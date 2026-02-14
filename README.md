@@ -4,7 +4,7 @@
 Project ini adalah aplikasi Laravel untuk:
 - Login user (web session + API JWT)
 - Preview laporan penjualan via API
-- Generate PDF laporan penjualan
+- Generate PDF laporan
 
 ## Requirement
 - PHP `^8.2`
