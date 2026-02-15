@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(SalesSeeder::class);
+        $this->call(MutasiCrossCutSeeder::class);
     }
 }

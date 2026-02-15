@@ -21,6 +21,7 @@
             </p>
             <div class="d-flex gap-2 flex-wrap">
                 <a href="{{ route('reports.sales.index') }}" class="btn btn-primary btn-lg">Generate Laporan Penjualan PDF</a>
+                <a href="{{ route('reports.mutasi.cross-cut.index') }}" class="btn btn-outline-primary btn-lg">Generate Laporan Mutasi Cross Cut PDF</a>
                 <a href="https://laravel.com/docs" target="_blank" class="btn btn-outline-primary btn-lg">Dokumentasi Laravel</a>
             </div>
         </div>

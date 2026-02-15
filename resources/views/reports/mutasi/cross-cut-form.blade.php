@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Generate Laporan Penjualan</title>
+    <title>Generate Laporan Mutasi Cross Cut</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -32,9 +32,9 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Penjualan (PDF)</h1>
+                <h1 class="h3 mb-3">Generate Laporan Mutasi Cross Cut (PDF)</h1>
                 <p class="text-secondary mb-4">
-                    Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data penjualan
+                    Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data mutasi cross cut
                     dan langsung mengunduh file PDF.
                 </p>
 
@@ -79,7 +79,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('reports.sales.download') }}" class="row g-3">
+                <form method="POST" action="{{ route('reports.mutasi.cross-cut.download') }}" class="row g-3">
                     @csrf
                     <div class="col-md-6">
                         <label for="start_date" class="form-label">Tanggal Awal</label>
@@ -97,19 +97,13 @@
                         <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
                     </div>
                 </form>
-
-                <hr class="my-4">
-                <p class="mb-0">
-                    Butuh laporan mutasi? Buka
-                    <a href="{{ route('reports.mutasi.cross-cut.index') }}">Mutasi Cross Cut</a>.
-                </p>
             </div>
         </div>
     </main>
 
     @if (session('success'))
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const toastEl = document.getElementById('authSuccessToast');
                 if (!toastEl || !window.bootstrap) {
                     return;

@@ -32,9 +32,9 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Penjualan (PDF)</h1>
+                <h1 class="h3 mb-3">Generate Laporan (PDF)</h1>
                 <p class="text-secondary mb-4">
-                    Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data penjualan
+                    Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data dari stored procedure
                     dan langsung mengunduh file PDF.
                 </p>
 
@@ -79,7 +79,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('reports.sales.download') }}" class="row g-3">
+                <form method="POST" action="{{ route('reports.mutasi.cross-cut.download') }}" class="row g-3">
                     @csrf
                     <div class="col-md-6">
                         <label for="start_date" class="form-label">Tanggal Awal</label>
@@ -99,17 +99,18 @@
                 </form>
 
                 <hr class="my-4">
+
+                <h2 class="h5 mb-2">OpenAPI Schema</h2>
                 <p class="mb-0">
-                    Butuh laporan mutasi? Buka
-                    <a href="{{ route('reports.mutasi.cross-cut.index') }}">Mutasi Cross Cut</a>.
+                    Endpoint schema tersedia di
+                    <a href="{{ url('/api/openapi.json') }}" target="_blank">/api/openapi.json</a>.
                 </p>
             </div>
         </div>
     </main>
-
     @if (session('success'))
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const toastEl = document.getElementById('authSuccessToast');
                 if (!toastEl || !window.bootstrap) {
                     return;

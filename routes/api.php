@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
+use App\Http\Controllers\MutasiCrossCutController;
 use App\Http\Controllers\SalesReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,4 +22,8 @@ Route::prefix('auth')->group(function (): void {
 Route::middleware('auth:api')->group(function (): void {
     Route::post('/reports/sales', [SalesReportController::class, 'preview'])->name('api.reports.sales.preview');
     Route::post('/reports/sales/pdf', [SalesReportController::class, 'download'])->name('api.reports.sales.pdf');
+
+    //Mutasi Cross Cut
+    Route::post('/reports/mutasi-cross-cut', [MutasiCrossCutController::class, 'preview'])->name('api.reports.mutasi-cross-cut.preview');
+    Route::post('/reports/mutasi-cross-cut/pdf', [MutasiCrossCutController::class, 'download'])->name('api.reports.mutasi-cross-cut.pdf');
 });
