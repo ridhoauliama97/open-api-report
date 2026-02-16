@@ -23,8 +23,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $this->call(SalesSeeder::class);
-        $this->call(MutasiCrossCutSeeder::class);
-        $this->call(MutasiBarangJadiSeeder::class);
+        // Seeder laporan selain user dinonaktifkan karena modul terkait sudah dihapus.
     }
 }

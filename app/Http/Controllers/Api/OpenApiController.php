@@ -15,9 +15,9 @@ class OpenApiController extends Controller
         return response()->json([
             'openapi' => '3.0.3',
             'info' => [
-                'title' => 'Sales Report API',
+                'title' => 'Open API Report',
                 'version' => '1.0.0',
-                'description' => 'API untuk autentikasi JWT, preview data, dan generate laporan PDF (penjualan, mutasi cross cut, mutasi barang jadi) berdasarkan rentang tanggal.',
+                'description' => 'API autentikasi JWT dan laporan mutasi barang jadi berbasis rentang tanggal.',
             ],
             'servers' => [
                 ['url' => url('/')],
@@ -79,16 +79,6 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Kredensial tidak valid',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Email atau password tidak valid.',
-                                        ],
-                                    ],
-                                ],
                             ],
                             '422' => [
                                 'description' => 'Validasi gagal',
@@ -99,19 +89,8 @@ class OpenApiController extends Controller
                 '/api/auth/logout' => [
                     'post' => [
                         'summary' => 'Logout user (invalidate token)',
-                        'description' => 'Kirim token melalui Authorization Bearer atau field `token` di body.',
                         'security' => [
                             ['bearerAuth' => []],
-                        ],
-                        'requestBody' => [
-                            'required' => false,
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/AuthTokenRequest',
-                                    ],
-                                ],
-                            ],
                         ],
                         'responses' => [
                             '200' => [
@@ -126,25 +105,6 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Token tidak valid atau tidak ditemukan',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'examples' => [
-                                            'token_missing' => [
-                                                'value' => [
-                                                    'message' => 'Token tidak ditemukan. Kirim Authorization: Bearer <token> atau field token.',
-                                                ],
-                                            ],
-                                            'token_invalid' => [
-                                                'value' => [
-                                                    'message' => 'Token tidak valid atau sudah kedaluwarsa.',
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -152,19 +112,8 @@ class OpenApiController extends Controller
                 '/api/auth/refresh' => [
                     'post' => [
                         'summary' => 'Refresh access token',
-                        'description' => 'Kirim token melalui Authorization Bearer atau field `token` di body.',
                         'security' => [
                             ['bearerAuth' => []],
-                        ],
-                        'requestBody' => [
-                            'required' => false,
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/AuthTokenRequest',
-                                    ],
-                                ],
-                            ],
                         ],
                         'responses' => [
                             '200' => [
@@ -179,25 +128,6 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Token tidak valid atau tidak ditemukan',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'examples' => [
-                                            'token_missing' => [
-                                                'value' => [
-                                                    'message' => 'Token tidak ditemukan. Kirim Authorization: Bearer <token> atau field token.',
-                                                ],
-                                            ],
-                                            'token_invalid' => [
-                                                'value' => [
-                                                    'message' => 'Token tidak valid atau sudah kedaluwarsa.',
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -221,23 +151,13 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Unauthenticated',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Unauthenticated.',
-                                        ],
-                                    ],
-                                ],
                             ],
                         ],
                     ],
                 ],
-                '/api/reports/sales' => [
+                '/api/reports/mutasi-barang-jadi' => [
                     'post' => [
-                        'summary' => 'Preview data laporan penjualan',
+                        'summary' => 'Preview data laporan mutasi barang jadi',
                         'security' => [
                             ['bearerAuth' => []],
                         ],
@@ -272,119 +192,6 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Unauthenticated',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Unauthenticated.',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                '/api/reports/sales/pdf' => [
-                    'post' => [
-                        'summary' => 'Generate laporan penjualan PDF',
-                        'security' => [
-                            ['bearerAuth' => []],
-                        ],
-                        'requestBody' => [
-                            'required' => true,
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
-                                    ],
-                                ],
-                                'application/x-www-form-urlencoded' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
-                                    ],
-                                ],
-                            ],
-                        ],
-                        'responses' => [
-                            '200' => [
-                                'description' => 'PDF berhasil dibuat',
-                                'content' => [
-                                    'application/pdf' => [
-                                        'schema' => [
-                                            'type' => 'string',
-                                            'format' => 'binary',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            '422' => [
-                                'description' => 'Validasi gagal',
-                            ],
-                            '401' => [
-                                'description' => 'Unauthenticated',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Unauthenticated.',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                '/api/reports/mutasi-barang-jadi' => [
-                    'post' => [
-                        'summary' => 'Preview data laporan mutasi barang jadi',
-                        'security' => [
-                            ['bearerAuth' => []],
-                        ],
-                        'requestBody' => [
-                            'required' => true,
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/SalesReportRequest',
-                                    ],
-                                ],
-                                'application/x-www-form-urlencoded' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/SalesReportRequest',
-                                    ],
-                                ],
-                            ],
-                        ],
-                        'responses' => [
-                            '200' => [
-                                'description' => 'Data preview laporan',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/SalesReportPreviewResponse',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            '422' => [
-                                'description' => 'Validasi gagal',
-                            ],
-                            '401' => [
-                                'description' => 'Unauthenticated',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Unauthenticated.',
-                                        ],
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -400,12 +207,12 @@ class OpenApiController extends Controller
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
-                                        '$ref' => '#/components/schemas/SalesReportRequest',
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
                                     ],
                                 ],
                                 'application/x-www-form-urlencoded' => [
                                     'schema' => [
-                                        '$ref' => '#/components/schemas/SalesReportRequest',
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
                                     ],
                                 ],
                             ],
@@ -427,16 +234,6 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Unauthenticated',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Unauthenticated.',
-                                        ],
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -478,16 +275,6 @@ class OpenApiController extends Controller
                             ],
                             '401' => [
                                 'description' => 'Unauthenticated',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            '$ref' => '#/components/schemas/MessageResponse',
-                                        ],
-                                        'example' => [
-                                            'message' => 'Unauthenticated.',
-                                        ],
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -506,20 +293,9 @@ class OpenApiController extends Controller
                         'type' => 'object',
                         'required' => ['name', 'email', 'password'],
                         'properties' => [
-                            'name' => [
-                                'type' => 'string',
-                                'example' => 'John Doe',
-                            ],
-                            'email' => [
-                                'type' => 'string',
-                                'format' => 'email',
-                                'example' => 'john@example.com',
-                            ],
-                            'password' => [
-                                'type' => 'string',
-                                'format' => 'password',
-                                'example' => 'secret123',
-                            ],
+                            'name' => ['type' => 'string', 'example' => 'John Doe'],
+                            'email' => ['type' => 'string', 'format' => 'email', 'example' => 'john@example.com'],
+                            'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                             'password_confirmation' => [
                                 'type' => 'string',
                                 'format' => 'password',
@@ -532,62 +308,29 @@ class OpenApiController extends Controller
                         'type' => 'object',
                         'required' => ['email', 'password'],
                         'properties' => [
-                            'email' => [
-                                'type' => 'string',
-                                'format' => 'email',
-                                'example' => 'john@example.com',
-                            ],
-                            'password' => [
-                                'type' => 'string',
-                                'format' => 'password',
-                                'example' => 'secret123',
-                            ],
-                        ],
-                    ],
-                    'AuthTokenRequest' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'token' => [
-                                'type' => 'string',
-                                'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-                            ],
+                            'email' => ['type' => 'string', 'format' => 'email', 'example' => 'john@example.com'],
+                            'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                         ],
                     ],
                     'AuthTokenResponse' => [
                         'type' => 'object',
                         'properties' => [
-                            'access_token' => [
-                                'type' => 'string',
-                                'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-                            ],
-                            'token_type' => [
-                                'type' => 'string',
-                                'example' => 'bearer',
-                            ],
-                            'expires_in' => [
-                                'type' => 'integer',
-                                'example' => 3600,
-                            ],
-                            'user' => [
-                                '$ref' => '#/components/schemas/User',
-                            ],
+                            'access_token' => ['type' => 'string', 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'],
+                            'token_type' => ['type' => 'string', 'example' => 'bearer'],
+                            'expires_in' => ['type' => 'integer', 'example' => 3600],
+                            'user' => ['$ref' => '#/components/schemas/User'],
                         ],
                     ],
                     'AuthUserResponse' => [
                         'type' => 'object',
                         'properties' => [
-                            'user' => [
-                                '$ref' => '#/components/schemas/User',
-                            ],
+                            'user' => ['$ref' => '#/components/schemas/User'],
                         ],
                     ],
                     'MessageResponse' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => [
-                                'type' => 'string',
-                                'example' => 'Logout berhasil.',
-                            ],
+                            'message' => ['type' => 'string', 'example' => 'Logout berhasil.'],
                         ],
                     ],
                     'User' => [
@@ -601,62 +344,12 @@ class OpenApiController extends Controller
                             'updated_at' => ['type' => 'string', 'format' => 'date-time'],
                         ],
                     ],
-                    'SalesReportRequest' => [
-                        'type' => 'object',
-                        'required' => ['start_date', 'end_date'],
-                        'properties' => [
-                            'start_date' => [
-                                'type' => 'string',
-                                'format' => 'date',
-                                'example' => '2026-01-01',
-                            ],
-                            'end_date' => [
-                                'type' => 'string',
-                                'format' => 'date',
-                                'example' => '2026-01-31',
-                            ],
-                        ],
-                    ],
-                    'SalesReportPreviewResponse' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'message' => [
-                                'type' => 'string',
-                                'example' => 'Preview laporan berhasil diambil.',
-                            ],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 100],
-                                    'amount_field' => ['type' => 'string', 'example' => 'total'],
-                                    'grand_total' => ['type' => 'number', 'example' => 12345678.9],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => [
-                                    'type' => 'object',
-                                    'additionalProperties' => true,
-                                ],
-                            ],
-                        ],
-                    ],
                     'MutasiBarangJadiRequest' => [
                         'type' => 'object',
                         'required' => ['TglAwal', 'TglAkhir'],
                         'properties' => [
-                            'TglAwal' => [
-                                'type' => 'string',
-                                'format' => 'date',
-                                'example' => '2026-01-01',
-                            ],
-                            'TglAkhir' => [
-                                'type' => 'string',
-                                'format' => 'date',
-                                'example' => '2026-01-31',
-                            ],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
                         ],
                     ],
                     'MutasiBarangJadiRow' => [
@@ -681,10 +374,7 @@ class OpenApiController extends Controller
                     'MutasiBarangJadiPreviewResponse' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => [
-                                'type' => 'string',
-                                'example' => 'Preview laporan berhasil diambil.',
-                            ],
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
                             'meta' => [
                                 'type' => 'object',
                                 'properties' => [
@@ -693,28 +383,18 @@ class OpenApiController extends Controller
                                     'TglAwal' => ['type' => 'string', 'format' => 'date'],
                                     'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                                     'total_rows' => ['type' => 'integer', 'example' => 14],
-                                    'column_order' => [
-                                        'type' => 'array',
-                                        'items' => ['type' => 'string'],
-                                        'example' => ['Jenis', 'Awal', 'Masuk', 'AdjOutput', 'BSOutput', 'AdjInput', 'BSInput', 'Keluar', 'Jual', 'MLDInput', 'LMTInput', 'CCAInput', 'SANDInput', 'Akhir'],
-                                    ],
                                 ],
                             ],
                             'data' => [
                                 'type' => 'array',
-                                'items' => [
-                                    '$ref' => '#/components/schemas/MutasiBarangJadiRow',
-                                ],
+                                'items' => ['$ref' => '#/components/schemas/MutasiBarangJadiRow'],
                             ],
                         ],
                     ],
                     'MutasiBarangJadiHealthResponse' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => [
-                                'type' => 'string',
-                                'example' => 'Struktur output SP_Mutasi_BarangJadi valid.',
-                            ],
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_BarangJadi valid.'],
                             'meta' => [
                                 'type' => 'object',
                                 'properties' => [

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class AuthApiFeatureTest extends TestCase
@@ -161,5 +162,29 @@ class AuthApiFeatureTest extends TestCase
         $this->postJson('/api/auth/logout')
             ->assertStatus(401)
             ->assertJsonPath('message', 'Token tidak ditemukan. Kirim Authorization: Bearer <token> atau field token.');
+    }
+
+    /**
+     * Execute test auth token includes configured interoperability claims logic.
+     */
+    public function test_auth_token_includes_configured_interoperability_claims(): void
+    {
+        config()->set('reports.report_auth.issued_audience', 'open-api-report');
+        config()->set('reports.report_auth.issued_scope', 'report:generate profile:read');
+
+        User::factory()->create([
+            'email' => 'claims@example.com',
+            'password' => 'secret123',
+        ]);
+
+        $token = $this->postJson('/api/auth/login', [
+            'email' => 'claims@example.com',
+            'password' => 'secret123',
+        ])->assertOk()->json('access_token');
+
+        $payload = JWTAuth::setToken((string) $token)->getPayload();
+
+        $this->assertContains('open-api-report', (array) $payload->get('aud'));
+        $this->assertSame('report:generate profile:read', $payload->get('scope'));
     }
 }

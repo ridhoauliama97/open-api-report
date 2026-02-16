@@ -31,7 +31,7 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        $token = Auth::guard('api')->attempt([
+        $token = $this->attemptWithConfiguredClaims([
             'email' => $validated['email'],
             'password' => $validated['password'],
         ]);
@@ -55,7 +55,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $token = Auth::guard('api')->attempt($credentials);
+        $token = $this->attemptWithConfiguredClaims($credentials);
 
         if ($token === false) {
             return response()->json([
@@ -131,11 +131,55 @@ class AuthController extends Controller
      */
     private function respondWithToken(string $token, int $status = 200): JsonResponse
     {
+        $authenticatedUser = Auth::guard('api')->setToken($token)->user();
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
-            'user' => Auth::guard('api')->user(),
+            'user' => $authenticatedUser,
         ], $status);
+    }
+
+    /**
+     * Attempt JWT login using optional interoperability claims from configuration.
+     *
+     * @param array<string, string> $credentials
+     */
+    private function attemptWithConfiguredClaims(array $credentials): string|false
+    {
+        $claims = $this->buildIssuedClaims();
+
+        if ($claims === []) {
+            return Auth::guard('api')->attempt($credentials);
+        }
+
+        return JWTAuth::claims($claims)->attempt($credentials);
+    }
+
+    /**
+     * Build token claims to align auth-issued token with report middleware policy.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildIssuedClaims(): array
+    {
+        $claims = [];
+
+        $audience = trim((string) config('reports.report_auth.issued_audience', ''));
+        if ($audience !== '') {
+            $claims['aud'] = $audience;
+        }
+
+        $scopeClaimName = (string) config('reports.report_auth.scope_claim', 'scope');
+        $issuedScope = trim((string) config('reports.report_auth.issued_scope', ''));
+        $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
+
+        $scopeValue = $issuedScope !== '' ? $issuedScope : $requiredScope;
+        if ($scopeValue !== '') {
+            $claims[$scopeClaimName] = $scopeValue;
+        }
+
+        return $claims;
     }
 }

@@ -27,7 +27,7 @@ class WebAuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()
-            ->route('reports.sales.index')
+            ->route('reports.mutasi.barang-jadi.index')
             ->with('success', 'Login berhasil.');
     }
 
@@ -41,7 +41,7 @@ class WebAuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()
-            ->route('reports.sales.index')
+            ->route('reports.mutasi.barang-jadi.index')
             ->with('success', 'Logout berhasil.');
     }
 }

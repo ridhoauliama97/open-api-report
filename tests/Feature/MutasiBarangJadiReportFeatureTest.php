@@ -6,10 +6,24 @@ use App\Models\User;
 use App\Services\MutasiBarangJadiReportService;
 use App\Services\PdfGenerator;
 use Mockery;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class MutasiBarangJadiReportFeatureTest extends TestCase
 {
+    /**
+     * Execute set up logic.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Isolasi test dari policy .env lokal agar skenario dasar tetap deterministik.
+        config()->set('reports.report_auth.issuers', []);
+        config()->set('reports.report_auth.audiences', []);
+        config()->set('reports.report_auth.required_scope', null);
+    }
+
     /**
      * Execute tear down logic.
      */
@@ -94,7 +108,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
 
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
 
-        $this->actingAs($user, 'api')
+        $this->withHeaders($this->authJsonHeaders($user))
             ->postJson('/api/reports/mutasi-barang-jadi', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
@@ -283,8 +297,9 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user, 'api')
-            ->get('/api/reports/mutasi-barang-jadi/pdf?TglAwal=2026-01-01&TglAkhir=2026-01-31')
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+        ])->get('/api/reports/mutasi-barang-jadi/pdf?TglAwal=2026-01-01&TglAkhir=2026-01-31')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf')
             ->assertHeader('Content-Disposition', 'attachment; filename="laporan-mutasi-barang-jadi-2026-01-01-sd-2026-01-31.pdf"');
@@ -313,7 +328,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
 
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
 
-        $this->actingAs($user, 'api')
+        $this->withHeaders($this->authJsonHeaders($user))
             ->postJson('/api/reports/mutasi-barang-jadi/health', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
@@ -323,5 +338,86 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
             ->assertJsonPath('health.row_count', 14)
             ->assertJsonPath('meta.TglAwal', '2026-01-01')
             ->assertJsonPath('meta.TglAkhir', '2026-01-31');
+    }
+
+    /**
+     * Execute test report api rejects token without required scope logic.
+     */
+    public function test_report_api_rejects_token_without_required_scope(): void
+    {
+        config()->set('reports.report_auth.required_scope', 'report:generate');
+
+        $user = User::factory()->make(['id' => 1]);
+        $token = (string) JWTAuth::claims(['scope' => 'profile:read'])->fromUser($user);
+
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson('/api/reports/mutasi-barang-jadi', [
+            'TglAwal' => '2026-01-01',
+            'TglAkhir' => '2026-01-31',
+        ])->assertStatus(401)
+            ->assertJsonPath('message', 'Token tidak memiliki scope untuk generate report.');
+    }
+
+    /**
+     * Execute test report api rejects token with untrusted issuer logic.
+     */
+    public function test_report_api_rejects_token_with_untrusted_issuer(): void
+    {
+        config()->set('reports.report_auth.issuers', ['https://trusted-issuer.example']);
+
+        $user = User::factory()->make(['id' => 1]);
+        $token = (string) JWTAuth::fromUser($user);
+
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson('/api/reports/mutasi-barang-jadi', [
+            'TglAwal' => '2026-01-01',
+            'TglAkhir' => '2026-01-31',
+        ])->assertStatus(401)
+            ->assertJsonPath('message', 'Token issuer/audience tidak diizinkan.');
+    }
+
+    /**
+     * Execute test report api rejects token with untrusted audience logic.
+     */
+    public function test_report_api_rejects_token_with_untrusted_audience(): void
+    {
+        config()->set('reports.report_auth.audiences', ['open-api-report']);
+
+        $user = User::factory()->make(['id' => 1]);
+        $token = (string) JWTAuth::fromUser($user);
+
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson('/api/reports/mutasi-barang-jadi', [
+            'TglAwal' => '2026-01-01',
+            'TglAkhir' => '2026-01-31',
+        ])->assertStatus(401)
+            ->assertJsonPath('message', 'Token issuer/audience tidak diizinkan.');
+    }
+
+    /**
+     * Build authorization headers for JSON API testing.
+     *
+     * @return array<string, string>
+     */
+    private function authJsonHeaders(User $user): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Accept' => 'application/json',
+        ];
+    }
+
+    /**
+     * Create JWT token for test user without requiring auth guard lookup.
+     */
+    private function createBearerToken(User $user): string
+    {
+        return (string) JWTAuth::fromUser($user);
     }
 }
