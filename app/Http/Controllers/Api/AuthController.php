@@ -13,6 +13,9 @@ use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
+    /**
+     * Register application services and container bindings.
+     */
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -42,6 +45,9 @@ class AuthController extends Controller
         return $this->respondWithToken($token, 201);
     }
 
+    /**
+     * Execute login logic.
+     */
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
@@ -60,6 +66,9 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    /**
+     * Execute me logic.
+     */
     public function me(): JsonResponse
     {
         return response()->json([
@@ -67,6 +76,9 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Execute logout logic.
+     */
     public function logout(Request $request): JsonResponse
     {
         $token = $request->bearerToken() ?: $request->string('token')->toString();
@@ -90,6 +102,9 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Execute refresh logic.
+     */
     public function refresh(Request $request): JsonResponse
     {
         $token = $request->bearerToken() ?: $request->string('token')->toString();
@@ -111,6 +126,9 @@ class AuthController extends Controller
         return $this->respondWithToken($newToken);
     }
 
+    /**
+     * Execute respond with token logic.
+     */
     private function respondWithToken(string $token, int $status = 200): JsonResponse
     {
         return response()->json([

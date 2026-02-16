@@ -52,5 +52,4 @@
 - Jika jumlah kolom `<= 8` gunakan `portrait`.
 
 ## Referensi File
-- Template laporan: `resources/views/reports/mutasi/cross-cut-pdf.blade.php`
 - Generator PDF: `app/Services/PdfGenerator.php`

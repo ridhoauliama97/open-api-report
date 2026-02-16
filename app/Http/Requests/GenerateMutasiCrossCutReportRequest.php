@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class GenerateMutasiCrossCutReportRequest extends FormRequest
 {
+    /**
+     * Determine whether the current user is authorized for this request.
+     */
     public function authorize(): bool
     {
         return true;

@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Definisikan struktur tabel users.
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -21,12 +22,14 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Definisikan struktur tabel token reset password.
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Definisikan struktur tabel session aplikasi.
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

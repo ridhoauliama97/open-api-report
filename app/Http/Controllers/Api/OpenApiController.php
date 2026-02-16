@@ -7,6 +7,9 @@ use Illuminate\Http\JsonResponse;
 
 class OpenApiController extends Controller
 {
+    /**
+     * Display the default page for this resource.
+     */
     public function index(): JsonResponse
     {
         return response()->json([
@@ -14,7 +17,7 @@ class OpenApiController extends Controller
             'info' => [
                 'title' => 'Sales Report API',
                 'version' => '1.0.0',
-                'description' => 'API untuk autentikasi JWT, preview data, dan generate laporan penjualan PDF berdasarkan rentang tanggal.',
+                'description' => 'API untuk autentikasi JWT, preview data, dan generate laporan PDF (penjualan, mutasi cross cut, mutasi barang jadi) berdasarkan rentang tanggal.',
             ],
             'servers' => [
                 ['url' => url('/')],
@@ -243,6 +246,109 @@ class OpenApiController extends Controller
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiBarangJadiPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MessageResponse',
+                                        ],
+                                        'example' => [
+                                            'message' => 'Unauthenticated.',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/sales/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan penjualan PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MessageResponse',
+                                        ],
+                                        'example' => [
+                                            'message' => 'Unauthenticated.',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-barang-jadi' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi barang jadi',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
                                         '$ref' => '#/components/schemas/SalesReportRequest',
                                     ],
                                 ],
@@ -283,9 +389,9 @@ class OpenApiController extends Controller
                         ],
                     ],
                 ],
-                '/api/reports/sales/pdf' => [
+                '/api/reports/mutasi-barang-jadi/pdf' => [
                     'post' => [
-                        'summary' => 'Generate laporan penjualan PDF',
+                        'summary' => 'Generate laporan mutasi barang jadi PDF',
                         'security' => [
                             ['bearerAuth' => []],
                         ],
@@ -312,6 +418,57 @@ class OpenApiController extends Controller
                                         'schema' => [
                                             'type' => 'string',
                                             'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MessageResponse',
+                                        ],
+                                        'example' => [
+                                            'message' => 'Unauthenticated.',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-barang-jadi/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi barang jadi',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiBarangJadiRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiBarangJadiHealthResponse',
                                         ],
                                     ],
                                 ],
@@ -482,6 +639,100 @@ class OpenApiController extends Controller
                                 'items' => [
                                     'type' => 'object',
                                     'additionalProperties' => true,
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiBarangJadiRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => [
+                                'type' => 'string',
+                                'format' => 'date',
+                                'example' => '2026-01-01',
+                            ],
+                            'TglAkhir' => [
+                                'type' => 'string',
+                                'format' => 'date',
+                                'example' => '2026-01-31',
+                            ],
+                        ],
+                    ],
+                    'MutasiBarangJadiRow' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'Jenis' => ['type' => 'string', 'example' => 'BJ JABON FJLB A/A'],
+                            'Awal' => ['type' => 'number', 'example' => 4.2935],
+                            'Masuk' => ['type' => 'number', 'example' => 438.0548],
+                            'AdjOutput' => ['type' => 'number', 'example' => 0],
+                            'BSOutput' => ['type' => 'number', 'example' => 159.5689],
+                            'AdjInput' => ['type' => 'number', 'example' => 0],
+                            'BSInput' => ['type' => 'number', 'example' => 159.57],
+                            'Keluar' => ['type' => 'number', 'example' => 9.2471],
+                            'Jual' => ['type' => 'number', 'example' => 401.6065],
+                            'MLDInput' => ['type' => 'number', 'example' => 0],
+                            'LMTInput' => ['type' => 'number', 'example' => 0.0857],
+                            'CCAInput' => ['type' => 'number', 'example' => 2.3059],
+                            'SANDInput' => ['type' => 'number', 'example' => 0],
+                            'Akhir' => ['type' => 'number', 'example' => 29.102],
+                        ],
+                    ],
+                    'MutasiBarangJadiPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => [
+                                'type' => 'string',
+                                'example' => 'Preview laporan berhasil diambil.',
+                            ],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 14],
+                                    'column_order' => [
+                                        'type' => 'array',
+                                        'items' => ['type' => 'string'],
+                                        'example' => ['Jenis', 'Awal', 'Masuk', 'AdjOutput', 'BSOutput', 'AdjInput', 'BSInput', 'Keluar', 'Jual', 'MLDInput', 'LMTInput', 'CCAInput', 'SANDInput', 'Akhir'],
+                                    ],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => [
+                                    '$ref' => '#/components/schemas/MutasiBarangJadiRow',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiBarangJadiHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => [
+                                'type' => 'string',
+                                'example' => 'Struktur output SP_Mutasi_BarangJadi valid.',
+                            ],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 14],
                                 ],
                             ],
                         ],

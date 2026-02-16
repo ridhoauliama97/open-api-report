@@ -10,6 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        // Definisikan struktur tabel sumber data laporan mutasi cross cut.
         Schema::create('mutasi_cross_cut', function (Blueprint $table) {
             $table->id();
             $table->string('jenis');

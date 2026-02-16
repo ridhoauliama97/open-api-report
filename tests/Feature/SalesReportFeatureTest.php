@@ -10,6 +10,9 @@ use Tests\TestCase;
 
 class SalesReportFeatureTest extends TestCase
 {
+    /**
+     * Execute tear down logic.
+     */
     protected function tearDown(): void
     {
         Mockery::close();
@@ -17,6 +20,9 @@ class SalesReportFeatureTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * Execute test sales report form page is accessible logic.
+     */
     public function test_sales_report_form_page_is_accessible(): void
     {
         $this->get('/reports/sales')
@@ -24,6 +30,9 @@ class SalesReportFeatureTest extends TestCase
             ->assertSee('Generate Laporan Penjualan (PDF)');
     }
 
+    /**
+     * Execute test openapi json endpoint is available logic.
+     */
     public function test_openapi_json_endpoint_is_available(): void
     {
         $this->get('/api/openapi.json')
@@ -36,12 +45,16 @@ class SalesReportFeatureTest extends TestCase
             ->assertJsonPath('paths./api/auth/me.get.summary', 'Data user yang sedang login')
             ->assertJsonPath('paths./api/reports/sales.post.summary', 'Preview data laporan penjualan')
             ->assertJsonPath('paths./api/reports/sales/pdf.post.summary', 'Generate laporan penjualan PDF')
+            ->assertJsonPath('paths./api/reports/mutasi-barang-jadi/health.post.summary', 'Cek kesehatan struktur output SP mutasi barang jadi')
             ->assertJsonPath('paths./api/reports/sales.post.security.0.bearerAuth.0', null)
             ->assertJsonPath('components.securitySchemes.bearerAuth.scheme', 'bearer')
             ->assertJsonPath('components.securitySchemes.bearerAuth.bearerFormat', 'JWT')
             ->assertJsonPath('components.schemas.AuthTokenResponse.properties.token_type.example', 'bearer');
     }
 
+    /**
+     * Execute test sales preview endpoint returns json data logic.
+     */
     public function test_sales_preview_endpoint_returns_json_data(): void
     {
         $user = User::factory()->make(['id' => 1]);
@@ -71,6 +84,9 @@ class SalesReportFeatureTest extends TestCase
             ->assertJsonCount(2, 'data');
     }
 
+    /**
+     * Execute test pdf download endpoint returns attachment logic.
+     */
     public function test_pdf_download_endpoint_returns_attachment(): void
     {
         $user = User::factory()->make(['id' => 1]);

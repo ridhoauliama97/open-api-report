@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class WebAuthController extends Controller
 {
+    /**
+     * Execute login logic.
+     */
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
@@ -28,6 +31,9 @@ class WebAuthController extends Controller
             ->with('success', 'Login berhasil.');
     }
 
+    /**
+     * Execute logout logic.
+     */
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();

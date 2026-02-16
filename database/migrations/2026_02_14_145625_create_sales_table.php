@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Definisikan struktur tabel sumber data laporan sales.
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_no')->unique();

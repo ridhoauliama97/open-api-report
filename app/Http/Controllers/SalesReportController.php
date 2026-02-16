@@ -11,11 +11,17 @@ use RuntimeException;
 
 class SalesReportController extends Controller
 {
+    /**
+     * Display the default page for this resource.
+     */
     public function index(): View
     {
         return view('reports.sales-form');
     }
 
+    /**
+     * Execute download logic.
+     */
     public function download(
         GenerateSalesReportRequest $request,
         SalesReportService $salesReportService,
@@ -72,6 +78,9 @@ class SalesReportController extends Controller
         ]);
     }
 
+    /**
+     * Execute preview logic.
+     */
     public function preview(
         GenerateSalesReportRequest $request,
         SalesReportService $salesReportService,

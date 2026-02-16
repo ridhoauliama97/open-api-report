@@ -37,6 +37,9 @@ class PdfGenerator
         return count($visibleColumns);
     }
 
+    /**
+     * Execute render logic.
+     */
     public function render(string $view, array $data = []): string
     {
         $html = view($view, $data)->render();

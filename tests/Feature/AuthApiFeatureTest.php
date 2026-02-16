@@ -10,6 +10,9 @@ class AuthApiFeatureTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Execute test user can register and receive jwt token logic.
+     */
     public function test_user_can_register_and_receive_jwt_token(): void
     {
         $response = $this->postJson('/api/auth/register', [
@@ -31,6 +34,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonPath('user.email', 'test@example.com');
     }
 
+    /**
+     * Execute test user can login and get profile using bearer token logic.
+     */
     public function test_user_can_login_and_get_profile_using_bearer_token(): void
     {
         User::factory()->create([
@@ -55,6 +61,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonPath('user.email', 'login@example.com');
     }
 
+    /**
+     * Execute test user can refresh token logic.
+     */
     public function test_user_can_refresh_token(): void
     {
         User::factory()->create([
@@ -75,6 +84,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonPath('token_type', 'bearer');
     }
 
+    /**
+     * Execute test user can logout logic.
+     */
     public function test_user_can_logout(): void
     {
         User::factory()->create([
@@ -95,6 +107,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonPath('message', 'Logout berhasil.');
     }
 
+    /**
+     * Execute test register fails when email is already used logic.
+     */
     public function test_register_fails_when_email_is_already_used(): void
     {
         User::factory()->create([
@@ -110,6 +125,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonValidationErrors(['email']);
     }
 
+    /**
+     * Execute test login fails with invalid credentials logic.
+     */
     public function test_login_fails_with_invalid_credentials(): void
     {
         User::factory()->create([
@@ -125,6 +143,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonPath('message', 'Email atau password tidak valid.');
     }
 
+    /**
+     * Execute test refresh fails without token logic.
+     */
     public function test_refresh_fails_without_token(): void
     {
         $this->postJson('/api/auth/refresh')
@@ -132,6 +153,9 @@ class AuthApiFeatureTest extends TestCase
             ->assertJsonPath('message', 'Token tidak ditemukan. Kirim Authorization: Bearer <token> atau field token.');
     }
 
+    /**
+     * Execute test logout fails without token logic.
+     */
     public function test_logout_fails_without_token(): void
     {
         $this->postJson('/api/auth/logout')

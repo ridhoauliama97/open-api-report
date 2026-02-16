@@ -13,10 +13,16 @@ use RuntimeException;
 class MutasiCrossCutController extends Controller
 {
 
+    /**
+     * Display the default page for this resource.
+     */
     public function index(): View
     {
         return view('reports.mutasi.cross-cut-form');
     }
+    /**
+     * Execute download logic.
+     */
     public function download(
         GenerateMutasiCrossCutReportRequest $request,
         MutasiCrossCutReportService $mutasiCrossCutReportService,
@@ -71,6 +77,9 @@ class MutasiCrossCutController extends Controller
         ]);
     }
 
+    /**
+     * Execute preview logic.
+     */
     public function preview(
         GenerateMutasiCrossCutReportRequest $request,
         MutasiCrossCutReportService $mutasiCrossCutReportService,

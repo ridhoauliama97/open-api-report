@@ -3,7 +3,7 @@
 ## Ringkasan
 Project ini adalah aplikasi Laravel untuk:
 - Login user (web session + API JWT)
-- Preview laporan penjualan via API
+- Preview laporan penjualan/mutasi via API
 - Generate PDF laporan
 
 ## Requirement
@@ -49,6 +49,18 @@ SALES_REPORT_DB_CONNECTION=${DB_CONNECTION}
 SALES_REPORT_PROCEDURE=sp_sales_report
 SALES_REPORT_CALL_SYNTAX=auto
 # SALES_REPORT_QUERY=
+
+MUTASI_CROSS_CUT_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_CROSS_CUT_REPORT_PROCEDURE=sp_mutasi_cross_cut_report
+MUTASI_CROSS_CUT_REPORT_CALL_SYNTAX=auto
+# MUTASI_CROSS_CUT_REPORT_QUERY=
+
+MUTASI_BARANG_JADI_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_BARANG_JADI_REPORT_PROCEDURE=SP_Mutasi_BarangJadi
+MUTASI_BARANG_JADI_SUB_REPORT_PROCEDURE=SP_SubMutasi_BarangJadi
+MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=auto
+# MUTASI_BARANG_JADI_REPORT_QUERY=
+# MUTASI_BARANG_JADI_SUB_REPORT_QUERY=
 ```
 
 Keterangan:
@@ -66,9 +78,13 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 
 ## Web Flow
 - Halaman report: `GET /reports/sales`
+- Halaman report: `GET /reports/mutasi/cross-cut`
+- Halaman report: `GET /reports/mutasi/barang-jadi`
 - Login web: `POST /login`
 - Logout web: `POST /logout`
 - Download PDF report (web): `POST /reports/sales/download`
+- Download PDF report (web): `POST /reports/mutasi/cross-cut/download`
+- Download PDF report (web): `POST /reports/mutasi/barang-jadi/download`
 
 Catatan:
 - Setelah login web berhasil, akan muncul notifikasi toast.
@@ -88,6 +104,10 @@ Auth JWT:
 Report API (perlu Bearer token):
 - `POST /api/reports/sales`
 - `POST /api/reports/sales/pdf`
+- `POST /api/reports/mutasi-cross-cut`
+- `POST /api/reports/mutasi-cross-cut/pdf`
+- `POST /api/reports/mutasi-barang-jadi`
+- `POST /api/reports/mutasi-barang-jadi/pdf`
 
 ## Contoh Penggunaan API
 ### 1) Login
@@ -120,3 +140,22 @@ Jalankan test:
 php artisan test
 ```
 
+## Export Struktur Database
+Untuk memahami struktur database yang dipakai laporan stored procedure (tables, kolom, PK/FK, views, functions, procedures, parameter, dan dependency), jalankan:
+
+```bash
+php artisan db:export-structure sqlsrv
+```
+
+Output akan tersimpan di:
+- `storage/app/private/db-structure/*_summary.json`
+- `storage/app/private/db-structure/*_tables.json`
+- `storage/app/private/db-structure/*_views.json`
+- `storage/app/private/db-structure/*_functions.json`
+- `storage/app/private/db-structure/*_procedures.json`
+
+Jika ingin ikut mengekspor definisi SQL setiap stored procedure:
+
+```bash
+php artisan db:export-structure sqlsrv --with-definitions
+```

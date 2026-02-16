@@ -73,6 +73,7 @@ class MutasiCrossCutReportService
      */
     private function normalizeRows(array $rows): array
     {
+        // Ubah setiap baris object dari database menjadi array asosiatif.
         return array_map(function ($row) {
             return (array) $row;
         }, $rows);
@@ -87,3 +88,4 @@ class MutasiCrossCutReportService
         return str_contains($query, '?') ? $bindings : [];
     }
 }
+
