@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
@@ -15,34 +21,29 @@
 
     <main class="container py-5">
         <div class="p-5 mb-4 bg-white rounded-3 shadow-sm border">
-            <h1 class="display-5 fw-bold">Laravel + Bootstrap</h1>
+            <h1 class="display-5 fw-bold">Welcome!</h1>
             <p class="fs-5 text-secondary mb-4">
-                Aplikasi Laravel berhasil dibuat dan Bootstrap sudah terintegrasi.
+                Aplikasi ini dibuat untuk memudahkan dalam menghasilkan laporan PDF dengan menggunakan OpenAPI
+                Specification (OAS), library mpdf dan Laravel sebagai framework backend. Dengan aplikasi ini, Anda dapat
+                dengan mudah menghasilkan laporan PDF yang sesuai dengan kebutuhan Anda, tanpa perlu khawatir tentang
+                kompleksitas teknis yang terkait dengan pembuatan laporan PDF secara manual.
             </p>
             <div class="d-flex gap-2 flex-wrap">
-                <a href="{{ route('reports.mutasi.barang-jadi.index') }}" class="btn btn-primary btn-lg">Generate Laporan Mutasi Barang Jadi PDF</a>
-                <a href="https://laravel.com/docs" target="_blank" class="btn btn-outline-primary btn-lg">Dokumentasi Laravel</a>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="h5">Frontend</h2>
-                        <p class="text-secondary mb-0">Bootstrap 5 melalui Vite (`resources/css/app.css` dan `resources/js/app.js`).</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="h5">Backend</h2>
-                        <p class="text-secondary mb-0">Laravel sudah siap untuk route, controller, model, API, dan generate laporan PDF.</p>
-                    </div>
-                </div>
+                <a href="{{ route('reports.mutasi.barang-jadi.index') }}" class="btn btn-primary btn-lg">
+                    Generate Laporan Mutasi Barang Jadi (PDF)</a>
+                <a href="{{ route('reports.mutasi.finger-joint.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Mutasi Finger Joint (PDF)</a>
+                <a href="{{ route('reports.mutasi.moulding.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Mutasi Moulding (PDF)</a>
+                <a href="{{ route('reports.mutasi.s4s.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Mutasi S4S (PDF)</a>
+                <a href="{{ route('reports.rangkuman-label-input.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Rangkuman Jumlah Label Input (PDF)</a>
+                <a href="{{ route('reports.bahan-terpakai.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Bahan Terpakai (PDF)</a>
             </div>
         </div>
     </main>
 </body>
+
 </html>

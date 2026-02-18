@@ -4,7 +4,15 @@
 Project ini adalah aplikasi Laravel untuk:
 - Login user (web session + API JWT)
 - Preview laporan mutasi barang jadi via API
+- Preview laporan mutasi finger joint via API
+- Preview laporan mutasi moulding via API
+- Preview laporan mutasi s4s via API
+- Preview laporan rangkuman jumlah label input via API
 - Generate PDF laporan mutasi barang jadi
+- Generate PDF laporan mutasi finger joint
+- Generate PDF laporan mutasi moulding
+- Generate PDF laporan mutasi s4s
+- Generate PDF laporan rangkuman jumlah label input
 
 ## Requirement
 - PHP `^8.2`
@@ -50,6 +58,39 @@ MUTASI_BARANG_JADI_SUB_REPORT_PROCEDURE=SP_SubMutasi_BarangJadi
 MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=exec
 # MUTASI_BARANG_JADI_REPORT_QUERY=
 # MUTASI_BARANG_JADI_SUB_REPORT_QUERY=
+
+MUTASI_FINGER_JOINT_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_FINGER_JOINT_REPORT_PROCEDURE=SP_Mutasi_FingerJoint
+MUTASI_FINGER_JOINT_SUB_REPORT_PROCEDURE=SP_SubMutasi_FingerJoint
+MUTASI_FINGER_JOINT_REPORT_CALL_SYNTAX=exec
+# MUTASI_FINGER_JOINT_REPORT_QUERY=
+# MUTASI_FINGER_JOINT_SUB_REPORT_QUERY=
+# MUTASI_FINGER_JOINT_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_FINGER_JOINT_SUB_REPORT_EXPECTED_COLUMNS=Jenis,CCAkhir,S4S
+
+MUTASI_MOULDING_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_MOULDING_REPORT_PROCEDURE=SP_Mutasi_Moulding
+MUTASI_MOULDING_SUB_REPORT_PROCEDURE=SP_SubMutasi_Moulding
+MUTASI_MOULDING_REPORT_CALL_SYNTAX=exec
+# MUTASI_MOULDING_REPORT_QUERY=
+# MUTASI_MOULDING_SUB_REPORT_QUERY=
+# MUTASI_MOULDING_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_MOULDING_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
+
+MUTASI_S4S_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_S4S_REPORT_PROCEDURE=SP_Mutasi_S4S
+MUTASI_S4S_SUB_REPORT_PROCEDURE=SP_SubMutasi_S4S
+MUTASI_S4S_REPORT_CALL_SYNTAX=exec
+# MUTASI_S4S_REPORT_QUERY=
+# MUTASI_S4S_SUB_REPORT_QUERY=
+# MUTASI_S4S_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_S4S_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
+
+RANGKUMAN_LABEL_INPUT_REPORT_DB_CONNECTION=${DB_CONNECTION}
+RANGKUMAN_LABEL_INPUT_REPORT_PROCEDURE=SPWps_LapRangkumanJlhLabelInput
+RANGKUMAN_LABEL_INPUT_REPORT_CALL_SYNTAX=exec
+# RANGKUMAN_LABEL_INPUT_REPORT_QUERY=
+# RANGKUMAN_LABEL_INPUT_REPORT_EXPECTED_COLUMNS=
 ```
 
 ### JWT
@@ -59,10 +100,22 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 
 ## Web Flow
 - Halaman report: `GET /reports/mutasi/barang-jadi`
+- Halaman report: `GET /reports/mutasi/finger-joint`
+- Halaman report: `GET /reports/mutasi/moulding`
+- Halaman report: `GET /reports/mutasi/s4s`
+- Halaman report: `GET /reports/rangkuman-label-input`
 - Login web: `POST /login`
 - Logout web: `POST /logout`
 - Download PDF report (web): `POST /reports/mutasi/barang-jadi/download`
+- Download PDF report (web): `POST /reports/mutasi/finger-joint/download`
+- Download PDF report (web): `POST /reports/mutasi/moulding/download`
+- Download PDF report (web): `POST /reports/mutasi/s4s/download`
+- Download PDF report (web): `POST /reports/rangkuman-label-input/download`
 - Preview report (web, JSON): `POST /reports/mutasi/barang-jadi/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/finger-joint/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/moulding/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/s4s/preview`
+- Preview report (web, JSON): `POST /reports/rangkuman-label-input/preview`
 
 ## API Endpoint
 OpenAPI schema:
@@ -79,6 +132,18 @@ Report API (perlu Bearer token):
 - `POST /api/reports/mutasi-barang-jadi`
 - `GET|POST /api/reports/mutasi-barang-jadi/pdf`
 - `POST /api/reports/mutasi-barang-jadi/health`
+- `POST /api/reports/mutasi-finger-joint`
+- `GET|POST /api/reports/mutasi-finger-joint/pdf`
+- `POST /api/reports/mutasi-finger-joint/health`
+- `POST /api/reports/mutasi-moulding`
+- `GET|POST /api/reports/mutasi-moulding/pdf`
+- `POST /api/reports/mutasi-moulding/health`
+- `POST /api/reports/mutasi-s4s`
+- `GET|POST /api/reports/mutasi-s4s/pdf`
+- `POST /api/reports/mutasi-s4s/health`
+- `POST /api/reports/rangkuman-label-input`
+- `GET|POST /api/reports/rangkuman-label-input/pdf`
+- `POST /api/reports/rangkuman-label-input/health`
 
 Catatan autentikasi report API:
 - Endpoint report API memvalidasi JWT berdasarkan signature + claim token.

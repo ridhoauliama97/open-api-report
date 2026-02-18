@@ -1,55 +1,107 @@
-# Guideline Template Laporan
+# Guideline Membuat Laporan Baru (Acuan: Mutasi Barang Jadi)
 
-## Struktur Dokumen
-- Margin halaman: `24mm 12mm 20mm 12mm`.
-- Header laporan:
-  - Judul: `Laporan Mutasi Cross Cut`.
-  - Subtitle: periode tanggal laporan.
-  - Font header: `Noto Serif`.
-- Footer halaman:
-  - Menampilkan user pencetak dan timestamp.
-  - Nomor halaman di sisi kanan: `Halaman {PAGENO} dari {nbpg}`.
-  - Font footer: `Noto Serif`, ukuran kecil.
+## Tujuan
+Panduan ini dipakai untuk menambah laporan baru dengan pola arsitektur yang sama seperti modul Mutasi Barang Jadi:
+- Web form + download PDF
+- API preview + download PDF (+ health check opsional)
+- Data source dari stored procedure / query
+- Proteksi API report via JWT claim policy
 
-## Konfigurasi Tabel
-- Class utama: `table table-striped`.
-- Border tabel: garis solid tipis (`#9ca3af`) untuk header dan body.
-- Header tabel:
-  - Background: `#306DD0`.
-  - Mendukung header bertingkat (`Masuk`, `Keluar`) jika kolom tersedia.
-- Zebra rows:
-  - Baris ganjil (`row-odd`): `#c9d1df`.
-  - Baris genap (`row-even`): `#eef2f8`.
-  - Implementasi zebra menggunakan class baris Blade (`$loop->odd`/`$loop->even`) agar konsisten di mPDF.
+## Standar Penamaan
+Contoh jika laporan baru bernama `stok-harian`:
+- Controller: `StokHarianController`
+- Request: `GenerateStokHarianReportRequest`
+- Service: `StokHarianReportService`
+- View form: `resources/views/reports/stok/harian-form.blade.php`
+- View PDF: `resources/views/reports/stok/harian-pdf.blade.php`
+- Route name web: `reports.stok.harian.*`
+- Route name api: `api.reports.stok-harian.*`
+- Config key: `reports.stok_harian.*`
 
-## Aturan Kolom dan Urutan
-- Kolom sistem yang disembunyikan: `created_at`, `updated_at`.
-- Label dan urutan utama:
-  - `No` (dari `id`, ditampilkan sebagai nomor urut 1..n).
-  - `Jenis`.
-  - `Awal`.
-  - Grup `Masuk` (sub-kolom masuk sesuai mapping).
-  - `Total Masuk`.
-  - Grup `Keluar` (sub-kolom keluar sesuai mapping).
-  - `Total Keluar`.
-  - `Total Akhir`.
-- Mapping kolom grup dilakukan dengan normalisasi nama key agar tahan terhadap variasi format key.
+## Langkah Implementasi
+1. Buat service laporan baru
+- Duplikasi pola dari `app/Services/MutasiBarangJadiReportService.php`.
+- Tambahkan:
+  - `fetch(...)` untuk data utama
+  - `fetchSubReport(...)` jika perlu tabel tambahan
+  - `healthCheck(...)` jika perlu validasi struktur output SP
+- Validasi:
+  - nama stored procedure aman (`preg_match`)
+  - output kolom sesuai ekspektasi
+  - normalisasi data `object -> array`
 
-## Format Angka dan Penekanan Data
-- Data numerik diformat dengan `number_format(..., 2, ',', '.')`.
-- Kolom numerik rata kanan (`.number`).
-- Kolom `No` rata tengah.
-- Jika terdapat kolom dengan kalimat `Total `, ditampilkan dengan font `bold`.
+2. Buat request validator
+- Buat file `app/Http/Requests/Generate<NamaLaporan>ReportRequest.php`.
+- Minimum validasi tanggal:
+  - `start_date/end_date` atau format legacy (`TglAwal/TglAkhir`)
+  - `end_date >= start_date`
 
-## Baris Total
-- Ditampilkan di bagian bawah tabel jika data tersedia.
-- Sel pertama berisi label `Total`.
-- Kolom numerik menampilkan akumulasi total.
+3. Buat controller
+- Buat file `app/Http/Controllers/<NamaLaporan>Controller.php`.
+- Method minimum:
+  - `index()` untuk halaman form
+  - `preview()` untuk JSON preview
+  - `download()` untuk PDF
+- Method opsional:
+  - `health()` untuk cek struktur hasil query/SP
+- Gunakan `PdfGenerator` untuk render HTML Blade menjadi PDF.
 
-## Logika Orientasi Kertas
-- Ditentukan di `PdfGenerator` berdasarkan jumlah kolom terlihat (setelah mengecualikan kolom tersembunyi).
-- Jika jumlah kolom `> 8` gunakan `landscape`.
-- Jika jumlah kolom `<= 8` gunakan `portrait`.
+4. Tambahkan view
+- Form web: input tanggal + tombol preview/download.
+- Template PDF:
+  - Header judul laporan
+  - Info periode
+  - Info footer `Dicetak oleh` + timestamp
+  - Tabel data utama (+ sub tabel bila ada)
+- Referensi pola: `resources/views/reports/mutasi/barang-jadi-form.blade.php` dan `resources/views/reports/mutasi/barang-jadi-pdf.blade.php`.
 
-## Referensi File
-- Generator PDF: `app/Services/PdfGenerator.php`
+5. Daftarkan route
+- Web di `routes/web.php`:
+  - `GET /reports/...` -> `index`
+  - `POST /reports/.../preview` -> `preview`
+  - `POST /reports/.../download` -> `download`
+- API di `routes/api.php`:
+  - `POST /api/reports/...` -> `preview`
+  - `GET|POST /api/reports/.../pdf` -> `download`
+  - `POST /api/reports/.../health` -> `health` (opsional)
+- Route API report wajib di group middleware `report.jwt.claims`.
+
+6. Tambahkan konfigurasi report
+- Tambahkan key baru di `config/reports.php`.
+- Minimum key:
+  - `database_connection`
+  - `stored_procedure`
+  - `call_syntax`
+  - `query` (untuk fallback mode query)
+
+7. Update OpenAPI
+- Tambahkan endpoint baru di `app/Http/Controllers/Api/OpenApiController.php`:
+  - path
+  - requestBody
+  - response schema
+  - security bearer
+
+8. Tambahkan test feature
+- Buat/extend test di `tests/Feature/`.
+- Minimum skenario:
+  - form web bisa diakses
+  - preview API sukses
+  - download PDF sukses
+  - unauthorized token ditolak
+- Jika ada health endpoint:
+  - assert struktur response `health.*`
+
+## Checklist Merge
+- `php artisan route:list` memastikan route terdaftar.
+- `php artisan test` harus hijau.
+- OpenAPI `GET /api/openapi.json` sudah memuat endpoint baru.
+- Footer PDF menampilkan user dari token/session tanpa error.
+- README diperbarui jika ada endpoint/config baru.
+
+## Catatan Integrasi JWT
+- Report API tidak bergantung login user DB lokal.
+- Pastikan token issuer punya claim yang dipakai report:
+  - `sub`, `name`, `email`
+  - `scope` jika `REPORT_JWT_REQUIRED_SCOPE` diaktifkan
+  - `iss` dan `aud` jika whitelist diaktifkan
+- Referensi lengkap ada di `docs/jwt-cross-app-integration.md`.

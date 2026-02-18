@@ -17,7 +17,7 @@ class OpenApiController extends Controller
             'info' => [
                 'title' => 'Open API Report',
                 'version' => '1.0.0',
-                'description' => 'API autentikasi JWT dan laporan mutasi barang jadi berbasis rentang tanggal.',
+                'description' => 'API autentikasi JWT dan laporan mutasi barang jadi/finger joint berbasis rentang tanggal.',
             ],
             'servers' => [
                 ['url' => url('/')],
@@ -279,6 +279,626 @@ class OpenApiController extends Controller
                         ],
                     ],
                 ],
+                '/api/reports/mutasi-finger-joint' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi finger joint',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiFingerJointRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiFingerJointRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiFingerJointPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-finger-joint/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi finger joint PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiFingerJointRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiFingerJointRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-finger-joint/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi finger joint',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiFingerJointRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiFingerJointRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiFingerJointHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-moulding' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi moulding',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiMouldingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiMouldingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiMouldingPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-moulding/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi moulding PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiMouldingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiMouldingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-moulding/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi moulding',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiMouldingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiMouldingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiMouldingHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-s4s' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi s4s',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiS4SRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiS4SRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiS4SPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-s4s/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi s4s PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiS4SRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiS4SRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-s4s/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi s4s',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiS4SRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiS4SRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiS4SHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/rangkuman-label-input' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan rangkuman jumlah label input',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/RangkumanLabelInputRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/RangkumanLabelInputRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/RangkumanLabelInputPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/rangkuman-label-input/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan rangkuman jumlah label input PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/RangkumanLabelInputRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/RangkumanLabelInputRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/rangkuman-label-input/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SPWps_LapRangkumanJlhLabelInput',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/RangkumanLabelInputRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/RangkumanLabelInputRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/RangkumanLabelInputHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/bahan-terpakai' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan bahan terpakai',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/BahanTerpakaiRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/BahanTerpakaiRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/BahanTerpakaiPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/bahan-terpakai/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan bahan terpakai PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/BahanTerpakaiRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/BahanTerpakaiRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/bahan-terpakai/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SPWps_LapBahanTerpakai',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/BahanTerpakaiRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/BahanTerpakaiRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/BahanTerpakaiHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'components' => [
                 'securitySchemes' => [
@@ -413,6 +1033,370 @@ class OpenApiController extends Controller
                                     'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
                                     'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
                                     'row_count' => ['type' => 'integer', 'example' => 14],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiFingerJointRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiFingerJointRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'FJ JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiFingerJointPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 12],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiFingerJointRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiFingerJointRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiFingerJointHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_FingerJoint valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiMouldingRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiMouldingRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'MLD JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiMouldingPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiMouldingRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiMouldingRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiMouldingHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Moulding valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiS4SRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiS4SRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'S4S JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiS4SPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiS4SRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiS4SRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiS4SHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_S4S valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'RangkumanLabelInputRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'RangkumanLabelInputRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Tanggal' => '2026-01-01',
+                            'Shift' => '1',
+                            'JumlahLabel' => 125,
+                        ],
+                    ],
+                    'RangkumanLabelInputPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 31],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/RangkumanLabelInputRow'],
+                            ],
+                        ],
+                    ],
+                    'RangkumanLabelInputHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapRangkumanJlhLabelInput valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 31],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'BahanTerpakaiRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                        ],
+                    ],
+                    'BahanTerpakaiRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Group' => 'PROSES CCAKHIR',
+                            'NamaMesin' => 'DOUBLE END CUTTER',
+                            'Jenis' => 'LMT PULAI TASOBO',
+                            'Tebal' => 48,
+                            'Lebar' => 45,
+                            'Panjang' => 2430,
+                            'JmlhBatang' => 124,
+                            'KubikIN' => 0.6508,
+                        ],
+                    ],
+                    'BahanTerpakaiSubRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Group' => 'PROSES S4S',
+                            'NamaMesin' => 'MULTI RIPSAW',
+                            'Jenis' => 'ST RAMBUNG - STD',
+                            'Tebal' => 44,
+                            'Lebar' => 42,
+                            'Ton' => 1.0688,
+                        ],
+                    ],
+                    'BahanTerpakaiPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 31],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 5],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'sub_column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/BahanTerpakaiRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/BahanTerpakaiSubRow'],
+                            ],
+                        ],
+                    ],
+                    'BahanTerpakaiHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapBahanTerpakai valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 31],
+                                    'expected_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'sub_row_count' => ['type' => 'integer', 'example' => 5],
                                 ],
                             ],
                         ],
