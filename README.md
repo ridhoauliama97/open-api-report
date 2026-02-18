@@ -7,12 +7,18 @@ Project ini adalah aplikasi Laravel untuk:
 - Preview laporan mutasi finger joint via API
 - Preview laporan mutasi moulding via API
 - Preview laporan mutasi s4s via API
+- Preview laporan mutasi kayu bulat via API
+- Preview laporan mutasi kayu bulat kgv2 via API
 - Preview laporan rangkuman jumlah label input via API
+- Preview laporan label nyangkut via API
 - Generate PDF laporan mutasi barang jadi
 - Generate PDF laporan mutasi finger joint
 - Generate PDF laporan mutasi moulding
 - Generate PDF laporan mutasi s4s
+- Generate PDF laporan mutasi kayu bulat
+- Generate PDF laporan mutasi kayu bulat kgv2
 - Generate PDF laporan rangkuman jumlah label input
+- Generate PDF laporan label nyangkut
 
 ## Requirement
 - PHP `^8.2`
@@ -86,11 +92,37 @@ MUTASI_S4S_REPORT_CALL_SYNTAX=exec
 # MUTASI_S4S_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
 # MUTASI_S4S_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
 
+MUTASI_KAYU_BULAT_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_KAYU_BULAT_REPORT_PROCEDURE=SP_Mutasi_KayuBulat
+# Opsional, isi hanya jika ada sub report:
+# MUTASI_KAYU_BULAT_SUB_REPORT_PROCEDURE=
+MUTASI_KAYU_BULAT_REPORT_CALL_SYNTAX=exec
+# MUTASI_KAYU_BULAT_REPORT_QUERY=
+# MUTASI_KAYU_BULAT_SUB_REPORT_QUERY=
+# MUTASI_KAYU_BULAT_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_KAYU_BULAT_SUB_REPORT_EXPECTED_COLUMNS=Jenis
+
+MUTASI_KAYU_BULAT_KGV2_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_KAYU_BULAT_KGV2_REPORT_PROCEDURE=SP_Mutasi_KayuBulatKGV2
+# Opsional, isi hanya jika ada sub report:
+# MUTASI_KAYU_BULAT_KGV2_SUB_REPORT_PROCEDURE=
+MUTASI_KAYU_BULAT_KGV2_REPORT_CALL_SYNTAX=exec
+# MUTASI_KAYU_BULAT_KGV2_REPORT_QUERY=
+# MUTASI_KAYU_BULAT_KGV2_SUB_REPORT_QUERY=
+# MUTASI_KAYU_BULAT_KGV2_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_KAYU_BULAT_KGV2_SUB_REPORT_EXPECTED_COLUMNS=Jenis
+
 RANGKUMAN_LABEL_INPUT_REPORT_DB_CONNECTION=${DB_CONNECTION}
 RANGKUMAN_LABEL_INPUT_REPORT_PROCEDURE=SPWps_LapRangkumanJlhLabelInput
 RANGKUMAN_LABEL_INPUT_REPORT_CALL_SYNTAX=exec
 # RANGKUMAN_LABEL_INPUT_REPORT_QUERY=
 # RANGKUMAN_LABEL_INPUT_REPORT_EXPECTED_COLUMNS=
+
+LABEL_NYANGKUT_REPORT_DB_CONNECTION=${DB_CONNECTION}
+LABEL_NYANGKUT_REPORT_PROCEDURE=SPWps_LapLabelNyangkut
+LABEL_NYANGKUT_REPORT_CALL_SYNTAX=exec
+# LABEL_NYANGKUT_REPORT_QUERY=
+# LABEL_NYANGKUT_REPORT_EXPECTED_COLUMNS=
 ```
 
 ### JWT
@@ -103,19 +135,28 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Halaman report: `GET /reports/mutasi/finger-joint`
 - Halaman report: `GET /reports/mutasi/moulding`
 - Halaman report: `GET /reports/mutasi/s4s`
+- Halaman report: `GET /reports/mutasi/kayu-bulat`
+- Halaman report: `GET /reports/mutasi/kayu-bulat-kgv2`
 - Halaman report: `GET /reports/rangkuman-label-input`
+- Halaman report: `GET /reports/label-nyangkut`
 - Login web: `POST /login`
 - Logout web: `POST /logout`
 - Download PDF report (web): `POST /reports/mutasi/barang-jadi/download`
 - Download PDF report (web): `POST /reports/mutasi/finger-joint/download`
 - Download PDF report (web): `POST /reports/mutasi/moulding/download`
 - Download PDF report (web): `POST /reports/mutasi/s4s/download`
+- Download PDF report (web): `POST /reports/mutasi/kayu-bulat/download`
+- Download PDF report (web): `POST /reports/mutasi/kayu-bulat-kgv2/download`
 - Download PDF report (web): `POST /reports/rangkuman-label-input/download`
+- Download PDF report (web): `POST /reports/label-nyangkut/download`
 - Preview report (web, JSON): `POST /reports/mutasi/barang-jadi/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/finger-joint/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/moulding/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/s4s/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat-kgv2/preview`
 - Preview report (web, JSON): `POST /reports/rangkuman-label-input/preview`
+- Preview report (web, JSON): `POST /reports/label-nyangkut/preview`
 
 ## API Endpoint
 OpenAPI schema:
@@ -141,9 +182,18 @@ Report API (perlu Bearer token):
 - `POST /api/reports/mutasi-s4s`
 - `GET|POST /api/reports/mutasi-s4s/pdf`
 - `POST /api/reports/mutasi-s4s/health`
+- `POST /api/reports/mutasi-kayu-bulat`
+- `GET|POST /api/reports/mutasi-kayu-bulat/pdf`
+- `POST /api/reports/mutasi-kayu-bulat/health`
+- `POST /api/reports/mutasi-kayu-bulat-kgv2`
+- `GET|POST /api/reports/mutasi-kayu-bulat-kgv2/pdf`
+- `POST /api/reports/mutasi-kayu-bulat-kgv2/health`
 - `POST /api/reports/rangkuman-label-input`
 - `GET|POST /api/reports/rangkuman-label-input/pdf`
 - `POST /api/reports/rangkuman-label-input/health`
+- `POST /api/reports/label-nyangkut`
+- `GET|POST /api/reports/label-nyangkut/pdf`
+- `POST /api/reports/label-nyangkut/health`
 
 Catatan autentikasi report API:
 - Endpoint report API memvalidasi JWT berdasarkan signature + claim token.

@@ -2,7 +2,7 @@
 
 return [
 
-    // Laporan Mutasi
+    // Laporan Seluruh Mutasi :
     'mutasi_barang_jadi' => [
         'database_connection' => env('MUTASI_BARANG_JADI_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('MUTASI_BARANG_JADI_REPORT_PROCEDURE', 'SP_Mutasi_BarangJadi'),
@@ -41,12 +41,51 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_S4S_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_S4S_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'mutasi_kayu_bulat' => [
+        'database_connection' => env('MUTASI_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_KAYU_BULAT_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulat'),
+        'sub_stored_procedure' => env('MUTASI_KAYU_BULAT_SUB_REPORT_PROCEDURE', ''),
+        'call_syntax' => env('MUTASI_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_KAYU_BULAT_REPORT_QUERY'),
+        'sub_query' => env('MUTASI_KAYU_BULAT_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'mutasi_kayu_bulat_kgv2' => [
+        'database_connection' => env('MUTASI_KAYU_BULAT_KGV2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_KAYU_BULAT_KGV2_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulatKGV2'),
+        'sub_stored_procedure' => env('MUTASI_KAYU_BULAT_KGV2_SUB_REPORT_PROCEDURE', ''),
+        'call_syntax' => env('MUTASI_KAYU_BULAT_KGV2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_KAYU_BULAT_KGV2_REPORT_QUERY'),
+        'sub_query' => env('MUTASI_KAYU_BULAT_KGV2_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_KGV2_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_KGV2_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'mutasi_kayu_bulat_kg' => [
+        'database_connection' => env('MUTASI_KAYU_BULAT_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_KAYU_BULAT_KG_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulatKG'),
+        'sub_stored_procedure' => env('MUTASI_KAYU_BULAT_KG_SUB_REPORT_PROCEDURE', ''),
+        'call_syntax' => env('MUTASI_KAYU_BULAT_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_KAYU_BULAT_KG_REPORT_QUERY'),
+        'sub_query' => env('MUTASI_KAYU_BULAT_KG_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_KG_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_KG_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+
+    // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [
         'database_connection' => env('RANGKUMAN_LABEL_INPUT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('RANGKUMAN_LABEL_INPUT_REPORT_PROCEDURE', 'SPWps_LapRangkumanJlhLabelInput'),
         'call_syntax' => env('RANGKUMAN_LABEL_INPUT_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('RANGKUMAN_LABEL_INPUT_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('RANGKUMAN_LABEL_INPUT_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'label_nyangkut' => [
+        'database_connection' => env('LABEL_NYANGKUT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('LABEL_NYANGKUT_REPORT_PROCEDURE', 'SPWps_LapLabelNyangkut'),
+        'call_syntax' => env('LABEL_NYANGKUT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LABEL_NYANGKUT_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('LABEL_NYANGKUT_REPORT_EXPECTED_COLUMNS', '')))),
     ],
     'bahan_terpakai' => [
         'database_connection' => env('BAHAN_TERPAKAI_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -59,8 +98,6 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('BAHAN_TERPAKAI_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('BAHAN_TERPAKAI_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
-
-    //Laporan Verifikasi :
 
 
     // Pengaturan otentikasi JWT untuk endpoint laporan

@@ -27,7 +27,7 @@ class OpenApiController extends Controller
                     'post' => [
                         'summary' => 'Registrasi user baru',
                         'requestBody' => [
-                            'required' => true,
+                            'required' => false,
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
@@ -57,7 +57,7 @@ class OpenApiController extends Controller
                     'post' => [
                         'summary' => 'Login user',
                         'requestBody' => [
-                            'required' => true,
+                            'required' => false,
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
@@ -162,7 +162,7 @@ class OpenApiController extends Controller
                             ['bearerAuth' => []],
                         ],
                         'requestBody' => [
-                            'required' => true,
+                            'required' => false,
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
@@ -651,6 +651,378 @@ class OpenApiController extends Controller
                         ],
                     ],
                 ],
+                '/api/reports/mutasi-kayu-bulat' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi kayu bulat',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi kayu bulat PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi kayu bulat',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-kgv2' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi kayu bulat kgv2',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGV2Request',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGV2Request',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatKGV2PreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-kgv2/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi kayu bulat kgv2 PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGV2Request',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGV2Request',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-kgv2/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi kayu bulat kgv2',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGV2Request',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGV2Request',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatKGV2HealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-kg' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi kayu bulat kg',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatKGPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-kg/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi kayu bulat kg PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-kg/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi kayu bulat kg',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatKGRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatKGHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
                 '/api/reports/rangkuman-label-input' => [
                     'post' => [
                         'summary' => 'Preview data laporan rangkuman jumlah label input',
@@ -762,6 +1134,130 @@ class OpenApiController extends Controller
                                     'application/json' => [
                                         'schema' => [
                                             '$ref' => '#/components/schemas/RangkumanLabelInputHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/label-nyangkut' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan label nyangkut',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/LabelNyangkutRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/LabelNyangkutRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/LabelNyangkutPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/label-nyangkut/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan label nyangkut PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/LabelNyangkutRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/LabelNyangkutRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/label-nyangkut/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SPWps_LapLabelNyangkut',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/LabelNyangkutRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/LabelNyangkutRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/LabelNyangkutHealthResponse',
                                         ],
                                     ],
                                 ],
@@ -1250,6 +1746,219 @@ class OpenApiController extends Controller
                             ],
                         ],
                     ],
+                    'MutasiKayuBulatRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiKayuBulatRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'KB JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiKayuBulatPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulat valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatKGV2Request' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiKayuBulatKGV2Row' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'KB JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiKayuBulatKGV2PreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGV2Row'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGV2Row'],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatKGV2HealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatKGV2 valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatKGRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiKayuBulatKGRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'KB JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiKayuBulatKGPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatKGHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatKG valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
                     'RangkumanLabelInputRequest' => [
                         'type' => 'object',
                         'required' => ['TglAwal', 'TglAkhir'],
@@ -1300,6 +2009,57 @@ class OpenApiController extends Controller
                                     'TglAwal' => ['type' => 'string', 'format' => 'date'],
                                     'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                                 ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 31],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'LabelNyangkutRequest' => [
+                        'type' => 'object',
+                        'properties' => [],
+                    ],
+                    'LabelNyangkutRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Tanggal' => '2026-01-01',
+                            'Shift' => '1',
+                            'JumlahLabelNyangkut' => 12,
+                        ],
+                    ],
+                    'LabelNyangkutPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'total_rows' => ['type' => 'integer', 'example' => 31],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/LabelNyangkutRow'],
+                            ],
+                        ],
+                    ],
+                    'LabelNyangkutHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapLabelNyangkut valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [],
                             ],
                             'health' => [
                                 'type' => 'object',
@@ -1406,3 +2166,4 @@ class OpenApiController extends Controller
         ]);
     }
 }
+
