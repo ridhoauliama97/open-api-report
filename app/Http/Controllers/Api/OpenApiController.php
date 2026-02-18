@@ -527,6 +527,254 @@ class OpenApiController extends Controller
                         ],
                     ],
                 ],
+                '/api/reports/mutasi-laminating' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi laminating',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiLaminatingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiLaminatingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiLaminatingPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-laminating/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi laminating PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiLaminatingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiLaminatingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-laminating/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi laminating',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiLaminatingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiLaminatingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiLaminatingHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-sanding' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi sanding',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSandingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSandingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiSandingPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-sanding/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi sanding PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSandingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSandingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-sanding/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi sanding',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSandingRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSandingRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiSandingHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
                 '/api/reports/mutasi-s4s' => [
                     'post' => [
                         'summary' => 'Preview data laporan mutasi s4s',
@@ -2025,6 +2273,148 @@ class OpenApiController extends Controller
                         'type' => 'object',
                         'properties' => [
                             'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Moulding valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiLaminatingRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiLaminatingRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'LMT JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiLaminatingPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiLaminatingRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiLaminatingRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiLaminatingHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Laminating valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiSandingRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiSandingRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'SND JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiSandingPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiSandingRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiSandingRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiSandingHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Sanding valid.'],
                             'meta' => [
                                 'type' => 'object',
                                 'properties' => [

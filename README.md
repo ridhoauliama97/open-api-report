@@ -6,6 +6,8 @@ Project ini adalah aplikasi Laravel untuk:
 - Preview laporan mutasi barang jadi via API
 - Preview laporan mutasi finger joint via API
 - Preview laporan mutasi moulding via API
+- Preview laporan mutasi laminating via API
+- Preview laporan mutasi sanding via API
 - Preview laporan mutasi s4s via API
 - Preview laporan mutasi st via API
 - Preview laporan mutasi kayu bulat via API
@@ -17,6 +19,8 @@ Project ini adalah aplikasi Laravel untuk:
 - Generate PDF laporan mutasi barang jadi
 - Generate PDF laporan mutasi finger joint
 - Generate PDF laporan mutasi moulding
+- Generate PDF laporan mutasi laminating
+- Generate PDF laporan mutasi sanding
 - Generate PDF laporan mutasi s4s
 - Generate PDF laporan mutasi st
 - Generate PDF laporan mutasi kayu bulat
@@ -88,6 +92,24 @@ MUTASI_MOULDING_REPORT_CALL_SYNTAX=exec
 # MUTASI_MOULDING_SUB_REPORT_QUERY=
 # MUTASI_MOULDING_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
 # MUTASI_MOULDING_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
+
+MUTASI_LAMINATING_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_LAMINATING_REPORT_PROCEDURE=SP_Mutasi_Laminating
+MUTASI_LAMINATING_SUB_REPORT_PROCEDURE=SP_SubMutasi_Laminating
+MUTASI_LAMINATING_REPORT_CALL_SYNTAX=exec
+# MUTASI_LAMINATING_REPORT_QUERY=
+# MUTASI_LAMINATING_SUB_REPORT_QUERY=
+# MUTASI_LAMINATING_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_LAMINATING_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
+
+MUTASI_SANDING_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_SANDING_REPORT_PROCEDURE=SP_Mutasi_Sanding
+MUTASI_SANDING_SUB_REPORT_PROCEDURE=SP_SubMutasi_Sanding
+MUTASI_SANDING_REPORT_CALL_SYNTAX=exec
+# MUTASI_SANDING_REPORT_QUERY=
+# MUTASI_SANDING_SUB_REPORT_QUERY=
+# MUTASI_SANDING_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_SANDING_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
 
 MUTASI_S4S_REPORT_DB_CONNECTION=${DB_CONNECTION}
 MUTASI_S4S_REPORT_PROCEDURE=SP_Mutasi_S4S
@@ -166,6 +188,8 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Halaman report: `GET /reports/mutasi/barang-jadi`
 - Halaman report: `GET /reports/mutasi/finger-joint`
 - Halaman report: `GET /reports/mutasi/moulding`
+- Halaman report: `GET /reports/mutasi/laminating`
+- Halaman report: `GET /reports/mutasi/sanding`
 - Halaman report: `GET /reports/mutasi/s4s`
 - Halaman report: `GET /reports/mutasi/st`
 - Halaman report: `GET /reports/mutasi/kayu-bulat`
@@ -179,6 +203,8 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Download PDF report (web): `POST /reports/mutasi/barang-jadi/download`
 - Download PDF report (web): `POST /reports/mutasi/finger-joint/download`
 - Download PDF report (web): `POST /reports/mutasi/moulding/download`
+- Download PDF report (web): `POST /reports/mutasi/laminating/download`
+- Download PDF report (web): `POST /reports/mutasi/sanding/download`
 - Download PDF report (web): `POST /reports/mutasi/s4s/download`
 - Download PDF report (web): `POST /reports/mutasi/st/download`
 - Download PDF report (web): `POST /reports/mutasi/kayu-bulat/download`
@@ -190,6 +216,8 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Preview report (web, JSON): `POST /reports/mutasi/barang-jadi/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/finger-joint/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/moulding/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/laminating/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/sanding/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/s4s/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/st/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat/preview`
@@ -220,6 +248,12 @@ Report API (perlu Bearer token):
 - `POST /api/reports/mutasi-moulding`
 - `GET|POST /api/reports/mutasi-moulding/pdf`
 - `POST /api/reports/mutasi-moulding/health`
+- `POST /api/reports/mutasi-laminating`
+- `GET|POST /api/reports/mutasi-laminating/pdf`
+- `POST /api/reports/mutasi-laminating/health`
+- `POST /api/reports/mutasi-sanding`
+- `GET|POST /api/reports/mutasi-sanding/pdf`
+- `POST /api/reports/mutasi-sanding/health`
 - `POST /api/reports/mutasi-s4s`
 - `GET|POST /api/reports/mutasi-s4s/pdf`
 - `POST /api/reports/mutasi-s4s/health`
