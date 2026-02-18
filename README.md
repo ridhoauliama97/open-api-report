@@ -7,17 +7,23 @@ Project ini adalah aplikasi Laravel untuk:
 - Preview laporan mutasi finger joint via API
 - Preview laporan mutasi moulding via API
 - Preview laporan mutasi s4s via API
+- Preview laporan mutasi st via API
 - Preview laporan mutasi kayu bulat via API
+- Preview laporan mutasi kayu bulat v2 via API
 - Preview laporan mutasi kayu bulat kgv2 via API
 - Preview laporan rangkuman jumlah label input via API
+- Preview laporan mutasi hasil racip via API
 - Preview laporan label nyangkut via API
 - Generate PDF laporan mutasi barang jadi
 - Generate PDF laporan mutasi finger joint
 - Generate PDF laporan mutasi moulding
 - Generate PDF laporan mutasi s4s
+- Generate PDF laporan mutasi st
 - Generate PDF laporan mutasi kayu bulat
+- Generate PDF laporan mutasi kayu bulat v2
 - Generate PDF laporan mutasi kayu bulat kgv2
 - Generate PDF laporan rangkuman jumlah label input
+- Generate PDF laporan mutasi hasil racip
 - Generate PDF laporan label nyangkut
 
 ## Requirement
@@ -92,6 +98,16 @@ MUTASI_S4S_REPORT_CALL_SYNTAX=exec
 # MUTASI_S4S_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
 # MUTASI_S4S_SUB_REPORT_EXPECTED_COLUMNS=Jenis,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,Sanding,WIP
 
+MUTASI_ST_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_ST_REPORT_PROCEDURE=SP_Mutasi_ST
+# Opsional, isi hanya jika ada sub report:
+# MUTASI_ST_SUB_REPORT_PROCEDURE=
+MUTASI_ST_REPORT_CALL_SYNTAX=exec
+# MUTASI_ST_REPORT_QUERY=
+# MUTASI_ST_SUB_REPORT_QUERY=
+# MUTASI_ST_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_ST_SUB_REPORT_EXPECTED_COLUMNS=Jenis
+
 MUTASI_KAYU_BULAT_REPORT_DB_CONNECTION=${DB_CONNECTION}
 MUTASI_KAYU_BULAT_REPORT_PROCEDURE=SP_Mutasi_KayuBulat
 # Opsional, isi hanya jika ada sub report:
@@ -101,6 +117,16 @@ MUTASI_KAYU_BULAT_REPORT_CALL_SYNTAX=exec
 # MUTASI_KAYU_BULAT_SUB_REPORT_QUERY=
 # MUTASI_KAYU_BULAT_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
 # MUTASI_KAYU_BULAT_SUB_REPORT_EXPECTED_COLUMNS=Jenis
+
+MUTASI_KAYU_BULAT_V2_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_KAYU_BULAT_V2_REPORT_PROCEDURE=SP_Mutasi_KayuBulatV2
+# Opsional, isi hanya jika ada sub report:
+# MUTASI_KAYU_BULAT_V2_SUB_REPORT_PROCEDURE=
+MUTASI_KAYU_BULAT_V2_REPORT_CALL_SYNTAX=exec
+# MUTASI_KAYU_BULAT_V2_REPORT_QUERY=
+# MUTASI_KAYU_BULAT_V2_SUB_REPORT_QUERY=
+# MUTASI_KAYU_BULAT_V2_REPORT_EXPECTED_COLUMNS=Jenis,Awal,Masuk,Keluar,Akhir
+# MUTASI_KAYU_BULAT_V2_SUB_REPORT_EXPECTED_COLUMNS=Jenis
 
 MUTASI_KAYU_BULAT_KGV2_REPORT_DB_CONNECTION=${DB_CONNECTION}
 MUTASI_KAYU_BULAT_KGV2_REPORT_PROCEDURE=SP_Mutasi_KayuBulatKGV2
@@ -117,6 +143,12 @@ RANGKUMAN_LABEL_INPUT_REPORT_PROCEDURE=SPWps_LapRangkumanJlhLabelInput
 RANGKUMAN_LABEL_INPUT_REPORT_CALL_SYNTAX=exec
 # RANGKUMAN_LABEL_INPUT_REPORT_QUERY=
 # RANGKUMAN_LABEL_INPUT_REPORT_EXPECTED_COLUMNS=
+
+MUTASI_HASIL_RACIP_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_HASIL_RACIP_REPORT_PROCEDURE=SPWps_LapMutasiHasilRacip
+MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX=exec
+# MUTASI_HASIL_RACIP_REPORT_QUERY=
+# MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS=
 
 LABEL_NYANGKUT_REPORT_DB_CONNECTION=${DB_CONNECTION}
 LABEL_NYANGKUT_REPORT_PROCEDURE=SPWps_LapLabelNyangkut
@@ -135,8 +167,11 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Halaman report: `GET /reports/mutasi/finger-joint`
 - Halaman report: `GET /reports/mutasi/moulding`
 - Halaman report: `GET /reports/mutasi/s4s`
+- Halaman report: `GET /reports/mutasi/st`
 - Halaman report: `GET /reports/mutasi/kayu-bulat`
+- Halaman report: `GET /reports/mutasi/kayu-bulat-v2`
 - Halaman report: `GET /reports/mutasi/kayu-bulat-kgv2`
+- Halaman report: `GET /reports/mutasi-hasil-racip`
 - Halaman report: `GET /reports/rangkuman-label-input`
 - Halaman report: `GET /reports/label-nyangkut`
 - Login web: `POST /login`
@@ -145,16 +180,22 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Download PDF report (web): `POST /reports/mutasi/finger-joint/download`
 - Download PDF report (web): `POST /reports/mutasi/moulding/download`
 - Download PDF report (web): `POST /reports/mutasi/s4s/download`
+- Download PDF report (web): `POST /reports/mutasi/st/download`
 - Download PDF report (web): `POST /reports/mutasi/kayu-bulat/download`
+- Download PDF report (web): `POST /reports/mutasi/kayu-bulat-v2/download`
 - Download PDF report (web): `POST /reports/mutasi/kayu-bulat-kgv2/download`
+- Download PDF report (web): `POST /reports/mutasi-hasil-racip/download`
 - Download PDF report (web): `POST /reports/rangkuman-label-input/download`
 - Download PDF report (web): `POST /reports/label-nyangkut/download`
 - Preview report (web, JSON): `POST /reports/mutasi/barang-jadi/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/finger-joint/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/moulding/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/s4s/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/st/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat-v2/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat-kgv2/preview`
+- Preview report (web, JSON): `POST /reports/mutasi-hasil-racip/preview`
 - Preview report (web, JSON): `POST /reports/rangkuman-label-input/preview`
 - Preview report (web, JSON): `POST /reports/label-nyangkut/preview`
 
@@ -182,9 +223,18 @@ Report API (perlu Bearer token):
 - `POST /api/reports/mutasi-s4s`
 - `GET|POST /api/reports/mutasi-s4s/pdf`
 - `POST /api/reports/mutasi-s4s/health`
+- `POST /api/reports/mutasi-st`
+- `GET|POST /api/reports/mutasi-st/pdf`
+- `POST /api/reports/mutasi-st/health`
 - `POST /api/reports/mutasi-kayu-bulat`
 - `GET|POST /api/reports/mutasi-kayu-bulat/pdf`
 - `POST /api/reports/mutasi-kayu-bulat/health`
+- `POST /api/reports/mutasi-kayu-bulat-v2`
+- `GET|POST /api/reports/mutasi-kayu-bulat-v2/pdf`
+- `POST /api/reports/mutasi-kayu-bulat-v2/health`
+- `POST /api/reports/mutasi-hasil-racip`
+- `GET|POST /api/reports/mutasi-hasil-racip/pdf`
+- `POST /api/reports/mutasi-hasil-racip/health`
 - `POST /api/reports/mutasi-kayu-bulat-kgv2`
 - `GET|POST /api/reports/mutasi-kayu-bulat-kgv2/pdf`
 - `POST /api/reports/mutasi-kayu-bulat-kgv2/health`

@@ -7,9 +7,12 @@ use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiFingerJointController;
 use App\Http\Controllers\MutasiKayuBulatController;
+use App\Http\Controllers\MutasiKayuBulatV2Controller;
 use App\Http\Controllers\MutasiKayuBulatKGController;
 use App\Http\Controllers\MutasiKayuBulatKGV2Controller;
 use App\Http\Controllers\MutasiMouldingController;
+use App\Http\Controllers\MutasiHasilRacipController;
+use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use Illuminate\Support\Facades\Route;
@@ -44,9 +47,15 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::post('/reports/mutasi-s4s', [MutasiS4SController::class, 'preview'])->name('api.reports.mutasi-s4s.preview');
     Route::match(['get', 'post'], '/reports/mutasi-s4s/pdf', [MutasiS4SController::class, 'download'])->name('api.reports.mutasi-s4s.pdf');
     Route::post('/reports/mutasi-s4s/health', [MutasiS4SController::class, 'health'])->name('api.reports.mutasi-s4s.health');
+    Route::post('/reports/mutasi-st', [MutasiSTController::class, 'preview'])->name('api.reports.mutasi-st.preview');
+    Route::match(['get', 'post'], '/reports/mutasi-st/pdf', [MutasiSTController::class, 'download'])->name('api.reports.mutasi-st.pdf');
+    Route::post('/reports/mutasi-st/health', [MutasiSTController::class, 'health'])->name('api.reports.mutasi-st.health');
     Route::post('/reports/mutasi-kayu-bulat', [MutasiKayuBulatController::class, 'preview'])->name('api.reports.mutasi-kayu-bulat.preview');
     Route::match(['get', 'post'], '/reports/mutasi-kayu-bulat/pdf', [MutasiKayuBulatController::class, 'download'])->name('api.reports.mutasi-kayu-bulat.pdf');
     Route::post('/reports/mutasi-kayu-bulat/health', [MutasiKayuBulatController::class, 'health'])->name('api.reports.mutasi-kayu-bulat.health');
+    Route::post('/reports/mutasi-kayu-bulat-v2', [MutasiKayuBulatV2Controller::class, 'preview'])->name('api.reports.mutasi-kayu-bulat-v2.preview');
+    Route::match(['get', 'post'], '/reports/mutasi-kayu-bulat-v2/pdf', [MutasiKayuBulatV2Controller::class, 'download'])->name('api.reports.mutasi-kayu-bulat-v2.pdf');
+    Route::post('/reports/mutasi-kayu-bulat-v2/health', [MutasiKayuBulatV2Controller::class, 'health'])->name('api.reports.mutasi-kayu-bulat-v2.health');
     Route::post('/reports/mutasi-kayu-bulat-kgv2', [MutasiKayuBulatKGV2Controller::class, 'preview'])->name('api.reports.mutasi-kayu-bulat-kgv2.preview');
     Route::match(['get', 'post'], '/reports/mutasi-kayu-bulat-kgv2/pdf', [MutasiKayuBulatKGV2Controller::class, 'download'])->name('api.reports.mutasi-kayu-bulat-kgv2.pdf');
     Route::post('/reports/mutasi-kayu-bulat-kgv2/health', [MutasiKayuBulatKGV2Controller::class, 'health'])->name('api.reports.mutasi-kayu-bulat-kgv2.health');
@@ -56,6 +65,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::post('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'preview'])->name('api.reports.rangkuman-label-input.preview');
     Route::match(['get', 'post'], '/reports/rangkuman-label-input/pdf', [RangkumanJlhLabelInputController::class, 'download'])->name('api.reports.rangkuman-label-input.pdf');
     Route::post('/reports/rangkuman-label-input/health', [RangkumanJlhLabelInputController::class, 'health'])->name('api.reports.rangkuman-label-input.health');
+    Route::post('/reports/mutasi-hasil-racip', [MutasiHasilRacipController::class, 'preview'])->name('api.reports.mutasi-hasil-racip.preview');
+    Route::match(['get', 'post'], '/reports/mutasi-hasil-racip/pdf', [MutasiHasilRacipController::class, 'download'])->name('api.reports.mutasi-hasil-racip.pdf');
+    Route::post('/reports/mutasi-hasil-racip/health', [MutasiHasilRacipController::class, 'health'])->name('api.reports.mutasi-hasil-racip.health');
     Route::post('/reports/label-nyangkut', [LabelNyangkutController::class, 'preview'])->name('api.reports.label-nyangkut.preview');
     Route::match(['get', 'post'], '/reports/label-nyangkut/pdf', [LabelNyangkutController::class, 'download'])->name('api.reports.label-nyangkut.pdf');
     Route::post('/reports/label-nyangkut/health', [LabelNyangkutController::class, 'health'])->name('api.reports.label-nyangkut.health');
@@ -63,3 +75,4 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::match(['get', 'post'], '/reports/bahan-terpakai/pdf', [BahanTerpakaiController::class, 'download'])->name('api.reports.bahan-terpakai.pdf');
     Route::post('/reports/bahan-terpakai/health', [BahanTerpakaiController::class, 'health'])->name('api.reports.bahan-terpakai.health');
 });
+

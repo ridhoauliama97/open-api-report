@@ -651,6 +651,130 @@ class OpenApiController extends Controller
                         ],
                     ],
                 ],
+                '/api/reports/mutasi-st' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi st',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSTRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSTRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiSTPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-st/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi st PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSTRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSTRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-st/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi st',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSTRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiSTRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiSTHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
                 '/api/reports/mutasi-kayu-bulat' => [
                     'post' => [
                         'summary' => 'Preview data laporan mutasi kayu bulat',
@@ -762,6 +886,130 @@ class OpenApiController extends Controller
                                     'application/json' => [
                                         'schema' => [
                                             '$ref' => '#/components/schemas/MutasiKayuBulatHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-v2' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi kayu bulat v2',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatV2Request',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatV2Request',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatV2PreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-v2/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi kayu bulat v2 PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatV2Request',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatV2Request',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-kayu-bulat-v2/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SP mutasi kayu bulat v2',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatV2Request',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiKayuBulatV2Request',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiKayuBulatV2HealthResponse',
                                         ],
                                     ],
                                 ],
@@ -1134,6 +1382,130 @@ class OpenApiController extends Controller
                                     'application/json' => [
                                         'schema' => [
                                             '$ref' => '#/components/schemas/RangkumanLabelInputHealthResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-hasil-racip' => [
+                    'post' => [
+                        'summary' => 'Preview data laporan mutasi hasil racip',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiHasilRacipRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiHasilRacipRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Data preview laporan',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiHasilRacipPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-hasil-racip/pdf' => [
+                    'post' => [
+                        'summary' => 'Generate laporan mutasi hasil racip PDF',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiHasilRacipRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiHasilRacipRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'PDF berhasil dibuat',
+                                'content' => [
+                                    'application/pdf' => [
+                                        'schema' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            '422' => [
+                                'description' => 'Validasi gagal',
+                            ],
+                            '401' => [
+                                'description' => 'Unauthenticated',
+                            ],
+                        ],
+                    ],
+                ],
+                '/api/reports/mutasi-hasil-racip/health' => [
+                    'post' => [
+                        'summary' => 'Cek kesehatan struktur output SPWps_LapMutasiHasilRacip',
+                        'security' => [
+                            ['bearerAuth' => []],
+                        ],
+                        'requestBody' => [
+                            'required' => true,
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiHasilRacipRequest',
+                                    ],
+                                ],
+                                'application/x-www-form-urlencoded' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/MutasiHasilRacipRequest',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'Hasil pemeriksaan struktur output',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => '#/components/schemas/MutasiHasilRacipHealthResponse',
                                         ],
                                     ],
                                 ],
@@ -1746,6 +2118,77 @@ class OpenApiController extends Controller
                             ],
                         ],
                     ],
+                    'MutasiSTRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiSTRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'S4S JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiSTPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiSTRow'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiSTRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiSTHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_ST valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
                     'MutasiKayuBulatRequest' => [
                         'type' => 'object',
                         'required' => ['TglAwal', 'TglAkhir'],
@@ -1795,6 +2238,77 @@ class OpenApiController extends Controller
                         'type' => 'object',
                         'properties' => [
                             'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulat valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 12],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatV2Request' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiKayuBulatV2Row' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Jenis' => 'KB JABON',
+                            'Awal' => 10.25,
+                            'Masuk' => 2.1,
+                            'Keluar' => 1.4,
+                            'Akhir' => 10.95,
+                        ],
+                    ],
+                    'MutasiKayuBulatV2PreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 12],
+                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatV2Row'],
+                            ],
+                            'sub_data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatV2Row'],
+                            ],
+                        ],
+                    ],
+                    'MutasiKayuBulatV2HealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatV2 valid.'],
                             'meta' => [
                                 'type' => 'object',
                                 'properties' => [
@@ -2023,6 +2537,70 @@ class OpenApiController extends Controller
                             ],
                         ],
                     ],
+                    'MutasiHasilRacipRequest' => [
+                        'type' => 'object',
+                        'required' => ['TglAwal', 'TglAkhir'],
+                        'properties' => [
+                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                        ],
+                    ],
+                    'MutasiHasilRacipRow' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                        'example' => [
+                            'Tanggal' => '2026-01-01',
+                            'Shift' => '1',
+                            'JumlahMutasi' => 125,
+                        ],
+                    ],
+                    'MutasiHasilRacipPreviewResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                    'total_rows' => ['type' => 'integer', 'example' => 31],
+                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                ],
+                            ],
+                            'data' => [
+                                'type' => 'array',
+                                'items' => ['$ref' => '#/components/schemas/MutasiHasilRacipRow'],
+                            ],
+                        ],
+                    ],
+                    'MutasiHasilRacipHealthResponse' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapMutasiHasilRacip valid.'],
+                            'meta' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'start_date' => ['type' => 'string', 'format' => 'date'],
+                                    'end_date' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                                ],
+                            ],
+                            'health' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
+                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                                    'row_count' => ['type' => 'integer', 'example' => 31],
+                                ],
+                            ],
+                        ],
+                    ],
                     'LabelNyangkutRequest' => [
                         'type' => 'object',
                         'properties' => [],
@@ -2166,4 +2744,8 @@ class OpenApiController extends Controller
         ]);
     }
 }
+
+
+
+
 

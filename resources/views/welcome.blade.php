@@ -37,14 +37,20 @@
                     Generate Laporan Mutasi Moulding (PDF)</a>
                 <a href="{{ route('reports.mutasi.s4s.index') }}" class="btn btn-outline-primary btn-lg">
                     Generate Laporan Mutasi S4S (PDF)</a>
+                <a href="{{ route('reports.mutasi.st.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Mutasi Sawn Timber (Ton) (PDF)</a>
                 <a href="{{ route('reports.mutasi.kayu-bulat.index') }}" class="btn btn-outline-primary btn-lg">
                     Generate Laporan Mutasi Kayu Bulat (PDF)</a>
+                <a href="{{ route('reports.mutasi.kayu-bulat-v2.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Mutasi Kayu Bulat Gantung (PDF)</a>
                 <a href="{{ route('reports.mutasi.kayu-bulat-kg.index') }}" class="btn btn-outline-primary btn-lg">
                     Generate Laporan Mutasi Kayu Bulat - Timbang KG (PDF)</a>
                 <a href="{{ route('reports.mutasi.kayu-bulat-kgv2.index') }}" class="btn btn-outline-primary btn-lg">
                     Generate Laporan Mutasi Kayu Bulat (Gantung) - Timbang KG (PDF)</a>
                 <a href="{{ route('reports.rangkuman-label-input.index') }}" class="btn btn-outline-primary btn-lg">
                     Generate Rangkuman Jumlah Label Input (PDF)</a>
+                <a href="{{ route('reports.mutasi-hasil-racip.index') }}" class="btn btn-outline-primary btn-lg">
+                    Generate Laporan Mutasi Hasil Racip (PDF)</a>
                 <a href="{{ route('reports.label-nyangkut.index') }}" class="btn btn-outline-primary btn-lg">
                     Generate Laporan Label Nyangkut (PDF)</a>
                 <a href="{{ route('reports.bahan-terpakai.index') }}" class="btn btn-outline-primary btn-lg">

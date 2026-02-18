@@ -4,9 +4,12 @@ use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiFingerJointController;
 use App\Http\Controllers\MutasiKayuBulatController;
+use App\Http\Controllers\MutasiKayuBulatV2Controller;
 use App\Http\Controllers\MutasiKayuBulatKGController;
 use App\Http\Controllers\MutasiKayuBulatKGV2Controller;
 use App\Http\Controllers\MutasiMouldingController;
+use App\Http\Controllers\MutasiHasilRacipController;
+use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
@@ -27,9 +30,15 @@ Route::post('/reports/mutasi/moulding/preview', [MutasiMouldingController::class
 Route::get('/reports/mutasi/s4s', [MutasiS4SController::class, 'index'])->name('reports.mutasi.s4s.index');
 Route::post('/reports/mutasi/s4s/download', [MutasiS4SController::class, 'download'])->name('reports.mutasi.s4s.download');
 Route::post('/reports/mutasi/s4s/preview', [MutasiS4SController::class, 'preview'])->name('reports.mutasi.s4s.preview');
+Route::get('/reports/mutasi/st', [MutasiSTController::class, 'index'])->name('reports.mutasi.st.index');
+Route::post('/reports/mutasi/st/download', [MutasiSTController::class, 'download'])->name('reports.mutasi.st.download');
+Route::post('/reports/mutasi/st/preview', [MutasiSTController::class, 'preview'])->name('reports.mutasi.st.preview');
 Route::get('/reports/mutasi/kayu-bulat', [MutasiKayuBulatController::class, 'index'])->name('reports.mutasi.kayu-bulat.index');
 Route::post('/reports/mutasi/kayu-bulat/download', [MutasiKayuBulatController::class, 'download'])->name('reports.mutasi.kayu-bulat.download');
 Route::post('/reports/mutasi/kayu-bulat/preview', [MutasiKayuBulatController::class, 'preview'])->name('reports.mutasi.kayu-bulat.preview');
+Route::get('/reports/mutasi/kayu-bulat-v2', [MutasiKayuBulatV2Controller::class, 'index'])->name('reports.mutasi.kayu-bulat-v2.index');
+Route::post('/reports/mutasi/kayu-bulat-v2/download', [MutasiKayuBulatV2Controller::class, 'download'])->name('reports.mutasi.kayu-bulat-v2.download');
+Route::post('/reports/mutasi/kayu-bulat-v2/preview', [MutasiKayuBulatV2Controller::class, 'preview'])->name('reports.mutasi.kayu-bulat-v2.preview');
 Route::get('/reports/mutasi/kayu-bulat-kgv2', [MutasiKayuBulatKGV2Controller::class, 'index'])->name('reports.mutasi.kayu-bulat-kgv2.index');
 Route::post('/reports/mutasi/kayu-bulat-kgv2/download', [MutasiKayuBulatKGV2Controller::class, 'download'])->name('reports.mutasi.kayu-bulat-kgv2.download');
 Route::post('/reports/mutasi/kayu-bulat-kgv2/preview', [MutasiKayuBulatKGV2Controller::class, 'preview'])->name('reports.mutasi.kayu-bulat-kgv2.preview');
@@ -39,6 +48,9 @@ Route::post('/reports/mutasi/kayu-bulat-kg/preview', [MutasiKayuBulatKGControlle
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');
+Route::get('/reports/mutasi-hasil-racip', [MutasiHasilRacipController::class, 'index'])->name('reports.mutasi-hasil-racip.index');
+Route::post('/reports/mutasi-hasil-racip/download', [MutasiHasilRacipController::class, 'download'])->name('reports.mutasi-hasil-racip.download');
+Route::post('/reports/mutasi-hasil-racip/preview', [MutasiHasilRacipController::class, 'preview'])->name('reports.mutasi-hasil-racip.preview');
 Route::get('/reports/label-nyangkut', [LabelNyangkutController::class, 'index'])->name('reports.label-nyangkut.index');
 Route::post('/reports/label-nyangkut/download', [LabelNyangkutController::class, 'download'])->name('reports.label-nyangkut.download');
 Route::post('/reports/label-nyangkut/preview', [LabelNyangkutController::class, 'preview'])->name('reports.label-nyangkut.preview');
@@ -47,3 +59,4 @@ Route::post('/reports/bahan-terpakai/download', [BahanTerpakaiController::class,
 Route::post('/reports/bahan-terpakai/preview', [BahanTerpakaiController::class, 'preview'])->name('reports.bahan-terpakai.preview');
 Route::middleware('guest')->post('/login', [WebAuthController::class, 'login'])->name('web.login');
 Route::middleware('auth')->post('/logout', [WebAuthController::class, 'logout'])->name('web.logout');
+
