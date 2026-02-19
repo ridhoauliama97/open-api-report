@@ -28,38 +28,6 @@
                     Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data mutasi moulding
                     dan langsung mengunduh file PDF.
                 </p>
-
-                @auth
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-                        <div class="text-success fw-semibold">
-                            Login sebagai: {{ auth()->user()->name }} ({{ auth()->user()->email }})
-                        </div>
-                        <form method="POST" action="{{ route('web.logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
-                        </form>
-                    </div>
-                @else
-                    <div class="border rounded p-3 mb-4 bg-white">
-                        <h2 class="h6 mb-3">Login</h2>
-                        <form method="POST" action="{{ route('web.login') }}" class="row g-3">
-                            @csrf
-                            <div class="col-md-5">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" name="email" class="form-control" required
-                                    value="{{ old('email') }}">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">Login</button>
-                            </div>
-                        </form>
-                    </div>
-                @endauth
-
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -149,3 +117,4 @@
 </body>
 
 </html>
+

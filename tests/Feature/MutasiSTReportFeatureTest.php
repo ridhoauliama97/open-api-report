@@ -31,7 +31,7 @@ class MutasiSTReportFeatureTest extends TestCase
     {
         $this->get('/reports/mutasi/st')
             ->assertOk()
-            ->assertSee('Generate Laporan Mutasi ST (PDF)');
+            ->assertSee('Generate Laporan Mutasi Sawn Timber (PDF)');
     }
 
     public function test_mutasi_st_preview_endpoint_returns_json_data(): void

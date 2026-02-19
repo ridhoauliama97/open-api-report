@@ -26,6 +26,44 @@
                 <p class="text-secondary mb-0">
                     Pilih jenis laporan di bawah ini untuk membuka form generate dan download PDF.
                 </p>
+                @if (session('success'))
+                    <div class="alert alert-success mt-3 mb-0">{{ session('success') }}</div>
+                @endif
+                @if ($errors->has('login'))
+                    <div class="alert alert-danger mt-3 mb-0">{{ $errors->first('login') }}</div>
+                @endif
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                @auth
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="text-success fw-semibold">
+                            Login sebagai: {{ auth()->user()->name }} ({{ auth()->user()->email }})
+                        </div>
+                        <form method="POST" action="{{ route('web.logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                        </form>
+                    </div>
+                @else
+                    <h2 class="h5 mb-3">Login</h2>
+                    <form method="POST" action="{{ route('web.login') }}" class="row g-3">
+                        @csrf
+                        <div class="col-md-5">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" required value="{{ old('email') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </div>
+                    </form>
+                @endauth
             </div>
         </div>
 
