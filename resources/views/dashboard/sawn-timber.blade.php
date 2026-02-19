@@ -154,136 +154,95 @@
             </div>
         </div>
 
-        <div id="chartsRoot" class="row g-4"></div>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3">Chart Arus Masuk per Jenis</h2>
+                <div style="height: 420px;">
+                    <canvas id="sawnTimberChart"></canvas>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const payload = @json($chartData);
-            const root = document.getElementById('chartsRoot');
+            const chartCanvas = document.getElementById('sawnTimberChart');
 
-            if (!root || !payload || !Array.isArray(payload.types) || payload.types.length === 0 || !Array.isArray(
-                    payload.dates) || payload.dates.length === 0) {
-                if (root) {
-                    root.innerHTML =
-                        '<div class="col-12"><div class="alert alert-info mb-0">Data tidak tersedia untuk periode ini.</div></div>';
+            if (!payload || !chartCanvas) {
+                return;
+            }
+
+            const formatNumber = (value) => Number(value || 0).toLocaleString('id-ID', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            });
+
+            const labels = Array.isArray(payload.dates) ? payload.dates : [];
+            const types = Array.isArray(payload.types) ? payload.types : [];
+
+            if (labels.length === 0 || types.length === 0) {
+                const parent = chartCanvas.parentElement;
+                if (parent) {
+                    parent.innerHTML =
+                        '<div class="alert alert-info mb-0">Data tidak tersedia untuk periode ini.</div>';
                 }
                 return;
             }
 
-            const palettes = [{
-                    in: 'rgba(13, 110, 253, 0.8)',
-                    out: 'rgba(220, 53, 69, 0.8)'
-                },
-                {
-                    in: 'rgba(25, 135, 84, 0.8)',
-                    out: 'rgba(253, 126, 20, 0.8)'
-                },
-                {
-                    in: 'rgba(111, 66, 193, 0.8)',
-                    out: 'rgba(214, 51, 132, 0.8)'
-                },
-                {
-                    in: 'rgba(32, 201, 151, 0.8)',
-                    out: 'rgba(255, 193, 7, 0.8)'
-                },
+            const palette = [
+                'rgba(13, 110, 253, 0.8)',
+                'rgba(25, 135, 84, 0.8)',
+                'rgba(220, 53, 69, 0.8)',
+                'rgba(253, 126, 20, 0.8)',
+                'rgba(111, 66, 193, 0.8)',
+                'rgba(32, 201, 151, 0.8)',
+                'rgba(214, 51, 132, 0.8)',
+                'rgba(108, 117, 125, 0.8)',
+                'rgba(255, 193, 7, 0.8)',
+                'rgba(0, 123, 255, 0.8)'
             ];
 
-            payload.types.forEach((type, index) => {
-                const card = document.createElement('div');
-                card.className = 'col-12';
-                card.innerHTML = `
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h3 class="h6 mb-3">${type}</h3>
-                            <div style="height: 320px;">
-                                <canvas id="chart-${index}"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            const datasets = types.map((type, index) => ({
+                label: String(type),
+                data: (payload.series_by_type && payload.series_by_type[type] && payload.series_by_type[type].in) ?
+                    payload.series_by_type[type].in : [],
+                backgroundColor: palette[index % palette.length],
+                borderColor: palette[index % palette.length],
+                borderWidth: 1,
+            }));
 
-                root.appendChild(card);
-
-                const canvas = card.querySelector(`#chart-${index}`);
-                if (!canvas) {
-                    return;
-                }
-
-                const palette = palettes[index % palettes.length];
-                const series = payload.series_by_type[type] || {
-                    in: [],
-                    out: []
-                };
-
-                new Chart(canvas, {
-                    type: 'bar',
-                    data: {
-                        labels: payload.dates,
-                        datasets: [{
-                                label: 'Masuk',
-                                data: series.in || [],
-                                backgroundColor: palette.in,
-                                borderColor: palette.in,
-                                borderWidth: 1,
-                            },
-                            {
-                                label: 'Keluar',
-                                data: series.out || [],
-                                backgroundColor: palette.out,
-                                borderColor: palette.out,
-                                borderWidth: 1,
-                            },
-                        ],
+            new Chart(chartCanvas, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Tanggal',
-                                },
-                            },
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Volume',
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return Number(value).toLocaleString('id-ID', {
-                                            minimumFractionDigits: 1,
-                                            maximumFractionDigits: 1
-                                        });
-                                    }
-                                },
-                            },
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.dataset.label || '';
-                                        const value = Number(context.raw || 0).toLocaleString('id-ID', {
-                                            minimumFractionDigits: 1,
-                                            maximumFractionDigits: 1
-                                        });
-
-                                        return `${label}: ${value}`;
-                                    }
-                                }
+                    scales: {
+                        x: {},
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: formatNumber
                             }
                         }
                     },
-                });
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `${context.dataset.label}: ${formatNumber(context.raw)}`
+                            }
+                        }
+                    }
+                }
             });
         });
     </script>

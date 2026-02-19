@@ -12,8 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\LogUserActivity::class,
+        ]);
+
+        $middleware->api(append: [
+            \App\Http\Middleware\LogUserActivity::class,
+        ]);
+
         $middleware->alias([
             'report.jwt.claims' => \App\Http\Middleware\AuthenticateReportJwtClaims::class,
+            'activity.log' => \App\Http\Middleware\LogUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
