@@ -112,21 +112,21 @@ class MutasiKayuBulatReportService
         $connectionName = config('reports.mutasi_kayu_bulat.database_connection');
         $procedure = (string) config(
             $isSubProcedure
-                ? 'reports.mutasi_kayu_bulat.sub_stored_procedure'
-                : 'reports.mutasi_kayu_bulat.stored_procedure'
+            ? 'reports.mutasi_kayu_bulat.sub_stored_procedure'
+            : 'reports.mutasi_kayu_bulat.stored_procedure'
         );
         $syntax = (string) config('reports.mutasi_kayu_bulat.call_syntax', 'exec');
         $customQuery = config(
             $isSubProcedure
-                ? 'reports.mutasi_kayu_bulat.sub_query'
-                : 'reports.mutasi_kayu_bulat.query'
+            ? 'reports.mutasi_kayu_bulat.sub_query'
+            : 'reports.mutasi_kayu_bulat.query'
         );
 
         if ($procedure === '' && !is_string($customQuery)) {
             throw new RuntimeException(
                 $isSubProcedure
-                    ? 'Stored procedure sub laporan mutasi kayu bulat belum dikonfigurasi.'
-                    : 'Stored procedure laporan mutasi kayu bulat belum dikonfigurasi.',
+                ? 'Stored procedure sub laporan mutasi kayu bulat belum dikonfigurasi.'
+                : 'Stored procedure laporan mutasi kayu bulat belum dikonfigurasi.',
             );
         }
 
@@ -161,8 +161,8 @@ class MutasiKayuBulatReportService
             'exec' => "EXEC {$procedure} ?, ?",
             'call' => "CALL {$procedure}(?, ?)",
             default => $driver === 'sqlsrv'
-                ? "EXEC {$procedure} ?, ?"
-                : "CALL {$procedure}(?, ?)",
+            ? "EXEC {$procedure} ?, ?"
+            : "CALL {$procedure}(?, ?)",
         };
 
         return $connection->select($sql, $bindings);

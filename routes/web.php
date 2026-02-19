@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BahanTerpakaiController;
+use App\Http\Controllers\DashboardSawnTimberController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiCCAkhirController;
 use App\Http\Controllers\MutasiFingerJointController;
@@ -18,10 +19,13 @@ use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
+use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
+Route::get('/dashboard/sawn-timber', [DashboardSawnTimberController::class, 'index'])->name('dashboard.sawn-timber.index');
+Route::get('/dashboard/sawn-timber/preview', [DashboardSawnTimberController::class, 'preview'])->name('dashboard.sawn-timber.preview');
 
 Route::get('/reports/mutasi/barang-jadi', [MutasiBarangJadiController::class, 'index'])->name('reports.mutasi.barang-jadi.index');
 Route::post('/reports/mutasi/barang-jadi/download', [MutasiBarangJadiController::class, 'download'])->name('reports.mutasi.barang-jadi.download');
@@ -65,6 +69,8 @@ Route::post('/reports/mutasi/kayu-bulat-kg/preview', [MutasiKayuBulatKGControlle
 Route::get('/reports/kayu-bulat/saldo', [SaldoKayuBulatController::class, 'index'])->name('reports.kayu-bulat.saldo.index');
 Route::post('/reports/kayu-bulat/saldo/download', [SaldoKayuBulatController::class, 'download'])->name('reports.kayu-bulat.saldo.download');
 Route::post('/reports/kayu-bulat/saldo/preview', [SaldoKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.saldo.preview');
+Route::get('/reports/kayu-bulat/rekap-pembelian', [RekapPembelianKayuBulatController::class, 'index'])->name('reports.kayu-bulat.rekap-pembelian.index');
+Route::get('/reports/kayu-bulat/rekap-pembelian/preview', [RekapPembelianKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.rekap-pembelian.preview');
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');

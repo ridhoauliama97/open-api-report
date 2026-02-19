@@ -138,12 +138,36 @@ return [
         'query' => env('MUTASI_HASIL_RACIP_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+
+    // Kayu Bulat
     'saldo_kayu_bulat' => [
         'database_connection' => env('SALDO_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('SALDO_KAYU_BULAT_REPORT_PROCEDURE', 'SPWps_LapSaldoKayuBulat'),
         'call_syntax' => env('SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('SALDO_KAYU_BULAT_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('SALDO_KAYU_BULAT_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'rekap_pembelian_kayu_bulat' => [
+        'database_connection' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_PROCEDURE', 'SPWps_LapRekapPembelianKayuBulat'),
+        'call_syntax' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_PARAMETER_COUNT', 2),
+    ],
+
+    // Dashboard
+    'dashboard_sawn_timber' => [
+        'database_connection' => env('DASHBOARD_SAWN_TIMBER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_SAWN_TIMBER_REPORT_PROCEDURE', 'SPWps_LapDashboardSawnTimber'),
+        'call_syntax' => env('DASHBOARD_SAWN_TIMBER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_SAWN_TIMBER_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_SAWN_TIMBER_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_SAWN_TIMBER_CTR_DIVISOR', '75'),
+        'type_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_SAWN_TIMBER_TYPE_ORDER',
+            'JABON,JABON TG,KAYU LAT JABON,KAYU LAT RAMBUNG,PULAI,RAMBUNG - MC 1,RAMBUNG - MC 2,RAMBUNG - STD,SEMBARANG'
+        )))),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('DASHBOARD_SAWN_TIMBER_REPORT_EXPECTED_COLUMNS', '')))),
     ],
 
     // Laporan Verifikasi :
