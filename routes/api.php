@@ -19,6 +19,7 @@ use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
+use App\Http\Controllers\SaldoKayuBulatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
@@ -78,6 +79,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::post('/reports/mutasi-kayu-bulat-kg', [MutasiKayuBulatKGController::class, 'preview'])->name('api.reports.mutasi-kayu-bulat-kg.preview');
     Route::match(['get', 'post'], '/reports/mutasi-kayu-bulat-kg/pdf', [MutasiKayuBulatKGController::class, 'download'])->name('api.reports.mutasi-kayu-bulat-kg.pdf');
     Route::post('/reports/mutasi-kayu-bulat-kg/health', [MutasiKayuBulatKGController::class, 'health'])->name('api.reports.mutasi-kayu-bulat-kg.health');
+    Route::post('/reports/kayu-bulat/saldo', [SaldoKayuBulatController::class, 'preview'])->name('api.reports.kayu-bulat.saldo.preview');
+    Route::match(['get', 'post'], '/reports/kayu-bulat/saldo/pdf', [SaldoKayuBulatController::class, 'download'])->name('api.reports.kayu-bulat.saldo.pdf');
+    Route::post('/reports/kayu-bulat/saldo/health', [SaldoKayuBulatController::class, 'health'])->name('api.reports.kayu-bulat.saldo.health');
     Route::post('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'preview'])->name('api.reports.rangkuman-label-input.preview');
     Route::match(['get', 'post'], '/reports/rangkuman-label-input/pdf', [RangkumanJlhLabelInputController::class, 'download'])->name('api.reports.rangkuman-label-input.pdf');
     Route::post('/reports/rangkuman-label-input/health', [RangkumanJlhLabelInputController::class, 'health'])->name('api.reports.rangkuman-label-input.health');

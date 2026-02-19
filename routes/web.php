@@ -15,6 +15,7 @@ use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\MutasiS4SController;
+use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\WebAuthController;
@@ -61,6 +62,9 @@ Route::post('/reports/mutasi/kayu-bulat-kgv2/preview', [MutasiKayuBulatKGV2Contr
 Route::get('/reports/mutasi/kayu-bulat-kg', [MutasiKayuBulatKGController::class, 'index'])->name('reports.mutasi.kayu-bulat-kg.index');
 Route::post('/reports/mutasi/kayu-bulat-kg/download', [MutasiKayuBulatKGController::class, 'download'])->name('reports.mutasi.kayu-bulat-kg.download');
 Route::post('/reports/mutasi/kayu-bulat-kg/preview', [MutasiKayuBulatKGController::class, 'preview'])->name('reports.mutasi.kayu-bulat-kg.preview');
+Route::get('/reports/kayu-bulat/saldo', [SaldoKayuBulatController::class, 'index'])->name('reports.kayu-bulat.saldo.index');
+Route::post('/reports/kayu-bulat/saldo/download', [SaldoKayuBulatController::class, 'download'])->name('reports.kayu-bulat.saldo.download');
+Route::post('/reports/kayu-bulat/saldo/preview', [SaldoKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.saldo.preview');
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');

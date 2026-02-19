@@ -71,7 +71,7 @@
             </div>
 
             <div class="col-12 col-lg-4">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
                         <h2 class="h5 mb-3">Laporan Verifikasi</h2>
                         <div class="d-grid gap-2">
@@ -86,6 +86,16 @@
                             <a href="{{ route('reports.bahan-terpakai.index') }}"
                                 class="btn btn-outline-primary text-start">
                                 Bahan Terpakai
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h2 class="h5 mb-3">Laporan Kayu Bulat</h2>
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('reports.kayu-bulat.saldo.index') }}" class="btn btn-outline-primary text-start">
+                                Saldo Kayu Bulat
                             </a>
                         </div>
                     </div>

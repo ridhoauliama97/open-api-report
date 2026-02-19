@@ -18,6 +18,7 @@ Project ini adalah aplikasi Laravel untuk:
 - Preview laporan rangkuman jumlah label input via API
 - Preview laporan mutasi hasil racip via API
 - Preview laporan label nyangkut via API
+- Preview laporan saldo kayu bulat via API
 - Generate PDF laporan mutasi barang jadi
 - Generate PDF laporan mutasi finger joint
 - Generate PDF laporan mutasi moulding
@@ -33,6 +34,7 @@ Project ini adalah aplikasi Laravel untuk:
 - Generate PDF laporan rangkuman jumlah label input
 - Generate PDF laporan mutasi hasil racip
 - Generate PDF laporan label nyangkut
+- Generate PDF laporan saldo kayu bulat
 
 ## Requirement
 - PHP `^8.2`
@@ -194,6 +196,12 @@ MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX=exec
 # MUTASI_HASIL_RACIP_REPORT_QUERY=
 # MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS=
 
+SALDO_KAYU_BULAT_REPORT_DB_CONNECTION=${DB_CONNECTION}
+SALDO_KAYU_BULAT_REPORT_PROCEDURE=SPWps_LapSaldoKayuBulat
+SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX=exec
+# SALDO_KAYU_BULAT_REPORT_QUERY=
+# SALDO_KAYU_BULAT_REPORT_EXPECTED_COLUMNS=NokayuBulat,DateCreate,DateUsage,Jenis,NmSupplier,Ton
+
 LABEL_NYANGKUT_REPORT_DB_CONNECTION=${DB_CONNECTION}
 LABEL_NYANGKUT_REPORT_PROCEDURE=SPWps_LapLabelNyangkut
 LABEL_NYANGKUT_REPORT_CALL_SYNTAX=exec
@@ -222,6 +230,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Halaman report: `GET /reports/mutasi-hasil-racip`
 - Halaman report: `GET /reports/rangkuman-label-input`
 - Halaman report: `GET /reports/label-nyangkut`
+- Halaman report: `GET /reports/kayu-bulat/saldo`
 - Login web: `POST /login`
 - Logout web: `POST /logout`
 - Download PDF report (web): `POST /reports/mutasi/barang-jadi/download`
@@ -239,6 +248,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Download PDF report (web): `POST /reports/mutasi-hasil-racip/download`
 - Download PDF report (web): `POST /reports/rangkuman-label-input/download`
 - Download PDF report (web): `POST /reports/label-nyangkut/download`
+- Download PDF report (web): `POST /reports/kayu-bulat/saldo/download`
 - Preview report (web, JSON): `POST /reports/mutasi/barang-jadi/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/finger-joint/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/moulding/preview`
@@ -254,6 +264,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Preview report (web, JSON): `POST /reports/mutasi-hasil-racip/preview`
 - Preview report (web, JSON): `POST /reports/rangkuman-label-input/preview`
 - Preview report (web, JSON): `POST /reports/label-nyangkut/preview`
+- Preview report (web, JSON): `POST /reports/kayu-bulat/saldo/preview`
 
 ## API Endpoint
 OpenAPI schema:
@@ -312,6 +323,9 @@ Report API (perlu Bearer token):
 - `POST /api/reports/label-nyangkut`
 - `GET|POST /api/reports/label-nyangkut/pdf`
 - `POST /api/reports/label-nyangkut/health`
+- `POST /api/reports/kayu-bulat/saldo`
+- `GET|POST /api/reports/kayu-bulat/saldo/pdf`
+- `POST /api/reports/kayu-bulat/saldo/health`
 
 Catatan autentikasi report API:
 - Endpoint report API memvalidasi JWT berdasarkan signature + claim token.

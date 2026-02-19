@@ -138,6 +138,13 @@ return [
         'query' => env('MUTASI_HASIL_RACIP_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'saldo_kayu_bulat' => [
+        'database_connection' => env('SALDO_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SALDO_KAYU_BULAT_REPORT_PROCEDURE', 'SPWps_LapSaldoKayuBulat'),
+        'call_syntax' => env('SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SALDO_KAYU_BULAT_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('SALDO_KAYU_BULAT_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
 
     // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [
