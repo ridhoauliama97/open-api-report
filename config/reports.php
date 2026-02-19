@@ -81,6 +81,16 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_CCA_AKHIR_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_CCA_AKHIR_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'mutasi_reproses' => [
+        'database_connection' => env('MUTASI_REPROSES_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_REPROSES_REPORT_PROCEDURE', 'SP_Mutasi_Reproses'),
+        'sub_stored_procedure' => env('MUTASI_REPROSES_SUB_REPORT_PROCEDURE', 'SP_SubMutasi_Reproses'),
+        'call_syntax' => env('MUTASI_REPROSES_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_REPROSES_REPORT_QUERY'),
+        'sub_query' => env('MUTASI_REPROSES_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_REPROSES_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_REPROSES_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
     'mutasi_kayu_bulat' => [
         'database_connection' => env('MUTASI_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('MUTASI_KAYU_BULAT_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulat'),

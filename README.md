@@ -11,6 +11,7 @@ Project ini adalah aplikasi Laravel untuk:
 - Preview laporan mutasi s4s via API
 - Preview laporan mutasi st via API
 - Preview laporan mutasi cca akhir via API
+- Preview laporan mutasi reproses via API
 - Preview laporan mutasi kayu bulat via API
 - Preview laporan mutasi kayu bulat v2 via API
 - Preview laporan mutasi kayu bulat kgv2 via API
@@ -25,6 +26,7 @@ Project ini adalah aplikasi Laravel untuk:
 - Generate PDF laporan mutasi s4s
 - Generate PDF laporan mutasi st
 - Generate PDF laporan mutasi cca akhir
+- Generate PDF laporan mutasi reproses
 - Generate PDF laporan mutasi kayu bulat
 - Generate PDF laporan mutasi kayu bulat v2
 - Generate PDF laporan mutasi kayu bulat kgv2
@@ -141,6 +143,15 @@ MUTASI_CCA_AKHIR_REPORT_CALL_SYNTAX=exec
 # MUTASI_CCA_AKHIR_REPORT_EXPECTED_COLUMNS=Jenis,CCAkhirAwal,AdjOutputCCA,BSOutputCCA,CCAProdOutput,CCAMasuk,AdjInptCCA,BSInputCCA,FJProdInpt,MldProdinpt,S4SProdInpt,SandProdInpt,LMTProdInpt,CCAJual,CCAAkhir,PACKProdInpt,CCAInputCCA
 # MUTASI_CCA_AKHIR_SUB_REPORT_EXPECTED_COLUMNS=Jenis,FJ,Laminating,Reproses,WIP,BJ,Sanding,CCAkhir
 
+MUTASI_REPROSES_REPORT_DB_CONNECTION=${DB_CONNECTION}
+MUTASI_REPROSES_REPORT_PROCEDURE=SP_Mutasi_Reproses
+MUTASI_REPROSES_SUB_REPORT_PROCEDURE=SP_SubMutasi_Reproses
+MUTASI_REPROSES_REPORT_CALL_SYNTAX=exec
+# MUTASI_REPROSES_REPORT_QUERY=
+# MUTASI_REPROSES_SUB_REPORT_QUERY=
+# MUTASI_REPROSES_REPORT_EXPECTED_COLUMNS=Jenis,REPROAwal,AdjOutput,MLDOutput,PACKOutput,REPROKeluar,AdjInput,BSInput,CCAInput,LMTInput,MLDInput,S4SInput,SANDInput,REPROJual,ReprosesAkhir
+# MUTASI_REPROSES_SUB_REPORT_EXPECTED_COLUMNS=
+
 MUTASI_KAYU_BULAT_REPORT_DB_CONNECTION=${DB_CONNECTION}
 MUTASI_KAYU_BULAT_REPORT_PROCEDURE=SP_Mutasi_KayuBulat
 # Opsional, isi hanya jika ada sub report:
@@ -204,6 +215,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Halaman report: `GET /reports/mutasi/s4s`
 - Halaman report: `GET /reports/mutasi/st`
 - Halaman report: `GET /reports/mutasi/cca-akhir`
+- Halaman report: `GET /reports/mutasi/reproses`
 - Halaman report: `GET /reports/mutasi/kayu-bulat`
 - Halaman report: `GET /reports/mutasi/kayu-bulat-v2`
 - Halaman report: `GET /reports/mutasi/kayu-bulat-kgv2`
@@ -220,6 +232,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Download PDF report (web): `POST /reports/mutasi/s4s/download`
 - Download PDF report (web): `POST /reports/mutasi/st/download`
 - Download PDF report (web): `POST /reports/mutasi/cca-akhir/download`
+- Download PDF report (web): `POST /reports/mutasi/reproses/download`
 - Download PDF report (web): `POST /reports/mutasi/kayu-bulat/download`
 - Download PDF report (web): `POST /reports/mutasi/kayu-bulat-v2/download`
 - Download PDF report (web): `POST /reports/mutasi/kayu-bulat-kgv2/download`
@@ -234,6 +247,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 - Preview report (web, JSON): `POST /reports/mutasi/s4s/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/st/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/cca-akhir/preview`
+- Preview report (web, JSON): `POST /reports/mutasi/reproses/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat-v2/preview`
 - Preview report (web, JSON): `POST /reports/mutasi/kayu-bulat-kgv2/preview`
@@ -277,6 +291,9 @@ Report API (perlu Bearer token):
 - `POST /api/reports/mutasi-cca-akhir`
 - `GET|POST /api/reports/mutasi-cca-akhir/pdf`
 - `POST /api/reports/mutasi-cca-akhir/health`
+- `POST /api/reports/mutasi-reproses`
+- `GET|POST /api/reports/mutasi-reproses/pdf`
+- `POST /api/reports/mutasi-reproses/health`
 - `POST /api/reports/mutasi-kayu-bulat`
 - `GET|POST /api/reports/mutasi-kayu-bulat/pdf`
 - `POST /api/reports/mutasi-kayu-bulat/health`

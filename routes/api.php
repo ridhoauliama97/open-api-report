@@ -13,6 +13,7 @@ use App\Http\Controllers\MutasiKayuBulatKGController;
 use App\Http\Controllers\MutasiKayuBulatKGV2Controller;
 use App\Http\Controllers\MutasiLaminatingController;
 use App\Http\Controllers\MutasiMouldingController;
+use App\Http\Controllers\MutasiReprosesController;
 use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
@@ -62,6 +63,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::post('/reports/mutasi-cca-akhir', [MutasiCCAkhirController::class, 'preview'])->name('api.reports.mutasi-cca-akhir.preview');
     Route::match(['get', 'post'], '/reports/mutasi-cca-akhir/pdf', [MutasiCCAkhirController::class, 'download'])->name('api.reports.mutasi-cca-akhir.pdf');
     Route::post('/reports/mutasi-cca-akhir/health', [MutasiCCAkhirController::class, 'health'])->name('api.reports.mutasi-cca-akhir.health');
+    Route::post('/reports/mutasi-reproses', [MutasiReprosesController::class, 'preview'])->name('api.reports.mutasi-reproses.preview');
+    Route::match(['get', 'post'], '/reports/mutasi-reproses/pdf', [MutasiReprosesController::class, 'download'])->name('api.reports.mutasi-reproses.pdf');
+    Route::post('/reports/mutasi-reproses/health', [MutasiReprosesController::class, 'health'])->name('api.reports.mutasi-reproses.health');
     Route::post('/reports/mutasi-kayu-bulat', [MutasiKayuBulatController::class, 'preview'])->name('api.reports.mutasi-kayu-bulat.preview');
     Route::match(['get', 'post'], '/reports/mutasi-kayu-bulat/pdf', [MutasiKayuBulatController::class, 'download'])->name('api.reports.mutasi-kayu-bulat.pdf');
     Route::post('/reports/mutasi-kayu-bulat/health', [MutasiKayuBulatController::class, 'health'])->name('api.reports.mutasi-kayu-bulat.health');

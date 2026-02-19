@@ -51,6 +51,8 @@
                                     class="btn btn-outline-primary w-100 text-start">Mutasi Sawn Timber (Ton)</a></div>
                             <div class="col-12 col-md-6"><a href="{{ route('reports.mutasi.cca-akhir.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">Mutasi CC Akhir</a></div>
+                            <div class="col-12 col-md-6"><a href="{{ route('reports.mutasi.reproses.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Reproses</a></div>
                             <div class="col-12 col-md-6"><a href="{{ route('reports.mutasi.kayu-bulat.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat</a></div>
                             <div class="col-12 col-md-6"><a href="{{ route('reports.mutasi.kayu-bulat-v2.index') }}"

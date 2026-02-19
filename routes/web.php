@@ -10,6 +10,7 @@ use App\Http\Controllers\MutasiKayuBulatKGController;
 use App\Http\Controllers\MutasiKayuBulatKGV2Controller;
 use App\Http\Controllers\MutasiLaminatingController;
 use App\Http\Controllers\MutasiMouldingController;
+use App\Http\Controllers\MutasiReprosesController;
 use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
@@ -45,6 +46,9 @@ Route::post('/reports/mutasi/st/preview', [MutasiSTController::class, 'preview']
 Route::get('/reports/mutasi/cca-akhir', [MutasiCCAkhirController::class, 'index'])->name('reports.mutasi.cca-akhir.index');
 Route::post('/reports/mutasi/cca-akhir/download', [MutasiCCAkhirController::class, 'download'])->name('reports.mutasi.cca-akhir.download');
 Route::post('/reports/mutasi/cca-akhir/preview', [MutasiCCAkhirController::class, 'preview'])->name('reports.mutasi.cca-akhir.preview');
+Route::get('/reports/mutasi/reproses', [MutasiReprosesController::class, 'index'])->name('reports.mutasi.reproses.index');
+Route::post('/reports/mutasi/reproses/download', [MutasiReprosesController::class, 'download'])->name('reports.mutasi.reproses.download');
+Route::post('/reports/mutasi/reproses/preview', [MutasiReprosesController::class, 'preview'])->name('reports.mutasi.reproses.preview');
 Route::get('/reports/mutasi/kayu-bulat', [MutasiKayuBulatController::class, 'index'])->name('reports.mutasi.kayu-bulat.index');
 Route::post('/reports/mutasi/kayu-bulat/download', [MutasiKayuBulatController::class, 'download'])->name('reports.mutasi.kayu-bulat.download');
 Route::post('/reports/mutasi/kayu-bulat/preview', [MutasiKayuBulatController::class, 'preview'])->name('reports.mutasi.kayu-bulat.preview');
