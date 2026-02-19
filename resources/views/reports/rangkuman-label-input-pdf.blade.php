@@ -36,7 +36,7 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         table {
@@ -152,7 +152,9 @@
             return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
 
-        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use ($normalizeColumnName): ?string {
+        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
+            $normalizeColumnName,
+        ): ?string {
             $normalizedCandidates = array_map($normalizeColumnName, $candidateNames);
 
             foreach ($availableColumns as $column) {
@@ -200,7 +202,9 @@
                 ];
             }
 
-            $columns = array_values(array_filter($columns, static fn(string $column): bool => $column !== $groupColumn));
+            $columns = array_values(
+                array_filter($columns, static fn(string $column): bool => $column !== $groupColumn),
+            );
         } else {
             $currentGroup = 'Tanpa Group';
 
@@ -228,10 +232,12 @@
 
             $tableGroups = collect($tableGroups)
                 ->sortKeys()
-                ->map(static fn(array $items, string $groupName): array => [
-                    'name' => $groupName,
-                    'rows' => array_values($items),
-                ])
+                ->map(
+                    static fn(array $items, string $groupName): array => [
+                        'name' => $groupName,
+                        'rows' => array_values($items),
+                    ],
+                )
                 ->values()
                 ->all();
         }
@@ -296,7 +302,11 @@
                                 $value = $row[$column] ?? null;
                                 $numeric = $isNumericColumn($column, $group['rows']);
                                 $isRendemenColumn = $normalizeColumnName($column) === 'rendemen';
-                                $isLabelOutColumn = in_array($normalizeColumnName($column), ['labelout', 'labeloutput'], true);
+                                $isLabelOutColumn = in_array(
+                                    $normalizeColumnName($column),
+                                    ['labelout', 'labeloutput'],
+                                    true,
+                                );
                             @endphp
                             @if ($isRendemenColumn)
                                 <td class="number">

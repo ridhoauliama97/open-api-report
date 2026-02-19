@@ -36,7 +36,7 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         .group-title {
@@ -120,10 +120,14 @@
 
 <body>
     @php
-        $rowsData = isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
-        $subRowsData = isset($subRows) && is_iterable($subRows)
-            ? (is_array($subRows) ? $subRows : collect($subRows)->values()->all())
-            : [];
+        $rowsData =
+            isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
+        $subRowsData =
+            isset($subRows) && is_iterable($subRows)
+                ? (is_array($subRows)
+                    ? $subRows
+                    : collect($subRows)->values()->all())
+                : [];
         $reportDateText = \Carbon\Carbon::parse($reportDate)->format('d/m/Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
@@ -192,7 +196,9 @@
                     </tr>
                 @endforeach
                 @php
-                    $totalTon = collect($groupRows)->sum(static fn(array $row): float => $toFloat($row['Ton'] ?? null) ?? 0.0);
+                    $totalTon = collect($groupRows)->sum(
+                        static fn(array $row): float => $toFloat($row['Ton'] ?? null) ?? 0.0,
+                    );
                     $totalM3 = $totalTon * $tonToM3Factor;
                 @endphp
                 <tr class="total-row">
@@ -231,8 +237,12 @@
                     </tr>
                 @endforeach
                 @php
-                    $totalBatang = collect($groupRows)->sum(static fn(array $row): float => $toFloat($row['JmlhBatang'] ?? null) ?? 0.0);
-                    $totalKubik = collect($groupRows)->sum(static fn(array $row): float => $toFloat($row['KubikIN'] ?? null) ?? 0.0);
+                    $totalBatang = collect($groupRows)->sum(
+                        static fn(array $row): float => $toFloat($row['JmlhBatang'] ?? null) ?? 0.0,
+                    );
+                    $totalKubik = collect($groupRows)->sum(
+                        static fn(array $row): float => $toFloat($row['KubikIN'] ?? null) ?? 0.0,
+                    );
                 @endphp
                 <tr class="total-row">
                     <td colspan="5" class="number">Total</td>

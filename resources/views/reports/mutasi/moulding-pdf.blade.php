@@ -36,13 +36,13 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         table {
@@ -268,7 +268,7 @@
                     $bsOut = $valueFromAliases($row, ['BSOutptutMLD', 'BSOutputMLD', 'BSOutptMLD', 'BSOutMLD']);
                     $prodOut = $valueFromAliases($row, ['MLDProdOutput', 'ProdOutputMLD', 'MLDMasuk', 'Masuk']);
                     $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk']);
-                    $totalMasuk = $totalMasukDirect !== 0.0 ? $totalMasukDirect : ($adjOut + $bsOut + $prodOut);
+                    $totalMasuk = $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOut + $bsOut + $prodOut;
 
                     $adjInpt = $valueFromAliases($row, ['AdjInptMLD', 'AdjInputMLD', 'AdjInpt']);
                     $bsInpt = $valueFromAliases($row, ['BSInptMLD', 'BSInputMLD', 'BSInpt']);
@@ -280,17 +280,18 @@
                     $sandInpt = $valueFromAliases($row, ['SANDInptMLD', 'SandInptMLD', 'SANDInputMLD']);
                     $s4sInpt = $valueFromAliases($row, ['S4SinptMLD', 'S4SInptMLD', 'S4SInputMLD']);
                     $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar']);
-                    $totalKeluar = $totalKeluarDirect !== 0.0
-                        ? $totalKeluarDirect
-                        : ($adjInpt +
-                            $bsInpt +
-                            $mldJual +
-                            $ccaInpt +
-                            $lmtInpt +
-                            $mldInpt +
-                            $packInpt +
-                            $sandInpt +
-                            $s4sInpt);
+                    $totalKeluar =
+                        $totalKeluarDirect !== 0.0
+                            ? $totalKeluarDirect
+                            : $adjInpt +
+                                $bsInpt +
+                                $mldJual +
+                                $ccaInpt +
+                                $lmtInpt +
+                                $mldInpt +
+                                $packInpt +
+                                $sandInpt +
+                                $s4sInpt;
 
                     $akhir = $valueFromAliases($row, ['MLDAkhir', 'Akhir']);
 

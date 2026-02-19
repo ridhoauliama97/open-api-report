@@ -60,13 +60,13 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         table {
@@ -304,12 +304,9 @@
                                 'FJMasuk',
                                 'Masuk',
                             ]);
-                            $totalMasukDirect = $valueFromAliases($row, [
-                                'TotalMasuk',
-                                'Total Masuk',
-                                'TTL Masuk',
-                            ]);
-                            $totalMasuk = $totalMasukDirect !== 0.0 ? $totalMasukDirect : ($adjOutFJ + $bsOutFJ + $fjProdOut);
+                            $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk', 'TTL Masuk']);
+                            $totalMasuk =
+                                $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOutFJ + $bsOutFJ + $fjProdOut;
 
                             $adjInpFJ = $valueFromAliases($row, [
                                 'AdjInpFJ',
@@ -333,13 +330,7 @@
                                 'BSInputFJ',
                                 'BSInput',
                             ]);
-                            $fjJual = $valueFromAliases($row, [
-                                'FJJual',
-                                'FJ Jual',
-                                'Jual FJ',
-                                'JualFJ',
-                                'Jual',
-                            ]);
+                            $fjJual = $valueFromAliases($row, ['FJJual', 'FJ Jual', 'Jual FJ', 'JualFJ', 'Jual']);
                             $ccaProdInpt = $valueFromAliases($row, [
                                 'CCAProdInpt',
                                 'CCAInptFJ',
@@ -389,14 +380,17 @@
                                 'Sand Input',
                                 'SANDInput',
                             ]);
-                            $totalKeluarDirect = $valueFromAliases($row, [
-                                'TotalKeluar',
-                                'Total Keluar',
-                                'TTL Keluar',
-                            ]);
-                            $totalKeluar = $totalKeluarDirect !== 0.0
-                                ? $totalKeluarDirect
-                                : ($adjInpFJ + $bsInpFJ + $fjJual + $ccaProdInpt + $mldProdInpt + $s4sProdInpt + $sandProdInpt);
+                            $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar', 'TTL Keluar']);
+                            $totalKeluar =
+                                $totalKeluarDirect !== 0.0
+                                    ? $totalKeluarDirect
+                                    : $adjInpFJ +
+                                        $bsInpFJ +
+                                        $fjJual +
+                                        $ccaProdInpt +
+                                        $mldProdInpt +
+                                        $s4sProdInpt +
+                                        $sandProdInpt;
 
                             $akhir = $valueFromAliases($row, ['Akhir', 'FJAkhir', 'FJ Akhir']);
 

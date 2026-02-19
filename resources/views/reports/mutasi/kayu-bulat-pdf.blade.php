@@ -36,13 +36,13 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         table {
@@ -321,4 +321,3 @@
 </body>
 
 </html>
-

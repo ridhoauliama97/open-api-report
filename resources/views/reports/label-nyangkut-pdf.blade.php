@@ -36,7 +36,7 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         table {
@@ -166,7 +166,9 @@
             return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
 
-        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use ($normalizeColumnName): ?string {
+        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
+            $normalizeColumnName,
+        ): ?string {
             foreach ($candidateNames as $candidateName) {
                 $candidateNormalized = $normalizeColumnName($candidateName);
                 foreach ($availableColumns as $column) {
@@ -202,7 +204,9 @@
         };
 
         $groupColumn = $findGroupColumn($columns);
-        $columns = array_values(array_filter($columns, static fn(string $column): bool => $normalizeColumnName($column) !== 'rendemen'));
+        $columns = array_values(
+            array_filter($columns, static fn(string $column): bool => $normalizeColumnName($column) !== 'rendemen'),
+        );
         $jmlhBatangColumn = $findColumnByNames($columns, ['JmlhBatang', 'Jmlh Btg', 'JmlBatang', 'JumlahBatang']);
         $lokasiColumn = $findColumnByNames($columns, ['Description', 'Lokasi']);
 
@@ -243,7 +247,9 @@
                 ];
             }
 
-            $columns = array_values(array_filter($columns, static fn(string $column): bool => $column !== $groupColumn));
+            $columns = array_values(
+                array_filter($columns, static fn(string $column): bool => $column !== $groupColumn),
+            );
         } else {
             $currentGroup = 'Tanpa Group';
 
@@ -271,10 +277,12 @@
 
             $tableGroups = collect($tableGroups)
                 ->sortKeys()
-                ->map(static fn(array $items, string $groupName): array => [
-                    'name' => $groupName,
-                    'rows' => array_values($items),
-                ])
+                ->map(
+                    static fn(array $items, string $groupName): array => [
+                        'name' => $groupName,
+                        'rows' => array_values($items),
+                    ],
+                )
                 ->values()
                 ->all();
         }
@@ -321,7 +329,11 @@
                             @php
                                 $value = $row[$column] ?? null;
                                 $numeric = $isNumericColumn($column, $group['rows']);
-                                $isLabelOutColumn = in_array($normalizeColumnName($column), ['labelout', 'labeloutput'], true);
+                                $isLabelOutColumn = in_array(
+                                    $normalizeColumnName($column),
+                                    ['labelout', 'labeloutput'],
+                                    true,
+                                );
                             @endphp
                             @if ($isLabelOutColumn)
                                 <td class="number">

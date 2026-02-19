@@ -25,13 +25,14 @@
             text-align: center;
             margin: 0;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
+            color: #636466;
         }
 
         table {

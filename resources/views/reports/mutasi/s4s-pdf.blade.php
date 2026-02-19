@@ -36,13 +36,13 @@
             text-align: center;
             margin: 2px 0 10px 0;
             font-size: 10px;
-            color: #000;
+            color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         table {
@@ -259,7 +259,8 @@
                     $prodOut = $valueFromAliases($row, ['ProdOutputS4S', 'S4SProdOutput', 'S4SMasuk', 'Masuk']);
                     $ccaProd = $valueFromAliases($row, ['CCAProdOutputS4S', 'CCAProdS4S', 'CCAProdOutS4S', 'CCAProd']);
                     $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk']);
-                    $totalMasuk = $totalMasukDirect !== 0.0 ? $totalMasukDirect : ($adjOut + $bsOut + $prodOut + $ccaProd);
+                    $totalMasuk =
+                        $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOut + $bsOut + $prodOut + $ccaProd;
 
                     $adjInpt = $valueFromAliases($row, ['AdjInputS4S', 'AdjInptS4S', 'AdjInpt']);
                     $bsInpt = $valueFromAliases($row, ['BsInputS4S', 'BSInputS4S', 'BSInptS4S', 'BSInpt']);
@@ -268,14 +269,10 @@
                     $mldInpt = $valueFromAliases($row, ['MldInputS4S', 'MLDInptS4S', 'MldInptS4S', 'MLDInputS4S']);
                     $s4sInpt = $valueFromAliases($row, ['S4SInputS4S', 'S4SInptS4S', 'S4SInpt']);
                     $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar']);
-                    $totalKeluar = $totalKeluarDirect !== 0.0
-                        ? $totalKeluarDirect
-                        : ($adjInpt +
-                            $bsInpt +
-                            $mldJual +
-                            $fjInpt +
-                            $mldInpt +
-                            $s4sInpt);
+                    $totalKeluar =
+                        $totalKeluarDirect !== 0.0
+                            ? $totalKeluarDirect
+                            : $adjInpt + $bsInpt + $mldJual + $fjInpt + $mldInpt + $s4sInpt;
 
                     $akhir = $valueFromAliases($row, ['AkhirS4S', 'S4SAkhir', 'Akhir']);
 
@@ -295,11 +292,11 @@
                     $mainTotals['Akhir'] += $akhir;
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
-                        <td class="label">{{ $row['Jenis'] ?? '' }}</td>
-                        <td class="number">{{ $fmt($awal, true) }}</td>
-                        <td class="number">{{ $fmt($adjOut, true) }}</td>
-                        <td class="number">{{ $fmt($bsOut, true) }}</td>
+                    <td class="center">{{ $loop->iteration }}</td>
+                    <td class="label">{{ $row['Jenis'] ?? '' }}</td>
+                    <td class="number">{{ $fmt($awal, true) }}</td>
+                    <td class="number">{{ $fmt($adjOut, true) }}</td>
+                    <td class="number">{{ $fmt($bsOut, true) }}</td>
                     <td class="number">{{ $fmt($prodOut, true) }}</td>
                     <td class="number">{{ $fmt($ccaProd, true) }}</td>
                     <td class="number" style="font-weight:700">{{ $fmt($totalMasuk, true) }}</td>

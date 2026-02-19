@@ -336,7 +336,7 @@
     </table>
 
     @if ($subRowsData !== [])
-        <div style="margin: 10px 0 6px 0; font-size: 12px; font-weight: bold;">Input Sanding Produksi</div>
+        <div style="margin: 10px 0 6px 0; font-size: 12px; font-weight: 700;">Input Sanding Produksi</div>
         <table style="width: 78%;">
             <thead>
                 <tr>
