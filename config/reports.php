@@ -71,6 +71,16 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_ST_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_ST_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'mutasi_cca_akhir' => [
+        'database_connection' => env('MUTASI_CCA_AKHIR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_CCA_AKHIR_REPORT_PROCEDURE', 'SP_Mutasi_CCAkhir'),
+        'sub_stored_procedure' => env('MUTASI_CCA_AKHIR_SUB_REPORT_PROCEDURE', 'SP_SubMutasi_CCAkhir'),
+        'call_syntax' => env('MUTASI_CCA_AKHIR_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_CCA_AKHIR_REPORT_QUERY'),
+        'sub_query' => env('MUTASI_CCA_AKHIR_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_CCA_AKHIR_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_CCA_AKHIR_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
     'mutasi_kayu_bulat' => [
         'database_connection' => env('MUTASI_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('MUTASI_KAYU_BULAT_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulat'),
@@ -111,6 +121,13 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_KG_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_KG_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'mutasi_hasil_racip' => [
+        'database_connection' => env('MUTASI_HASIL_RACIP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_HASIL_RACIP_REPORT_PROCEDURE', 'SPWps_LapMutasiHasilRacip'),
+        'call_syntax' => env('MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_HASIL_RACIP_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
 
     // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [
@@ -120,13 +137,7 @@ return [
         'query' => env('RANGKUMAN_LABEL_INPUT_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('RANGKUMAN_LABEL_INPUT_REPORT_EXPECTED_COLUMNS', '')))),
     ],
-    'mutasi_hasil_racip' => [
-        'database_connection' => env('MUTASI_HASIL_RACIP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
-        'stored_procedure' => env('MUTASI_HASIL_RACIP_REPORT_PROCEDURE', 'SPWps_LapMutasiHasilRacip'),
-        'call_syntax' => env('MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX', 'exec'),
-        'query' => env('MUTASI_HASIL_RACIP_REPORT_QUERY'),
-        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS', '')))),
-    ],
+
     'label_nyangkut' => [
         'database_connection' => env('LABEL_NYANGKUT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('LABEL_NYANGKUT_REPORT_PROCEDURE', 'SPWps_LapLabelNyangkut'),
