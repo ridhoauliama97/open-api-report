@@ -13,15 +13,26 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $table = 'MstUsername';
+
+    protected $primaryKey = 'Username';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'Username',
+        'Password',
+        'Nama',
+        'Email',
     ];
 
     /**
@@ -30,8 +41,7 @@ class User extends Authenticatable implements JWTSubject
      * @var list<string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'Password',
     ];
 
     /**
@@ -42,9 +52,30 @@ class User extends Authenticatable implements JWTSubject
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'Password' => 'hashed',
         ];
+    }
+
+    public function getAuthPasswordName(): string
+    {
+        return 'Password';
+    }
+
+    public function getRememberTokenName(): ?string
+    {
+        return null;
+    }
+
+    public function getNameAttribute(): string
+    {
+        return (string) ($this->attributes['Nama'] ?? $this->attributes['Username'] ?? '');
+    }
+
+    public function getEmailAttribute(): ?string
+    {
+        $email = $this->attributes['Email'] ?? null;
+
+        return is_string($email) && $email !== '' ? $email : null;
     }
 
     /**

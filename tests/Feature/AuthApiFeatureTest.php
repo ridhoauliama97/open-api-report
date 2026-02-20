@@ -17,8 +17,7 @@ class AuthApiFeatureTest extends TestCase
     public function test_user_can_register_and_receive_jwt_token(): void
     {
         $response = $this->postJson('/api/auth/register', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'username' => 'test-user',
             'password' => 'secret123',
             'password_confirmation' => 'secret123',
         ]);
@@ -29,10 +28,10 @@ class AuthApiFeatureTest extends TestCase
                 'access_token',
                 'token_type',
                 'expires_in',
-                'user' => ['id', 'name', 'email'],
+                'user' => ['Username'],
             ])
             ->assertJsonPath('token_type', 'bearer')
-            ->assertJsonPath('user.email', 'test@example.com');
+            ->assertJsonPath('user.Username', 'test-user');
     }
 
     /**
@@ -41,12 +40,12 @@ class AuthApiFeatureTest extends TestCase
     public function test_user_can_login_and_get_profile_using_bearer_token(): void
     {
         User::factory()->create([
-            'email' => 'login@example.com',
-            'password' => 'secret123',
+            'Username' => 'login-user',
+            'Password' => 'secret123',
         ]);
 
         $loginResponse = $this->postJson('/api/auth/login', [
-            'email' => 'login@example.com',
+            'username' => 'login-user',
             'password' => 'secret123',
         ]);
 
@@ -59,7 +58,7 @@ class AuthApiFeatureTest extends TestCase
         $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/me')
             ->assertOk()
-            ->assertJsonPath('user.email', 'login@example.com');
+            ->assertJsonPath('user.Username', 'login-user');
     }
 
     /**
@@ -68,12 +67,12 @@ class AuthApiFeatureTest extends TestCase
     public function test_user_can_refresh_token(): void
     {
         User::factory()->create([
-            'email' => 'refresh@example.com',
-            'password' => 'secret123',
+            'Username' => 'refresh-user',
+            'Password' => 'secret123',
         ]);
 
         $loginResponse = $this->postJson('/api/auth/login', [
-            'email' => 'refresh@example.com',
+            'username' => 'refresh-user',
             'password' => 'secret123',
         ])->assertOk();
 
@@ -91,12 +90,12 @@ class AuthApiFeatureTest extends TestCase
     public function test_user_can_logout(): void
     {
         User::factory()->create([
-            'email' => 'logout@example.com',
-            'password' => 'secret123',
+            'Username' => 'logout-user',
+            'Password' => 'secret123',
         ]);
 
         $loginResponse = $this->postJson('/api/auth/login', [
-            'email' => 'logout@example.com',
+            'username' => 'logout-user',
             'password' => 'secret123',
         ])->assertOk();
 
@@ -109,21 +108,20 @@ class AuthApiFeatureTest extends TestCase
     }
 
     /**
-     * Execute test register fails when email is already used logic.
+     * Execute test register fails when username is already used logic.
      */
-    public function test_register_fails_when_email_is_already_used(): void
+    public function test_register_fails_when_username_is_already_used(): void
     {
         User::factory()->create([
-            'email' => 'duplicate@example.com',
+            'Username' => 'duplicate-user',
         ]);
 
         $this->postJson('/api/auth/register', [
-            'name' => 'Another User',
-            'email' => 'duplicate@example.com',
+            'username' => 'duplicate-user',
             'password' => 'secret123',
         ])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
+            ->assertJsonValidationErrors(['username']);
     }
 
     /**
@@ -132,16 +130,16 @@ class AuthApiFeatureTest extends TestCase
     public function test_login_fails_with_invalid_credentials(): void
     {
         User::factory()->create([
-            'email' => 'invalid-login@example.com',
-            'password' => 'secret123',
+            'Username' => 'invalid-login-user',
+            'Password' => 'secret123',
         ]);
 
         $this->postJson('/api/auth/login', [
-            'email' => 'invalid-login@example.com',
+            'username' => 'invalid-login-user',
             'password' => 'wrong-password',
         ])
             ->assertStatus(401)
-            ->assertJsonPath('message', 'Email atau password tidak valid.');
+            ->assertJsonPath('message', 'Username atau password tidak valid.');
     }
 
     /**
@@ -173,12 +171,12 @@ class AuthApiFeatureTest extends TestCase
         config()->set('reports.report_auth.issued_scope', 'report:generate profile:read');
 
         User::factory()->create([
-            'email' => 'claims@example.com',
-            'password' => 'secret123',
+            'Username' => 'claims-user',
+            'Password' => 'secret123',
         ]);
 
         $token = $this->postJson('/api/auth/login', [
-            'email' => 'claims@example.com',
+            'username' => 'claims-user',
             'password' => 'secret123',
         ])->assertOk()->json('access_token');
 

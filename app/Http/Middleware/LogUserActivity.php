@@ -107,14 +107,14 @@ class LogUserActivity
 
     private function extractUserName(Authenticatable $user): ?string
     {
-        $value = data_get($user, 'name');
+        $value = data_get($user, 'name') ?? data_get($user, 'Nama') ?? data_get($user, 'Username');
 
         return is_string($value) ? $value : null;
     }
 
     private function extractUserEmail(Authenticatable $user): ?string
     {
-        $value = data_get($user, 'email');
+        $value = data_get($user, 'email') ?? data_get($user, 'Email');
 
         return is_string($value) ? $value : null;
     }

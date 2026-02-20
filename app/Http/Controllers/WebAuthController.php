@@ -14,14 +14,17 @@ class WebAuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (!Auth::attempt([
+            'Username' => $credentials['username'],
+            'password' => $credentials['password'],
+        ])) {
             return back()
-                ->withInput($request->only('email'))
-                ->withErrors(['login' => 'Email atau password tidak valid.']);
+                ->withInput($request->only('username'))
+                ->withErrors(['login' => 'Username atau password tidak valid.']);
         }
 
         $request->session()->regenerate();

@@ -15,11 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!User::query()->where('email', 'test@example.com')->exists()) {
+        if (!User::query()->where('Username', 'test-user')->exists()) {
             User::factory()->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'password' => bcrypt('password'),
+                'Username' => 'test-user',
+                'Nama' => 'Test User',
+                'Email' => 'test@example.com',
+                'Password' => bcrypt('password'),
             ]);
         }
 

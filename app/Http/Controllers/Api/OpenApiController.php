@@ -2027,10 +2027,9 @@ class OpenApiController extends Controller
                 'schemas' => [
                     'AuthRegisterRequest' => [
                         'type' => 'object',
-                        'required' => ['name', 'email', 'password'],
+                        'required' => ['username', 'password'],
                         'properties' => [
-                            'name' => ['type' => 'string', 'example' => 'John Doe'],
-                            'email' => ['type' => 'string', 'format' => 'email', 'example' => 'john@example.com'],
+                            'username' => ['type' => 'string', 'example' => 'john.doe'],
                             'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                             'password_confirmation' => [
                                 'type' => 'string',
@@ -2042,9 +2041,9 @@ class OpenApiController extends Controller
                     ],
                     'AuthLoginRequest' => [
                         'type' => 'object',
-                        'required' => ['email', 'password'],
+                        'required' => ['username', 'password'],
                         'properties' => [
-                            'email' => ['type' => 'string', 'format' => 'email', 'example' => 'john@example.com'],
+                            'username' => ['type' => 'string', 'example' => 'john.doe'],
                             'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                         ],
                     ],
@@ -2072,12 +2071,9 @@ class OpenApiController extends Controller
                     'User' => [
                         'type' => 'object',
                         'properties' => [
-                            'id' => ['type' => 'integer', 'example' => 1],
-                            'name' => ['type' => 'string', 'example' => 'John Doe'],
-                            'email' => ['type' => 'string', 'format' => 'email', 'example' => 'john@example.com'],
-                            'email_verified_at' => ['type' => 'string', 'format' => 'date-time', 'nullable' => true],
-                            'created_at' => ['type' => 'string', 'format' => 'date-time'],
-                            'updated_at' => ['type' => 'string', 'format' => 'date-time'],
+                            'Username' => ['type' => 'string', 'example' => 'john.doe'],
+                            'Nama' => ['type' => 'string', 'nullable' => true, 'example' => 'John Doe'],
+                            'Email' => ['type' => 'string', 'format' => 'email', 'nullable' => true, 'example' => 'john@example.com'],
                         ],
                     ],
                     'MutasiBarangJadiRequest' => [

@@ -19,20 +19,18 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'username' => ['required', 'string', 'max:255', 'unique:MstUsername,Username'],
             'password' => ['required', 'string', 'min:8'],
             'password_confirmation' => ['nullable', 'string', 'same:password'],
         ]);
 
         User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'Username' => $validated['username'],
+            'Password' => Hash::make($validated['password']),
         ]);
 
         $token = $this->attemptWithConfiguredClaims([
-            'email' => $validated['email'],
+            'Username' => $validated['username'],
             'password' => $validated['password'],
         ]);
 
@@ -51,15 +49,18 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        $token = $this->attemptWithConfiguredClaims($credentials);
+        $token = $this->attemptWithConfiguredClaims([
+            'Username' => $credentials['username'],
+            'password' => $credentials['password'],
+        ]);
 
         if ($token === false) {
             return response()->json([
-                'message' => 'Email atau password tidak valid.',
+                'message' => 'Username atau password tidak valid.',
             ], 401);
         }
 

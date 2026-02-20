@@ -40,7 +40,7 @@
                 @auth
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div class="text-success fw-semibold">
-                            Login sebagai: {{ auth()->user()->name }} ({{ auth()->user()->email }})
+                            Login sebagai: {{ auth()->user()->name ?: auth()->user()->Username }}
                         </div>
                         <form method="POST" action="{{ route('web.logout') }}">
                             @csrf
@@ -52,9 +52,9 @@
                     <form method="POST" action="{{ route('web.login') }}" class="row g-3">
                         @csrf
                         <div class="col-md-5">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required
-                                value="{{ old('email') }}">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" name="username" class="form-control" required
+                                value="{{ old('username') }}">
                         </div>
                         <div class="col-md-4">
                             <label for="password" class="form-label">Password</label>

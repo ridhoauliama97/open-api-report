@@ -277,6 +277,10 @@ Auth JWT:
 - `POST /api/auth/refresh`
 - `GET /api/auth/me`
 
+Catatan payload auth lokal:
+- `register`: `username`, `password`, `password_confirmation`
+- `login`: `username`, `password`
+
 Report API (perlu Bearer token):
 - `POST /api/reports/mutasi-barang-jadi`
 - `GET|POST /api/reports/mutasi-barang-jadi/pdf`
@@ -404,7 +408,7 @@ Referensi detail integrasi ada di `docs/jwt-cross-app-integration.md`.
 ```bash
 curl -X POST http://127.0.0.1:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d "{\"email\":\"user@example.com\",\"password\":\"secret123\"}"
+  -d "{\"username\":\"test-user\",\"password\":\"secret123\"}"
 ```
 
 ### 2) Preview report
