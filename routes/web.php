@@ -15,8 +15,10 @@ use App\Http\Controllers\MutasiReprosesController;
 use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
+use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
+use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapPembelianKayuBulatController;
@@ -71,6 +73,12 @@ Route::post('/reports/kayu-bulat/saldo/download', [SaldoKayuBulatController::cla
 Route::post('/reports/kayu-bulat/saldo/preview', [SaldoKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.saldo.preview');
 Route::get('/reports/kayu-bulat/rekap-pembelian', [RekapPembelianKayuBulatController::class, 'index'])->name('reports.kayu-bulat.rekap-pembelian.index');
 Route::get('/reports/kayu-bulat/rekap-pembelian/preview', [RekapPembelianKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.rekap-pembelian.preview');
+Route::get('/reports/kayu-bulat/penerimaan-bulanan-per-supplier', [PenerimaanKayuBulatBulananPerSupplierController::class, 'index'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.index');
+Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/download', [PenerimaanKayuBulatBulananPerSupplierController::class, 'download'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.download');
+Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/preview', [PenerimaanKayuBulatBulananPerSupplierController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.preview');
+Route::get('/reports/kayu-bulat/stock-opname', [StockOpnameKayuBulatController::class, 'index'])->name('reports.kayu-bulat.stock-opname.index');
+Route::post('/reports/kayu-bulat/stock-opname/download', [StockOpnameKayuBulatController::class, 'download'])->name('reports.kayu-bulat.stock-opname.download');
+Route::post('/reports/kayu-bulat/stock-opname/preview', [StockOpnameKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.stock-opname.preview');
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');
@@ -85,4 +93,3 @@ Route::post('/reports/bahan-terpakai/download', [BahanTerpakaiController::class,
 Route::post('/reports/bahan-terpakai/preview', [BahanTerpakaiController::class, 'preview'])->name('reports.bahan-terpakai.preview');
 Route::middleware('guest')->post('/login', [WebAuthController::class, 'login'])->name('web.login');
 Route::middleware('auth')->post('/logout', [WebAuthController::class, 'logout'])->name('web.logout');
-

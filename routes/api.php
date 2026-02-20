@@ -17,9 +17,11 @@ use App\Http\Controllers\MutasiReprosesController;
 use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
+use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
+use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
@@ -82,6 +84,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::post('/reports/kayu-bulat/saldo', [SaldoKayuBulatController::class, 'preview'])->name('api.reports.kayu-bulat.saldo.preview');
     Route::match(['get', 'post'], '/reports/kayu-bulat/saldo/pdf', [SaldoKayuBulatController::class, 'download'])->name('api.reports.kayu-bulat.saldo.pdf');
     Route::post('/reports/kayu-bulat/saldo/health', [SaldoKayuBulatController::class, 'health'])->name('api.reports.kayu-bulat.saldo.health');
+    Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier', [PenerimaanKayuBulatBulananPerSupplierController::class, 'preview'])->name('api.reports.kayu-bulat.penerimaan-bulanan-per-supplier.preview');
+    Route::match(['get', 'post'], '/reports/kayu-bulat/penerimaan-bulanan-per-supplier/pdf', [PenerimaanKayuBulatBulananPerSupplierController::class, 'download'])->name('api.reports.kayu-bulat.penerimaan-bulanan-per-supplier.pdf');
+    Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/health', [PenerimaanKayuBulatBulananPerSupplierController::class, 'health'])->name('api.reports.kayu-bulat.penerimaan-bulanan-per-supplier.health');
+    Route::post('/reports/kayu-bulat/stock-opname', [StockOpnameKayuBulatController::class, 'preview'])->name('api.reports.kayu-bulat.stock-opname.preview');
+    Route::match(['get', 'post'], '/reports/kayu-bulat/stock-opname/pdf', [StockOpnameKayuBulatController::class, 'download'])->name('api.reports.kayu-bulat.stock-opname.pdf');
+    Route::post('/reports/kayu-bulat/stock-opname/health', [StockOpnameKayuBulatController::class, 'health'])->name('api.reports.kayu-bulat.stock-opname.health');
     Route::post('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'preview'])->name('api.reports.rangkuman-label-input.preview');
     Route::match(['get', 'post'], '/reports/rangkuman-label-input/pdf', [RangkumanJlhLabelInputController::class, 'download'])->name('api.reports.rangkuman-label-input.pdf');
     Route::post('/reports/rangkuman-label-input/health', [RangkumanJlhLabelInputController::class, 'health'])->name('api.reports.rangkuman-label-input.health');

@@ -154,6 +154,23 @@ return [
         'query' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_QUERY'),
         'parameter_count' => (int) env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_PARAMETER_COUNT', 2),
     ],
+    'penerimaan_kayu_bulat_bulanan_per_supplier' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_PROCEDURE', 'SP_LaPenerimaanKayuBulatBulananPerSupplier'),
+        'sub_stored_procedure' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_PROCEDURE', 'SP_SubLaPenerimaanKayuBulatBulananPerSupplier'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_QUERY'),
+        'sub_query' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'stock_opname_kayu_bulat' => [
+        'database_connection' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'STOCK_OPNAME_KAYU_BULAT_REPORT_EXPECTED_COLUMNS',
+            'NoKayuBulat,Tanggal,JenisKayu,Supplier,NoSuket,NoPlat,NoTruk,Tebal,Lebar,Panjang,Pcs,JmlhTon'
+        )))),
+    ],
 
     // Dashboard
     'dashboard_sawn_timber' => [
