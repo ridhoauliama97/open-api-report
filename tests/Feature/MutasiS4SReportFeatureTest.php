@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\MutasiS4SReportService;
 use App\Services\PdfGenerator;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class MutasiS4SReportFeatureTest extends TestCase
@@ -177,7 +176,11 @@ class MutasiS4SReportFeatureTest extends TestCase
      */
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+
 

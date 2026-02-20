@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\MutasiBarangJadiReportService;
 use App\Services\PdfGenerator;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class MutasiBarangJadiReportFeatureTest extends TestCase
@@ -348,7 +347,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         config()->set('reports.report_auth.required_scope', 'report:generate');
 
         $user = User::factory()->make(['id' => 1]);
-        $token = (string) JWTAuth::claims(['scope' => 'profile:read'])->fromUser($user);
+        $token = $this->issueJwtForUser($user, ['scope' => 'profile:read']);
 
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
@@ -368,7 +367,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         config()->set('reports.report_auth.issuers', ['https://trusted-issuer.example']);
 
         $user = User::factory()->make(['id' => 1]);
-        $token = (string) JWTAuth::fromUser($user);
+        $token = $this->issueJwtForUser($user);
 
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
@@ -388,7 +387,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         config()->set('reports.report_auth.audiences', ['open-api-report']);
 
         $user = User::factory()->make(['id' => 1]);
-        $token = (string) JWTAuth::fromUser($user);
+        $token = $this->issueJwtForUser($user);
 
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
@@ -418,6 +417,10 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
      */
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+

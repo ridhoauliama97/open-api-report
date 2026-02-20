@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\StockOpnameKayuBulatReportService;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class StockOpnameKayuBulatReportFeatureTest extends TestCase
@@ -154,6 +153,10 @@ class StockOpnameKayuBulatReportFeatureTest extends TestCase
 
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+

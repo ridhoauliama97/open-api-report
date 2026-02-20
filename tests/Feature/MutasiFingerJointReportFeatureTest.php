@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\MutasiFingerJointReportService;
 use App\Services\PdfGenerator;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class MutasiFingerJointReportFeatureTest extends TestCase
@@ -253,6 +252,10 @@ class MutasiFingerJointReportFeatureTest extends TestCase
      */
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+

@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\MutasiHasilRacipReportService;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class MutasiHasilRacipReportFeatureTest extends TestCase
@@ -157,7 +156,11 @@ class MutasiHasilRacipReportFeatureTest extends TestCase
      */
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+
 

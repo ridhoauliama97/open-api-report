@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Support\JwtTokenService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class AuthApiFeatureTest extends TestCase
@@ -180,9 +180,13 @@ class AuthApiFeatureTest extends TestCase
             'password' => 'secret123',
         ])->assertOk()->json('access_token');
 
-        $payload = JWTAuth::setToken((string) $token)->getPayload();
+        $payload = app(JwtTokenService::class)->parseAndValidate((string) $token);
 
-        $this->assertContains('open-api-report', (array) $payload->get('aud'));
-        $this->assertSame('report:generate profile:read', $payload->get('scope'));
+        $this->assertContains('open-api-report', (array) ($payload['aud'] ?? []));
+        $this->assertSame('report:generate profile:read', $payload['scope'] ?? null);
     }
 }
+
+
+
+

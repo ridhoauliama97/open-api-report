@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\RangkumanJlhLabelInputReportService;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class RangkumanJlhLabelInputReportFeatureTest extends TestCase
@@ -157,6 +156,10 @@ class RangkumanJlhLabelInputReportFeatureTest extends TestCase
      */
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+

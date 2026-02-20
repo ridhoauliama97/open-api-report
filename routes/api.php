@@ -37,7 +37,7 @@ Route::prefix('auth')->group(function (): void {
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('api.auth.refresh');
 
     // Group route autentikasi API yang memerlukan token JWT.
-    Route::middleware('auth:api')->group(function (): void {
+    Route::middleware('report.jwt.claims')->group(function (): void {
         Route::get('/me', [AuthController::class, 'me'])->name('api.auth.me');
     });
 });

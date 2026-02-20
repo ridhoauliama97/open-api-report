@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\PenerimaanKayuBulatBulananPerSupplierReportService;
 use App\Services\PdfGenerator;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
@@ -183,6 +182,10 @@ class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
 
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+

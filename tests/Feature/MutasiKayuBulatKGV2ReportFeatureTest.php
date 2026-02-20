@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\MutasiKayuBulatKGV2ReportService;
 use App\Services\PdfGenerator;
 use Mockery;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class MutasiKayuBulatKGV2ReportFeatureTest extends TestCase
@@ -155,6 +154,10 @@ class MutasiKayuBulatKGV2ReportFeatureTest extends TestCase
 
     private function createBearerToken(User $user): string
     {
-        return (string) JWTAuth::fromUser($user);
+        return $this->issueJwtForUser($user);
     }
 }
+
+
+
+

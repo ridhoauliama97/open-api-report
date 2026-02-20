@@ -2,14 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\JwtTokenService;
 use Closure;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateReportJwtClaims
@@ -26,12 +24,20 @@ class AuthenticateReportJwtClaims
         }
 
         try {
-            $claims = JWTAuth::setToken($token)->getPayload()->toArray();
-        } catch (TokenExpiredException) {
-            return $this->unauthenticated('Token sudah kedaluwarsa.');
-        } catch (TokenInvalidException) {
-            return $this->unauthenticated('Token tidak valid.');
-        } catch (JWTException) {
+            /** @var JwtTokenService $jwt */
+            $jwt = app(JwtTokenService::class);
+            $claims = $jwt->parseAndValidate($token);
+        } catch (RuntimeException $exception) {
+            $message = $exception->getMessage();
+
+            if (str_contains($message, 'kedaluwarsa')) {
+                return $this->unauthenticated('Token sudah kedaluwarsa.');
+            }
+
+            if (str_contains($message, 'signature')) {
+                return $this->unauthenticated('Token tidak valid.');
+            }
+
             return $this->unauthenticated('Token tidak dapat diverifikasi.');
         }
 
@@ -57,9 +63,12 @@ class AuthenticateReportJwtClaims
         $nameClaim = (string) config('reports.report_auth.name_claim', 'name');
         $emailClaim = (string) config('reports.report_auth.email_claim', 'email');
 
+        $resolvedName = (string) ($claims[$nameClaim] ?? $claims['username'] ?? $claims['preferred_username'] ?? 'API User');
+
         $identity = new GenericUser([
             'id' => $subject,
-            'name' => (string) ($claims[$nameClaim] ?? $claims['username'] ?? $claims['preferred_username'] ?? 'API User'),
+            'Username' => (string) ($claims['username'] ?? $subject),
+            'name' => $resolvedName,
             'email' => (string) ($claims[$emailClaim] ?? $claims['upn'] ?? 'unknown@example.com'),
             'claims' => $claims,
         ]);
