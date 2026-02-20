@@ -2,18 +2,17 @@
 
 namespace App\Http\Middleware;
 
-use App\Support\JwtTokenService;
+use App\Models\User;
 use Closure;
-use Illuminate\Auth\GenericUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use RuntimeException;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateReportJwtClaims
 {
     /**
-     * Validate report JWT token and map user identity from token claims.
+     * Validate Sanctum token and enforce report scope policy.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -23,154 +22,64 @@ class AuthenticateReportJwtClaims
             return $this->unauthenticated('Token tidak ditemukan. Kirim Authorization: Bearer <token>.');
         }
 
-        try {
-            /** @var JwtTokenService $jwt */
-            $jwt = app(JwtTokenService::class);
-            $claims = $jwt->parseAndValidate($token);
-        } catch (RuntimeException $exception) {
-            $message = $exception->getMessage();
+        $accessToken = PersonalAccessToken::findToken($token);
 
-            if (str_contains($message, 'kedaluwarsa')) {
-                return $this->unauthenticated('Token sudah kedaluwarsa.');
-            }
-
-            if (str_contains($message, 'signature')) {
-                return $this->unauthenticated('Token tidak valid.');
-            }
-
-            return $this->unauthenticated('Token tidak dapat diverifikasi.');
+        if ($accessToken === null || !$accessToken->tokenable instanceof User) {
+            return $this->unauthenticated('Token tidak valid.');
         }
 
-        if (!$this->isIssuerValid($claims) || !$this->isAudienceValid($claims)) {
+        if ($this->isTokenExpired($accessToken)) {
+            return $this->unauthenticated('Token sudah kedaluwarsa.');
+        }
+
+        if (!$this->isIssuerAudienceCompatible()) {
             return $this->unauthenticated('Token issuer/audience tidak diizinkan.');
         }
 
-        if (!$this->hasRequiredScope($claims)) {
+        $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
+        if ($requiredScope !== '' && !$accessToken->can($requiredScope)) {
             return $this->unauthenticated('Token tidak memiliki scope untuk generate report.');
         }
 
-        $subjectClaim = (string) config('reports.report_auth.subject_claim', 'sub');
-        $subject = $claims[$subjectClaim]
-            ?? $claims['sub']
-            ?? $claims['idUsername']
-            ?? $claims['user_id']
-            ?? null;
-
-        if ($subject === null || $subject === '') {
-            return $this->unauthenticated('Claim subject tidak ditemukan di token.');
-        }
-
-        $nameClaim = (string) config('reports.report_auth.name_claim', 'name');
-        $emailClaim = (string) config('reports.report_auth.email_claim', 'email');
-
-        $resolvedName = (string) ($claims[$nameClaim] ?? $claims['username'] ?? $claims['preferred_username'] ?? 'API User');
-
-        $identity = new GenericUser([
-            'id' => $subject,
-            'Username' => (string) ($claims['username'] ?? $subject),
-            'name' => $resolvedName,
-            'email' => (string) ($claims[$emailClaim] ?? $claims['upn'] ?? 'unknown@example.com'),
-            'claims' => $claims,
+        $user = $accessToken->tokenable->withAccessToken($accessToken);
+        $request->setUserResolver(static fn() => $user);
+        $request->attributes->set('report_token_claims', [
+            'sub' => (string) $user->getAuthIdentifier(),
+            'username' => (string) ($user->Username ?? $user->name),
+            'name' => (string) ($user->name ?? $user->Username),
+            'email' => (string) ($user->email ?? ''),
+            'scope' => implode(' ', $accessToken->abilities),
         ]);
-
-        $request->attributes->set('report_token_claims', $claims);
-        $request->setUserResolver(static fn() => $identity);
 
         return $next($request);
     }
 
-    /**
-     * Check whether issuer claim is allowed by configuration.
-     *
-     * @param array<string, mixed> $claims
-     */
-    private function isIssuerValid(array $claims): bool
+    private function isTokenExpired(PersonalAccessToken $accessToken): bool
     {
-        if (!(bool) config('reports.report_auth.enforce_issuer', true)) {
-            return true;
+        $expirationMinutes = config('sanctum.expiration');
+
+        if ($expirationMinutes === null) {
+            return false;
         }
 
-        $expectedIssuers = config('reports.report_auth.issuers', []);
-
-        if (!is_array($expectedIssuers) || $expectedIssuers === []) {
-            return true;
-        }
-
-        return in_array((string) ($claims['iss'] ?? ''), $expectedIssuers, true);
+        return $accessToken->created_at
+            ->addMinutes((int) $expirationMinutes)
+            ->isPast();
     }
 
-    /**
-     * Check whether audience claim is allowed by configuration.
-     *
-     * @param array<string, mixed> $claims
-     */
-    private function isAudienceValid(array $claims): bool
+    private function isIssuerAudienceCompatible(): bool
     {
-        if (!(bool) config('reports.report_auth.enforce_audience', true)) {
-            return true;
-        }
+        // Sanctum personal access tokens do not carry issuer/audience claims.
+        // Keep backward-compatible policy: if issuer/audience whitelist is set, deny.
+        $issuers = config('reports.report_auth.issuers', []);
+        $audiences = config('reports.report_auth.audiences', []);
 
-        $expectedAudiences = config('reports.report_auth.audiences', []);
-
-        if (!is_array($expectedAudiences) || $expectedAudiences === []) {
-            return true;
-        }
-
-        $audienceClaim = $claims['aud'] ?? null;
-
-        if (is_string($audienceClaim)) {
-            return in_array($audienceClaim, $expectedAudiences, true);
-        }
-
-        if (is_array($audienceClaim)) {
-            foreach ($expectedAudiences as $expectedAudience) {
-                if (in_array($expectedAudience, $audienceClaim, true)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return (is_array($issuers) ? count($issuers) : 0) === 0
+            && (is_array($audiences) ? count($audiences) : 0) === 0;
     }
 
-    /**
-     * Check whether configured report scope exists in token claims.
-     *
-     * @param array<string, mixed> $claims
-     */
-    private function hasRequiredScope(array $claims): bool
-    {
-        if (!(bool) config('reports.report_auth.enforce_scope', true)) {
-            return true;
-        }
-
-        $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
-
-        if ($requiredScope === '') {
-            return true;
-        }
-
-        $scopeClaimName = (string) config('reports.report_auth.scope_claim', 'scope');
-        $scopeClaim = $claims[$scopeClaimName] ?? null;
-
-        if (is_string($scopeClaim)) {
-            return in_array($requiredScope, preg_split('/\s+/', trim($scopeClaim)) ?: [], true);
-        }
-
-        if (is_array($scopeClaim)) {
-            return in_array($requiredScope, $scopeClaim, true);
-        }
-
-        return false;
-    }
-
-    /**
-     * Build a standard unauthenticated JSON response.
-     */
     private function unauthenticated(string $message): JsonResponse
     {
-        return response()->json([
-            'message' => $message,
-        ], 401);
+        return response()->json(['message' => $message], 401);
     }
 }

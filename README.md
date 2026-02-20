@@ -2,7 +2,7 @@
 
 ## Ringkasan
 Project ini adalah aplikasi Laravel untuk:
-- Login user (web session + API JWT)
+- Login user (web session + API Sanctum token)
 - Preview laporan mutasi barang jadi via API
 - Preview laporan mutasi finger joint via API
 - Preview laporan mutasi moulding via API
@@ -59,15 +59,11 @@ cp .env.example .env
 ```bash
 php artisan key:generate
 ```
-5. Generate JWT secret:
-```bash
-php artisan jwt:secret
-```
-6. Jalankan migrasi:
+5. Jalankan migrasi:
 ```bash
 php artisan migrate
 ```
-7. Jalankan aplikasi:
+6. Jalankan aplikasi:
 ```bash
 php artisan serve
 ```
@@ -209,9 +205,10 @@ LABEL_NYANGKUT_REPORT_CALL_SYNTAX=exec
 # LABEL_NYANGKUT_REPORT_EXPECTED_COLUMNS=
 ```
 
-### JWT
+### Sanctum Token Policy
 ```env
-JWT_SECRET=isi_dengan_hasil_jwt_secret
+REPORT_API_REQUIRED_SCOPE=report:generate
+REPORT_API_ISSUED_SCOPE="report:generate profile:read"
 ```
 
 ## Web Flow
@@ -270,7 +267,7 @@ JWT_SECRET=isi_dengan_hasil_jwt_secret
 OpenAPI schema:
 - `GET /api/openapi.json`
 
-Auth JWT:
+Auth API (Sanctum Personal Access Token):
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
@@ -332,46 +329,12 @@ Report API (perlu Bearer token):
 - `POST /api/reports/kayu-bulat/saldo/health`
 
 Catatan autentikasi report API:
-- Endpoint report API memvalidasi JWT berdasarkan signature + claim token.
-- Service laporan tidak melakukan lookup user ke database untuk request report API.
-- Bisa batasi issuer/audience/scope melalui:
-  - `REPORT_JWT_TRUSTED_ISSUERS` (comma separated)
-  - `REPORT_JWT_TRUSTED_AUDIENCES` (comma separated)
-  - `REPORT_JWT_REQUIRED_SCOPE` (contoh: `report:generate`)
-  - `REPORT_JWT_SCOPE_CLAIM` (default: `scope`)
+- Endpoint report API menggunakan Bearer token Sanctum.
+- Scope report yang wajib bisa diatur via `REPORT_API_REQUIRED_SCOPE`.
+- Scope default saat login/register bisa diatur via `REPORT_API_ISSUED_SCOPE`.
 
 ### Integrasi Token dari Aplikasi Lain
-1. Tentukan algoritma token yang dipakai issuer:
-   - `HS256`: samakan `JWT_SECRET` antara issuer dan service laporan.
-   - `RS256/ES256`: set `JWT_ALGO` + `JWT_PUBLIC_KEY` di service laporan.
-2. Standarkan claim token minimal:
-   - subject: `sub` (atau ubah via `REPORT_JWT_SUBJECT_CLAIM`)
-   - nama user: `name`
-   - email user: `email`
-   - scope report: `report:generate` (jika enforce scope)
-3. Set policy trust di service laporan:
-   - `REPORT_JWT_TRUSTED_ISSUERS`
-   - `REPORT_JWT_TRUSTED_AUDIENCES`
-   - `REPORT_JWT_REQUIRED_SCOPE`
-4. (Opsional) agar token dari endpoint auth project ini langsung kompatibel:
-   - `REPORT_JWT_ISSUED_AUDIENCE`
-   - `REPORT_JWT_ISSUED_SCOPE`
-
-### Contoh Penerapan dari Aplikasi Lain
-Contoh payload JWT dari aplikasi lain yang akan diterima service report:
-```json
-{
-  "iss": "https://auth.company.local",
-  "aud": ["open-api-report"],
-  "sub": "user-uuid-123",
-  "name": "Budi Santoso",
-  "email": "budi@company.local",
-  "scope": "report:generate profile:read",
-  "iat": 1760000000,
-  "nbf": 1760000000,
-  "exp": 1760003600
-}
-```
+Gunakan endpoint `/api/auth/login` pada service ini untuk mendapatkan Sanctum token, lalu kirim sebagai Bearer token ke endpoint report.
 
 Contoh request dari aplikasi lain (Node.js):
 ```js
@@ -401,7 +364,7 @@ $response = Http::withToken($jwtToken)
     ]);
 ```
 
-Referensi detail integrasi ada di `docs/jwt-cross-app-integration.md`.
+Referensi detail integrasi lama berbasis JWT ada di `docs/jwt-cross-app-integration.md` (legacy).
 
 ## Contoh Penggunaan API
 ### 1) Login

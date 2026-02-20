@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Support\JwtTokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use RuntimeException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -72,31 +71,7 @@ class AuthController extends Controller
      */
     public function me(): JsonResponse
     {
-        $request = request();
-        $user = $request->user();
-
-        if ($user === null) {
-            /** @var array<string, mixed>|null $claims */
-            $claims = $request->attributes->get('report_token_claims');
-
-            if (is_array($claims)) {
-                $user = [
-                    'id' => (string) ($claims['sub'] ?? $claims['idUsername'] ?? ''),
-                    'Username' => (string) ($claims['username'] ?? $claims['sub'] ?? $claims['idUsername'] ?? ''),
-                    'name' => (string) ($claims['name'] ?? $claims['username'] ?? ''),
-                    'email' => (string) ($claims['email'] ?? ''),
-                ];
-            }
-        }
-
-        if (is_object($user)) {
-            $user = [
-                'id' => (string) (data_get($user, 'id') ?? ''),
-                'Username' => (string) (data_get($user, 'Username') ?? data_get($user, 'username') ?? data_get($user, 'id') ?? ''),
-                'name' => (string) (data_get($user, 'name') ?? data_get($user, 'Username') ?? ''),
-                'email' => (string) (data_get($user, 'email') ?? ''),
-            ];
-        }
+        $user = request()->user();
 
         return response()->json([
             'user' => $user,
@@ -116,7 +91,15 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Stateless JWT: token dianggap invalid di sisi client (hapus dari penyimpanan client).
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if ($accessToken === null) {
+            return response()->json([
+                'message' => 'Token tidak valid atau sudah kedaluwarsa.',
+            ], 401);
+        }
+
+        $accessToken->delete();
 
         return response()->json([
             'message' => 'Logout berhasil.',
@@ -136,21 +119,18 @@ class AuthController extends Controller
             ], 401);
         }
 
-        try {
-            /** @var JwtTokenService $jwt */
-            $jwt = app(JwtTokenService::class);
-            $payload = $jwt->parseAndValidate($token);
-        } catch (RuntimeException) {
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if ($accessToken === null || !$accessToken->tokenable instanceof User) {
             return response()->json([
                 'message' => 'Token tidak valid atau sudah kedaluwarsa.',
             ], 401);
         }
 
-        unset($payload['iat'], $payload['nbf'], $payload['exp'], $payload['jti']);
-
-        $newToken = $jwt->issue($payload);
-
-        $user = User::query()->find((string) ($payload['sub'] ?? ''));
+        $user = $accessToken->tokenable;
+        $abilities = $accessToken->abilities;
+        $accessToken->delete();
+        $newToken = $user->createToken('api-token', is_array($abilities) ? $abilities : ['*'])->plainTextToken;
 
         return $this->respondWithToken($newToken, $user);
     }
@@ -163,14 +143,14 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => (int) config('jwt.ttl', 60) * 60,
+            'expires_in' => config('sanctum.expiration') !== null
+                ? (int) config('sanctum.expiration') * 60
+                : null,
             'user' => $authenticatedUser,
         ], $status);
     }
 
     /**
-     * Attempt JWT login using optional interoperability claims from configuration.
-     *
      * @param array<string, string> $credentials
      * @return array{token: string, user: User}|false
      */
@@ -198,37 +178,26 @@ class AuthController extends Controller
 
         $provider->rehashPasswordIfRequired($user, ['password' => $plainPassword]);
 
-        /** @var JwtTokenService $jwt */
-        $jwt = app(JwtTokenService::class);
-
-        $token = $jwt->issue($this->buildIssuedClaims((string) $user->getAuthIdentifier()));
+        $token = $user->createToken('api-token', $this->buildIssuedAbilities())->plainTextToken;
 
         return ['token' => $token, 'user' => $user];
     }
 
     /**
-     * Build token claims to align auth-issued token with report middleware policy.
+     * Build Sanctum abilities to align issued token with report authorization policy.
      *
-     * @return array<string, mixed>
+     * @return array<int, string>
      */
-    private function buildIssuedClaims(string $subject): array
+    private function buildIssuedAbilities(): array
     {
-        $claims = ['sub' => $subject];
-
-        $audience = trim((string) config('reports.report_auth.issued_audience', ''));
-        if ($audience !== '') {
-            $claims['aud'] = $audience;
-        }
-
-        $scopeClaimName = (string) config('reports.report_auth.scope_claim', 'scope');
         $issuedScope = trim((string) config('reports.report_auth.issued_scope', ''));
         $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
-
         $scopeValue = $issuedScope !== '' ? $issuedScope : $requiredScope;
-        if ($scopeValue !== '') {
-            $claims[$scopeClaimName] = $scopeValue;
+
+        if ($scopeValue === '') {
+            return ['*'];
         }
 
-        return $claims;
+        return array_values(array_filter(preg_split('/\s+/', $scopeValue) ?: []));
     }
 }

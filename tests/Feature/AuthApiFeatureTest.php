@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Support\JwtTokenService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
 
 class AuthApiFeatureTest extends TestCase
@@ -180,10 +180,11 @@ class AuthApiFeatureTest extends TestCase
             'password' => 'secret123',
         ])->assertOk()->json('access_token');
 
-        $payload = app(JwtTokenService::class)->parseAndValidate((string) $token);
+        $accessToken = PersonalAccessToken::findToken((string) $token);
 
-        $this->assertContains('open-api-report', (array) ($payload['aud'] ?? []));
-        $this->assertSame('report:generate profile:read', $payload['scope'] ?? null);
+        $this->assertNotNull($accessToken);
+        $this->assertContains('report:generate', $accessToken?->abilities ?? []);
+        $this->assertContains('profile:read', $accessToken?->abilities ?? []);
     }
 }
 

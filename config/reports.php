@@ -248,17 +248,15 @@ return [
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [
-        'enforce_issuer' => filter_var(env('REPORT_JWT_ENFORCE_ISSUER', true), FILTER_VALIDATE_BOOL),
-        'enforce_audience' => filter_var(env('REPORT_JWT_ENFORCE_AUDIENCE', true), FILTER_VALIDATE_BOOL),
-        'enforce_scope' => filter_var(env('REPORT_JWT_ENFORCE_SCOPE', true), FILTER_VALIDATE_BOOL),
-        'issuers' => array_filter(array_map('trim', explode(',', (string) env('REPORT_JWT_TRUSTED_ISSUERS', env('REPORT_JWT_TRUSTED_ISSUER', ''))))),
-        'audiences' => array_filter(array_map('trim', explode(',', (string) env('REPORT_JWT_TRUSTED_AUDIENCES', env('REPORT_JWT_TRUSTED_AUDIENCE', ''))))),
-        'required_scope' => env('REPORT_JWT_REQUIRED_SCOPE'),
-        'scope_claim' => env('REPORT_JWT_SCOPE_CLAIM', 'scope'),
-        'issued_audience' => env('REPORT_JWT_ISSUED_AUDIENCE'),
-        'issued_scope' => env('REPORT_JWT_ISSUED_SCOPE'),
-        'subject_claim' => env('REPORT_JWT_SUBJECT_CLAIM', 'sub'),
-        'name_claim' => env('REPORT_JWT_NAME_CLAIM', 'name'),
-        'email_claim' => env('REPORT_JWT_EMAIL_CLAIM', 'email'),
+        'issuers' => array_filter(array_map(
+            'trim',
+            explode(',', (string) env('REPORT_API_TRUSTED_ISSUERS', env('REPORT_JWT_TRUSTED_ISSUERS', env('REPORT_JWT_TRUSTED_ISSUER', ''))))
+        )),
+        'audiences' => array_filter(array_map(
+            'trim',
+            explode(',', (string) env('REPORT_API_TRUSTED_AUDIENCES', env('REPORT_JWT_TRUSTED_AUDIENCES', env('REPORT_JWT_TRUSTED_AUDIENCE', ''))))
+        )),
+        'required_scope' => env('REPORT_API_REQUIRED_SCOPE', env('REPORT_JWT_REQUIRED_SCOPE')),
+        'issued_scope' => env('REPORT_API_ISSUED_SCOPE', env('REPORT_JWT_ISSUED_SCOPE')),
     ],
 ];
