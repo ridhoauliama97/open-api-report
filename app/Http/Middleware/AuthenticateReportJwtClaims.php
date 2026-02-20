@@ -44,7 +44,11 @@ class AuthenticateReportJwtClaims
         }
 
         $subjectClaim = (string) config('reports.report_auth.subject_claim', 'sub');
-        $subject = $claims[$subjectClaim] ?? $claims['sub'] ?? null;
+        $subject = $claims[$subjectClaim]
+            ?? $claims['sub']
+            ?? $claims['idUsername']
+            ?? $claims['user_id']
+            ?? null;
 
         if ($subject === null || $subject === '') {
             return $this->unauthenticated('Claim subject tidak ditemukan di token.');
@@ -55,7 +59,7 @@ class AuthenticateReportJwtClaims
 
         $identity = new GenericUser([
             'id' => $subject,
-            'name' => (string) ($claims[$nameClaim] ?? $claims['preferred_username'] ?? 'API User'),
+            'name' => (string) ($claims[$nameClaim] ?? $claims['username'] ?? $claims['preferred_username'] ?? 'API User'),
             'email' => (string) ($claims[$emailClaim] ?? $claims['upn'] ?? 'unknown@example.com'),
             'claims' => $claims,
         ]);
@@ -73,6 +77,10 @@ class AuthenticateReportJwtClaims
      */
     private function isIssuerValid(array $claims): bool
     {
+        if (!(bool) config('reports.report_auth.enforce_issuer', true)) {
+            return true;
+        }
+
         $expectedIssuers = config('reports.report_auth.issuers', []);
 
         if (!is_array($expectedIssuers) || $expectedIssuers === []) {
@@ -89,6 +97,10 @@ class AuthenticateReportJwtClaims
      */
     private function isAudienceValid(array $claims): bool
     {
+        if (!(bool) config('reports.report_auth.enforce_audience', true)) {
+            return true;
+        }
+
         $expectedAudiences = config('reports.report_auth.audiences', []);
 
         if (!is_array($expectedAudiences) || $expectedAudiences === []) {
@@ -119,6 +131,10 @@ class AuthenticateReportJwtClaims
      */
     private function hasRequiredScope(array $claims): bool
     {
+        if (!(bool) config('reports.report_auth.enforce_scope', true)) {
+            return true;
+        }
+
         $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
 
         if ($requiredScope === '') {

@@ -145,14 +145,10 @@ return [
     |
     */
 
-    'required_claims' => [
-        'iss',
-        'iat',
-        'exp',
-        'nbf',
-        'sub',
-        'jti',
-    ],
+    'required_claims' => array_values(array_filter(array_map(
+        static fn(string $claim): string => trim($claim),
+        explode(',', (string) env('JWT_REQUIRED_CLAIMS', 'iss,iat,exp,nbf,sub,jti'))
+    ))),
 
     /*
     |--------------------------------------------------------------------------

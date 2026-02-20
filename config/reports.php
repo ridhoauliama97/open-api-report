@@ -248,6 +248,9 @@ return [
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [
+        'enforce_issuer' => filter_var(env('REPORT_JWT_ENFORCE_ISSUER', true), FILTER_VALIDATE_BOOL),
+        'enforce_audience' => filter_var(env('REPORT_JWT_ENFORCE_AUDIENCE', true), FILTER_VALIDATE_BOOL),
+        'enforce_scope' => filter_var(env('REPORT_JWT_ENFORCE_SCOPE', true), FILTER_VALIDATE_BOOL),
         'issuers' => array_filter(array_map('trim', explode(',', (string) env('REPORT_JWT_TRUSTED_ISSUERS', env('REPORT_JWT_TRUSTED_ISSUER', ''))))),
         'audiences' => array_filter(array_map('trim', explode(',', (string) env('REPORT_JWT_TRUSTED_AUDIENCES', env('REPORT_JWT_TRUSTED_AUDIENCE', ''))))),
         'required_scope' => env('REPORT_JWT_REQUIRED_SCOPE'),
