@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class StockOpnameKayuBulatReportService
 {
@@ -11,46 +12,26 @@ class StockOpnameKayuBulatReportService
      */
     public function fetch(): array
     {
-        $connectionName = config('reports.stock_opname_kayu_bulat.database_connection');
-        $connection = DB::connection($connectionName ?: null);
+        $rows = $this->runProcedureQuery();
 
-        $sql = <<<'SQL'
-SELECT
-    KH.NoKayuBulat,
-    CAST(KH.DateCreate AS DATE) AS Tanggal,
-    JK.Jenis AS JenisKayu,
-    MS.NmSupplier AS Supplier,
-    KH.Suket AS NoSuket,
-    KH.NoPlat,
-    KH.NoTruk,
-    D.Tebal,
-    D.Lebar,
-    D.Panjang,
-    COUNT(1) AS Pcs,
-    CAST(SUM((D.Tebal * D.Lebar * D.Panjang) / 7200.8) AS DECIMAL(18,4)) AS JmlhTon,
-    MIN(D.NoLog) AS UrutNoLog
-FROM KayuBulat_h KH
-INNER JOIN KayuBulat_d D ON D.NoKayuBulat = KH.NoKayuBulat
-LEFT JOIN MstJenisKayu JK ON JK.IdJenisKayu = KH.IdJenisKayu
-LEFT JOIN MstSupplier MS ON MS.IdSupplier = KH.IdSupplier
-WHERE CAST(KH.DateCreate AS DATE) BETWEEN DATEADD(DAY, -30, CAST(GETDATE() AS DATE)) AND CAST(GETDATE() AS DATE)
-GROUP BY
-    KH.NoKayuBulat,
-    CAST(KH.DateCreate AS DATE),
-    JK.Jenis,
-    MS.NmSupplier,
-    KH.Suket,
-    KH.NoPlat,
-    KH.NoTruk,
-    D.Tebal,
-    D.Lebar,
-    D.Panjang
-ORDER BY CAST(KH.DateCreate AS DATE) DESC, KH.NoKayuBulat DESC, UrutNoLog
-SQL;
+        return array_map(function ($row): array {
+            $item = (array) $row;
 
-        $rows = $connection->select($sql);
-
-        return array_map(static fn($row): array => (array) $row, $rows);
+            return [
+                'NoKayuBulat' => $item['NoKayuBulat'] ?? null,
+                'Tanggal' => $item['DateCreate'] ?? null,
+                'JenisKayu' => $item['Jenis'] ?? null,
+                'Supplier' => $item['NmSupplier'] ?? null,
+                'NoSuket' => $item['Suket'] ?? null,
+                'NoPlat' => $item['NoPlat'] ?? null,
+                'NoTruk' => $item['NoTruk'] ?? null,
+                'Tebal' => $item['Tebal'] ?? null,
+                'Lebar' => $item['Lebar'] ?? null,
+                'Panjang' => $item['Panjang'] ?? null,
+                'Pcs' => $item['Pcs'] ?? null,
+                'JmlhTon' => $item['Ton'] ?? null,
+            ];
+        }, $rows);
     }
 
     /**
@@ -154,5 +135,53 @@ SQL;
             'total_ton' => $totalTon,
             'per_no_kayu_bulat' => $perNoKayu,
         ];
+    }
+
+    /**
+     * @return array<int, object>
+     */
+    private function runProcedureQuery(): array
+    {
+        $connectionName = config('reports.stock_opname_kayu_bulat.database_connection');
+        $procedure = (string) config('reports.stock_opname_kayu_bulat.stored_procedure', 'sp_LapStockOpnameKB');
+        $syntax = (string) config('reports.stock_opname_kayu_bulat.call_syntax', 'exec');
+        $customQuery = config('reports.stock_opname_kayu_bulat.query');
+
+        if ($procedure === '' && !is_string($customQuery)) {
+            throw new RuntimeException('Stored procedure laporan stock opname kayu bulat belum dikonfigurasi.');
+        }
+
+        $connection = DB::connection($connectionName ?: null);
+        $driver = $connection->getDriverName();
+
+        if ($driver !== 'sqlsrv' && $syntax !== 'query') {
+            throw new RuntimeException(
+                'Laporan stock opname kayu bulat dikonfigurasi untuk SQL Server. '
+                . 'Set STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+            );
+        }
+
+        if ($syntax === 'query') {
+            $query = is_string($customQuery) && trim($customQuery) !== ''
+                ? $customQuery
+                : throw new RuntimeException(
+                    'STOCK_OPNAME_KAYU_BULAT_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX=query.',
+                );
+
+            return $connection->select($query);
+        }
+
+        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+            throw new RuntimeException('Nama stored procedure tidak valid.');
+        }
+
+        $sql = match ($syntax) {
+            'exec' => "EXEC {$procedure}",
+            'call' => "CALL {$procedure}()",
+            default => $driver === 'sqlsrv' ? "EXEC {$procedure}" : "CALL {$procedure}()",
+        };
+
+        return $connection->select($sql);
     }
 }

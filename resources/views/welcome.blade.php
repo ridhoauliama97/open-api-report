@@ -170,25 +170,37 @@
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.saldo.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
-                                    Saldo Kayu Bulat
+                                    Laporan Kayu Bulat Detail
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.rekap-pembelian.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
-                                    Rekap Pembelian Kayu Bulat (Chart)
+                                    Laporan Rekap Pembelian Kayu Bulat (Chart)
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.penerimaan-bulanan-per-supplier.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
-                                    Penerimaan Kayu Bulat Bulanan Per Supplier
+                                    Laporan Penerimaan Kayu Bulat Bulanan Per Supplier/Hari
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.stock-opname.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
-                                    Stock Opname Kayu Bulat
+                                    Laporan Stock Opname Kayu Bulat
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.hidup-per-group.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Hidup Kayu Bulat Per Group
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.hidup.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Kayu Bulat Hidup
                                 </a>
                             </div>
                         </div>

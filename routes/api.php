@@ -3,6 +3,8 @@
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
+use App\Http\Controllers\HidupKBPerGroupController;
+use App\Http\Controllers\KayuBulatHidupController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiCCAkhirController;
@@ -90,6 +92,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
     Route::post('/reports/kayu-bulat/stock-opname', [StockOpnameKayuBulatController::class, 'preview'])->name('api.reports.kayu-bulat.stock-opname.preview');
     Route::match(['get', 'post'], '/reports/kayu-bulat/stock-opname/pdf', [StockOpnameKayuBulatController::class, 'download'])->name('api.reports.kayu-bulat.stock-opname.pdf');
     Route::post('/reports/kayu-bulat/stock-opname/health', [StockOpnameKayuBulatController::class, 'health'])->name('api.reports.kayu-bulat.stock-opname.health');
+    Route::post('/reports/kayu-bulat/hidup-per-group', [HidupKBPerGroupController::class, 'preview'])->name('api.reports.kayu-bulat.hidup-per-group.preview');
+    Route::match(['get', 'post'], '/reports/kayu-bulat/hidup-per-group/pdf', [HidupKBPerGroupController::class, 'download'])->name('api.reports.kayu-bulat.hidup-per-group.pdf');
+    Route::post('/reports/kayu-bulat/hidup-per-group/health', [HidupKBPerGroupController::class, 'health'])->name('api.reports.kayu-bulat.hidup-per-group.health');
+    Route::post('/reports/kayu-bulat/hidup', [KayuBulatHidupController::class, 'preview'])->name('api.reports.kayu-bulat.hidup.preview');
+    Route::match(['get', 'post'], '/reports/kayu-bulat/hidup/pdf', [KayuBulatHidupController::class, 'download'])->name('api.reports.kayu-bulat.hidup.pdf');
+    Route::post('/reports/kayu-bulat/hidup/health', [KayuBulatHidupController::class, 'health'])->name('api.reports.kayu-bulat.hidup.health');
     Route::post('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'preview'])->name('api.reports.rangkuman-label-input.preview');
     Route::match(['get', 'post'], '/reports/rangkuman-label-input/pdf', [RangkumanJlhLabelInputController::class, 'download'])->name('api.reports.rangkuman-label-input.pdf');
     Route::post('/reports/rangkuman-label-input/health', [RangkumanJlhLabelInputController::class, 'health'])->name('api.reports.rangkuman-label-input.health');

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\DashboardSawnTimberController;
+use App\Http\Controllers\HidupKBPerGroupController;
+use App\Http\Controllers\KayuBulatHidupController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiCCAkhirController;
 use App\Http\Controllers\MutasiFingerJointController;
@@ -79,6 +81,12 @@ Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/preview', [Pene
 Route::get('/reports/kayu-bulat/stock-opname', [StockOpnameKayuBulatController::class, 'index'])->name('reports.kayu-bulat.stock-opname.index');
 Route::post('/reports/kayu-bulat/stock-opname/download', [StockOpnameKayuBulatController::class, 'download'])->name('reports.kayu-bulat.stock-opname.download');
 Route::post('/reports/kayu-bulat/stock-opname/preview', [StockOpnameKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.stock-opname.preview');
+Route::get('/reports/kayu-bulat/hidup-per-group', [HidupKBPerGroupController::class, 'index'])->name('reports.kayu-bulat.hidup-per-group.index');
+Route::post('/reports/kayu-bulat/hidup-per-group/download', [HidupKBPerGroupController::class, 'download'])->name('reports.kayu-bulat.hidup-per-group.download');
+Route::post('/reports/kayu-bulat/hidup-per-group/preview', [HidupKBPerGroupController::class, 'preview'])->name('reports.kayu-bulat.hidup-per-group.preview');
+Route::get('/reports/kayu-bulat/hidup', [KayuBulatHidupController::class, 'index'])->name('reports.kayu-bulat.hidup.index');
+Route::post('/reports/kayu-bulat/hidup/download', [KayuBulatHidupController::class, 'download'])->name('reports.kayu-bulat.hidup.download');
+Route::post('/reports/kayu-bulat/hidup/preview', [KayuBulatHidupController::class, 'preview'])->name('reports.kayu-bulat.hidup.preview');
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');

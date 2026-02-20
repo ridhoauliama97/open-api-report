@@ -41,7 +41,7 @@
 
         .section-title {
             margin: 10px 0 4px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
 
@@ -78,6 +78,14 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
         .footer-wrap {
             display: flex;
             justify-content: space-between;
@@ -110,33 +118,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Stock Opname Kayu Bulat</h1>
-    <p class="report-subtitle">Semua No. Kayu Balut Rentang 30 Hari Terakhir</p>
-
-    <div class="section-title">Summary</div>
-    <table class="summary-table">
-        <tbody>
-            <tr>
-                <th style="width: 65%;">Keterangan</th>
-                <th>Nilai</th>
-            </tr>
-            <tr>
-                <td>Total Jumlah Data</td>
-                <td class="center">{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris</td>
-            </tr>
-            <tr>
-                <td>Total No Kayu Bulat</td>
-                <td class="center">{{ (int) ($summaryData['total_no_kayu_bulat'] ?? 0) }}</td>
-            </tr>
-            <tr>
-                <td>Total Pcs</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', '') }} Pcs</td>
-            </tr>
-            <tr>
-                <td>Total Ton</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', '') }} Ton</td>
-            </tr>
-        </tbody>
-    </table>
+    <p class="report-subtitle"></p>
 
     @forelse ($groups as $group)
         @php
@@ -164,7 +146,7 @@
             </thead>
             <tbody>
                 @foreach ($rows as $row)
-                    <tr>
+                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $loop->iteration }}</td>
                         <td class="center">{{ (string) ($row['NoKayuBulat'] ?? '') }}</td>
                         <td class="center">
@@ -204,6 +186,32 @@
             </tbody>
         </table>
     @endforelse
+
+    <div class="section-title">Summary</div>
+    <table class="summary-table">
+        <tbody>
+            <tr>
+                <th style="width: 65%;">Keterangan</th>
+                <th>Nilai</th>
+            </tr>
+            <tr>
+                <td>Total Jumlah Data</td>
+                <td class="center">{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris</td>
+            </tr>
+            <tr>
+                <td>Total No Kayu Bulat</td>
+                <td class="center">{{ (int) ($summaryData['total_no_kayu_bulat'] ?? 0) }}</td>
+            </tr>
+            <tr>
+                <td>Total Pcs</td>
+                <td class="center">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', '') }} Pcs</td>
+            </tr>
+            <tr>
+                <td>Total Ton</td>
+                <td class="center">{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', '') }} Ton</td>
+            </tr>
+        </tbody>
+    </table>
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

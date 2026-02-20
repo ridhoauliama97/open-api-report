@@ -42,7 +42,7 @@
         .section-supplier {
             margin: 8px 0 2px;
             font-size: 10px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         table {
@@ -81,6 +81,14 @@
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
         }
 
         .summary-inline {
@@ -240,7 +248,7 @@
             </thead>
             <tbody>
                 @foreach ($rows as $row)
-                    <tr>
+                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ (string) ($row['NoKayuBulat'] ?? '') }}</td>
                         <td class="center">{{ (string) ($row['NoTruk'] ?? '') }}</td>
                         <td class="center">
@@ -307,7 +315,7 @@
         </thead>
         <tbody>
             @forelse ($recapRows as $row)
-                <tr>
+                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">
                         @php
                             $tglRecap = (string) ($row['tanggal'] ?? '');

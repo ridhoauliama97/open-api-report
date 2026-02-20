@@ -166,9 +166,32 @@ return [
     ],
     'stock_opname_kayu_bulat' => [
         'database_connection' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_PROCEDURE', 'sp_LapStockOpnameKB'),
+        'call_syntax' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'STOCK_OPNAME_KAYU_BULAT_REPORT_EXPECTED_COLUMNS',
             'NoKayuBulat,Tanggal,JenisKayu,Supplier,NoSuket,NoPlat,NoTruk,Tebal,Lebar,Panjang,Pcs,JmlhTon'
+        )))),
+    ],
+    'hidup_kb_per_group' => [
+        'database_connection' => env('HIDUP_KB_PER_GROUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('HIDUP_KB_PER_GROUP_REPORT_PROCEDURE', 'sp_LapHidupKBPerGroup'),
+        'call_syntax' => env('HIDUP_KB_PER_GROUP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('HIDUP_KB_PER_GROUP_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'HIDUP_KB_PER_GROUP_REPORT_EXPECTED_COLUMNS',
+            'Group,Ton'
+        )))),
+    ],
+    'kayu_bulat_hidup' => [
+        'database_connection' => env('KAYU_BULAT_HIDUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KAYU_BULAT_HIDUP_REPORT_PROCEDURE', 'SPWps_LapkayuBulatHidup'),
+        'call_syntax' => env('KAYU_BULAT_HIDUP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KAYU_BULAT_HIDUP_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KAYU_BULAT_HIDUP_REPORT_EXPECTED_COLUMNS',
+            'NoKayuBulat,Tanggal,Supplier,NoTruk,Jenis,Pcs,BlkTepakai,BatangBalokMasuk,BatangBalokTerpakai,FisikBatangBalokDiLapangan'
         )))),
     ],
 
