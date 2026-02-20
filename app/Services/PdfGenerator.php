@@ -51,6 +51,11 @@ class PdfGenerator
             'orientation' => $orientation,
         ]);
 
+        // Increase PCRE limits for very large HTML reports before handing
+        // everything to mPDF in a single pass (keeps named footer parsing intact).
+        @ini_set('pcre.backtrack_limit', '10000000');
+        @ini_set('pcre.recursion_limit', '1000000');
+
         $mpdf->WriteHTML($html);
 
         return $mpdf->Output('', Destination::STRING_RETURN);

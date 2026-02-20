@@ -209,6 +209,13 @@ return [
         )))),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('DASHBOARD_SAWN_TIMBER_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'stock_st_basah' => [
+        'database_connection' => env('STOCK_ST_BASAH_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOCK_ST_BASAH_REPORT_PROCEDURE', 'SP_LapStockSTBasah'),
+        'call_syntax' => env('STOCK_ST_BASAH_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOCK_ST_BASAH_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_BASAH_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
 
     // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [

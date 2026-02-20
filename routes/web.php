@@ -20,6 +20,7 @@ use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
+use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
@@ -30,6 +31,10 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome');
 Route::get('/dashboard/sawn-timber', [DashboardSawnTimberController::class, 'index'])->name('dashboard.sawn-timber.index');
 Route::get('/dashboard/sawn-timber/preview', [DashboardSawnTimberController::class, 'preview'])->name('dashboard.sawn-timber.preview');
+Route::get('/reports/sawn-timber/stock-st-basah', [StockSTBasahController::class, 'index'])->name('reports.sawn-timber.stock-st-basah.index');
+Route::post('/reports/sawn-timber/stock-st-basah/download', [StockSTBasahController::class, 'download'])->name('reports.sawn-timber.stock-st-basah.download');
+Route::post('/reports/sawn-timber/stock-st-basah/preview-pdf', [StockSTBasahController::class, 'previewPdf'])->name('reports.sawn-timber.stock-st-basah.preview-pdf');
+Route::post('/reports/sawn-timber/stock-st-basah/preview', [StockSTBasahController::class, 'preview'])->name('reports.sawn-timber.stock-st-basah.preview');
 
 Route::get('/reports/mutasi/barang-jadi', [MutasiBarangJadiController::class, 'index'])->name('reports.mutasi.barang-jadi.index');
 Route::post('/reports/mutasi/barang-jadi/download', [MutasiBarangJadiController::class, 'download'])->name('reports.mutasi.barang-jadi.download');
