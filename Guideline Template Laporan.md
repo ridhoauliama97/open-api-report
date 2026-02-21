@@ -105,3 +105,6 @@ Contoh jika laporan baru bernama `stok-harian`:
   - `scope` jika `REPORT_JWT_REQUIRED_SCOPE` diaktifkan
   - `iss` dan `aud` jika whitelist diaktifkan
 - Referensi lengkap ada di `docs/jwt-cross-app-integration.md`.
+
+
+SECRET_KEY=ratimdoKey
