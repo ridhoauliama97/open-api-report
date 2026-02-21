@@ -257,6 +257,14 @@ return [
             explode(',', (string) env('REPORT_API_TRUSTED_AUDIENCES', env('REPORT_JWT_TRUSTED_AUDIENCES', env('REPORT_JWT_TRUSTED_AUDIENCE', ''))))
         )),
         'required_scope' => env('REPORT_API_REQUIRED_SCOPE', env('REPORT_JWT_REQUIRED_SCOPE')),
+        'enforce_scope' => filter_var(env('REPORT_API_ENFORCE_SCOPE', false), FILTER_VALIDATE_BOOL),
         'issued_scope' => env('REPORT_API_ISSUED_SCOPE', env('REPORT_JWT_ISSUED_SCOPE')),
+        'jwt_secret' => env('REPORT_API_JWT_SECRET', env('REPORT_JWT_SECRET', env('SECRET_KEY', ''))),
+        'clock_skew_seconds' => (int) env('REPORT_API_JWT_CLOCK_SKEW_SECONDS', 30),
+        'scope_claim' => env('REPORT_API_JWT_SCOPE_CLAIM', env('REPORT_JWT_SCOPE_CLAIM', 'scope')),
+        'subject_claim' => env('REPORT_API_JWT_SUBJECT_CLAIM', env('REPORT_JWT_SUBJECT_CLAIM', 'sub')),
+        'name_claim' => env('REPORT_API_JWT_NAME_CLAIM', env('REPORT_JWT_NAME_CLAIM', 'name')),
+        'username_claim' => env('REPORT_API_JWT_USERNAME_CLAIM', env('REPORT_JWT_USERNAME_CLAIM', 'username')),
+        'email_claim' => env('REPORT_API_JWT_EMAIL_CLAIM', env('REPORT_JWT_EMAIL_CLAIM', 'email')),
     ],
 ];

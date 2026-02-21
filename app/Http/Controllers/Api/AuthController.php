@@ -72,6 +72,19 @@ class AuthController extends Controller
     public function me(): JsonResponse
     {
         $user = request()->user();
+        $claims = request()->attributes->get('report_token_claims');
+
+        if (is_array($claims) && $claims !== []) {
+            return response()->json([
+                'user' => [
+                    'id' => (string) ($claims['sub'] ?? $claims['idUsername'] ?? ''),
+                    'username' => (string) ($claims['username'] ?? ''),
+                    'name' => (string) ($claims['name'] ?? $claims['username'] ?? ''),
+                    'email' => (string) ($claims['email'] ?? ''),
+                ],
+                'claims' => $claims,
+            ]);
+        }
 
         return response()->json([
             'user' => $user,

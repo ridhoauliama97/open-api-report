@@ -2,7 +2,8 @@
 
 ## Ringkasan
 Project ini adalah aplikasi Laravel untuk:
-- Login user (web session + API Sanctum token)
+- Login user (web session)
+- Validasi JWT dari backend existing untuk akses report API (mode microservice)
 - Preview laporan mutasi barang jadi via API
 - Preview laporan mutasi finger joint via API
 - Preview laporan mutasi moulding via API
@@ -205,10 +206,17 @@ LABEL_NYANGKUT_REPORT_CALL_SYNTAX=exec
 # LABEL_NYANGKUT_REPORT_EXPECTED_COLUMNS=
 ```
 
-### Sanctum Token Policy
+### JWT Token Policy (Microservice)
 ```env
+SECRET_KEY=ratimdoKey
+REPORT_API_JWT_SECRET=${SECRET_KEY}
+REPORT_API_JWT_CLOCK_SKEW_SECONDS=30
+REPORT_API_JWT_SUBJECT_CLAIM=sub
+REPORT_API_JWT_USERNAME_CLAIM=username
+REPORT_API_JWT_NAME_CLAIM=name
+REPORT_API_JWT_EMAIL_CLAIM=email
+REPORT_API_ENFORCE_SCOPE=false
 REPORT_API_REQUIRED_SCOPE=report:generate
-REPORT_API_ISSUED_SCOPE="report:generate profile:read"
 ```
 
 ## Web Flow
@@ -267,7 +275,7 @@ REPORT_API_ISSUED_SCOPE="report:generate profile:read"
 OpenAPI schema:
 - `GET /api/openapi.json`
 
-Auth API (Sanctum Personal Access Token):
+Auth API (opsional untuk login lokal service ini):
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
@@ -329,12 +337,13 @@ Report API (perlu Bearer token):
 - `POST /api/reports/kayu-bulat/saldo/health`
 
 Catatan autentikasi report API:
-- Endpoint report API menggunakan Bearer token Sanctum.
-- Scope report yang wajib bisa diatur via `REPORT_API_REQUIRED_SCOPE`.
-- Scope default saat login/register bisa diatur via `REPORT_API_ISSUED_SCOPE`.
+- Endpoint report API menggunakan Bearer token JWT dari backend existing.
+- JWT diverifikasi dengan HS256 + secret (`REPORT_API_JWT_SECRET` atau fallback `SECRET_KEY`).
+- Claim minimal: `username` dan `exp`.
+- Scope opsional dapat dipaksa via `REPORT_API_REQUIRED_SCOPE` + `REPORT_API_ENFORCE_SCOPE=true`.
 
 ### Integrasi Token dari Aplikasi Lain
-Gunakan endpoint `/api/auth/login` pada service ini untuk mendapatkan Sanctum token, lalu kirim sebagai Bearer token ke endpoint report.
+Langsung kirim JWT dari backend existing sebagai Bearer token ke endpoint report. Service ini tidak perlu login ulang ke tabel user.
 
 Contoh request dari aplikasi lain (Node.js):
 ```js
@@ -364,29 +373,22 @@ $response = Http::withToken($jwtToken)
     ]);
 ```
 
-Referensi detail integrasi lama berbasis JWT ada di `docs/jwt-cross-app-integration.md` (legacy).
+Referensi detail integrasi JWT ada di `docs/jwt-cross-app-integration.md`.
 
 ## Contoh Penggunaan API
-### 1) Login
-```bash
-curl -X POST http://127.0.0.1:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"username\":\"test-user\",\"password\":\"secret123\"}"
-```
-
-### 2) Preview report
+### 1) Preview report
 ```bash
 curl -X POST http://127.0.0.1:8000/api/reports/mutasi-barang-jadi \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <access_token>" \
+  -H "Authorization: Bearer <jwt_dari_backend_existing>" \
   -d "{\"TglAwal\":\"2026-01-01\",\"TglAkhir\":\"2026-01-31\"}"
 ```
 
-### 3) Generate PDF via API
+### 2) Generate PDF via API
 ```bash
 curl -X POST http://127.0.0.1:8000/api/reports/mutasi-barang-jadi/pdf \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <access_token>" \
+  -H "Authorization: Bearer <jwt_dari_backend_existing>" \
   -d "{\"TglAwal\":\"2026-01-01\",\"TglAkhir\":\"2026-01-31\"}" \
   --output laporan-mutasi-barang-jadi.pdf
 ```

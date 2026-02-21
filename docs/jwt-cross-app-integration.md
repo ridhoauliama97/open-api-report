@@ -7,40 +7,36 @@ Dokumen ini menjelaskan cara mengintegrasikan aplikasi lain ke endpoint report d
 - Service report hanya memverifikasi JWT (signature + claim policy).
 
 ## Claim Minimal yang Direkomendasikan
-- `iss`: issuer token (URL/id auth service)
-- `aud`: audience token (contoh: `open-api-report`)
-- `sub`: identifier user global (UUID direkomendasikan)
-- `name`: nama user untuk metadata "Dicetak oleh"
-- `email`: email user untuk metadata
-- `scope`: minimal mengandung `report:generate` jika policy ini diaktifkan
+- `username`: username user login di backend existing
+- `exp`: waktu kedaluwarsa token (Unix timestamp)
+- `iat`: waktu terbit token (Unix timestamp, opsional tapi direkomendasikan)
+- `sub`: identifier user global (opsional)
+- `name`: nama user untuk metadata "Dicetak oleh" (opsional)
+- `email`: email user untuk metadata (opsional)
+- `scope`: minimal mengandung `report:generate` jika policy ini diaktifkan (opsional)
 - `iat`, `nbf`, `exp`: claim waktu standar JWT
 
 ## Konfigurasi di Service Report
 Set nilai ini pada `.env` service report:
 
 ```env
-REPORT_JWT_TRUSTED_ISSUERS=https://auth.company.local
-REPORT_JWT_TRUSTED_AUDIENCES=open-api-report
-REPORT_JWT_REQUIRED_SCOPE=report:generate
-REPORT_JWT_SCOPE_CLAIM=scope
+SECRET_KEY=ratimdoKey
+REPORT_API_JWT_SECRET=${SECRET_KEY}
+REPORT_API_JWT_CLOCK_SKEW_SECONDS=30
+REPORT_API_JWT_SUBJECT_CLAIM=sub
+REPORT_API_JWT_USERNAME_CLAIM=username
+REPORT_API_JWT_NAME_CLAIM=name
+REPORT_API_JWT_EMAIL_CLAIM=email
+REPORT_API_ENFORCE_SCOPE=false
+# Optional policy:
+# REPORT_API_REQUIRED_SCOPE=report:generate
+# REPORT_API_TRUSTED_ISSUERS=https://auth.company.local
+# REPORT_API_TRUSTED_AUDIENCES=open-api-report
 ```
 
 ## Konfigurasi Signature Verification
-Pilih sesuai algoritma token dari issuer:
-
-1. `HS256`
-- Gunakan secret yang sama antara issuer dan service report:
-```env
-JWT_ALGO=HS256
-JWT_SECRET=shared-secret-from-issuer
-```
-
-2. `RS256/ES256`
-- Simpan public key issuer di service report:
-```env
-JWT_ALGO=RS256
-JWT_PUBLIC_KEY=file://C:/keys/report-public.pem
-```
+Service report saat ini memverifikasi JWT algoritma `HS256`.
+Gunakan secret yang sama antara issuer dan service report via `REPORT_API_JWT_SECRET` (atau fallback `SECRET_KEY`).
 
 ## Contoh Request dari Aplikasi Lain
 ```bash
@@ -55,9 +51,9 @@ Request akan ditolak jika:
 - token tidak dikirim
 - signature tidak valid
 - token expired
-- `iss` tidak ada di whitelist
-- `aud` tidak ada di whitelist
-- `scope` tidak mengandung scope yang diwajibkan
+- `iss` tidak ada di whitelist (jika whitelist issuer diaktifkan)
+- `aud` tidak ada di whitelist (jika whitelist audience diaktifkan)
+- `scope` tidak mengandung scope yang diwajibkan (jika `REPORT_API_ENFORCE_SCOPE=true`)
 
 ## Catatan Operasional
 - Gunakan NTP di semua server agar `iat/nbf/exp` tidak bermasalah karena clock skew.
