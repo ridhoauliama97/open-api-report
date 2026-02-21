@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
-class GenerateKayuBulatHidupReportRequest extends FormRequest
+class GenerateKayuBulatHidupReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {
@@ -41,3 +41,5 @@ class GenerateKayuBulatHidupReportRequest extends FormRequest
         });
     }
 }
+
+

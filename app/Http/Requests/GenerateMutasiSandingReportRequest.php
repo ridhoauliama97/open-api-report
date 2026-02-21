@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
-class GenerateMutasiSandingReportRequest extends FormRequest
+class GenerateMutasiSandingReportRequest extends BaseReportRequest
 {
     /**
      * Determine whether the current user is authorized for this request.
@@ -49,4 +49,6 @@ class GenerateMutasiSandingReportRequest extends FormRequest
         });
     }
 }
+
+
 

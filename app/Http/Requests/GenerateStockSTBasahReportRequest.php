@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 
-class GenerateStockSTBasahReportRequest extends FormRequest
+class GenerateStockSTBasahReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {
@@ -28,8 +28,12 @@ class GenerateStockSTBasahReportRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        parent::prepareForValidation();
+
         if (!$this->filled('end_date') && $this->filled('TglAkhir')) {
             $this->merge(['end_date' => $this->input('TglAkhir')]);
         }
     }
 }
+
+

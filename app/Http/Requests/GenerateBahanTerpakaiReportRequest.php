@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 
-class GenerateBahanTerpakaiReportRequest extends FormRequest
+class GenerateBahanTerpakaiReportRequest extends BaseReportRequest
 {
     /**
      * Determine whether the current user is authorized for this request.
@@ -28,3 +28,5 @@ class GenerateBahanTerpakaiReportRequest extends FormRequest
         ];
     }
 }
+
+

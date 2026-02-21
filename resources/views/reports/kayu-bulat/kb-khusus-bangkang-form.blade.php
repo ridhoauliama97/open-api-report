@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <title>Generate Laporan Mutasi Laminating</title>
+    <title>Generate Laporan KB Khusus Bangkang</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -23,10 +23,9 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Mutasi Laminating (PDF)</h1>
+                <h1 class="h3 mb-3">Generate Laporan KB Khusus Bangkang (PDF)</h1>
                 <p class="text-secondary mb-4">
-                    Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data mutasi laminating
-                    dan langsung mengunduh file PDF.
+                    Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data dari SP_LapKBKhususBangkang.
                 </p>
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -38,7 +37,8 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('reports.mutasi.laminating.download') }}" class="row g-3">
+                <form method="POST" action="{{ route('reports.kayu-bulat.kb-khusus-bangkang.download') }}"
+                    class="row g-3">
                     @csrf
                     <div class="col-md-6">
                         <label for="TglAwal" class="form-label">Tanggal Awal</label>
@@ -55,6 +55,11 @@
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
+                            <button type="submit" class="btn btn-outline-primary"
+                                formaction="{{ route('reports.kayu-bulat.kb-khusus-bangkang.preview-pdf') }}"
+                                formtarget="_blank">
+                                Preview PDF
+                            </button>
                             <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Raw SP
                                 (JSON)</button>
                         </div>
@@ -82,26 +87,22 @@
             }
 
             previewButton.addEventListener('click', async function() {
-                const tglAwal = startDateInput.value;
-                const tglAkhir = endDateInput.value;
-
                 previewWrapper.classList.remove('d-none');
                 previewOutput.textContent = 'Loading...';
 
                 try {
-                    const response = await fetch(
-                        '{{ route('reports.mutasi.laminating.preview') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            },
-                            body: JSON.stringify({
-                                TglAwal: tglAwal,
-                                TglAkhir: tglAkhir,
-                            }),
-                        });
+                    const response = await fetch('{{ route('reports.kayu-bulat.kb-khusus-bangkang.preview') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            TglAwal: startDateInput.value,
+                            TglAkhir: endDateInput.value,
+                        }),
+                    });
 
                     const payload = await response.json();
                     previewOutput.textContent = JSON.stringify(payload, null, 2);
@@ -117,6 +118,5 @@
 </body>
 
 </html>
-
 
 

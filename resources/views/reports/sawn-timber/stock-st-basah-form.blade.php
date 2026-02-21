@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -42,7 +42,7 @@
                     <div class="col-md-4">
                         <label for="end_date" class="form-label">End Date</label>
                         <input type="date" id="end_date" name="end_date" class="form-control"
-                            value="{{ old('end_date', old('TglAkhir', now()->toDateString())) }}" required>
+                            value="{{ old('end_date', old('TglAkhir')) }}" required>
                     </div>
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
@@ -107,3 +107,4 @@
 </body>
 
 </html>
+

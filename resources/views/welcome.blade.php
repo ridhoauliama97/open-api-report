@@ -212,6 +212,24 @@
                                     Laporan Kayu Bulat Hidup
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Perbandingan KB Masuk Periode 1 & 2
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.kb-khusus-bangkang.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan KB Khusus Bangkang
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.balok-sudah-semprot.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Balok Sudah Semprot
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
-class ShowRekapPembelianKayuBulatRequest extends FormRequest
+class ShowRekapPembelianKayuBulatRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {
@@ -50,3 +50,5 @@ class ShowRekapPembelianKayuBulatRequest extends FormRequest
         });
     }
 }
+
+

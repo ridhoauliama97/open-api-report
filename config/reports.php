@@ -194,7 +194,39 @@ return [
             'NoKayuBulat,Tanggal,Supplier,NoTruk,Jenis,Pcs,BlkTepakai,BatangBalokMasuk,BatangBalokTerpakai,FisikBatangBalokDiLapangan'
         )))),
     ],
-
+    'perbandingan_kb_masuk_periode_1_dan_2' => [
+        'database_connection' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_PROCEDURE', 'SP_LapPerbandinganKbMasukPeriode1dan2'),
+        'call_syntax' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
+    'kb_khusus_bangkang' => [
+        'database_connection' => env('KB_KHUSUS_BANGKANG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KB_KHUSUS_BANGKANG_REPORT_PROCEDURE', 'SP_LapKBKhususBangkang'),
+        'call_syntax' => env('KB_KHUSUS_BANGKANG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KB_KHUSUS_BANGKANG_REPORT_QUERY'),
+        'parameter_count' => (int) env('KB_KHUSUS_BANGKANG_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KB_KHUSUS_BANGKANG_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
+    'balok_sudah_semprot' => [
+        'database_connection' => env('BALOK_SUDAH_SEMPROT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('BALOK_SUDAH_SEMPROT_REPORT_PROCEDURE', 'SP_LapBalokSudahSemprot'),
+        'call_syntax' => env('BALOK_SUDAH_SEMPROT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('BALOK_SUDAH_SEMPROT_REPORT_QUERY'),
+        'parameter_count' => (int) env('BALOK_SUDAH_SEMPROT_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'BALOK_SUDAH_SEMPROT_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
     // Dashboard
     'dashboard_sawn_timber' => [
         'database_connection' => env('DASHBOARD_SAWN_TIMBER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

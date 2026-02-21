@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
-class GenerateMutasiSTReportRequest extends FormRequest
+class GenerateMutasiSTReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {
@@ -41,5 +41,7 @@ class GenerateMutasiSTReportRequest extends FormRequest
         });
     }
 }
+
+
 
 

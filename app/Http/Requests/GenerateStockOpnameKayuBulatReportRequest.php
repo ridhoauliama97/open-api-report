@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 
-class GenerateStockOpnameKayuBulatReportRequest extends FormRequest
+class GenerateStockOpnameKayuBulatReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {
@@ -19,3 +19,5 @@ class GenerateStockOpnameKayuBulatReportRequest extends FormRequest
         return [];
     }
 }
+
+

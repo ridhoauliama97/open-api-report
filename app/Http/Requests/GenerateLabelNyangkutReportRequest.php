@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 
-class GenerateLabelNyangkutReportRequest extends FormRequest
+class GenerateLabelNyangkutReportRequest extends BaseReportRequest
 {
     /**
      * Determine whether the current user is authorized for this request.
@@ -24,3 +24,5 @@ class GenerateLabelNyangkutReportRequest extends FormRequest
         return [];
     }
 }
+
+

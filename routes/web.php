@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\BahanTerpakaiController;
+use App\Http\Controllers\BalokSudahSemprotController;
 use App\Http\Controllers\DashboardSawnTimberController;
 use App\Http\Controllers\HidupKBPerGroupController;
+use App\Http\Controllers\KbKhususBangkangController;
 use App\Http\Controllers\KayuBulatHidupController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiCCAkhirController;
@@ -18,6 +20,7 @@ use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
+use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\StockSTBasahController;
@@ -92,6 +95,18 @@ Route::post('/reports/kayu-bulat/hidup-per-group/preview', [HidupKBPerGroupContr
 Route::get('/reports/kayu-bulat/hidup', [KayuBulatHidupController::class, 'index'])->name('reports.kayu-bulat.hidup.index');
 Route::post('/reports/kayu-bulat/hidup/download', [KayuBulatHidupController::class, 'download'])->name('reports.kayu-bulat.hidup.download');
 Route::post('/reports/kayu-bulat/hidup/preview', [KayuBulatHidupController::class, 'preview'])->name('reports.kayu-bulat.hidup.preview');
+Route::get('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'index'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.index');
+Route::post('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/download', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'download'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.download');
+Route::post('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/preview-pdf', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'previewPdf'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview-pdf');
+Route::post('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/preview', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'preview'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview');
+Route::get('/reports/kayu-bulat/kb-khusus-bangkang', [KbKhususBangkangController::class, 'index'])->name('reports.kayu-bulat.kb-khusus-bangkang.index');
+Route::post('/reports/kayu-bulat/kb-khusus-bangkang/download', [KbKhususBangkangController::class, 'download'])->name('reports.kayu-bulat.kb-khusus-bangkang.download');
+Route::post('/reports/kayu-bulat/kb-khusus-bangkang/preview-pdf', [KbKhususBangkangController::class, 'previewPdf'])->name('reports.kayu-bulat.kb-khusus-bangkang.preview-pdf');
+Route::post('/reports/kayu-bulat/kb-khusus-bangkang/preview', [KbKhususBangkangController::class, 'preview'])->name('reports.kayu-bulat.kb-khusus-bangkang.preview');
+Route::get('/reports/kayu-bulat/balok-sudah-semprot', [BalokSudahSemprotController::class, 'index'])->name('reports.kayu-bulat.balok-sudah-semprot.index');
+Route::post('/reports/kayu-bulat/balok-sudah-semprot/download', [BalokSudahSemprotController::class, 'download'])->name('reports.kayu-bulat.balok-sudah-semprot.download');
+Route::post('/reports/kayu-bulat/balok-sudah-semprot/preview-pdf', [BalokSudahSemprotController::class, 'previewPdf'])->name('reports.kayu-bulat.balok-sudah-semprot.preview-pdf');
+Route::post('/reports/kayu-bulat/balok-sudah-semprot/preview', [BalokSudahSemprotController::class, 'preview'])->name('reports.kayu-bulat.balok-sudah-semprot.preview');
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');

@@ -3,8 +3,10 @@
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
+use App\Http\Controllers\BalokSudahSemprotController;
 use App\Http\Controllers\HidupKBPerGroupController;
 use App\Http\Controllers\KayuBulatHidupController;
+use App\Http\Controllers\KbKhususBangkangController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiCCAkhirController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\MutasiS4SController;
+use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\StockSTBasahController;
@@ -73,6 +76,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/stock-st-basah', 'api.reports.sawn-timber.stock-st-basah', StockSTBasahController::class],
         ['/reports/kayu-bulat/hidup-per-group', 'api.reports.kayu-bulat.hidup-per-group', HidupKBPerGroupController::class],
         ['/reports/kayu-bulat/hidup', 'api.reports.kayu-bulat.hidup', KayuBulatHidupController::class],
+        ['/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2', 'api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2', PerbandinganKbMasukPeriode1Dan2Controller::class],
+        ['/reports/kayu-bulat/kb-khusus-bangkang', 'api.reports.kayu-bulat.kb-khusus-bangkang', KbKhususBangkangController::class],
+        ['/reports/kayu-bulat/balok-sudah-semprot', 'api.reports.kayu-bulat.balok-sudah-semprot', BalokSudahSemprotController::class],
         ['/reports/rangkuman-label-input', 'api.reports.rangkuman-label-input', RangkumanJlhLabelInputController::class],
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],

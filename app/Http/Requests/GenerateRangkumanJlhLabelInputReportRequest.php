@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
-class GenerateRangkumanJlhLabelInputReportRequest extends FormRequest
+class GenerateRangkumanJlhLabelInputReportRequest extends BaseReportRequest
 {
     /**
      * Determine whether the current user is authorized for this request.
@@ -49,3 +49,5 @@ class GenerateRangkumanJlhLabelInputReportRequest extends FormRequest
         });
     }
 }
+
+
