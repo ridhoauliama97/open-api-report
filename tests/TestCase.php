@@ -54,7 +54,9 @@ abstract class TestCase extends BaseTestCase
         if (!Schema::hasTable('personal_access_tokens')) {
             Schema::create('personal_access_tokens', function (Blueprint $table): void {
                 $table->id();
-                $table->morphs('tokenable');
+                $table->string('tokenable_type');
+                $table->string('tokenable_id');
+                $table->index(['tokenable_type', 'tokenable_id']);
                 $table->string('name');
                 $table->string('token', 64)->unique();
                 $table->text('abilities')->nullable();

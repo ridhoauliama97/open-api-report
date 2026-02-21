@@ -44,18 +44,6 @@ class User extends Authenticatable
         'Password',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'Password' => 'hashed',
-        ];
-    }
-
     public function getAuthPasswordName(): string
     {
         return 'Password';

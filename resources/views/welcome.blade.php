@@ -32,6 +32,15 @@
                 @if ($errors->has('login'))
                     <div class="alert alert-danger mt-3 mb-0">{{ $errors->first('login') }}</div>
                 @endif
+                @if ($errors->any() && !$errors->has('login'))
+                    <div class="alert alert-danger mt-3 mb-0">
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         </div>
 
