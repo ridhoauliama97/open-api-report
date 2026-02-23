@@ -56,6 +56,10 @@
                     </div>
                     <div class="col-md-4 d-flex align-items-end gap-2">
                         <button type="submit" class="btn btn-primary">Tampilkan Chart</button>
+                        <a href="{{ route('dashboard.sawn-timber.download', ['start_date' => $startDate, 'end_date' => $endDate]) }}"
+                            class="btn btn-success">Generate PDF</a>
+                        <a href="{{ route('dashboard.sawn-timber.download', ['start_date' => $startDate, 'end_date' => $endDate, 'preview_pdf' => 1]) }}"
+                            class="btn btn-outline-primary" target="_blank">Preview PDF</a>
                         <a href="{{ route('dashboard.sawn-timber.preview', ['start_date' => $startDate, 'end_date' => $endDate]) }}"
                             class="btn btn-outline-secondary">Preview JSON</a>
                     </div>
@@ -101,7 +105,8 @@
                                 @foreach ($chartData['totals_by_type'] as $type => $totals)
                                     <tr>
                                         <td>{{ $type }}</td>
-                                        <td class="text-end">{{ number_format((float) ($totals['in'] ?? 0), 1, ',', '.') }}
+                                        <td class="text-end">
+                                            {{ number_format((float) ($totals['in'] ?? 0), 1, ',', '.') }}
                                         </td>
                                         <td class="text-end">
                                             {{ number_format((float) ($totals['out'] ?? 0), 1, ',', '.') }}
@@ -131,7 +136,8 @@
                             @foreach ($chartData['stock_by_type'] ?? [] as $type => $row)
                                 <tr>
                                     <td>{{ $type }}</td>
-                                    <td class="text-end">{{ number_format((float) ($row['s_akhir'] ?? 0), 1, ',', '.') }}
+                                    <td class="text-end">
+                                        {{ number_format((float) ($row['s_akhir'] ?? 0), 1, ',', '.') }}
                                     </td>
                                     <td class="text-end">{{ number_format((float) ($row['ctr'] ?? 0), 2, ',', '.') }}
                                     </td>
@@ -142,10 +148,10 @@
                             <tr class="fw-semibold">
                                 <td>Total</td>
                                 <td class="text-end">
-                                    {{ number_format((float) (($chartData['stock_totals']['s_akhir'] ?? 0)), 1, ',', '.') }}
+                                    {{ number_format((float) ($chartData['stock_totals']['s_akhir'] ?? 0), 1, ',', '.') }}
                                 </td>
                                 <td class="text-end">
-                                    {{ number_format((float) (($chartData['stock_totals']['ctr'] ?? 0)), 2, ',', '.') }}
+                                    {{ number_format((float) ($chartData['stock_totals']['ctr'] ?? 0), 2, ',', '.') }}
                                 </td>
                             </tr>
                         </tfoot>
@@ -206,7 +212,8 @@
 
             const datasets = types.map((type, index) => ({
                 label: String(type),
-                data: (payload.series_by_type && payload.series_by_type[type] && payload.series_by_type[type].in) ?
+                data: (payload.series_by_type && payload.series_by_type[type] && payload.series_by_type[
+                        type].in) ?
                     payload.series_by_type[type].in : [],
                 backgroundColor: palette[index % palette.length],
                 borderColor: palette[index % palette.length],

@@ -73,7 +73,7 @@
         }
 
         .row-odd td {
-            background: #ffffff;
+            background: #c9d1df;
         }
 
         .row-even td {

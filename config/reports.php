@@ -138,6 +138,16 @@ return [
         'query' => env('MUTASI_HASIL_RACIP_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_HASIL_RACIP_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'mutasi_racip_detail' => [
+        'database_connection' => env('MUTASI_RACIP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_RACIP_DETAIL_REPORT_PROCEDURE', 'SPWps_LapMutasiRacipanDetail'),
+        'call_syntax' => env('MUTASI_RACIP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_RACIP_DETAIL_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'MUTASI_RACIP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Sawal,Sawal1,SawalJlhBtg,Masuk,MskJlhBtg,Keluar,KeluarJlhBtg,AdjusmentInput,AdjInJlhBtg,AdjusmentOutput,AdjOutJlhBtg,Akhir,AkhirJlhBtg'
+        )))),
+    ],
 
     // Kayu Bulat
     'saldo_kayu_bulat' => [
@@ -153,6 +163,27 @@ return [
         'call_syntax' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_QUERY'),
         'parameter_count' => (int) env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'target_masuk_bb' => [
+        'database_connection' => env('TARGET_MASUK_BB_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TARGET_MASUK_BB_REPORT_PROCEDURE', 'SP_LapTargetMasukBB'),
+        'call_syntax' => env('TARGET_MASUK_BB_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TARGET_MASUK_BB_REPORT_QUERY'),
+        'parameter_count' => (int) env('TARGET_MASUK_BB_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'target_masuk_bb_bulanan' => [
+        'database_connection' => env('TARGET_MASUK_BB_BULANAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TARGET_MASUK_BB_BULANAN_REPORT_PROCEDURE', 'SP_LapTargetMasukBBBulanan'),
+        'call_syntax' => env('TARGET_MASUK_BB_BULANAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TARGET_MASUK_BB_BULANAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('TARGET_MASUK_BB_BULANAN_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'stock_racip_kayu_lat' => [
+        'database_connection' => env('STOCK_RACIP_KAYU_LAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOCK_RACIP_KAYU_LAT_REPORT_PROCEDURE', 'sp_LapStockRacipKayuLat'),
+        'call_syntax' => env('STOCK_RACIP_KAYU_LAT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOCK_RACIP_KAYU_LAT_REPORT_QUERY'),
+        'parameter_count' => (int) env('STOCK_RACIP_KAYU_LAT_REPORT_PARAMETER_COUNT', 1),
     ],
     'penerimaan_kayu_bulat_bulanan_per_supplier' => [
         'database_connection' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

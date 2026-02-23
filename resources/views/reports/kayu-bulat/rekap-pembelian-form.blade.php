@@ -56,6 +56,10 @@
                     </div>
                     <div class="col-md-4 d-flex align-items-end gap-2">
                         <button type="submit" class="btn btn-primary">Refresh Data</button>
+                        <a href="{{ route('reports.kayu-bulat.rekap-pembelian.download', ['start_year' => $startYear, 'end_year' => $endYear]) }}"
+                            class="btn btn-success">Generate PDF</a>
+                        <a href="{{ route('reports.kayu-bulat.rekap-pembelian.download', ['start_year' => $startYear, 'end_year' => $endYear, 'preview_pdf' => 1]) }}"
+                            target="_blank" class="btn btn-outline-primary">Preview PDF</a>
                         <a href="{{ route('reports.kayu-bulat.rekap-pembelian.preview', ['start_year' => $startYear, 'end_year' => $endYear]) }}"
                             class="btn btn-outline-secondary">Preview JSON</a>
                     </div>

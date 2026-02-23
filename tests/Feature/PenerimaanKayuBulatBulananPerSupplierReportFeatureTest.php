@@ -30,7 +30,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
     {
         $this->get('/reports/kayu-bulat/penerimaan-bulanan-per-supplier')
             ->assertOk()
-            ->assertSee('Generate Laporan Penerimaan Kayu Bulat Bulanan Per Supplier (PDF)');
+            ->assertSee('Laporan Penerimaan Kayu Bulat Per Supplier Per Hari (PDF)');
     }
 
     public function test_preview_endpoint_returns_grouped_data_and_summary(): void

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ShowDashboardSawnTimberRequest;
 use App\Services\DashboardSawnTimberReportService;
+use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -71,6 +72,57 @@ class DashboardSawnTimberController extends Controller
                 'column_mapping' => $chartData['column_mapping'] ?? [],
             ],
             'data' => $chartData,
+        ]);
+    }
+
+    public function download(
+        ShowDashboardSawnTimberRequest $request,
+        DashboardSawnTimberReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        if ($generatedBy === null) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['auth' => 'Silakan login terlebih dahulu untuk mencetak laporan.']);
+        }
+
+        $defaultEndDate = now()->toDateString();
+        $defaultStartDate = now()->subDays(6)->toDateString();
+        $startDate = (string) $request->input('start_date', $defaultStartDate);
+        $endDate = (string) $request->input('end_date', $defaultEndDate);
+
+        try {
+            $chartData = $reportService->buildChartData($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $exception->getMessage()], 422);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => $exception->getMessage()]);
+        }
+
+        $pdf = $pdfGenerator->render('dashboard.sawn-timber-pdf', [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'chartData' => $chartData,
+            'generatedBy' => $generatedBy,
+            'generatedAt' => now(),
+        ]);
+
+        $filename = sprintf('Dashboard-Sawn-Timber-%s-sd-%s.pdf', $startDate, $endDate);
+        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
     }
 }

@@ -70,11 +70,11 @@
         }
 
         .row-odd td {
-            background: #eef2f8;
+            background: #c9d1df;
         }
 
         .row-even td {
-            background: #ffffff;
+            background: #eef2f8;
         }
 
         .grand-total-row td {

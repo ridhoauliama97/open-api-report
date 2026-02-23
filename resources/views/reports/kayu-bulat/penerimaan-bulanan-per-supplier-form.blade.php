@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -23,7 +23,7 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Penerimaan Kayu Bulat Bulanan Per Supplier (PDF)</h1>
+                <h1 class="h3 mb-3">Generate Laporan Penerimaan Kayu Bulat Per Supplier Per Hari (PDF)</h1>
                 <p class="text-secondary mb-4">
                     Isi tanggal awal dan tanggal akhir, lalu sistem akan mengambil data dari
                     SP_LaPenerimaanKayuBulatBulananPerSupplier dan
@@ -58,6 +58,8 @@
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
+                            <button type="submit" class="btn btn-outline-primary" name="preview_pdf" value="1"
+                                formtarget="_blank">Preview PDF</button>
                             <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Raw SP
                                 (JSON)</button>
                         </div>
@@ -117,5 +119,3 @@
 </body>
 
 </html>
-
-

@@ -102,16 +102,24 @@ class DashboardSawnTimberReportService
         $seriesByType = [];
         $totalsByType = [];
         $stockByType = [];
-        $stockSakhirColumn = $this->findMatchingKey(array_keys($rows[0] ?? []), [
+        $keys = array_keys($rows[0] ?? []);
+        $stockSakhirColumn = $this->findMatchingKey($keys, [
             's_akhir',
             'sakhir',
             'saldo_akhir',
             'saldoakhir',
             'stok_akhir',
             'stokakhir',
+            'akhir2',
+            'akhir',
+        ]);
+        $stockCtrColumn = $this->findMatchingKey($keys, [
+            'ctr',
+            '#ctr',
         ]);
 
         $stockAccumulator = [];
+        $stockCtrAccumulator = [];
 
         foreach ($types as $type) {
             $seriesByType[$type] = ['in' => [], 'out' => []];
@@ -131,19 +139,36 @@ class DashboardSawnTimberReportService
             $stockAccumulator[$type] = $totalsByType[$type]['in'] - $totalsByType[$type]['out'];
         }
 
-        if ($stockSakhirColumn !== null) {
-            $sakhirByType = [];
+        if ($stockSakhirColumn !== null || $stockCtrColumn !== null) {
+            $latestByType = [];
             foreach ($rows as $row) {
                 $type = trim((string) ($row[$columns['type']] ?? 'Tanpa Jenis'));
                 if ($type === '') {
                     $type = 'Tanpa Jenis';
                 }
 
-                $sakhirByType[$type] = $this->toFloat($row[$stockSakhirColumn] ?? 0);
+                $date = $this->resolveDateValue($row[$columns['date']] ?? null);
+                if ($date === null) {
+                    continue;
+                }
+
+                $current = $latestByType[$type] ?? null;
+                if ($current === null || strcmp($date, (string) $current['date']) >= 0) {
+                    $latestByType[$type] = [
+                        'date' => $date,
+                        's_akhir' => $stockSakhirColumn !== null ? $this->toFloat($row[$stockSakhirColumn] ?? 0) : null,
+                        'ctr' => $stockCtrColumn !== null ? $this->toFloat($row[$stockCtrColumn] ?? 0) : null,
+                    ];
+                }
             }
 
-            foreach ($sakhirByType as $type => $value) {
-                $stockAccumulator[$type] = $value;
+            foreach ($latestByType as $type => $values) {
+                if ($values['s_akhir'] !== null) {
+                    $stockAccumulator[$type] = (float) $values['s_akhir'];
+                }
+                if ($values['ctr'] !== null) {
+                    $stockCtrAccumulator[$type] = (float) $values['ctr'];
+                }
             }
         }
 
@@ -172,7 +197,9 @@ class DashboardSawnTimberReportService
         $stockTotalCtr = 0.0;
         foreach ($finalTypes as $type) {
             $sAkhir = (float) ($stockAccumulator[$type] ?? 0.0);
-            $ctr = $sAkhir / $ctrDivisor;
+            $ctr = array_key_exists($type, $stockCtrAccumulator)
+                ? (float) $stockCtrAccumulator[$type]
+                : $sAkhir / $ctrDivisor;
 
             $stockByType[$type] = [
                 's_akhir' => $sAkhir,
@@ -188,6 +215,8 @@ class DashboardSawnTimberReportService
             'types' => $finalTypes,
             'series_by_type' => $seriesByType,
             'totals_by_type' => $totalsByType,
+            'daily_in_totals' => $this->buildDailyTotals($finalTypes, $dates, $seriesByType, 'in'),
+            'daily_out_totals' => $this->buildDailyTotals($finalTypes, $dates, $seriesByType, 'out'),
             'stock_by_type' => $stockByType,
             'stock_totals' => [
                 's_akhir' => $stockTotalSakhir,
@@ -196,6 +225,26 @@ class DashboardSawnTimberReportService
             'column_mapping' => $columns,
             'raw_rows' => $rows,
         ];
+    }
+
+    /**
+     * @param array<int, string> $types
+     * @param array<int, string> $dates
+     * @param array<string, array{in: array<int, float>, out: array<int, float>}> $seriesByType
+     * @return array<int, float>
+     */
+    private function buildDailyTotals(array $types, array $dates, array $seriesByType, string $direction): array
+    {
+        $totals = array_fill(0, count($dates), 0.0);
+
+        foreach ($types as $type) {
+            $series = $seriesByType[$type][$direction] ?? [];
+            foreach ($series as $idx => $value) {
+                $totals[$idx] += (float) $value;
+            }
+        }
+
+        return $totals;
     }
 
     /**

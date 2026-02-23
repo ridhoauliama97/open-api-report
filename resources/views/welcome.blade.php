@@ -139,6 +139,10 @@
                             <a href="{{ route('reports.mutasi-hasil-racip.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">Mutasi Hasil Racip</a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.mutasi-racip-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Mutasi Racip Detail</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -189,6 +193,18 @@
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.target-masuk-bb.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Target Masuk Bahan Baku Harian
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.target-masuk-bb-bulanan.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Target Masuk Bahan Baku Bulanan
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.penerimaan-bulanan-per-supplier.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Penerimaan Kayu Bulat Bulanan Per Supplier/Hari
@@ -230,6 +246,12 @@
                                     Laporan Balok Sudah Semprot
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.stock-racip-kayu-lat.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Stok Racip Kayu Lat
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -246,6 +268,15 @@
                                     Dasboard Sawn Timber (Chart)
                                 </a>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h2 class="h5 mb-3">Sawn Timber</h2>
+                        <div class="row g-2">
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.sawn-timber.stock-st-basah.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">

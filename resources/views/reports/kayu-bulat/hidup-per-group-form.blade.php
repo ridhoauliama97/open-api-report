@@ -42,6 +42,7 @@
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
+                            <button type="submit" class="btn btn-outline-primary" name="preview_pdf" value="1" formtarget="_blank">Preview PDF</button>
                             <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Data
                                 (JSON)</button>
                         </div>
@@ -95,3 +96,4 @@
 </body>
 
 </html>
+
