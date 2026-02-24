@@ -35,7 +35,7 @@
         .report-subtitle {
             text-align: center;
             margin: 2px 0 8px 0;
-            font-size: 12px;
+            font-size: 10px;
             color: #636466;
         }
 
@@ -183,7 +183,7 @@
                 <th rowspan="2">Tgt Bulan</th>
                 <th colspan="{{ count($dayColumns) + count($reportData['lb_columns'] ?? []) }}">
                     {{ ucfirst($monthTitle) }}</th>
-                <th rowspan="2">Total</th>
+                <th rowspan="2" style="font-weight: bold">Total</th>
             </tr>
             <tr>
                 @foreach ($dayColumns as $dayMeta)
@@ -207,7 +207,7 @@
                             <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, ',', '.') }}</td>
                         @endif
                     @endforeach
-                    <td>{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
+                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>

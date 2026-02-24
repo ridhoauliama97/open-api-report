@@ -29,12 +29,12 @@
             text-align: center;
             margin: 0;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
+            margin: 2px 0 20px 0;
             font-size: 10px;
             color: #555;
         }
@@ -142,7 +142,9 @@
                             $value = $row[$column] ?? '';
                             $isBeratColumn = strtolower((string) $column) === 'berat';
                             $displayValue =
-                                $isBeratColumn && is_numeric($value) ? number_format((float) $value, 4, '.', '') : (string) $value;
+                                $isBeratColumn && is_numeric($value)
+                                    ? number_format((float) $value, 4, '.', '')
+                                    : (string) $value;
                         @endphp
                         <td class="{{ $isBeratColumn ? 'number-right' : 'center' }}">{{ $displayValue }}</td>
                     @endforeach

@@ -30,6 +30,7 @@
             margin: 0;
             font-size: 14px;
             font-weight: bold;
+            margin-bottom: 20px;
         }
 
         .report-subtitle {

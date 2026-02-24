@@ -34,7 +34,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
+            margin: 2px 0 20px 0;
             font-size: 10px;
             color: #555;
         }
@@ -339,7 +339,7 @@
 
     <h1 class="report-title">Laporan Stock ST Basah</h1>
     <p class="report-subtitle">
-        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d F Y') }}
+        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d F Y') }}
     </p>
 
     @forelse ($grouped as $jenisName => $produkGroups)
@@ -406,14 +406,17 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number">Jumlah {{ $produkName }} :
+                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number" style="font-weight: bold">
+                                    Jumlah {{ $produkName }} :
                                 </td>
                                 @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
                                     @php $summaryColumn = $tableColumns[$idx]; @endphp
                                     @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
-                                        <td class="number">{{ number_format($subtotalPcs, 0, '.', '') }}</td>
+                                        <td class="number" style="font-weight: bold">
+                                            {{ number_format($subtotalPcs, 0, '.', '') }}</td>
                                     @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
-                                        <td class="number">{{ number_format($subtotalTon, 4, '.', '') }}</td>
+                                        <td class="number" style="font-weight: bold">
+                                            {{ number_format($subtotalTon, 4, '.', '') }}</td>
                                     @else
                                         <td></td>
                                     @endif

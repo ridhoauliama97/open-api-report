@@ -34,8 +34,8 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
-            font-size: 12px;
+            margin: 2px 0 20px 0;
+            font-size: 10px;
             color: #636466;
         }
 
@@ -172,7 +172,7 @@
     <h1 class="report-title">Laporan Target Masuk Bahan Baku Bulanan</h1>
     <p class="report-subtitle">{{ $reportData['period_text'] ?? '' }}</p>
 
-    <table>
+    <table style="margin-bottom: 20px">
         <thead>
             <tr>
                 <th>Nama Group</th>
@@ -180,7 +180,7 @@
                 @foreach ($monthColumns as $month)
                     <th>{{ $month['label'] }}</th>
                 @endforeach
-                <th>Total</th>
+                <th style="font-weight: bold">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -191,7 +191,7 @@
                     @foreach ($row['monthly_values'] as $value)
                         <td>{{ number_format((float) $value, 0, ',', '.') }}</td>
                     @endforeach
-                    <td>{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
+                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -201,15 +201,15 @@
         </tbody>
     </table>
 
-    <table class="summary-table">
+    <table class="summary-table" style="margin-bottom: 20px">
         <thead>
             <tr>
-                <th></th>
+                <th>Nama Group</th>
                 <th>Avg</th>
                 <th>Min</th>
                 <th>Max</th>
                 <th>Bulan Capai</th>
-                <th>% Capai</th>
+                <th style="font-weight: bold">% Capai</th>
             </tr>
         </thead>
         <tbody>
@@ -220,7 +220,8 @@
                     <td>{{ number_format((float) $summary['min'], 0, ',', '.') }}</td>
                     <td>{{ number_format((float) $summary['max'], 0, ',', '.') }}</td>
                     <td>{{ $summary['bulan_capai'] }}/{{ $summary['total_bulan_target'] }}</td>
-                    <td>{{ number_format((float) $summary['persen_capai_group'], 2, ',', '.') }}%</td>
+                    <td style="font-weight: bold">
+                        {{ number_format((float) $summary['persen_capai_group'], 2, ',', '.') }}%</td>
                 </tr>
             @empty
                 <tr>

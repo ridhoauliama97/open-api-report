@@ -34,7 +34,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
+            margin: 2px 0 20px 0;
             font-size: 10px;
             color: #636466;
         }
@@ -202,9 +202,9 @@
                     $totalM3 = $totalTon * $tonToM3Factor;
                 @endphp
                 <tr class="total-row">
-                    <td colspan="4" class="number">Total</td>
-                    <td class="number">{{ $formatNumber($totalTon, 4) }}</td>
-                    <td class="number">{{ $formatNumber($totalM3, 4) }}</td>
+                    <td colspan="4" class="number" style="font-weight: bold; text-align: center;">Total</td>
+                    <td class="number" style="font-weight: bold">{{ $formatNumber($totalTon, 4) }}</td>
+                    <td class="number" style="font-weight: bold">{{ $formatNumber($totalM3, 4) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -245,9 +245,9 @@
                     );
                 @endphp
                 <tr class="total-row">
-                    <td colspan="5" class="number">Total</td>
-                    <td class="number">{{ $formatNumber($totalBatang, 0) }}</td>
-                    <td class="number">{{ $formatNumber($totalKubik, 4) }}</td>
+                    <td colspan="5" class="number" style="text-align: center; font-weight: bold;">Total</td>
+                    <td class="number" style="font-weight: bold;">{{ $formatNumber($totalBatang, 0) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $formatNumber($totalKubik, 4) }}</td>
                 </tr>
             </tbody>
         </table>

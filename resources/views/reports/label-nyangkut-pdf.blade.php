@@ -34,7 +34,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
+            margin: 2px 0 20px 0;
             font-size: 10px;
             color: #636466;
         }
@@ -306,7 +306,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Label Nyangkut</h1>
-    <p class="report-subtitle">Dicetak pada {{ $generatedAtText }}</p>
+    <p class="report-subtitle">Per-{{ $generatedAtText }}</p>
 
     @forelse ($tableGroups as $group)
         <p style="margin: 8px 0 4px 0; font-size: 11px; font-weight: 700; text-transform: uppercase;">
@@ -360,7 +360,7 @@
                         $groupTotalValue = $sumColumn($group['rows'], $totalColumn);
                     @endphp
                     <tr>
-                        <td colspan="{{ $summaryStartIndex + 1 }}" class="number" style="font-weight:700;">
+                        <td colspan="{{ $summaryStartIndex + 1 }}" class="number" style="font-weight:bold;">
                             Total {{ $group['name'] }}
                         </td>
                         @for ($columnIndex = $summaryStartIndex; $columnIndex < count($columns); $columnIndex++)
@@ -368,11 +368,11 @@
                                 $summaryColumn = $columns[$columnIndex];
                             @endphp
                             @if ($jmlhBatangColumn !== null && $summaryColumn === $jmlhBatangColumn)
-                                <td class="number" style="font-weight:700;">
+                                <td class="number" style="font-weight:bold;">
                                     {{ number_format($groupJmlhBatang, 0, '.', ',') }}
                                 </td>
                             @elseif ($totalColumn !== null && $summaryColumn === $totalColumn)
-                                <td class="number" style="font-weight:700;">
+                                <td class="number" style="font-weight:bold;">
                                     {{ number_format($groupTotalValue, 4, '.', '') }}
                                 </td>
                             @else

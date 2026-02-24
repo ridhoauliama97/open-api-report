@@ -29,7 +29,8 @@
             text-align: center;
             margin: 0;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
 
         .report-subtitle {

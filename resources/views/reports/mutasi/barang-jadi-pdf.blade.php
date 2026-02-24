@@ -58,14 +58,14 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
+            margin: 2px 0 20px 0;
             font-size: 10px;
             color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 700;
         }
 
@@ -120,6 +120,7 @@
         .row-even td {
             background: #eef2f8;
         }
+
 
         .totals-row td {
             background: #dde4f2;

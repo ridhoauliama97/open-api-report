@@ -30,14 +30,13 @@
             text-align: center;
             margin: 0;
             font-size: 14px;
-            ;
-            ;
+            font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
-            font-size: 12px;
+            margin: 2px 0 20px 0;
+            font-size: 10px;
             color: #636466;
         }
 
@@ -177,7 +176,7 @@
                             </tr>
                         @endforeach
                         <tr>
-                            <td colspan="3" class="subtotal-label" style="text-align: center; ;;">
+                            <td colspan="3" class="subtotal-label" style="text-align: center; font-weight: bold;">
                                 Jumlah </td>
                             <td class="cell-right" style="font-weight:bold;">{{ $fmtInt($sumBatang) }}</td>
                             <td class="cell-right" style="font-weight:bold;">{{ $fmt4($sumHasil) }}</td>
