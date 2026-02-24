@@ -28,15 +28,15 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0;
-            font-size: 10px;
-            color: #555;
+            font-size: 12px;
+            color: #636466;
         }
 
         table {
@@ -56,8 +56,8 @@
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #fff;
+            font-weight: bold;
+            font-size: 12px;
         }
 
         td.center {
@@ -78,8 +78,8 @@
         }
 
         .grand-total-row td {
-            font-weight: 700;
-            background: #f2f2f2;
+            font-weight: bold;
+            font-size: 12px;
         }
 
         .footer-wrap {
@@ -116,7 +116,7 @@
         }
 
         .trend-flat {
-            color: #555;
+            color: #636466;
             font-weight: bold;
         }
     </style>
@@ -126,11 +126,11 @@
     @php
         $rows = is_array($rows ?? null) ? $rows : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d F Y H:i:s');
-        $period1StartText = \Carbon\Carbon::parse($period1StartDate)->locale('id')->translatedFormat('d F Y');
-        $period1EndText = \Carbon\Carbon::parse($period1EndDate)->locale('id')->translatedFormat('d F Y');
-        $period2StartText = \Carbon\Carbon::parse($period2StartDate)->locale('id')->translatedFormat('d F Y');
-        $period2EndText = \Carbon\Carbon::parse($period2EndDate)->locale('id')->translatedFormat('d F Y');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i:s');
+        $period1StartText = \Carbon\Carbon::parse($period1StartDate)->locale('id')->translatedFormat('d M Y');
+        $period1EndText = \Carbon\Carbon::parse($period1EndDate)->locale('id')->translatedFormat('d M Y');
+        $period2StartText = \Carbon\Carbon::parse($period2StartDate)->locale('id')->translatedFormat('d M Y');
+        $period2EndText = \Carbon\Carbon::parse($period2EndDate)->locale('id')->translatedFormat('d M Y');
         $formatNumber = static function ($value): string {
             $number = is_numeric($value) ? (float) $value : 0.0;
             if (abs($number) < 0.0000001) {
@@ -143,7 +143,7 @@
             if (abs($number) < 0.0000001) {
                 return '';
             }
-            return number_format($number, 4, '.', ',');
+            return number_format($number, 0, '.', ',');
         };
         $calculatePercent = static function (float $ton1, float $ton2): float {
             if ($ton1 == 0.0 && $ton2 == 0.0) {
@@ -173,13 +173,13 @@
     <p class="report-subtitle">
         Periode 1: {{ $period1StartText }} s/d {{ $period1EndText }}
     </p>
-    <p class="report-subtitle">
+    <p class="report-subtitle" style="margin-bottom:20px">
         Periode 2: {{ $period2StartText }} s/d {{ $period2EndText }}
     </p>
 
     <table>
         <thead>
-            <tr>
+            <tr style="border: 1.5px solid #000">
                 <th style="width: 34px;">No</th>
                 <th>Nama Supplier</th>
                 <th style="width: 120px;">No.Tlp/HP</th>
@@ -205,20 +205,21 @@
                     <td class="number">{{ $formatNumber($ton1) }}</td>
                     <td class="number">{{ $formatNumber($ton2) }}</td>
                     <td class="number {{ $trendClass }}">
-                        {{ $percentText }}{{ $percentText !== '' ? ' ' . $trendIcon : '' }}</td>
+                        {{ $percentText !== '' ? $percentText . '%' : '' }}{{ $percentText !== '' ? ' ' . $trendIcon : '' }}
+                    </td>
                 </tr>
             @empty
                 <tr>
                     <td class="center" colspan="6">Tidak ada data.</td>
                 </tr>
             @endforelse
-            <tr class="grand-total-row">
-                <td colspan="3" class="center">Grand Total :</td>
+            <tr class="grand-total-row" style="border: 1.5px solid #000">
+                <td colspan="3" class="center">Grand Total</td>
                 <td class="number">{{ $formatNumber($totalTon1) }}</td>
                 <td class="number">{{ $formatNumber($totalTon2) }}</td>
                 <td
                     class="number {{ $totalPercent > 0 ? 'trend-up' : ($totalPercent < 0 ? 'trend-down' : 'trend-flat') }}">
-                    {{ $formatPercent($totalPercent) }}{{ $formatPercent($totalPercent) !== '' ? ' ' . ($totalPercent > 0 ? '↑' : ($totalPercent < 0 ? '↓' : '→')) : '' }}
+                    {{ $formatPercent($totalPercent) !== '' ? $formatPercent($totalPercent) . '%' : '' }}{{ $formatPercent($totalPercent) !== '' ? ' ' . ($totalPercent > 0 ? '↑' : ($totalPercent < 0 ? '↓' : '→')) : '' }}
                 </td>
             </tr>
         </tbody>

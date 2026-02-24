@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 8px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -28,14 +28,14 @@
         .title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -43,6 +43,10 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 8px;
+        }
+
+        tr {
+            border: 1px solid #000;
         }
 
         th,
@@ -54,8 +58,8 @@
 
         th {
             text-align: center;
-            background: #fff;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.label {
@@ -80,6 +84,7 @@
             padding: 6px;
             margin-top: 8px;
             margin-bottom: 10px;
+            text-align: center;
         }
 
         .chart-title {
@@ -112,7 +117,7 @@
 
         .footer-left,
         .footer-right {
-            font-size: 7px;
+            font-size: 8px;
             font-style: italic;
         }
 
@@ -138,8 +143,8 @@
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
 
-        $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, ',', '.');
-        $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, ',', '.');
+        $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
+        $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
 
         $dailyNet = [];
         $totalInAll = 0.0;
@@ -197,12 +202,12 @@
     @endphp
 
     <h1 class="title">Dashboard Sawn Timber</h1>
-    <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} s/d
-        {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}</p>
+    <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y') }} s/d
+        {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y') }}</p>
 
     <table>
         <thead>
-            <tr>
+            <tr style="border: 1.5px solid #000">
                 <th>No</th>
                 <th>Jenis</th>
                 <th>Total Masuk</th>
@@ -226,6 +231,7 @@
             @endforeach
         </tbody>
     </table>
+
     <div class="chart-wrap">
         <p class="chart-title">Trend Harian Total Masuk vs Keluar</p>
         <svg width="{{ $lineW }}" height="{{ $lineH }}"
@@ -243,7 +249,7 @@
                 <line x1="{{ $padL }}" y1="{{ $y }}" x2="{{ $padL + $plotW }}"
                     y2="{{ $y }}" stroke="#e3e3e3" stroke-width="1" />
                 <text x="{{ $padL - 6 }}" y="{{ $y + 3 }}" text-anchor="end" font-size="9">
-                    {{ number_format($tick, 0, '.', '') }}</text>
+                    {{ number_format($tick, 0, '.', ',') }}</text>
             @endfor
             @foreach ($dates as $idx => $date)
                 @php
@@ -276,7 +282,7 @@
 
     <table>
         <thead>
-            <tr>
+            <tr style="border: 1.5px solid #000">
                 <th>Jenis</th>
                 <th>S Akhir</th>
                 <th>#Ctr</th>
@@ -290,10 +296,11 @@
                     <td class="number">{{ $fmt2($stockByType[$type]['ctr'] ?? 0) }}</td>
                 </tr>
             @endforeach
-            <tr>
-                <td class="label" style="font-weight:bold; text-align: center;">Total</td>
-                <td class="number" style="font-weight:bold;">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}</td>
-                <td class="number" style="font-weight:bold;">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
+            <tr style="border: 1.5px solid #000">
+                <td class="label" style="font-weight:bold; text-align: center; font-size: 11px;">Total</td>
+                <td class="number" style="font-weight:bold;font-size: 11px;">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}
+                </td>
+                <td class="number" style="font-weight:bold;font-size: 11px;">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
             </tr>
         </tbody>
     </table>
@@ -315,40 +322,24 @@
                 <rect x="{{ $barPadL }}" y="{{ $y }}" width="{{ $barLen }}"
                     height="{{ $h }}" fill="#198754" />
                 <text x="{{ $barPadL + $barLen + 4 }}" y="{{ $y + $h / 2 + 3 }}"
-                    font-size="8">{{ number_format($val, 1, '.', '') }}</text>
+                    font-size="8">{{ number_format($val, 1, '.', ',') }}</text>
             @endforeach
         </svg>
     </div>
 
     <p style="font-size: 10px; margin-bottom: 5px; font-weight: bold; text-decoration: underline;">Summary :</p>
-    <table style="width: 55%;">
-        <tbody>
-            <tr>
-                <td class="label">Jumlah Seluruh Hari</td>
-                <td class="number">{{ number_format(count($dates), 0, ',', '.') }} Hari</td>
-            </tr>
-            <tr>
-                <td class="label">Jumlah Seluruh Jenis ST</td>
-                <td class="number">{{ number_format(count($types), 0, ',', '.') }}Jenis </td>
-            </tr>
-            <tr>
-                <td class="label">Jumlah Baris Raw Data Terhitung</td>
-                <td class="number">{{ number_format(count($rawRows), 0, ',', '.') }} Baris Data</td>
-            </tr>
-            <tr>
-                <td class="label">Total Masuk Keseluruhan (Semua Jenis ST)</td>
-                <td class="number">{{ $fmt1($totalInAll) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Total Keluar Keseluruhan (Semua Jenis ST)</td>
-                <td class="number">{{ $fmt1($totalOutAll) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Total Net Keseluruhan (Semua Jenis ST)</td>
-                <td class="number">{{ $fmt1($netAll) }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <ul class="summary-list">
+        <li><span class="summary-label">Jumlah Seluruh Hari :</span> {{ number_format(count($dates), 0, '.', ',') }}
+            Hari</li>
+        <li><span class="summary-label">Jumlah Seluruh Jenis ST :</span>
+            {{ number_format(count($types), 0, '.', ',') }} Jenis</li>
+        <li><span class="summary-label">Jumlah Baris Raw Data Terhitung :</span>
+            {{ number_format(count($rawRows), 0, '.', ',') }} Baris Data</li>
+        <li><span class="summary-label">Total Masuk Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($totalInAll) }}</li>
+        <li><span class="summary-label">Total Keluar Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($totalOutAll) }}
+        </li>
+        <li><span class="summary-label">Total Net Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($netAll) }}</li>
+    </ul>
 
 
     <htmlpagefooter name="reportFooter">

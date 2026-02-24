@@ -28,15 +28,15 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
-            font-size: 10px;
-            color: #555;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
         }
 
         table {
@@ -63,9 +63,9 @@
         }
 
         th {
-            background: #f5f7fb;
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -103,8 +103,13 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
-        $start = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
-        $end = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        if ($columns === []) {
+            $expectedColumns = config('reports.kb_khusus_bangkang.expected_columns', []);
+            $columns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : [];
+        }
+        $visibleColumnCount = max(count($columns), 1);
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
     @endphp
@@ -114,7 +119,7 @@
 
     <table>
         <thead>
-            <tr>
+            <tr style="border: 1.5px solid #000">
                 <th style="width: 34px;">No</th>
                 @foreach ($columns as $column)
                     <th>{{ $column }}</th>
@@ -131,7 +136,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
+                    <td colspan="{{ $visibleColumnCount + 1 }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

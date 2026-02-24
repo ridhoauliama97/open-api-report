@@ -244,7 +244,7 @@ return [
         'parameter_count' => (int) env('KB_KHUSUS_BANGKANG_REPORT_PARAMETER_COUNT', 0),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'KB_KHUSUS_BANGKANG_REPORT_EXPECTED_COLUMNS',
-            ''
+            'No Kayu Bulat, Tanggal , Nama Supplier, Jenis, No Truk, Berat'
         )))),
     ],
     'balok_sudah_semprot' => [

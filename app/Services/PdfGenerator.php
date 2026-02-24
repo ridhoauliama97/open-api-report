@@ -12,6 +12,10 @@ class PdfGenerator
      */
     private function columnCount(array $data): int
     {
+        if (isset($data['pdf_column_count']) && is_numeric($data['pdf_column_count'])) {
+            return max(0, (int) $data['pdf_column_count']);
+        }
+
         $rows = $data['rows'] ?? [];
 
         if (!is_array($rows) || empty($rows)) {
@@ -43,7 +47,7 @@ class PdfGenerator
     public function render(string $view, array $data = []): string
     {
         $html = view($view, $data)->render();
-        $orientation = $this->columnCount($data) > 8 ? 'landscape' : 'portrait';
+        $orientation = $this->columnCount($data) >= 10 ? 'landscape' : 'portrait';
 
         $mpdf = new Mpdf([
             'tempDir' => storage_path('app/mpdf-temp'),

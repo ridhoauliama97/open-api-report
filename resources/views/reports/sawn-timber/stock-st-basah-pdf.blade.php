@@ -36,7 +36,7 @@
             text-align: center;
             margin: 2px 0 20px 0;
             font-size: 10px;
-            color: #555;
+            color: #636466;
         }
 
         table {
@@ -339,7 +339,7 @@
 
     <h1 class="report-title">Laporan Stock ST Basah</h1>
     <p class="report-subtitle">
-        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d F Y') }}
+        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
     </p>
 
     @forelse ($grouped as $jenisName => $produkGroups)

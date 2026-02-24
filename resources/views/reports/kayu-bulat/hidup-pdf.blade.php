@@ -28,20 +28,20 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
-            color: #555;
+            font-size: 12px;
+            color: #636466;
         }
 
         .section-title {
-            margin: 10px 0 4px;
-            font-size: 10px;
+            margin: 20px 0 4px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -52,6 +52,11 @@
             page-break-inside: auto;
         }
 
+        thead,
+        tr {
+            border: 1px solid #000;
+        }
+
         th,
         td {
             border: 1px solid #666;
@@ -59,10 +64,11 @@
             vertical-align: middle;
         }
 
+        thead,
         th {
             text-align: center;
-            font-weight: 700;
-            background: #fff;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -110,8 +116,8 @@
     @php
         $rowsData = is_iterable($rows ?? null) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $summaryData = is_array($summary ?? null) ? $summary : [];
-        $start = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
-        $end = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
     @endphp
@@ -121,15 +127,15 @@
 
     <table>
         <thead>
-            <tr>
-                <th style="width: 35px;">No</th>
-                <th style="width: 80px;">Tanggal</th>
+            <tr style="border: 1.5px solid #000">
+                <th>No</th>
+                <th>Tanggal</th>
                 <th>Supplier</th>
-                <th style="width: 70px;">No Truk</th>
-                <th style="width: 88px;">Jenis</th>
-                <th style="width: 90px;">Batang Balok Masuk</th>
-                <th style="width: 105px;">Batang Balok Terpakai</th>
-                <th style="width: 120px;">Fisik Batang Balok Di Lapangan</th>
+                <th>No Truk</th>
+                <th>Jenis</th>
+                <th>Batang Balok Masuk</th>
+                <th>Batang Balok Terpakai</th>
+                <th>Fisik Batang Balok Di Lapangan</th>
             </tr>
         </thead>
         <tbody>
@@ -151,7 +157,7 @@
                         {{ $tanggalText }}
                     </td>
                     <td>{{ (string) ($row['Supplier'] ?? '') }}</td>
-                    <td class="number">
+                    <td class="number" style="text-align: center;">
                         @php
                             $noTrukRaw = (string) ($row['NoTruk'] ?? '');
                             $noTrukNumeric = str_replace(',', '', $noTrukRaw);
@@ -162,8 +168,8 @@
                         {{ $noTrukText }}
                     </td>
                     <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', '') }}</td>
+                    <td class="number">{{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number">
                         @php
                             $fisik = (float) ($row['FisikBatangBalokDiLapangan'] ?? 0);
@@ -188,23 +194,24 @@
             </tr>
             <tr>
                 <td>Total Jumlah Data</td>
-                <td class="center">{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris</td>
+                <td class="center">{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris Data</td>
             </tr>
             <tr>
                 <td>Total Balok Masuk</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', '') }} Batang
-                    Balok
+                <td class="center">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }}
+                    Batang Balok
                 </td>
             </tr>
             <tr>
                 <td>Total Balok Terpakai</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_blk_terpakai'] ?? 0), 0, '.', '') }}
+                <td class="center">{{ number_format((float) ($summaryData['total_blk_terpakai'] ?? 0), 0, '.', ',') }}
                     Batang Balok
                 </td>
             </tr>
             <tr>
                 <td>Total Fisik Di Lapangan</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_fisik_lapangan'] ?? 0), 0, '.', '') }}
+                <td class="center">
+                    {{ number_format((float) ($summaryData['total_fisik_lapangan'] ?? 0), 0, '.', ',') }}
                     Batang Balok
                 </td>
             </tr>

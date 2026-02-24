@@ -28,14 +28,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -64,9 +64,8 @@
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #ffffff;
-            color: #000;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -91,9 +90,16 @@
             background: #eef2f8;
         }
 
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+
         .totals-row td {
-            background: #dde4f2;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .footer-wrap {
@@ -119,8 +125,8 @@
     @php
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
-        $start = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
-        $end = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
 
@@ -146,9 +152,9 @@
 
     <table>
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th style="width: 35px;">No</th>
-                <th style="width: 90px;">Tanggal Masuk</th>
+                <th>Tanggal Masuk</th>
                 <th style="width: 140px;">Jenis Kayu</th>
                 <th>Supplier</th>
                 <th style="width: 85px;">Ton</th>

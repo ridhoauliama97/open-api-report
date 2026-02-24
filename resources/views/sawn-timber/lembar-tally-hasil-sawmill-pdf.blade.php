@@ -36,7 +36,7 @@
             text-align: center;
             margin: 2px 0 20px 0;
             font-size: 10px;
-            color: #555;
+            color: #636466;
         }
 
         .meta-table {
@@ -235,7 +235,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->format('d/m/Y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d M Y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }

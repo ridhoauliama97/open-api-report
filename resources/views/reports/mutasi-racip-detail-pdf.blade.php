@@ -122,8 +122,8 @@
         $numericColumns = is_array($reportData['numeric_columns'] ?? null) ? $reportData['numeric_columns'] : [];
         $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : [];
 
-        $startText = $reportData['start_date_text'] ?? \Carbon\Carbon::parse($startDate)->format('d/m/Y');
-        $endText = $reportData['end_date_text'] ?? \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        $startText = $reportData['start_date_text'] ?? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $endText = $reportData['end_date_text'] ?? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
 

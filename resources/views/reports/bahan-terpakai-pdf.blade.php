@@ -128,7 +128,7 @@
                     ? $subRows
                     : collect($subRows)->values()->all())
                 : [];
-        $reportDateText = \Carbon\Carbon::parse($reportDate)->format('d/m/Y');
+        $reportDateText = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
         $tonToM3Factor = isset($tonToM3Factor) ? (float) $tonToM3Factor : 1.416;

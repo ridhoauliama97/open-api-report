@@ -129,8 +129,8 @@
     @php
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
-        $start = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
-        $end = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
 

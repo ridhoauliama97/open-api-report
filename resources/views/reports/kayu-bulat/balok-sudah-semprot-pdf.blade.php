@@ -28,15 +28,15 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
-            color: #555;
+            font-size: 12px;
+            color: #636466;
         }
 
         table {
@@ -52,6 +52,7 @@
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
@@ -64,9 +65,9 @@
         }
 
         th {
-            background: #f5f7fb;
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -112,13 +113,49 @@
         $hasDateRange = trim((string) $startDate) !== '' && trim((string) $endDate) !== '';
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+
+        $normalize = static fn(string $name): string => preg_replace('/[^a-z0-9]/', '', strtolower($name)) ?? '';
+        $resolveHeaderLabel = static function (string $column) use ($normalize): string {
+            return match ($normalize($column)) {
+                'nokayubulat' => 'No Kayu Bulat',
+                'datecreate' => 'Tanggal Masuk Balok',
+                'jammasuk' => 'Jam Masuk Mobil',
+                'nmsupplier' => 'Nama Supplier',
+                'notruk' => 'Nomor Truk',
+                'type' => 'Tipe',
+                'jamsiapbongkar', 'jamsiapbongkart' => 'Jam Siap Bongkar',
+                'tglsemprot' => 'Tanggal Semprot',
+                'berat' => 'Berat',
+                default => $column,
+            };
+        };
+
+        $formatDateValue = static function ($value): string {
+            if ($value === null || $value === '') {
+                return '';
+            }
+
+            try {
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d M Y');
+            } catch (\Throwable $exception) {
+                return (string) $value;
+            }
+        };
+
+        $jenisColumn = null;
+        foreach ($columns as $column) {
+            if ($normalize((string) $column) === 'jenis') {
+                $jenisColumn = (string) $column;
+                break;
+            }
+        }
     @endphp
 
     <h1 class="report-title">Laporan Balok Sudah Semprot</h1>
     @if ($hasDateRange)
         <p class="report-subtitle">
-            Periode {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} s/d
-            {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
+            Periode {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y') }} s/d
+            {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y') }}
         </p>
     @else
         <p class="report-subtitle">&nbsp;</p>
@@ -126,10 +163,10 @@
 
     <table>
         <thead>
-            <tr>
+            <tr style="border: 1.5px solid #000">
                 <th style="width: 34px;">No</th>
                 @foreach ($columns as $column)
-                    <th>{{ $column }}</th>
+                    <th>{{ $resolveHeaderLabel((string) $column) }}</th>
                 @endforeach
             </tr>
         </thead>
@@ -140,11 +177,24 @@
                     @foreach ($columns as $column)
                         @php
                             $value = $row[$column] ?? '';
-                            $isBeratColumn = strtolower((string) $column) === 'berat';
-                            $displayValue =
-                                $isBeratColumn && is_numeric($value)
-                                    ? number_format((float) $value, 4, '.', '')
-                                    : (string) $value;
+                            $columnKey = $normalize((string) $column);
+                            $isBeratColumn = $columnKey === 'berat';
+                            $isDateColumn = in_array($columnKey, ['datecreate', 'tglsemprot'], true);
+                            $displayValue = (string) $value;
+
+                            if ($isBeratColumn && is_numeric($value)) {
+                                $jenisValue =
+                                    $jenisColumn !== null ? strtoupper(trim((string) ($row[$jenisColumn] ?? ''))) : '';
+                                if ($jenisValue === 'JABON') {
+                                    $displayValue = number_format((float) $value, 4, '.', '') . ' Ton';
+                                } elseif ($jenisValue === 'RAMBUNG') {
+                                    $displayValue = number_format((float) $value, 0, '.', ',') . ' Kg';
+                                } else {
+                                    $displayValue = number_format((float) $value, 2, '.', '');
+                                }
+                            } elseif ($isDateColumn) {
+                                $displayValue = $formatDateValue($value);
+                            }
                         @endphp
                         <td class="{{ $isBeratColumn ? 'number-right' : 'center' }}">{{ $displayValue }}</td>
                     @endforeach

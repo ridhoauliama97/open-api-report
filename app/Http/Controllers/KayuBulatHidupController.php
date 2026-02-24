@@ -54,6 +54,7 @@ class KayuBulatHidupController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_column_count' => 8,
         ]);
 
         $filename = sprintf('Laporan Kayu Bulat (Hidup) - %s sd %s.pdf', $startDate, $endDate);

@@ -28,20 +28,20 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
-            color: #555;
+            font-size: 12px;
+            color: #636466;
         }
 
         .section-supplier {
             margin: 8px 0 2px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -69,8 +69,8 @@
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #fff;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -110,7 +110,7 @@
         .recap-title {
             margin: 10px 0 4px;
             padding-top: 5pt;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -120,8 +120,16 @@
             padding: 2px 2px;
         }
 
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+
         .recap-total td {
             font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .footer-wrap {
@@ -161,8 +169,8 @@
                 : [];
         }
 
-        $start = \Carbon\Carbon::parse($startDate)->format('d/m/Y');
-        $end = \Carbon\Carbon::parse($endDate)->format('d/m/Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
 
@@ -213,7 +221,7 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan Penerimaan Kayu Bulat Bulanan Per Supplier</h1>
+    <h1 class="report-title">Laporan Penerimaan Kayu Bulat Per Supplier / Hari</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @if ($detailGroups === [])
@@ -235,15 +243,15 @@
         <div class="section-supplier">Nama Supplier : {{ $supplierName }}</div>
         <table>
             <thead>
-                <tr>
-                    <th style="width: 52px;">No Kayu Bulat</th>
-                    <th style="width: 42px;">No Truk</th>
-                    <th style="width: 70px;">Tanggal</th>
-                    <th style="width: 84px;">Jenis Kayu</th>
+                <tr class="headers-row">
+                    <th style="width:90px">No Kayu Bulat</th>
+                    <th style="width:60px">No Truk</th>
+                    <th style="width:90px">Tanggal</th>
+                    <th style="width:100px">Jenis Kayu</th>
                     <th>Nama Grade</th>
-                    <th style="width: 54px;">Jmlh Pcs</th>
-                    <th style="width: 42px;">Ton KB</th>
-                    <th style="width: 56px;">Ton KG</th>
+                    <th style="width:60px">Jmlh Pcs</th>
+                    <th style="width:60px">Ton KB</th>
+                    <th style="width:60px">Ton KG</th>
                 </tr>
             </thead>
             <tbody>
@@ -275,7 +283,7 @@
             </tbody>
         </table>
 
-        <div class="summary-inline">
+        {{-- <div class="summary-inline">
             <table>
                 <tr>
                     <td style="width: 20%;">Jmlh Truk : {{ (int) ($sum['total_trucks'] ?? 0) }}</td>
@@ -286,31 +294,31 @@
                     </td>
                 </tr>
             </table>
-        </div>
+        </div> --}}
     @endforeach
 
     <div class="recap-title">Rangkuman / Periode : {{ $start }} s/d {{ $end }}</div>
     <table class="recap-table">
         <thead>
-            <tr>
-                <th rowspan="2" style="width: 72px;">Tanggal</th>
-                <th colspan="2">JABON</th>
-                <th colspan="2">JABON TG/TD</th>
-                <th colspan="2">PULAI</th>
-                <th colspan="5">RAMBUNG (Ton)</th>
+            <tr class="headers-row">
+                <th rowspan="2" style="font-size: 11px; width: 24px;">Tanggal</th>
+                <th colspan="2" style="font-size: 11px">JABON</th>
+                <th colspan="2" style="font-size: 11px">JABON TG/TD</th>
+                <th colspan="2" style="font-size: 11px">PULAI</th>
+                <th colspan="5" style="font-size: 11px">RAMBUNG (Ton)</th>
             </tr>
-            <tr>
-                <th style="width: 28px;">Truk</th>
-                <th style="width: 56px;">Ton</th>
-                <th style="width: 28px;">Truk</th>
-                <th style="width: 56px;">Ton</th>
-                <th style="width: 28px;">Truk</th>
-                <th style="width: 56px;">Ton</th>
-                <th style="width: 28px;">Truk</th>
-                <th style="width: 56px;">Super</th>
-                <th style="width: 56px;">Mc</th>
-                <th style="width: 56px;">SamSam</th>
-                <th style="width: 56px;">Afkir</th>
+            <tr class="headers-row">
+                <th style="width: 30px;font-size: 11px">Truk</th>
+                <th style="width: 54px;font-size: 11px">Ton</th>
+                <th style="width: 30px;font-size: 11px">Truk</th>
+                <th style="width: 54px;font-size: 11px">Ton</th>
+                <th style="width: 30px;font-size: 11px">Truk</th>
+                <th style="width: 54px;font-size: 11px">Ton</th>
+                <th style="width: 30px;font-size: 11px">Truk</th>
+                <th style="width: 54px;font-size: 11px">Super</th>
+                <th style="width: 54px;font-size: 11px">Mc</th>
+                <th style="width: 54px;font-size: 11px">SamSam</th>
+                <th style="width: 54px;font-size: 11px">Afkir</th>
             </tr>
         </thead>
         <tbody>
@@ -350,17 +358,26 @@
             @if ($recapRows !== [])
                 <tr class="recap-total">
                     <td class="center">Total </td>
-                    <td class="number">{{ $fmtIntBlankZero($recapTotals['jabon_truk'] ?? 0) }}</td>
+                    <td class="number">{{ $fmtIntBlankZero($recapTotals['jabon_truk'] ?? 0) }}
+                    </td>
                     <td class="number">{{ $fmt2Smart($recapTotals['jabon_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmtIntBlankZero($recapTotals['jabon_tgtd_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['jabon_tgtd_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmtIntBlankZero($recapTotals['pulai_truk'] ?? 0) }}</td>
+                    <td class="number">
+                        {{ $fmtIntBlankZero($recapTotals['jabon_tgtd_truk'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['jabon_tgtd_ton'] ?? 0) }}
+                    </td>
+                    <td class="number">{{ $fmtIntBlankZero($recapTotals['pulai_truk'] ?? 0) }}
+                    </td>
                     <td class="number">{{ $fmt2Smart($recapTotals['pulai_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmtIntBlankZero($recapTotals['rambung_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_super_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_mc_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_samsam_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_afkir_ton'] ?? 0) }}</td>
+                    <td class="number">
+                        {{ $fmtIntBlankZero($recapTotals['rambung_truk'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_super_ton'] ?? 0) }}
+                    </td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_mc_ton'] ?? 0) }}
+                    </td>
+                    <td class="number">
+                        {{ $fmt2Smart($recapTotals['rambung_samsam_ton'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_afkir_ton'] ?? 0) }}
+                    </td>
                 </tr>
             @endif
         </tbody>

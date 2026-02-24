@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -28,14 +28,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -55,8 +55,8 @@
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #fff;
+            font-weight: bold;
+            font-weight: 11px;
         }
 
         td.label {
@@ -182,10 +182,11 @@
                 }
             }
         }
-        $maxValue = $maxValue > 0 ? $maxValue : 1.0;
+        $yStep = 100.0;
+        $maxValue = $maxValue > 0 ? ceil($maxValue / $yStep) * $yStep : $yStep;
         $monthCount = max(count($monthLabels), 1);
         $xStep = $monthCount > 1 ? $plotWidth / ($monthCount - 1) : 0;
-        $yTicks = 4;
+        $yTicks = max((int) ($maxValue / $yStep), 1);
     @endphp
 
     <h1 class="report-title">Rekap Pembelian Kayu Bulat</h1>
@@ -193,12 +194,12 @@
 
     <table style="margin-top: 15px;">
         <thead>
-            <tr>
-                <th>Tahun</th>
+            <tr style="border: 1.5px solid #000;">
+                <th style="font-weight: bold; font-size:11px">Tahun</th>
                 @foreach ($monthLabels as $month)
-                    <th>{{ $month }}</th>
+                    <th style="font-weight: bold; font-size:11px">{{ $month }}</th>
                 @endforeach
-                <th style="font-weight: bold;">Total</th>
+                <th style="font-weight: bold; font-size:11px">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -207,9 +208,11 @@
                     $monthly = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="label" style="text-align: center">{{ $year }}</td>
+                    <td class="label" style="text-align: center; font-weight: bold; font-size:11px;">
+                        {{ $year }}</td>
                     @foreach ($monthLabels as $index => $month)
-                        <td class="number">{{ $fmt4($monthly[$index] ?? 0) }}</td>
+                        <td class="number">
+                            {{ $fmt4($monthly[$index] ?? 0) }}</td>
                     @endforeach
                     <td class="number" style="font-weight: bold;">
                         {{ $fmt4($yearlyTotals[$year] ?? 0) }}</td>
@@ -230,13 +233,13 @@
 
             @for ($i = 0; $i <= $yTicks; $i++)
                 @php
-                    $tickVal = ($maxValue / $yTicks) * $i;
+                    $tickVal = $yStep * $i;
                     $y = $padTop + $plotHeight - $plotHeight * ($i / $yTicks);
                 @endphp
                 <line x1="{{ $padLeft }}" y1="{{ $y }}" x2="{{ $padLeft + $plotWidth }}"
                     y2="{{ $y }}" stroke="#ddd" stroke-width="1" />
                 <text x="{{ $padLeft - 6 }}" y="{{ $y + 3 }}" font-size="9" text-anchor="end"
-                    fill="#444">{{ number_format($tickVal, 4, '.', '') }}</text>
+                    fill="#444">{{ number_format($tickVal, 0, '.', ',') }}</text>
             @endfor
 
             @foreach ($monthLabels as $idx => $month)

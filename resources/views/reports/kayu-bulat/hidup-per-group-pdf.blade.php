@@ -28,7 +28,7 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -36,8 +36,8 @@
         .report-subtitle {
             text-align: center;
             margin: 2px 0 8px 0;
-            font-size: 10px;
-            color: #555;
+            font-size: 12px;
+            color: #636466;
         }
 
         table {
@@ -56,8 +56,8 @@
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #fff;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -104,11 +104,11 @@
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
     @endphp
 
-    <h1 class="report-title">Laporan Hidup Kayu Bulat Per Group</h1>
+    <h1 class="report-title">Laporan Saldo Hidup Kayu Bulat Per Group</h1>
 
     <table>
         <thead>
-            <tr>
+            <tr style="border: 1.5px solid #000">
                 <th style="width: 40px;">No</th>
                 <th>Group</th>
                 <th style="width: 120px;">Ton</th>
@@ -120,8 +120,8 @@
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $loop->iteration }}</td>
                     <td>{{ (string) ($row['Group'] ?? '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Ton'] ?? 0), 4, '.', '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', '') }} %</td>
+                    <td class="number">{{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>
                 </tr>
             @empty
                 <tr>
@@ -129,10 +129,10 @@
                 </tr>
             @endforelse
             @if ($rowsData !== [])
-                <tr>
-                    <td class="center" colspan="2"><strong>Total</strong></td>
+                <tr style="border: 1.5px solid #000">
+                    <td class="center" colspan="2" style="font-size: 11px"><strong>Total</strong></td>
                     <td class="number">
-                        <strong>{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', '') }}</strong>
+                        <strong>{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }}</strong>
                     </td>
                     <td class="number"><strong>100.00 %</strong></td>
                 </tr>

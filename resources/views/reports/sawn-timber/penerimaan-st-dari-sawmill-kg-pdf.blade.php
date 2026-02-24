@@ -36,7 +36,7 @@
             text-align: left;
             margin: 2px 0 10px 0;
             font-size: 9px;
-            color: #555;
+            color: #636466;
         }
 
         .supplier-block {
@@ -252,15 +252,30 @@
             }
         };
 
-        $dateColumn = $findColumn($availableColumns, ['TglLaporan', 'Tanggal', 'DateCreate', 'TanggalST', 'TglPenerimaanST', 'Date']);
-        $supplierColumnResolved = $supplierColumn ?? $findColumn($availableColumns, ['Supplier', 'NmSupplier', 'Nama Supplier']);
+        $dateColumn = $findColumn($availableColumns, [
+            'TglLaporan',
+            'Tanggal',
+            'DateCreate',
+            'TanggalST',
+            'TglPenerimaanST',
+            'Date',
+        ]);
+        $supplierColumnResolved =
+            $supplierColumn ?? $findColumn($availableColumns, ['Supplier', 'NmSupplier', 'Nama Supplier']);
         $sawmillColumn = $findColumn($availableColumns, ['Sawmill', 'NamaSawmill']);
         $noPenStColumn = $findColumn($availableColumns, ['NoPenST', 'No Pen ST', 'NoPenerimaanST']);
         $noKbColumn = $findColumn($availableColumns, ['NoKB', 'No KB', 'NoKayuBulat']);
         $jenisKayuColumn = $findColumn($availableColumns, ['JenisKayu', 'Jenis Kayu', 'Jenis']);
         $trukColumn = $findColumn($availableColumns, ['NoTruk', 'Truk']);
         $mejaColumn = $findColumn($availableColumns, ['Meja', 'NoMeja']);
-        $sectionColumn = $findColumn($availableColumns, ['InOut', 'InputOutput', 'Kelompok', 'Kategori', 'Status', 'Posisi']);
+        $sectionColumn = $findColumn($availableColumns, [
+            'InOut',
+            'InputOutput',
+            'Kelompok',
+            'Kategori',
+            'Status',
+            'Posisi',
+        ]);
         $gradeColumn = $findColumn($availableColumns, ['Grade', 'NamaGrade']);
         $jmlhTrukColumn = $findColumn($availableColumns, ['JmlhTruk', 'JumlahTruk', 'JmlTruk']);
         $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)', 'KBTon', 'TonKB', 'KBTon']);
@@ -355,8 +370,8 @@
 
     <h1 class="report-title">Laporan Penerimaan ST Dari Sawmill - Timbang KG</h1>
     <p class="report-subtitle">
-        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d F Y') }} s/d
-        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d F Y') }}
+        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d M Y') }} s/d
+        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
         | Group by Supplier
     </p>
 
@@ -378,12 +393,13 @@
                 }
             }
 
-            $displayNoPenSt = $noPenStColumn !== null ? ($contextRow[$noPenStColumn] ?? $noPenerimaanSt) : $noPenerimaanSt;
+            $displayNoPenSt =
+                $noPenStColumn !== null ? $contextRow[$noPenStColumn] ?? $noPenerimaanSt : $noPenerimaanSt;
             $displayTglPenerimaan = $dateColumn !== null ? $formatDate($contextRow[$dateColumn] ?? '') : '';
-            $displayNoKb = $noKbColumn !== null ? ($contextRow[$noKbColumn] ?? '') : '';
-            $displayJenisKayu = $jenisKayuColumn !== null ? ($contextRow[$jenisKayuColumn] ?? '') : '';
-            $displayTruk = $trukColumn !== null ? ($contextRow[$trukColumn] ?? '') : '';
-            $displayMeja = $mejaColumn !== null ? ($contextRow[$mejaColumn] ?? '') : '';
+            $displayNoKb = $noKbColumn !== null ? $contextRow[$noKbColumn] ?? '' : '';
+            $displayJenisKayu = $jenisKayuColumn !== null ? $contextRow[$jenisKayuColumn] ?? '' : '';
+            $displayTruk = $trukColumn !== null ? $contextRow[$trukColumn] ?? '' : '';
+            $displayMeja = $mejaColumn !== null ? $contextRow[$mejaColumn] ?? '' : '';
 
             $inputRows = [];
             $outputRows = [];
@@ -391,10 +407,10 @@
             $outputByGrade = [];
 
             foreach ($groupRows as $row) {
-                $gradeName = trim((string) ($gradeColumn !== null ? ($row[$gradeColumn] ?? '') : ''));
-                $kbTonValue = $kbTonColumn !== null ? ($toFloat($row[$kbTonColumn] ?? null) ?? 0.0) : 0.0;
-                $stTonValue = $stTonColumn !== null ? ($toFloat($row[$stTonColumn] ?? null) ?? 0.0) : 0.0;
-                $jmlhTrukValue = $jmlhTrukColumn !== null ? ($toFloat($row[$jmlhTrukColumn] ?? null) ?? 0.0) : 0.0;
+                $gradeName = trim((string) ($gradeColumn !== null ? $row[$gradeColumn] ?? '' : ''));
+                $kbTonValue = $kbTonColumn !== null ? $toFloat($row[$kbTonColumn] ?? null) ?? 0.0 : 0.0;
+                $stTonValue = $stTonColumn !== null ? $toFloat($row[$stTonColumn] ?? null) ?? 0.0 : 0.0;
+                $jmlhTrukValue = $jmlhTrukColumn !== null ? $toFloat($row[$jmlhTrukColumn] ?? null) ?? 0.0 : 0.0;
 
                 $rawSection = $sectionColumn !== null ? strtoupper(trim((string) ($row[$sectionColumn] ?? ''))) : '';
                 $resolvedSection = '';
@@ -466,18 +482,13 @@
                 ];
             }
 
-            usort(
-                $inputRows,
-                function (array $a, array $b) use ($gradeSortRank): int {
-                    return $gradeSortRank('INPUT', (string) $a['grade']) <=> $gradeSortRank('INPUT', (string) $b['grade']);
-                },
-            );
-            usort(
-                $outputRows,
-                function (array $a, array $b) use ($gradeSortRank): int {
-                    return $gradeSortRank('OUTPUT', (string) $a['grade']) <=> $gradeSortRank('OUTPUT', (string) $b['grade']);
-                },
-            );
+            usort($inputRows, function (array $a, array $b) use ($gradeSortRank): int {
+                return $gradeSortRank('INPUT', (string) $a['grade']) <=> $gradeSortRank('INPUT', (string) $b['grade']);
+            });
+            usort($outputRows, function (array $a, array $b) use ($gradeSortRank): int {
+                return $gradeSortRank('OUTPUT', (string) $a['grade']) <=>
+                    $gradeSortRank('OUTPUT', (string) $b['grade']);
+            });
 
             $totalInputKb = 0.0;
             foreach ($inputRows as $item) {
@@ -494,31 +505,58 @@
             $rendemen = $totalKb > 0 ? ($totalSt / $totalKb) * 100 : 0.0;
 
             $inputRows = array_map(static function (array $item) use ($totalInputKb): array {
-                $item['input_percent'] = $totalInputKb > 0 ? (((float) $item['kb_ton'] / $totalInputKb) * 100) : 0.0;
+                $item['input_percent'] = $totalInputKb > 0 ? ((float) $item['kb_ton'] / $totalInputKb) * 100 : 0.0;
                 $item['output_percent'] = 0.0;
                 return $item;
             }, $inputRows);
 
             $outputRows = array_map(static function (array $item) use ($totalOutputSt): array {
                 $item['input_percent'] = 0.0;
-                $item['output_percent'] = $totalOutputSt > 0 ? (((float) $item['st_ton'] / $totalOutputSt) * 100) : 0.0;
+                $item['output_percent'] = $totalOutputSt > 0 ? ((float) $item['st_ton'] / $totalOutputSt) * 100 : 0.0;
                 return $item;
             }, $outputRows);
 
             $renderRows = [
                 [
                     'section' => 'INPUT',
-                    'rows' => count($inputRows) > 0 ? $inputRows : [['grade' => '-', 'jmlh_truk' => 0.0, 'kb_ton' => 0.0, 'st_ton' => 0.0, 'input_percent' => 0.0, 'output_percent' => 0.0]],
+                    'rows' =>
+                        count($inputRows) > 0
+                            ? $inputRows
+                            : [
+                                [
+                                    'grade' => '-',
+                                    'jmlh_truk' => 0.0,
+                                    'kb_ton' => 0.0,
+                                    'st_ton' => 0.0,
+                                    'input_percent' => 0.0,
+                                    'output_percent' => 0.0,
+                                ],
+                            ],
                 ],
                 [
                     'section' => 'OUTPUT',
-                    'rows' => count($outputRows) > 0 ? $outputRows : [['grade' => '-', 'jmlh_truk' => 0.0, 'kb_ton' => 0.0, 'st_ton' => 0.0, 'input_percent' => 0.0, 'output_percent' => 0.0]],
+                    'rows' =>
+                        count($outputRows) > 0
+                            ? $outputRows
+                            : [
+                                [
+                                    'grade' => '-',
+                                    'jmlh_truk' => 0.0,
+                                    'kb_ton' => 0.0,
+                                    'st_ton' => 0.0,
+                                    'input_percent' => 0.0,
+                                    'output_percent' => 0.0,
+                                ],
+                            ],
                 ],
             ];
 
             $metaPairs = [
                 'No Pen ST' => $displayNoPenSt,
-                'Supplier' => $supplierColumnResolved !== null ? ($contextRow[$supplierColumnResolved] ?? $supplierName) : $supplierName,
+                'Supplier' =>
+                    $supplierColumnResolved !== null
+                        ? $contextRow[$supplierColumnResolved] ?? $supplierName
+                        : $supplierName,
                 'No KB' => $displayNoKb,
                 'Tgl Penerimaan ST Sawmill' => $displayTglPenerimaan,
                 'Jenis Kayu' => $displayJenisKayu,
