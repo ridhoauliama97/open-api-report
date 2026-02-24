@@ -283,6 +283,18 @@
                                     Laporan Stock ST Basah
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Penerimaan ST Dari Sawmill - Timbang KG
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.sawn-timber.lembar-tally-hasil-sawmill.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Lembar Tally Hasil Sawmill
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

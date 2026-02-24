@@ -279,6 +279,22 @@ return [
         'query' => env('STOCK_ST_BASAH_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_BASAH_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'penerimaan_st_dari_sawmill_kg' => [
+        'database_connection' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PROCEDURE', 'SPWps_LapRekapPenerimaanSawmilRp'),
+        'call_syntax' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_QUERY'),
+        'parameter_count' => (int) env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'lembar_tally_hasil_sawmill' => [
+        'database_connection' => env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_PROCEDURE', 'SPWps_LapUpahSawmill'),
+        'call_syntax' => env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_QUERY'),
+        'parameter_count' => (int) env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
 
     // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [

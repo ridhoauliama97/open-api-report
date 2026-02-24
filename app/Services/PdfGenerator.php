@@ -31,7 +31,7 @@ class PdfGenerator
         $excluded = ['created_at', 'updated_at'];
         $visibleColumns = array_filter(
             array_keys($firstRow),
-            static fn (string $key): bool => !in_array($key, $excluded, true)
+            static fn(string $key): bool => !in_array($key, $excluded, true)
         );
 
         return count($visibleColumns);
