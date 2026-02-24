@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -86,7 +86,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -120,6 +120,12 @@
             font-size: 8px;
             font-style: italic;
             text-align: right;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -210,7 +216,7 @@
 
     <table>
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th style="width: 32px;">No</th>
                 @foreach ($mainColumns as $column)
                     <th>{{ $column }}</th>
@@ -265,7 +271,7 @@
         <div class="section-title">Sub Report Mutasi Kayu Bulat</div>
         <table style="width: 78%;">
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th style="width: 32px;">No</th>
                     @foreach ($subColumns as $column)
                         <th>{{ $column }}</th>

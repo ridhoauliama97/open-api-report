@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -77,7 +77,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -109,6 +109,18 @@
             font-style: italic;
             text-align: right;
         }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
     </style>
 </head>
 
@@ -127,7 +139,7 @@
 
     <table>
         <thead>
-            <tr style="border: 1.5px solid #000">
+            <tr class="headers-row" style="border: 1.5px solid #000">
                 <th>No</th>
                 <th>Tanggal</th>
                 <th>Supplier</th>

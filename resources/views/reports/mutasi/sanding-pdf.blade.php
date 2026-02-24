@@ -15,7 +15,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -66,7 +66,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -102,6 +102,12 @@
             font-size: 8px;
             font-style: italic;
             text-align: right;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -211,7 +217,7 @@
 
     <table>
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th rowspan="2" style="width:30px">No</th>
                 <th rowspan="2" style="width:230px">Jenis</th>
                 <th rowspan="2" style="width:65px">Awal</th>
@@ -221,7 +227,7 @@
                 <th rowspan="2" style="width:70px">Total<br>Keluar</th>
                 <th rowspan="2" style="width:65px">Akhir</th>
             </tr>
-            <tr>
+            <tr class="headers-row">
                 <th style="width:68px">Adj Outp<br>SAND</th>
                 <th style="width:68px">BS Outp<br>SAND</th>
                 <th style="width:68px">SAND Prod<br>Outp</th>
@@ -339,7 +345,7 @@
         <div style="margin: 10px 0 6px 0; font-size: 12px; font-weight: 700;">Input Sanding Produksi</div>
         <table style="width: 78%;">
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th style="width:30px">No</th>
                     <th style="width:220px">Jenis</th>
                     @foreach ($subSpec as $spec)

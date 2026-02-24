@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -72,6 +72,13 @@
             text-align: center;
         }
 
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+
+
         .row-odd td {
             background: #c9d1df;
         }
@@ -94,6 +101,12 @@
 
         .footer-right {
             text-align: right;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -119,7 +132,7 @@
 
     <table>
         <thead>
-            <tr style="border: 1.5px solid #000">
+            <tr class="headers-row">
                 <th style="width: 34px;">No</th>
                 @foreach ($columns as $column)
                     <th>{{ $column }}</th>

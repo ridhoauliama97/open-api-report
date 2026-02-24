@@ -110,7 +110,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -142,6 +142,12 @@
         }
 
         .footer-wrap {}
+
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
     </style>
 </head>
 
@@ -221,7 +227,7 @@
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
-                    <tr>
+                    <tr class="headers-row">
                         <th rowspan="2" style="width: 30px;">No</th>
                         <th rowspan="2" style="width: 210px;">Jenis Kayu</th>
                         <th rowspan="2" style="width: 55px;">Awal</th>
@@ -231,7 +237,7 @@
                         <th rowspan="2" style="width: 62px;">Total<br>Keluar</th>
                         <th rowspan="2" style="width: 55px;">Akhir</th>
                     </tr>
-                    <tr>
+                    <tr class="headers-row">
                         <th style="width: 58px;">Adj Output</th>
                         <th style="width: 58px;">B.Susun Output</th>
                         <th style="width: 58px;">Packing Outp</th>
@@ -356,7 +362,7 @@
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
-                    <tr>
+                    <tr class="headers-row">
                         <th style="width: 32px;">No</th>
                         <th style="width: 270px; text-align: center;">Jenis Kayu</th>
                         <th style="width: 95px;">Barang Jadi</th>

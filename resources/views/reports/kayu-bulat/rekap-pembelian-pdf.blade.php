@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -66,7 +66,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", sans-serif;
+            font-family:"Calibri", sans-serif;
         }
 
         .row-odd td {
@@ -128,6 +128,18 @@
             display: inline-block;
             min-width: 170px;
             font-weight: 700;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -194,7 +206,7 @@
 
     <table style="margin-top: 15px;">
         <thead>
-            <tr style="border: 1.5px solid #000;">
+            <tr class="headers-row" style="border: 1.5px solid #000;">
                 <th style="font-weight: bold; font-size:11px">Tahun</th>
                 @foreach ($monthLabels as $month)
                     <th style="font-weight: bold; font-size:11px">{{ $month }}</th>

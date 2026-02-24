@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -74,7 +74,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -130,6 +130,18 @@
             font-size: 8px;
             font-style: italic;
             text-align: right;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -356,7 +368,7 @@
             <p class="produk-title">{{ $produkName }}</p>
             <table>
                 <thead>
-                    <tr>
+                    <tr class="headers-row">
                         <th style="width: 34px;">No</th>
                         @foreach ($tableColumns as $column)
                             <th>{{ $column }}</th>
@@ -396,7 +408,7 @@
                         </tr>
                     @endforeach
                     @if ($totalRows > 0)
-                        <tr class="subtotal-row">
+                        <tr class="subtotal-row totals-row">
                             @if (is_int($pcsIndex) || is_int($tonIndex))
                                 @php
                                     $firstSummaryIndex = collect([$pcsIndex, $tonIndex])

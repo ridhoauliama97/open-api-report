@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -76,7 +76,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         .headers-row th {

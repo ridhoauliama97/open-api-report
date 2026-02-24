@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 8px;
             line-height: 1.2;
             color: #000;
@@ -120,6 +120,18 @@
             font-style: italic;
             text-align: right;
         }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
     </style>
 </head>
 
@@ -157,7 +169,7 @@
                 <p class="group-title">{{ $group['jenis'] }}</p>
                 <table class="zebra">
                     <thead>
-                        <tr>
+                        <tr class="headers-row">
                             <th>Tebal</th>
                             <th>Lebar</th>
                             <th>Panjang</th>

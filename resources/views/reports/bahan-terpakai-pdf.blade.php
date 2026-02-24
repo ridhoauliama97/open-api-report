@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -83,7 +83,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -114,6 +114,18 @@
             font-size: 8px;
             font-style: italic;
             text-align: right;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -171,7 +183,7 @@
         <p class="group-title">{{ $groupName }}</p>
         <table>
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th>NamaMesin</th>
                     <th>Jenis</th>
                     <th style="width: 62px;">Tebal</th>
@@ -201,7 +213,7 @@
                     );
                     $totalM3 = $totalTon * $tonToM3Factor;
                 @endphp
-                <tr class="total-row">
+                <tr class="total-row totals-row">
                     <td colspan="4" class="number" style="font-weight: bold; text-align: center;">Total</td>
                     <td class="number" style="font-weight: bold">{{ $formatNumber($totalTon, 4) }}</td>
                     <td class="number" style="font-weight: bold">{{ $formatNumber($totalM3, 4) }}</td>
@@ -214,7 +226,7 @@
         <p class="group-title">{{ $groupName }}</p>
         <table>
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th>NamaMesin</th>
                     <th>Jenis</th>
                     <th style="width: 62px;">Tebal</th>
@@ -244,7 +256,7 @@
                         static fn(array $row): float => $toFloat($row['KubikIN'] ?? null) ?? 0.0,
                     );
                 @endphp
-                <tr class="total-row">
+                <tr class="total-row totals-row">
                     <td colspan="5" class="number" style="text-align: center; font-weight: bold;">Total</td>
                     <td class="number" style="font-weight: bold;">{{ $formatNumber($totalBatang, 0) }}</td>
                     <td class="number" style="font-weight: bold;">{{ $formatNumber($totalKubik, 4) }}</td>

@@ -43,7 +43,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -110,7 +110,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -141,6 +141,12 @@
         }
 
         .footer-wrap {}
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
     </style>
 </head>
 
@@ -249,7 +255,7 @@
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
-                    <tr>
+                    <tr class="headers-row">
                         <th rowspan="2" style="width: 30px;">No</th>
                         <th rowspan="2" style="width: 210px;">Jenis</th>
                         <th rowspan="2" style="width: 60px;">FJ Awal</th>
@@ -259,7 +265,7 @@
                         <th rowspan="2" style="width: 62px;">Total<br>Keluar</th>
                         <th rowspan="2" style="width: 55px;">Akhir</th>
                     </tr>
-                    <tr>
+                    <tr class="headers-row">
                         <th style="width: 58px;">Adj Out FJ</th>
                         <th style="width: 58px;">BS Out FJ</th>
                         <th style="width: 58px;">FJ Prod Out</th>
@@ -477,7 +483,7 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr>
+                        <tr class="headers-row">
                             <th style="width: 32px;">No</th>
                             <th style="width: 280px; text-align: center;">Jenis</th>
                             <th style="width: 95px;">CCAkhir</th>

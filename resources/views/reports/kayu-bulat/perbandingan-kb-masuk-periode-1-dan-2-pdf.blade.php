@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -66,7 +66,7 @@
 
         td.number {
             text-align: center;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -118,6 +118,18 @@
         .trend-flat {
             color: #636466;
             font-weight: bold;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -179,7 +191,7 @@
 
     <table>
         <thead>
-            <tr style="border: 1.5px solid #000">
+            <tr class="headers-row" style="border: 1.5px solid #000">
                 <th style="width: 34px;">No</th>
                 <th>Nama Supplier</th>
                 <th style="width: 120px;">No.Tlp/HP</th>
@@ -213,7 +225,7 @@
                     <td class="center" colspan="6">Tidak ada data.</td>
                 </tr>
             @endforelse
-            <tr class="grand-total-row" style="border: 1.5px solid #000">
+            <tr class="grand-total-row totals-row" style="border: 1.5px solid #000">
                 <td colspan="3" class="center">Grand Total</td>
                 <td class="number">{{ $formatNumber($totalTon1) }}</td>
                 <td class="number">{{ $formatNumber($totalTon2) }}</td>

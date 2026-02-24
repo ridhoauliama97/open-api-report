@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 8px;
             line-height: 1.2;
             color: #000;
@@ -112,6 +112,18 @@
             font-style: italic;
             text-align: right;
         }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
     </style>
 </head>
 
@@ -177,7 +189,7 @@
 
     <table>
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th rowspan="2">Jenis</th>
                 <th rowspan="2">Tgt Hari</th>
                 <th rowspan="2">Tgt Bulan</th>
@@ -185,7 +197,7 @@
                     {{ ucfirst($monthTitle) }}</th>
                 <th rowspan="2" style="font-weight: bold">Total</th>
             </tr>
-            <tr>
+            <tr class="headers-row">
                 @foreach ($dayColumns as $dayMeta)
                     <th>{{ $dayMeta['label'] }}</th>
                     @if ($dayMeta['is_lb_after'] ?? false)
@@ -219,7 +231,7 @@
 
     <table class="summary-table">
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th></th>
                 <th>Avg</th>
                 <th>Min</th>

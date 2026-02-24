@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 8px;
             line-height: 1.2;
             color: #000;
@@ -74,7 +74,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
             white-space: nowrap;
         }
 
@@ -106,6 +106,12 @@
             font-size: 7px;
             font-style: italic;
             text-align: right;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -170,7 +176,7 @@
     <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
     <table>
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th rowspan="2">No</th>
                 <th rowspan="2">Jenis</th>
                 <th rowspan="2">Tebal</th>
@@ -181,7 +187,7 @@
                 <th colspan="4">Keluar</th>
                 <th colspan="2">Akhir</th>
             </tr>
-            <tr>
+            <tr class="headers-row">
                 <th>Sawal</th>
                 <th>JlhBtg</th>
                 <th>Masuk</th>

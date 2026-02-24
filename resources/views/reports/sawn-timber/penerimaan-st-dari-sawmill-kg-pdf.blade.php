@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 9.5px;
             line-height: 1.2;
             color: #000;
@@ -122,7 +122,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         td.grade-output {
@@ -162,6 +162,18 @@
 
         .footer-right {
             text-align: right;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -592,7 +604,7 @@
 
             <table>
                 <thead>
-                    <tr>
+                    <tr class="headers-row">
                         <th style="width: 58px;"></th>
                         <th>Grade</th>
                         <th style="width: 76px;">Jmlh Truk</th>
@@ -635,7 +647,7 @@
                             </tr>
                         @endforeach
                     @endforeach
-                    <tr class="subtotal-row">
+                    <tr class="subtotal-row totals-row">
                         <td class="number" colspan="3">Jumlah:</td>
                         <td class="number">{{ number_format($totalKb, 2, '.', '') }}</td>
                         <td class="number">{{ number_format($totalSt, 4, '.', '') }}</td>

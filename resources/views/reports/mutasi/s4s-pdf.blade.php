@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -86,7 +86,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -120,6 +120,12 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -227,7 +233,7 @@
 
     <table>
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th rowspan="2" style="width: 30px;">No</th>
                 <th rowspan="2" style="width: 210px;">Jenis Kayu</th>
                 <th rowspan="2" style="width: 55px;">Awal</th>
@@ -237,7 +243,7 @@
                 <th rowspan="2" style="width: 62px;">Total<br>Keluar</th>
                 <th rowspan="2" style="width: 55px;">Akhir</th>
             </tr>
-            <tr>
+            <tr class="headers-row">
                 <th style="width: 58px;">Adj Out S4S</th>
                 <th style="width: 58px;">BS Out S4S</th>
                 <th style="width: 58px;">Prod Out S4S</th>
@@ -338,7 +344,7 @@
         <div class="section-title">Input S4S Produksi</div>
         <table style="width: 72%;">
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th style="width: 32px;">No</th>
                     <th style="width: 220px;">Jenis</th>
                     @foreach ($subSpec as $spec)

@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", serif;
+            font-family:"Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -118,7 +118,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family:"Calibri","DejaVu Sans", sans-serif;
         }
 
         .footer-wrap {
@@ -176,6 +176,18 @@
             border-top: 1px solid #333;
             min-width: 150px;
             padding-top: 2px;
+        }
+    
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+        }
+    
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
     </style>
 </head>
@@ -409,7 +421,7 @@
 
     <table class="zebra-table">
         <thead>
-            <tr>
+            <tr class="headers-row">
                 <th style="width: 34px;">No</th>
                 @foreach ($tableColumns as $column)
                     @php
@@ -465,7 +477,7 @@
                 </tr>
             @endforelse
             {{-- @if ($rowsData !== [] && $jmlhBatangCol !== null)
-                <tr class="total-row">
+                <tr class="total-row totals-row">
                     <td class="number" colspan="{{ count($tableColumns) }}"
                         style="text-align: center; font-weight: bold;">Total Jumlah Batang</td>
                     <td class="number"><strong>{{ number_format($totalBatang, 0, '.', '') }} Pcs</strong></td>
@@ -478,7 +490,7 @@
     @if ($summaryByKet !== [])
         <table class="summary-table zebra-table">
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th>#</th>
                     <th>Jumlah Batang (Pcs)</th>
                     <th>Berat (Ton)</th>
@@ -494,7 +506,7 @@
                         </td>
                     </tr>
                 @endforeach
-                <tr class="total-row">
+                <tr class="total-row totals-row">
                     <td style="text-align: center; font-weight: bold;">Total</td>
                     <td class="number" style="text-align: center; font-weight: bold;">
                         {{ number_format($totalBatang, 0, '.', '') }} Pcs</td>
