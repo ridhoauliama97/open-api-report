@@ -29,6 +29,7 @@ use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\StockSTBasahController;
+use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +84,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2', 'api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2', PerbandinganKbMasukPeriode1Dan2Controller::class],
         ['/reports/kayu-bulat/kb-khusus-bangkang', 'api.reports.kayu-bulat.kb-khusus-bangkang', KbKhususBangkangController::class],
         ['/reports/kayu-bulat/balok-sudah-semprot', 'api.reports.kayu-bulat.balok-sudah-semprot', BalokSudahSemprotController::class],
+        ['/reports/kayu-bulat/timeline-kayu-bulat-harian', 'api.reports.kayu-bulat.timeline-kayu-bulat-harian', TimelineKayuBulatHarianController::class],
         ['/reports/rangkuman-label-input', 'api.reports.rangkuman-label-input', RangkumanJlhLabelInputController::class],
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],
