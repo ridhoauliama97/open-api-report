@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -28,14 +28,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -74,7 +74,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -131,13 +131,13 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -157,8 +157,24 @@
         $normalizeName = static function (?string $name): string {
             $raw = $name ?? '';
 
-            return strtolower(preg_replace('/[^a-z0-9]/', '', $raw) ?? '');
+            return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $raw) ?? '');
         };
+
+        $headerLabelMap = [
+            'nost' => 'Nomor ST',
+            'nostock' => 'Nomor ST',
+            'datecreate' => 'Tanggal',
+            'date' => 'Tanggal',
+            'tanggal' => 'Tanggal',
+            'jlhbtg' => 'Jumlah Batang',
+            'jmlhbatang' => 'Jumlah Batang',
+            'jumlahbatang' => 'Jumlah Batang',
+            'pcs' => 'Jumlah Batang',
+            'idlokasi' => 'Lokasi',
+            'lokasi' => 'Lokasi',
+            'location' => 'Lokasi',
+            'description' => 'Lokasi',
+        ];
 
         $findColumn = static function (array $columns, array $candidates) use ($normalizeName): ?string {
             $candidateSet = [];
@@ -249,14 +265,42 @@
         $noStColumn = $findColumn($availableColumns, ['NoST', 'NoSt']);
         $pcsColumn = $findColumn($availableColumns, ['Pcs', 'JmlhBatang', 'JumlahBatang']);
         $tonColumn = $findColumn($availableColumns, ['Ton', 'JmlhTon', 'JumlahTon']);
-        $lokasiColumn = $findColumn($availableColumns, ['Lokasi', 'Location', 'Description']);
+        $lokasiColumn = $findColumn($availableColumns, ['IdLokasi', 'Lokasi', 'Location', 'Description']);
+
+        $columnHeaderOverrides = [];
+        if ($noStColumn !== null) {
+            $columnHeaderOverrides[$noStColumn] = 'Nomor ST';
+        }
+        if ($dateColumn !== null) {
+            $columnHeaderOverrides[$dateColumn] = 'Tanggal';
+        }
+        if ($pcsColumn !== null) {
+            $columnHeaderOverrides[$pcsColumn] = 'Jumlah Batang';
+        }
+        if ($lokasiColumn !== null) {
+            $columnHeaderOverrides[$lokasiColumn] = 'Lokasi';
+        }
+
+        $formatHeaderLabel = static function (string $column) use (
+            $normalizeName,
+            $headerLabelMap,
+            $columnHeaderOverrides,
+        ): string {
+            if (isset($columnHeaderOverrides[$column])) {
+                return $columnHeaderOverrides[$column];
+            }
+
+            $normalized = $normalizeName($column);
+
+            return $headerLabelMap[$normalized] ?? $column;
+        };
 
         $excludedColumns = array_filter(
             [$statusColumn, $jenisColumn, $produkColumn],
             static fn($column): bool => $column !== null,
         );
 
-        $preferredOrder = ['NoST', 'DateCreate', 'Tebal', 'Lebar', 'Panjang', 'Pcs', 'Ton', 'Lokasi'];
+        $preferredOrder = ['NoST', 'DateCreate', 'Tebal', 'Lebar', 'Panjang', 'Pcs', 'Ton'];
         $tableColumns = [];
         foreach ($preferredOrder as $candidate) {
             $matched = $findColumn($availableColumns, [$candidate]);
@@ -269,9 +313,16 @@
             }
         }
         foreach ($availableColumns as $column) {
-            if (!in_array($column, $excludedColumns, true) && !in_array($column, $tableColumns, true)) {
+            if (
+                !in_array($column, $excludedColumns, true) &&
+                !in_array($column, $tableColumns, true) &&
+                ($lokasiColumn === null || $column !== $lokasiColumn)
+            ) {
                 $tableColumns[] = $column;
             }
+        }
+        if ($lokasiColumn !== null && !in_array($lokasiColumn, $tableColumns, true)) {
+            $tableColumns[] = $lokasiColumn;
         }
 
         $sortedRows = $rowsData;
@@ -371,7 +422,7 @@
                     <tr class="headers-row">
                         <th style="width: 34px;">No</th>
                         @foreach ($tableColumns as $column)
-                            <th>{{ $column }}</th>
+                            <th>{{ $formatHeaderLabel($column) }}</th>
                         @endforeach
                     </tr>
                 </thead>
