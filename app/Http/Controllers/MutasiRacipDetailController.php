@@ -56,6 +56,7 @@ class MutasiRacipDetailController extends Controller
 
         $pdf = $pdfGenerator->render('reports.mutasi-racip-detail-pdf', [
             'reportData' => $reportData,
+            'pdf_orientation' => 'landscape',
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,

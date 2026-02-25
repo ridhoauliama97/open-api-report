@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 9px;
             line-height: 1.2;
             color: #000;
@@ -28,15 +28,21 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
+        }
+
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         table {
@@ -80,7 +86,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -92,11 +98,15 @@
         }
 
         .totals-row td {
-            background: #dde4f2;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .totals-row td.blank {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
             text-align: center;
         }
 
@@ -116,7 +126,7 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -227,7 +237,7 @@
         ];
     @endphp
 
-    <h1 class="report-title">Laporan Mutasi CC Akhir</h1>
+    <h1 class="report-title">Laporan Mutasi Cross Cut Akhir (m3)</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
     <table>
@@ -364,7 +374,7 @@
     </table>
 
     @if ($subRowsData !== [])
-        <div style="font-size: 11px; font-weight: 700; margin: 10px 0 4px 0;">Input Cross Cut Akhir Produksi</div>
+        <div class="section-title">Input Cross Cut Akhir Produksi</div>
         <table style="width: 92%;">
             <thead>
                 <tr class="headers-row">

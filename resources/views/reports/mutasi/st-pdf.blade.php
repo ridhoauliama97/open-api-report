@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -28,21 +28,21 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         table {
@@ -50,6 +50,7 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
@@ -86,7 +87,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -98,11 +99,15 @@
         }
 
         .totals-row td {
-            background: #dde4f2;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .totals-row td.blank {
-            background: transparent;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .footer-wrap {
@@ -121,11 +126,23 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
+        }
+
+        .col-no {
+            width: 32px;
+        }
+
+        .col-jenis {
+            width: 180px;
+        }
+
+        .col-uniform {
+            width: 72px;
         }
     </style>
 </head>
@@ -143,6 +160,18 @@
 
         $mainColumns = array_keys($rowsData[0] ?? []);
         $subColumns = array_keys($subRowsData[0] ?? []);
+
+        $headerLabelMap = [
+            'AdjustmentPlus' => 'Adjust (+)',
+            'AdjustmentMinus' => 'Adjust (-)',
+            'BongkarSusunPlus' => 'B.Susun (+)',
+            'BongkarSusunMinus' => 'B.Susun (-)',
+        ];
+        $isJenisColumn = static function (string $column): bool {
+            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
+
+            return str_starts_with($normalized, 'JENIS');
+        };
 
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
@@ -232,22 +261,24 @@
         }
     @endphp
 
-    <h1 class="report-title">Laporan Mutasi ST</h1>
+    <h1 class="report-title">Laporan Mutasi Sawn Timber (Ton)</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
     <table>
         <thead>
             <tr class="headers-row">
-                <th style="width: 32px;">No</th>
+                <th class="col-no">No</th>
                 @foreach ($mainColumns as $column)
-                    <th>{{ $column }}</th>
+                    <th class="{{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                        {{ $headerLabelMap[$column] ?? $column }}
+                    </th>
                 @endforeach
             </tr>
         </thead>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
+                    <td class="center col-no">{{ $loop->iteration }}</td>
                     @foreach ($mainColumns as $column)
                         @php
                             $value = $row[$column] ?? null;
@@ -258,9 +289,13 @@
                             }
                         @endphp
                         @if ($isNumeric)
-                            <td class="number">{{ $fmt($floatValue ?? 0.0, true) }}</td>
+                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                {{ $fmt($floatValue ?? 0.0, true) }}
+                            </td>
                         @else
-                            <td class="label">{{ (string) $value }}</td>
+                            <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                {{ (string) $value }}
+                            </td>
                         @endif
                     @endforeach
                 </tr>
@@ -290,19 +325,21 @@
 
     @if ($subRowsData !== [])
         <div class="section-title">Sub Report Mutasi ST</div>
-        <table style="width: 78%;">
+        <table>
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 32px;">No</th>
+                    <th class="col-no">No</th>
                     @foreach ($subColumns as $column)
-                        <th>{{ $column }}</th>
+                        <th class="{{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                            {{ $headerLabelMap[$column] ?? $column }}
+                        </th>
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 @foreach ($subRowsData as $row)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                        <td class="center col-no">{{ $loop->iteration }}</td>
                         @foreach ($subColumns as $column)
                             @php
                                 $value = $row[$column] ?? null;
@@ -313,9 +350,13 @@
                                 }
                             @endphp
                             @if ($isNumeric)
-                                <td class="number">{{ $fmt($floatValue ?? 0.0, true) }}</td>
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                    {{ $fmt($floatValue ?? 0.0, true) }}
+                                </td>
                             @else
-                                <td class="label">{{ (string) $value }}</td>
+                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                    {{ (string) $value }}
+                                </td>
                             @endif
                         @endforeach
                     </tr>

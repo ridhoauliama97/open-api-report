@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -28,21 +28,21 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         table {
@@ -86,7 +86,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -98,7 +98,9 @@
         }
 
         .totals-row td {
-            background: #dde4f2;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .totals-row td.blank {
@@ -121,7 +123,7 @@
             justify-content: space-between;
             align-items: flex-end;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -325,7 +327,7 @@
                     <td class="number">{{ $fmt($adjOut, true) }}</td>
                     <td class="number">{{ $fmt($bsOut, true) }}</td>
                     <td class="number">{{ $fmt($prodOut, true) }}</td>
-                    <td class="number" style="font-weight:700">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number">{{ $fmt($totalMasuk, true) }}</td>
                     <td class="number">{{ $fmt($adjInpt, true) }}</td>
                     <td class="number">{{ $fmt($bsInpt, true) }}</td>
                     <td class="number">{{ $fmt($mldJual, true) }}</td>
@@ -335,8 +337,8 @@
                     <td class="number">{{ $fmt($packInpt, true) }}</td>
                     <td class="number">{{ $fmt($sandInpt, true) }}</td>
                     <td class="number">{{ $fmt($s4sInpt, true) }}</td>
-                    <td class="number" style="font-weight:700">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number" style="font-weight:700">{{ $fmt($akhir, true) }}</td>
+                    <td class="number">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -349,7 +351,7 @@
                 <td class="number">{{ $fmt($mainTotals['AdjOut'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['BSOut'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['ProdOut'], true) }}</td>
-                <td class="number" style="font-weight:700">{{ $fmt($mainTotals['TotalMasuk'], true) }}</td>
+                <td class="number">{{ $fmt($mainTotals['TotalMasuk'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['AdjInpt'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['BSInpt'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['MLDJual'], true) }}</td>
@@ -359,8 +361,8 @@
                 <td class="number">{{ $fmt($mainTotals['PACKInpt'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['SANDInpt'], true) }}</td>
                 <td class="number">{{ $fmt($mainTotals['S4SInpt'], true) }}</td>
-                <td class="number" style="font-weight:700">{{ $fmt($mainTotals['TotalKeluar'], true) }}</td>
-                <td class="number" style="font-weight:700">{{ $fmt($mainTotals['Akhir'], true) }}</td>
+                <td class="number">{{ $fmt($mainTotals['TotalKeluar'], true) }}</td>
+                <td class="number">{{ $fmt($mainTotals['Akhir'], true) }}</td>
             </tr>
         </tbody>
     </table>
@@ -407,7 +409,7 @@
                     @foreach ($subSpec as $spec)
                         <td class="number">{{ $fmt($subTotals[$spec['key']], true) }}</td>
                     @endforeach
-                    <td class="number" style="font-weight:700">{{ $fmt($subTotals['Total'], true) }}</td>
+                    <td class="number">{{ $fmt($subTotals['Total'], true) }}</td>
                 </tr>
             </tbody>
         </table>

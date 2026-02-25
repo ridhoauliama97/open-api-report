@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -76,7 +76,7 @@
 
         td.number-right {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -102,13 +102,13 @@
         .footer-right {
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;

@@ -52,21 +52,21 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
+            font-size: 12px;
             color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         table {
@@ -123,7 +123,9 @@
 
 
         .totals-row td {
-            background: #dde4f2;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .totals-row td.blank {

@@ -10,6 +10,19 @@ class PdfGenerator
     /**
      * @param array<string, mixed> $data
      */
+    private function resolveOrientation(array $data): string
+    {
+        $requested = strtolower((string) ($data['pdf_orientation'] ?? ''));
+        if (in_array($requested, ['landscape', 'portrait'], true)) {
+            return $requested;
+        }
+
+        return $this->columnCount($data) >= 10 ? 'landscape' : 'portrait';
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
     private function columnCount(array $data): int
     {
         if (isset($data['pdf_column_count']) && is_numeric($data['pdf_column_count'])) {
@@ -47,7 +60,7 @@ class PdfGenerator
     public function render(string $view, array $data = []): string
     {
         $html = view($view, $data)->render();
-        $orientation = $this->columnCount($data) >= 10 ? 'landscape' : 'portrait';
+        $orientation = $this->resolveOrientation($data);
 
         $mpdf = new Mpdf([
             'tempDir' => storage_path('app/mpdf-temp'),

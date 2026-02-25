@@ -19,8 +19,8 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
-            font-size: 8px;
+            font-family: "Noto Serif", serif;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
             background: #dcdcdc;
@@ -29,14 +29,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -45,6 +45,7 @@
             border-collapse: collapse;
             page-break-inside: auto;
             background: #fff;
+            table-layout: fixed;
         }
 
         thead {
@@ -78,18 +79,12 @@
 
         .group-title {
             font-size: 10px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .cell-right {
             text-align: right;
             padding-right: 4px;
-        }
-
-        .subtotal-label {
-            text-align: right;
-            font-weight: 700;
-            padding-right: 8px;
         }
 
         .zebra tbody tr:nth-child(odd) td {
@@ -101,6 +96,10 @@
         }
 
         .zebra tbody tr:last-child td {
+            background: #ffffff;
+        }
+
+        table tbody tr:last-child td {
             background: #ffffff;
         }
 
@@ -120,17 +119,30 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
+            background: #ffffff !important;
+        }
+
+        .zebra tbody tr.totals-row td {
+            background: #ffffff !important;
+        }
+
+        .equal-cols-6 col {
+            width: 16.6667%;
+        }
+
+        .equal-cols-2 col {
+            width: 50%;
         }
     </style>
 </head>
@@ -144,10 +156,10 @@
         $endDateText = $reportData['end_date_text'] ?? $endDate;
         $fmt4 = static function ($value): string {
             $num = (float) ($value ?? 0);
-            return abs($num) < 0.0000001 ? '' : number_format($num, 4, ',', '.');
+            return abs($num) < 0.0000001 ? '' : number_format($num, 4, '.', ',');
         };
         $fmtInt = static function ($value): string {
-            return number_format((float) ($value ?? 0), 0, ',', '.');
+            return number_format((float) ($value ?? 0), 0, '.', ',');
         };
     @endphp
 
@@ -167,9 +179,18 @@
             @endphp
             <div class="section">
                 <p class="group-title">{{ $group['jenis'] }}</p>
-                <table class="zebra">
+                <table class="zebra equal-cols-6">
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
                     <thead>
                         <tr class="headers-row">
+                            <th>No</th>
                             <th>Tebal</th>
                             <th>Lebar</th>
                             <th>Panjang</th>
@@ -180,6 +201,7 @@
                     <tbody>
                         @foreach ($groupRows as $row)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td class="cell-right">{{ $fmt4($row['Tebal'] ?? 0) }}</td>
                                 <td class="cell-right">{{ $fmt4($row['Lebar'] ?? 0) }}</td>
                                 <td class="cell-right">{{ $fmt4($row['Panjang'] ?? 0) }}</td>
@@ -187,11 +209,10 @@
                                 <td class="cell-right">{{ $fmt4($row['Hasil'] ?? 0) }}</td>
                             </tr>
                         @endforeach
-                        <tr>
-                            <td colspan="3" class="subtotal-label" style="text-align: center; font-weight: bold;">
-                                Jumlah </td>
-                            <td class="cell-right" style="font-weight:bold;">{{ $fmtInt($sumBatang) }}</td>
-                            <td class="cell-right" style="font-weight:bold;">{{ $fmt4($sumHasil) }}</td>
+                        <tr class="totals-row">
+                            <td colspan="4" style="background: #ffffff;"> Jumlah </td>
+                            <td class="cell-right" style="background: #ffffff;">{{ $fmtInt($sumBatang) }}</td>
+                            <td class="cell-right" style="background: #ffffff;">{{ $fmt4($sumHasil) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -208,7 +229,11 @@
     @endif
 
     <p style="text-decoration: underline; font-weight: bold;">Summary</p>
-    <table style="width: 45%;">
+    <table class="equal-cols-2" style="width: 45%;">
+        <colgroup>
+            <col>
+            <col>
+        </colgroup>
         <tbody>
             <tr>
                 <td class="row-label">Jumlah Baris Data Seluruhnya</td>

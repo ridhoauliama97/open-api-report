@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -28,14 +28,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -44,6 +44,7 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
@@ -80,7 +81,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -92,8 +93,9 @@
         }
 
         .totals-row td {
-            background: #dde4f2;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .footer-wrap {
@@ -112,11 +114,23 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
+        }
+
+        .col-no {
+            width: 34px;
+        }
+
+        .col-jenis {
+            width: 180px;
+        }
+
+        .col-uniform {
+            width: 72px;
         }
     </style>
 </head>
@@ -276,6 +290,40 @@
 
             return $isLabelOutColumn ? number_format($value, 0, '.', '') : number_format($value, 4, '.', '');
         };
+
+        $headerLabelMap = [
+            'Sawal' => 'Saldo Awal',
+            'AdjustmentInput' => 'Adj Input',
+            'AdjustmentOutput' => 'Adj Output',
+        ];
+
+        $formatColumnHeader = static function (string $column) use ($headerLabelMap): string {
+            if (isset($headerLabelMap[$column])) {
+                return $headerLabelMap[$column];
+            }
+
+            $trimmed = trim($column);
+            if ($trimmed === '') {
+                return '';
+            }
+
+            $normalizedForCheck = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $trimmed));
+            if ($normalizedForCheck === 'JENIS') {
+                return 'Jenis';
+            }
+
+            $label = preg_replace('/[_-]+/', ' ', $trimmed);
+            $label = preg_replace('/([a-z0-9])([A-Z])/', '$1 $2', (string) $label);
+            $label = preg_replace('/\s+/', ' ', (string) $label);
+
+            return trim((string) $label);
+        };
+
+        $isJenisColumn = static function (string $column): bool {
+            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
+
+            return str_starts_with($normalized, 'JENIS');
+        };
     @endphp
 
     <h1 class="report-title">Laporan Mutasi Hasil Racip</h1>
@@ -293,16 +341,18 @@
         <table>
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 34px; text-align:center">No</th>
+                    <th class="col-no" style="text-align:center">No</th>
                     @foreach ($columns as $column)
-                        <th>{{ $column }}</th>
+                        <th class="{{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                            {{ $formatColumnHeader($column) }}
+                        </th>
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 @forelse ($group['rows'] as $row)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                        <td class="center col-no">{{ $loop->iteration }}</td>
                         @foreach ($columns as $column)
                             @php
                                 $value = $row[$column] ?? null;
@@ -314,10 +364,12 @@
                                 }
                             @endphp
                             @if ($numeric)
-                                <td class="number">
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
                                     {{ $formatByColumn($column, $floatValue) }}</td>
                             @else
-                                <td class="label">{{ (string) $value }}</td>
+                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                    {{ (string) $value }}
+                                </td>
                             @endif
                         @endforeach
                     </tr>

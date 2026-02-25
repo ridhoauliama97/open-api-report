@@ -43,7 +43,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -52,21 +52,21 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
         .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         table {
@@ -110,7 +110,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -122,7 +122,9 @@
         }
 
         .totals-row td {
-            background: #dde4f2;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .totals-row td.blank {
@@ -141,7 +143,7 @@
         }
 
         .footer-wrap {}
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -450,7 +452,7 @@
                             {{ $fmt($mainTotals['BSOutFJ'], true) }}</td>
                         <td class="number {{ $totalClass($mainTotals['FJProdOut']) }}">
                             {{ $fmt($mainTotals['FJProdOut'], true) }}</td>
-                        <td class="number {{ $totalClass($mainTotals['TotalMasuk']) }}" style="font-weight: 700">
+                        <td class="number {{ $totalClass($mainTotals['TotalMasuk']) }}">
                             {{ $fmt($mainTotals['TotalMasuk'], true) }}
                         </td>
                         <td class="number {{ $totalClass($mainTotals['AdjInpFJ']) }}">
@@ -467,9 +469,9 @@
                             {{ $fmt($mainTotals['S4SProdInpt'], true) }}</td>
                         <td class="number {{ $totalClass($mainTotals['SandProdInpt']) }}">
                             {{ $fmt($mainTotals['SandProdInpt'], true) }}</td>
-                        <td class="number {{ $totalClass($mainTotals['TotalKeluar']) }}" style="font-weight: 700">
+                        <td class="number {{ $totalClass($mainTotals['TotalKeluar']) }}">
                             {{ $fmt($mainTotals['TotalKeluar'], true) }}</td>
-                        <td class="number {{ $totalClass($mainTotals['Akhir']) }}" style="font-weight: 700">
+                        <td class="number {{ $totalClass($mainTotals['Akhir']) }}">
                             {{ $fmt($mainTotals['Akhir'], true) }}</td>
                     </tr>
                 </tbody>
@@ -507,7 +509,7 @@
                                 <td class="label">{{ $row['Jenis'] ?? '' }}</td>
                                 <td class="number">{{ $fmt($ccAkhir, true) }}</td>
                                 <td class="number">{{ $fmt($s4s, true) }}</td>
-                                <td class="number {{ $totalClass($total) }}" style="font-weight: 700">
+                                <td class="number {{ $totalClass($total) }}">
                                     {{ $fmt($total, true) }}
                                 </td>
                             </tr>
@@ -518,7 +520,7 @@
                                 {{ $fmt($subTotals['CCAkhir'], true) }}</td>
                             <td class="number {{ $totalClass($subTotals['S4S']) }}">
                                 {{ $fmt($subTotals['S4S'], true) }}</td>
-                            <td class="number {{ $totalClass($subTotals['Total']) }}" style="font-weight: 700">
+                            <td class="number {{ $totalClass($subTotals['Total']) }}">
                                 {{ $fmt($subTotals['Total'], true) }}</td>
                         </tr>
                     </tbody>

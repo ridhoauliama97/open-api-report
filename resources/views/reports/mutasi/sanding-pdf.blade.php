@@ -15,7 +15,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -24,15 +24,21 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
+        }
+
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         table {
@@ -66,7 +72,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -78,13 +84,15 @@
         }
 
         .totals-row td {
-            background: #dde4f2;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .totals-row td.blank {
-            background: transparent;
-            font-weight: 400;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .footer-wrap {
@@ -103,7 +111,7 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -342,7 +350,7 @@
     </table>
 
     @if ($subRowsData !== [])
-        <div style="margin: 10px 0 6px 0; font-size: 12px; font-weight: 700;">Input Sanding Produksi</div>
+        <div class="section-title">Input Sanding Produksi</div>
         <table style="width: 78%;">
             <thead>
                 <tr class="headers-row">

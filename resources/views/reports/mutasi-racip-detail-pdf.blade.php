@@ -19,8 +19,8 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
-            font-size: 8px;
+            font-family: "Noto Serif", serif;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -28,13 +28,13 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
@@ -44,6 +44,7 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
@@ -74,7 +75,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
         }
 
@@ -87,8 +88,9 @@
         }
 
         .totals-row td {
-            background: #fff;
-            font-weight: 700;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
         }
 
         .footer-wrap {
@@ -107,11 +109,19 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
+        }
+
+        .col-uniform {
+            width: 5.25%;
+        }
+
+        .col-jenis {
+            width: 16%;
         }
     </style>
 </head>
@@ -128,8 +138,11 @@
         $numericColumns = is_array($reportData['numeric_columns'] ?? null) ? $reportData['numeric_columns'] : [];
         $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : [];
 
-        $startText = $reportData['start_date_text'] ?? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $endText = $reportData['end_date_text'] ?? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $startText =
+            $reportData['start_date_text'] ??
+            \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
+        $endText =
+            $reportData['end_date_text'] ?? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
 
@@ -175,6 +188,25 @@
     <h1 class="report-title">Laporan Mutasi Racip Detail</h1>
     <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
     <table>
+        <colgroup>
+            <col class="col-uniform">
+            <col class="col-jenis">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+            <col class="col-uniform">
+        </colgroup>
         <thead>
             <tr class="headers-row">
                 <th rowspan="2">No</th>
@@ -182,24 +214,24 @@
                 <th rowspan="2">Tebal</th>
                 <th rowspan="2">Lebar</th>
                 <th rowspan="2">Panjang</th>
-                <th colspan="2">Sawal</th>
+                <th colspan="2">Saldo Awal</th>
                 <th colspan="4">Masuk</th>
                 <th colspan="4">Keluar</th>
                 <th colspan="2">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th>Sawal</th>
-                <th>JlhBtg</th>
+                <th>Saldo Awal</th>
+                <th>Jlh Batang</th>
                 <th>Masuk</th>
-                <th>JlhBtg</th>
+                <th>Jlh Batang</th>
                 <th>Adj Outp</th>
-                <th>JlhBtg</th>
+                <th>Jlh Batang</th>
                 <th>Keluar</th>
-                <th>JlhBtg</th>
+                <th>Jlh Batang</th>
                 <th>Adj Inp</th>
-                <th>JlhBtg</th>
+                <th>Jlh Batang</th>
                 <th>Akhir</th>
-                <th>JlhBtg</th>
+                <th>Jlh Batang</th>
             </tr>
         </thead>
         <tbody>
