@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -28,15 +28,22 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
+            font-size: 12px;
             color: #636466;
+        }
+
+        .group-title {
+            margin: 10px 0 4px 0;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
         table {
@@ -44,6 +51,7 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
@@ -74,13 +82,14 @@
         }
 
         td.label {
-            white-space: nowrap;
+            white-space: normal;
+            word-break: break-word;
         }
 
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibry","Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -107,18 +116,19 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
+
     </style>
 </head>
 
@@ -163,6 +173,19 @@
         $normalizeColumnName = static function (string $column): string {
             return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
+
+        $isNamaMesinColumn = static function (string $column) use ($normalizeColumnName): bool {
+            return $normalizeColumnName($column) === 'namamesin';
+        };
+
+        $headerLabelMap = [
+            'NoProduksi' => 'Nomor Produksi',
+            'NamaMesin' => 'Nama Mesin',
+            'LabelIn' => 'Label In',
+            'KubikIn' => 'Kubik In',
+            'LabelOut' => 'Label Out',
+            'KubikOut' => 'Kubik Out',
+        ];
 
         $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
             $normalizeColumnName,
@@ -259,6 +282,20 @@
             $rendemenColumn = 'Rendemen';
         }
 
+        $machineColumnCount = count(array_filter($columns, $isNamaMesinColumn));
+        $noWeight = 0.5; // narrower No column
+        $machineWeight = 1.5; // slightly wider Nama Mesin column
+        $effectiveUnits = max(
+            1.0,
+            $noWeight + ((count($columns) - $machineColumnCount) * 1.0) + ($machineColumnCount * $machineWeight),
+        );
+        $uniformWidth = 100 / $effectiveUnits;
+        $noWidth = $uniformWidth * $noWeight;
+        $machineWidth = $uniformWidth * $machineWeight;
+        $widthText = static function (float $width): string {
+            return number_format($width, 4, '.', '') . '%';
+        };
+
         foreach ($tableGroups as &$tableGroup) {
             foreach ($tableGroup['rows'] as &$tableRow) {
                 $rendemenValue = null;
@@ -293,22 +330,30 @@
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
     @forelse ($tableGroups as $group)
-        <p style="margin: 8px 0 4px 0; font-size: 11px; font-weight: 700; text-transform: uppercase;">
+        <p class="group-title">
             {{ $group['name'] }}
         </p>
         <table>
+            <colgroup>
+                <col style="width: {{ $widthText($noWidth) }};">
+                @foreach ($columns as $column)
+                    <col style="width: {{ $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth) }};">
+                @endforeach
+            </colgroup>
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 34px; text-align:center">No</th>
+                    <th style="text-align:center; width: {{ $widthText($noWidth) }};">No</th>
                     @foreach ($columns as $column)
-                        <th>{{ $column }}</th>
+                        <th style="width: {{ $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth) }};">
+                            {{ $headerLabelMap[$column] ?? $column }}
+                        </th>
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 @forelse ($group['rows'] as $row)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                        <td class="center" style="width: {{ $widthText($noWidth) }};">{{ $loop->iteration }}</td>
                         @foreach ($columns as $column)
                             @php
                                 $value = $row[$column] ?? null;
@@ -319,19 +364,20 @@
                                     ['labelout', 'labeloutput'],
                                     true,
                                 );
+                                $cellWidth = $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth);
                             @endphp
                             @if ($isRendemenColumn)
-                                <td class="number">
+                                <td class="number" style="width: {{ $cellWidth }};">
                                     {{ is_numeric($value) ? number_format((float) $value, 1, '.', '') . '%' : '' }}
                                 </td>
                             @elseif ($isLabelOutColumn)
-                                <td class="number">
+                                <td class="number" style="width: {{ $cellWidth }};">
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', '') : '' }}</td>
                             @elseif ($numeric)
-                                <td class="number">
+                                <td class="number" style="width: {{ $cellWidth }};">
                                     {{ is_numeric($value) ? number_format((float) $value, 4, '.', '') : '' }}</td>
                             @else
-                                <td class="label">{{ (string) $value }}</td>
+                                <td class="label" style="width: {{ $cellWidth }};">{{ (string) $value }}</td>
                             @endif
                         @endforeach
                     </tr>
