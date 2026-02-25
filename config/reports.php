@@ -270,6 +270,17 @@ return [
             ''
         )))),
     ],
+    'timeline_kayu_bulat_bulanan' => [
+        'database_connection' => env('TIMELINE_KAYU_BULAT_BULANAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TIMELINE_KAYU_BULAT_BULANAN_REPORT_PROCEDURE', 'SP_LapTimelineKBBulanan'),
+        'call_syntax' => env('TIMELINE_KAYU_BULAT_BULANAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TIMELINE_KAYU_BULAT_BULANAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('TIMELINE_KAYU_BULAT_BULANAN_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TIMELINE_KAYU_BULAT_BULANAN_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
     // Dashboard
     'dashboard_sawn_timber' => [
         'database_connection' => env('DASHBOARD_SAWN_TIMBER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

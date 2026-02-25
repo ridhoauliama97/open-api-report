@@ -148,7 +148,7 @@
                     $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.', $normalized);
+                $normalized = str_replace(',', '.');
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -169,15 +169,79 @@
             return null;
         };
 
-        $formatDateDay = static function ($value): ?string {
+        $formatMonthKey = static function ($value) use ($normalize, $endDate): ?string {
             if ($value === null || $value === '') {
                 return null;
             }
 
+            if (is_numeric($value)) {
+                $monthNum = (int) $value;
+                if ($monthNum >= 1 && $monthNum <= 12) {
+                    $year = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+
+                    return sprintf('%s-%02d', $year, $monthNum);
+                }
+            }
+
+            $raw = trim((string) $value);
+            if (preg_match('/^\d{1,2}$/', $raw) === 1) {
+                $monthNum = (int) $raw;
+                if ($monthNum >= 1 && $monthNum <= 12) {
+                    $year = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+
+                    return sprintf('%s-%02d', $year, $monthNum);
+                }
+            }
+
+            $monthAliases = [
+                'jan' => 1,
+                'januari' => 1,
+                'feb' => 2,
+                'februari' => 2,
+                'mar' => 3,
+                'maret' => 3,
+                'apr' => 4,
+                'april' => 4,
+                'mei' => 5,
+                'may' => 5,
+                'jun' => 6,
+                'juni' => 6,
+                'jul' => 7,
+                'juli' => 7,
+                'agu' => 8,
+                'agustus' => 8,
+                'aug' => 8,
+                'sep' => 9,
+                'sept' => 9,
+                'september' => 9,
+                'okt' => 10,
+                'oct' => 10,
+                'oktober' => 10,
+                'nov' => 11,
+                'november' => 11,
+                'des' => 12,
+                'dec' => 12,
+                'desember' => 12,
+            ];
+            $normalized = $normalize($raw);
+            if (isset($monthAliases[$normalized])) {
+                $year = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+
+                return sprintf('%s-%02d', $year, $monthAliases[$normalized]);
+            }
+
             try {
-                return \Carbon\Carbon::parse((string) $value)->format('d');
+                return \Carbon\Carbon::parse((string) $value)->format('Y-m');
             } catch (\Throwable $exception) {
                 return null;
+            }
+        };
+
+        $formatMonthLabel = static function (string $monthKey): string {
+            try {
+                return \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M y');
+            } catch (\Throwable $exception) {
+                return $monthKey;
             }
         };
 
@@ -186,12 +250,12 @@
                 return '';
             }
 
-            return number_format($value, 2, '.', '');
+            return number_format($value, 2, '.', ',');
         };
 
         $columns = array_keys($rowsData[0] ?? []);
         $supplierColumn = $findColumn($columns, ['NmSupplier', 'NamaSupplier', 'Supplier', 'Nama Supplier']);
-        $dateColumn = $findColumn($columns, ['DateCreate', 'Tanggal', 'Tgl', 'Date']);
+        $dateColumn = $findColumn($columns, ['DateCreate', 'Tanggal', 'Tgl', 'Date', 'Bulan']);
 
         $valueColumn = $findColumn($columns, ['KBTon', 'Tonase', 'Ton', 'Berat', 'TotalTon', 'Total', 'Qty', 'Jumlah']);
         if ($valueColumn === null) {
@@ -200,7 +264,19 @@
                 if (
                     in_array(
                         $key,
-                        ['datecreate', 'tanggal', 'tgl', 'supplier', 'nmsupplier', 'namasupplier', 'tahun', 'year', 'ranking', 'rank'],
+                        [
+                            'datecreate',
+                            'tanggal',
+                            'tgl',
+                            'bulan',
+                            'supplier',
+                            'nmsupplier',
+                            'namasupplier',
+                            'tahun',
+                            'year',
+                            'ranking',
+                            'rank',
+                        ],
                         true,
                     )
                 ) {
@@ -220,16 +296,16 @@
         $canPivot = $supplierColumn !== null && $dateColumn !== null && $valueColumn !== null;
 
         $pivotRows = [];
-        $dayOrderMap = [];
-        $grandByDay = [];
+        $monthKeys = [];
+        $grandByMonth = [];
         $grandTotal = 0.0;
 
         if ($canPivot) {
             foreach ($rowsData as $row) {
                 $supplier = trim((string) ($row[$supplierColumn] ?? ''));
                 $supplier = $supplier !== '' ? $supplier : 'Tanpa Supplier';
-                $day = $formatDateDay($row[$dateColumn] ?? null);
-                if ($day === null) {
+                $monthKey = $formatMonthKey($row[$dateColumn] ?? null);
+                if ($monthKey === null) {
                     continue;
                 }
 
@@ -238,22 +314,26 @@
                 if (!isset($pivotRows[$supplier])) {
                     $pivotRows[$supplier] = [
                         'supplier' => $supplier,
-                        'days' => [],
+                        'months' => [],
                         'total' => 0.0,
                     ];
                 }
 
-                $pivotRows[$supplier]['days'][$day] = ($pivotRows[$supplier]['days'][$day] ?? 0.0) + $value;
+                $pivotRows[$supplier]['months'][$monthKey] =
+                    ($pivotRows[$supplier]['months'][$monthKey] ?? 0.0) + $value;
                 $pivotRows[$supplier]['total'] += $value;
 
-                $grandByDay[$day] = ($grandByDay[$day] ?? 0.0) + $value;
+                $grandByMonth[$monthKey] = ($grandByMonth[$monthKey] ?? 0.0) + $value;
                 $grandTotal += $value;
-                $dayOrderMap[(int) $day] = $day;
+                $monthKeys[$monthKey] = true;
             }
         }
 
-        ksort($dayOrderMap);
-        $dayHeaders = array_values($dayOrderMap);
+        $displayYear = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+        $monthHeaders = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $monthHeaders[] = sprintf('%s-%02d', $displayYear, $month);
+        }
         $pivotRows = array_values($pivotRows);
         usort(
             $pivotRows,
@@ -261,22 +341,25 @@
         );
     @endphp
 
-    <h1 class="report-title">Laporan Time Line Kayu Bulat - Harian (JTG/PLI)</h1>
+    <h1 class="report-title">Laporan Time Line Kayu Bulat - Bulanan (JTG/PLI)</h1>
     <p class="report-subtitle">
         Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d M Y') }} s/d
         {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
     </p>
 
-    @if ($canPivot && $dayHeaders !== [])
+    @if ($canPivot && $monthHeaders !== [])
         <table>
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 34px;">No</th>
-                    <th style="text-align: left; width: 170px;">Nama Supplier</th>
-                    @foreach ($dayHeaders as $day)
-                        <th>{{ $day }}</th>
+                    <th rowspan="2" style="width: 34px;">No</th>
+                    <th rowspan="2" style="text-align: center; width: 170px;">Nama Supplier</th>
+                    <th colspan="{{ count($monthHeaders) }}">{{ $displayYear }}</th>
+                    <th rowspan="2">Total</th>
+                </tr>
+                <tr class="headers-row">
+                    @foreach ($monthHeaders as $monthKey)
+                        <th>{{ (int) substr($monthKey, -2) }}</th>
                     @endforeach
-                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -284,23 +367,23 @@
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $loop->iteration }}</td>
                         <td style="text-align: left;">{{ $row['supplier'] }}</td>
-                        @foreach ($dayHeaders as $day)
-                            <td class="number-right">{{ $formatNumber($row['days'][$day] ?? null) }}</td>
+                        @foreach ($monthHeaders as $monthKey)
+                            <td class="number-right">{{ $formatNumber($row['months'][$monthKey] ?? null) }}</td>
                         @endforeach
                         <td class="number-right" style="font-weight: bold">{{ $formatNumber($row['total'] ?? null) }}
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ count($dayHeaders) + 3 }}" class="center">Tidak ada data.</td>
+                        <td colspan="{{ count($monthHeaders) + 4 }}" class="center">Tidak ada data.</td>
                     </tr>
                 @endforelse
                 @if ($pivotRows !== [])
                     <tr class="totals-row">
-                        <td colspan="2">Total </td>
-                        @foreach ($dayHeaders as $day)
+                        <td colspan="2">Total :</td>
+                        @foreach ($monthHeaders as $monthKey)
                             <td class="number-right">
-                                {{ $formatNumber($grandByDay[$day] ?? null) }}</td>
+                                {{ $formatNumber($grandByMonth[$monthKey] ?? null) }}</td>
                         @endforeach
                         <td class="number-right">{{ $formatNumber($grandTotal) }}</td>
                     </tr>

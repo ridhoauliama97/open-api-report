@@ -258,6 +258,12 @@
                                     Laporan Time Line Kayu Bulat - Harian (JTG/PLI)
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.timeline-kayu-bulat-bulanan.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Time Line Kayu Bulat - Bulanan (JTG/PLI)
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
