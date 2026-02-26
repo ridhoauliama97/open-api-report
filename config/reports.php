@@ -307,6 +307,17 @@ return [
             ''
         )))),
     ],
+    'umur_kayu_bulat_rambung' => [
+        'database_connection' => env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_PROCEDURE', 'SPWps_LapUmurKayuBulatRambung'),
+        'call_syntax' => env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_KAYU_BULAT_RAMBUNG_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
     // Dashboard
     'dashboard_sawn_timber' => [
         'database_connection' => env('DASHBOARD_SAWN_TIMBER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

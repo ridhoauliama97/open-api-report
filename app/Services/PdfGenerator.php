@@ -17,7 +17,7 @@ class PdfGenerator
             return $requested;
         }
 
-        return $this->columnCount($data) >= 10 ? 'landscape' : 'portrait';
+        return $this->columnCount($data) > 10 ? 'landscape' : 'portrait';
     }
 
     /**
