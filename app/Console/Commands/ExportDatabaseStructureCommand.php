@@ -6,6 +6,12 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
+/**
+ * Artisan command untuk mengekspor struktur database SQL Server ke file JSON dan README.
+ *
+ * Data yang diekspor meliputi ringkasan schema, tabel beserta kolom + PK/FK,
+ * views, functions, serta stored procedures (parameter, dependency, dan opsional definisi SQL).
+ */
 class ExportDatabaseStructureCommand extends Command
 {
     protected $signature = 'db:export-structure
@@ -16,7 +22,9 @@ class ExportDatabaseStructureCommand extends Command
     protected $description = 'Export struktur database lengkap (tables, columns, PK/FK, views, procedures, functions, dependencies).';
 
     /**
-     * Execute handle logic.
+     * Menjalankan proses export struktur database ke folder output.
+     *
+     * @return int Exit code command (`self::SUCCESS` atau `self::FAILURE`)
      */
     public function handle(): int
     {
@@ -28,7 +36,7 @@ class ExportDatabaseStructureCommand extends Command
             $connection = DB::connection($connectionName);
             $connection->getPdo();
         } catch (\Throwable $exception) {
-            $this->error('Koneksi database gagal: '.$exception->getMessage());
+            $this->error('Koneksi database gagal: ' . $exception->getMessage());
 
             return self::FAILURE;
         }
@@ -196,7 +204,7 @@ class ExportDatabaseStructureCommand extends Command
 
         $tablesMap = [];
         foreach ($tables as $table) {
-            $key = $table->schema_name.'.'.$table->table_name;
+            $key = $table->schema_name . '.' . $table->table_name;
             $tablesMap[$key] = [
                 'schema' => $table->schema_name,
                 'table' => $table->table_name,
@@ -207,7 +215,7 @@ class ExportDatabaseStructureCommand extends Command
         }
 
         foreach ($columns as $column) {
-            $key = $column->schema_name.'.'.$column->table_name;
+            $key = $column->schema_name . '.' . $column->table_name;
             $tablesMap[$key]['columns'][] = [
                 'name' => $column->column_name,
                 'data_type' => $this->formatType($column->data_type, $column->max_length, $column->precision, $column->scale),
@@ -217,7 +225,7 @@ class ExportDatabaseStructureCommand extends Command
         }
 
         foreach ($primaryKeys as $primaryKey) {
-            $key = $primaryKey->schema_name.'.'.$primaryKey->table_name;
+            $key = $primaryKey->schema_name . '.' . $primaryKey->table_name;
             $tablesMap[$key]['primary_key'][] = [
                 'name' => $primaryKey->pk_name,
                 'column' => $primaryKey->column_name,
@@ -226,11 +234,11 @@ class ExportDatabaseStructureCommand extends Command
         }
 
         foreach ($foreignKeys as $foreignKey) {
-            $key = $foreignKey->parent_schema.'.'.$foreignKey->parent_table;
+            $key = $foreignKey->parent_schema . '.' . $foreignKey->parent_table;
             $tablesMap[$key]['foreign_keys'][] = [
                 'name' => $foreignKey->fk_name,
                 'column' => $foreignKey->parent_column,
-                'references' => $foreignKey->referenced_schema.'.'.$foreignKey->referenced_table.'.'.$foreignKey->referenced_column,
+                'references' => $foreignKey->referenced_schema . '.' . $foreignKey->referenced_table . '.' . $foreignKey->referenced_column,
                 'ordinal' => (int) $foreignKey->constraint_column_id,
             ];
         }
@@ -303,12 +311,12 @@ class ExportDatabaseStructureCommand extends Command
         ];
 
         $paths = [
-            'summary' => $outputDir.'/'.$slug.'_summary.json',
-            'tables' => $outputDir.'/'.$slug.'_tables.json',
-            'views' => $outputDir.'/'.$slug.'_views.json',
-            'functions' => $outputDir.'/'.$slug.'_functions.json',
-            'procedures' => $outputDir.'/'.$slug.'_procedures.json',
-            'readme' => $outputDir.'/'.$slug.'_README.md',
+            'summary' => $outputDir . '/' . $slug . '_summary.json',
+            'tables' => $outputDir . '/' . $slug . '_tables.json',
+            'views' => $outputDir . '/' . $slug . '_views.json',
+            'functions' => $outputDir . '/' . $slug . '_functions.json',
+            'procedures' => $outputDir . '/' . $slug . '_procedures.json',
+            'readme' => $outputDir . '/' . $slug . '_README.md',
         ];
 
         file_put_contents($paths['summary'], json_encode($summary, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -326,18 +334,27 @@ class ExportDatabaseStructureCommand extends Command
         file_put_contents($paths['readme'], $this->buildReadme($summary, $paths, $withDefinitions));
 
         $this->info('Export selesai.');
-        $this->line('- '.$paths['summary']);
-        $this->line('- '.$paths['tables']);
-        $this->line('- '.$paths['views']);
-        $this->line('- '.$paths['functions']);
-        $this->line('- '.$paths['procedures']);
-        $this->line('- '.$paths['readme']);
+        $this->line('- ' . $paths['summary']);
+        $this->line('- ' . $paths['tables']);
+        $this->line('- ' . $paths['views']);
+        $this->line('- ' . $paths['functions']);
+        $this->line('- ' . $paths['procedures']);
+        $this->line('- ' . $paths['readme']);
 
         return self::SUCCESS;
     }
 
     /**
-     * Execute format type logic.
+     * Memformat tipe data SQL Server agar lebih mudah dibaca pada hasil export.
+     *
+     * Menangani tipe dengan panjang karakter/binary dan tipe numerik presisi-skala.
+     *
+     * @param string|null $baseType Nama base type dari metadata SQL Server.
+     * @param int|null $maxLength Panjang maksimum untuk tipe karakter/binary.
+     * @param int|null $precision Nilai presisi untuk tipe decimal/numeric.
+     * @param int|null $scale Nilai skala untuk tipe decimal/numeric.
+     *
+     * @return string Tipe data yang sudah diformat (contoh: `nvarchar(100)`, `decimal(18,2)`).
      */
     private function formatType(?string $baseType, ?int $maxLength, ?int $precision, ?int $scale): string
     {
@@ -361,32 +378,37 @@ class ExportDatabaseStructureCommand extends Command
     }
 
     /**
+     * Membangun konten README markdown untuk hasil export.
+     *
      * @param array<string, mixed> $summary
      * @param array<string, string> $paths
+     * @param bool $withDefinitions Menandakan apakah definisi procedure disertakan pada export.
+     *
+     * @return string Konten README dalam format markdown.
      */
     private function buildReadme(array $summary, array $paths, bool $withDefinitions): string
     {
         $lines = [];
         $lines[] = '# Database Structure Export';
         $lines[] = '';
-        $lines[] = '- Generated at: `'.$summary['generated_at'].'`';
-        $lines[] = '- Connection: `'.$summary['connection'].'`';
-        $lines[] = '- Database: `'.$summary['database'].'`';
+        $lines[] = '- Generated at: `' . $summary['generated_at'] . '`';
+        $lines[] = '- Connection: `' . $summary['connection'] . '`';
+        $lines[] = '- Database: `' . $summary['database'] . '`';
         $lines[] = '';
         $lines[] = '## Totals';
-        $lines[] = '- Schemas: '.$summary['totals']['schemas'];
-        $lines[] = '- Tables: '.$summary['totals']['tables'];
-        $lines[] = '- Views: '.$summary['totals']['views'];
-        $lines[] = '- Stored Procedures: '.$summary['totals']['procedures'];
-        $lines[] = '- Functions: '.$summary['totals']['functions'];
+        $lines[] = '- Schemas: ' . $summary['totals']['schemas'];
+        $lines[] = '- Tables: ' . $summary['totals']['tables'];
+        $lines[] = '- Views: ' . $summary['totals']['views'];
+        $lines[] = '- Stored Procedures: ' . $summary['totals']['procedures'];
+        $lines[] = '- Functions: ' . $summary['totals']['functions'];
         $lines[] = '';
         $lines[] = '## Files';
-        $lines[] = '- Summary: `'.$paths['summary'].'`';
-        $lines[] = '- Tables + columns + PK/FK: `'.$paths['tables'].'`';
-        $lines[] = '- Views: `'.$paths['views'].'`';
-        $lines[] = '- Functions: `'.$paths['functions'].'`';
-        $lines[] = '- Procedures + params + dependencies'.($withDefinitions ? ' + definition' : '').': `'.$paths['procedures'].'`';
+        $lines[] = '- Summary: `' . $paths['summary'] . '`';
+        $lines[] = '- Tables + columns + PK/FK: `' . $paths['tables'] . '`';
+        $lines[] = '- Views: `' . $paths['views'] . '`';
+        $lines[] = '- Functions: `' . $paths['functions'] . '`';
+        $lines[] = '- Procedures + params + dependencies' . ($withDefinitions ? ' + definition' : '') . ': `' . $paths['procedures'] . '`';
 
-        return implode(PHP_EOL, $lines).PHP_EOL;
+        return implode(PHP_EOL, $lines) . PHP_EOL;
     }
 }

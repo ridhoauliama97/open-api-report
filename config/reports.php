@@ -185,6 +185,14 @@ return [
         'query' => env('STOCK_RACIP_KAYU_LAT_REPORT_QUERY'),
         'parameter_count' => (int) env('STOCK_RACIP_KAYU_LAT_REPORT_PARAMETER_COUNT', 1),
     ],
+    'hasil_output_racip_harian' => [
+        'database_connection' => env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_PROCEDURE', 'SP_LapHasilOutputRacipHarian'),
+        'call_syntax' => env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
     'penerimaan_kayu_bulat_bulanan_per_supplier' => [
         'database_connection' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_PROCEDURE', 'SP_LaPenerimaanKayuBulatBulananPerSupplier'),
@@ -194,6 +202,13 @@ return [
         'sub_query' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'penerimaan_kayu_bulat_per_supplier_group' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_PROCEDURE', 'SP_LapPenerimaanKBPerSupplierGroup'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_EXPECTED_COLUMNS', '')))),
     ],
     'stock_opname_kayu_bulat' => [
         'database_connection' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

@@ -211,6 +211,12 @@
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.penerimaan-per-supplier-group.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Penerimaan Kayu Bulat Per-Supplier Berdasarkan Group Kayu
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.stock-opname.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Stock Opname Kayu Bulat
@@ -250,6 +256,12 @@
                                 <a href="{{ route('reports.stock-racip-kayu-lat.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Stok Racip Kayu Lat
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.hasil-output-racip-harian.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Hasil Output Racip Harian
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">

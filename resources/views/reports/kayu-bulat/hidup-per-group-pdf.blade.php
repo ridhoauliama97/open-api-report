@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -35,7 +35,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
@@ -66,7 +66,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -93,13 +93,13 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
