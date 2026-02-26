@@ -276,6 +276,12 @@
                                     Laporan Time Line Kayu Bulat - Bulanan (JTG/PLI)
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.umur-kayu-bulat-non-rambung.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Umur Kayu Bulat (NON RAMBUNG)
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

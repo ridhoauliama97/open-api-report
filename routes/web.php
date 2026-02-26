@@ -32,6 +32,7 @@ use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
+use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\StockRacipKayuLatController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
@@ -150,6 +151,9 @@ Route::get('/reports/kayu-bulat/timeline-kayu-bulat-bulanan', [TimelineKayuBulat
 Route::post('/reports/kayu-bulat/timeline-kayu-bulat-bulanan/download', [TimelineKayuBulatBulananController::class, 'download'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.download');
 Route::post('/reports/kayu-bulat/timeline-kayu-bulat-bulanan/preview-pdf', [TimelineKayuBulatBulananController::class, 'previewPdf'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.preview-pdf');
 Route::post('/reports/kayu-bulat/timeline-kayu-bulat-bulanan/preview', [TimelineKayuBulatBulananController::class, 'preview'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.preview');
+Route::get('/reports/kayu-bulat/umur-kayu-bulat-non-rambung', [UmurKayuBulatNonRambungController::class, 'index'])->name('reports.kayu-bulat.umur-kayu-bulat-non-rambung.index');
+Route::post('/reports/kayu-bulat/umur-kayu-bulat-non-rambung/download', [UmurKayuBulatNonRambungController::class, 'download'])->name('reports.kayu-bulat.umur-kayu-bulat-non-rambung.download');
+Route::post('/reports/kayu-bulat/umur-kayu-bulat-non-rambung/preview', [UmurKayuBulatNonRambungController::class, 'preview'])->name('reports.kayu-bulat.umur-kayu-bulat-non-rambung.preview');
 Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
 Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
 Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');
