@@ -22,6 +22,7 @@ use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiRacipDetailController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
+use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
@@ -119,6 +120,9 @@ Route::post('/reports/hasil-output-racip-harian/preview', [HasilOutputRacipHaria
 Route::get('/reports/kayu-bulat/penerimaan-bulanan-per-supplier', [PenerimaanKayuBulatBulananPerSupplierController::class, 'index'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.index');
 Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/download', [PenerimaanKayuBulatBulananPerSupplierController::class, 'download'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.download');
 Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/preview', [PenerimaanKayuBulatBulananPerSupplierController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.preview');
+Route::get('/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'index'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.index');
+Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik/download', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'download'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.download');
+Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik/preview', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.preview');
 Route::get('/reports/kayu-bulat/penerimaan-per-supplier-group', [PenerimaanKayuBulatPerSupplierGroupController::class, 'index'])->name('reports.kayu-bulat.penerimaan-per-supplier-group.index');
 Route::post('/reports/kayu-bulat/penerimaan-per-supplier-group/download', [PenerimaanKayuBulatPerSupplierGroupController::class, 'download'])->name('reports.kayu-bulat.penerimaan-per-supplier-group.download');
 Route::post('/reports/kayu-bulat/penerimaan-per-supplier-group/preview', [PenerimaanKayuBulatPerSupplierGroupController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-per-supplier-group.preview');

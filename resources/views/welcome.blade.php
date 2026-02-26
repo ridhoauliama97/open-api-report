@@ -211,6 +211,12 @@
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Penerimaan Kayu Bulat Per Supplier Bulanan (Grafik)
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.penerimaan-per-supplier-group.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Penerimaan Kayu Bulat Per-Supplier Berdasarkan Group Kayu
