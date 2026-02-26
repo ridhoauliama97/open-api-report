@@ -47,143 +47,340 @@ use App\Http\Controllers\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
-Route::get('/dashboard/sawn-timber', [DashboardSawnTimberController::class, 'index'])->name('dashboard.sawn-timber.index');
-Route::get('/dashboard/sawn-timber/preview', [DashboardSawnTimberController::class, 'preview'])->name('dashboard.sawn-timber.preview');
-Route::match(['get', 'post'], '/dashboard/sawn-timber/download', [DashboardSawnTimberController::class, 'download'])->name('dashboard.sawn-timber.download');
-Route::get('/reports/sawn-timber/stock-st-basah', [StockSTBasahController::class, 'index'])->name('reports.sawn-timber.stock-st-basah.index');
-Route::post('/reports/sawn-timber/stock-st-basah/download', [StockSTBasahController::class, 'download'])->name('reports.sawn-timber.stock-st-basah.download');
-Route::post('/reports/sawn-timber/stock-st-basah/preview-pdf', [StockSTBasahController::class, 'previewPdf'])->name('reports.sawn-timber.stock-st-basah.preview-pdf');
-Route::post('/reports/sawn-timber/stock-st-basah/preview', [StockSTBasahController::class, 'preview'])->name('reports.sawn-timber.stock-st-basah.preview');
-Route::get('/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', [PenerimaanStSawmillKgController::class, 'index'])->name('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.index');
-Route::post('/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/download', [PenerimaanStSawmillKgController::class, 'download'])->name('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.download');
-Route::post('/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/preview-pdf', [PenerimaanStSawmillKgController::class, 'previewPdf'])->name('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.preview-pdf');
-Route::post('/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/preview', [PenerimaanStSawmillKgController::class, 'preview'])->name('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.preview');
-Route::get('/reports/sawn-timber/lembar-tally-hasil-sawmill', [LembarTallyHasilSawmillController::class, 'index'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.index');
-Route::post('/reports/sawn-timber/lembar-tally-hasil-sawmill/download', [LembarTallyHasilSawmillController::class, 'download'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.download');
-Route::post('/reports/sawn-timber/lembar-tally-hasil-sawmill/preview-pdf', [LembarTallyHasilSawmillController::class, 'previewPdf'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.preview-pdf');
-Route::post('/reports/sawn-timber/lembar-tally-hasil-sawmill/preview', [LembarTallyHasilSawmillController::class, 'preview'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.preview');
-Route::get('/reports/sawn-timber/umur-sawn-timber-detail-ton', [UmurSawnTimberDetailTonController::class, 'index'])->name('reports.sawn-timber.umur-sawn-timber-detail-ton.index');
-Route::post('/reports/sawn-timber/umur-sawn-timber-detail-ton/download', [UmurSawnTimberDetailTonController::class, 'download'])->name('reports.sawn-timber.umur-sawn-timber-detail-ton.download');
-Route::post('/reports/sawn-timber/umur-sawn-timber-detail-ton/preview', [UmurSawnTimberDetailTonController::class, 'preview'])->name('reports.sawn-timber.umur-sawn-timber-detail-ton.preview');
-Route::get('/reports/sawn-timber/st-sawmill-masuk-per-group', [StSawmillMasukPerGroupController::class, 'index'])->name('reports.sawn-timber.st-sawmill-masuk-per-group.index');
-Route::post('/reports/sawn-timber/st-sawmill-masuk-per-group/download', [StSawmillMasukPerGroupController::class, 'download'])->name('reports.sawn-timber.st-sawmill-masuk-per-group.download');
-Route::post('/reports/sawn-timber/st-sawmill-masuk-per-group/preview', [StSawmillMasukPerGroupController::class, 'preview'])->name('reports.sawn-timber.st-sawmill-masuk-per-group.preview');
 
-Route::get('/reports/mutasi/barang-jadi', [MutasiBarangJadiController::class, 'index'])->name('reports.mutasi.barang-jadi.index');
-Route::post('/reports/mutasi/barang-jadi/download', [MutasiBarangJadiController::class, 'download'])->name('reports.mutasi.barang-jadi.download');
-Route::post('/reports/mutasi/barang-jadi/preview', [MutasiBarangJadiController::class, 'preview'])->name('reports.mutasi.barang-jadi.preview');
-Route::get('/reports/mutasi/finger-joint', [MutasiFingerJointController::class, 'index'])->name('reports.mutasi.finger-joint.index');
-Route::post('/reports/mutasi/finger-joint/download', [MutasiFingerJointController::class, 'download'])->name('reports.mutasi.finger-joint.download');
-Route::post('/reports/mutasi/finger-joint/preview', [MutasiFingerJointController::class, 'preview'])->name('reports.mutasi.finger-joint.preview');
-Route::get('/reports/mutasi/moulding', [MutasiMouldingController::class, 'index'])->name('reports.mutasi.moulding.index');
-Route::post('/reports/mutasi/moulding/download', [MutasiMouldingController::class, 'download'])->name('reports.mutasi.moulding.download');
-Route::post('/reports/mutasi/moulding/preview', [MutasiMouldingController::class, 'preview'])->name('reports.mutasi.moulding.preview');
-Route::get('/reports/mutasi/laminating', [MutasiLaminatingController::class, 'index'])->name('reports.mutasi.laminating.index');
-Route::post('/reports/mutasi/laminating/download', [MutasiLaminatingController::class, 'download'])->name('reports.mutasi.laminating.download');
-Route::post('/reports/mutasi/laminating/preview', [MutasiLaminatingController::class, 'preview'])->name('reports.mutasi.laminating.preview');
-Route::get('/reports/mutasi/sanding', [MutasiSandingController::class, 'index'])->name('reports.mutasi.sanding.index');
-Route::post('/reports/mutasi/sanding/download', [MutasiSandingController::class, 'download'])->name('reports.mutasi.sanding.download');
-Route::post('/reports/mutasi/sanding/preview', [MutasiSandingController::class, 'preview'])->name('reports.mutasi.sanding.preview');
-Route::get('/reports/mutasi/s4s', [MutasiS4SController::class, 'index'])->name('reports.mutasi.s4s.index');
-Route::post('/reports/mutasi/s4s/download', [MutasiS4SController::class, 'download'])->name('reports.mutasi.s4s.download');
-Route::post('/reports/mutasi/s4s/preview', [MutasiS4SController::class, 'preview'])->name('reports.mutasi.s4s.preview');
-Route::get('/reports/mutasi/st', [MutasiSTController::class, 'index'])->name('reports.mutasi.st.index');
-Route::post('/reports/mutasi/st/download', [MutasiSTController::class, 'download'])->name('reports.mutasi.st.download');
-Route::post('/reports/mutasi/st/preview', [MutasiSTController::class, 'preview'])->name('reports.mutasi.st.preview');
-Route::get('/reports/mutasi/cca-akhir', [MutasiCCAkhirController::class, 'index'])->name('reports.mutasi.cca-akhir.index');
-Route::post('/reports/mutasi/cca-akhir/download', [MutasiCCAkhirController::class, 'download'])->name('reports.mutasi.cca-akhir.download');
-Route::post('/reports/mutasi/cca-akhir/preview', [MutasiCCAkhirController::class, 'preview'])->name('reports.mutasi.cca-akhir.preview');
-Route::get('/reports/mutasi/reproses', [MutasiReprosesController::class, 'index'])->name('reports.mutasi.reproses.index');
-Route::post('/reports/mutasi/reproses/download', [MutasiReprosesController::class, 'download'])->name('reports.mutasi.reproses.download');
-Route::post('/reports/mutasi/reproses/preview', [MutasiReprosesController::class, 'preview'])->name('reports.mutasi.reproses.preview');
-Route::get('/reports/mutasi/kayu-bulat', [MutasiKayuBulatController::class, 'index'])->name('reports.mutasi.kayu-bulat.index');
-Route::post('/reports/mutasi/kayu-bulat/download', [MutasiKayuBulatController::class, 'download'])->name('reports.mutasi.kayu-bulat.download');
-Route::post('/reports/mutasi/kayu-bulat/preview', [MutasiKayuBulatController::class, 'preview'])->name('reports.mutasi.kayu-bulat.preview');
-Route::get('/reports/mutasi/kayu-bulat-v2', [MutasiKayuBulatV2Controller::class, 'index'])->name('reports.mutasi.kayu-bulat-v2.index');
-Route::post('/reports/mutasi/kayu-bulat-v2/download', [MutasiKayuBulatV2Controller::class, 'download'])->name('reports.mutasi.kayu-bulat-v2.download');
-Route::post('/reports/mutasi/kayu-bulat-v2/preview', [MutasiKayuBulatV2Controller::class, 'preview'])->name('reports.mutasi.kayu-bulat-v2.preview');
-Route::get('/reports/mutasi/kayu-bulat-kgv2', [MutasiKayuBulatKGV2Controller::class, 'index'])->name('reports.mutasi.kayu-bulat-kgv2.index');
-Route::post('/reports/mutasi/kayu-bulat-kgv2/download', [MutasiKayuBulatKGV2Controller::class, 'download'])->name('reports.mutasi.kayu-bulat-kgv2.download');
-Route::post('/reports/mutasi/kayu-bulat-kgv2/preview', [MutasiKayuBulatKGV2Controller::class, 'preview'])->name('reports.mutasi.kayu-bulat-kgv2.preview');
-Route::get('/reports/mutasi/kayu-bulat-kg', [MutasiKayuBulatKGController::class, 'index'])->name('reports.mutasi.kayu-bulat-kg.index');
-Route::post('/reports/mutasi/kayu-bulat-kg/download', [MutasiKayuBulatKGController::class, 'download'])->name('reports.mutasi.kayu-bulat-kg.download');
-Route::post('/reports/mutasi/kayu-bulat-kg/preview', [MutasiKayuBulatKGController::class, 'preview'])->name('reports.mutasi.kayu-bulat-kg.preview');
-Route::get('/reports/kayu-bulat/saldo', [SaldoKayuBulatController::class, 'index'])->name('reports.kayu-bulat.saldo.index');
-Route::post('/reports/kayu-bulat/saldo/download', [SaldoKayuBulatController::class, 'download'])->name('reports.kayu-bulat.saldo.download');
-Route::post('/reports/kayu-bulat/saldo/preview', [SaldoKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.saldo.preview');
-Route::get('/reports/kayu-bulat/rekap-pembelian', [RekapPembelianKayuBulatController::class, 'index'])->name('reports.kayu-bulat.rekap-pembelian.index');
-Route::get('/reports/kayu-bulat/rekap-pembelian/preview', [RekapPembelianKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.rekap-pembelian.preview');
-Route::match(['get', 'post'], '/reports/kayu-bulat/rekap-pembelian/download', [RekapPembelianKayuBulatController::class, 'download'])->name('reports.kayu-bulat.rekap-pembelian.download');
-Route::get('/reports/kayu-bulat/target-masuk-bb', [TargetMasukBBController::class, 'index'])->name('reports.kayu-bulat.target-masuk-bb.index');
-Route::match(['get', 'post'], '/reports/kayu-bulat/target-masuk-bb/download', [TargetMasukBBController::class, 'download'])->name('reports.kayu-bulat.target-masuk-bb.download');
-Route::get('/reports/kayu-bulat/target-masuk-bb/preview', [TargetMasukBBController::class, 'preview'])->name('reports.kayu-bulat.target-masuk-bb.preview');
-Route::get('/reports/kayu-bulat/target-masuk-bb-bulanan', [TargetMasukBBBulananController::class, 'index'])->name('reports.kayu-bulat.target-masuk-bb-bulanan.index');
-Route::match(['get', 'post'], '/reports/kayu-bulat/target-masuk-bb-bulanan/download', [TargetMasukBBBulananController::class, 'download'])->name('reports.kayu-bulat.target-masuk-bb-bulanan.download');
-Route::get('/reports/kayu-bulat/target-masuk-bb-bulanan/preview', [TargetMasukBBBulananController::class, 'preview'])->name('reports.kayu-bulat.target-masuk-bb-bulanan.preview');
-Route::get('/reports/stock-racip-kayu-lat', [StockRacipKayuLatController::class, 'index'])->name('reports.stock-racip-kayu-lat.index');
-Route::match(['get', 'post'], '/reports/stock-racip-kayu-lat/download', [StockRacipKayuLatController::class, 'download'])->name('reports.stock-racip-kayu-lat.download');
-Route::get('/reports/stock-racip-kayu-lat/preview', [StockRacipKayuLatController::class, 'preview'])->name('reports.stock-racip-kayu-lat.preview');
-Route::get('/reports/hasil-output-racip-harian', [HasilOutputRacipHarianController::class, 'index'])->name('reports.hasil-output-racip-harian.index');
-Route::post('/reports/hasil-output-racip-harian/download', [HasilOutputRacipHarianController::class, 'download'])->name('reports.hasil-output-racip-harian.download');
-Route::post('/reports/hasil-output-racip-harian/preview', [HasilOutputRacipHarianController::class, 'preview'])->name('reports.hasil-output-racip-harian.preview');
-Route::get('/reports/kayu-bulat/penerimaan-bulanan-per-supplier', [PenerimaanKayuBulatBulananPerSupplierController::class, 'index'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.index');
-Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/download', [PenerimaanKayuBulatBulananPerSupplierController::class, 'download'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.download');
-Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/preview', [PenerimaanKayuBulatBulananPerSupplierController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier.preview');
-Route::get('/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'index'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.index');
-Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik/download', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'download'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.download');
-Route::post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik/preview', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik.preview');
-Route::get('/reports/kayu-bulat/penerimaan-per-supplier-group', [PenerimaanKayuBulatPerSupplierGroupController::class, 'index'])->name('reports.kayu-bulat.penerimaan-per-supplier-group.index');
-Route::post('/reports/kayu-bulat/penerimaan-per-supplier-group/download', [PenerimaanKayuBulatPerSupplierGroupController::class, 'download'])->name('reports.kayu-bulat.penerimaan-per-supplier-group.download');
-Route::post('/reports/kayu-bulat/penerimaan-per-supplier-group/preview', [PenerimaanKayuBulatPerSupplierGroupController::class, 'preview'])->name('reports.kayu-bulat.penerimaan-per-supplier-group.preview');
-Route::get('/reports/kayu-bulat/stock-opname', [StockOpnameKayuBulatController::class, 'index'])->name('reports.kayu-bulat.stock-opname.index');
-Route::post('/reports/kayu-bulat/stock-opname/download', [StockOpnameKayuBulatController::class, 'download'])->name('reports.kayu-bulat.stock-opname.download');
-Route::post('/reports/kayu-bulat/stock-opname/preview', [StockOpnameKayuBulatController::class, 'preview'])->name('reports.kayu-bulat.stock-opname.preview');
-Route::get('/reports/kayu-bulat/hidup-per-group', [HidupKBPerGroupController::class, 'index'])->name('reports.kayu-bulat.hidup-per-group.index');
-Route::post('/reports/kayu-bulat/hidup-per-group/download', [HidupKBPerGroupController::class, 'download'])->name('reports.kayu-bulat.hidup-per-group.download');
-Route::post('/reports/kayu-bulat/hidup-per-group/preview', [HidupKBPerGroupController::class, 'preview'])->name('reports.kayu-bulat.hidup-per-group.preview');
-Route::get('/reports/kayu-bulat/hidup', [KayuBulatHidupController::class, 'index'])->name('reports.kayu-bulat.hidup.index');
-Route::post('/reports/kayu-bulat/hidup/download', [KayuBulatHidupController::class, 'download'])->name('reports.kayu-bulat.hidup.download');
-Route::post('/reports/kayu-bulat/hidup/preview', [KayuBulatHidupController::class, 'preview'])->name('reports.kayu-bulat.hidup.preview');
-Route::get('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'index'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.index');
-Route::post('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/download', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'download'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.download');
-Route::post('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/preview-pdf', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'previewPdf'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview-pdf');
-Route::post('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/preview', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'preview'])->name('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview');
-Route::get('/reports/kayu-bulat/kb-khusus-bangkang', [KbKhususBangkangController::class, 'index'])->name('reports.kayu-bulat.kb-khusus-bangkang.index');
-Route::post('/reports/kayu-bulat/kb-khusus-bangkang/download', [KbKhususBangkangController::class, 'download'])->name('reports.kayu-bulat.kb-khusus-bangkang.download');
-Route::post('/reports/kayu-bulat/kb-khusus-bangkang/preview-pdf', [KbKhususBangkangController::class, 'previewPdf'])->name('reports.kayu-bulat.kb-khusus-bangkang.preview-pdf');
-Route::post('/reports/kayu-bulat/kb-khusus-bangkang/preview', [KbKhususBangkangController::class, 'preview'])->name('reports.kayu-bulat.kb-khusus-bangkang.preview');
-Route::get('/reports/kayu-bulat/balok-sudah-semprot', [BalokSudahSemprotController::class, 'index'])->name('reports.kayu-bulat.balok-sudah-semprot.index');
-Route::post('/reports/kayu-bulat/balok-sudah-semprot/download', [BalokSudahSemprotController::class, 'download'])->name('reports.kayu-bulat.balok-sudah-semprot.download');
-Route::post('/reports/kayu-bulat/balok-sudah-semprot/preview-pdf', [BalokSudahSemprotController::class, 'previewPdf'])->name('reports.kayu-bulat.balok-sudah-semprot.preview-pdf');
-Route::post('/reports/kayu-bulat/balok-sudah-semprot/preview', [BalokSudahSemprotController::class, 'preview'])->name('reports.kayu-bulat.balok-sudah-semprot.preview');
-Route::get('/reports/kayu-bulat/timeline-kayu-bulat-harian', [TimelineKayuBulatHarianController::class, 'index'])->name('reports.kayu-bulat.timeline-kayu-bulat-harian.index');
-Route::post('/reports/kayu-bulat/timeline-kayu-bulat-harian/download', [TimelineKayuBulatHarianController::class, 'download'])->name('reports.kayu-bulat.timeline-kayu-bulat-harian.download');
-Route::post('/reports/kayu-bulat/timeline-kayu-bulat-harian/preview-pdf', [TimelineKayuBulatHarianController::class, 'previewPdf'])->name('reports.kayu-bulat.timeline-kayu-bulat-harian.preview-pdf');
-Route::post('/reports/kayu-bulat/timeline-kayu-bulat-harian/preview', [TimelineKayuBulatHarianController::class, 'preview'])->name('reports.kayu-bulat.timeline-kayu-bulat-harian.preview');
-Route::get('/reports/kayu-bulat/timeline-kayu-bulat-bulanan', [TimelineKayuBulatBulananController::class, 'index'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.index');
-Route::post('/reports/kayu-bulat/timeline-kayu-bulat-bulanan/download', [TimelineKayuBulatBulananController::class, 'download'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.download');
-Route::post('/reports/kayu-bulat/timeline-kayu-bulat-bulanan/preview-pdf', [TimelineKayuBulatBulananController::class, 'previewPdf'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.preview-pdf');
-Route::post('/reports/kayu-bulat/timeline-kayu-bulat-bulanan/preview', [TimelineKayuBulatBulananController::class, 'preview'])->name('reports.kayu-bulat.timeline-kayu-bulat-bulanan.preview');
-Route::get('/reports/kayu-bulat/umur-kayu-bulat-non-rambung', [UmurKayuBulatNonRambungController::class, 'index'])->name('reports.kayu-bulat.umur-kayu-bulat-non-rambung.index');
-Route::post('/reports/kayu-bulat/umur-kayu-bulat-non-rambung/download', [UmurKayuBulatNonRambungController::class, 'download'])->name('reports.kayu-bulat.umur-kayu-bulat-non-rambung.download');
-Route::post('/reports/kayu-bulat/umur-kayu-bulat-non-rambung/preview', [UmurKayuBulatNonRambungController::class, 'preview'])->name('reports.kayu-bulat.umur-kayu-bulat-non-rambung.preview');
-Route::get('/reports/kayu-bulat/umur-kayu-bulat-rambung', [UmurKayuBulatRambungController::class, 'index'])->name('reports.kayu-bulat.umur-kayu-bulat-rambung.index');
-Route::post('/reports/kayu-bulat/umur-kayu-bulat-rambung/download', [UmurKayuBulatRambungController::class, 'download'])->name('reports.kayu-bulat.umur-kayu-bulat-rambung.download');
-Route::post('/reports/kayu-bulat/umur-kayu-bulat-rambung/preview', [UmurKayuBulatRambungController::class, 'preview'])->name('reports.kayu-bulat.umur-kayu-bulat-rambung.preview');
-Route::get('/reports/rangkuman-label-input', [RangkumanJlhLabelInputController::class, 'index'])->name('reports.rangkuman-label-input.index');
-Route::post('/reports/rangkuman-label-input/download', [RangkumanJlhLabelInputController::class, 'download'])->name('reports.rangkuman-label-input.download');
-Route::post('/reports/rangkuman-label-input/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('reports.rangkuman-label-input.preview');
-Route::get('/reports/mutasi-hasil-racip', [MutasiHasilRacipController::class, 'index'])->name('reports.mutasi-hasil-racip.index');
-Route::post('/reports/mutasi-hasil-racip/download', [MutasiHasilRacipController::class, 'download'])->name('reports.mutasi-hasil-racip.download');
-Route::post('/reports/mutasi-hasil-racip/preview', [MutasiHasilRacipController::class, 'preview'])->name('reports.mutasi-hasil-racip.preview');
-Route::get('/reports/mutasi-racip-detail', [MutasiRacipDetailController::class, 'index'])->name('reports.mutasi-racip-detail.index');
-Route::post('/reports/mutasi-racip-detail/download', [MutasiRacipDetailController::class, 'download'])->name('reports.mutasi-racip-detail.download');
-Route::post('/reports/mutasi-racip-detail/preview', [MutasiRacipDetailController::class, 'preview'])->name('reports.mutasi-racip-detail.preview');
-Route::get('/reports/label-nyangkut', [LabelNyangkutController::class, 'index'])->name('reports.label-nyangkut.index');
-Route::post('/reports/label-nyangkut/download', [LabelNyangkutController::class, 'download'])->name('reports.label-nyangkut.download');
-Route::post('/reports/label-nyangkut/preview', [LabelNyangkutController::class, 'preview'])->name('reports.label-nyangkut.preview');
-Route::get('/reports/bahan-terpakai', [BahanTerpakaiController::class, 'index'])->name('reports.bahan-terpakai.index');
-Route::post('/reports/bahan-terpakai/download', [BahanTerpakaiController::class, 'download'])->name('reports.bahan-terpakai.download');
-Route::post('/reports/bahan-terpakai/preview', [BahanTerpakaiController::class, 'preview'])->name('reports.bahan-terpakai.preview');
+/**
+ * Dashboard route group.
+ */
+Route::prefix('dashboard/sawn-timber')->name('dashboard.sawn-timber.')->group(function (): void {
+    Route::get('/', [DashboardSawnTimberController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardSawnTimberController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardSawnTimberController::class, 'download'])->name('download');
+});
+
+/**
+ * Sawn timber report route groups.
+ */
+Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(function (): void {
+    /** Stock ST Basah routes. */
+    Route::prefix('stock-st-basah')->name('stock-st-basah.')->group(function (): void {
+        Route::get('/', [StockSTBasahController::class, 'index'])->name('index');
+        Route::post('/download', [StockSTBasahController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StockSTBasahController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StockSTBasahController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan ST dari sawmill KG routes. */
+    Route::prefix('penerimaan-st-dari-sawmill-kg')->name('penerimaan-st-dari-sawmill-kg.')->group(function (): void {
+        Route::get('/', [PenerimaanStSawmillKgController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanStSawmillKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanStSawmillKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanStSawmillKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Lembar tally hasil sawmill routes. */
+    Route::prefix('lembar-tally-hasil-sawmill')->name('lembar-tally-hasil-sawmill.')->group(function (): void {
+        Route::get('/', [LembarTallyHasilSawmillController::class, 'index'])->name('index');
+        Route::post('/download', [LembarTallyHasilSawmillController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [LembarTallyHasilSawmillController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [LembarTallyHasilSawmillController::class, 'preview'])->name('preview');
+    });
+
+    /** Umur sawn timber detail ton routes. */
+    Route::prefix('umur-sawn-timber-detail-ton')->name('umur-sawn-timber-detail-ton.')->group(function (): void {
+        Route::get('/', [UmurSawnTimberDetailTonController::class, 'index'])->name('index');
+        Route::post('/download', [UmurSawnTimberDetailTonController::class, 'download'])->name('download');
+        Route::post('/preview', [UmurSawnTimberDetailTonController::class, 'preview'])->name('preview');
+    });
+
+    /** ST sawmill masuk per-group routes. */
+    Route::prefix('st-sawmill-masuk-per-group')->name('st-sawmill-masuk-per-group.')->group(function (): void {
+        Route::get('/', [StSawmillMasukPerGroupController::class, 'index'])->name('index');
+        Route::post('/download', [StSawmillMasukPerGroupController::class, 'download'])->name('download');
+        Route::post('/preview', [StSawmillMasukPerGroupController::class, 'preview'])->name('preview');
+    });
+});
+
+/**
+ * Mutasi report route groups.
+ */
+Route::prefix('reports/mutasi')->name('reports.mutasi.')->group(function (): void {
+    /** Mutasi barang jadi routes. */
+    Route::prefix('barang-jadi')->name('barang-jadi.')->group(function (): void {
+        Route::get('/', [MutasiBarangJadiController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiBarangJadiController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiBarangJadiController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi finger-joint routes. */
+    Route::prefix('finger-joint')->name('finger-joint.')->group(function (): void {
+        Route::get('/', [MutasiFingerJointController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiFingerJointController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiFingerJointController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi moulding routes. */
+    Route::prefix('moulding')->name('moulding.')->group(function (): void {
+        Route::get('/', [MutasiMouldingController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiMouldingController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiMouldingController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi laminating routes. */
+    Route::prefix('laminating')->name('laminating.')->group(function (): void {
+        Route::get('/', [MutasiLaminatingController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiLaminatingController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiLaminatingController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi sanding routes. */
+    Route::prefix('sanding')->name('sanding.')->group(function (): void {
+        Route::get('/', [MutasiSandingController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiSandingController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiSandingController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi s4s routes. */
+    Route::prefix('s4s')->name('s4s.')->group(function (): void {
+        Route::get('/', [MutasiS4SController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiS4SController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiS4SController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi ST routes. */
+    Route::prefix('st')->name('st.')->group(function (): void {
+        Route::get('/', [MutasiSTController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiSTController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiSTController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi CCA akhir routes. */
+    Route::prefix('cca-akhir')->name('cca-akhir.')->group(function (): void {
+        Route::get('/', [MutasiCCAkhirController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiCCAkhirController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiCCAkhirController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi reproses routes. */
+    Route::prefix('reproses')->name('reproses.')->group(function (): void {
+        Route::get('/', [MutasiReprosesController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiReprosesController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiReprosesController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi kayu bulat routes. */
+    Route::prefix('kayu-bulat')->name('kayu-bulat.')->group(function (): void {
+        Route::get('/', [MutasiKayuBulatController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiKayuBulatController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiKayuBulatController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi kayu bulat v2 routes. */
+    Route::prefix('kayu-bulat-v2')->name('kayu-bulat-v2.')->group(function (): void {
+        Route::get('/', [MutasiKayuBulatV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [MutasiKayuBulatV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiKayuBulatV2Controller::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi kayu bulat kgv2 routes. */
+    Route::prefix('kayu-bulat-kgv2')->name('kayu-bulat-kgv2.')->group(function (): void {
+        Route::get('/', [MutasiKayuBulatKGV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [MutasiKayuBulatKGV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiKayuBulatKGV2Controller::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi kayu bulat kg routes. */
+    Route::prefix('kayu-bulat-kg')->name('kayu-bulat-kg.')->group(function (): void {
+        Route::get('/', [MutasiKayuBulatKGController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiKayuBulatKGController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiKayuBulatKGController::class, 'preview'])->name('preview');
+    });
+});
+
+/**
+ * Kayu bulat report route groups.
+ */
+Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function (): void {
+    /** Saldo kayu bulat routes. */
+    Route::prefix('saldo')->name('saldo.')->group(function (): void {
+        Route::get('/', [SaldoKayuBulatController::class, 'index'])->name('index');
+        Route::post('/download', [SaldoKayuBulatController::class, 'download'])->name('download');
+        Route::post('/preview', [SaldoKayuBulatController::class, 'preview'])->name('preview');
+    });
+
+    /** Rekap pembelian kayu bulat routes. */
+    Route::prefix('rekap-pembelian')->name('rekap-pembelian.')->group(function (): void {
+        Route::get('/', [RekapPembelianKayuBulatController::class, 'index'])->name('index');
+        Route::get('/preview', [RekapPembelianKayuBulatController::class, 'preview'])->name('preview');
+        Route::match(['get', 'post'], '/download', [RekapPembelianKayuBulatController::class, 'download'])->name('download');
+    });
+
+    /** Target masuk bahan baku routes. */
+    Route::prefix('target-masuk-bb')->name('target-masuk-bb.')->group(function (): void {
+        Route::get('/', [TargetMasukBBController::class, 'index'])->name('index');
+        Route::match(['get', 'post'], '/download', [TargetMasukBBController::class, 'download'])->name('download');
+        Route::get('/preview', [TargetMasukBBController::class, 'preview'])->name('preview');
+    });
+
+    /** Target masuk bahan baku bulanan routes. */
+    Route::prefix('target-masuk-bb-bulanan')->name('target-masuk-bb-bulanan.')->group(function (): void {
+        Route::get('/', [TargetMasukBBBulananController::class, 'index'])->name('index');
+        Route::match(['get', 'post'], '/download', [TargetMasukBBBulananController::class, 'download'])->name('download');
+        Route::get('/preview', [TargetMasukBBBulananController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan bulanan per supplier routes. */
+    Route::prefix('penerimaan-bulanan-per-supplier')->name('penerimaan-bulanan-per-supplier.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatBulananPerSupplierController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatBulananPerSupplierController::class, 'download'])->name('download');
+        Route::post('/preview', [PenerimaanKayuBulatBulananPerSupplierController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan bulanan per supplier grafik routes. */
+    Route::prefix('penerimaan-bulanan-per-supplier-grafik')->name('penerimaan-bulanan-per-supplier-grafik.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'download'])->name('download');
+        Route::post('/preview', [PenerimaanKayuBulatPerSupplierBulananGrafikController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan per supplier group routes. */
+    Route::prefix('penerimaan-per-supplier-group')->name('penerimaan-per-supplier-group.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatPerSupplierGroupController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatPerSupplierGroupController::class, 'download'])->name('download');
+        Route::post('/preview', [PenerimaanKayuBulatPerSupplierGroupController::class, 'preview'])->name('preview');
+    });
+
+    /** Stock opname kayu bulat routes. */
+    Route::prefix('stock-opname')->name('stock-opname.')->group(function (): void {
+        Route::get('/', [StockOpnameKayuBulatController::class, 'index'])->name('index');
+        Route::post('/download', [StockOpnameKayuBulatController::class, 'download'])->name('download');
+        Route::post('/preview', [StockOpnameKayuBulatController::class, 'preview'])->name('preview');
+    });
+
+    /** Hidup kayu bulat per group routes. */
+    Route::prefix('hidup-per-group')->name('hidup-per-group.')->group(function (): void {
+        Route::get('/', [HidupKBPerGroupController::class, 'index'])->name('index');
+        Route::post('/download', [HidupKBPerGroupController::class, 'download'])->name('download');
+        Route::post('/preview', [HidupKBPerGroupController::class, 'preview'])->name('preview');
+    });
+
+    /** Hidup kayu bulat routes. */
+    Route::prefix('hidup')->name('hidup.')->group(function (): void {
+        Route::get('/', [KayuBulatHidupController::class, 'index'])->name('index');
+        Route::post('/download', [KayuBulatHidupController::class, 'download'])->name('download');
+        Route::post('/preview', [KayuBulatHidupController::class, 'preview'])->name('preview');
+    });
+
+    /** Perbandingan KB masuk periode routes. */
+    Route::prefix('perbandingan-kb-masuk-periode-1-dan-2')->name('perbandingan-kb-masuk-periode-1-dan-2.')->group(function (): void {
+        Route::get('/', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'index'])->name('index');
+        Route::post('/download', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'preview'])->name('preview');
+    });
+
+    /** KB khusus bangkang routes. */
+    Route::prefix('kb-khusus-bangkang')->name('kb-khusus-bangkang.')->group(function (): void {
+        Route::get('/', [KbKhususBangkangController::class, 'index'])->name('index');
+        Route::post('/download', [KbKhususBangkangController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KbKhususBangkangController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KbKhususBangkangController::class, 'preview'])->name('preview');
+    });
+
+    /** Balok sudah semprot routes. */
+    Route::prefix('balok-sudah-semprot')->name('balok-sudah-semprot.')->group(function (): void {
+        Route::get('/', [BalokSudahSemprotController::class, 'index'])->name('index');
+        Route::post('/download', [BalokSudahSemprotController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [BalokSudahSemprotController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [BalokSudahSemprotController::class, 'preview'])->name('preview');
+    });
+
+    /** Timeline kayu bulat harian routes. */
+    Route::prefix('timeline-kayu-bulat-harian')->name('timeline-kayu-bulat-harian.')->group(function (): void {
+        Route::get('/', [TimelineKayuBulatHarianController::class, 'index'])->name('index');
+        Route::post('/download', [TimelineKayuBulatHarianController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TimelineKayuBulatHarianController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TimelineKayuBulatHarianController::class, 'preview'])->name('preview');
+    });
+
+    /** Timeline kayu bulat bulanan routes. */
+    Route::prefix('timeline-kayu-bulat-bulanan')->name('timeline-kayu-bulat-bulanan.')->group(function (): void {
+        Route::get('/', [TimelineKayuBulatBulananController::class, 'index'])->name('index');
+        Route::post('/download', [TimelineKayuBulatBulananController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TimelineKayuBulatBulananController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TimelineKayuBulatBulananController::class, 'preview'])->name('preview');
+    });
+
+    /** Umur kayu bulat non-rambung routes. */
+    Route::prefix('umur-kayu-bulat-non-rambung')->name('umur-kayu-bulat-non-rambung.')->group(function (): void {
+        Route::get('/', [UmurKayuBulatNonRambungController::class, 'index'])->name('index');
+        Route::post('/download', [UmurKayuBulatNonRambungController::class, 'download'])->name('download');
+        Route::post('/preview', [UmurKayuBulatNonRambungController::class, 'preview'])->name('preview');
+    });
+
+    /** Umur kayu bulat rambung routes. */
+    Route::prefix('umur-kayu-bulat-rambung')->name('umur-kayu-bulat-rambung.')->group(function (): void {
+        Route::get('/', [UmurKayuBulatRambungController::class, 'index'])->name('index');
+        Route::post('/download', [UmurKayuBulatRambungController::class, 'download'])->name('download');
+        Route::post('/preview', [UmurKayuBulatRambungController::class, 'preview'])->name('preview');
+    });
+});
+
+/**
+ * Standalone report route groups.
+ */
+Route::prefix('reports')->name('reports.')->group(function (): void {
+    /** Stock racip kayu lat routes. */
+    Route::prefix('stock-racip-kayu-lat')->name('stock-racip-kayu-lat.')->group(function (): void {
+        Route::get('/', [StockRacipKayuLatController::class, 'index'])->name('index');
+        Route::match(['get', 'post'], '/download', [StockRacipKayuLatController::class, 'download'])->name('download');
+        Route::get('/preview', [StockRacipKayuLatController::class, 'preview'])->name('preview');
+    });
+
+    /** Hasil output racip harian routes. */
+    Route::prefix('hasil-output-racip-harian')->name('hasil-output-racip-harian.')->group(function (): void {
+        Route::get('/', [HasilOutputRacipHarianController::class, 'index'])->name('index');
+        Route::post('/download', [HasilOutputRacipHarianController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilOutputRacipHarianController::class, 'preview'])->name('preview');
+    });
+
+    /** Rangkuman label input routes. */
+    Route::prefix('rangkuman-label-input')->name('rangkuman-label-input.')->group(function (): void {
+        Route::get('/', [RangkumanJlhLabelInputController::class, 'index'])->name('index');
+        Route::post('/download', [RangkumanJlhLabelInputController::class, 'download'])->name('download');
+        Route::post('/preview', [RangkumanJlhLabelInputController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi hasil racip routes. */
+    Route::prefix('mutasi-hasil-racip')->name('mutasi-hasil-racip.')->group(function (): void {
+        Route::get('/', [MutasiHasilRacipController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiHasilRacipController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiHasilRacipController::class, 'preview'])->name('preview');
+    });
+
+    /** Mutasi racip detail routes. */
+    Route::prefix('mutasi-racip-detail')->name('mutasi-racip-detail.')->group(function (): void {
+        Route::get('/', [MutasiRacipDetailController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiRacipDetailController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiRacipDetailController::class, 'preview'])->name('preview');
+    });
+
+    /** Label nyangkut routes. */
+    Route::prefix('label-nyangkut')->name('label-nyangkut.')->group(function (): void {
+        Route::get('/', [LabelNyangkutController::class, 'index'])->name('index');
+        Route::post('/download', [LabelNyangkutController::class, 'download'])->name('download');
+        Route::post('/preview', [LabelNyangkutController::class, 'preview'])->name('preview');
+    });
+
+    /** Bahan terpakai routes. */
+    Route::prefix('bahan-terpakai')->name('bahan-terpakai.')->group(function (): void {
+        Route::get('/', [BahanTerpakaiController::class, 'index'])->name('index');
+        Route::post('/download', [BahanTerpakaiController::class, 'download'])->name('download');
+        Route::post('/preview', [BahanTerpakaiController::class, 'preview'])->name('preview');
+    });
+});
+
+/**
+ * Authentication route group for web UI.
+ */
 Route::middleware('guest')->post('/login', [WebAuthController::class, 'login'])->name('web.login');
 Route::middleware('auth')->post('/logout', [WebAuthController::class, 'logout'])->name('web.logout');

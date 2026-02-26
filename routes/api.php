@@ -43,20 +43,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
 
-// Group route autentikasi API publik.
+/**
+ * Group route autentikasi API publik.
+ */
 Route::prefix('auth')->group(function (): void {
     Route::post('/register', [AuthController::class, 'register'])->name('api.auth.register');
     Route::post('/login', [AuthController::class, 'login'])->name('api.auth.login');
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('api.auth.refresh');
 
-    // Group route autentikasi API yang memerlukan token JWT.
+    /**
+     * Group route autentikasi API yang memerlukan token JWT.
+     */
     Route::middleware('report.jwt.claims')->group(function (): void {
         Route::get('/me', [AuthController::class, 'me'])->name('api.auth.me');
     });
 });
 
-// Group route laporan yang hanya bisa diakses user terautentikasi.
+/**
+ * Group route laporan yang hanya bisa diakses user terautentikasi.
+ */
 Route::middleware('report.jwt.claims')->group(function (): void {
     /**
      * @param class-string $controller
@@ -67,7 +73,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         Route::post("{$path}/health", [$controller, 'health'])->name("{$namePrefix}.health");
     };
 
-    $reportRouteDefinitions = [
+    /**
+     * Mutasi report API routes.
+     *
+     * @var array<int, array{0: string, 1: string, 2: class-string}>
+     */
+    $mutasiReportRouteDefinitions = [
         ['/reports/mutasi-barang-jadi', 'api.reports.mutasi-barang-jadi', MutasiBarangJadiController::class],
         ['/reports/mutasi-finger-joint', 'api.reports.mutasi-finger-joint', MutasiFingerJointController::class],
         ['/reports/mutasi-moulding', 'api.reports.mutasi-moulding', MutasiMouldingController::class],
@@ -81,16 +92,19 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/mutasi-kayu-bulat-v2', 'api.reports.mutasi-kayu-bulat-v2', MutasiKayuBulatV2Controller::class],
         ['/reports/mutasi-kayu-bulat-kgv2', 'api.reports.mutasi-kayu-bulat-kgv2', MutasiKayuBulatKGV2Controller::class],
         ['/reports/mutasi-kayu-bulat-kg', 'api.reports.mutasi-kayu-bulat-kg', MutasiKayuBulatKGController::class],
+    ];
+
+    /**
+     * Kayu bulat report API routes.
+     *
+     * @var array<int, array{0: string, 1: string, 2: class-string}>
+     */
+    $kayuBulatReportRouteDefinitions = [
         ['/reports/kayu-bulat/saldo', 'api.reports.kayu-bulat.saldo', SaldoKayuBulatController::class],
         ['/reports/kayu-bulat/penerimaan-bulanan-per-supplier', 'api.reports.kayu-bulat.penerimaan-bulanan-per-supplier', PenerimaanKayuBulatBulananPerSupplierController::class],
         ['/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik', 'api.reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik', PenerimaanKayuBulatPerSupplierBulananGrafikController::class],
         ['/reports/kayu-bulat/penerimaan-per-supplier-group', 'api.reports.kayu-bulat.penerimaan-per-supplier-group', PenerimaanKayuBulatPerSupplierGroupController::class],
         ['/reports/kayu-bulat/stock-opname', 'api.reports.kayu-bulat.stock-opname', StockOpnameKayuBulatController::class],
-        ['/reports/sawn-timber/stock-st-basah', 'api.reports.sawn-timber.stock-st-basah', StockSTBasahController::class],
-        ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
-        ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
-        ['/reports/sawn-timber/umur-sawn-timber-detail-ton', 'api.reports.sawn-timber.umur-sawn-timber-detail-ton', UmurSawnTimberDetailTonController::class],
-        ['/reports/sawn-timber/st-sawmill-masuk-per-group', 'api.reports.sawn-timber.st-sawmill-masuk-per-group', StSawmillMasukPerGroupController::class],
         ['/reports/kayu-bulat/hidup-per-group', 'api.reports.kayu-bulat.hidup-per-group', HidupKBPerGroupController::class],
         ['/reports/kayu-bulat/hidup', 'api.reports.kayu-bulat.hidup', KayuBulatHidupController::class],
         ['/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2', 'api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2', PerbandinganKbMasukPeriode1Dan2Controller::class],
@@ -100,6 +114,27 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/timeline-kayu-bulat-bulanan', 'api.reports.kayu-bulat.timeline-kayu-bulat-bulanan', TimelineKayuBulatBulananController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-non-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-non-rambung', UmurKayuBulatNonRambungController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-rambung', UmurKayuBulatRambungController::class],
+    ];
+
+    /**
+     * Sawn timber report API routes.
+     *
+     * @var array<int, array{0: string, 1: string, 2: class-string}>
+     */
+    $sawnTimberReportRouteDefinitions = [
+        ['/reports/sawn-timber/stock-st-basah', 'api.reports.sawn-timber.stock-st-basah', StockSTBasahController::class],
+        ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
+        ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
+        ['/reports/sawn-timber/umur-sawn-timber-detail-ton', 'api.reports.sawn-timber.umur-sawn-timber-detail-ton', UmurSawnTimberDetailTonController::class],
+        ['/reports/sawn-timber/st-sawmill-masuk-per-group', 'api.reports.sawn-timber.st-sawmill-masuk-per-group', StSawmillMasukPerGroupController::class],
+    ];
+
+    /**
+     * Standalone report API routes.
+     *
+     * @var array<int, array{0: string, 1: string, 2: class-string}>
+     */
+    $standaloneReportRouteDefinitions = [
         ['/reports/hasil-output-racip-harian', 'api.reports.hasil-output-racip-harian', HasilOutputRacipHarianController::class],
         ['/reports/rangkuman-label-input', 'api.reports.rangkuman-label-input', RangkumanJlhLabelInputController::class],
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
@@ -107,7 +142,17 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/bahan-terpakai', 'api.reports.bahan-terpakai', BahanTerpakaiController::class],
     ];
 
-    foreach ($reportRouteDefinitions as [$path, $namePrefix, $controller]) {
-        $registerReportRoutes($path, $namePrefix, $controller);
+    /** @var array<int, array<int, array{0: string, 1: string, 2: class-string}>> $routeGroups */
+    $routeGroups = [
+        $mutasiReportRouteDefinitions,
+        $kayuBulatReportRouteDefinitions,
+        $sawnTimberReportRouteDefinitions,
+        $standaloneReportRouteDefinitions,
+    ];
+
+    foreach ($routeGroups as $routeGroup) {
+        foreach ($routeGroup as [$path, $namePrefix, $controller]) {
+            $registerReportRoutes($path, $namePrefix, $controller);
+        }
     }
 });
