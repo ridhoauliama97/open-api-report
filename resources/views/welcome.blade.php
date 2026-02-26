@@ -348,6 +348,18 @@
                                     Laporan Lembar Tally Hasil Sawmill
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.sawn-timber.umur-sawn-timber-detail-ton.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Umur Sawn Timber Detail (Ton)
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.sawn-timber.st-sawmill-masuk-per-group.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan ST (Sawmill) Masuk Per-Group
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

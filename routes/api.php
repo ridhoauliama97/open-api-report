@@ -36,6 +36,8 @@ use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
+use App\Http\Controllers\UmurSawnTimberDetailTonController;
+use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +89,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/stock-st-basah', 'api.reports.sawn-timber.stock-st-basah', StockSTBasahController::class],
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
+        ['/reports/sawn-timber/umur-sawn-timber-detail-ton', 'api.reports.sawn-timber.umur-sawn-timber-detail-ton', UmurSawnTimberDetailTonController::class],
+        ['/reports/sawn-timber/st-sawmill-masuk-per-group', 'api.reports.sawn-timber.st-sawmill-masuk-per-group', StSawmillMasukPerGroupController::class],
         ['/reports/kayu-bulat/hidup-per-group', 'api.reports.kayu-bulat.hidup-per-group', HidupKBPerGroupController::class],
         ['/reports/kayu-bulat/hidup', 'api.reports.kayu-bulat.hidup', KayuBulatHidupController::class],
         ['/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2', 'api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2', PerbandinganKbMasukPeriode1Dan2Controller::class],

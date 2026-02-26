@@ -355,6 +355,28 @@ return [
         'parameter_count' => (int) env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_PARAMETER_COUNT', 1),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'umur_sawn_timber_detail_ton' => [
+        'database_connection' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PROCEDURE', 'SPWps_LapUmurST'),
+        'call_syntax' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5'
+        )))),
+    ],
+    'st_sawmill_masuk_per_group' => [
+        'database_connection' => env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_PROCEDURE', 'SPWps_LapSTMasukPerGroup'),
+        'call_syntax' => env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_SAWMILL_MASUK_PER_GROUP_REPORT_EXPECTED_COLUMNS',
+            'Group,Jenis,Tebal,STTon'
+        )))),
+    ],
 
     // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [

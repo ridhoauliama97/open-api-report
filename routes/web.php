@@ -35,6 +35,8 @@ use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
+use App\Http\Controllers\UmurSawnTimberDetailTonController;
+use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StockRacipKayuLatController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
@@ -60,6 +62,12 @@ Route::get('/reports/sawn-timber/lembar-tally-hasil-sawmill', [LembarTallyHasilS
 Route::post('/reports/sawn-timber/lembar-tally-hasil-sawmill/download', [LembarTallyHasilSawmillController::class, 'download'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.download');
 Route::post('/reports/sawn-timber/lembar-tally-hasil-sawmill/preview-pdf', [LembarTallyHasilSawmillController::class, 'previewPdf'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.preview-pdf');
 Route::post('/reports/sawn-timber/lembar-tally-hasil-sawmill/preview', [LembarTallyHasilSawmillController::class, 'preview'])->name('reports.sawn-timber.lembar-tally-hasil-sawmill.preview');
+Route::get('/reports/sawn-timber/umur-sawn-timber-detail-ton', [UmurSawnTimberDetailTonController::class, 'index'])->name('reports.sawn-timber.umur-sawn-timber-detail-ton.index');
+Route::post('/reports/sawn-timber/umur-sawn-timber-detail-ton/download', [UmurSawnTimberDetailTonController::class, 'download'])->name('reports.sawn-timber.umur-sawn-timber-detail-ton.download');
+Route::post('/reports/sawn-timber/umur-sawn-timber-detail-ton/preview', [UmurSawnTimberDetailTonController::class, 'preview'])->name('reports.sawn-timber.umur-sawn-timber-detail-ton.preview');
+Route::get('/reports/sawn-timber/st-sawmill-masuk-per-group', [StSawmillMasukPerGroupController::class, 'index'])->name('reports.sawn-timber.st-sawmill-masuk-per-group.index');
+Route::post('/reports/sawn-timber/st-sawmill-masuk-per-group/download', [StSawmillMasukPerGroupController::class, 'download'])->name('reports.sawn-timber.st-sawmill-masuk-per-group.download');
+Route::post('/reports/sawn-timber/st-sawmill-masuk-per-group/preview', [StSawmillMasukPerGroupController::class, 'preview'])->name('reports.sawn-timber.st-sawmill-masuk-per-group.preview');
 
 Route::get('/reports/mutasi/barang-jadi', [MutasiBarangJadiController::class, 'index'])->name('reports.mutasi.barang-jadi.index');
 Route::post('/reports/mutasi/barang-jadi/download', [MutasiBarangJadiController::class, 'download'])->name('reports.mutasi.barang-jadi.download');
