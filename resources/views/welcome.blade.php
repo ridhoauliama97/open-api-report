@@ -305,6 +305,12 @@
                                     Laporan Umur Kayu Bulat (Rambung)
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.kayu-bulat.supplier-intel.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Supplier Intel
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -334,6 +340,12 @@
                                 <a href="{{ route('reports.sawn-timber.stock-st-basah.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Stock ST Basah
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.sawn-timber.stock-st-kering.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Stock ST Kering
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
@@ -369,3 +381,4 @@
 </body>
 
 </html>
+

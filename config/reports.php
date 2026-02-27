@@ -318,6 +318,18 @@ return [
             ''
         )))),
     ],
+    'supplier_intel' => [
+        'database_connection' => env('SUPPLIER_INTEL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SUPPLIER_INTEL_REPORT_PROCEDURE', 'SP_LapSupplierIntel'),
+        'call_syntax' => env('SUPPLIER_INTEL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SUPPLIER_INTEL_REPORT_QUERY'),
+        'parameter_count' => (int) env('SUPPLIER_INTEL_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('SUPPLIER_INTEL_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SUPPLIER_INTEL_REPORT_EXPECTED_COLUMNS',
+            'NamaSupplier,DateIn,JlhTruk,TonKB,M3ST'
+        )))),
+    ],
     // Dashboard
     'dashboard_sawn_timber' => [
         'database_connection' => env('DASHBOARD_SAWN_TIMBER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -337,7 +349,20 @@ return [
         'stored_procedure' => env('STOCK_ST_BASAH_REPORT_PROCEDURE', 'SP_LapStockSTBasah'),
         'call_syntax' => env('STOCK_ST_BASAH_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('STOCK_ST_BASAH_REPORT_QUERY'),
+        'cache_ttl_seconds' => (int) env('STOCK_ST_BASAH_REPORT_CACHE_TTL_SECONDS', 60),
+        'max_sort_rows' => (int) env('STOCK_ST_BASAH_REPORT_MAX_SORT_ROWS', 3000),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_BASAH_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'stock_st_kering' => [
+        'database_connection' => env('STOCK_ST_KERING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOCK_ST_KERING_REPORT_PROCEDURE', 'SP_LapStockSTKering'),
+        'call_syntax' => env('STOCK_ST_KERING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOCK_ST_KERING_REPORT_QUERY'),
+        'cache_ttl_seconds' => (int) env('STOCK_ST_KERING_REPORT_CACHE_TTL_SECONDS', 60),
+        'max_sort_rows' => (int) env('STOCK_ST_KERING_REPORT_MAX_SORT_ROWS', 3000),
+        'preview_json_max_rows' => (int) env('STOCK_ST_KERING_PREVIEW_JSON_MAX_ROWS', 100),
+        'preview_pdf_max_rows' => (int) env('STOCK_ST_KERING_PREVIEW_PDF_MAX_ROWS', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_KERING_REPORT_EXPECTED_COLUMNS', '')))),
     ],
     'penerimaan_st_dari_sawmill_kg' => [
         'database_connection' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -429,3 +454,4 @@ return [
         'email_claim' => env('REPORT_API_JWT_EMAIL_CLAIM', env('REPORT_JWT_EMAIL_CLAIM', 'email')),
     ],
 ];
+

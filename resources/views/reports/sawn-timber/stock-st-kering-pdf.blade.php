@@ -61,6 +61,7 @@
             border: 1px solid #666;
             padding: 3px 4px;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         th {
@@ -339,7 +340,7 @@
             $tableColumns[] = $lokasiColumn;
         }
 
-        $maxSortRows = (int) config('reports.stock_st_basah.max_sort_rows', 3000);
+        $maxSortRows = (int) config('reports.stock_st_kering.max_sort_rows', 3000);
         if ($maxSortRows > 0 && count($rowsData) > $maxSortRows) {
             $sortedRows = $rowsData;
         } else {
@@ -419,12 +420,31 @@
             }
         }
 
+        $summaryTotalRows = (int) ($summaryStats['total_rows'] ?? $totalRows);
+        $summaryTotalJenis = (int) ($summaryStats['total_jenis'] ?? $totalJenis);
+        $summaryTotalProduk = (int) ($summaryStats['total_produk'] ?? $totalProduk);
+        $summaryTotalProdukUnik = (int) ($summaryStats['total_produk_unik'] ?? count($allProdukNames));
+        $summaryTotalPcs = (float) ($summaryStats['total_pcs'] ?? $totalPcs);
+        $summaryTotalTon = (float) ($summaryStats['total_ton'] ?? $totalTon);
+
         $pcsIndex = $pcsColumn !== null ? array_search($pcsColumn, $tableColumns, true) : false;
         $tonIndex = $tonColumn !== null ? array_search($tonColumn, $tableColumns, true) : false;
-        $equalColumnWidth = 100 / max(1, count($tableColumns) + 1);
+
+        $columnWidths = [];
+        $noColumnWidth = 4.0;
+        $dataColumnWidth = count($tableColumns) > 0 ? (100.0 - $noColumnWidth) / count($tableColumns) : 96.0;
+        foreach ($tableColumns as $column) {
+            $columnWidths[$column] = $dataColumnWidth;
+        }
+        $columnWidths['__no__'] = $noColumnWidth;
+        $noWidthStyle = 'width: ' . number_format((float) ($columnWidths['__no__'] ?? 4.0), 6, '.', '') . '%;';
+        $columnWidthStyles = [];
+        foreach ($tableColumns as $column) {
+            $columnWidthStyles[$column] = 'width: ' . number_format((float) ($columnWidths[$column] ?? 0.0), 6, '.', '') . '%;';
+        }
     @endphp
 
-    <h1 class="report-title">Laporan Stock ST Basah</h1>
+    <h1 class="report-title">Laporan Stock ST Kering</h1>
     <p class="report-subtitle">
         Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
     </p>
@@ -439,24 +459,18 @@
             @endphp
             <p class="produk-title">{{ $produkName }}</p>
             <table>
-                <colgroup>
-                    <col style="width: {{ number_format($equalColumnWidth, 6, '.', '') }}%;">
-                    @foreach ($tableColumns as $column)
-                        <col style="width: {{ number_format($equalColumnWidth, 6, '.', '') }}%;">
-                    @endforeach
-                </colgroup>
                 <thead>
                     <tr class="headers-row">
-                        <th>No</th>
+                        <th style="{{ $noWidthStyle }}">No</th>
                         @foreach ($tableColumns as $column)
-                            <th>{{ $formatHeaderLabel($column) }}</th>
+                            <th style="{{ $columnWidthStyles[$column] ?? '' }}">{{ $formatHeaderLabel($column) }}</th>
                         @endforeach
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($produkRows as $row)
                         <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="center">{{ $loop->iteration }}</td>
+                            <td class="center" style="{{ $noWidthStyle }}">{{ $loop->iteration }}</td>
                             @foreach ($tableColumns as $column)
                                 @php
                                     $value = $row[$column] ?? null;
@@ -465,23 +479,24 @@
                                     $isTonColumn = $tonColumn !== null && $column === $tonColumn;
                                     $isPcsColumn = $pcsColumn !== null && $column === $pcsColumn;
                                     $isDateColumn = $dateColumn !== null && $column === $dateColumn;
+                                    $columnStyle = $columnWidthStyles[$column] ?? '';
                                 @endphp
                                 @if ($isDateColumn)
-                                    <td class="center">{{ $formatDate($value) }}</td>
+                                    <td class="center" style="{{ $columnStyle }}">{{ $formatDate($value) }}</td>
                                 @elseif ($isTonColumn)
-                                    <td class="number">
+                                    <td class="number" style="{{ $columnStyle }}">
                                         {{ $floatValue !== null ? number_format($floatValue, 4, '.', '') : '' }}
                                     </td>
                                 @elseif ($isPcsColumn)
-                                    <td class="number">
+                                    <td class="number" style="{{ $columnStyle }}">
                                         {{ $floatValue !== null ? number_format($floatValue, 0, '.', '') : '' }}
                                     </td>
                                 @elseif ($numeric)
-                                    <td class="number">
+                                    <td class="number" style="{{ $columnStyle }}">
                                         {{ $floatValue !== null ? number_format($floatValue, 0, '.', '') : '' }}
                                     </td>
                                 @else
-                                    <td>{{ (string) $value }}</td>
+                                    <td style="{{ $columnStyle }}">{{ (string) $value }}</td>
                                 @endif
                             @endforeach
                         </tr>
@@ -540,27 +555,27 @@
             </tr>
             <tr>
                 <td>Total jumlah data</td>
-                <td class="center">{{ number_format($totalRows, 0, '.', '') }} baris</td>
+                <td class="center">{{ number_format($summaryTotalRows, 0, '.', '') }} baris</td>
             </tr>
             <tr>
                 <td>Total jenis</td>
-                <td class="center">{{ number_format($totalJenis, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryTotalJenis, 0, '.', '') }}</td>
             </tr>
             <tr>
                 <td>Total produk (per grup jenis)</td>
-                <td class="center">{{ number_format($totalProduk, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryTotalProduk, 0, '.', '') }}</td>
             </tr>
             <tr>
                 <td>Total produk unik</td>
-                <td class="center">{{ number_format(count($allProdukNames), 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryTotalProdukUnik, 0, '.', '') }}</td>
             </tr>
             <tr>
                 <td>Total Jumlah Batang</td>
-                <td class="center">{{ number_format($totalPcs, 0, '.', '') }} Batang</td>
+                <td class="center">{{ number_format($summaryTotalPcs, 0, '.', '') }} Batang</td>
             </tr>
             <tr>
                 <td>Total ton</td>
-                <td class="center">{{ number_format($totalTon, 4, '.', '') }} Ton</td>
+                <td class="center">{{ number_format($summaryTotalTon, 4, '.', '') }} Ton</td>
             </tr>
 
         </tbody>
@@ -576,3 +591,4 @@
 </body>
 
 </html>
+

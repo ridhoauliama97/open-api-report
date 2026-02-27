@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class StockSTBasahReportService
+class StockSTKeringReportService
 {
     /**
      * @return array<int, array<string, mixed>>
      */
     public function fetch(string $endDate): array
     {
-        $cacheTtl = (int) config('reports.stock_st_basah.cache_ttl_seconds', 60);
+        $cacheTtl = (int) config('reports.stock_st_kering.cache_ttl_seconds', 60);
         if ($cacheTtl <= 0) {
             $rows = $this->runProcedureQuery($endDate);
 
@@ -21,10 +21,10 @@ class StockSTBasahReportService
         }
 
         $cacheKey = sprintf(
-            'report:stock_st_basah:%s:%s:%s',
+            'report:stock_st_kering:%s:%s:%s',
             $endDate,
-            (string) config('reports.stock_st_basah.call_syntax', 'exec'),
-            md5((string) config('reports.stock_st_basah.stored_procedure', 'SP_LapStockSTBasah') . '|' . (string) config('reports.stock_st_basah.query', '')),
+            (string) config('reports.stock_st_kering.call_syntax', 'exec'),
+            md5((string) config('reports.stock_st_kering.stored_procedure', 'SP_LapStockSTKering') . '|' . (string) config('reports.stock_st_kering.query', '')),
         );
         $rows = Cache::remember($cacheKey, now()->addSeconds($cacheTtl), fn(): array => $this->runProcedureQuery($endDate));
 
@@ -38,7 +38,7 @@ class StockSTBasahReportService
     {
         $rows = $this->fetch($endDate);
         $detectedColumns = array_keys($rows[0] ?? []);
-        $expectedColumns = config('reports.stock_st_basah.expected_columns', []);
+        $expectedColumns = config('reports.stock_st_kering.expected_columns', []);
         $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
         $missingColumns = array_values(array_diff($expectedColumns, $detectedColumns));
         $extraColumns = array_values(array_diff($detectedColumns, $expectedColumns));
@@ -58,13 +58,13 @@ class StockSTBasahReportService
      */
     private function runProcedureQuery(string $endDate): array
     {
-        $connectionName = config('reports.stock_st_basah.database_connection');
-        $procedure = (string) config('reports.stock_st_basah.stored_procedure', 'SP_LapStockSTBasah');
-        $syntax = (string) config('reports.stock_st_basah.call_syntax', 'exec');
-        $customQuery = config('reports.stock_st_basah.query');
+        $connectionName = config('reports.stock_st_kering.database_connection');
+        $procedure = (string) config('reports.stock_st_kering.stored_procedure', 'SP_LapStockSTKering');
+        $syntax = (string) config('reports.stock_st_kering.call_syntax', 'exec');
+        $customQuery = config('reports.stock_st_kering.query');
 
         if ($procedure === '' && !is_string($customQuery)) {
-            throw new RuntimeException('Stored procedure laporan stock ST basah belum dikonfigurasi.');
+            throw new RuntimeException('Stored procedure laporan Stock ST kering belum dikonfigurasi.');
         }
 
         $connection = DB::connection($connectionName ?: null);
@@ -73,8 +73,8 @@ class StockSTBasahReportService
 
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
-                'Laporan stock ST basah dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_ST_BASAH_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                'Laporan stock ST kering dikonfigurasi untuk SQL Server. '
+                . 'Set STOCK_ST_KERING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -82,8 +82,8 @@ class StockSTBasahReportService
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
                 : throw new RuntimeException(
-                    'STOCK_ST_BASAH_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_ST_BASAH_REPORT_CALL_SYNTAX=query.',
+                    'STOCK_ST_KERING_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan STOCK_ST_KERING_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
@@ -102,3 +102,4 @@ class StockSTBasahReportService
         return $connection->select($sql, $bindings);
     }
 }
+

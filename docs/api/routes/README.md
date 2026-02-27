@@ -56,6 +56,9 @@ Total routes terdokumentasi: 117
 - [api.reports.kayu-bulat.umur-kayu-bulat-rambung.preview](./api.reports.kayu-bulat.umur-kayu-bulat-rambung.preview.md) - `POST /api/reports/kayu-bulat/umur-kayu-bulat-rambung`
 - [api.reports.kayu-bulat.umur-kayu-bulat-rambung.health](./api.reports.kayu-bulat.umur-kayu-bulat-rambung.health.md) - `POST /api/reports/kayu-bulat/umur-kayu-bulat-rambung/health`
 - [api.reports.kayu-bulat.umur-kayu-bulat-rambung.pdf](./api.reports.kayu-bulat.umur-kayu-bulat-rambung.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/umur-kayu-bulat-rambung/pdf`
+- [api.reports.kayu-bulat.supplier-intel.preview](./api.reports.kayu-bulat.supplier-intel.preview.md) - `POST /api/reports/kayu-bulat/supplier-intel`
+- [api.reports.kayu-bulat.supplier-intel.health](./api.reports.kayu-bulat.supplier-intel.health.md) - `POST /api/reports/kayu-bulat/supplier-intel/health`
+- [api.reports.kayu-bulat.supplier-intel.pdf](./api.reports.kayu-bulat.supplier-intel.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/supplier-intel/pdf`
 - [api.reports.label-nyangkut.preview](./api.reports.label-nyangkut.preview.md) - `POST /api/reports/label-nyangkut`
 - [api.reports.label-nyangkut.health](./api.reports.label-nyangkut.health.md) - `POST /api/reports/label-nyangkut/health`
 - [api.reports.label-nyangkut.pdf](./api.reports.label-nyangkut.pdf.md) - `GET|POST|HEAD /api/reports/label-nyangkut/pdf`
@@ -116,6 +119,10 @@ Total routes terdokumentasi: 117
 - [api.reports.sawn-timber.stock-st-basah.preview](./api.reports.sawn-timber.stock-st-basah.preview.md) - `POST /api/reports/sawn-timber/stock-st-basah`
 - [api.reports.sawn-timber.stock-st-basah.health](./api.reports.sawn-timber.stock-st-basah.health.md) - `POST /api/reports/sawn-timber/stock-st-basah/health`
 - [api.reports.sawn-timber.stock-st-basah.pdf](./api.reports.sawn-timber.stock-st-basah.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/stock-st-basah/pdf`
+- [api.reports.sawn-timber.stock-st-kering.preview](./api.reports.sawn-timber.stock-st-kering.preview.md) - `POST /api/reports/sawn-timber/stock-st-kering`
+- [api.reports.sawn-timber.stock-st-kering.health](./api.reports.sawn-timber.stock-st-kering.health.md) - `POST /api/reports/sawn-timber/stock-st-kering/health`
+- [api.reports.sawn-timber.stock-st-kering.pdf](./api.reports.sawn-timber.stock-st-kering.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/stock-st-kering/pdf`
 - [api.reports.sawn-timber.umur-sawn-timber-detail-ton.preview](./api.reports.sawn-timber.umur-sawn-timber-detail-ton.preview.md) - `POST /api/reports/sawn-timber/umur-sawn-timber-detail-ton`
 - [api.reports.sawn-timber.umur-sawn-timber-detail-ton.health](./api.reports.sawn-timber.umur-sawn-timber-detail-ton.health.md) - `POST /api/reports/sawn-timber/umur-sawn-timber-detail-ton/health`
 - [api.reports.sawn-timber.umur-sawn-timber-detail-ton.pdf](./api.reports.sawn-timber.umur-sawn-timber-detail-ton.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/umur-sawn-timber-detail-ton/pdf`
+

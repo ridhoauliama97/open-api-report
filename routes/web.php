@@ -43,6 +43,8 @@ use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\LembarTallyHasilSawmillController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapPembelianKayuBulatController;
+use App\Http\Controllers\StockSTKeringController;
+use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +69,14 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/download', [StockSTBasahController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [StockSTBasahController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StockSTBasahController::class, 'preview'])->name('preview');
+    });
+
+    /** Stock ST Kering routes. */
+    Route::prefix('stock-st-kering')->name('stock-st-kering.')->group(function (): void {
+        Route::get('/', [StockSTKeringController::class, 'index'])->name('index');
+        Route::post('/download', [StockSTKeringController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StockSTKeringController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StockSTKeringController::class, 'preview'])->name('preview');
     });
 
     /** Penerimaan ST dari sawmill KG routes. */
@@ -323,6 +333,14 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::post('/download', [UmurKayuBulatRambungController::class, 'download'])->name('download');
         Route::post('/preview', [UmurKayuBulatRambungController::class, 'preview'])->name('preview');
     });
+
+    /** Supplier Intel routes. */
+    Route::prefix('supplier-intel')->name('supplier-intel.')->group(function (): void {
+        Route::get('/', [SupplierIntelController::class, 'index'])->name('index');
+        Route::post('/download', [SupplierIntelController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [SupplierIntelController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [SupplierIntelController::class, 'preview'])->name('preview');
+    });
 });
 
 /**
@@ -384,3 +402,4 @@ Route::prefix('reports')->name('reports.')->group(function (): void {
  */
 Route::middleware('guest')->post('/login', [WebAuthController::class, 'login'])->name('web.login');
 Route::middleware('auth')->post('/logout', [WebAuthController::class, 'logout'])->name('web.logout');
+
