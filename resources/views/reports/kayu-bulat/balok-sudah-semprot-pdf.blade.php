@@ -39,6 +39,12 @@
             color: #636466;
         }
 
+        .section-title {
+            margin: 20px 0 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;

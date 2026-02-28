@@ -2,6 +2,14 @@
 
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\BalokSudahSemprotController;
+use App\Http\Controllers\DashboardBarangJadiController;
+use App\Http\Controllers\DashboardCrossCutAkhirController;
+use App\Http\Controllers\DashboardFingerJointController;
+use App\Http\Controllers\DashboardLaminatingController;
+use App\Http\Controllers\DashboardMouldingController;
+use App\Http\Controllers\DashboardS4SController;
+use App\Http\Controllers\DashboardS4SV2Controller;
+use App\Http\Controllers\DashboardSandingController;
 use App\Http\Controllers\DashboardSawnTimberController;
 use App\Http\Controllers\HidupKBPerGroupController;
 use App\Http\Controllers\HasilOutputRacipHarianController;
@@ -57,6 +65,54 @@ Route::prefix('dashboard/sawn-timber')->name('dashboard.sawn-timber.')->group(fu
     Route::get('/', [DashboardSawnTimberController::class, 'index'])->name('index');
     Route::get('/preview', [DashboardSawnTimberController::class, 'preview'])->name('preview');
     Route::match(['get', 'post'], '/download', [DashboardSawnTimberController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/barang-jadi')->name('dashboard.barang-jadi.')->group(function (): void {
+    Route::get('/', [DashboardBarangJadiController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardBarangJadiController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardBarangJadiController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/cross-cut-akhir')->name('dashboard.cross-cut-akhir.')->group(function (): void {
+    Route::get('/', [DashboardCrossCutAkhirController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardCrossCutAkhirController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardCrossCutAkhirController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/finger-joint')->name('dashboard.finger-joint.')->group(function (): void {
+    Route::get('/', [DashboardFingerJointController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardFingerJointController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardFingerJointController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/laminating')->name('dashboard.laminating.')->group(function (): void {
+    Route::get('/', [DashboardLaminatingController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardLaminatingController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardLaminatingController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/moulding')->name('dashboard.moulding.')->group(function (): void {
+    Route::get('/', [DashboardMouldingController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardMouldingController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardMouldingController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/sanding')->name('dashboard.sanding.')->group(function (): void {
+    Route::get('/', [DashboardSandingController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardSandingController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardSandingController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/s4s')->name('dashboard.s4s.')->group(function (): void {
+    Route::get('/', [DashboardS4SController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardS4SController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardS4SController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/s4s-v2')->name('dashboard.s4s-v2.')->group(function (): void {
+    Route::get('/', [DashboardS4SV2Controller::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardS4SV2Controller::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardS4SV2Controller::class, 'download'])->name('download');
 });
 
 /**

@@ -4,6 +4,14 @@ use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
 use App\Http\Controllers\BalokSudahSemprotController;
+use App\Http\Controllers\DashboardBarangJadiController;
+use App\Http\Controllers\DashboardCrossCutAkhirController;
+use App\Http\Controllers\DashboardFingerJointController;
+use App\Http\Controllers\DashboardLaminatingController;
+use App\Http\Controllers\DashboardMouldingController;
+use App\Http\Controllers\DashboardS4SController;
+use App\Http\Controllers\DashboardS4SV2Controller;
+use App\Http\Controllers\DashboardSandingController;
 use App\Http\Controllers\HasilOutputRacipHarianController;
 use App\Http\Controllers\HidupKBPerGroupController;
 use App\Http\Controllers\KayuBulatHidupController;
@@ -144,6 +152,14 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],
         ['/reports/bahan-terpakai', 'api.reports.bahan-terpakai', BahanTerpakaiController::class],
+        ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
+        ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],
+        ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],
+        ['/reports/dashboard-laminating', 'api.reports.dashboard-laminating', DashboardLaminatingController::class],
+        ['/reports/dashboard-moulding', 'api.reports.dashboard-moulding', DashboardMouldingController::class],
+        ['/reports/dashboard-sanding', 'api.reports.dashboard-sanding', DashboardSandingController::class],
+        ['/reports/dashboard-s4s', 'api.reports.dashboard-s4s', DashboardS4SController::class],
+        ['/reports/dashboard-s4s-v2', 'api.reports.dashboard-s4s-v2', DashboardS4SV2Controller::class],
     ];
 
     /** @var array<int, array<int, array{0: string, 1: string, 2: class-string}>> $routeGroups */

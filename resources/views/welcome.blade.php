@@ -327,6 +327,54 @@
                                     Dasboard Sawn Timber (Chart)
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.barang-jadi.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Barang Jadi
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.cross-cut-akhir.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Cross Cut Akhir
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.finger-joint.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Finger Joint
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.laminating.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Laminating
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.moulding.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Moulding
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.sanding.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Sanding
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.s4s.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard S4S
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.s4s-v2.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard S4S v2
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

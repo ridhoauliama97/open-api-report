@@ -344,6 +344,98 @@ return [
         )))),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('DASHBOARD_SAWN_TIMBER_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'dashboard_barang_jadi' => [
+        'database_connection' => env('DASHBOARD_BARANG_JADI_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_BARANG_JADI_REPORT_PROCEDURE', 'SPWps_LapDashboardBJ'),
+        'call_syntax' => env('DASHBOARD_BARANG_JADI_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_BARANG_JADI_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_BARANG_JADI_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_BARANG_JADI_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_BARANG_JADI_COLUMN_ORDER',
+            'JABON FILB A/A,JABON FILB B/C,JABON ISOBO,PULAI ISOBO,RAMBUNG FILB A/A,RAMBUNG FILB A/B,RAMBUNG FILB A/C,RAMBUNG FILB C/C'
+        )))),
+    ],
+    'dashboard_cross_cut_akhir' => [
+        'database_connection' => env('DASHBOARD_CROSS_CUT_AKHIR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_CROSS_CUT_AKHIR_REPORT_PROCEDURE', 'SPWps_LapDashboardCCAkhir'),
+        'call_syntax' => env('DASHBOARD_CROSS_CUT_AKHIR_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_CROSS_CUT_AKHIR_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_CROSS_CUT_AKHIR_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_CROSS_CUT_AKHIR_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_CROSS_CUT_AKHIR_COLUMN_ORDER',
+            'JABON FILB A/A,JABON FILB C/C,JABON ISOBO,JABON NISOBO,PULAI ISOBO,PULAI NISOBO,PULAI TASOBO,RAMBUNG A/B,RAMBUNG C/C,RAMBUNG FILB A/A,RAMBUNG FILB A/B,RAMBUNG FILB A/C,RAMBUNG FILB C/C'
+        )))),
+    ],
+    'dashboard_finger_joint' => [
+        'database_connection' => env('DASHBOARD_FINGER_JOINT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_FINGER_JOINT_REPORT_PROCEDURE', 'SPWps_LapDashboardFJ'),
+        'call_syntax' => env('DASHBOARD_FINGER_JOINT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_FINGER_JOINT_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_FINGER_JOINT_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_FINGER_JOINT_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_FINGER_JOINT_COLUMN_ORDER',
+            'JABON A/A,JABON ISOBO,JABON NISOBO,JABON TG A/A,PULAI ISOBO,PULAI NISOBO,RAMBUNG A/A,RAMBUNG A/B,RAMBUNG C/C'
+        )))),
+    ],
+    'dashboard_laminating' => [
+        'database_connection' => env('DASHBOARD_LAMINATING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_LAMINATING_REPORT_PROCEDURE', 'SPWps_LapDashboardLaminating'),
+        'call_syntax' => env('DASHBOARD_LAMINATING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_LAMINATING_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_LAMINATING_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_LAMINATING_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_LAMINATING_COLUMN_ORDER',
+            'JABON FILB A/A,JABON FILB C/C,JABON TASOBO,PULAI NISOBO,PULAI TASOBO,RAMBUNG FILB A/A,RAMBUNG FILB A/B,RAMBUNG FILB C/C'
+        )))),
+    ],
+    'dashboard_moulding' => [
+        'database_connection' => env('DASHBOARD_MOULDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_MOULDING_REPORT_PROCEDURE', 'SPWps_LapDashboardMoulding'),
+        'call_syntax' => env('DASHBOARD_MOULDING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_MOULDING_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_MOULDING_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_MOULDING_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_MOULDING_COLUMN_ORDER',
+            'JABON A/A,JABON ISOBO,JABON NISOBO,JABON TASOBO,PULAI ISOBO,PULAI NISOBO,PULAI TASOBO,RAMBUNG A/A,RAMBUNG A/B,RAMBUNG C/C'
+        )))),
+    ],
+    'dashboard_sanding' => [
+        'database_connection' => env('DASHBOARD_SANDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_SANDING_REPORT_PROCEDURE', 'SPWps_LapDashboardSanding'),
+        'call_syntax' => env('DASHBOARD_SANDING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_SANDING_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_SANDING_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_SANDING_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_SANDING_COLUMN_ORDER',
+            'JABON FILB A/A,JABON ISOBO,JABON NISOBO,JABON TASOBO,PULAI ISOBO,PULAI NISOBO,PULAI TASOBO,RAMBUNG FILB A/A,RAMBUNG FILB A/B,RAMBUNG FILB C/C'
+        )))),
+    ],
+    'dashboard_s4s' => [
+        'database_connection' => env('DASHBOARD_S4S_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_S4S_REPORT_PROCEDURE', 'SPWps_LapDashboardS4S'),
+        'call_syntax' => env('DASHBOARD_S4S_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_S4S_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_S4S_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_S4S_CTR_DIVISOR', '65'),
+    ],
+    'dashboard_s4s_v2' => [
+        'database_connection' => env('DASHBOARD_S4S_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_S4S_V2_REPORT_PROCEDURE', 'SPWps_LapDashboardS4S2'),
+        'call_syntax' => env('DASHBOARD_S4S_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_S4S_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_S4S_V2_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_S4S_V2_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_S4S_V2_COLUMN_ORDER',
+            'JABON A/A,JABON BELAH,JABON ISOBO,JABON MISS TEBAL,JABON NISOBO,JABON TASOBO,JABON TG A/A,JABON TG MISS TEBAL,PULAI BELAH,PULAI ISOBO,PULAI MISS TEBAL,PULAI NISOBO,PULAI TASOBO,RAMBUNG A/A,RAMBUNG A/B,RAMBUNG A/C,RAMBUNG BELAH,RAMBUNG C/C,RAMBUNG MISS TEBAL'
+        )))),
+    ],
     'stock_st_basah' => [
         'database_connection' => env('STOCK_ST_BASAH_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('STOCK_ST_BASAH_REPORT_PROCEDURE', 'SP_LapStockSTBasah'),

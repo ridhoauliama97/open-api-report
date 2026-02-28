@@ -24,13 +24,24 @@ class PdfGenerator
     /**
      * @param array<string, mixed> $data
      */
+    private function resolveFormat(array $data): string
+    {
+        $requested = strtoupper(trim((string) ($data['pdf_format'] ?? 'A4')));
+        $allowed = ['A4', 'A3', 'A2', 'A1', 'A0', 'LETTER', 'LEGAL'];
+
+        return in_array($requested, $allowed, true) ? $requested : 'A4';
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
     private function columnCount(array $data): int
     {
         if (isset($data['pdf_column_count']) && is_numeric($data['pdf_column_count'])) {
             return max(0, (int) $data['pdf_column_count']);
         }
 
-        $rows = $data['rows'] ?? [];
+        $rows = $data['rows'] ?? ($data['reportData']['rows'] ?? []);
 
         if (!is_array($rows) || empty($rows)) {
             return 0;
@@ -62,11 +73,13 @@ class PdfGenerator
     {
         $html = view($view, $data)->render();
         $html = $this->stripExternalFontLinks($html);
+        $html = $this->sanitizeUtf8($html);
         $orientation = $this->resolveOrientation($data);
+        $format = $this->resolveFormat($data);
 
         $mpdf = new Mpdf([
             'tempDir' => storage_path('app/mpdf-temp'),
-            'format' => 'A4',
+            'format' => $format,
             'orientation' => $orientation,
             'simpleTables' => true,
             'packTableData' => true,
@@ -75,12 +88,24 @@ class PdfGenerator
             'autoLangToFont' => false,
         ]);
 
+        if (isset($data['pdf_shrink_tables_to_fit']) && is_numeric($data['pdf_shrink_tables_to_fit'])) {
+            $mpdf->shrink_tables_to_fit = (float) $data['pdf_shrink_tables_to_fit'];
+        }
+
+        if (!empty($data['pdf_disable_auto_page_break'])) {
+            $mpdf->SetAutoPageBreak(false);
+        }
+
         // Keep limits high, but still stream HTML in chunks to avoid
         // "The HTML code size is larger than pcre.backtrack_limit".
         @ini_set('pcre.backtrack_limit', '10000000');
         @ini_set('pcre.recursion_limit', '1000000');
 
-        $this->writeHtmlInChunks($mpdf, $html);
+        if (!empty($data['pdf_disable_chunking'])) {
+            $mpdf->WriteHTML($html);
+        } else {
+            $this->writeHtmlInChunks($mpdf, $html);
+        }
 
         return $mpdf->Output('', Destination::STRING_RETURN);
     }
@@ -102,11 +127,11 @@ class PdfGenerator
 
         // Keep named footer/header declarations intact and processed before body chunks.
         $footerDeclarations = [];
-        if (preg_match_all('/<htmlpagefooter\b[^>]*>.*?<\/htmlpagefooter>/is', $html, $footerMatches) === 1) {
+        if (preg_match_all('/<htmlpagefooter\b[^>]*>.*?<\/htmlpagefooter>/is', $html, $footerMatches) >= 1) {
             $footerDeclarations = array_merge($footerDeclarations, $footerMatches[0]);
             $html = preg_replace('/<htmlpagefooter\b[^>]*>.*?<\/htmlpagefooter>/is', '', $html) ?? $html;
         }
-        if (preg_match_all('/<sethtmlpagefooter\b[^>]*\/?>/is', $html, $setFooterMatches) === 1) {
+        if (preg_match_all('/<sethtmlpagefooter\b[^>]*\/?>/is', $html, $setFooterMatches) >= 1) {
             $footerDeclarations = array_merge($footerDeclarations, $setFooterMatches[0]);
             $html = preg_replace('/<sethtmlpagefooter\b[^>]*\/?>/is', '', $html) ?? $html;
         }
@@ -151,7 +176,7 @@ class PdfGenerator
                 continue;
             }
 
-            $parts = str_split($line, $maxLength);
+            $parts = $this->utf8ChunkSplit($line, $maxLength);
             $lastIndex = count($parts) - 1;
             foreach ($parts as $index => $part) {
                 if ($index === $lastIndex) {
@@ -177,5 +202,48 @@ class PdfGenerator
         $html = preg_replace('/<link\b[^>]*rel=["\']preconnect["\'][^>]*>/i', '', $html) ?? $html;
 
         return $html;
+    }
+
+    /**
+     * Remove BOM and drop malformed byte sequences to prevent mPDF UTF-8 errors.
+     */
+    private function sanitizeUtf8(string $html): string
+    {
+        if (str_starts_with($html, "\xEF\xBB\xBF")) {
+            $html = substr($html, 3);
+        }
+
+        $sanitized = @iconv('UTF-8', 'UTF-8//IGNORE', $html);
+
+        return is_string($sanitized) ? $sanitized : $html;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function utf8ChunkSplit(string $line, int $maxLength): array
+    {
+        if ($line === '') {
+            return [''];
+        }
+
+        if (!function_exists('mb_strcut')) {
+            return str_split($line, $maxLength);
+        }
+
+        $parts = [];
+        $offset = 0;
+        $lineLength = strlen($line);
+
+        while ($offset < $lineLength) {
+            $part = mb_strcut($line, $offset, $maxLength, 'UTF-8');
+            if ($part === '') {
+                break;
+            }
+            $parts[] = $part;
+            $offset += strlen($part);
+        }
+
+        return $parts === [] ? [''] : $parts;
     }
 }
