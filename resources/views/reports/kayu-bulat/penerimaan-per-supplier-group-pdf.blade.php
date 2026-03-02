@@ -142,15 +142,19 @@
         $groupTotals = is_array($summary['group_totals'] ?? null) ? $summary['group_totals'] : [];
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
 
         $fmtTon = static fn(float $value): string => number_format($value, 4, '.', ',');
         $fmtRatio = static fn(float $value): string => number_format($value, 1, '.', ',') . '%';
-        $fmtTonBlankZero = static fn(float $value): string => abs($value) < 0.0000001 ? '' : number_format($value, 4, '.', ',');
-        $fmtRatioBlankZero = static fn(float $value): string => abs($value) < 0.0000001 ? '' : number_format($value, 1, '.', ',') . '%';
+        $fmtTonBlankZero = static fn(float $value): string => abs($value) < 0.0000001
+            ? ''
+            : number_format($value, 4, '.', ',');
+        $fmtRatioBlankZero = static fn(float $value): string => abs($value) < 0.0000001
+            ? ''
+            : number_format($value, 1, '.', ',') . '%';
 
         $totalTon = (float) ($summary['total_ton'] ?? 0.0);
         $totalTrucks = (int) ($summary['total_trucks'] ?? 0);
@@ -174,7 +178,7 @@
 
     <div class="sheet">
         <h1 class="report-title">Laporan Penerimaan Kayu Bulat Per-Supplier Berdasarkan Group Kayu</h1>
-        <p class="report-subtitle">{{ $start }} S/D {{ $end }}</p>
+        <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
         <table>
             <thead>

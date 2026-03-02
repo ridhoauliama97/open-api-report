@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_','-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
@@ -8,14 +8,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <title>{{ config('app.name', 'Laravel') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <title>{{ config('app.name','Laravel') }}</title>
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
-            <a class="navbar-brand fw-semibold" href="#">{{ config('app.name', 'Laravel') }}</a>
+            <a class="navbar-brand fw-semibold" href="#">{{ config('app.name','Laravel') }}</a>
         </div>
     </nav>
 

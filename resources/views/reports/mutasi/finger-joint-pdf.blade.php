@@ -171,10 +171,10 @@
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),
         );
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt = static function ($value, bool $blankWhenZero = true): string {
             if (!is_numeric($value)) {
@@ -186,7 +186,7 @@
                 return '';
             }
 
-            return number_format($float, 4, '.', '');
+            return number_format($float, 4, '.', ',');
         };
 
         $totalClass = static fn($value): string => $fmt($value, true) !== '' ? 'value-total' : '';
@@ -203,7 +203,7 @@
         };
 
         $normalizeKey = static function (string $key): string {
-            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $key));
+            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $key));
         };
 
         $valueFromAliases = static function (array $row, array $aliases) use ($normalizeKey): float {
@@ -283,7 +283,7 @@
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
-                            $fjAwal = $valueFromAliases($row, ['FJAwal', 'FJ Awal', 'Awal', 'FJ_Awal']);
+                            $fjAwal = $valueFromAliases($row, ['FJAwal','FJ Awal','Awal','FJ_Awal']);
                             $adjOutFJ = $valueFromAliases($row, [
                                 'AdjOutFJ',
                                 'AdjOutputFJ',
@@ -312,7 +312,7 @@
                                 'FJMasuk',
                                 'Masuk',
                             ]);
-                            $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk', 'TTL Masuk']);
+                            $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk','Total Masuk','TTL Masuk']);
                             $totalMasuk =
                                 $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOutFJ + $bsOutFJ + $fjProdOut;
 
@@ -338,7 +338,7 @@
                                 'BSInputFJ',
                                 'BSInput',
                             ]);
-                            $fjJual = $valueFromAliases($row, ['FJJual', 'FJ Jual', 'Jual FJ', 'JualFJ', 'Jual']);
+                            $fjJual = $valueFromAliases($row, ['FJJual','FJ Jual','Jual FJ','JualFJ','Jual']);
                             $ccaProdInpt = $valueFromAliases($row, [
                                 'CCAProdInpt',
                                 'CCAInptFJ',
@@ -388,7 +388,7 @@
                                 'Sand Input',
                                 'SANDInput',
                             ]);
-                            $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar', 'TTL Keluar']);
+                            $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar','Total Keluar','TTL Keluar']);
                             $totalKeluar =
                                 $totalKeluarDirect !== 0.0
                                     ? $totalKeluarDirect
@@ -400,7 +400,7 @@
                                         $s4sProdInpt +
                                         $sandProdInpt;
 
-                            $akhir = $valueFromAliases($row, ['Akhir', 'FJAkhir', 'FJ Akhir']);
+                            $akhir = $valueFromAliases($row, ['Akhir','FJAkhir','FJ Akhir']);
 
                             $mainTotals['FJAwal'] += $fjAwal;
                             $mainTotals['AdjOutFJ'] += $adjOutFJ;
@@ -496,8 +496,8 @@
                     <tbody>
                         @foreach ($subRowsData as $row)
                             @php
-                                $ccAkhir = $valueFromAliases($row, ['CCAkhir', 'CCA Akhir', 'CCA_Akhir']);
-                                $s4s = $valueFromAliases($row, ['S4S', 'S4S FJ', 'S4S_FJ']);
+                                $ccAkhir = $valueFromAliases($row, ['CCAkhir','CCA Akhir','CCA_Akhir']);
+                                $s4s = $valueFromAliases($row, ['S4S','S4S FJ','S4S_FJ']);
                                 $total = $ccAkhir + $s4s;
 
                                 $subTotals['CCAkhir'] += $ccAkhir;

@@ -154,12 +154,12 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $availableColumns = array_keys($rowsData[0] ?? []);
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $normalizeName = static function (?string $name): string {
             $raw = $name ?? '';
 
-            return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $raw) ?? '');
+            return strtolower(preg_replace('/[^a-zA-Z0-9]/','', $raw) ?? '');
         };
 
         $headerLabelMap = [
@@ -207,17 +207,17 @@
                 return null;
             }
 
-            $normalized = str_replace(' ', '', $normalized);
+            $normalized = str_replace(' ','', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.');
+                $normalized = str_replace(',','.');
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -261,7 +261,7 @@
 
             $formatted = '';
             try {
-                $formatted = \Carbon\Carbon::parse((string) $value)->format('d M Y');
+                $formatted = \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 $formatted = (string) $value;
             }
@@ -274,13 +274,13 @@
         };
 
         $statusColumn = $findColumn($availableColumns, ['Status']);
-        $jenisColumn = $findColumn($availableColumns, ['Jenis', 'JenisKayu', 'Type', 'Tipe', 'Kategori']);
-        $produkColumn = $findColumn($availableColumns, ['Produk', 'Product', 'NamaProduk', 'NamaBarang', 'Item']);
-        $dateColumn = $findColumn($availableColumns, ['DateCreate', 'Tanggal', 'Date']);
-        $noStColumn = $findColumn($availableColumns, ['NoST', 'NoSt']);
-        $pcsColumn = $findColumn($availableColumns, ['Pcs', 'JmlhBatang', 'JumlahBatang']);
-        $tonColumn = $findColumn($availableColumns, ['Ton', 'JmlhTon', 'JumlahTon']);
-        $lokasiColumn = $findColumn($availableColumns, ['IdLokasi', 'Lokasi', 'Location', 'Description']);
+        $jenisColumn = $findColumn($availableColumns, ['Jenis','JenisKayu','Type','Tipe','Kategori']);
+        $produkColumn = $findColumn($availableColumns, ['Produk','Product','NamaProduk','NamaBarang','Item']);
+        $dateColumn = $findColumn($availableColumns, ['DateCreate','Tanggal','Date']);
+        $noStColumn = $findColumn($availableColumns, ['NoST','NoSt']);
+        $pcsColumn = $findColumn($availableColumns, ['Pcs','JmlhBatang','JumlahBatang']);
+        $tonColumn = $findColumn($availableColumns, ['Ton','JmlhTon','JumlahTon']);
+        $lokasiColumn = $findColumn($availableColumns, ['IdLokasi','Lokasi','Location','Description']);
 
         $columnHeaderOverrides = [];
         if ($noStColumn !== null) {
@@ -315,7 +315,7 @@
             static fn($column): bool => $column !== null,
         );
 
-        $preferredOrder = ['NoST', 'DateCreate', 'Tebal', 'Lebar', 'Panjang', 'Pcs', 'Ton'];
+        $preferredOrder = ['NoST','DateCreate','Tebal','Lebar','Panjang','Pcs','Ton'];
         $tableColumns = [];
         foreach ($preferredOrder as $candidate) {
             $matched = $findColumn($availableColumns, [$candidate]);
@@ -437,16 +437,17 @@
             $columnWidths[$column] = $dataColumnWidth;
         }
         $columnWidths['__no__'] = $noColumnWidth;
-        $noWidthStyle = 'width: ' . number_format((float) ($columnWidths['__no__'] ?? 4.0), 6, '.', '') . '%;';
+        $noWidthStyle = 'width: ' . number_format((float) ($columnWidths['__no__'] ?? 4.0), 6, '.', ',') . '%;';
         $columnWidthStyles = [];
         foreach ($tableColumns as $column) {
-            $columnWidthStyles[$column] = 'width: ' . number_format((float) ($columnWidths[$column] ?? 0.0), 6, '.', '') . '%;';
+            $columnWidthStyles[$column] =
+                'width: ' . number_format((float) ($columnWidths[$column] ?? 0.0), 6, '.', ',') . '%;';
         }
     @endphp
 
     <h1 class="report-title">Laporan Stock ST Kering</h1>
     <p class="report-subtitle">
-        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
+        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
     </p>
 
     @forelse ($grouped as $jenisName => $produkGroups)
@@ -485,15 +486,15 @@
                                     <td class="center" style="{{ $columnStyle }}">{{ $formatDate($value) }}</td>
                                 @elseif ($isTonColumn)
                                     <td class="number" style="{{ $columnStyle }}">
-                                        {{ $floatValue !== null ? number_format($floatValue, 4, '.', '') : '' }}
+                                        {{ $floatValue !== null ? number_format($floatValue, 4, '.', ',') : '' }}
                                     </td>
                                 @elseif ($isPcsColumn)
                                     <td class="number" style="{{ $columnStyle }}">
-                                        {{ $floatValue !== null ? number_format($floatValue, 0, '.', '') : '' }}
+                                        {{ $floatValue !== null ? number_format($floatValue, 0, '.', ',') : '' }}
                                     </td>
                                 @elseif ($numeric)
                                     <td class="number" style="{{ $columnStyle }}">
-                                        {{ $floatValue !== null ? number_format($floatValue, 0, '.', '') : '' }}
+                                        {{ $floatValue !== null ? number_format($floatValue, 0, '.', ',') : '' }}
                                     </td>
                                 @else
                                     <td style="{{ $columnStyle }}">{{ (string) $value }}</td>
@@ -519,10 +520,10 @@
                                     @php $summaryColumn = $tableColumns[$idx]; @endphp
                                     @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
                                         <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalPcs, 0, '.', '') }}</td>
+                                            {{ number_format($subtotalPcs, 0, '.', ',') }}</td>
                                     @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
                                         <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalTon, 4, '.', '') }}</td>
+                                            {{ number_format($subtotalTon, 4, '.', ',') }}</td>
                                     @else
                                         <td></td>
                                     @endif
@@ -555,27 +556,27 @@
             </tr>
             <tr>
                 <td>Total jumlah data</td>
-                <td class="center">{{ number_format($summaryTotalRows, 0, '.', '') }} baris</td>
+                <td class="center">{{ number_format($summaryTotalRows, 0, '.', ',') }} baris</td>
             </tr>
             <tr>
                 <td>Total jenis</td>
-                <td class="center">{{ number_format($summaryTotalJenis, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryTotalJenis, 0, '.', ',') }}</td>
             </tr>
             <tr>
                 <td>Total produk (per grup jenis)</td>
-                <td class="center">{{ number_format($summaryTotalProduk, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryTotalProduk, 0, '.', ',') }}</td>
             </tr>
             <tr>
                 <td>Total produk unik</td>
-                <td class="center">{{ number_format($summaryTotalProdukUnik, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryTotalProdukUnik, 0, '.', ',') }}</td>
             </tr>
             <tr>
                 <td>Total Jumlah Batang</td>
-                <td class="center">{{ number_format($summaryTotalPcs, 0, '.', '') }} Batang</td>
+                <td class="center">{{ number_format($summaryTotalPcs, 0, '.', ',') }} Batang</td>
             </tr>
             <tr>
                 <td>Total ton</td>
-                <td class="center">{{ number_format($summaryTotalTon, 4, '.', '') }} Ton</td>
+                <td class="center">{{ number_format($summaryTotalTon, 4, '.', ',') }} Ton</td>
             </tr>
 
         </tbody>
@@ -591,4 +592,3 @@
 </body>
 
 </html>
-

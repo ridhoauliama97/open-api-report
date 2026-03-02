@@ -8,7 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         @page {
             margin: 18mm 10mm 18mm 10mm;
@@ -44,10 +46,17 @@
             page-break-inside: auto;
         }
 
-        thead { display: table-header-group; }
-        tr { page-break-inside: avoid; page-break-after: auto; }
+        thead {
+            display: table-header-group;
+        }
 
-        th, td {
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        th,
+        td {
             border: 1px solid #9ca3af;
             padding: 3px 4px;
             vertical-align: middle;
@@ -59,15 +68,23 @@
             background: #fff;
         }
 
-        td.center { text-align: center; }
+        td.center {
+            text-align: center;
+        }
+
         td.number {
             text-align: right;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
         }
 
-        .row-odd td { background: #c9d1df; }
-        .row-even td { background: #eef2f8; }
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
 
         .headers-row th {
             font-weight: bold;
@@ -87,12 +104,15 @@
             align-items: flex-end;
         }
 
-        .footer-left, .footer-right {
+        .footer-left,
+        .footer-right {
             font-size: 8px;
             font-style: italic;
         }
 
-        .footer-right { text-align: right; }
+        .footer-right {
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -102,10 +122,10 @@
         $groups = is_array($data['groups'] ?? null) ? $data['groups'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
 
-        $startText = \Carbon\Carbon::parse((string) ($startDate ?? now()))->locale('id')->translatedFormat('d M Y');
-        $endText = \Carbon\Carbon::parse((string) ($endDate ?? now()))->locale('id')->translatedFormat('d M Y');
+        $startText = \Carbon\Carbon::parse((string) ($startDate ?? now()))->locale('id')->translatedFormat('d-M-y');
+        $endText = \Carbon\Carbon::parse((string) ($endDate ?? now()))->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $grandTotalTon = (float) ($summary['grand_total_ton'] ?? 0.0);
 
         $toFloat = static function ($value): ?float {
@@ -196,19 +216,20 @@
                         <td class="center">{{ $tebalInt !== null ? $tebalInt : '' }}</td>
                         @foreach ($mejaColumns as $meja)
                             <td class="number">
-                                {{ $tebalInt === $meja ? number_format($ton, 4, '.', '') : '' }}
+                                {{ $tebalInt === $meja ? number_format($ton, 4, '.', ',') : '' }}
                             </td>
                         @endforeach
-                        <td class="number">{{ number_format($ton, 4, '.', '') }}</td>
+                        <td class="number">{{ number_format($ton, 4, '.', ',') }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="totals-row">
                     <td class="center">Jumlah</td>
                     @foreach ($mejaColumns as $meja)
-                        <td class="number">{{ $groupByMeja[$meja] > 0 ? number_format($groupByMeja[$meja], 4, '.', '') : '' }}</td>
+                        <td class="number">
+                            {{ $groupByMeja[$meja] > 0 ? number_format($groupByMeja[$meja], 4, '.', ',') : '' }}</td>
                     @endforeach
-                    <td class="number">{{ number_format((float) ($group['total_ton'] ?? 0.0), 4, '.', '') }}</td>
+                    <td class="number">{{ number_format((float) ($group['total_ton'] ?? 0.0), 4, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -220,9 +241,10 @@
                 <tr class="totals-row">
                     <td colspan="3" class="center">Total</td>
                     @foreach ($mejaColumns as $meja)
-                        <td class="number">{{ $grandByMeja[$meja] > 0 ? number_format($grandByMeja[$meja], 4, '.', '') : '' }}</td>
+                        <td class="number">
+                            {{ $grandByMeja[$meja] > 0 ? number_format($grandByMeja[$meja], 4, '.', ',') : '' }}</td>
                     @endforeach
-                    <td class="number">{{ number_format($grandTotalTon, 4, '.', '') }}</td>
+                    <td class="number">{{ number_format($grandTotalTon, 4, '.', ',') }}</td>
                 </tr>
             @endif
         </tbody>

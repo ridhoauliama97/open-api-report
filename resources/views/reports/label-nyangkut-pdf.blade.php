@@ -134,7 +134,8 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedDateText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
 
         $isNumericColumn = static function (string $column, array $rows): bool {
             foreach ($rows as $row) {
@@ -163,25 +164,25 @@
                 return null;
             }
 
-            $normalized = str_replace(' ', '', $normalized);
+            $normalized = str_replace(' ','', $normalized);
 
             // Handle 1,234.56 and 1.234,56 formats.
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.', $normalized);
+                $normalized = str_replace(',','.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
 
         $normalizeColumnName = static function (string $column): string {
-            return strtolower(str_replace([' ', '_'], '', trim($column)));
+            return strtolower(str_replace([' ','_'], '', trim($column)));
         };
 
         $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
@@ -200,11 +201,11 @@
         };
 
         $findGroupColumn = static function (array $availableColumns): ?string {
-            $priorities = ['ket', 'keterangan', 'namagroup', 'group', 'namaproses'];
+            $priorities = ['ket','keterangan','namagroup','group','namaproses'];
 
             foreach ($priorities as $candidate) {
                 foreach ($availableColumns as $column) {
-                    $normalized = strtolower(str_replace([' ', '_'], '', trim($column)));
+                    $normalized = strtolower(str_replace([' ','_'], '', trim($column)));
                     if ($normalized === $candidate) {
                         return $column;
                     }
@@ -212,7 +213,7 @@
             }
 
             foreach ($availableColumns as $column) {
-                $normalized = strtolower(str_replace([' ', '_'], '', trim($column)));
+                $normalized = strtolower(str_replace([' ','_'], '', trim($column)));
                 if (in_array($normalized, $priorities, true)) {
                     return $column;
                 }
@@ -225,8 +226,8 @@
         $columns = array_values(
             array_filter($columns, static fn(string $column): bool => $normalizeColumnName($column) !== 'rendemen'),
         );
-        $jmlhBatangColumn = $findColumnByNames($columns, ['JmlhBatang', 'Jmlh Btg', 'JmlBatang', 'JumlahBatang']);
-        $lokasiColumn = $findColumnByNames($columns, ['Description', 'Lokasi']);
+        $jmlhBatangColumn = $findColumnByNames($columns, ['JmlhBatang','Jmlh Btg','JmlBatang','JumlahBatang']);
+        $lokasiColumn = $findColumnByNames($columns, ['Description','Lokasi']);
 
         $jmlhBatangSwapIndex = $jmlhBatangColumn !== null ? array_search($jmlhBatangColumn, $columns, true) : false;
         $lokasiSwapIndex = $lokasiColumn !== null ? array_search($lokasiColumn, $columns, true) : false;
@@ -324,7 +325,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Label Nyangkut</h1>
-    <p class="report-subtitle">Per-{{ $generatedAtText }}</p>
+    <p class="report-subtitle">Per-{{ $generatedDateText }}</p>
 
     @forelse ($tableGroups as $group)
         <div class="section-title">
@@ -349,7 +350,7 @@
                                 $numeric = $isNumericColumn($column, $group['rows']);
                                 $isLabelOutColumn = in_array(
                                     $normalizeColumnName($column),
-                                    ['labelout', 'labeloutput'],
+                                    ['labelout','labeloutput'],
                                     true,
                                 );
                             @endphp
@@ -358,7 +359,7 @@
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
                             @elseif ($totalColumn !== null && $column === $totalColumn)
                                 <td class="number">
-                                    {{ is_numeric($value) ? number_format((float) $value, 4, '.', '') : '' }}</td>
+                                    {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}</td>
                             @elseif ($numeric)
                                 <td class="number">
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
@@ -391,7 +392,7 @@
                                 </td>
                             @elseif ($totalColumn !== null && $summaryColumn === $totalColumn)
                                 <td class="number" style="font-weight:bold;">
-                                    {{ number_format($groupTotalValue, 4, '.', '') }}
+                                    {{ number_format($groupTotalValue, 4, '.', ',') }}
                                 </td>
                             @else
                                 <td></td>

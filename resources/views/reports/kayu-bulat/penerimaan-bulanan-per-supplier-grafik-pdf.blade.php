@@ -144,10 +144,10 @@
     @php
         $data = is_array($reportData ?? null) ? $reportData : [];
         $groups = is_array($data['groups'] ?? null) ? $data['groups'] : [];
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt4 = static fn($value): string => number_format((float) $value, 4, '.', ',');
         $fmt2 = static fn($value): string => number_format((float) $value, 2, '.', ',');
@@ -159,10 +159,90 @@
             $num = (float) $value;
             return abs($num) < 0.0000001 ? '' : $fmt2($num);
         };
+        $formatMonthLabel = static function ($label): string {
+            $text = trim((string) $label);
+            if ($text === '') {
+                return '';
+            }
+
+            try {
+                return \Carbon\Carbon::parse($text)->locale('id')->translatedFormat('M-y');
+            } catch (\Throwable $exception) {
+                // Continue to manual parse for localized month names.
+            }
+
+            $normalized = preg_replace('/\s+/', ' ', strtoupper(str_replace(['/', '.'], ['-', '-'], $text)));
+            $normalized = str_replace(' ', '-', $normalized);
+            $parts = preg_split('/-+/', $normalized) ?: [];
+            if (count($parts) < 2) {
+                return $text;
+            }
+
+            $monthMap = [
+                'JAN' => 1,
+                'FEB' => 2,
+                'MAR' => 3,
+                'APR' => 4,
+                'APRIL' => 4,
+                'MEI' => 5,
+                'MAY' => 5,
+                'JUN' => 6,
+                'JUNI' => 6,
+                'JUL' => 7,
+                'JULI' => 7,
+                'AGU' => 8,
+                'AGT' => 8,
+                'AUG' => 8,
+                'AGUSTUS' => 8,
+                'AUGUST' => 8,
+                'SEP' => 9,
+                'SEPTEMBER' => 9,
+                'OKT' => 10,
+                'OCT' => 10,
+                'OKTOBER' => 10,
+                'OCTOBER' => 10,
+                'NOV' => 11,
+                'NOVEMBER' => 11,
+                'DES' => 12,
+                'DEC' => 12,
+                'DESEMBER' => 12,
+                'DECEMBER' => 12,
+            ];
+
+            $yearPart = null;
+            $monthPart = null;
+            if (preg_match('/^\d{4}$/', $parts[0] ?? '')) {
+                $yearPart = (int) $parts[0];
+                $monthPart = $parts[1] ?? null;
+            } else {
+                $monthPart = $parts[0] ?? null;
+                $yearRaw = $parts[1] ?? null;
+                if (preg_match('/^\d{4}$/', (string) $yearRaw)) {
+                    $yearPart = (int) $yearRaw;
+                } elseif (preg_match('/^\d{2}$/', (string) $yearRaw)) {
+                    $yearPart = 2000 + (int) $yearRaw;
+                }
+            }
+
+            $monthNumber = null;
+            if (is_numeric($monthPart)) {
+                $monthNumber = (int) $monthPart;
+            } elseif (isset($monthMap[(string) $monthPart])) {
+                $monthNumber = $monthMap[(string) $monthPart];
+            } else {
+                $monthNumber = $monthMap[substr((string) $monthPart, 0, 3)] ?? null;
+            }
+
+            if ($yearPart && $monthNumber && $monthNumber >= 1 && $monthNumber <= 12) {
+                return \Carbon\Carbon::create($yearPart, $monthNumber, 1)->locale('id')->translatedFormat('M-y');
+            }
+
+            return $text;
+        };
     @endphp
 
     <h1 class="report-title">Laporan Penerimaan Kayu Bulat Per Supplier Bulanan (Grafik)</h1>
-    <p class="report-subtitle">Dari {{ $start }} Sampai {{ $end }}</p>
+    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @forelse ($groups as $groupIndex => $group)
         @php
@@ -178,12 +258,12 @@
         <table>
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 36%">Supplier</th>
+                    <th style="width: 20%">Supplier</th>
                     <th style="width: 12%">Total</th>
                     @foreach ($monthLabels as $label)
                         <th
-                            style="width: {{ count($monthLabels) > 0 ? number_format(36 / count($monthLabels), 2, '.', '') : '12' }}%">
-                            {{ $label }}</th>
+                            style="width: {{ count($monthLabels) > 0 ? number_format(52 / count($monthLabels), 2, '.', ',') : '12' }}%">
+                            {{ $formatMonthLabel($label) }}</th>
                     @endforeach
                 </tr>
             </thead>

@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -66,7 +66,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibri", sans-serif;
+            font-family: "Calibri", sans-serif;
         }
 
         .row-odd td {
@@ -129,13 +129,13 @@
             min-width: 170px;
             font-weight: 700;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -157,7 +157,7 @@
         $grandTotal = (float) ($reportData['grand_total'] ?? 0);
         $rawCount = count($reportData['rows'] ?? []);
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt4 = static function ($value): string {
             $num = (float) ($value ?? 0);
@@ -172,7 +172,7 @@
             if (abs($num) < 0.0000001) {
                 return '';
             }
-            return number_format($num, 0, ',', '.');
+            return number_format($num, 0, '.', ',');
         };
 
         $svgWidth = 960;
@@ -183,7 +183,7 @@
         $padBottom = 34;
         $plotWidth = $svgWidth - $padLeft - $padRight;
         $plotHeight = $svgHeight - $padTop - $padBottom;
-        $palette = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#6f42c1', '#20c997', '#d63384', '#6c757d'];
+        $palette = ['#0d6efd','#198754','#dc3545','#fd7e14','#6f42c1','#20c997','#d63384','#6c757d'];
         $maxValue = 0.0;
         foreach ($years as $year) {
             $yearSeries = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
@@ -202,7 +202,7 @@
     @endphp
 
     <h1 class="report-title">Rekap Pembelian Kayu Bulat</h1>
-    <p class="report-subtitle">Rentang Periode Tahun {{ $startYear }} s/d {{ $endYear }}</p>
+    <p class="report-subtitle">Periode {{ $startYear }} s/d {{ $endYear }}</p>
 
     <table style="margin-top: 15px;">
         <thead>

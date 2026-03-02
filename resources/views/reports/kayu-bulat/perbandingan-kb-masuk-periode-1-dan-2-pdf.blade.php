@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -66,7 +66,7 @@
 
         td.number {
             text-align: center;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -119,13 +119,13 @@
             color: #636466;
             font-weight: bold;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -138,11 +138,11 @@
     @php
         $rows = is_array($rows ?? null) ? $rows : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i:s');
-        $period1StartText = \Carbon\Carbon::parse($period1StartDate)->locale('id')->translatedFormat('d M Y');
-        $period1EndText = \Carbon\Carbon::parse($period1EndDate)->locale('id')->translatedFormat('d M Y');
-        $period2StartText = \Carbon\Carbon::parse($period2StartDate)->locale('id')->translatedFormat('d M Y');
-        $period2EndText = \Carbon\Carbon::parse($period2EndDate)->locale('id')->translatedFormat('d M Y');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $period1StartText = \Carbon\Carbon::parse($period1StartDate)->locale('id')->translatedFormat('d-M-y');
+        $period1EndText = \Carbon\Carbon::parse($period1EndDate)->locale('id')->translatedFormat('d-M-y');
+        $period2StartText = \Carbon\Carbon::parse($period2StartDate)->locale('id')->translatedFormat('d-M-y');
+        $period2EndText = \Carbon\Carbon::parse($period2EndDate)->locale('id')->translatedFormat('d-M-y');
         $formatNumber = static function ($value): string {
             $number = is_numeric($value) ? (float) $value : 0.0;
             if (abs($number) < 0.0000001) {

@@ -137,9 +137,9 @@
         $umur4 = (int) ($params['Umur4'] ?? 0);
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $columns = ['Jenis', 'Tebal', 'Lebar', 'Panjang', 'Period1', 'Period2', 'Period3', 'Period4', 'Period5'];
+        $columns = ['Jenis','Tebal','Lebar','Panjang','Period1','Period2','Period3','Period4','Period5'];
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -148,7 +148,7 @@
             return null;
         };
         $formatDecimal = static function (?float $value, int $decimals): string {
-            return $value === null ? '' : number_format($value, $decimals, '.', '');
+            return $value === null ? '' : number_format($value, $decimals, '.', ',');
         };
 
         $totals = [
@@ -225,7 +225,7 @@
                     <td class="number">{{ $formatDecimal($toFloat($row['Period3'] ?? null), 4) }}</td>
                     <td class="number">{{ $formatDecimal($toFloat($row['Period4'] ?? null), 4) }}</td>
                     <td class="number">{{ $formatDecimal($toFloat($row['Period5'] ?? null), 4) }}</td>
-                    <td class="number">{{ number_format($rowTotal, 4, '.', '') }}</td>
+                    <td class="number">{{ number_format($rowTotal, 4, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -235,12 +235,12 @@
             @if (count($rowsData) > 0)
                 <tr class="totals-row">
                     <td colspan="5" class="number">Total</td>
-                    <td class="number">{{ number_format($totals['Period1'], 4, '.', '') }}</td>
-                    <td class="number">{{ number_format($totals['Period2'], 4, '.', '') }}</td>
-                    <td class="number">{{ number_format($totals['Period3'], 4, '.', '') }}</td>
-                    <td class="number">{{ number_format($totals['Period4'], 4, '.', '') }}</td>
-                    <td class="number">{{ number_format($totals['Period5'], 4, '.', '') }}</td>
-                    <td class="number">{{ number_format($totals['RowTotal'], 4, '.', '') }}</td>
+                    <td class="number">{{ number_format($totals['Period1'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period2'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period3'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period4'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period5'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['RowTotal'], 4, '.', ',') }}</td>
                 </tr>
             @endif
         </tbody>

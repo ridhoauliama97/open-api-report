@@ -23,7 +23,7 @@
             font-size: 10px;
             line-height: 1.2;
             color: #000;
-            background: #dcdcdc;
+            background: #fff;
         }
 
         .report-title {
@@ -126,6 +126,10 @@
             border: 1.5px solid #000;
         }
 
+        .center td {
+            text-align: center;
+        }
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -137,8 +141,25 @@
             background: #ffffff !important;
         }
 
-        .equal-cols-6 col {
-            width: 16.6667%;
+        .group-cols col.col-no {
+            width: 6%;
+        }
+
+        .group-cols col.col-tebal,
+        .group-cols col.col-lebar {
+            width: 14%;
+        }
+
+        .group-cols col.col-panjang {
+            width: 14%;
+        }
+
+        .group-cols col.col-jumlah {
+            width: 24%;
+        }
+
+        .group-cols col.col-hasil {
+            width: 28%;
         }
 
         .equal-cols-2 col {
@@ -150,7 +171,7 @@
 <body>
     @php
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $groupedRows = $reportData['grouped_rows'] ?? [];
         $summary = $reportData['summary'] ?? [];
         $endDateText = $reportData['end_date_text'] ?? $endDate;
@@ -159,12 +180,12 @@
             return abs($num) < 0.0000001 ? '' : number_format($num, 4, '.', ',');
         };
         $fmtInt = static function ($value): string {
-            return number_format((float) ($value ?? 0), 0, '.', ',');
+            return number_format((float) ($value = 0 ? '' : $value), 0, '.', ',');
         };
     @endphp
 
     <h1 class="report-title">Laporan Stok Racip Kayu Lat</h1>
-    <p class="report-subtitle">Per Tanggal {{ $endDateText }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $endDateText }}</p>
 
     @if (!empty($groupedRows))
         @foreach ($groupedRows as $group)
@@ -179,40 +200,40 @@
             @endphp
             <div class="section">
                 <p class="group-title">{{ $group['jenis'] }}</p>
-                <table class="zebra equal-cols-6">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
+                <table class="zebra group-cols">
+                    <colgroup class="group-cols">
+                        <col class="col-no" style="width: 6%;">
+                        <col class="col-tebal" style="width: 14%;">
+                        <col class="col-lebar" style="width: 14%;">
+                        <col class="col-panjang" style="width: 14%;">
+                        <col class="col-jumlah" style="width: 24%;">
+                        <col class="col-hasil" style="width: 28%;">
                     </colgroup>
                     <thead>
                         <tr class="headers-row">
-                            <th>No</th>
-                            <th>Tebal</th>
-                            <th>Lebar</th>
-                            <th>Panjang</th>
-                            <th>Jmlh Batang</th>
-                            <th>Hasil</th>
+                            <th style="width: 6%;">No</th>
+                            <th style="width: 14%;">Tebal (mm)</th>
+                            <th style="width: 14%;">Lebar (mm)</th>
+                            <th style="width: 14%;">Panjang (ft)</th>
+                            <th style="width: 24%;">Jumlah Batang (pcs)</th>
+                            <th style="width: 28%;">Hasil</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($groupRows as $row)
-                            <tr>
+                            <tr class="center">
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="cell-right">{{ $fmt4($row['Tebal'] ?? 0) }}</td>
-                                <td class="cell-right">{{ $fmt4($row['Lebar'] ?? 0) }}</td>
-                                <td class="cell-right">{{ $fmt4($row['Panjang'] ?? 0) }}</td>
-                                <td class="cell-right">{{ $fmtInt($row['JmlhBatang'] ?? 0) }}</td>
-                                <td class="cell-right">{{ $fmt4($row['Hasil'] ?? 0) }}</td>
+                                <td>{{ $fmtInt($row['Tebal'] ?? 0) }}</td>
+                                <td>{{ $fmtInt($row['Lebar'] ?? 0) }}</td>
+                                <td>{{ $fmtInt($row['Panjang'] ?? 0) }}</td>
+                                <td>{{ $fmtInt($row['JmlhBatang'] ?? 0) }}</td>
+                                <td>{{ $fmt4($row['Hasil'] ?? 0) }}</td>
                             </tr>
                         @endforeach
                         <tr class="totals-row">
-                            <td colspan="4" style="background: #ffffff;"> Jumlah </td>
-                            <td class="cell-right" style="background: #ffffff;">{{ $fmtInt($sumBatang) }}</td>
-                            <td class="cell-right" style="background: #ffffff;">{{ $fmt4($sumHasil) }}</td>
+                            <td colspan="4"> Jumlah </td>
+                            <td>{{ $fmtInt($sumBatang) }}</td>
+                            <td>{{ $fmt4($sumHasil) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -228,29 +249,32 @@
         </table>
     @endif
 
-    <p style="text-decoration: underline; font-weight: bold;">Summary</p>
-    <table class="equal-cols-2" style="width: 45%;">
-        <colgroup>
-            <col>
-            <col>
-        </colgroup>
-        <tbody>
-            <tr>
-                <td class="row-label">Jumlah Baris Data Seluruhnya</td>
-                <td style="text-align: right; font-weight: bold;">
-                    {{ number_format((int) ($summary['total_rows'] ?? 0), 0, ',', '.') }}
-                </td>
-            </tr>
-            <tr>
-                <td class="row-label">Jumlah Batang Seluruhnya</td>
-                <td style="text-align: right; font-weight: bold;">{{ $summary['total_batang'] ?? 0 }}</td>
-            </tr>
-            <tr>
-                <td class="row-label">Hasil Seluruhnya</td>
-                <td style="text-align: right; font-weight: bold;">{{ $fmt4($summary['total_hasil'] ?? 0) }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="section">
+        <h4 class="group-title">Summary</h4>
+        <table class="equal-cols-2" style="width: 45%;">
+            <colgroup>
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td class="row-label">Total Data</td>
+                    <td style="text-align: right; font-weight: bold;">
+                        {{ number_format((int) ($summary['total_rows'] ?? 0), 0, '.', ',') }} Data
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row-label">Total Jumlah Batang</td>
+                    <td style="text-align: right; font-weight: bold;">{{ $fmtInt($summary['total_batang'] ?? 0) }} pcs
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row-label">Grand Total Hasil</td>
+                    <td style="text-align: right; font-weight: bold;">{{ $fmt4($summary['total_hasil'] ?? 0) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

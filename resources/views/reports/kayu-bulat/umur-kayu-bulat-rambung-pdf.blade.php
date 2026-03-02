@@ -138,13 +138,13 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
-        $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y') : null;
-        $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y') : null;
+        $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') : null;
+        $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') : null;
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $normalize = static function (string $value): string {
-            return strtolower(str_replace([' ', '_', '.'], '', trim($value)));
+            return strtolower(str_replace([' ','_','.'], '', trim($value)));
         };
 
         $findColumnByCandidates = static function (array $availableColumns, array $candidates) use (
@@ -177,7 +177,7 @@
                     return false;
                 }
 
-                $normalized = str_replace([' ', ','], ['', '.'], trim($value));
+                $normalized = str_replace([' ',','], ['','.'], trim($value));
 
                 return is_numeric($normalized);
             }
@@ -186,10 +186,10 @@
         };
 
         $statusColumn = $findColumnByCandidates($columns, ['Status']);
-        $tonColumn = $findColumnByCandidates($columns, ['Ton', 'JmlhTon', 'JumlahTon', 'Berat']);
-        $truckColumn = $findColumnByCandidates($columns, ['Truk', 'NoTruk', 'No Truk']);
-        $lamaRacipColumn = $findColumnByCandidates($columns, ['Lama Racip', 'LamaRacip']);
-        $lamaTungguColumn = $findColumnByCandidates($columns, ['Lama Tunggu', 'LamaTunggu']);
+        $tonColumn = $findColumnByCandidates($columns, ['Ton','JmlhTon','JumlahTon','Berat']);
+        $truckColumn = $findColumnByCandidates($columns, ['Truk','NoTruk','No Truk']);
+        $lamaRacipColumn = $findColumnByCandidates($columns, ['Lama Racip','LamaRacip']);
+        $lamaTungguColumn = $findColumnByCandidates($columns, ['Lama Tunggu','LamaTunggu']);
 
         if ($tonColumn === null) {
             foreach ($columns as $column) {
@@ -268,8 +268,8 @@
             $textValue = trim((string) $value);
             $numericValue = is_numeric($value)
                 ? (float) $value
-                : (is_numeric(str_replace([' ', ','], ['', '.'], $textValue))
-                    ? (float) str_replace([' ', ','], ['', '.'], $textValue)
+                : (is_numeric(str_replace([' ',','], ['','.'], $textValue))
+                    ? (float) str_replace([' ',','], ['','.'], $textValue)
                     : null);
 
             $isTonColumn =
@@ -299,7 +299,7 @@
 
             if (preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $textValue) === 1) {
                 try {
-                    return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d M Y');
+                    return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
                 } catch (\Throwable $exception) {
                     return $textValue;
                 }
@@ -322,7 +322,7 @@
             $groupedRows[$groupName][] = $row;
         }
 
-        $groupOrder = ['Masih Hidup', 'Sudah Mati'];
+        $groupOrder = ['Masih Hidup','Sudah Mati'];
         uksort($groupedRows, static function (string $left, string $right) use ($groupOrder): int {
             $leftIndex = array_search($left, $groupOrder, true);
             $rightIndex = array_search($right, $groupOrder, true);
@@ -354,17 +354,17 @@
                 return null;
             }
 
-            $normalized = str_replace(' ', '', $normalized);
+            $normalized = str_replace(' ','', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.', $normalized);
+                $normalized = str_replace(',','.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -402,7 +402,7 @@
             <colgroup>
                 <col style="width: 4%">
                 @foreach ($displayColumns as $column)
-                    <col style="width: {{ number_format((float) ($finalColumnWidths[$column] ?? 0), 4, '.', '') }}%">
+                    <col style="width: {{ number_format((float) ($finalColumnWidths[$column] ?? 0), 4, '.', ',') }}%">
                 @endforeach
             </colgroup>
             <thead>
@@ -456,4 +456,3 @@
 </body>
 
 </html>
-

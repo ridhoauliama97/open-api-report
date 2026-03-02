@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Laporan Stok Racip Kayu Lat</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
         body {
             font-family: 'Noto Serif', serif;
@@ -71,7 +71,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -125,10 +125,10 @@
                 @php
                     $fmt4 = static function ($value): string {
                         $num = (float) ($value ?? 0);
-                        return abs($num) < 0.0000001 ? '' : number_format($num, 4, ',', '.');
+                        return abs($num) < 0.0000001 ? '' : number_format($num, 4, '.', ',');
                     };
                     $fmtInt = static function ($value): string {
-                        return number_format((float) ($value ?? 0), 0, ',', '.');
+                        return number_format((float) ($value ?? 0), 0, '.', ',');
                     };
                 @endphp
 
@@ -194,7 +194,7 @@
                         <tbody>
                             <tr>
                                 <td class="text-start fw-bold">Jumlah Baris Data Seluruhnya</td>
-                                <td class="text-end">{{ number_format((int) ($reportData['summary']['total_rows'] ?? 0), 0, ',', '.') }}</td>
+                                <td class="text-end">{{ number_format((int) ($reportData['summary']['total_rows'] ?? 0), 0, '.', ',') }}</td>
                             </tr>
                             <tr>
                                 <td class="text-start fw-bold">Jumlah Batang Seluruhnya</td>

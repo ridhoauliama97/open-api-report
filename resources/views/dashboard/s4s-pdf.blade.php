@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -119,10 +119,10 @@
         $groups = is_array($reportData['groups'] ?? null) ? $reportData['groups'] : [];
         $rows = is_array($reportData['rows'] ?? null) ? $reportData['rows'] : [];
 
-        $startText = \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y');
-        $endText = \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y');
+        $startText = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $endText = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
         $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
@@ -151,7 +151,7 @@
             @forelse ($rows as $row)
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td style="text-align: center;">
-                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->format('d') }}</td>
+                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
                     @foreach ($groups as $groupKey => $group)
                         @php
                             $masuk = (float) ($row['cells'][$groupKey]['masuk'] ?? 0);

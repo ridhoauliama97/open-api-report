@@ -142,10 +142,10 @@
         $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : ['s_akhir' => 0, 'ctr' => 0];
         $highlightColumns = [];
 
-        $startText = \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y');
-        $endText = \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y');
+        $startText = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $endText = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
         $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
@@ -176,7 +176,7 @@
             @forelse ($rows as $row)
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="label" style="text-align: center;">
-                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->format('d M Y') }}</td>
+                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
                     @foreach ($columns as $column)
                         @php
                             $inflow = (float) ($row['cells'][$column]['in'] ?? 0 ?: 0);

@@ -140,9 +140,9 @@
                     ? $subRows
                     : collect($subRows)->values()->all())
                 : [];
-        $reportDateText = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d M Y');
+        $reportDateText = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $tonToM3Factor = isset($tonToM3Factor) ? (float) $tonToM3Factor : 1.416;
 
         $toFloat = static function ($value): ?float {
@@ -213,7 +213,7 @@
                     );
                     $totalM3 = $totalTon * $tonToM3Factor;
                 @endphp
-                <tr class="total-row totals-row">
+                <tr class="totals-row">
                     <td colspan="4" class="number" style="font-weight: bold; text-align: center;">Total</td>
                     <td class="number" style="font-weight: bold">{{ $formatNumber($totalTon, 4) }}</td>
                     <td class="number" style="font-weight: bold">{{ $formatNumber($totalM3, 4) }}</td>

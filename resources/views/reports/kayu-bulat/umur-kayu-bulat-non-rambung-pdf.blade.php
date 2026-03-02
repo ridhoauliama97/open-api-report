@@ -117,6 +117,10 @@
             border: 1.5px solid #000;
         }
 
+        .summary-section {
+            margin-top: 12px;
+        }
+
         .group-summary {
             width: 100%;
             text-align: right;
@@ -130,6 +134,29 @@
             text-align: left;
             font-weight: bold;
         }
+
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1.5px solid #000;
+            background: #fff;
+        }
+
+        .summary-table {
+            width: 50%;
+            table-layout: auto;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            padding: 4px 6px;
+            font-size: 11px;
+        }
+
+        .summary-table th {
+            text-align: left;
+            width: 40%;
+        }
     </style>
 </head>
 
@@ -138,10 +165,10 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
-        $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y') : null;
-        $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y') : null;
+        $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') : null;
+        $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') : null;
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $normalize = static function (string $value): string {
             return strtolower(str_replace([' ', '_', '.'], '', trim($value)));
@@ -160,6 +187,17 @@
             }
 
             return null;
+        };
+
+        $formatHeaderLabel = static function (string $column) use ($normalize): string {
+            $normalized = $normalize($column);
+
+            return match ($normalized) {
+                'nokb' => 'No KB',
+                'notruk', 'truk', 'mtruk' => 'No Truk',
+                'ton' => 'Berat Muatan (Ton)',
+                default => $column,
+            };
         };
 
         $isNumericColumn = static function (string $column, array $rows): bool {
@@ -188,6 +226,8 @@
         $statusColumn = $findColumnByCandidates($columns, ['Status']);
         $tonColumn = $findColumnByCandidates($columns, ['Ton', 'JmlhTon', 'JumlahTon', 'Berat']);
         $truckColumn = $findColumnByCandidates($columns, ['Truk', 'NoTruk', 'No Truk']);
+        $supplierColumn = $findColumnByCandidates($columns, ['Supplier', 'NamaSupplier', 'Nama Supplier']);
+        $jenisKayuColumn = $findColumnByCandidates($columns, ['JenisKayu', 'Jenis Kayu', 'Jenis']);
         $lamaRacipColumn = $findColumnByCandidates($columns, ['Lama Racip', 'LamaRacip']);
         $lamaTungguColumn = $findColumnByCandidates($columns, ['Lama Tunggu', 'LamaTunggu']);
 
@@ -203,6 +243,18 @@
         $displayColumns = array_values(
             array_filter($columns, static fn(string $column): bool => $column !== $statusColumn),
         );
+        $displayColumns = array_values(
+            array_filter(
+                $displayColumns,
+                static fn(string $column): bool => $column !== $truckColumn && $column !== $tonColumn,
+            ),
+        );
+        if ($truckColumn !== null && in_array($truckColumn, $columns, true)) {
+            $displayColumns[] = $truckColumn;
+        }
+        if ($tonColumn !== null && in_array($tonColumn, $columns, true)) {
+            $displayColumns[] = $tonColumn;
+        }
 
         $columnWidths = [];
         foreach ($displayColumns as $column) {
@@ -291,7 +343,7 @@
                     ($lamaRacipColumn !== null && $normalize($lamaRacipColumn) === $normalizedColumn) ||
                     ($lamaTungguColumn !== null && $normalize($lamaTungguColumn) === $normalizedColumn)
                 ) {
-                    return "{$formatted} hr";
+                    return "{$formatted} hari";
                 }
 
                 return $formatted;
@@ -299,7 +351,7 @@
 
             if (preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $textValue) === 1) {
                 try {
-                    return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d M Y');
+                    return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
                 } catch (\Throwable $exception) {
                     return $textValue;
                 }
@@ -385,6 +437,39 @@
 
             return $total;
         };
+
+        $countTruck = static function (array $rows, ?string $truckColumn): int {
+            if ($truckColumn === null) {
+                return count($rows);
+            }
+
+            return count(
+                array_filter($rows, static fn(array $row): bool => trim((string) ($row[$truckColumn] ?? '')) !== ''),
+            );
+        };
+
+        $countDistinct = static function (array $rows, ?string $column): int {
+            if ($column === null) {
+                return 0;
+            }
+
+            $values = [];
+            foreach ($rows as $row) {
+                $value = trim((string) ($row[$column] ?? ''));
+                if ($value === '') {
+                    continue;
+                }
+
+                $values[$value] = true;
+            }
+
+            return count($values);
+        };
+
+        $summaryTotalSupplier = $countDistinct($rowsData, $supplierColumn);
+        $summaryTotalJenisKayu = $countDistinct($rowsData, $jenisKayuColumn);
+        $summaryTotalTruk = $countDistinct($rowsData, $truckColumn);
+        $summaryTotalMuatan = $sumTon($rowsData, $tonColumn);
     @endphp
 
     <h1 class="report-title">Laporan Umur Kayu Bulat (NON RAMBUNG)</h1>
@@ -402,14 +487,14 @@
             <colgroup>
                 <col style="width: 4%">
                 @foreach ($displayColumns as $column)
-                    <col style="width: {{ number_format((float) ($finalColumnWidths[$column] ?? 0), 4, '.', '') }}%">
+                    <col style="width: {{ number_format((float) ($finalColumnWidths[$column] ?? 0), 4, '.', ',') }}%">
                 @endforeach
             </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>No</th>
                     @foreach ($displayColumns as $column)
-                        <th>{{ $column }}</th>
+                        <th>{{ $formatHeaderLabel($column) }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -428,14 +513,23 @@
                         @endforeach
                     </tr>
                 @endforeach
+                <tr class="totals-row">
+                    @php
+                        $hasTruckColumn = $truckColumn !== null && in_array($truckColumn, $displayColumns, true);
+                        $hasTonColumn = $tonColumn !== null && in_array($tonColumn, $displayColumns, true);
+                        $tailColumnsCount = ($hasTruckColumn ? 1 : 0) + ($hasTonColumn ? 1 : 0);
+                        $totalLabelColspan = max(1, 1 + count($displayColumns) - $tailColumnsCount);
+                    @endphp
+                    <td class="center" colspan="{{ $totalLabelColspan }}">Total :</td>
+                    @if ($hasTruckColumn)
+                        <td class="center">{{ $countTruck($groupRows, $truckColumn) }} Truk</td>
+                    @endif
+                    @if ($hasTonColumn)
+                        <td class="number">{{ number_format($sumTon($groupRows, $tonColumn), 4, '.', ',') }}</td>
+                    @endif
+                </tr>
             </tbody>
         </table>
-        <div class="group-summary">
-            <span class="label">Total :</span>
-            {{ number_format($sumTon($groupRows, $tonColumn), 4, '.', ',') }} Ton
-            ({{ $truckColumn !== null ? count(array_filter($groupRows, static fn(array $row): bool => trim((string) ($row[$truckColumn] ?? '')) !== '')) : count($groupRows) }}
-            Truk)
-        </div>
     @empty
         <table>
             <tbody>
@@ -445,6 +539,30 @@
             </tbody>
         </table>
     @endforelse
+
+    <div class="section-title">Summary :</div>
+
+    <table class="summary-table">
+        <tbody>
+            <tr>
+                <th>Total Supplier</th>
+                <td class="center"><strong>{{ $summaryTotalSupplier }} Supplier</strong></td>
+            </tr>
+            <tr>
+                <th>Total Jenis Kayu</th>
+                <td class="center"><strong>{{ $summaryTotalJenisKayu }} Jenis Kayu</strong></td>
+            </tr>
+            <tr>
+                <th>Total Semua Truk</th>
+                <td class="center"><strong>{{ $summaryTotalTruk }} Truk</strong></td>
+            </tr>
+            <tr>
+                <th>Berat Semua Muatan</th>
+                <td class="center"><strong>{{ number_format($summaryTotalMuatan, 4, '.', ',') }} Ton</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

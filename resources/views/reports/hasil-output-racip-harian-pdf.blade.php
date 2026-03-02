@@ -123,14 +123,24 @@
     @php
         $rows = is_array($reportData['rows'] ?? null) ? $reportData['rows'] : [];
         $columns = is_array($reportData['columns'] ?? null) ? $reportData['columns'] : [];
+        if ($columns === []) {
+            $expectedColumns = config('reports.hasil_output_racip_harian.expected_columns', []);
+            $columns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : [];
+            if ($columns === []) {
+                $columns = ['Jenis', 'Masuk', 'Tebal', 'Lebar', 'Panjang', 'JlhBtg'];
+            }
+        }
         $numericColumns = is_array($reportData['numeric_columns'] ?? null) ? $reportData['numeric_columns'] : [];
         $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : [];
 
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $headerLabelMap = [
-            'JlhBtg' => 'Jumlah Batang',
+            'JlhBtg' => 'Jumlah Batang (pcs)',
+            'Tebal' => 'Tebal (mm)',
+            'Lebar' => 'Lebar (mm)',
+            'Panjang' => 'Panjang (ft)',
         ];
 
         $isMasukColumn = static function (string $column): bool {
@@ -150,6 +160,7 @@
         }
         $columns = array_values(array_merge($nonMasukColumns, $masukColumns));
         $lastMasukColumn = $masukColumns !== [] ? end($masukColumns) : null;
+        $visibleColumnCount = max(count($columns), 1);
 
         $formatNumber = static function (mixed $value, string $column) use ($isMasukColumn): string {
             $num = (float) ($value ?? 0);
@@ -162,7 +173,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Hasil Output Racip Harian</h1>
-    <p class="report-subtitle">Per Tanggal {{ $end }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $end }}</p>
 
     <table>
         <thead>
@@ -187,7 +198,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
+                    <td colspan="{{ $visibleColumnCount + 1 }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
 

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Generate Laporan Mutasi Barang Jadi</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
 <body class="bg-light">
@@ -25,7 +25,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 

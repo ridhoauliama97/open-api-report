@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Generate Laporan Mutasi Finger Joint</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
 <body class="bg-light">
@@ -29,7 +29,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 

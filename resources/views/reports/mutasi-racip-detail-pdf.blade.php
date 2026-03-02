@@ -138,13 +138,25 @@
         $numericColumns = is_array($reportData['numeric_columns'] ?? null) ? $reportData['numeric_columns'] : [];
         $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : [];
 
-        $startText =
-            $reportData['start_date_text'] ??
-            \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $endText =
-            $reportData['end_date_text'] ?? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $formatDateText = static function ($value): ?string {
+            if ($value === null || $value === '') {
+                return null;
+            }
+
+            if (is_array($value)) {
+                return null;
+            }
+
+            try {
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
+            } catch (\Throwable $exception) {
+                return null;
+            }
+        };
+        $startText = $formatDateText($reportData['start_date_text'] ?? null) ?? ($formatDateText($startDate) ?? '');
+        $endText = $formatDateText($reportData['end_date_text'] ?? null) ?? ($formatDateText($endDate) ?? '');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -177,16 +189,16 @@
             }
 
             if ($isDimensionColumn) {
-                $text = number_format($value, 4, '.', '');
+                $text = number_format($value, 4, '.', ',');
                 return rtrim(rtrim($text, '0'), '.');
             }
 
-            return number_format($value, 4, '.', '');
+            return number_format($value, 4, '.', ',');
         };
     @endphp
 
     <h1 class="report-title">Laporan Mutasi Racip Detail</h1>
-    <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
+    <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
     <table>
         <colgroup>
             <col class="col-uniform">
@@ -211,9 +223,9 @@
             <tr class="headers-row">
                 <th rowspan="2">No</th>
                 <th rowspan="2">Jenis</th>
-                <th rowspan="2">Tebal</th>
-                <th rowspan="2">Lebar</th>
-                <th rowspan="2">Panjang</th>
+                <th rowspan="2">Tebal (mm)</th>
+                <th rowspan="2">Lebar (mm)</th>
+                <th rowspan="2">Panjang (ft)</th>
                 <th colspan="2">Saldo Awal</th>
                 <th colspan="4">Masuk</th>
                 <th colspan="4">Keluar</th>
@@ -239,9 +251,12 @@
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $loop->iteration }}</td>
                     <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number">{{ $formatNumeric('Tebal', $toFloat($row['Tebal'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('Lebar', $toFloat($row['Lebar'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}</td>
+                    <td class="number" style="text-align: center;">
+                        {{ $formatNumeric('Tebal', $toFloat($row['Tebal'] ?? null)) }}</td>
+                    <td class="number" style="text-align: center;">
+                        {{ $formatNumeric('Lebar', $toFloat($row['Lebar'] ?? null)) }}</td>
+                    <td class="number" style="text-align: center;">
+                        {{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}</td>
                     <td class="number">{{ $formatNumeric('Sawal', $toFloat($row['Sawal'] ?? null)) }}</td>
                     <td class="number">{{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
                     <td class="number">{{ $formatNumeric('Masuk', $toFloat($row['Masuk'] ?? null)) }}</td>

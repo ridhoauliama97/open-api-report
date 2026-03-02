@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Dashboard Finger Joint</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
         .highlight-col {
             background-color: #8fe9e8 !important;
@@ -21,7 +21,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -134,7 +134,7 @@
                         <tbody>
                             @forelse ($rows as $row)
                                 <tr>
-                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->format('d-M') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
                                     @foreach ($columns as $column)
                                         @php
                                             $inflow = (float) (($row['cells'][$column]['in'] ?? 0) ?: 0);

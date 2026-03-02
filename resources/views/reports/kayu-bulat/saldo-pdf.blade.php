@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -79,7 +79,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -125,10 +125,10 @@
     @php
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): float {
             return is_numeric($value) ? (float) $value : 0.0;
@@ -139,7 +139,7 @@
                 return '';
             }
 
-            return number_format($value, 4, '.', '');
+            return number_format($value, 4, '.', ',');
         };
 
         $tonToM3Factor = 1.416;
@@ -171,7 +171,9 @@
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">{{ (string) ($row['DateCreate'] ?? '') }}</td>
+                    <td class="center">
+                        {{ \Carbon\Carbon::parse((string) ($row['DateCreate'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}
+                    </td>
                     <td class="label">{{ (string) ($row['Jenis'] ?? '') }}</td>
                     <td>{{ (string) ($row['NmSupplier'] ?? '') }}</td>
                     <td class="number">{{ $fmt($ton, true) }}</td>

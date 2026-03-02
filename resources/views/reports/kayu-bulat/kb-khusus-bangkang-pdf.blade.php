@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -102,7 +102,7 @@
         .footer-right {
             text-align: right;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -121,10 +121,10 @@
             $columns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : [];
         }
         $visibleColumnCount = max(count($columns), 1);
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
     @endphp
 
     <h1 class="report-title">Laporan KB Khusus Bangkang</h1>

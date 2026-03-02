@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 9.5px;
             line-height: 1.2;
             color: #000;
@@ -122,7 +122,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         td.grade-output {
@@ -163,13 +163,13 @@
         .footer-right {
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -190,7 +190,7 @@
                 : [];
         $availableColumns = array_keys($rowsData[0] ?? []);
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -201,20 +201,20 @@
                 return null;
             }
 
-            $normalized = trim(str_replace(' ', '', $value));
+            $normalized = trim(str_replace(' ','', $value));
             if ($normalized === '') {
                 return null;
             }
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.', $normalized);
+                $normalized = str_replace(',','.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -225,7 +225,7 @@
                 return false;
             }
 
-            $normalized = strtolower(str_replace([' ', '_'], '', $column));
+            $normalized = strtolower(str_replace([' ','_'], '', $column));
 
             return str_contains($normalized, 'tgl') ||
                 str_contains($normalized, 'tanggal') ||
@@ -234,7 +234,7 @@
 
         $normalizeName = static function (?string $name): string {
             $raw = (string) ($name ?? '');
-            return strtolower(preg_replace('/[^a-z0-9]/', '', $raw) ?? '');
+            return strtolower(preg_replace('/[^a-z0-9]/','', $raw) ?? '');
         };
 
         $findColumn = static function (array $columns, array $candidates) use ($normalizeName): ?string {
@@ -258,7 +258,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->format('d M Y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -273,13 +273,13 @@
             'Date',
         ]);
         $supplierColumnResolved =
-            $supplierColumn ?? $findColumn($availableColumns, ['Supplier', 'NmSupplier', 'Nama Supplier']);
-        $sawmillColumn = $findColumn($availableColumns, ['Sawmill', 'NamaSawmill']);
-        $noPenStColumn = $findColumn($availableColumns, ['NoPenST', 'No Pen ST', 'NoPenerimaanST']);
-        $noKbColumn = $findColumn($availableColumns, ['NoKB', 'No KB', 'NoKayuBulat']);
-        $jenisKayuColumn = $findColumn($availableColumns, ['JenisKayu', 'Jenis Kayu', 'Jenis']);
-        $trukColumn = $findColumn($availableColumns, ['NoTruk', 'Truk']);
-        $mejaColumn = $findColumn($availableColumns, ['Meja', 'NoMeja']);
+            $supplierColumn ?? $findColumn($availableColumns, ['Supplier','NmSupplier','Nama Supplier']);
+        $sawmillColumn = $findColumn($availableColumns, ['Sawmill','NamaSawmill']);
+        $noPenStColumn = $findColumn($availableColumns, ['NoPenST','No Pen ST','NoPenerimaanST']);
+        $noKbColumn = $findColumn($availableColumns, ['NoKB','No KB','NoKayuBulat']);
+        $jenisKayuColumn = $findColumn($availableColumns, ['JenisKayu','Jenis Kayu','Jenis']);
+        $trukColumn = $findColumn($availableColumns, ['NoTruk','Truk']);
+        $mejaColumn = $findColumn($availableColumns, ['Meja','NoMeja']);
         $sectionColumn = $findColumn($availableColumns, [
             'InOut',
             'InputOutput',
@@ -288,10 +288,10 @@
             'Status',
             'Posisi',
         ]);
-        $gradeColumn = $findColumn($availableColumns, ['Grade', 'NamaGrade']);
-        $jmlhTrukColumn = $findColumn($availableColumns, ['JmlhTruk', 'JumlahTruk', 'JmlTruk']);
-        $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)', 'KBTon', 'TonKB', 'KBTon']);
-        $stTonColumn = $findColumn($availableColumns, ['ST (Ton)', 'STTon', 'TonST', 'TonKG']);
+        $gradeColumn = $findColumn($availableColumns, ['Grade','NamaGrade']);
+        $jmlhTrukColumn = $findColumn($availableColumns, ['JmlhTruk','JumlahTruk','JmlTruk']);
+        $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)','KBTon','TonKB','KBTon']);
+        $stTonColumn = $findColumn($availableColumns, ['ST (Ton)','STTon','TonST','TonKG']);
         $summaryData = is_array($summary ?? null) ? $summary : [];
         $summarySuppliers = (int) ($summaryData['total_suppliers'] ?? count($groupsData));
         $summaryRows = (int) ($summaryData['total_rows'] ?? count($rowsData));
@@ -361,7 +361,7 @@
 
         $normalizeOutputGradeKey = static function (string $grade): string {
             $upper = strtoupper(trim($grade));
-            $normalized = preg_replace('/\s+/', ' ', $upper) ?? $upper;
+            $normalized = preg_replace('/\s+/',' ', $upper) ?? $upper;
 
             if (str_contains($normalized, 'KAYU LAT')) {
                 return 'KAYU LAT';
@@ -382,8 +382,8 @@
 
     <h1 class="report-title">Laporan Penerimaan ST Dari Sawmill - Timbang KG</h1>
     <p class="report-subtitle">
-        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d M Y') }} s/d
-        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
+        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
+        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
         | Group by Supplier
     </p>
 
@@ -471,7 +471,7 @@
 
             $inputRows = array_values($inputByGrade);
 
-            $expectedOutputOrder = ['KAYU LAT', 'MC 1', 'MC 2', 'STD'];
+            $expectedOutputOrder = ['KAYU LAT','MC 1','MC 2','STD'];
             $outputRows = [];
             foreach ($expectedOutputOrder as $outputGrade) {
                 $existing = $outputByGrade[$outputGrade] ?? null;
@@ -630,33 +630,33 @@
                                     {{ (string) ($row['grade'] ?? '-') }}
                                 </td>
                                 <td class="center">
-                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['jmlh_truk'] ?? 0), 0, '.', '') : '' }}
+                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['jmlh_truk'] ?? 0), 0, '.', ',') : '' }}
                                 </td>
                                 <td class="number">
-                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['kb_ton'] ?? 0), 2, '.', '') : '' }}
+                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['kb_ton'] ?? 0), 2, '.', ',') : '' }}
                                 </td>
                                 <td class="number">
-                                    {{ $sectionName === 'OUTPUT' ? number_format((float) ($row['st_ton'] ?? 0), 4, '.', '') : '' }}
+                                    {{ $sectionName === 'OUTPUT' ? number_format((float) ($row['st_ton'] ?? 0), 4, '.', ',') : '' }}
                                 </td>
                                 <td class="number">
-                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['input_percent'] ?? 0), 1, '.', '') . '%' : '' }}
+                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['input_percent'] ?? 0), 1, '.', ',') . '%' : '' }}
                                 </td>
                                 <td class="number">
-                                    {{ $sectionName === 'OUTPUT' ? number_format((float) ($row['output_percent'] ?? 0), 1, '.', '') . '%' : '' }}
+                                    {{ $sectionName === 'OUTPUT' ? number_format((float) ($row['output_percent'] ?? 0), 1, '.', ',') . '%' : '' }}
                                 </td>
                             </tr>
                         @endforeach
                     @endforeach
                     <tr class="subtotal-row totals-row">
                         <td class="number" colspan="3">Jumlah:</td>
-                        <td class="number">{{ number_format($totalKb, 2, '.', '') }}</td>
-                        <td class="number">{{ number_format($totalSt, 4, '.', '') }}</td>
+                        <td class="number">{{ number_format($totalKb, 2, '.', ',') }}</td>
+                        <td class="number">{{ number_format($totalSt, 4, '.', ',') }}</td>
                         <td></td>
                         <td></td>
                     </tr>
                 </tbody>
             </table>
-            <p class="rendemen">RENDEMEN: {{ number_format($rendemen, 1, '.', '') }}%</p>
+            <p class="rendemen">RENDEMEN: {{ number_format($rendemen, 1, '.', ',') }}%</p>
         </div>
     @empty
         <table>
@@ -676,11 +676,11 @@
             </tr>
             <tr>
                 <td>Total supplier</td>
-                <td class="center">{{ number_format($summarySuppliers, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summarySuppliers, 0, '.', ',') }}</td>
             </tr>
             <tr>
                 <td>Total baris data</td>
-                <td class="center">{{ number_format($summaryRows, 0, '.', '') }}</td>
+                <td class="center">{{ number_format($summaryRows, 0, '.', ',') }}</td>
             </tr>
         </tbody>
     </table>

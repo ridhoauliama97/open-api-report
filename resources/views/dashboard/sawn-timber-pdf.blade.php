@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -68,7 +68,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
         }
 
@@ -124,13 +124,13 @@
         .footer-right {
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -153,7 +153,7 @@
         $dailyOut = is_array($chartData['daily_out_totals'] ?? null) ? $chartData['daily_out_totals'] : [];
         $rawRows = is_array($chartData['raw_rows'] ?? null) ? $chartData['raw_rows'] : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
         $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
@@ -214,8 +214,8 @@
     @endphp
 
     <h1 class="title">Dashboard Sawn Timber</h1>
-    <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y') }} s/d
-        {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y') }}</p>
+    <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
+        {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') }}</p>
 
     <table>
         <thead>
@@ -266,7 +266,7 @@
             @foreach ($dates as $idx => $date)
                 @php
                     $x = $padL + $idx * $xStep;
-                    $d = \Carbon\Carbon::parse($date)->format('d/m');
+                    $d = \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('d-M-y');
                 @endphp
                 <text x="{{ $x }}" y="{{ $padT + $plotH + 14 }}" text-anchor="middle"
                     font-size="8">{{ $d }}</text>

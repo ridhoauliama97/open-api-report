@@ -113,7 +113,7 @@
         $rowsData = is_iterable($rows ?? null) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $summaryData = is_array($summary ?? null) ? $summary : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
     @endphp
 
     <h1 class="report-title">Laporan Saldo Hidup Kayu Bulat Per Group</h1>

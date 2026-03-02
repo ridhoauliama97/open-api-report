@@ -121,7 +121,7 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $normalize = static fn(string $name): string => preg_replace('/[^a-z0-9]/', '', strtolower($name)) ?? '';
 
@@ -175,7 +175,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->format('d');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M');
             } catch (\Throwable $exception) {
                 return null;
             }
@@ -186,7 +186,7 @@
                 return '';
             }
 
-            return number_format($value, 2, '.', '');
+            return number_format($value, 2, '.', ',');
         };
 
         $columns = array_keys($rowsData[0] ?? []);
@@ -200,7 +200,18 @@
                 if (
                     in_array(
                         $key,
-                        ['datecreate', 'tanggal', 'tgl', 'supplier', 'nmsupplier', 'namasupplier', 'tahun', 'year', 'ranking', 'rank'],
+                        [
+                            'datecreate',
+                            'tanggal',
+                            'tgl',
+                            'supplier',
+                            'nmsupplier',
+                            'namasupplier',
+                            'tahun',
+                            'year',
+                            'ranking',
+                            'rank',
+                        ],
                         true,
                     )
                 ) {
@@ -263,8 +274,8 @@
 
     <h1 class="report-title">Laporan Time Line Kayu Bulat - Harian (JTG/PLI)</h1>
     <p class="report-subtitle">
-        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d M Y') }} s/d
-        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d M Y') }}
+        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
+        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
     </p>
 
     @if ($canPivot && $dayHeaders !== [])

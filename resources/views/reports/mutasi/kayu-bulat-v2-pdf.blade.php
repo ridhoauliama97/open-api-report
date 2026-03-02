@@ -186,10 +186,10 @@
             return str_starts_with($normalized, 'JENIS');
         };
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -229,7 +229,7 @@
                 return '';
             }
 
-            return number_format($float, 4, '.', '');
+            return number_format($float, 4, '.', ',');
         };
 
         $mainNumericColumns = [];
@@ -254,7 +254,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Mutasi Kayu Bulat Gantung</h1>
-    <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
+    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     <table>
         <thead>

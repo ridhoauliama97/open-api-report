@@ -130,9 +130,9 @@
         $columns = array_keys($rowsData[0] ?? []);
         $hasDateRange = trim((string) $startDate) !== '' && trim((string) $endDate) !== '';
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $normalize = static fn(string $name): string => preg_replace('/[^a-z0-9]/', '', strtolower($name)) ?? '';
+        $normalize = static fn(string $name): string => preg_replace('/[^a-z0-9]/','', strtolower($name)) ?? '';
         $resolveHeaderLabel = static function (string $column) use ($normalize): string {
             return match ($normalize($column)) {
                 'nokayubulat' => 'No Kayu Bulat',
@@ -141,7 +141,7 @@
                 'nmsupplier' => 'Nama Supplier',
                 'notruk' => 'Nomor Truk',
                 'type' => 'Tipe',
-                'jamsiapbongkar', 'jamsiapbongkart' => 'Jam Siap Bongkar',
+                'jamsiapbongkar','jamsiapbongkart' => 'Jam Siap Bongkar',
                 'tglsemprot' => 'Tanggal Semprot',
                 'berat' => 'Berat',
                 default => $column,
@@ -154,7 +154,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -172,8 +172,8 @@
     <h1 class="report-title">Laporan Balok Sudah Semprot</h1>
     @if ($hasDateRange)
         <p class="report-subtitle">
-            Periode {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y') }} s/d
-            {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y') }}
+            Periode {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
+            {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') }}
         </p>
     @else
         <p class="report-subtitle">&nbsp;</p>
@@ -197,18 +197,18 @@
                             $value = $row[$column] ?? '';
                             $columnKey = $normalize((string) $column);
                             $isBeratColumn = $columnKey === 'berat';
-                            $isDateColumn = in_array($columnKey, ['datecreate', 'tglsemprot'], true);
+                            $isDateColumn = in_array($columnKey, ['datecreate','tglsemprot'], true);
                             $displayValue = (string) $value;
 
                             if ($isBeratColumn && is_numeric($value)) {
                                 $jenisValue =
                                     $jenisColumn !== null ? strtoupper(trim((string) ($row[$jenisColumn] ?? ''))) : '';
                                 if ($jenisValue === 'JABON') {
-                                    $displayValue = number_format((float) $value, 4, '.', '') . ' Ton';
+                                    $displayValue = number_format((float) $value, 4, '.', ',') . ' Ton';
                                 } elseif ($jenisValue === 'RAMBUNG') {
                                     $displayValue = number_format((float) $value, 0, '.', ',') . ' Kg';
                                 } else {
-                                    $displayValue = number_format((float) $value, 2, '.', '');
+                                    $displayValue = number_format((float) $value, 2, '.', ',');
                                 }
                             } elseif ($isDateColumn) {
                                 $displayValue = $formatDateValue($value);

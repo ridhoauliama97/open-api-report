@@ -154,10 +154,10 @@
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),
         );
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt = static function ($value, bool $blankWhenZero = true): string {
             if (!is_numeric($value)) {
@@ -169,11 +169,11 @@
                 return '';
             }
 
-            return number_format($float, 4, '.', '');
+            return number_format($float, 4, '.', ',');
         };
 
         $normalizeKey = static function (string $key): string {
-            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $key));
+            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $key));
         };
 
         $valueFromAliases = static function (array $row, array $aliases) use ($normalizeKey): float {
@@ -214,12 +214,12 @@
         ];
 
         $subSpec = [
-            ['key' => 'CCAkhir', 'label' => 'CCAkhir'],
-            ['key' => 'FJ', 'label' => 'FJ'],
-            ['key' => 'Moulding', 'label' => 'Moulding'],
-            ['key' => 'Reproses', 'label' => 'Reproses'],
-            ['key' => 'S4S', 'label' => 'S4S'],
-            ['key' => 'ST', 'label' => 'ST'],
+            ['key' => 'CCAkhir','label' => 'CCAkhir'],
+            ['key' => 'FJ','label' => 'FJ'],
+            ['key' => 'Moulding','label' => 'Moulding'],
+            ['key' => 'Reproses','label' => 'Reproses'],
+            ['key' => 'S4S','label' => 'S4S'],
+            ['key' => 'ST','label' => 'ST'],
         ];
         $subTotals = [
             'CCAkhir' => 0.0,
@@ -263,28 +263,28 @@
         <tbody>
             @forelse ($rowsData as $row)
                 @php
-                    $awal = $valueFromAliases($row, ['S4SAwal', 'Awal']);
-                    $adjOut = $valueFromAliases($row, ['AdjOutputS4S', 'AdjOutptS4S', 'AdjOutS4S']);
-                    $bsOut = $valueFromAliases($row, ['BSOutputS4S', 'BSOutptutS4S', 'BSOutptS4S', 'BSOutS4S']);
-                    $prodOut = $valueFromAliases($row, ['ProdOutputS4S', 'S4SProdOutput', 'S4SMasuk', 'Masuk']);
-                    $ccaProd = $valueFromAliases($row, ['CCAProdOutputS4S', 'CCAProdS4S', 'CCAProdOutS4S', 'CCAProd']);
-                    $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk']);
+                    $awal = $valueFromAliases($row, ['S4SAwal','Awal']);
+                    $adjOut = $valueFromAliases($row, ['AdjOutputS4S','AdjOutptS4S','AdjOutS4S']);
+                    $bsOut = $valueFromAliases($row, ['BSOutputS4S','BSOutptutS4S','BSOutptS4S','BSOutS4S']);
+                    $prodOut = $valueFromAliases($row, ['ProdOutputS4S','S4SProdOutput','S4SMasuk','Masuk']);
+                    $ccaProd = $valueFromAliases($row, ['CCAProdOutputS4S','CCAProdS4S','CCAProdOutS4S','CCAProd']);
+                    $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk','Total Masuk']);
                     $totalMasuk =
                         $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOut + $bsOut + $prodOut + $ccaProd;
 
-                    $adjInpt = $valueFromAliases($row, ['AdjInputS4S', 'AdjInptS4S', 'AdjInpt']);
-                    $bsInpt = $valueFromAliases($row, ['BsInputS4S', 'BSInputS4S', 'BSInptS4S', 'BSInpt']);
-                    $mldJual = $valueFromAliases($row, ['S4SJual', 'JualS4S', 'Jual']);
-                    $fjInpt = $valueFromAliases($row, ['FJinputS4S', 'FJInptS4S', 'FJInputS4S', 'FJInpt']);
-                    $mldInpt = $valueFromAliases($row, ['MldInputS4S', 'MLDInptS4S', 'MldInptS4S', 'MLDInputS4S']);
-                    $s4sInpt = $valueFromAliases($row, ['S4SInputS4S', 'S4SInptS4S', 'S4SInpt']);
-                    $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar']);
+                    $adjInpt = $valueFromAliases($row, ['AdjInputS4S','AdjInptS4S','AdjInpt']);
+                    $bsInpt = $valueFromAliases($row, ['BsInputS4S','BSInputS4S','BSInptS4S','BSInpt']);
+                    $mldJual = $valueFromAliases($row, ['S4SJual','JualS4S','Jual']);
+                    $fjInpt = $valueFromAliases($row, ['FJinputS4S','FJInptS4S','FJInputS4S','FJInpt']);
+                    $mldInpt = $valueFromAliases($row, ['MldInputS4S','MLDInptS4S','MldInptS4S','MLDInputS4S']);
+                    $s4sInpt = $valueFromAliases($row, ['S4SInputS4S','S4SInptS4S','S4SInpt']);
+                    $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar','Total Keluar']);
                     $totalKeluar =
                         $totalKeluarDirect !== 0.0
                             ? $totalKeluarDirect
                             : $adjInpt + $bsInpt + $mldJual + $fjInpt + $mldInpt + $s4sInpt;
 
-                    $akhir = $valueFromAliases($row, ['AkhirS4S', 'S4SAkhir', 'Akhir']);
+                    $akhir = $valueFromAliases($row, ['AkhirS4S','S4SAkhir','Akhir']);
 
                     $mainTotals['Awal'] += $awal;
                     $mainTotals['AdjOut'] += $adjOut;
@@ -368,8 +368,8 @@
                         @foreach ($subSpec as $spec)
                             @php
                                 $aliases = match ($spec['key']) {
-                                    'CCAkhir' => ['CCAkhir', 'WIP'],
-                                    'Moulding' => ['Moulding', 'MLD'],
+                                    'CCAkhir' => ['CCAkhir','WIP'],
+                                    'Moulding' => ['Moulding','MLD'],
                                     default => [$spec['key']],
                                 };
                                 $value = $valueFromAliases($row, $aliases);

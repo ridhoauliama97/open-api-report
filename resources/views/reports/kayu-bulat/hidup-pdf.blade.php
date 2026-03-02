@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -77,7 +77,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -109,13 +109,13 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -128,10 +128,10 @@
     @php
         $rowsData = is_iterable($rows ?? null) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $summaryData = is_array($summary ?? null) ? $summary : [];
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
     @endphp
 
     <h1 class="report-title">Laporan Kayu Bulat Hidup</h1>
@@ -160,7 +160,9 @@
                             $tanggalText = '';
                             if ($tanggal) {
                                 try {
-                                    $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->format('d M Y');
+                                    $tanggalText = \Carbon\Carbon::parse((string) $tanggal)
+                                        ->locale('id')
+                                        ->translatedFormat('d-M-y');
                                 } catch (\Throwable $exception) {
                                     $tanggalText = (string) $tanggal;
                                 }
@@ -174,7 +176,7 @@
                             $noTrukRaw = (string) ($row['NoTruk'] ?? '');
                             $noTrukNumeric = str_replace(',', '', $noTrukRaw);
                             $noTrukText = is_numeric($noTrukNumeric)
-                                ? number_format((float) $noTrukNumeric, 0, '.', ',')
+                                ? number_format((float) $noTrukNumeric, 0, '', '')
                                 : $noTrukRaw;
                         @endphp
                         {{ $noTrukText }}
@@ -186,7 +188,7 @@
                         @php
                             $fisik = (float) ($row['FisikBatangBalokDiLapangan'] ?? 0);
                         @endphp
-                        {{ $fisik > 0 ? number_format($fisik, 0, '.', '') : '' }}
+                        {{ $fisik > 0 ? number_format($fisik, 0, '.', ',') : '' }}
                     </td>
                 </tr>
             @empty

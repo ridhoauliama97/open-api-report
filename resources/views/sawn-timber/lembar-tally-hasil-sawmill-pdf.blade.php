@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -118,7 +118,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .footer-wrap {
@@ -177,13 +177,13 @@
             min-width: 150px;
             padding-top: 2px;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -198,10 +198,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $headRow = $rowsData[0] ?? [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $findColumn = static function (array $columns, array $candidates): ?string {
-            $normalize = static fn(string $name): string => strtolower(preg_replace('/[^a-z0-9]/', '', $name) ?? '');
+            $normalize = static fn(string $name): string => strtolower(preg_replace('/[^a-z0-9]/','', $name) ?? '');
             $candidateMap = [];
             foreach ($candidates as $candidate) {
                 $candidateMap[$normalize($candidate)] = true;
@@ -223,19 +223,19 @@
             if (!is_string($value)) {
                 return null;
             }
-            $normalized = trim(str_replace(' ', '', $value));
+            $normalized = trim(str_replace(' ','', $value));
             if ($normalized === '') {
                 return null;
             }
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.');
+                $normalized = str_replace(',','.');
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -247,7 +247,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -266,25 +266,25 @@
         };
 
         $availableColumns = array_keys($headRow);
-        $noSTSawmillCol = $findColumn($availableColumns, ['NoSTSawmill', 'NoProduksi', 'NomorLembaran', 'NoLembaran']);
-        $tglSawmillCol = $findColumn($availableColumns, ['TglSawmill', 'Tanggal', 'Tgl', 'TglProduksi']);
-        $supplierCol = $findColumn($availableColumns, ['NmSupplier', 'Supplier', 'NamaSupplier']);
-        $noKayuBulatCol = $findColumn($availableColumns, ['NoKayuBulat', 'NoKB', 'NoKb']);
-        $suketCol = $findColumn($availableColumns, ['Suket', 'NoSuket', 'NoSuratKeterangan']);
-        $noMejaCol = $findColumn($availableColumns, ['NoMeja', 'Meja', 'No Meja']);
-        $noPlatCol = $findColumn($availableColumns, ['NoPlat', 'No Plat', 'Plat']);
-        $jenisCol = $findColumn($availableColumns, ['Jenis', 'JenisKayu', 'Jenis Kayu']);
-        $operatorCol = $findColumn($availableColumns, ['NamaOperator', 'Operator', 'Nama Operator']);
-        $statusCol = $findColumn($availableColumns, ['Status', 'StatusData']);
-        $beratTimCol = $findColumn($availableColumns, ['BeratTim', 'Berat(Tim)', 'Berat Tim', 'Berat']);
+        $noSTSawmillCol = $findColumn($availableColumns, ['NoSTSawmill','NoProduksi','NomorLembaran','NoLembaran']);
+        $tglSawmillCol = $findColumn($availableColumns, ['TglSawmill','Tanggal','Tgl','TglProduksi']);
+        $supplierCol = $findColumn($availableColumns, ['NmSupplier','Supplier','NamaSupplier']);
+        $noKayuBulatCol = $findColumn($availableColumns, ['NoKayuBulat','NoKB','NoKb']);
+        $suketCol = $findColumn($availableColumns, ['Suket','NoSuket','NoSuratKeterangan']);
+        $noMejaCol = $findColumn($availableColumns, ['NoMeja','Meja','No Meja']);
+        $noPlatCol = $findColumn($availableColumns, ['NoPlat','No Plat','Plat']);
+        $jenisCol = $findColumn($availableColumns, ['Jenis','JenisKayu','Jenis Kayu']);
+        $operatorCol = $findColumn($availableColumns, ['NamaOperator','Operator','Nama Operator']);
+        $statusCol = $findColumn($availableColumns, ['Status','StatusData']);
+        $beratTimCol = $findColumn($availableColumns, ['BeratTim','Berat(Tim)','Berat Tim','Berat']);
         $beratCol = $findColumn($availableColumns, ['Berat']);
         $tebalCol = $findColumn($availableColumns, ['Tebal']);
         $lebarCol = $findColumn($availableColumns, ['Lebar']);
         $panjangCol = $findColumn($availableColumns, ['Panjang']);
-        $jmlhBatangCol = $findColumn($availableColumns, ['JmlhBatang', 'JumlahBatang']);
-        $idUOMTblLebarCol = $findColumn($availableColumns, ['IdUOMTblLebar', 'IdUomTblLebar']);
-        $idUOMPanjangCol = $findColumn($availableColumns, ['IdUOMPanjang', 'IdUomPanjang']);
-        $ketCol = $findColumn($availableColumns, ['Ket', 'Keterangan']);
+        $jmlhBatangCol = $findColumn($availableColumns, ['JmlhBatang','JumlahBatang']);
+        $idUOMTblLebarCol = $findColumn($availableColumns, ['IdUOMTblLebar','IdUomTblLebar']);
+        $idUOMPanjangCol = $findColumn($availableColumns, ['IdUOMPanjang','IdUomPanjang']);
+        $ketCol = $findColumn($availableColumns, ['Ket','Keterangan']);
 
         $tableColumns = array_values(
             array_filter([$ketCol, $tebalCol, $lebarCol, $panjangCol, $beratCol, $jmlhBatangCol]),
@@ -377,7 +377,7 @@
                 <td class="meta-label">Berat (Tim)</td>
                 <td class="meta-sep">:</td>
                 <td class="meta-value">
-                    {{ number_format((float) ($toFloat($beratTimCol !== null ? $headRow[$beratTimCol] ?? null : null) ?? 0), 2, ',', '.') }}
+                    {{ number_format((float) ($toFloat($beratTimCol !== null ? $headRow[$beratTimCol] ?? null : null) ?? 0), 2, '.', ',') }}
                 </td>
             </tr>
             <tr>
@@ -452,19 +452,19 @@
                         @php $value = $row[$column] ?? null; @endphp
                         @if ($column === $jmlhBatangCol)
                             <td class="number" style="text-align: center">
-                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', '') }}
+                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', ',') }}
                             </td>
                         @elseif ($column === $beratCol)
                             <td class="number" style="text-align: center">
-                                {{ number_format($computeBeratRow($row), 4, '.', '') }}
+                                {{ number_format($computeBeratRow($row), 4, '.', ',') }}
                             </td>
                         @elseif ($column === $panjangCol)
                             <td class="number" style="text-align: center">
-                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', '') }}
+                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', ',') }}
                             </td>
                         @elseif (in_array($column, [$tebalCol, $lebarCol], true))
                             <td class="number" style="text-align: center">
-                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', '') }}
+                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', ',') }}
                             </td>
                         @else
                             <td style="text-align: center">{{ (string) $value }}</td>
@@ -480,7 +480,7 @@
                 <tr class="total-row totals-row">
                     <td class="number" colspan="{{ count($tableColumns) }}"
                         style="text-align: center; font-weight: bold;">Total Jumlah Batang</td>
-                    <td class="number"><strong>{{ number_format($totalBatang, 0, '.', '') }} Pcs</strong></td>
+                    <td class="number"><strong>{{ number_format($totalBatang, 0, '.', ',') }} Pcs</strong></td>
                 </tr>
             @endif --}}
         </tbody>
@@ -500,18 +500,18 @@
                 @foreach ($summaryByKet as $ketName => $summary)
                     <tr>
                         <td style="text-align: center">{{ $ketName }}</td>
-                        <td class="number" style="text-align: center">{{ number_format($summary['pcs'], 0, '.', '') }}
+                        <td class="number" style="text-align: center">{{ number_format($summary['pcs'], 0, '.', ',') }}
                         </td>
-                        <td class="number" style="text-align: center">{{ number_format($summary['ton'], 4, '.', '') }}
+                        <td class="number" style="text-align: center">{{ number_format($summary['ton'], 4, '.', ',') }}
                         </td>
                     </tr>
                 @endforeach
                 <tr class="total-row totals-row">
                     <td style="text-align: center; font-weight: bold;">Total</td>
                     <td class="number" style="text-align: center; font-weight: bold;">
-                        {{ number_format($totalBatang, 0, '.', '') }} Pcs</td>
+                        {{ number_format($totalBatang, 0, '.', ',') }} Pcs</td>
                     <td class="number" style="text-align: center; font-weight: bold;">
-                        {{ number_format($totalTon, 4, '.', '') }} Ton</td>
+                        {{ number_format($totalTon, 4, '.', ',') }} Ton</td>
                 </tr>
             </tbody>
         </table>

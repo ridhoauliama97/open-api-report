@@ -152,10 +152,10 @@
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),
         );
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt = static function ($value, bool $blankWhenZero = true): string {
             if (!is_numeric($value)) {
@@ -167,11 +167,11 @@
                 return '';
             }
 
-            return number_format($float, 4, '.', '');
+            return number_format($float, 4, '.', ',');
         };
 
         $normalizeKey = static function (string $key): string {
-            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $key));
+            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $key));
         };
 
         $valueFromAliases = static function (array $row, array $aliases) use ($normalizeKey): float {
@@ -214,15 +214,15 @@
         ];
 
         $subSpec = [
-            ['key' => 'BJ', 'label' => 'BJ'],
-            ['key' => 'CCAkhir', 'label' => 'CCAkhir'],
-            ['key' => 'FJ', 'label' => 'FJ'],
-            ['key' => 'Laminating', 'label' => 'Laminating'],
-            ['key' => 'Moulding', 'label' => 'Moulding'],
-            ['key' => 'Reproses', 'label' => 'Reproses'],
-            ['key' => 'S4S', 'label' => 'S4S'],
-            ['key' => 'Sanding', 'label' => 'Sanding'],
-            ['key' => 'WIP', 'label' => 'WIP'],
+            ['key' => 'BJ','label' => 'BJ'],
+            ['key' => 'CCAkhir','label' => 'CCAkhir'],
+            ['key' => 'FJ','label' => 'FJ'],
+            ['key' => 'Laminating','label' => 'Laminating'],
+            ['key' => 'Moulding','label' => 'Moulding'],
+            ['key' => 'Reproses','label' => 'Reproses'],
+            ['key' => 'S4S','label' => 'S4S'],
+            ['key' => 'Sanding','label' => 'Sanding'],
+            ['key' => 'WIP','label' => 'WIP'],
         ];
         $subTotals = [
             'BJ' => 0.0,
@@ -271,23 +271,23 @@
         <tbody>
             @forelse ($rowsData as $row)
                 @php
-                    $awal = $valueFromAliases($row, ['MLDAwal', 'Awal']);
-                    $adjOut = $valueFromAliases($row, ['AdjOutputMLD', 'AdjOutptMLD', 'AdjOutMLD']);
-                    $bsOut = $valueFromAliases($row, ['BSOutptutMLD', 'BSOutputMLD', 'BSOutptMLD', 'BSOutMLD']);
-                    $prodOut = $valueFromAliases($row, ['MLDProdOutput', 'ProdOutputMLD', 'MLDMasuk', 'Masuk']);
-                    $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk']);
+                    $awal = $valueFromAliases($row, ['MLDAwal','Awal']);
+                    $adjOut = $valueFromAliases($row, ['AdjOutputMLD','AdjOutptMLD','AdjOutMLD']);
+                    $bsOut = $valueFromAliases($row, ['BSOutptutMLD','BSOutputMLD','BSOutptMLD','BSOutMLD']);
+                    $prodOut = $valueFromAliases($row, ['MLDProdOutput','ProdOutputMLD','MLDMasuk','Masuk']);
+                    $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk','Total Masuk']);
                     $totalMasuk = $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOut + $bsOut + $prodOut;
 
-                    $adjInpt = $valueFromAliases($row, ['AdjInptMLD', 'AdjInputMLD', 'AdjInpt']);
-                    $bsInpt = $valueFromAliases($row, ['BSInptMLD', 'BSInputMLD', 'BSInpt']);
-                    $mldJual = $valueFromAliases($row, ['MLDJual', 'JualMLD', 'Jual']);
-                    $ccaInpt = $valueFromAliases($row, ['CCAInptMLD', 'CCAInputMLD', 'CCAInpt']);
-                    $lmtInpt = $valueFromAliases($row, ['LMTInptMLD', 'LMTInputMLD', 'LMTInpt']);
-                    $mldInpt = $valueFromAliases($row, ['MLDInptMLD', 'MldInptMLD', 'MLDInputMLD']);
-                    $packInpt = $valueFromAliases($row, ['PACKInptMLD', 'PackInptMLD', 'PACKInputMLD']);
-                    $sandInpt = $valueFromAliases($row, ['SANDInptMLD', 'SandInptMLD', 'SANDInputMLD']);
-                    $s4sInpt = $valueFromAliases($row, ['S4SinptMLD', 'S4SInptMLD', 'S4SInputMLD']);
-                    $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar']);
+                    $adjInpt = $valueFromAliases($row, ['AdjInptMLD','AdjInputMLD','AdjInpt']);
+                    $bsInpt = $valueFromAliases($row, ['BSInptMLD','BSInputMLD','BSInpt']);
+                    $mldJual = $valueFromAliases($row, ['MLDJual','JualMLD','Jual']);
+                    $ccaInpt = $valueFromAliases($row, ['CCAInptMLD','CCAInputMLD','CCAInpt']);
+                    $lmtInpt = $valueFromAliases($row, ['LMTInptMLD','LMTInputMLD','LMTInpt']);
+                    $mldInpt = $valueFromAliases($row, ['MLDInptMLD','MldInptMLD','MLDInputMLD']);
+                    $packInpt = $valueFromAliases($row, ['PACKInptMLD','PackInptMLD','PACKInputMLD']);
+                    $sandInpt = $valueFromAliases($row, ['SANDInptMLD','SandInptMLD','SANDInputMLD']);
+                    $s4sInpt = $valueFromAliases($row, ['S4SinptMLD','S4SInptMLD','S4SInputMLD']);
+                    $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar','Total Keluar']);
                     $totalKeluar =
                         $totalKeluarDirect !== 0.0
                             ? $totalKeluarDirect
@@ -301,7 +301,7 @@
                                 $sandInpt +
                                 $s4sInpt;
 
-                    $akhir = $valueFromAliases($row, ['MLDAkhir', 'Akhir']);
+                    $akhir = $valueFromAliases($row, ['MLDAkhir','Akhir']);
 
                     $mainTotals['Awal'] += $awal;
                     $mainTotals['AdjOut'] += $adjOut;

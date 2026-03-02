@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 8px;
             line-height: 1.2;
             color: #000;
@@ -107,13 +107,13 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -125,11 +125,79 @@
 <body>
     @php
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $safeDateText = static function ($value): ?string {
+            if ($value === null || is_array($value) || (is_object($value) && !$value instanceof \DateTimeInterface)) {
+                return null;
+            }
+
+            try {
+                return \Carbon\Carbon::parse($value)->locale('id')->translatedFormat('d-M-y');
+            } catch (\Throwable $exception) {
+                return null;
+            }
+        };
+        $formatMonthYearLabel = static function ($value): string {
+            $text = trim((string) $value);
+            if ($text === '') {
+                return '';
+            }
+
+            $normalized = str_replace(['/','.',' '], '-', strtoupper($text));
+            foreach (['M-y','M-Y','m-y','m-Y','Y-m','Y-M'] as $pattern) {
+                try {
+                    return \Carbon\Carbon::createFromFormat($pattern, $normalized)
+                        ->locale('id')
+                        ->translatedFormat('M y');
+                } catch (\Throwable $exception) {
+                    // try next pattern
+                }
+            }
+
+            try {
+                return \Carbon\Carbon::parse($text)->locale('id')->translatedFormat('M y');
+            } catch (\Throwable $exception) {
+                $months = [
+                    'JAN' => 'Jan',
+                    'FEB' => 'Feb',
+                    'MAR' => 'Mar',
+                    'APR' => 'Apr',
+                    'MAY' => 'Mei',
+                    'MEI' => 'Mei',
+                    'JUN' => 'Jun',
+                    'JUL' => 'Jul',
+                    'AUG' => 'Agu',
+                    'AGU' => 'Agu',
+                    'SEP' => 'Sep',
+                    'OCT' => 'Okt',
+                    'OKT' => 'Okt',
+                    'NOV' => 'Nov',
+                    'DEC' => 'Des',
+                    'DES' => 'Des',
+                ];
+                $parts = preg_split('/[-\s]+/', strtoupper($text)) ?: [];
+                $monthPart = $parts[0] ?? '';
+                $yearPart = $parts[1] ?? '';
+                $monthText = $months[$monthPart] ?? ucfirst(strtolower($monthPart));
+                $yearText = preg_match('/^\d{4}$/', $yearPart) ? substr($yearPart, -2) : $yearPart;
+
+                return trim($monthText . ' ' . $yearText);
+            }
+        };
+        $startText = $safeDateText($startDate ?? null);
+        $endText = $safeDateText($endDate ?? null);
+        $periodSubtitle =
+            $startText && $endText ? "Periode {$startText} s/d {$endText}" : $reportData['period_text'] ?? '';
         $monthColumns = $reportData['month_columns'] ?? [];
+        $monthColumnsDisplay = array_map(static function ($month) use ($formatMonthYearLabel) {
+            $item = is_array($month) ? $month : ['label' => (string) $month];
+            $item['label'] = $formatMonthYearLabel($item['label'] ?? '');
+            return $item;
+        }, $monthColumns);
         $tableRows = $reportData['table_rows'] ?? [];
         $summaryRows = $reportData['summary_rows'] ?? [];
         $chartLabels = $reportData['chart_labels'] ?? [];
+        $chartLabelsDisplay = array_map($formatMonthYearLabel, $chartLabels);
         $chartSeries = $reportData['chart_series'] ?? [];
 
         $resolveSeriesColor = static function (string $seriesName): string {
@@ -163,7 +231,7 @@
         $padBottom = 40;
         $plotWidth = $svgWidth - $padLeft - $padRight;
         $plotHeight = $svgHeight - $padTop - $padBottom;
-        $countLabels = count($chartLabels);
+        $countLabels = count($chartLabelsDisplay);
         $xStep = $countLabels > 1 ? $plotWidth / ($countLabels - 1) : 0;
         $yScale = $maxChartValue > 0 ? $plotHeight / $maxChartValue : 1;
 
@@ -182,14 +250,14 @@
     @endphp
 
     <h1 class="report-title">Laporan Target Masuk Bahan Baku Bulanan</h1>
-    <p class="report-subtitle">{{ $reportData['period_text'] ?? '' }}</p>
+    <p class="report-subtitle">{{ $periodSubtitle }}</p>
 
     <table style="margin-bottom: 20px">
         <thead>
             <tr class="headers-row">
                 <th>Nama Group</th>
-                <th>Tgt Bulan</th>
-                @foreach ($monthColumns as $month)
+                <th>Target Bulan</th>
+                @foreach ($monthColumnsDisplay as $month)
                     <th>{{ $month['label'] }}</th>
                 @endforeach
                 <th style="font-weight: bold">Total</th>
@@ -199,11 +267,11 @@
             @forelse ($tableRows as $row)
                 <tr>
                     <td class="row-label">{{ $row['jenis'] }}</td>
-                    <td>{{ number_format((float) $row['target_bulanan'], 0, ',', '.') }}</td>
+                    <td>{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                     @foreach ($row['monthly_values'] as $value)
-                        <td>{{ number_format((float) $value, 0, ',', '.') }}</td>
+                        <td>{{ number_format((float) $value, 0, '.', ',') }}</td>
                     @endforeach
-                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
+                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -228,12 +296,12 @@
             @forelse ($summaryRows as $summary)
                 <tr>
                     <td class="row-label">{{ $summary['jenis'] }}</td>
-                    <td>{{ number_format((float) $summary['avg'], 0, ',', '.') }}</td>
-                    <td>{{ number_format((float) $summary['min'], 0, ',', '.') }}</td>
-                    <td>{{ number_format((float) $summary['max'], 0, ',', '.') }}</td>
+                    <td>{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
+                    <td>{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
+                    <td>{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
                     <td>{{ $summary['bulan_capai'] }}/{{ $summary['total_bulan_target'] }}</td>
                     <td style="font-weight: bold">
-                        {{ number_format((float) $summary['persen_capai_group'], 2, ',', '.') }}%</td>
+                        {{ number_format((float) $summary['persen_capai_group'], 2, '.', ',') }}%</td>
                 </tr>
             @empty
                 <tr>
@@ -260,7 +328,7 @@
             <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}"
                 y2="{{ $padTop + $plotHeight }}" stroke="#111827" stroke-width="1" />
 
-            @foreach ($chartLabels as $index => $label)
+            @foreach ($chartLabelsDisplay as $index => $label)
                 @php $xPos = $padLeft + $index * $xStep; @endphp
                 <text x="{{ $xPos }}" y="{{ $padTop + $plotHeight + 12 }}" font-size="7" text-anchor="middle"
                     fill="#111827">{{ $label }}</text>

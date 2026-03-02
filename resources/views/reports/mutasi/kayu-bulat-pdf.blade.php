@@ -168,28 +168,28 @@
                 return '';
             }
 
-            $normalizedForCheck = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $trimmed));
+            $normalizedForCheck = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $trimmed));
             if ($normalizedForCheck === 'JENIS') {
                 return 'Jenis';
             }
 
-            $label = preg_replace('/[_-]+/', ' ', $trimmed);
-            $label = preg_replace('/([a-z0-9])([A-Z])/', '$1 $2', (string) $label);
-            $label = preg_replace('/\s+/', ' ', (string) $label);
+            $label = preg_replace('/[_-]+/',' ', $trimmed);
+            $label = preg_replace('/([a-z0-9])([A-Z])/','$1 $2', (string) $label);
+            $label = preg_replace('/\s+/',' ', (string) $label);
 
             return trim((string) $label);
         };
 
         $isJenisColumn = static function (string $column): bool {
-            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
+            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $column));
 
             return str_starts_with($normalized, 'JENIS');
         };
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -200,7 +200,7 @@
                 return null;
             }
 
-            $normalized = str_replace([' ', ','], ['', '.'], trim($value));
+            $normalized = str_replace([' ',','], ['','.'], trim($value));
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
@@ -229,7 +229,7 @@
                 return '';
             }
 
-            return number_format($float, 4, '.', '');
+            return number_format($float, 4, '.', ',');
         };
 
         $mainNumericColumns = [];

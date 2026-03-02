@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 8px;
             line-height: 1.2;
             color: #000;
@@ -112,13 +112,13 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border: 1.5px solid #000;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -130,11 +130,26 @@
 <body>
     @php
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $safeDateText = static function ($value): ?string {
+            if ($value === null || is_array($value) || is_object($value) && ! $value instanceof \DateTimeInterface) {
+                return null;
+            }
+
+            try {
+                return \Carbon\Carbon::parse($value)->locale('id')->translatedFormat('d-M-y');
+            } catch (\Throwable $exception) {
+                return null;
+            }
+        };
+        $startText = $safeDateText($startDate ?? null);
+        $endText = $safeDateText($endDate ?? null);
+        $periodSubtitle =
+            $startText && $endText ? "Periode {$startText} s/d {$endText}" : ($reportData['period_text'] ?? '');
         $dayColumns = $reportData['day_columns'] ?? [];
         $tableRows = $reportData['table_rows'] ?? [];
         $summaryRows = $reportData['summary_rows'] ?? [];
-        $monthTitle = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('F');
+        $monthTitle = $safeDateText($startDate ?? null) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('F') : '';
         $chartLabels = $reportData['chart_labels'] ?? [];
         $chartSeries = $reportData['chart_series'] ?? [];
         $resolveSeriesColor = static function (string $seriesName): string {
@@ -185,7 +200,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Target Masuk Bahan Baku Harian</h1>
-    <p class="report-subtitle">{{ $reportData['period_text'] ?? '' }}</p>
+    <p class="report-subtitle">{{ $periodSubtitle }}</p>
 
     <table>
         <thead>
@@ -210,16 +225,16 @@
             @forelse ($tableRows as $row)
                 <tr>
                     <td class="row-label">{{ $row['jenis'] }}</td>
-                    <td>{{ number_format((float) $row['target_harian'], 0, ',', '.') }}</td>
-                    <td>{{ number_format((float) $row['target_bulanan'], 0, ',', '.') }}</td>
+                    <td>{{ number_format((float) $row['target_harian'], 0, '.', ',') }}</td>
+                    <td>{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                     @foreach ($row['daily_values'] as $index => $value)
-                        <td>{{ number_format((float) $value, 0, ',', '.') }}</td>
+                        <td>{{ number_format((float) $value, 0, '.', ',') }}</td>
                         @if (($dayColumns[$index]['is_lb_after'] ?? false) === true)
                             @php $lbLabel = $dayColumns[$index]['label']; @endphp
-                            <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, ',', '.') }}</td>
+                            <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, '.', ',') }}</td>
                         @endif
                     @endforeach
-                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
+                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -242,9 +257,9 @@
             @forelse ($summaryRows as $summary)
                 <tr>
                     <td class="row-label">{{ $summary['jenis'] }}</td>
-                    <td>{{ number_format((float) $summary['avg'], 0, ',', '.') }}</td>
-                    <td>{{ number_format((float) $summary['min'], 0, ',', '.') }}</td>
-                    <td>{{ number_format((float) $summary['max'], 0, ',', '.') }}</td>
+                    <td>{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
+                    <td>{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
+                    <td>{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>

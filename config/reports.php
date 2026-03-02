@@ -191,7 +191,10 @@ return [
         'call_syntax' => env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_QUERY'),
         'parameter_count' => (int) env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_PARAMETER_COUNT', 1),
-        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('HASIL_OUTPUT_RACIP_HARIAN_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'HASIL_OUTPUT_RACIP_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Masuk,Tebal,Lebar,Panjang,JlhBtg'
+        )))),
     ],
     'penerimaan_kayu_bulat_bulanan_per_supplier' => [
         'database_connection' => env('PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

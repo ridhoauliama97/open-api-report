@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -80,7 +80,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -148,7 +148,7 @@
             font-style: italic;
             text-align: right;
         }
-    
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -175,10 +175,10 @@
                 : [];
         }
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -187,14 +187,14 @@
             if (!is_string($value)) {
                 return null;
             }
-            $normalized = str_replace([' ', ','], ['', '.'], trim($value));
+            $normalized = str_replace([' ',','], ['','.'], trim($value));
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
         $fmt2 = static function ($value) use ($toFloat): string {
             $float = $toFloat($value) ?? 0.0;
 
-            return number_format($float, 2, '.', '');
+            return number_format($float, 2, '.', ',');
         };
         $fmt2BlankZero = static function ($value) use ($toFloat): string {
             $float = $toFloat($value) ?? 0.0;
@@ -202,12 +202,12 @@
                 return '';
             }
 
-            return number_format($float, 2, '.', '');
+            return number_format($float, 2, '.', ',');
         };
         $fmtInt = static function ($value) use ($toFloat): string {
             $float = $toFloat($value) ?? 0.0;
 
-            return number_format($float, 0, '.', '');
+            return number_format($float, 0, '.', ',');
         };
         $fmtIntBlankZero = static function ($value) use ($toFloat): string {
             $float = $toFloat($value) ?? 0.0;
@@ -215,7 +215,7 @@
                 return '';
             }
 
-            return number_format($float, 0, '.', '');
+            return number_format($float, 0, '.', ',');
         };
         $fmt2Smart = static function ($value) use ($toFloat): string {
             $float = $toFloat($value) ?? 0.0;
@@ -223,7 +223,7 @@
                 return '';
             }
 
-            return number_format($float, 2, '.', '');
+            return number_format($float, 2, '.', ',');
         };
     @endphp
 
@@ -271,7 +271,7 @@
                                 $tanggalText = '';
                                 if ($tanggal) {
                                     try {
-                                        $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->format('d M Y');
+                                        $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->locale('id')->translatedFormat('d-M-y');
                                     } catch (\Throwable $exception) {
                                         $tanggalText = (string) $tanggal;
                                     }
@@ -280,7 +280,7 @@
                             {{ $tanggalText }}
                         </td>
                         <td>{{ (string) ($row['JenisKayu'] ?? '') }}</td>
-                        <td>{{ str_replace(' - ', '-', (string) ($row['NamaGrade'] ?? '')) }}</td>
+                        <td>{{ str_replace(' - ','-', (string) ($row['NamaGrade'] ?? '')) }}</td>
                         <td class="number">{{ $fmtInt($row['JmlhPcs'] ?? 0) }}</td>
                         <td class="number">{{ $fmt2BlankZero($row['TonKB'] ?? 0) }}</td>
                         <td class="number">{{ $fmt2($row['TonKG'] ?? 0) }}</td>
@@ -336,7 +336,7 @@
                             $tglRecapText = '';
                             if ($tglRecap !== '') {
                                 try {
-                                    $tglRecapText = \Carbon\Carbon::parse($tglRecap)->format('d M Y');
+                                    $tglRecapText = \Carbon\Carbon::parse($tglRecap)->locale('id')->translatedFormat('d-M-y');
                                 } catch (\Throwable $exception) {
                                     $tglRecapText = $tglRecap;
                                 }

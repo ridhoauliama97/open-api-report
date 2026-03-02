@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Dashboard Cross Cut Akhir</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
         .highlight-col {
             background-color: #8fe9e8 !important;
@@ -21,7 +21,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -79,7 +79,7 @@
             $percentByColumn = is_array($reportData['percent_by_column'] ?? null) ? $reportData['percent_by_column'] : [];
             $ctrByColumn = is_array($reportData['ctr_by_column'] ?? null) ? $reportData['ctr_by_column'] : [];
             $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : ['s_akhir' => 0, 'ctr' => 0];
-            $highlightColumns = ['JABON NISOBO', 'PULAI NISOBO'];
+            $highlightColumns = ['JABON NISOBO','PULAI NISOBO'];
 
             $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
             $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
@@ -134,7 +134,7 @@
                         <tbody>
                             @forelse ($rows as $row)
                                 <tr>
-                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->format('d-M') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
                                     @foreach ($columns as $column)
                                         @php
                                             $inflow = (float) (($row['cells'][$column]['in'] ?? 0) ?: 0);

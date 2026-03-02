@@ -9,14 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Dashboard Sawn Timber</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -106,10 +106,10 @@
                                     <tr>
                                         <td>{{ $type }}</td>
                                         <td class="text-end">
-                                            {{ number_format((float) ($totals['in'] ?? 0), 1, ',', '.') }}
+                                            {{ number_format((float) ($totals['in'] ?? 0), 1, '.', ',') }}
                                         </td>
                                         <td class="text-end">
-                                            {{ number_format((float) ($totals['out'] ?? 0), 1, ',', '.') }}
+                                            {{ number_format((float) ($totals['out'] ?? 0), 1, '.', ',') }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -137,9 +137,9 @@
                                 <tr>
                                     <td>{{ $type }}</td>
                                     <td class="text-end">
-                                        {{ number_format((float) ($row['s_akhir'] ?? 0), 1, ',', '.') }}
+                                        {{ number_format((float) ($row['s_akhir'] ?? 0), 1, '.', ',') }}
                                     </td>
-                                    <td class="text-end">{{ number_format((float) ($row['ctr'] ?? 0), 2, ',', '.') }}
+                                    <td class="text-end">{{ number_format((float) ($row['ctr'] ?? 0), 2, '.', ',') }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -148,10 +148,10 @@
                             <tr class="fw-semibold">
                                 <td>Total</td>
                                 <td class="text-end">
-                                    {{ number_format((float) ($chartData['stock_totals']['s_akhir'] ?? 0), 1, ',', '.') }}
+                                    {{ number_format((float) ($chartData['stock_totals']['s_akhir'] ?? 0), 1, '.', ',') }}
                                 </td>
                                 <td class="text-end">
-                                    {{ number_format((float) ($chartData['stock_totals']['ctr'] ?? 0), 2, ',', '.') }}
+                                    {{ number_format((float) ($chartData['stock_totals']['ctr'] ?? 0), 2, '.', ',') }}
                                 </td>
                             </tr>
                         </tfoot>

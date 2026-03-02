@@ -8,6 +8,7 @@ use RuntimeException;
 class HasilOutputRacipHarianReportService
 {
     private const CONFIG_KEY = 'reports.hasil_output_racip_harian';
+    private const DEFAULT_COLUMNS = ['Jenis', 'Masuk', 'Tebal', 'Lebar', 'Panjang', 'JlhBtg'];
 
     /**
      * @return array<int, array<string, mixed>>
@@ -26,6 +27,13 @@ class HasilOutputRacipHarianReportService
     {
         $rows = $this->fetch($endDate);
         $columns = array_keys($rows[0] ?? []);
+        if ($columns === []) {
+            $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', []);
+            $columns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : [];
+            if ($columns === []) {
+                $columns = self::DEFAULT_COLUMNS;
+            }
+        }
         $numericColumns = $this->detectNumericColumns($rows, $columns);
         $totals = $this->calculateTotals($rows, $numericColumns);
 

@@ -168,15 +168,15 @@
             'BongkarSusunMinus' => 'B.Susun (-)',
         ];
         $isJenisColumn = static function (string $column): bool {
-            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
+            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $column));
 
             return str_starts_with($normalized, 'JENIS');
         };
 
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -192,21 +192,21 @@
                 return null;
             }
 
-            $normalized = str_replace(' ', '', $normalized);
+            $normalized = str_replace(' ','', $normalized);
 
             // Handle"1,234.56" vs"1.234,56" vs"19,627" (thousand separator).
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
                 if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 } else {
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 }
             }
 
@@ -237,7 +237,7 @@
                 return '';
             }
 
-            return number_format($float, 4, '.', '');
+            return number_format($float, 4, '.', ',');
         };
 
         $mainNumericColumns = [];

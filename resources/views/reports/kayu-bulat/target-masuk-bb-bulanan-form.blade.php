@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Laporan Target Masuk Bahan Baku Bulanan</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
         body {
             font-family: 'Noto Serif', serif;
@@ -59,7 +59,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -130,11 +130,11 @@
                             @forelse ($reportData['table_rows'] as $row)
                                 <tr>
                                     <td class="sticky-col">{{ $row['jenis'] }}</td>
-                                    <td>{{ number_format((float) $row['target_bulanan'], 0, ',', '.') }}</td>
+                                    <td>{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                                     @foreach ($row['monthly_values'] as $value)
-                                        <td>{{ number_format((float) $value, 0, ',', '.') }}</td>
+                                        <td>{{ number_format((float) $value, 0, '.', ',') }}</td>
                                     @endforeach
-                                    <td>{{ number_format((float) $row['total'], 0, ',', '.') }}</td>
+                                    <td>{{ number_format((float) $row['total'], 0, '.', ',') }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -161,11 +161,11 @@
                             @forelse ($reportData['summary_rows'] as $summary)
                                 <tr>
                                     <td class="text-start">{{ $summary['jenis'] }}</td>
-                                    <td>{{ number_format((float) $summary['avg'], 0, ',', '.') }}</td>
-                                    <td>{{ number_format((float) $summary['min'], 0, ',', '.') }}</td>
-                                    <td>{{ number_format((float) $summary['max'], 0, ',', '.') }}</td>
+                                    <td>{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
+                                    <td>{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
+                                    <td>{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
                                     <td>{{ $summary['bulan_capai'] }}/{{ $summary['total_bulan_target'] }}</td>
-                                    <td>{{ number_format((float) $summary['persen_capai_group'], 2, ',', '.') }}%</td>
+                                    <td>{{ number_format((float) $summary['persen_capai_group'], 2, '.', ',') }}%</td>
                                 </tr>
                             @empty
                                 <tr>

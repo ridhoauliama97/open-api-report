@@ -128,7 +128,6 @@
             font-size: 11px;
             border: 1.5px solid #000;
         }
-
     </style>
 </head>
 
@@ -137,10 +136,10 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $isNumericColumn = static function (string $column, array $rows): bool {
             foreach ($rows as $row) {
@@ -161,7 +160,7 @@
             }
 
             if (is_string($value)) {
-                $normalized = str_replace(',', '.', trim($value));
+                $normalized = str_replace(',','.', trim($value));
                 if (is_numeric($normalized)) {
                     return (float) $normalized;
                 }
@@ -171,7 +170,7 @@
         };
 
         $normalizeColumnName = static function (string $column): string {
-            return strtolower(str_replace([' ', '_'], '', trim($column)));
+            return strtolower(str_replace([' ','_'], '', trim($column)));
         };
 
         $isNamaMesinColumn = static function (string $column) use ($normalizeColumnName): bool {
@@ -204,7 +203,7 @@
         $findGroupColumn = static function (array $availableColumns): ?string {
             foreach ($availableColumns as $column) {
                 $normalized = strtolower(trim($column));
-                if (in_array($normalized, ['nama group', 'nama_group', 'group', 'nama proses'], true)) {
+                if (in_array($normalized, ['nama group','nama_group','group','nama proses'], true)) {
                     return $column;
                 }
             }
@@ -214,8 +213,8 @@
 
         $groupColumn = $findGroupColumn($columns);
         $rendemenColumn = $findColumnByNames($columns, ['Rendemen']);
-        $kubikInputColumn = $findColumnByNames($columns, ['Kubik Input', 'kubik_input', 'KubikIN', 'Kubik In']);
-        $kubikOutputColumn = $findColumnByNames($columns, ['Kubik Output', 'kubik_output', 'KubikOut', 'Kubik Out']);
+        $kubikInputColumn = $findColumnByNames($columns, ['Kubik Input','kubik_input','KubikIN','Kubik In']);
+        $kubikOutputColumn = $findColumnByNames($columns, ['Kubik Output','kubik_output','KubikOut','Kubik Out']);
 
         $tableGroups = [];
 
@@ -287,13 +286,13 @@
         $machineWeight = 1.5; // slightly wider Nama Mesin column
         $effectiveUnits = max(
             1.0,
-            $noWeight + ((count($columns) - $machineColumnCount) * 1.0) + ($machineColumnCount * $machineWeight),
+            $noWeight + (count($columns) - $machineColumnCount) * 1.0 + $machineColumnCount * $machineWeight,
         );
         $uniformWidth = 100 / $effectiveUnits;
         $noWidth = $uniformWidth * $noWeight;
         $machineWidth = $uniformWidth * $machineWeight;
         $widthText = static function (float $width): string {
-            return number_format($width, 4, '.', '') . '%';
+            return number_format($width, 4, '.', ',') . '%';
         };
 
         foreach ($tableGroups as &$tableGroup) {
@@ -344,7 +343,8 @@
                 <tr class="headers-row">
                     <th style="text-align:center; width: {{ $widthText($noWidth) }};">No</th>
                     @foreach ($columns as $column)
-                        <th style="width: {{ $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth) }};">
+                        <th
+                            style="width: {{ $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth) }};">
                             {{ $headerLabelMap[$column] ?? $column }}
                         </th>
                     @endforeach
@@ -361,21 +361,21 @@
                                 $isRendemenColumn = $normalizeColumnName($column) === 'rendemen';
                                 $isLabelOutColumn = in_array(
                                     $normalizeColumnName($column),
-                                    ['labelout', 'labeloutput'],
+                                    ['labelout','labeloutput'],
                                     true,
                                 );
                                 $cellWidth = $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth);
                             @endphp
                             @if ($isRendemenColumn)
                                 <td class="number" style="width: {{ $cellWidth }};">
-                                    {{ is_numeric($value) ? number_format((float) $value, 1, '.', '') . '%' : '' }}
+                                    {{ is_numeric($value) ? number_format((float) $value, 1, '.', ',') . '%' : '' }}
                                 </td>
                             @elseif ($isLabelOutColumn)
                                 <td class="number" style="width: {{ $cellWidth }};">
-                                    {{ is_numeric($value) ? number_format((float) $value, 0, '.', '') : '' }}</td>
+                                    {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
                             @elseif ($numeric)
                                 <td class="number" style="width: {{ $cellWidth }};">
-                                    {{ is_numeric($value) ? number_format((float) $value, 4, '.', '') : '' }}</td>
+                                    {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}</td>
                             @else
                                 <td class="label" style="width: {{ $cellWidth }};">{{ (string) $value }}</td>
                             @endif

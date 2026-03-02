@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Laporan Target Masuk Bahan Baku Harian</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
         body {
             font-family: 'Noto Serif', serif;
@@ -64,7 +64,7 @@
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -146,17 +146,17 @@
                             @forelse ($reportData['table_rows'] as $row)
                                 <tr>
                                     <td class="sticky-col">{{ $row['jenis'] }}</td>
-                                    <td>{{ number_format($row['target_harian'], 0, ',', '.') }}</td>
-                                    <td>{{ number_format($row['target_bulanan'], 0, ',', '.') }}</td>
+                                    <td>{{ number_format($row['target_harian'], 0, '.', ',') }}</td>
+                                    <td>{{ number_format($row['target_bulanan'], 0, '.', ',') }}</td>
                                     @foreach ($row['daily_values'] as $index => $value)
-                                        <td>{{ number_format($value, 0, ',', '.') }}</td>
+                                        <td>{{ number_format($value, 0, '.', ',') }}</td>
                                         @if (($reportData['day_columns'][$index]['is_lb_after'] ?? false) === true)
                                             @php $lbLabel = $reportData['day_columns'][$index]['label']; @endphp
-                                            <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, ',', '.') }}
+                                            <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, '.', ',') }}
                                             </td>
                                         @endif
                                     @endforeach
-                                    <td>{{ number_format($row['total'], 0, ',', '.') }}</td>
+                                    <td>{{ number_format($row['total'], 0, '.', ',') }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -181,9 +181,9 @@
                             @forelse ($reportData['summary_rows'] as $summary)
                                 <tr>
                                     <td class="text-start">{{ $summary['jenis'] }}</td>
-                                    <td>{{ number_format((float) $summary['avg'], 0, ',', '.') }}</td>
-                                    <td>{{ number_format((float) $summary['min'], 0, ',', '.') }}</td>
-                                    <td>{{ number_format((float) $summary['max'], 0, ',', '.') }}</td>
+                                    <td>{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
+                                    <td>{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
+                                    <td>{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
                                 </tr>
                             @empty
                                 <tr>

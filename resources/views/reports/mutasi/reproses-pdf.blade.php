@@ -139,10 +139,10 @@
     @php
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $toFloat = static function ($value): float {
             if (is_numeric($value)) {
@@ -158,20 +158,20 @@
                 return 0.0;
             }
 
-            $normalized = str_replace(' ', '', $normalized);
+            $normalized = str_replace(' ','', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.', '', $normalized);
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace('.','', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 } else {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
                 if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
-                    $normalized = str_replace(',', '', $normalized);
+                    $normalized = str_replace(',','', $normalized);
                 } else {
-                    $normalized = str_replace(',', '.', $normalized);
+                    $normalized = str_replace(',','.', $normalized);
                 }
             }
 
@@ -193,7 +193,7 @@
                 return '';
             }
 
-            return number_format($value, 4, '.', '');
+            return number_format($value, 4, '.', ',');
         };
 
         $mainTotals = [
@@ -250,23 +250,23 @@
         <tbody>
             @forelse ($rowsData as $row)
                 @php
-                    $awal = $valueFromAliases($row, ['REPROAwal', 'Awal']);
-                    $adjOut = $valueFromAliases($row, ['AdjOutput', 'AdjOut']);
-                    $mldOut = $valueFromAliases($row, ['MLDOutput', 'MldOutput']);
-                    $packOut = $valueFromAliases($row, ['PACKOutput', 'PackOutput']);
+                    $awal = $valueFromAliases($row, ['REPROAwal','Awal']);
+                    $adjOut = $valueFromAliases($row, ['AdjOutput','AdjOut']);
+                    $mldOut = $valueFromAliases($row, ['MLDOutput','MldOutput']);
+                    $packOut = $valueFromAliases($row, ['PACKOutput','PackOutput']);
                     $reproKeluar = $valueFromAliases($row, ['REPROKeluar']);
                     $totalMasuk = $adjOut + $mldOut + $packOut + $reproKeluar;
 
-                    $adjIn = $valueFromAliases($row, ['AdjInput', 'AdjInpt']);
-                    $bsIn = $valueFromAliases($row, ['BSInput', 'BSInpt']);
-                    $ccaIn = $valueFromAliases($row, ['CCAInput', 'CCAInpt']);
-                    $lmtIn = $valueFromAliases($row, ['LMTInput', 'LMTInpt']);
-                    $mldIn = $valueFromAliases($row, ['MLDInput', 'MLDInpt']);
-                    $s4sIn = $valueFromAliases($row, ['S4SInput', 'S4SInpt']);
-                    $sandIn = $valueFromAliases($row, ['SANDInput', 'SANDInpt']);
+                    $adjIn = $valueFromAliases($row, ['AdjInput','AdjInpt']);
+                    $bsIn = $valueFromAliases($row, ['BSInput','BSInpt']);
+                    $ccaIn = $valueFromAliases($row, ['CCAInput','CCAInpt']);
+                    $lmtIn = $valueFromAliases($row, ['LMTInput','LMTInpt']);
+                    $mldIn = $valueFromAliases($row, ['MLDInput','MLDInpt']);
+                    $s4sIn = $valueFromAliases($row, ['S4SInput','S4SInpt']);
+                    $sandIn = $valueFromAliases($row, ['SANDInput','SANDInpt']);
                     $reproJual = $valueFromAliases($row, ['REPROJual']);
                     $totalKeluar = $adjIn + $bsIn + $ccaIn + $lmtIn + $mldIn + $s4sIn + $sandIn + $reproJual;
-                    $akhir = $valueFromAliases($row, ['ReprosesAkhir', 'Akhir']);
+                    $akhir = $valueFromAliases($row, ['ReprosesAkhir','Akhir']);
 
                     $mainTotals['awal'] += $awal;
                     $mainTotals['adj_out'] += $adjOut;

@@ -19,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family:"Noto Serif", serif;
+            font-family: "Noto Serif", serif;
             font-size: 10px;
             line-height: 1.2;
             color: #000;
@@ -76,7 +76,7 @@
 
         td.number {
             text-align: right;
-            font-family:"Calibri","DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .headers-row th {
@@ -135,7 +135,7 @@
         }
         $summaryData = is_array($summary ?? null) ? $summary : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
     @endphp
 
     <h1 class="report-title">Laporan Stock Opname Kayu Bulat</h1>
@@ -170,7 +170,7 @@
                             $tanggalText = '';
                             if ($tanggal) {
                                 try {
-                                    $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->format('d M Y');
+                                    $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->locale('id')->translatedFormat('d-M-y');
                                 } catch (\Throwable $exception) {
                                     $tanggalText = (string) $tanggal;
                                 }
@@ -183,11 +183,11 @@
                     <td>{{ (string) ($row['NoSuket'] ?? '') }}</td>
                     <td>{{ (string) ($row['NoPlat'] ?? '') }}</td>
                     <td class="center">{{ (string) ($row['NoTruk'] ?? '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Tebal'] ?? 0), 0, '.', '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Lebar'] ?? 0), 0, '.', '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Panjang'] ?? 0), 0, '.', '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', '') }}</td>
+                    <td class="number">{{ number_format((float) ($row['Tebal'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['Lebar'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['Panjang'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -216,12 +216,12 @@
             <tr>
                 <td>Total Pcs</td>
                 <td class="center" style="font-weight: bold">
-                    {{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', '') }} Pcs</td>
+                    {{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }} Pcs</td>
             </tr>
             <tr>
                 <td>Total Ton</td>
                 <td class="center" style="font-weight: bold">
-                    {{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', '') }} Ton</td>
+                    {{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }} Ton</td>
             </tr>
         </tbody>
     </table>

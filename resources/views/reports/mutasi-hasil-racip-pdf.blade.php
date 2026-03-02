@@ -140,10 +140,10 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d M Y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d M Y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d M Y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $isNumericColumn = static function (string $column, array $rows): bool {
             foreach ($rows as $row) {
@@ -285,16 +285,21 @@
             if ($value === null) {
                 return '';
             }
+            if (abs($value) < 0.0000001) {
+                return '';
+            }
 
             $isLabelOutColumn = in_array($normalizeColumnName($column), ['labelout', 'labeloutput'], true);
 
-            return $isLabelOutColumn ? number_format($value, 0, '.', '') : number_format($value, 4, '.', '');
+            return $isLabelOutColumn ? number_format($value, 0, '.', ',') : number_format($value, 4, '.', ',');
         };
 
         $headerLabelMap = [
             'Sawal' => 'Saldo Awal',
-            'AdjustmentInput' => 'Adj Input',
-            'AdjustmentOutput' => 'Adj Output',
+            'AdjustmentInput' => 'Adjust Input',
+            'AdjustmentOutput' => 'Adjust Output',
+            'AdjusmentInput' => 'Adjust Input',
+            'AdjusmentOutput' => 'Adjust Output',
         ];
 
         $formatColumnHeader = static function (string $column) use ($headerLabelMap): string {
@@ -327,7 +332,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Mutasi Hasil Racip</h1>
-    <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
+    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @forelse ($tableGroups as $group)
         @php
