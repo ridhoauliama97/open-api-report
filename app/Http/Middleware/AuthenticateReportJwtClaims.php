@@ -128,7 +128,12 @@ class AuthenticateReportJwtClaims
         $signingInput = $decoded['signing_input'];
 
         $algorithm = strtoupper((string) ($header['alg'] ?? ''));
-        if ($algorithm !== 'HS256') {
+        $allowedAlgorithms = config('reports.report_auth.jwt_allowed_algs', ['HS256']);
+        $allowedAlgorithms = is_array($allowedAlgorithms)
+            ? array_values(array_filter(array_map(static fn($alg): string => strtoupper((string) $alg), $allowedAlgorithms)))
+            : ['HS256'];
+
+        if (!in_array($algorithm, $allowedAlgorithms, true)) {
             return false;
         }
 
@@ -137,14 +142,81 @@ class AuthenticateReportJwtClaims
             return false;
         }
 
-        $secret = (string) config('reports.report_auth.jwt_secret', '');
-        if ($secret === '') {
+        $hashAlgo = match ($algorithm) {
+            'HS256' => 'sha256',
+            'HS384' => 'sha384',
+            'HS512' => 'sha512',
+            default => null,
+        };
+
+        if ($hashAlgo === null) {
             return false;
         }
 
-        $expectedSignature = hash_hmac('sha256', $signingInput, $secret, true);
+        $candidateSecrets = $this->resolveCandidateSecrets();
+        if ($candidateSecrets === []) {
+            return false;
+        }
 
-        return hash_equals($expectedSignature, $providedSignature) && is_array($payload);
+        foreach ($candidateSecrets as $secret) {
+            $expectedSignature = hash_hmac($hashAlgo, $signingInput, $secret, true);
+            if (hash_equals($expectedSignature, $providedSignature) && is_array($payload)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function resolveCandidateSecrets(): array
+    {
+        $secrets = config('reports.report_auth.jwt_secrets', []);
+        if (!is_array($secrets)) {
+            $secrets = [];
+        }
+
+        $singleSecret = (string) config('reports.report_auth.jwt_secret', '');
+        if ($singleSecret !== '') {
+            $secrets[] = $singleSecret;
+        }
+
+        $normalized = [];
+        foreach ($secrets as $secret) {
+            $rawSecret = (string) $secret;
+            if ($rawSecret === '') {
+                continue;
+            }
+
+            // Keep exact raw secret bytes (most compatible with jsonwebtoken).
+            $normalized[] = $rawSecret;
+
+            // Also try trimmed variant to handle accidental whitespace in env values.
+            $trimmedSecret = trim($rawSecret);
+            if ($trimmedSecret !== '' && $trimmedSecret !== $rawSecret) {
+                $normalized[] = $trimmedSecret;
+            }
+
+            // Support base64:encoded secrets for both raw and trimmed values.
+            $base64Candidates = [$rawSecret];
+            if ($trimmedSecret !== '') {
+                $base64Candidates[] = $trimmedSecret;
+            }
+
+            foreach ($base64Candidates as $base64Secret) {
+                if (!str_starts_with($base64Secret, 'base64:')) {
+                    continue;
+                }
+                $raw = base64_decode(substr($base64Secret, 7), true);
+                if (is_string($raw) && $raw !== '') {
+                    $normalized[] = $raw;
+                }
+            }
+        }
+
+        return array_values(array_unique($normalized));
     }
 
     /**

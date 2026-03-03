@@ -526,6 +526,80 @@ return [
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('BAHAN_TERPAKAI_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
 
+    // PPS
+    'pps_rekap_produksi_inject' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_INJECT_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_INJECT_REPORT_PROCEDURE', 'SP_LapRekapProduksiInject_FWIP'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_INJECT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_INJECT_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_INJECT_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_INJECT_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_INJECT_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_inject_bj' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_PROCEDURE', 'SP_LapRekapProduksiInject_BJ'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_hot_stamping_fwip' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_PROCEDURE', 'SP_LapRekapProduksiHotStamping_FWIP'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_HOT_STAMPING_FWIP_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_packing_bj' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_PROCEDURE', 'SP_LapRekapProduksiPacking_BJ'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_PACKING_BJ_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_pasang_kunci_fwip' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_PROCEDURE', 'SP_LapRekapProduksiPKunci_FWIP'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_PASANG_KUNCI_FWIP_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_spanner_fwip' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_PROCEDURE', 'SP_LapRekapProduksiSpanner_FWIP'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_SPANNER_FWIP_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [
@@ -541,6 +615,23 @@ return [
         'enforce_scope' => filter_var(env('REPORT_API_ENFORCE_SCOPE', false), FILTER_VALIDATE_BOOL),
         'issued_scope' => env('REPORT_API_ISSUED_SCOPE', env('REPORT_JWT_ISSUED_SCOPE')),
         'jwt_secret' => env('REPORT_API_JWT_SECRET', env('REPORT_JWT_SECRET', env('SECRET_KEY', ''))),
+        'jwt_secrets' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env(
+                'REPORT_API_JWT_SECRETS',
+                implode(',', array_filter([
+                    (string) env('REPORT_API_JWT_SECRET', ''),
+                    (string) env('REPORT_JWT_SECRET', ''),
+                    (string) env('SECRET_KEY', ''),
+                    (string) env('LEGACY_PASSWORD_KEY', ''),
+                    (string) env('APP_KEY', ''),
+                ]))
+            ))
+        ))),
+        'jwt_allowed_algs' => array_values(array_filter(array_map(
+            static fn(string $alg): string => strtoupper(trim($alg)),
+            explode(',', (string) env('REPORT_API_JWT_ALLOWED_ALGS', 'HS256,HS384,HS512'))
+        ))),
         'clock_skew_seconds' => (int) env('REPORT_API_JWT_CLOCK_SKEW_SECONDS', 30),
         'scope_claim' => env('REPORT_API_JWT_SCOPE_CLAIM', env('REPORT_JWT_SCOPE_CLAIM', 'scope')),
         'subject_claim' => env('REPORT_API_JWT_SUBJECT_CLAIM', env('REPORT_JWT_SUBJECT_CLAIM', 'sub')),

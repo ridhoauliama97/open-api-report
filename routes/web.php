@@ -54,10 +54,65 @@ use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\StockSTKeringController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
+use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
+use App\Http\Controllers\PPS\RekapProduksiInjectController;
+use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
+use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
+use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
+use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
+// PPS Reports Routes
+Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
+    /** Rekap produksi inject routes. */
+    Route::prefix('rekap-produksi/inject')->name('rekap-produksi.inject.')->group(function (): void {
+        Route::get('/', [RekapProduksiInjectController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiInjectController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiInjectController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiInjectController::class, 'health'])->name('health');
+    });
+
+    /** Rekap produksi inject BJ routes. */
+    Route::prefix('rekap-produksi/inject-bj')->name('rekap-produksi.inject-bj.')->group(function (): void {
+        Route::get('/', [RekapProduksiInjectBjController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiInjectBjController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiInjectBjController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiInjectBjController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/hot-stamping-fwip')->name('rekap-produksi.hot-stamping-fwip.')->group(function (): void {
+        Route::get('/', [RekapProduksiHotStampingFwipController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiHotStampingFwipController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiHotStampingFwipController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiHotStampingFwipController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/packing-bj')->name('rekap-produksi.packing-bj.')->group(function (): void {
+        Route::get('/', [RekapProduksiPackingBjController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiPackingBjController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiPackingBjController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiPackingBjController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/pasang-kunci-fwip')->name('rekap-produksi.pasang-kunci-fwip.')->group(function (): void {
+        Route::get('/', [RekapProduksiPasangKunciFwipController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiPasangKunciFwipController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiPasangKunciFwipController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiPasangKunciFwipController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/spanner-fwip')->name('rekap-produksi.spanner-fwip.')->group(function (): void {
+        Route::get('/', [RekapProduksiSpannerFwipController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiSpannerFwipController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiSpannerFwipController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiSpannerFwipController::class, 'health'])->name('health');
+    });
+});
+
+
+// WPS Reports Routes
 /**
  * Dashboard route group.
  */
@@ -458,4 +513,3 @@ Route::prefix('reports')->name('reports.')->group(function (): void {
  */
 Route::middleware('guest')->post('/login', [WebAuthController::class, 'login'])->name('web.login');
 Route::middleware('auth')->post('/logout', [WebAuthController::class, 'logout'])->name('web.logout');
-

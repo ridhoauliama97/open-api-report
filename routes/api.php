@@ -47,6 +47,12 @@ use App\Http\Controllers\TimelineKayuBulatBulananController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
+use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
+use App\Http\Controllers\PPS\RekapProduksiInjectController;
+use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
+use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
+use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
+use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
@@ -152,6 +158,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],
         ['/reports/bahan-terpakai', 'api.reports.bahan-terpakai', BahanTerpakaiController::class],
+        ['/reports/pps/rekap-produksi/inject', 'api.reports.pps.rekap-produksi.inject', RekapProduksiInjectController::class],
+        ['/reports/pps/rekap-produksi/inject-bj', 'api.reports.pps.rekap-produksi.inject-bj', RekapProduksiInjectBjController::class],
+        ['/reports/pps/rekap-produksi/hot-stamping-fwip', 'api.reports.pps.rekap-produksi.hot-stamping-fwip', RekapProduksiHotStampingFwipController::class],
+        ['/reports/pps/rekap-produksi/packing-bj', 'api.reports.pps.rekap-produksi.packing-bj', RekapProduksiPackingBjController::class],
+        ['/reports/pps/rekap-produksi/pasang-kunci-fwip', 'api.reports.pps.rekap-produksi.pasang-kunci-fwip', RekapProduksiPasangKunciFwipController::class],
+        ['/reports/pps/rekap-produksi/spanner-fwip', 'api.reports.pps.rekap-produksi.spanner-fwip', RekapProduksiSpannerFwipController::class],
         ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
         ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],
         ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],
@@ -175,5 +187,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
             $registerReportRoutes($path, $namePrefix, $controller);
         }
     }
+
+    // Alias endpoint khusus PPS Rekap Produksi Inject agar konsisten dengan pola endpoint web.
+    Route::prefix('/reports/pps/rekap-produksi/inject')->name('api.reports.pps.rekap-produksi.inject.')->group(function (): void {
+        Route::post('/preview', [RekapProduksiInjectController::class, 'preview'])->name('preview-explicit');
+        Route::match(['get', 'post'], '/download', [RekapProduksiInjectController::class, 'download'])->name('download');
+        Route::post('/health', [RekapProduksiInjectController::class, 'health'])->name('health-explicit');
+    });
 });
 
