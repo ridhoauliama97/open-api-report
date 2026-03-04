@@ -113,6 +113,21 @@ return [
             'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true'),
         ],
 
+        'sqlsrv_pps' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST_PPS', '192.168.10.100'),
+            'port' => env('DB_PORT_PPS', '1433'),
+            'database' => env('DB_DATABASE_PPS', 'WPS_TEST3'),
+            'username' => env('DB_USERNAME_PPS', 'sa'),
+            'password' => env('DB_PASSWORD_PPS', 'Utama1234'),
+            'charset' => env('DB_CHARSET_PPS', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
+            'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true'),
+        ],
+
     ],
 
     /*
