@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 18mm 10mm 18mm 10mm;
+            margin: 24mm 10mm 18mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -39,33 +39,27 @@
             color: #636466;
         }
 
-        .section-title {
-            margin: 20px 0 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        table {
+        .report-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
         }
 
-        thead,
-        tr {
-            border: 1px solid #000;
-        }
-
-        th,
-        td {
-            border: 1px solid #666;
-            padding: 3px 4px;
+        .report-table th,
+        .report-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 2px 4px;
             vertical-align: middle;
         }
 
-        thead,
-        th {
+        .report-table tbody td {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+        }
+
+        .report-table thead th {
             text-align: center;
             font-weight: bold;
             font-size: 11px;
@@ -80,17 +74,78 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        .row-odd td {
+        .report-table tbody tr.row-odd td {
             background: #c9d1df;
         }
 
-        .row-even td {
+        .report-table tbody tr.row-even td {
             background: #eef2f8;
         }
 
-        .summary-table {
-            width: 60%;
+        .report-table tbody tr:first-child td {
+            border-top: 0;
+            padding-top: 3px;
+        }
+
+        .report-table tbody tr.row-last td {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .header-line-1 th {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .summary-page {
+            page-break-before: auto;
+            margin-top: 8px;
+        }
+
+        .summary-title {
+            margin: 0 0 10px;
+            font-size: 11px;
             font-weight: bold;
+        }
+
+        .summary-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.1;
+        }
+
+        .summary-list li {
+            margin: 0 0 1px;
+            white-space: nowrap;
+        }
+
+        .summary-dot {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            margin-right: 8px;
+            border-radius: 999px;
+            vertical-align: middle;
+        }
+
+        .summary-label {
+            display: inline-block;
+            width: 168px;
+            vertical-align: middle;
+        }
+
+        .summary-separator {
+            display: inline-block;
+            width: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .summary-value {
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .footer-wrap {
@@ -109,18 +164,6 @@
             font-style: italic;
             text-align: right;
         }
-
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1.5px solid #000;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1.5px solid #000;
-        }
     </style>
 </head>
 
@@ -137,22 +180,23 @@
     <h1 class="report-title">Laporan Kayu Bulat Hidup</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
+
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000">
+            <tr class="header-line-1">
                 <th>No</th>
                 <th>Tanggal</th>
                 <th>Supplier</th>
-                <th>No Truk</th>
+                <th>Nomor<br>Truk</th>
                 <th>Jenis</th>
                 <th>Batang Balok Masuk</th>
                 <th>Batang Balok Terpakai</th>
-                <th>Fisik Batang Balok Di Lapangan</th>
+                <th>Fisik Batang Balok<br>Di Lapangan</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
                     <td class="center">{{ $loop->iteration }}</td>
                     <td class="center">
                         @php
@@ -183,7 +227,8 @@
                     </td>
                     <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
                     <td class="number">{{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}
+                    </td>
                     <td class="number">
                         @php
                             $fisik = (float) ($row['FisikBatangBalokDiLapangan'] ?? 0);
@@ -199,38 +244,38 @@
         </tbody>
     </table>
 
-    <div class="section-title">Summary : </div>
-    <table class="summary-table">
-        <tbody>
-            <tr>
-                <th style="width: 65%; font-weight: bold;">Keterangan</th>
-                <th style="font-weight: bold;">Nilai</th>
-            </tr>
-            <tr>
-                <td>Total Jumlah Data</td>
-                <td class="center">{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris Data</td>
-            </tr>
-            <tr>
-                <td>Total Balok Masuk</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }}
-                    Batang Balok
-                </td>
-            </tr>
-            <tr>
-                <td>Total Balok Terpakai</td>
-                <td class="center">{{ number_format((float) ($summaryData['total_blk_terpakai'] ?? 0), 0, '.', ',') }}
-                    Batang Balok
-                </td>
-            </tr>
-            <tr>
-                <td>Total Fisik Di Lapangan</td>
-                <td class="center">
-                    {{ number_format((float) ($summaryData['total_fisik_lapangan'] ?? 0), 0, '.', ',') }}
-                    Batang Balok
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <section class="summary-page">
+        <h2 class="summary-title">Keterangan:</h2>
+        <ul class="summary-list">
+            <li>
+                <span class="summary-dot"></span>
+                <span class="summary-label">Total Seluruh Data</span>
+                <span class="summary-separator">:</span>
+                <span class="summary-value">{{ (int) ($summaryData['total_rows'] ?? 0) }}</span>
+            </li>
+            <li>
+                <span class="summary-dot"></span>
+                <span class="summary-label">Total Balok Masuk</span>
+                <span class="summary-separator">:</span>
+                <span
+                    class="summary-value">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }}</span>
+            </li>
+            <li>
+                <span class="summary-dot"></span>
+                <span class="summary-label">Total Balok Terpakai</span>
+                <span class="summary-separator">:</span>
+                <span
+                    class="summary-value">{{ number_format((float) ($summaryData['total_blk_terpakai'] ?? 0), 0, '.', ',') }}</span>
+            </li>
+            <li>
+                <span class="summary-dot"></span>
+                <span class="summary-label">Total Fisik Di Lapangan</span>
+                <span class="summary-separator">:</span>
+                <span
+                    class="summary-value">{{ number_format((float) ($summaryData['total_fisik_lapangan'] ?? 0), 0, '.', ',') }}</span>
+            </li>
+        </ul>
+    </section>
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

@@ -55,6 +55,7 @@ class KayuBulatHidupController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_column_count' => 8,
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan Kayu Bulat (Hidup) - %s sd %s.pdf', $startDate, $endDate);
@@ -62,6 +63,9 @@ class KayuBulatHidupController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
         ]);
     }
 

@@ -76,13 +76,15 @@ class PdfGenerator
         $html = $this->sanitizeUtf8($html);
         $orientation = $this->resolveOrientation($data);
         $format = $this->resolveFormat($data);
+        $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
+        $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
 
         $mpdf = new Mpdf([
             'tempDir' => storage_path('app/mpdf-temp'),
             'format' => $format,
             'orientation' => $orientation,
-            'simpleTables' => true,
-            'packTableData' => true,
+            'simpleTables' => $simpleTables,
+            'packTableData' => $packTableData,
             'default_font' => 'dejavusans',
             'autoScriptToLang' => false,
             'autoLangToFont' => false,
