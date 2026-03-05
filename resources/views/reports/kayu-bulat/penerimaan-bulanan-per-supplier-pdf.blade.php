@@ -50,10 +50,21 @@
             border-collapse: collapse;
             margin-bottom: 3px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -62,7 +73,7 @@
 
         th,
         td {
-            border: 1px solid #5f5f5f;
+            border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -123,13 +134,14 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .recap-total td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .footer-wrap {
@@ -152,7 +164,29 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .report-table tbody tr.data-row:last-child td.data-cell {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -187,7 +221,7 @@
             if (!is_string($value)) {
                 return null;
             }
-            $normalized = str_replace([' ',','], ['','.'], trim($value));
+            $normalized = str_replace([' ', ','], ['', '.'], trim($value));
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
@@ -231,7 +265,7 @@
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @if ($detailGroups === [])
-        <table>
+        <table class="report-table">
             <tbody>
                 <tr>
                     <td class="center">Tidak ada data.</td>
@@ -247,7 +281,7 @@
             $sum = is_array($supplierSummaryMap[$supplierName] ?? null) ? $supplierSummaryMap[$supplierName] : [];
         @endphp
         <div class="section-supplier">Nama Supplier : {{ $supplierName }}</div>
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th style="width:90px">No Kayu Bulat</th>
@@ -260,18 +294,25 @@
                     <th style="width:60px">Ton KG</th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="8"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @foreach ($rows as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ (string) ($row['NoKayuBulat'] ?? '') }}</td>
-                        <td class="center">{{ (string) ($row['NoTruk'] ?? '') }}</td>
-                        <td class="center">
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ (string) ($row['NoKayuBulat'] ?? '') }}</td>
+                        <td class="center data-cell">{{ (string) ($row['NoTruk'] ?? '') }}</td>
+                        <td class="center data-cell">
                             @php
                                 $tanggal = $row['Tanggal'] ?? null;
                                 $tanggalText = '';
                                 if ($tanggal) {
                                     try {
-                                        $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->locale('id')->translatedFormat('d-M-y');
+                                        $tanggalText = \Carbon\Carbon::parse((string) $tanggal)
+                                            ->locale('id')
+                                            ->translatedFormat('d-M-y');
                                     } catch (\Throwable $exception) {
                                         $tanggalText = (string) $tanggal;
                                     }
@@ -279,11 +320,11 @@
                             @endphp
                             {{ $tanggalText }}
                         </td>
-                        <td>{{ (string) ($row['JenisKayu'] ?? '') }}</td>
-                        <td>{{ str_replace(' - ','-', (string) ($row['NamaGrade'] ?? '')) }}</td>
-                        <td class="number">{{ $fmtInt($row['JmlhPcs'] ?? 0) }}</td>
-                        <td class="number">{{ $fmt2BlankZero($row['TonKB'] ?? 0) }}</td>
-                        <td class="number">{{ $fmt2($row['TonKG'] ?? 0) }}</td>
+                        <td class="data-cell">{{ (string) ($row['JenisKayu'] ?? '') }}</td>
+                        <td class="data-cell">{{ str_replace(' - ', '-', (string) ($row['NamaGrade'] ?? '')) }}</td>
+                        <td class="number data-cell">{{ $fmtInt($row['JmlhPcs'] ?? 0) }}</td>
+                        <td class="number data-cell">{{ $fmt2BlankZero($row['TonKB'] ?? 0) }}</td>
+                        <td class="number data-cell">{{ $fmt2($row['TonKG'] ?? 0) }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -304,7 +345,7 @@
     @endforeach
 
     <div class="recap-title">Rangkuman / Periode : {{ $start }} s/d {{ $end }}</div>
-    <table class="recap-table">
+    <table class="report-table recap-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="font-size: 11px; width: 24px;">Tanggal</th>
@@ -327,16 +368,23 @@
                 <th style="width: 54px;font-size: 11px">Afkir</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="12"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($recapRows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">
                         @php
                             $tglRecap = (string) ($row['tanggal'] ?? '');
                             $tglRecapText = '';
                             if ($tglRecap !== '') {
                                 try {
-                                    $tglRecapText = \Carbon\Carbon::parse($tglRecap)->locale('id')->translatedFormat('d-M-y');
+                                    $tglRecapText = \Carbon\Carbon::parse($tglRecap)
+                                        ->locale('id')
+                                        ->translatedFormat('d-M-y');
                                 } catch (\Throwable $exception) {
                                     $tglRecapText = $tglRecap;
                                 }
@@ -344,17 +392,17 @@
                         @endphp
                         {{ $tglRecapText }}
                     </td>
-                    <td class="number">{{ $fmtIntBlankZero($row['jabon_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['jabon_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmtIntBlankZero($row['jabon_tgtd_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['jabon_tgtd_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmtIntBlankZero($row['pulai_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['pulai_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmtIntBlankZero($row['rambung_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['rambung_super_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['rambung_mc_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['rambung_samsam_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($row['rambung_afkir_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmtIntBlankZero($row['jabon_truk'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['jabon_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmtIntBlankZero($row['jabon_tgtd_truk'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['jabon_tgtd_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmtIntBlankZero($row['pulai_truk'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['pulai_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmtIntBlankZero($row['rambung_truk'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['rambung_super_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['rambung_mc_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['rambung_samsam_ton'] ?? 0) }}</td>
+                    <td class="number data-cell">{{ $fmt2Smart($row['rambung_afkir_ton'] ?? 0) }}</td>
                 </tr>
             @empty
                 <tr>

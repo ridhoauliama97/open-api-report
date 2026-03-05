@@ -58,7 +58,7 @@
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -84,7 +84,7 @@
         }
 
         .headers-row th {
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             font-weight: bold;
             font-size: 11px;
         }
@@ -92,7 +92,7 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .footer-wrap {

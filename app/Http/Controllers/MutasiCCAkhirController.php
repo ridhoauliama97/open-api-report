@@ -59,6 +59,7 @@ class MutasiCCAkhirController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-CC-Akhir-%s-sd-%s.pdf', $startDate, $endDate);

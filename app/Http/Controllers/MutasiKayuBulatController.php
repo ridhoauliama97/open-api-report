@@ -55,6 +55,7 @@ class MutasiKayuBulatController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Kayu-Bulat-%s-sd-%s.pdf', $startDate, $endDate);
@@ -131,4 +132,3 @@ class MutasiKayuBulatController extends Controller
         return [(string) $startDate, (string) $endDate];
     }
 }
-

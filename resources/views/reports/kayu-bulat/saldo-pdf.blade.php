@@ -44,6 +44,12 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         thead {
@@ -55,7 +61,7 @@
             page-break-after: auto;
         }
 
-
+        th,
         td {
             border: 1px solid #000;
             padding: 3px 4px;
@@ -93,13 +99,20 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+            background: #fff;
+        }
+
+        .report-table tbody tr.data-row td {
+            border-top: 0;
+            border-bottom: 0;
         }
 
         .footer-wrap {
@@ -150,7 +163,7 @@
     <h1 class="report-title">Laporan Saldo Kayu Bulat</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th style="width: 35px;">No</th>
@@ -169,7 +182,7 @@
                     $totalTon += $ton;
                     $totalM3 += $m3;
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $loop->iteration }}</td>
                     <td class="center">
                         {{ \Carbon\Carbon::parse((string) ($row['DateCreate'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}

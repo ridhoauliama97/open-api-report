@@ -66,14 +66,14 @@
 
         th,
         td {
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
 
         tbody td {
-            border-top: 0px solid #9ca3af;
-            border-bottom: 0px solid #9ca3af;
+            border: 1px solid #000;
+            border: 1px solid #000;
         }
 
         th {
@@ -119,7 +119,7 @@
         }
 
         /* .border-v3 th {
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         } */
     </style>
 </head>

@@ -43,10 +43,21 @@
             width: 100%;
             border-collapse: collapse;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -56,7 +67,7 @@
 
         th,
         td {
-            border: 1px solid #8f8f8f;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
             word-break: break-word;
@@ -75,7 +86,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
 
@@ -106,7 +118,25 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -130,7 +160,7 @@
     <h1 class="report-title">Laporan KB Khusus Bangkang</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th style="width: 34px;">No</th>
@@ -139,12 +169,17 @@
                 @endforeach
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ $visibleColumnCount + 1 }}"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
                     @foreach ($columns as $column)
-                        <td>{{ (string) ($row[$column] ?? '') }}</td>
+                        <td class="data-cell">{{ (string) ($row[$column] ?? '') }}</td>
                     @endforeach
                 </tr>
             @empty

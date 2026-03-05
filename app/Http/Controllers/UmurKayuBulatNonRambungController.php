@@ -63,6 +63,7 @@ class UmurKayuBulatNonRambungController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan Umur Kayu Bulat (NON RAMBUNG) - %s sd %s.pdf', $startDate, $endDate);

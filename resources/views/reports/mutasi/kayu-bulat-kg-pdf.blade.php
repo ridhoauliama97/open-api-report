@@ -57,6 +57,10 @@
             display: table-header-group;
         }
 
+        tfoot {
+            display: table-footer-group;
+        }
+
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
@@ -64,7 +68,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -101,13 +105,13 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             text-align: center;
         }
 
@@ -131,7 +135,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
 
         .col-no {
@@ -168,20 +197,20 @@
                 return '';
             }
 
-            $normalizedForCheck = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $trimmed));
+            $normalizedForCheck = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $trimmed));
             if ($normalizedForCheck === 'JENIS') {
                 return 'Jenis';
             }
 
-            $label = preg_replace('/[_-]+/',' ', $trimmed);
-            $label = preg_replace('/([a-z0-9])([A-Z])/','$1 $2', (string) $label);
-            $label = preg_replace('/\s+/',' ', (string) $label);
+            $label = preg_replace('/[_-]+/', ' ', $trimmed);
+            $label = preg_replace('/([a-z0-9])([A-Z])/', '$1 $2', (string) $label);
+            $label = preg_replace('/\s+/', ' ', (string) $label);
 
             return trim((string) $label);
         };
 
         $isJenisColumn = static function (string $column): bool {
-            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $column));
+            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
 
             return str_starts_with($normalized, 'JENIS');
         };
@@ -205,21 +234,21 @@
                 return null;
             }
 
-            $normalized = str_replace(' ','', $normalized);
+            $normalized = str_replace(' ', '', $normalized);
 
             // Handle"1,234.56" vs"1.234,56" vs"19,627" (thousand separator).
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
                 if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 } else {
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 }
             }
 
@@ -277,7 +306,7 @@
     <h1 class="report-title">Laporan Mutasi Kayu Bulat - Timbang KG</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th class="col-no">No</th>
@@ -288,10 +317,15 @@
                 @endforeach
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($mainColumns) + 1 }}"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center col-no">{{ $loop->iteration }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center col-no data-cell">{{ $loop->iteration }}</td>
                     @foreach ($mainColumns as $column)
                         @php
                             $value = $row[$column] ?? null;
@@ -302,11 +336,11 @@
                             }
                         @endphp
                         @if ($isNumeric)
-                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                 {{ $fmt($floatValue ?? 0.0, true) }}
                             </td>
                         @else
-                            <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                            <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                 {{ (string) $value }}
                             </td>
                         @endif
@@ -338,7 +372,7 @@
 
     @if ($subRowsData !== [])
         <div class="section-title">Sub Report Mutasi Kayu Bulat - Timbang KG</div>
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th class="col-no">No</th>
@@ -349,10 +383,15 @@
                     @endforeach
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($subColumns) + 1 }}"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center col-no">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center col-no data-cell">{{ $loop->iteration }}</td>
                         @foreach ($subColumns as $column)
                             @php
                                 $value = $row[$column] ?? null;
@@ -363,11 +402,11 @@
                                 }
                             @endphp
                             @if ($isNumeric)
-                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ $fmt($floatValue ?? 0.0, true) }}
                                 </td>
                             @else
-                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ (string) $value }}
                                 </td>
                             @endif

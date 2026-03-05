@@ -50,6 +50,7 @@ class HidupKBPerGroupController extends Controller
             'summary' => $reportData['summary'],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = 'laporan-hidup-kb-per-group.pdf';

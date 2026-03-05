@@ -78,6 +78,7 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
             'period2EndDate' => $period2EndDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf(

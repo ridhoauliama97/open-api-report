@@ -50,10 +50,21 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -63,7 +74,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -100,13 +111,13 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             text-align: center;
         }
 
@@ -130,7 +141,26 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -164,20 +194,20 @@
                 return 0.0;
             }
 
-            $normalized = str_replace(' ','', $normalized);
+            $normalized = str_replace(' ', '', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
                 if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 } else {
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 }
             }
 
@@ -240,7 +270,7 @@
     <h1 class="report-title">Laporan Mutasi Cross Cut Akhir (m3)</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="width:30px">No</th>
@@ -269,26 +299,31 @@
                 <th style="width:58px">CCA Prod<br>Inpt</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="20"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
-                    $awal = $valueFromAliases($row, ['CCAkhirAwal','Awal']);
-                    $adjOut = $valueFromAliases($row, ['AdjOutputCCA','AdjOutCCA']);
-                    $bsOut = $valueFromAliases($row, ['BSOutputCCA','BSOutCCA']);
-                    $prodOut = $valueFromAliases($row, ['CCAProdOutput','CCAProdOut']);
+                    $awal = $valueFromAliases($row, ['CCAkhirAwal', 'Awal']);
+                    $adjOut = $valueFromAliases($row, ['AdjOutputCCA', 'AdjOutCCA']);
+                    $bsOut = $valueFromAliases($row, ['BSOutputCCA', 'BSOutCCA']);
+                    $prodOut = $valueFromAliases($row, ['CCAProdOutput', 'CCAProdOut']);
                     $ccaMasuk = $valueFromAliases($row, ['CCAMasuk']);
                     $totalMasuk = $adjOut + $bsOut + $prodOut + $ccaMasuk;
 
-                    $adjIn = $valueFromAliases($row, ['AdjInptCCA','AdjInputCCA']);
-                    $bsIn = $valueFromAliases($row, ['BSInputCCA','BSInptCCA']);
+                    $adjIn = $valueFromAliases($row, ['AdjInptCCA', 'AdjInputCCA']);
+                    $bsIn = $valueFromAliases($row, ['BSInputCCA', 'BSInptCCA']);
                     $ccaJual = $valueFromAliases($row, ['CCAJual']);
                     $fjInpt = $valueFromAliases($row, ['FJProdInpt']);
                     $lmtInpt = $valueFromAliases($row, ['LMTProdInpt']);
-                    $mldInpt = $valueFromAliases($row, ['MldProdinpt','MldProdInpt','MLDProdInpt']);
+                    $mldInpt = $valueFromAliases($row, ['MldProdinpt', 'MldProdInpt', 'MLDProdInpt']);
                     $s4sInpt = $valueFromAliases($row, ['S4SProdInpt']);
-                    $sandInpt = $valueFromAliases($row, ['SandProdInpt','SANDProdInpt']);
-                    $packInpt = $valueFromAliases($row, ['PACKProdInpt','PackProdInpt']);
-                    $ccaProdInpt = $valueFromAliases($row, ['CCAInputCCA','CCAProdInpt']);
+                    $sandInpt = $valueFromAliases($row, ['SandProdInpt', 'SANDProdInpt']);
+                    $packInpt = $valueFromAliases($row, ['PACKProdInpt', 'PackProdInpt']);
+                    $ccaProdInpt = $valueFromAliases($row, ['CCAInputCCA', 'CCAProdInpt']);
                     $totalKeluar =
                         $adjIn +
                         $bsIn +
@@ -301,7 +336,7 @@
                         $packInpt +
                         $ccaProdInpt;
 
-                    $akhir = $valueFromAliases($row, ['CCAAkhir','Akhir']);
+                    $akhir = $valueFromAliases($row, ['CCAAkhir', 'Akhir']);
 
                     $totals['awal'] += $awal;
                     $totals['adj_out'] += $adjOut;
@@ -322,27 +357,27 @@
                     $totals['total_keluar'] += $totalKeluar;
                     $totals['akhir'] += $akhir;
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="label">{{ $row['Jenis'] ?? '' }}</td>
-                    <td class="number">{{ $fmt($awal, true) }}</td>
-                    <td class="number">{{ $fmt($adjOut, true) }}</td>
-                    <td class="number">{{ $fmt($bsOut, true) }}</td>
-                    <td class="number">{{ $fmt($prodOut, true) }}</td>
-                    <td class="number">{{ $fmt($ccaMasuk, true) }}</td>
-                    <td class="number">{{ $fmt($totalMasuk, true) }}</td>
-                    <td class="number">{{ $fmt($adjIn, true) }}</td>
-                    <td class="number">{{ $fmt($bsIn, true) }}</td>
-                    <td class="number">{{ $fmt($ccaJual, true) }}</td>
-                    <td class="number">{{ $fmt($fjInpt, true) }}</td>
-                    <td class="number">{{ $fmt($lmtInpt, true) }}</td>
-                    <td class="number">{{ $fmt($mldInpt, true) }}</td>
-                    <td class="number">{{ $fmt($s4sInpt, true) }}</td>
-                    <td class="number">{{ $fmt($sandInpt, true) }}</td>
-                    <td class="number">{{ $fmt($packInpt, true) }}</td>
-                    <td class="number">{{ $fmt($ccaProdInpt, true) }}</td>
-                    <td class="number">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number">{{ $fmt($akhir, true) }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
+                    <td class="number data-cell">{{ $fmt($awal, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($adjOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($bsOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($prodOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($ccaMasuk, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($adjIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($bsIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($ccaJual, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($fjInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($lmtInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($mldInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($s4sInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($sandInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($packInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($ccaProdInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -375,7 +410,7 @@
 
     @if ($subRowsData !== [])
         <div class="section-title">Input Cross Cut Akhir Produksi</div>
-        <table style="width: 92%;">
+        <table class="report-table" style="width: 92%;">
             <thead>
                 <tr class="headers-row">
                     <th style="width:30px">No</th>
@@ -390,6 +425,11 @@
                     <th style="width:78px">Total</th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="10"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
                     @php
@@ -397,7 +437,7 @@
                         $subCCAkhir = $valueFromAliases($row, ['CCAkhir']);
                         $subFj = $valueFromAliases($row, ['FJ']);
                         $subLaminating = $valueFromAliases($row, ['Laminating']);
-                        $subMoulding = $valueFromAliases($row, ['Moulding','WIP']);
+                        $subMoulding = $valueFromAliases($row, ['Moulding', 'WIP']);
                         $subReproses = $valueFromAliases($row, ['Reproses']);
                         $subSanding = $valueFromAliases($row, ['Sanding']);
                         $subTotal =
@@ -412,17 +452,17 @@
                         $subTotals['Sanding'] += $subSanding;
                         $subTotals['Total'] += $subTotal;
                     @endphp
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
-                        <td class="label">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                        <td class="number">{{ $fmt($subBj, true) }}</td>
-                        <td class="number">{{ $fmt($subCCAkhir, true) }}</td>
-                        <td class="number">{{ $fmt($subFj, true) }}</td>
-                        <td class="number">{{ $fmt($subLaminating, true) }}</td>
-                        <td class="number">{{ $fmt($subMoulding, true) }}</td>
-                        <td class="number">{{ $fmt($subReproses, true) }}</td>
-                        <td class="number">{{ $fmt($subSanding, true) }}</td>
-                        <td class="number">{{ $fmt($subTotal, true) }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
+                        <td class="label data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td class="number data-cell">{{ $fmt($subBj, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subCCAkhir, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subFj, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subLaminating, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subMoulding, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subReproses, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subSanding, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($subTotal, true) }}</td>
                     </tr>
                 @endforeach
                 <tr class="totals-row">

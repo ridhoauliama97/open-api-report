@@ -65,6 +65,7 @@ class MutasiSandingController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Sanding-%s-sd-%s.pdf', $startDate, $endDate);
@@ -154,4 +155,3 @@ class MutasiSandingController extends Controller
         ];
     }
 }
-

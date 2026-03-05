@@ -55,6 +55,7 @@ class MutasiSTController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Sawn-Timber-Ton-%s-sd-%s.pdf', $startDate, $endDate);
@@ -131,5 +132,4 @@ class MutasiSTController extends Controller
         return [(string) $startDate, (string) $endDate];
     }
 }
-
 

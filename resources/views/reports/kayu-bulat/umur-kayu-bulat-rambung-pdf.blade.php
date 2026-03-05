@@ -64,7 +64,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -114,7 +114,7 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .group-summary {

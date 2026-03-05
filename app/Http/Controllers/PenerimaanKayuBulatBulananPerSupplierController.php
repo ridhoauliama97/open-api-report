@@ -59,6 +59,7 @@ class PenerimaanKayuBulatBulananPerSupplierController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Penerimaan-Kayu-Bulat-Bulanan-Per-Supplier-%s-sd-%s.pdf', $startDate, $endDate);

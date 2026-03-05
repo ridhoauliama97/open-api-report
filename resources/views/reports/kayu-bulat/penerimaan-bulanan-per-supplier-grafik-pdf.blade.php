@@ -55,7 +55,7 @@
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
         }
@@ -86,13 +86,13 @@
 
         .headers-row th {
             font-weight: bold;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             font-size: 11px;
         }
 
         .totals-row td {
             font-weight: bold;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             font-size: 11px;
         }
 
@@ -101,7 +101,7 @@
         }
 
         .chart-wrap {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 6px;
             margin-top: 6px;
         }

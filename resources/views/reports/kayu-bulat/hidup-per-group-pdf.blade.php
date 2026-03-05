@@ -45,11 +45,26 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
         }
@@ -97,13 +112,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -118,22 +152,27 @@
 
     <h1 class="report-title">Laporan Saldo Hidup Kayu Bulat Per Group</h1>
 
-    <table>
+    <table class="report-table">
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000">
-                <th style="width: 40px;">No</th>
+            <tr class="headers-row">
+                <th>No</th>
                 <th>Group</th>
                 <th style="width: 120px;">Ton</th>
                 <th style="width: 120px;">Rasio (%)</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="4"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td>{{ (string) ($row['Group'] ?? '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="data-cell">{{ (string) ($row['Group'] ?? '') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>
                 </tr>
             @empty
                 <tr>
@@ -141,7 +180,7 @@
                 </tr>
             @endforelse
             @if ($rowsData !== [])
-                <tr style="border: 1.5px solid #000">
+                <tr class="totals-row">
                     <td class="center" colspan="2" style="font-size: 11px"><strong>Total</strong></td>
                     <td class="number">
                         <strong>{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }}</strong>

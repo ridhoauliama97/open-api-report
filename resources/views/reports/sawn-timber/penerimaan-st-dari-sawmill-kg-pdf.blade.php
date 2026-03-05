@@ -48,13 +48,13 @@
             margin: 0 0 5px 0;
             font-size: 11px;
             font-weight: 700;
-            border-bottom: 1px solid #222;
+            border: 1px solid #000;
             padding-bottom: 2px;
         }
 
         .meta-list {
             width: 100%;
-            border: 1px solid #9aa4b2;
+            border: 1px solid #000;
             background: #f8fafc;
             border-radius: 2px;
             margin-bottom: 6px;
@@ -105,7 +105,7 @@
 
         th,
         td {
-            border: 1px solid #4b5563;
+            border: 1px solid #000;
             padding: 2.5px 4px;
             vertical-align: middle;
         }
@@ -167,13 +167,13 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
     </style>
 </head>

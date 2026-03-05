@@ -74,10 +74,21 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -87,7 +98,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -124,7 +135,7 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td.blank {
@@ -147,7 +158,26 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -255,7 +285,7 @@
 
     <div class="container-fluid">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped report-table">
                 <thead>
                     <tr class="headers-row">
                         <th rowspan="2" style="width: 30px;">No</th>
@@ -280,6 +310,11 @@
                         <th style="width: 58px;">SandProd Inpt</th>
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="16"></td>
+                    </tr>
+                </tfoot>
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
@@ -417,25 +452,25 @@
                             $mainTotals['TotalKeluar'] += $totalKeluar;
                             $mainTotals['Akhir'] += $akhir;
                         @endphp
-                        <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="center">{{ $loop->iteration }}</td>
-                            <td class="label">{{ $row['Jenis'] ?? '' }}</td>
-                            <td class="number">{{ $fmt($fjAwal, true) }}</td>
-                            <td class="number">{{ $fmt($adjOutFJ, true) }}</td>
-                            <td class="number">{{ $fmt($bsOutFJ, true) }}</td>
-                            <td class="number">{{ $fmt($fjProdOut, true) }}</td>
-                            <td class="number {{ $totalClass($totalMasuk) }}" style="font-weight: 700">
+                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                            <td class="center data-cell">{{ $loop->iteration }}</td>
+                            <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
+                            <td class="number data-cell">{{ $fmt($fjAwal, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($adjOutFJ, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($bsOutFJ, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($fjProdOut, true) }}</td>
+                            <td class="number data-cell {{ $totalClass($totalMasuk) }}" style="font-weight: 700">
                                 {{ $fmt($totalMasuk, true) }}</td>
-                            <td class="number">{{ $fmt($adjInpFJ, true) }}</td>
-                            <td class="number">{{ $fmt($bsInpFJ, true) }}</td>
-                            <td class="number">{{ $fmt($fjJual, true) }}</td>
-                            <td class="number">{{ $fmt($ccaProdInpt, true) }}</td>
-                            <td class="number">{{ $fmt($mldProdInpt, true) }}</td>
-                            <td class="number">{{ $fmt($s4sProdInpt, true) }}</td>
-                            <td class="number">{{ $fmt($sandProdInpt, true) }}</td>
-                            <td class="number {{ $totalClass($totalKeluar) }}" style="font-weight: 700">
+                            <td class="number data-cell">{{ $fmt($adjInpFJ, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($bsInpFJ, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($fjJual, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($ccaProdInpt, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($mldProdInpt, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($s4sProdInpt, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($sandProdInpt, true) }}</td>
+                            <td class="number data-cell {{ $totalClass($totalKeluar) }}" style="font-weight: 700">
                                 {{ $fmt($totalKeluar, true) }}</td>
-                            <td class="number" style="font-weight: 700">{{ $fmt($akhir, true) }}</td>
+                            <td class="number data-cell" style="font-weight: 700">{{ $fmt($akhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -483,7 +518,7 @@
         <div class="section-title">Input FJ Produksi</div>
         <div class="container-fluid" style="width: 70%;">
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped report-table">
                     <thead>
                         <tr class="headers-row">
                             <th style="width: 32px;">No</th>
@@ -493,6 +528,11 @@
                             <th style="width: 95px;">Total</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr class="table-end-line">
+                            <td colspan="5"></td>
+                        </tr>
+                    </tfoot>
                     <tbody>
                         @foreach ($subRowsData as $row)
                             @php
@@ -504,12 +544,12 @@
                                 $subTotals['S4S'] += $s4s;
                                 $subTotals['Total'] += $total;
                             @endphp
-                            <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                                <td class="center">{{ $loop->iteration }}</td>
-                                <td class="label">{{ $row['Jenis'] ?? '' }}</td>
-                                <td class="number">{{ $fmt($ccAkhir, true) }}</td>
-                                <td class="number">{{ $fmt($s4s, true) }}</td>
-                                <td class="number {{ $totalClass($total) }}">
+                            <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                <td class="center data-cell">{{ $loop->iteration }}</td>
+                                <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
+                                <td class="number data-cell">{{ $fmt($ccAkhir, true) }}</td>
+                                <td class="number data-cell">{{ $fmt($s4s, true) }}</td>
+                                <td class="number data-cell {{ $totalClass($total) }}">
                                     {{ $fmt($total, true) }}
                                 </td>
                             </tr>

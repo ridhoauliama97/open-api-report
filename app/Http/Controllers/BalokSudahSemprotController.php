@@ -70,6 +70,7 @@ class BalokSudahSemprotController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Balok-Sudah-Semprot-%s-sd-%s.pdf', $startDate, $endDate);

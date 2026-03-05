@@ -51,6 +51,10 @@
             display: table-header-group;
         }
 
+        tfoot {
+            display: table-footer-group;
+        }
+
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
@@ -58,7 +62,7 @@
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -90,7 +94,7 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .footer-wrap {
@@ -113,7 +117,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .col-uniform {
@@ -122,6 +127,30 @@
 
         .col-jenis {
             width: 16%;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -199,7 +228,7 @@
 
     <h1 class="report-title">Laporan Mutasi Racip Detail</h1>
     <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
-    <table>
+    <table class="report-table">
         <colgroup>
             <col class="col-uniform">
             <col class="col-jenis">
@@ -246,33 +275,38 @@
                 <th>Jlh Batang</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="17"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number" style="text-align: center;">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                    <td class="number data-cell" style="text-align: center;">
                         {{ $formatNumeric('Tebal', $toFloat($row['Tebal'] ?? null)) }}</td>
-                    <td class="number" style="text-align: center;">
+                    <td class="number data-cell" style="text-align: center;">
                         {{ $formatNumeric('Lebar', $toFloat($row['Lebar'] ?? null)) }}</td>
-                    <td class="number" style="text-align: center;">
+                    <td class="number data-cell" style="text-align: center;">
                         {{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('Sawal', $toFloat($row['Sawal'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('Masuk', $toFloat($row['Masuk'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('MskJlhBtg', $toFloat($row['MskJlhBtg'] ?? null)) }}</td>
-                    <td class="number">
+                    <td class="number data-cell">{{ $formatNumeric('Sawal', $toFloat($row['Sawal'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('Masuk', $toFloat($row['Masuk'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('MskJlhBtg', $toFloat($row['MskJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">
                         {{ $formatNumeric('AdjusmentOutput', $toFloat($row['AdjusmentOutput'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('AdjOutJlhBtg', $toFloat($row['AdjOutJlhBtg'] ?? null)) }}
+                    <td class="number data-cell">{{ $formatNumeric('AdjOutJlhBtg', $toFloat($row['AdjOutJlhBtg'] ?? null)) }}
                     </td>
-                    <td class="number">{{ $formatNumeric('Keluar', $toFloat($row['Keluar'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('KeluarJlhBtg', $toFloat($row['KeluarJlhBtg'] ?? null)) }}
+                    <td class="number data-cell">{{ $formatNumeric('Keluar', $toFloat($row['Keluar'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('KeluarJlhBtg', $toFloat($row['KeluarJlhBtg'] ?? null)) }}
                     </td>
-                    <td class="number">{{ $formatNumeric('AdjusmentInput', $toFloat($row['AdjusmentInput'] ?? null)) }}
+                    <td class="number data-cell">{{ $formatNumeric('AdjusmentInput', $toFloat($row['AdjusmentInput'] ?? null)) }}
                     </td>
-                    <td class="number">{{ $formatNumeric('AdjInJlhBtg', $toFloat($row['AdjInJlhBtg'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('Akhir', $toFloat($row['Akhir'] ?? null)) }}</td>
-                    <td class="number">{{ $formatNumeric('AkhirJlhBtg', $toFloat($row['AkhirJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('AdjInJlhBtg', $toFloat($row['AdjInJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('Akhir', $toFloat($row['Akhir'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('AkhirJlhBtg', $toFloat($row['AkhirJlhBtg'] ?? null)) }}</td>
                 </tr>
             @empty
                 <tr>

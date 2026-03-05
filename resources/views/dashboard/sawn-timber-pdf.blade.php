@@ -51,7 +51,7 @@
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
         }
@@ -128,13 +128,13 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
     </style>
 </head>
@@ -219,18 +219,7 @@
 
     <table>
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000">
-                <th>No</th>
-                <th>Jenis</th>
-                <th>Total Masuk</th>
-                <th>Total Keluar</th>
-                <th>Net</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($types as $idx => $type)
-                @php
-                    $inVal = (float) ($totalsByType[$type]['in'] ?? 0);
+            <tr class="headers-row" style="border: 1px solid #000;
                     $outVal = (float) ($totalsByType[$type]['out'] ?? 0);
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -294,22 +283,7 @@
 
     <table>
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000">
-                <th>Jenis</th>
-                <th>S Akhir</th>
-                <th>#Ctr</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($types as $type)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="label">{{ $type }}</td>
-                    <td class="number">{{ $fmt1($stockByType[$type]['s_akhir'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2($stockByType[$type]['ctr'] ?? 0) }}</td>
-                </tr>
-            @endforeach
-            <tr style="border: 1.5px solid #000">
-                <td class="label" style="font-weight:bold; text-align: center; font-size: 11px;">Total</td>
+            <tr class="headers-row" style="border: 1px solid #000; text-align: center; font-size: 11px;">Total</td>
                 <td class="number" style="font-weight:bold;font-size: 11px;">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}
                 </td>
                 <td class="number" style="font-weight:bold;font-size: 11px;">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>

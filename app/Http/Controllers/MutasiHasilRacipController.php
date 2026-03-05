@@ -63,6 +63,7 @@ class MutasiHasilRacipController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Hasil-Racip-%s-sd-%s.pdf', $startDate, $endDate);
@@ -149,4 +150,3 @@ class MutasiHasilRacipController extends Controller
         ];
     }
 }
-

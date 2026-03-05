@@ -48,8 +48,8 @@
 
         .report-table th,
         .report-table td {
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
+            border: 1px solid #000;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -88,12 +88,12 @@
         }
 
         .report-table tbody tr.row-last td {
-            border-bottom: 1px solid #000 !important;
+            border: 1px solid #000 !important;
         }
 
         .header-line-1 th {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
+            border: 1px solid #000;
+            border: 1px solid #000;
         }
 
         .summary-page {

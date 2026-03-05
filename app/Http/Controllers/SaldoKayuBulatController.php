@@ -70,6 +70,8 @@ class SaldoKayuBulatController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_disable_chunking' => true,
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Saldo-Kayu-Bulat-%s-sd-%s.pdf', $startDate, $endDate);

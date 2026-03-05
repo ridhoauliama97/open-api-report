@@ -50,10 +50,21 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -63,7 +74,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -100,13 +111,13 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .footer-left {
@@ -129,7 +140,26 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -173,7 +203,7 @@
         };
 
         $normalizeKey = static function (string $key): string {
-            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $key));
+            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $key));
         };
 
         $valueFromAliases = static function (array $row, array $aliases) use ($normalizeKey): float {
@@ -214,12 +244,12 @@
         ];
 
         $subSpec = [
-            ['key' => 'CCAkhir','label' => 'CCAkhir'],
-            ['key' => 'FJ','label' => 'FJ'],
-            ['key' => 'Moulding','label' => 'Moulding'],
-            ['key' => 'Reproses','label' => 'Reproses'],
-            ['key' => 'S4S','label' => 'S4S'],
-            ['key' => 'ST','label' => 'ST'],
+            ['key' => 'CCAkhir', 'label' => 'CCAkhir'],
+            ['key' => 'FJ', 'label' => 'FJ'],
+            ['key' => 'Moulding', 'label' => 'Moulding'],
+            ['key' => 'Reproses', 'label' => 'Reproses'],
+            ['key' => 'S4S', 'label' => 'S4S'],
+            ['key' => 'ST', 'label' => 'ST'],
         ];
         $subTotals = [
             'CCAkhir' => 0.0,
@@ -235,7 +265,7 @@
     <h1 class="report-title">Laporan Mutasi S4S (m3)</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="width: 30px;">No</th>
@@ -260,31 +290,36 @@
                 <th style="width: 58px;">S4S Inpt S4S</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="16"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
-                    $awal = $valueFromAliases($row, ['S4SAwal','Awal']);
-                    $adjOut = $valueFromAliases($row, ['AdjOutputS4S','AdjOutptS4S','AdjOutS4S']);
-                    $bsOut = $valueFromAliases($row, ['BSOutputS4S','BSOutptutS4S','BSOutptS4S','BSOutS4S']);
-                    $prodOut = $valueFromAliases($row, ['ProdOutputS4S','S4SProdOutput','S4SMasuk','Masuk']);
-                    $ccaProd = $valueFromAliases($row, ['CCAProdOutputS4S','CCAProdS4S','CCAProdOutS4S','CCAProd']);
-                    $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk','Total Masuk']);
+                    $awal = $valueFromAliases($row, ['S4SAwal', 'Awal']);
+                    $adjOut = $valueFromAliases($row, ['AdjOutputS4S', 'AdjOutptS4S', 'AdjOutS4S']);
+                    $bsOut = $valueFromAliases($row, ['BSOutputS4S', 'BSOutptutS4S', 'BSOutptS4S', 'BSOutS4S']);
+                    $prodOut = $valueFromAliases($row, ['ProdOutputS4S', 'S4SProdOutput', 'S4SMasuk', 'Masuk']);
+                    $ccaProd = $valueFromAliases($row, ['CCAProdOutputS4S', 'CCAProdS4S', 'CCAProdOutS4S', 'CCAProd']);
+                    $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk']);
                     $totalMasuk =
                         $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOut + $bsOut + $prodOut + $ccaProd;
 
-                    $adjInpt = $valueFromAliases($row, ['AdjInputS4S','AdjInptS4S','AdjInpt']);
-                    $bsInpt = $valueFromAliases($row, ['BsInputS4S','BSInputS4S','BSInptS4S','BSInpt']);
-                    $mldJual = $valueFromAliases($row, ['S4SJual','JualS4S','Jual']);
-                    $fjInpt = $valueFromAliases($row, ['FJinputS4S','FJInptS4S','FJInputS4S','FJInpt']);
-                    $mldInpt = $valueFromAliases($row, ['MldInputS4S','MLDInptS4S','MldInptS4S','MLDInputS4S']);
-                    $s4sInpt = $valueFromAliases($row, ['S4SInputS4S','S4SInptS4S','S4SInpt']);
-                    $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar','Total Keluar']);
+                    $adjInpt = $valueFromAliases($row, ['AdjInputS4S', 'AdjInptS4S', 'AdjInpt']);
+                    $bsInpt = $valueFromAliases($row, ['BsInputS4S', 'BSInputS4S', 'BSInptS4S', 'BSInpt']);
+                    $mldJual = $valueFromAliases($row, ['S4SJual', 'JualS4S', 'Jual']);
+                    $fjInpt = $valueFromAliases($row, ['FJinputS4S', 'FJInptS4S', 'FJInputS4S', 'FJInpt']);
+                    $mldInpt = $valueFromAliases($row, ['MldInputS4S', 'MLDInptS4S', 'MldInptS4S', 'MLDInputS4S']);
+                    $s4sInpt = $valueFromAliases($row, ['S4SInputS4S', 'S4SInptS4S', 'S4SInpt']);
+                    $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar']);
                     $totalKeluar =
                         $totalKeluarDirect !== 0.0
                             ? $totalKeluarDirect
                             : $adjInpt + $bsInpt + $mldJual + $fjInpt + $mldInpt + $s4sInpt;
 
-                    $akhir = $valueFromAliases($row, ['AkhirS4S','S4SAkhir','Akhir']);
+                    $akhir = $valueFromAliases($row, ['AkhirS4S', 'S4SAkhir', 'Akhir']);
 
                     $mainTotals['Awal'] += $awal;
                     $mainTotals['AdjOut'] += $adjOut;
@@ -301,23 +336,23 @@
                     $mainTotals['TotalKeluar'] += $totalKeluar;
                     $mainTotals['Akhir'] += $akhir;
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="label">{{ $row['Jenis'] ?? '' }}</td>
-                    <td class="number">{{ $fmt($awal, true) }}</td>
-                    <td class="number">{{ $fmt($adjOut, true) }}</td>
-                    <td class="number">{{ $fmt($bsOut, true) }}</td>
-                    <td class="number">{{ $fmt($prodOut, true) }}</td>
-                    <td class="number">{{ $fmt($ccaProd, true) }}</td>
-                    <td class="number">{{ $fmt($totalMasuk, true) }}</td>
-                    <td class="number">{{ $fmt($adjInpt, true) }}</td>
-                    <td class="number">{{ $fmt($bsInpt, true) }}</td>
-                    <td class="number">{{ $fmt($mldJual, true) }}</td>
-                    <td class="number">{{ $fmt($fjInpt, true) }}</td>
-                    <td class="number">{{ $fmt($mldInpt, true) }}</td>
-                    <td class="number">{{ $fmt($s4sInpt, true) }}</td>
-                    <td class="number">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number">{{ $fmt($akhir, true) }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
+                    <td class="number data-cell">{{ $fmt($awal, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($adjOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($bsOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($prodOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($ccaProd, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($adjInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($bsInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($mldJual, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($fjInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($mldInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($s4sInpt, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -346,7 +381,7 @@
 
     @if ($subRowsData !== [])
         <div class="section-title">Input S4S Produksi</div>
-        <table style="width: 72%;">
+        <table class="report-table" style="width: 72%;">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 32px;">No</th>
@@ -357,33 +392,38 @@
                     <th style="width: 84px;">Total</th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="9"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
                     @php
                         $calculatedTotal = 0.0;
                     @endphp
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
-                        <td class="label">{{ $row['Jenis'] ?? '' }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
+                        <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
                         @foreach ($subSpec as $spec)
                             @php
                                 $aliases = match ($spec['key']) {
-                                    'CCAkhir' => ['CCAkhir','WIP'],
-                                    'Moulding' => ['Moulding','MLD'],
+                                    'CCAkhir' => ['CCAkhir', 'WIP'],
+                                    'Moulding' => ['Moulding', 'MLD'],
                                     default => [$spec['key']],
                                 };
                                 $value = $valueFromAliases($row, $aliases);
                                 $subTotals[$spec['key']] += $value;
                                 $calculatedTotal += $value;
                             @endphp
-                            <td class="number">{{ $fmt($value, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($value, true) }}</td>
                         @endforeach
                         @php
                             $rowTotal = $valueFromAliases($row, ['Total']);
                             $rowTotal = $rowTotal !== 0.0 ? $rowTotal : $calculatedTotal;
                             $subTotals['Total'] += $rowTotal;
                         @endphp
-                        <td class="number">{{ $fmt($rowTotal, true) }}</td>
+                        <td class="number data-cell">{{ $fmt($rowTotal, true) }}</td>
                     </tr>
                 @endforeach
                 <tr class="totals-row">

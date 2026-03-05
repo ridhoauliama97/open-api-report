@@ -65,6 +65,7 @@ class MutasiFingerJointController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Finger-Joint-%s-sd-%s.pdf', $startDate, $endDate);

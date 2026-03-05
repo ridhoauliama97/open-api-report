@@ -112,6 +112,7 @@ class PdfGenerator
         return $mpdf->Output('', Destination::STRING_RETURN);
     }
 
+
     private function writeHtmlInChunks(Mpdf $mpdf, string $html): void
     {
         if (trim($html) === '') {

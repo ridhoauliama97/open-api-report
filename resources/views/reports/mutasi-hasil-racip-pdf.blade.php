@@ -51,6 +51,10 @@
             display: table-header-group;
         }
 
+        tfoot {
+            display: table-footer-group;
+        }
+
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
@@ -58,7 +62,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -95,7 +99,7 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .footer-wrap {
@@ -118,7 +122,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .col-no {
@@ -131,6 +136,30 @@
 
         .col-uniform {
             width: 72px;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -343,7 +372,7 @@
                 {{ $group['name'] }}
             </p>
         @endif
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th class="col-no" style="text-align:center">No</th>
@@ -354,10 +383,15 @@
                     @endforeach
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($columns) + 1 }}"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @forelse ($group['rows'] as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center col-no">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center col-no data-cell">{{ $loop->iteration }}</td>
                         @foreach ($columns as $column)
                             @php
                                 $value = $row[$column] ?? null;
@@ -369,10 +403,10 @@
                                 }
                             @endphp
                             @if ($numeric)
-                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ $formatByColumn($column, $floatValue) }}</td>
                             @else
-                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }}">
+                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ (string) $value }}
                                 </td>
                             @endif
@@ -402,7 +436,12 @@
             </tbody>
         </table>
     @empty
-        <table>
+        <table class="report-table">
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="1"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 <tr>
                     <td class="center">Tidak ada data.</td>

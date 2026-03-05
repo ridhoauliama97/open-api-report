@@ -52,7 +52,7 @@
 
         th,
         td {
-            border: 1px solid #444;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
         }
@@ -76,7 +76,7 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .row-odd td {
@@ -90,7 +90,7 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .ratio-row td {

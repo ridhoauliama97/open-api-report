@@ -50,10 +50,21 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -63,7 +74,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -100,13 +111,13 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             text-align: center;
         }
 
@@ -130,7 +141,26 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -158,20 +188,20 @@
                 return 0.0;
             }
 
-            $normalized = str_replace(' ','', $normalized);
+            $normalized = str_replace(' ', '', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
                 if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 } else {
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 }
             }
 
@@ -220,7 +250,7 @@
     <h1 class="report-title">Laporan Mutasi Reproses</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="width:30px">No</th>
@@ -247,26 +277,31 @@
                 <th style="width:58px">REPRO<br>Jual</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="18"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
-                    $awal = $valueFromAliases($row, ['REPROAwal','Awal']);
-                    $adjOut = $valueFromAliases($row, ['AdjOutput','AdjOut']);
-                    $mldOut = $valueFromAliases($row, ['MLDOutput','MldOutput']);
-                    $packOut = $valueFromAliases($row, ['PACKOutput','PackOutput']);
+                    $awal = $valueFromAliases($row, ['REPROAwal', 'Awal']);
+                    $adjOut = $valueFromAliases($row, ['AdjOutput', 'AdjOut']);
+                    $mldOut = $valueFromAliases($row, ['MLDOutput', 'MldOutput']);
+                    $packOut = $valueFromAliases($row, ['PACKOutput', 'PackOutput']);
                     $reproKeluar = $valueFromAliases($row, ['REPROKeluar']);
                     $totalMasuk = $adjOut + $mldOut + $packOut + $reproKeluar;
 
-                    $adjIn = $valueFromAliases($row, ['AdjInput','AdjInpt']);
-                    $bsIn = $valueFromAliases($row, ['BSInput','BSInpt']);
-                    $ccaIn = $valueFromAliases($row, ['CCAInput','CCAInpt']);
-                    $lmtIn = $valueFromAliases($row, ['LMTInput','LMTInpt']);
-                    $mldIn = $valueFromAliases($row, ['MLDInput','MLDInpt']);
-                    $s4sIn = $valueFromAliases($row, ['S4SInput','S4SInpt']);
-                    $sandIn = $valueFromAliases($row, ['SANDInput','SANDInpt']);
+                    $adjIn = $valueFromAliases($row, ['AdjInput', 'AdjInpt']);
+                    $bsIn = $valueFromAliases($row, ['BSInput', 'BSInpt']);
+                    $ccaIn = $valueFromAliases($row, ['CCAInput', 'CCAInpt']);
+                    $lmtIn = $valueFromAliases($row, ['LMTInput', 'LMTInpt']);
+                    $mldIn = $valueFromAliases($row, ['MLDInput', 'MLDInpt']);
+                    $s4sIn = $valueFromAliases($row, ['S4SInput', 'S4SInpt']);
+                    $sandIn = $valueFromAliases($row, ['SANDInput', 'SANDInpt']);
                     $reproJual = $valueFromAliases($row, ['REPROJual']);
                     $totalKeluar = $adjIn + $bsIn + $ccaIn + $lmtIn + $mldIn + $s4sIn + $sandIn + $reproJual;
-                    $akhir = $valueFromAliases($row, ['ReprosesAkhir','Akhir']);
+                    $akhir = $valueFromAliases($row, ['ReprosesAkhir', 'Akhir']);
 
                     $mainTotals['awal'] += $awal;
                     $mainTotals['adj_out'] += $adjOut;
@@ -285,25 +320,25 @@
                     $mainTotals['total_keluar'] += $totalKeluar;
                     $mainTotals['akhir'] += $akhir;
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="label">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number">{{ $fmt($awal, true) }}</td>
-                    <td class="number">{{ $fmt($adjOut, true) }}</td>
-                    <td class="number">{{ $fmt($mldOut, true) }}</td>
-                    <td class="number">{{ $fmt($packOut, true) }}</td>
-                    <td class="number">{{ $fmt($reproKeluar, true) }}</td>
-                    <td class="number">{{ $fmt($totalMasuk, true) }}</td>
-                    <td class="number">{{ $fmt($adjIn, true) }}</td>
-                    <td class="number">{{ $fmt($bsIn, true) }}</td>
-                    <td class="number">{{ $fmt($ccaIn, true) }}</td>
-                    <td class="number">{{ $fmt($lmtIn, true) }}</td>
-                    <td class="number">{{ $fmt($mldIn, true) }}</td>
-                    <td class="number">{{ $fmt($s4sIn, true) }}</td>
-                    <td class="number">{{ $fmt($sandIn, true) }}</td>
-                    <td class="number">{{ $fmt($reproJual, true) }}</td>
-                    <td class="number">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number">{{ $fmt($akhir, true) }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="label data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                    <td class="number data-cell">{{ $fmt($awal, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($adjOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($mldOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($packOut, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($reproKeluar, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($adjIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($bsIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($ccaIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($lmtIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($mldIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($s4sIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($sandIn, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($reproJual, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>

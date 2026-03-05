@@ -44,11 +44,26 @@
             border-collapse: collapse;
             margin-bottom: 8px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
         }
@@ -102,7 +117,7 @@
         }
 
         .chart-wrap {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 6px;
             margin-top: 10px;
             margin-bottom: 10px;
@@ -133,13 +148,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -183,7 +217,7 @@
         $padBottom = 34;
         $plotWidth = $svgWidth - $padLeft - $padRight;
         $plotHeight = $svgHeight - $padTop - $padBottom;
-        $palette = ['#0d6efd','#198754','#dc3545','#fd7e14','#6f42c1','#20c997','#d63384','#6c757d'];
+        $palette = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#6f42c1', '#20c997', '#d63384', '#6c757d'];
         $maxValue = 0.0;
         foreach ($years as $year) {
             $yearSeries = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
@@ -204,9 +238,9 @@
     <h1 class="report-title">Rekap Pembelian Kayu Bulat</h1>
     <p class="report-subtitle">Periode {{ $startYear }} s/d {{ $endYear }}</p>
 
-    <table style="margin-top: 15px;">
+    <table class="report-table" style="margin-top: 15px;">
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000;">
+            <tr class="headers-row">
                 <th style="font-weight: bold; font-size:11px">Tahun</th>
                 @foreach ($monthLabels as $month)
                     <th style="font-weight: bold; font-size:11px">{{ $month }}</th>
@@ -214,19 +248,24 @@
                 <th style="font-weight: bold; font-size:11px">Total</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($monthLabels) + 2 }}"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @foreach ($years as $year)
                 @php
                     $monthly = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="label" style="text-align: center; font-weight: bold; font-size:11px;">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="label data-cell" style="text-align: center; font-weight: bold; font-size:11px;">
                         {{ $year }}</td>
                     @foreach ($monthLabels as $index => $month)
-                        <td class="number">
+                        <td class="number data-cell">
                             {{ $fmt4($monthly[$index] ?? 0) }}</td>
                     @endforeach
-                    <td class="number" style="font-weight: bold;">
+                    <td class="number data-cell" style="font-weight: bold;">
                         {{ $fmt4($yearlyTotals[$year] ?? 0) }}</td>
                 </tr>
             @endforeach

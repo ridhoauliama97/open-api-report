@@ -70,6 +70,7 @@ class KbKhususBangkangController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-KB-Khusus-Bangkang-%s-sd-%s.pdf', $startDate, $endDate);

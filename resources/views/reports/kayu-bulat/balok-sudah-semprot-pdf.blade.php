@@ -49,21 +49,31 @@
             width: 100%;
             border-collapse: collapse;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
         }
 
+        tfoot {
+            display: table-footer-group;
+        }
+
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
-            border: 1px solid #000;
         }
 
         th,
         td {
-            border: 1px solid #8f8f8f;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
             word-break: break-word;
@@ -112,13 +122,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -132,7 +161,7 @@
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $normalize = static fn(string $name): string => preg_replace('/[^a-z0-9]/','', strtolower($name)) ?? '';
+        $normalize = static fn(string $name): string => preg_replace('/[^a-z0-9]/', '', strtolower($name)) ?? '';
         $resolveHeaderLabel = static function (string $column) use ($normalize): string {
             return match ($normalize($column)) {
                 'nokayubulat' => 'No Kayu Bulat',
@@ -141,7 +170,7 @@
                 'nmsupplier' => 'Nama Supplier',
                 'notruk' => 'Nomor Truk',
                 'type' => 'Tipe',
-                'jamsiapbongkar','jamsiapbongkart' => 'Jam Siap Bongkar',
+                'jamsiapbongkar', 'jamsiapbongkart' => 'Jam Siap Bongkar',
                 'tglsemprot' => 'Tanggal Semprot',
                 'berat' => 'Berat',
                 default => $column,
@@ -179,25 +208,30 @@
         <p class="report-subtitle">&nbsp;</p>
     @endif
 
-    <table>
+    <table class="report-table">
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000">
-                <th style="width: 34px;">No</th>
+            <tr class="headers-row">
+                <th>No</th>
                 @foreach ($columns as $column)
                     <th>{{ $resolveHeaderLabel((string) $column) }}</th>
                 @endforeach
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($columns) + 1 }}"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
                     @foreach ($columns as $column)
                         @php
                             $value = $row[$column] ?? '';
                             $columnKey = $normalize((string) $column);
                             $isBeratColumn = $columnKey === 'berat';
-                            $isDateColumn = in_array($columnKey, ['datecreate','tglsemprot'], true);
+                            $isDateColumn = in_array($columnKey, ['datecreate', 'tglsemprot'], true);
                             $displayValue = (string) $value;
 
                             if ($isBeratColumn && is_numeric($value)) {
@@ -214,7 +248,7 @@
                                 $displayValue = $formatDateValue($value);
                             }
                         @endphp
-                        <td class="{{ $isBeratColumn ? 'number-right' : 'center' }}">{{ $displayValue }}</td>
+                        <td class="data-cell {{ $isBeratColumn ? 'number-right' : 'center' }}">{{ $displayValue }}</td>
                     @endforeach
                 </tr>
             @empty

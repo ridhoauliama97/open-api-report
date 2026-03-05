@@ -65,6 +65,7 @@ class MutasiS4SController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-S4S-%s-sd-%s.pdf', $startDate, $endDate);
@@ -154,4 +155,3 @@ class MutasiS4SController extends Controller
         ];
     }
 }
-

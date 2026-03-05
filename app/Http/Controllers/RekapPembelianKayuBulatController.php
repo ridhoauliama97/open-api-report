@@ -136,6 +136,7 @@ class RekapPembelianKayuBulatController extends Controller
             'endYear' => $endYear,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Rekap-Pembelian-Kayu-Bulat-%d-sd-%d.pdf', $startYear, $endYear);

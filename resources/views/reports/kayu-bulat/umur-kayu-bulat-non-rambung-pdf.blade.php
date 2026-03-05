@@ -53,6 +53,11 @@
             table-layout: fixed;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
         thead {
             display: table-header-group;
         }
@@ -64,7 +69,7 @@
 
         th,
         td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #000;
             padding: 2px 4px;
             vertical-align: middle;
         }
@@ -114,7 +119,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
 
         .summary-section {
@@ -138,8 +144,15 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
             background: #fff;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
         }
 
         .summary-table {
@@ -483,7 +496,7 @@
 
     @forelse ($groupedRows as $groupName => $groupRows)
         <div class="section-title">Status : {{ $groupName }}</div>
-        <table>
+        <table class="report-table">
             <colgroup>
                 <col style="width: 4%">
                 @foreach ($displayColumns as $column)
@@ -500,14 +513,14 @@
             </thead>
             <tbody>
                 @foreach ($groupRows as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
                         @foreach ($displayColumns as $column)
                             @php
                                 $value = $row[$column] ?? null;
                                 $isTonCell = $tonColumn !== null && $normalize($column) === $normalize($tonColumn);
                             @endphp
-                            <td class="{{ $isTonCell ? 'number' : 'center' }}">
+                            <td class="data-cell {{ $isTonCell ? 'number' : 'center' }}">
                                 {{ $formatCellValue($value, $column) }}
                             </td>
                         @endforeach

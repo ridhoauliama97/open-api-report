@@ -65,6 +65,7 @@ class MutasiMouldingController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Moulding-%s-sd-%s.pdf', $startDate, $endDate);

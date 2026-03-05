@@ -46,9 +46,23 @@
             page-break-inside: auto;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
             text-align: center;
@@ -123,13 +137,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -189,10 +222,10 @@
         Periode 2: {{ $period2StartText }} s/d {{ $period2EndText }}
     </p>
 
-    <table>
+    <table class="report-table">
         <thead>
-            <tr class="headers-row" style="border: 1.5px solid #000">
-                <th style="width: 34px;">No</th>
+            <tr class="headers-row">
+                <th>No</th>
                 <th>Nama Supplier</th>
                 <th style="width: 120px;">No.Tlp/HP</th>
                 <th style="width: 80px;">Ton1</th>
@@ -200,6 +233,11 @@
                 <th style="width: 110px;">Persen (%)</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rows as $row)
                 @php
@@ -207,16 +245,16 @@
                     $ton2 = is_numeric($row['Ton2'] ?? null) ? (float) $row['Ton2'] : 0.0;
                     $percent = $calculatePercent($ton1, $ton2);
                     $trendClass = $percent > 0 ? 'trend-up' : ($percent < 0 ? 'trend-down' : 'trend-flat');
-                    $trendIcon = $percent > 0 ? '↑' : ($percent < 0 ? '↓' : '→');
+                    $trendIcon = $percent > 0 ? '' : ($percent < 0 ? '' : '');
                     $percentText = $formatPercent($percent);
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">{{ (string) ($row['NmSupplier'] ?? '') }}</td>
-                    <td class="center">{{ (string) ($row['NoTlp'] ?? '') }}</td>
-                    <td class="number">{{ $formatNumber($ton1) }}</td>
-                    <td class="number">{{ $formatNumber($ton2) }}</td>
-                    <td class="number {{ $trendClass }}">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="center data-cell">{{ (string) ($row['NmSupplier'] ?? '') }}</td>
+                    <td class="center data-cell">{{ (string) ($row['NoTlp'] ?? '') }}</td>
+                    <td class="number data-cell">{{ $formatNumber($ton1) }}</td>
+                    <td class="number data-cell">{{ $formatNumber($ton2) }}</td>
+                    <td class="number data-cell {{ $trendClass }}">
                         {{ $percentText !== '' ? $percentText . '%' : '' }}{{ $percentText !== '' ? ' ' . $trendIcon : '' }}
                     </td>
                 </tr>
@@ -225,13 +263,13 @@
                     <td class="center" colspan="6">Tidak ada data.</td>
                 </tr>
             @endforelse
-            <tr class="grand-total-row totals-row" style="border: 1.5px solid #000">
+            <tr class="grand-total-row totals-row" style="border: 1px solid #000">
                 <td colspan="3" class="center">Grand Total</td>
                 <td class="number">{{ $formatNumber($totalTon1) }}</td>
                 <td class="number">{{ $formatNumber($totalTon2) }}</td>
                 <td
                     class="number {{ $totalPercent > 0 ? 'trend-up' : ($totalPercent < 0 ? 'trend-down' : 'trend-flat') }}">
-                    {{ $formatPercent($totalPercent) !== '' ? $formatPercent($totalPercent) . '%' : '' }}{{ $formatPercent($totalPercent) !== '' ? ' ' . ($totalPercent > 0 ? '↑' : ($totalPercent < 0 ? '↓' : '→')) : '' }}
+                    {{ $formatPercent($totalPercent) !== '' ? $formatPercent($totalPercent) . '%' : '' }}{{ $formatPercent($totalPercent) !== '' ? ' ' . ($totalPercent > 0 ? '' : ($totalPercent < 0 ? '' : '')) : '' }}
                 </td>
             </tr>
         </tbody>

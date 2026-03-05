@@ -56,7 +56,7 @@
 
         th,
         td {
-            border: 1px solid #8f8f8f;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
             word-break: break-word;
@@ -105,13 +105,13 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1.5px solid #000;
+            border: 1px solid #000;
         }
     </style>
 </head>
