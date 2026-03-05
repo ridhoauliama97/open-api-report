@@ -21,6 +21,23 @@ class SaldoKayuBulatController extends Controller
         SaldoKayuBulatReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+    }
+
+    public function previewPdf(
+        GenerateSaldoKayuBulatReportRequest $request,
+        SaldoKayuBulatReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+    }
+
+    private function buildPdfResponse(
+        GenerateSaldoKayuBulatReportRequest $request,
+        SaldoKayuBulatReportService $reportService,
+        PdfGenerator $pdfGenerator,
+        bool $inline,
+    ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
         if ($generatedBy === null) {
@@ -57,9 +74,16 @@ class SaldoKayuBulatController extends Controller
 
         $filename = sprintf('Laporan-Saldo-Kayu-Bulat-%s-sd-%s.pdf', $startDate, $endDate);
 
+        $dispositionType = $inline ? 'inline' : 'attachment';
+
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf(
+                '%s; filename="%s"; filename*=UTF-8\'\'%s',
+                $dispositionType,
+                addcslashes($filename, "\"\\"),
+                rawurlencode($filename)
+            ),
         ]);
     }
 

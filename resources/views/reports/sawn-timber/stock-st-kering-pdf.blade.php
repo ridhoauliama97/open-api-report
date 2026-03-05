@@ -58,7 +58,7 @@
 
         th,
         td {
-            border: 1px solid #666;
+            border: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
             white-space: nowrap;
@@ -159,7 +159,7 @@
         $normalizeName = static function (?string $name): string {
             $raw = $name ?? '';
 
-            return strtolower(preg_replace('/[^a-zA-Z0-9]/','', $raw) ?? '');
+            return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $raw) ?? '');
         };
 
         $headerLabelMap = [
@@ -207,17 +207,17 @@
                 return null;
             }
 
-            $normalized = str_replace(' ','', $normalized);
+            $normalized = str_replace(' ', '', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',','.');
+                $normalized = str_replace(',', '.');
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -274,13 +274,16 @@
         };
 
         $statusColumn = $findColumn($availableColumns, ['Status']);
-        $jenisColumn = $findColumn($availableColumns, ['Jenis','JenisKayu','Type','Tipe','Kategori']);
-        $produkColumn = $findColumn($availableColumns, ['Produk','Product','NamaProduk','NamaBarang','Item']);
-        $dateColumn = $findColumn($availableColumns, ['DateCreate','Tanggal','Date']);
-        $noStColumn = $findColumn($availableColumns, ['NoST','NoSt']);
-        $pcsColumn = $findColumn($availableColumns, ['Pcs','JmlhBatang','JumlahBatang']);
-        $tonColumn = $findColumn($availableColumns, ['Ton','JmlhTon','JumlahTon']);
-        $lokasiColumn = $findColumn($availableColumns, ['IdLokasi','Lokasi','Location','Description']);
+        $jenisColumn = $findColumn($availableColumns, ['Jenis', 'JenisKayu', 'Type', 'Tipe', 'Kategori']);
+        $produkColumn = $findColumn($availableColumns, ['Produk', 'Product', 'NamaProduk', 'NamaBarang', 'Item']);
+        $dateColumn = $findColumn($availableColumns, ['DateCreate', 'Tanggal', 'Date']);
+        $noStColumn = $findColumn($availableColumns, ['NoST', 'NoSt']);
+        $tebalColumn = $findColumn($availableColumns, ['Tebal']);
+        $lebarColumn = $findColumn($availableColumns, ['Lebar']);
+        $panjangColumn = $findColumn($availableColumns, ['Panjang']);
+        $pcsColumn = $findColumn($availableColumns, ['Pcs', 'JmlhBatang', 'JumlahBatang']);
+        $tonColumn = $findColumn($availableColumns, ['Ton', 'JmlhTon', 'JumlahTon']);
+        $lokasiColumn = $findColumn($availableColumns, ['IdLokasi', 'Lokasi', 'Location', 'Description']);
 
         $columnHeaderOverrides = [];
         if ($noStColumn !== null) {
@@ -294,6 +297,15 @@
         }
         if ($lokasiColumn !== null) {
             $columnHeaderOverrides[$lokasiColumn] = 'Lokasi';
+        }
+        if ($tebalColumn !== null) {
+            $columnHeaderOverrides[$tebalColumn] = 'Tebal';
+        }
+        if ($lebarColumn !== null) {
+            $columnHeaderOverrides[$lebarColumn] = 'Lebar';
+        }
+        if ($panjangColumn !== null) {
+            $columnHeaderOverrides[$panjangColumn] = 'Panjang';
         }
 
         $formatHeaderLabel = static function (string $column) use (
@@ -310,35 +322,19 @@
             return $headerLabelMap[$normalized] ?? $column;
         };
 
-        $excludedColumns = array_filter(
-            [$statusColumn, $jenisColumn, $produkColumn],
-            static fn($column): bool => $column !== null,
+        $desiredColumns = [
+            $noStColumn,
+            $dateColumn,
+            $tebalColumn,
+            $lebarColumn,
+            $panjangColumn,
+            $lokasiColumn,
+            $pcsColumn,
+            $tonColumn,
+        ];
+        $tableColumns = array_values(
+            array_unique(array_filter($desiredColumns, static fn($column): bool => $column !== null)),
         );
-
-        $preferredOrder = ['NoST','DateCreate','Tebal','Lebar','Panjang','Pcs','Ton'];
-        $tableColumns = [];
-        foreach ($preferredOrder as $candidate) {
-            $matched = $findColumn($availableColumns, [$candidate]);
-            if (
-                $matched !== null &&
-                !in_array($matched, $excludedColumns, true) &&
-                !in_array($matched, $tableColumns, true)
-            ) {
-                $tableColumns[] = $matched;
-            }
-        }
-        foreach ($availableColumns as $column) {
-            if (
-                !in_array($column, $excludedColumns, true) &&
-                !in_array($column, $tableColumns, true) &&
-                ($lokasiColumn === null || $column !== $lokasiColumn)
-            ) {
-                $tableColumns[] = $column;
-            }
-        }
-        if ($lokasiColumn !== null && !in_array($lokasiColumn, $tableColumns, true)) {
-            $tableColumns[] = $lokasiColumn;
-        }
 
         $maxSortRows = (int) config('reports.stock_st_kering.max_sort_rows', 3000);
         if ($maxSortRows > 0 && count($rowsData) > $maxSortRows) {
@@ -447,7 +443,7 @@
 
     <h1 class="report-title">Laporan Stock ST Kering</h1>
     <p class="report-subtitle">
-        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
+        Per {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
     </p>
 
     @forelse ($grouped as $jenisName => $produkGroups)
@@ -513,7 +509,8 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number" style="font-weight: bold">
+                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number" style="font-weight: bold"
+                                    style="text-align: center;">
                                     Jumlah {{ $produkName }} :
                                 </td>
                                 @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
@@ -529,7 +526,8 @@
                                     @endif
                                 @endfor
                             @else
-                                <td colspan="{{ count($tableColumns) + 1 }}" class="number">Jumlah {{ $produkName }}
+                                <td colspan="{{ count($tableColumns) + 1 }}" class="number" style="text-align: center">
+                                    Jumlah {{ $produkName }}
                                     : {{ count($produkRows) }} baris</td>
                             @endif
                         </tr>

@@ -56,7 +56,7 @@ class UmurSawnTimberDetailTonController extends Controller
             'parameters' => $parameters,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'landscape',
+            'pdf_orientation' => 'portrait',
         ]);
 
         $filename = sprintf(

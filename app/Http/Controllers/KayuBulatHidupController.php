@@ -21,6 +21,32 @@ class KayuBulatHidupController extends Controller
         KayuBulatHidupReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+    }
+
+    public function previewPdf(
+        GenerateKayuBulatHidupReportRequest $request,
+        KayuBulatHidupReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+    }
+
+    public function previewPdfLink(
+        GenerateKayuBulatHidupReportRequest $request,
+        KayuBulatHidupReportService $reportService,
+        PdfGenerator $pdfGenerator,
+        string $downloadName,
+    ) {
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+    }
+
+    private function buildPdfResponse(
+        GenerateKayuBulatHidupReportRequest $request,
+        KayuBulatHidupReportService $reportService,
+        PdfGenerator $pdfGenerator,
+        bool $inline,
+    ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
         if ($generatedBy === null) {
@@ -58,11 +84,20 @@ class KayuBulatHidupController extends Controller
             'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan Kayu Bulat (Hidup) - %s sd %s.pdf', $startDate, $endDate);
+        $startLabel = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $endLabel = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
+        $filename = sprintf('Laporan Kayu Bulat Hidup - Periode %s s/d %s.pdf', $startLabel, $endLabel);
+
+        $dispositionType = $inline ? 'inline' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf(
+                '%s; filename="%s"; filename*=UTF-8\'\'%s',
+                $dispositionType,
+                addcslashes($filename, "\"\\"),
+                rawurlencode($filename)
+            ),
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
             'Pragma' => 'no-cache',
             'Expires' => '0',

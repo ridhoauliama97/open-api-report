@@ -117,6 +117,7 @@ class StockSTBasahController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_orientation' => 'portrait',
         ]);
 
         $filename = sprintf('Laporan-Stock-ST-Basah-%s.pdf', $endDate);

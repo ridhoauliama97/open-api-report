@@ -325,6 +325,7 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
     Route::prefix('saldo')->name('saldo.')->group(function (): void {
         Route::get('/', [SaldoKayuBulatController::class, 'index'])->name('index');
         Route::post('/download', [SaldoKayuBulatController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [SaldoKayuBulatController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [SaldoKayuBulatController::class, 'preview'])->name('preview');
     });
 
@@ -388,6 +389,8 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
     Route::prefix('hidup')->name('hidup.')->group(function (): void {
         Route::get('/', [KayuBulatHidupController::class, 'index'])->name('index');
         Route::post('/download', [KayuBulatHidupController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KayuBulatHidupController::class, 'previewPdf'])->name('preview-pdf');
+        Route::get('/preview-pdf/{downloadName}', [KayuBulatHidupController::class, 'previewPdfLink'])->name('preview-pdf-link');
         Route::post('/preview', [KayuBulatHidupController::class, 'preview'])->name('preview');
     });
 

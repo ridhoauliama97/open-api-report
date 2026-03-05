@@ -54,7 +54,7 @@
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
-                            <button type="submit" class="btn btn-outline-primary" name="preview_pdf" value="1" formtarget="_blank">Preview PDF</button>
+                            <button type="button" id="previewPdfBtn" class="btn btn-outline-primary">Preview PDF</button>
                             <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Data
                                 (JSON)</button>
                         </div>
@@ -72,14 +72,31 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const previewButton = document.getElementById('previewJsonBtn');
+            const previewPdfButton = document.getElementById('previewPdfBtn');
             const previewWrapper = document.getElementById('previewJsonWrapper');
             const previewOutput = document.getElementById('previewJsonOutput');
             const startDateInput = document.getElementById('TglAwal');
             const endDateInput = document.getElementById('TglAkhir');
 
-            if (!previewButton || !previewWrapper || !previewOutput || !startDateInput || !endDateInput) {
+            if (!previewButton || !previewPdfButton || !previewWrapper || !previewOutput || !startDateInput || !endDateInput) {
                 return;
             }
+
+            previewPdfButton.addEventListener('click', function() {
+                const startDate = (startDateInput.value || '').trim();
+                const endDate = (endDateInput.value || '').trim();
+
+                if (!startDate || !endDate) {
+                    alert('Tanggal awal dan tanggal akhir wajib diisi.');
+                    return;
+                }
+
+                const fileName = `Laporan-Kayu-Bulat-Hidup-Periode-${startDate}-s-d-${endDate}.pdf`;
+                const baseUrl = '{{ url('reports/kayu-bulat/hidup/preview-pdf') }}';
+                const previewUrl = `${baseUrl}/${encodeURIComponent(fileName)}?TglAwal=${encodeURIComponent(startDate)}&TglAkhir=${encodeURIComponent(endDate)}`;
+
+                window.open(previewUrl, '_blank');
+            });
 
             previewButton.addEventListener('click', async function() {
                 previewWrapper.classList.remove('d-none');

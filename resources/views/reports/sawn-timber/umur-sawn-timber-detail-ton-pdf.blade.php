@@ -139,7 +139,7 @@
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $columns = ['Jenis','Tebal','Lebar','Panjang','Period1','Period2','Period3','Period4','Period5'];
+        $columns = ['Jenis', 'Tebal', 'Lebar', 'Panjang', 'Period1', 'Period2', 'Period3', 'Period4', 'Period5'];
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -234,7 +234,7 @@
             @endforelse
             @if (count($rowsData) > 0)
                 <tr class="totals-row">
-                    <td colspan="5" class="number">Total</td>
+                    <td colspan="5" class="number"style="text-align: center;">Total</td>
                     <td class="number">{{ number_format($totals['Period1'], 4, '.', ',') }}</td>
                     <td class="number">{{ number_format($totals['Period2'], 4, '.', ',') }}</td>
                     <td class="number">{{ number_format($totals['Period3'], 4, '.', ',') }}</td>
