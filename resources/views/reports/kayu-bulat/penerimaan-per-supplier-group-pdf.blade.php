@@ -48,6 +48,21 @@
             border-collapse: collapse;
             margin-bottom: 4px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         th,
@@ -76,7 +91,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .row-odd td {
@@ -126,6 +142,24 @@
             font-size: 8px;
             font-style: italic;
             text-align: right;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -180,7 +214,7 @@
         <h1 class="report-title">Laporan Penerimaan Kayu Bulat Per-Supplier Berdasarkan Group Kayu</h1>
         <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th rowspan="2" style="width: 40px;">No</th>
@@ -199,23 +233,28 @@
                     @endforeach
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ 5 + count($groupNames) * 2 }}"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @forelse ($suppliers as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
-                        <td>{{ (string) ($row['supplier'] ?? '') }}</td>
-                        <td class="center">{{ (int) ($row['trucks'] ?? 0) }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
+                        <td class="data-cell">{{ (string) ($row['supplier'] ?? '') }}</td>
+                        <td class="center data-cell">{{ (int) ($row['trucks'] ?? 0) }}</td>
                         @foreach ($groupNames as $groupName)
                             @php
                                 $groupCell = is_array($row['groups'][$groupName] ?? null)
                                     ? $row['groups'][$groupName]
                                     : ['ton' => 0, 'ratio' => 0];
                             @endphp
-                            <td class="number">{{ $fmtTonBlankZero((float) ($groupCell['ton'] ?? 0.0)) }}</td>
-                            <td class="number">{{ $fmtRatioBlankZero((float) ($groupCell['ratio'] ?? 0.0)) }}</td>
+                            <td class="number data-cell">{{ $fmtTonBlankZero((float) ($groupCell['ton'] ?? 0.0)) }}</td>
+                            <td class="number data-cell">{{ $fmtRatioBlankZero((float) ($groupCell['ratio'] ?? 0.0)) }}</td>
                         @endforeach
-                        <td class="number">{{ $fmtTonBlankZero((float) ($row['total_ton'] ?? 0.0)) }}</td>
-                        <td class="number">{{ $fmtRatioBlankZero((float) ($row['ratio'] ?? 0.0)) }}</td>
+                        <td class="number data-cell">{{ $fmtTonBlankZero((float) ($row['total_ton'] ?? 0.0)) }}</td>
+                        <td class="number data-cell">{{ $fmtRatioBlankZero((float) ($row['ratio'] ?? 0.0)) }}</td>
                     </tr>
                 @empty
                     <tr>

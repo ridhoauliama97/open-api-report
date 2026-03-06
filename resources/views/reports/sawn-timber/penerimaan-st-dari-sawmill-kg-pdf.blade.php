@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9.5px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -201,20 +201,20 @@
                 return null;
             }
 
-            $normalized = trim(str_replace(' ','', $value));
+            $normalized = trim(str_replace(' ', '', $value));
             if ($normalized === '') {
                 return null;
             }
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',','.', $normalized);
+                $normalized = str_replace(',', '.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -225,7 +225,7 @@
                 return false;
             }
 
-            $normalized = strtolower(str_replace([' ','_'], '', $column));
+            $normalized = strtolower(str_replace([' ', '_'], '', $column));
 
             return str_contains($normalized, 'tgl') ||
                 str_contains($normalized, 'tanggal') ||
@@ -234,7 +234,7 @@
 
         $normalizeName = static function (?string $name): string {
             $raw = (string) ($name ?? '');
-            return strtolower(preg_replace('/[^a-z0-9]/','', $raw) ?? '');
+            return strtolower(preg_replace('/[^a-z0-9]/', '', $raw) ?? '');
         };
 
         $findColumn = static function (array $columns, array $candidates) use ($normalizeName): ?string {
@@ -273,13 +273,13 @@
             'Date',
         ]);
         $supplierColumnResolved =
-            $supplierColumn ?? $findColumn($availableColumns, ['Supplier','NmSupplier','Nama Supplier']);
-        $sawmillColumn = $findColumn($availableColumns, ['Sawmill','NamaSawmill']);
-        $noPenStColumn = $findColumn($availableColumns, ['NoPenST','No Pen ST','NoPenerimaanST']);
-        $noKbColumn = $findColumn($availableColumns, ['NoKB','No KB','NoKayuBulat']);
-        $jenisKayuColumn = $findColumn($availableColumns, ['JenisKayu','Jenis Kayu','Jenis']);
-        $trukColumn = $findColumn($availableColumns, ['NoTruk','Truk']);
-        $mejaColumn = $findColumn($availableColumns, ['Meja','NoMeja']);
+            $supplierColumn ?? $findColumn($availableColumns, ['Supplier', 'NmSupplier', 'Nama Supplier']);
+        $sawmillColumn = $findColumn($availableColumns, ['Sawmill', 'NamaSawmill']);
+        $noPenStColumn = $findColumn($availableColumns, ['NoPenST', 'No Pen ST', 'NoPenerimaanST']);
+        $noKbColumn = $findColumn($availableColumns, ['NoKB', 'No KB', 'NoKayuBulat']);
+        $jenisKayuColumn = $findColumn($availableColumns, ['JenisKayu', 'Jenis Kayu', 'Jenis']);
+        $trukColumn = $findColumn($availableColumns, ['NoTruk', 'Truk']);
+        $mejaColumn = $findColumn($availableColumns, ['Meja', 'NoMeja']);
         $sectionColumn = $findColumn($availableColumns, [
             'InOut',
             'InputOutput',
@@ -288,10 +288,10 @@
             'Status',
             'Posisi',
         ]);
-        $gradeColumn = $findColumn($availableColumns, ['Grade','NamaGrade']);
-        $jmlhTrukColumn = $findColumn($availableColumns, ['JmlhTruk','JumlahTruk','JmlTruk']);
-        $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)','KBTon','TonKB','KBTon']);
-        $stTonColumn = $findColumn($availableColumns, ['ST (Ton)','STTon','TonST','TonKG']);
+        $gradeColumn = $findColumn($availableColumns, ['Grade', 'NamaGrade']);
+        $jmlhTrukColumn = $findColumn($availableColumns, ['JmlhTruk', 'JumlahTruk', 'JmlTruk']);
+        $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)', 'KBTon', 'TonKB', 'KBTon']);
+        $stTonColumn = $findColumn($availableColumns, ['ST (Ton)', 'STTon', 'TonST', 'TonKG']);
         $summaryData = is_array($summary ?? null) ? $summary : [];
         $summarySuppliers = (int) ($summaryData['total_suppliers'] ?? count($groupsData));
         $summaryRows = (int) ($summaryData['total_rows'] ?? count($rowsData));
@@ -361,7 +361,7 @@
 
         $normalizeOutputGradeKey = static function (string $grade): string {
             $upper = strtoupper(trim($grade));
-            $normalized = preg_replace('/\s+/',' ', $upper) ?? $upper;
+            $normalized = preg_replace('/\s+/', ' ', $upper) ?? $upper;
 
             if (str_contains($normalized, 'KAYU LAT')) {
                 return 'KAYU LAT';
@@ -471,7 +471,7 @@
 
             $inputRows = array_values($inputByGrade);
 
-            $expectedOutputOrder = ['KAYU LAT','MC 1','MC 2','STD'];
+            $expectedOutputOrder = ['KAYU LAT', 'MC 1', 'MC 2', 'STD'];
             $outputRows = [];
             foreach ($expectedOutputOrder as $outputGrade) {
                 $existing = $outputByGrade[$outputGrade] ?? null;

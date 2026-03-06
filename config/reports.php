@@ -223,6 +223,23 @@ return [
             'NoKayuBulat,Tanggal,JenisKayu,Supplier,NoSuket,NoPlat,NoTruk,Tebal,Lebar,Panjang,Pcs,JmlhTon'
         )))),
     ],
+    'rekap_hasil_sawmill_per_meja_upah_borongan_v2' => [
+        'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBoronganV2'),
+        'sub_stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_SUB_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBoronganV2_Sub'),
+        'call_syntax' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_QUERY'),
+        'sub_query' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_SUB_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_EXPECTED_COLUMNS',
+            'NoMeja,TglSawmill,Jenis,Operator,Tebal,Lebar,UOM,TonRacip,IdSawmillSpecialCondition,Condition,IsBorongan,NamaMeja'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_SUB_REPORT_EXPECTED_COLUMNS',
+            'NoMeja,NamaMeja,TglSawmill,Jenis,Operator,Tebal,Lebar,UOM,TonRacip,IdSawmillSpecialCondition,Condition,SM,IsBorongan'
+        )))),
+    ],
     'hidup_kb_per_group' => [
         'database_connection' => env('HIDUP_KB_PER_GROUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('HIDUP_KB_PER_GROUP_REPORT_PROCEDURE', 'sp_LapHidupKBPerGroup'),
@@ -599,6 +616,66 @@ return [
             'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
         )))),
     ],
+    'pps_rekap_produksi_broker' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_BROKER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_BROKER_REPORT_PROCEDURE', 'SP_LapRekapProduksiBroker'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_BROKER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_BROKER_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_BROKER_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_BROKER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_BROKER_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_washing' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_WASHING_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_WASHING_REPORT_PROCEDURE', 'SP_LapRekapProduksiWashing'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_WASHING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_WASHING_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_WASHING_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_WASHING_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_WASHING_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_mixer' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_PROCEDURE', 'SP_LapRekapProduksiMixer'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_MIXER_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_MIXER_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_gilingan' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_GILINGAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_GILINGAN_REPORT_PROCEDURE', 'SP_LapRekapProduksiGilingan'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_GILINGAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_GILINGAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_GILINGAN_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_GILINGAN_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_GILINGAN_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
+    'pps_rekap_produksi_crusher' => [
+        'database_connection' => env('PPS_REKAP_PRODUKSI_CRUSHER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_REKAP_PRODUKSI_CRUSHER_REPORT_PROCEDURE', 'SP_LapRekapProduksiCrusher'),
+        'call_syntax' => env('PPS_REKAP_PRODUKSI_CRUSHER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_REKAP_PRODUKSI_CRUSHER_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_REKAP_PRODUKSI_CRUSHER_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_REKAP_PRODUKSI_CRUSHER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_REKAP_PRODUKSI_CRUSHER_REPORT_EXPECTED_COLUMNS',
+            'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
+        )))),
+    ],
 
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
@@ -640,4 +717,3 @@ return [
         'email_claim' => env('REPORT_API_JWT_EMAIL_CLAIM', env('REPORT_JWT_EMAIL_CLAIM', 'email')),
     ],
 ];
-

@@ -130,6 +130,7 @@ class DashboardS4SV2Controller extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf(

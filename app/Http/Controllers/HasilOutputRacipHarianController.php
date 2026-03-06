@@ -54,6 +54,7 @@ class HasilOutputRacipHarianController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Hasil-Output-Racip-Harian-%s.pdf', $endDate);

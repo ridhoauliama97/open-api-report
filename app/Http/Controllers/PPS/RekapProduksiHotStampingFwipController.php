@@ -51,7 +51,7 @@ class RekapProduksiHotStampingFwipController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_column_count' => $columnCount,
-            'pdf_simple_tables' => true,
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Hot-Stamping-FWIP-%s.pdf', $endDate);
@@ -142,4 +142,3 @@ class RekapProduksiHotStampingFwipController extends Controller
         return (object) ['name' => 'sistem'];
     }
 }
-

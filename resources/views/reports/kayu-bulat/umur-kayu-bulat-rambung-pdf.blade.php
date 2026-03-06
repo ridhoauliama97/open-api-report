@@ -47,7 +47,8 @@
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-bottom: 6px;
             page-break-inside: auto;
             table-layout: fixed;
@@ -55,6 +56,10 @@
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -114,7 +119,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table {
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
 
         .group-summary {
@@ -144,7 +172,7 @@
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $normalize = static function (string $value): string {
-            return strtolower(str_replace([' ','_','.'], '', trim($value)));
+            return strtolower(str_replace([' ', '_', '.'], '', trim($value)));
         };
 
         $findColumnByCandidates = static function (array $availableColumns, array $candidates) use (
@@ -177,7 +205,7 @@
                     return false;
                 }
 
-                $normalized = str_replace([' ',','], ['','.'], trim($value));
+                $normalized = str_replace([' ', ','], ['', '.'], trim($value));
 
                 return is_numeric($normalized);
             }
@@ -186,10 +214,10 @@
         };
 
         $statusColumn = $findColumnByCandidates($columns, ['Status']);
-        $tonColumn = $findColumnByCandidates($columns, ['Ton','JmlhTon','JumlahTon','Berat']);
-        $truckColumn = $findColumnByCandidates($columns, ['Truk','NoTruk','No Truk']);
-        $lamaRacipColumn = $findColumnByCandidates($columns, ['Lama Racip','LamaRacip']);
-        $lamaTungguColumn = $findColumnByCandidates($columns, ['Lama Tunggu','LamaTunggu']);
+        $tonColumn = $findColumnByCandidates($columns, ['Ton', 'JmlhTon', 'JumlahTon', 'Berat']);
+        $truckColumn = $findColumnByCandidates($columns, ['Truk', 'NoTruk', 'No Truk']);
+        $lamaRacipColumn = $findColumnByCandidates($columns, ['Lama Racip', 'LamaRacip']);
+        $lamaTungguColumn = $findColumnByCandidates($columns, ['Lama Tunggu', 'LamaTunggu']);
 
         if ($tonColumn === null) {
             foreach ($columns as $column) {
@@ -268,8 +296,8 @@
             $textValue = trim((string) $value);
             $numericValue = is_numeric($value)
                 ? (float) $value
-                : (is_numeric(str_replace([' ',','], ['','.'], $textValue))
-                    ? (float) str_replace([' ',','], ['','.'], $textValue)
+                : (is_numeric(str_replace([' ', ','], ['', '.'], $textValue))
+                    ? (float) str_replace([' ', ','], ['', '.'], $textValue)
                     : null);
 
             $isTonColumn =
@@ -322,7 +350,7 @@
             $groupedRows[$groupName][] = $row;
         }
 
-        $groupOrder = ['Masih Hidup','Sudah Mati'];
+        $groupOrder = ['Masih Hidup', 'Sudah Mati'];
         uksort($groupedRows, static function (string $left, string $right) use ($groupOrder): int {
             $leftIndex = array_search($left, $groupOrder, true);
             $rightIndex = array_search($right, $groupOrder, true);
@@ -354,17 +382,17 @@
                 return null;
             }
 
-            $normalized = str_replace(' ','', $normalized);
+            $normalized = str_replace(' ', '', $normalized);
 
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',','.', $normalized);
+                $normalized = str_replace(',', '.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -398,7 +426,7 @@
 
     @forelse ($groupedRows as $groupName => $groupRows)
         <div class="section-title">Status : {{ $groupName }}</div>
-        <table>
+        <table class="report-table">
             <colgroup>
                 <col style="width: 4%">
                 @foreach ($displayColumns as $column)
@@ -415,20 +443,25 @@
             </thead>
             <tbody>
                 @foreach ($groupRows as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
                         @foreach ($displayColumns as $column)
                             @php
                                 $value = $row[$column] ?? null;
                                 $isTonCell = $tonColumn !== null && $normalize($column) === $normalize($tonColumn);
                             @endphp
-                            <td class="{{ $isTonCell ? 'number' : 'center' }}">
+                            <td class="data-cell {{ $isTonCell ? 'number' : 'center' }}">
                                 {{ $formatCellValue($value, $column) }}
                             </td>
                         @endforeach
                     </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($displayColumns) + 1 }}"></td>
+                </tr>
+            </tfoot>
         </table>
         <div class="group-summary">
             <span class="label">Total :</span>
@@ -437,12 +470,17 @@
             Truk)
         </div>
     @empty
-        <table>
+        <table class="report-table">
             <tbody>
-                <tr>
-                    <td class="center">Tidak ada data.</td>
+                <tr class="data-row">
+                    <td class="center data-cell">Tidak ada data.</td>
                 </tr>
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td></td>
+                </tr>
+            </tfoot>
         </table>
     @endforelse
 

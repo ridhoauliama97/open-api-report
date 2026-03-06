@@ -43,13 +43,24 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 6px;
             page-break-inside: auto;
             background: #fff;
             table-layout: fixed;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
         }
 
         tr {
@@ -123,7 +134,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .center td {
@@ -139,6 +151,22 @@
 
         .zebra tbody tr.totals-row td {
             background: #ffffff !important;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
 
         .group-cols col.col-no {
@@ -200,7 +228,7 @@
             @endphp
             <div class="section">
                 <p class="group-title">{{ $group['jenis'] }}</p>
-                <table class="zebra group-cols">
+                <table class="report-table zebra group-cols">
                     <colgroup class="group-cols">
                         <col class="col-no" style="width: 6%;">
                         <col class="col-tebal" style="width: 14%;">
@@ -221,21 +249,26 @@
                     </thead>
                     <tbody>
                         @foreach ($groupRows as $row)
-                            <tr class="center">
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $fmtInt($row['Tebal'] ?? 0) }}</td>
-                                <td>{{ $fmtInt($row['Lebar'] ?? 0) }}</td>
-                                <td>{{ $fmtInt($row['Panjang'] ?? 0) }}</td>
-                                <td>{{ $fmtInt($row['JmlhBatang'] ?? 0) }}</td>
-                                <td>{{ $fmt4($row['Hasil'] ?? 0) }}</td>
+                            <tr class="data-row center">
+                                <td class="data-cell">{{ $loop->iteration }}</td>
+                                <td class="data-cell">{{ $fmtInt($row['Tebal'] ?? 0) }}</td>
+                                <td class="data-cell">{{ $fmtInt($row['Lebar'] ?? 0) }}</td>
+                                <td class="data-cell">{{ $fmtInt($row['Panjang'] ?? 0) }}</td>
+                                <td class="data-cell">{{ $fmtInt($row['JmlhBatang'] ?? 0) }}</td>
+                                <td class="data-cell">{{ $fmt4($row['Hasil'] ?? 0) }}</td>
                             </tr>
                         @endforeach
+                    </tbody>
+                    <tfoot>
                         <tr class="totals-row">
-                            <td colspan="4"> Jumlah </td>
+                            <td colspan="4">Jumlah</td>
                             <td>{{ $fmtInt($sumBatang) }}</td>
                             <td>{{ $fmt4($sumHasil) }}</td>
                         </tr>
-                    </tbody>
+                        <tr class="table-end-line">
+                            <td colspan="6"></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         @endforeach

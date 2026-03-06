@@ -137,6 +137,7 @@ class StockSTKeringController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
             'summaryStats' => $summaryStats,
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Stock-ST-Kering-%s.pdf', $endDate);
@@ -247,4 +248,3 @@ class StockSTKeringController extends Controller
         ];
     }
 }
-

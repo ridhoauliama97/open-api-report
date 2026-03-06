@@ -37,6 +37,7 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
+use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\StockSTBasahController;
@@ -49,10 +50,15 @@ use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
 use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
 use App\Http\Controllers\PPS\RekapProduksiInjectController;
+use App\Http\Controllers\PPS\RekapProduksiBrokerController;
+use App\Http\Controllers\PPS\RekapProduksiCrusherController;
+use App\Http\Controllers\PPS\RekapProduksiGilinganController;
 use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
+use App\Http\Controllers\PPS\RekapProduksiMixerController;
 use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
 use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
+use App\Http\Controllers\PPS\RekapProduksiWashingController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
@@ -164,6 +170,11 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/rekap-produksi/packing-bj', 'api.reports.pps.rekap-produksi.packing-bj', RekapProduksiPackingBjController::class],
         ['/reports/pps/rekap-produksi/pasang-kunci-fwip', 'api.reports.pps.rekap-produksi.pasang-kunci-fwip', RekapProduksiPasangKunciFwipController::class],
         ['/reports/pps/rekap-produksi/spanner-fwip', 'api.reports.pps.rekap-produksi.spanner-fwip', RekapProduksiSpannerFwipController::class],
+        ['/reports/pps/rekap-produksi/broker', 'api.reports.pps.rekap-produksi.broker', RekapProduksiBrokerController::class],
+        ['/reports/pps/rekap-produksi/washing', 'api.reports.pps.rekap-produksi.washing', RekapProduksiWashingController::class],
+        ['/reports/pps/rekap-produksi/mixer', 'api.reports.pps.rekap-produksi.mixer', RekapProduksiMixerController::class],
+        ['/reports/pps/rekap-produksi/gilingan', 'api.reports.pps.rekap-produksi.gilingan', RekapProduksiGilinganController::class],
+        ['/reports/pps/rekap-produksi/crusher', 'api.reports.pps.rekap-produksi.crusher', RekapProduksiCrusherController::class],
         ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
         ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],
         ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],
@@ -188,6 +199,14 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         }
     }
 
+    Route::prefix('/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan-v2')
+        ->name('api.reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan-v2.')
+        ->group(function (): void {
+            Route::post('/', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'preview'])->name('preview');
+            Route::match(['get', 'post'], '/pdf', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'download'])->name('pdf');
+            Route::post('/health', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'health'])->name('health');
+        });
+
     // Alias endpoint khusus PPS Rekap Produksi Inject agar konsisten dengan pola endpoint web.
     Route::prefix('/reports/pps/rekap-produksi/inject')->name('api.reports.pps.rekap-produksi.inject.')->group(function (): void {
         Route::post('/preview', [RekapProduksiInjectController::class, 'preview'])->name('preview-explicit');
@@ -195,4 +214,3 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         Route::post('/health', [RekapProduksiInjectController::class, 'health'])->name('health-explicit');
     });
 });
-

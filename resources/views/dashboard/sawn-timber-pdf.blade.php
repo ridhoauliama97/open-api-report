@@ -45,7 +45,9 @@
             margin-bottom: 8px;
         }
 
-        tr {
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
             border: 1px solid #000;
         }
 
@@ -78,19 +80,6 @@
 
         .row-even td {
             background: #eef2f8;
-        }
-
-        .chart-wrap {
-            padding: 6px;
-            margin-top: 8px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .chart-title {
-            text-align: center;
-            font-weight: bold;
-            margin: 0 0 4px 0;
         }
 
         .summary-list {
@@ -128,13 +117,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
     </style>
 </head>
@@ -151,7 +157,9 @@
             : ['s_akhir' => 0, 'ctr' => 0];
         $dailyIn = is_array($chartData['daily_in_totals'] ?? null) ? $chartData['daily_in_totals'] : [];
         $dailyOut = is_array($chartData['daily_out_totals'] ?? null) ? $chartData['daily_out_totals'] : [];
-        $rawRows = is_array($chartData['raw_rows'] ?? null) ? $chartData['raw_rows'] : [];
+        $rawRowCount = (int) ($chartData['raw_row_count'] ?? 0);
+        $pdfTruncatedTypes = (bool) ($chartData['pdf_truncated_types'] ?? false);
+        $pdfOriginalTypeCount = (int) ($chartData['pdf_original_type_count'] ?? count($types));
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
@@ -170,148 +178,86 @@
         }
         $netAll = $totalInAll - $totalOutAll;
 
-        $lineW = 980;
-        $lineH = 240;
-        $padL = 56;
-        $padR = 12;
-        $padT = 14;
-        $padB = 34;
-        $plotW = $lineW - $padL - $padR;
-        $plotH = $lineH - $padT - $padB;
-        $xStep = count($dates) > 1 ? $plotW / (count($dates) - 1) : 0;
-        $maxLine = 0.0;
-        foreach ($dailyIn as $v) {
-            if ((float) $v > $maxLine) {
-                $maxLine = (float) $v;
-            }
-        }
-        foreach ($dailyOut as $v) {
-            if ((float) $v > $maxLine) {
-                $maxLine = (float) $v;
-            }
-        }
-        $yStep = 200.0;
-        $maxLine = $maxLine > 0 ? $maxLine : $yStep;
-        $maxLine = ceil($maxLine / $yStep) * $yStep;
-        $yTicks = max((int) ($maxLine / $yStep), 1);
-
-        $barW = 980;
-        $barH = 260;
-        $barPadL = 170;
-        $barPadR = 16;
-        $barPadT = 12;
-        $barPadB = 20;
-        $barPlotW = $barW - $barPadL - $barPadR;
-        $barRowH = max(count($types), 1) > 0 ? ($barH - $barPadT - $barPadB) / max(count($types), 1) : 20;
-        $maxSakhir = 0.0;
-        foreach ($types as $t) {
-            $v = (float) ($stockByType[$t]['s_akhir'] ?? 0);
-            if ($v > $maxSakhir) {
-                $maxSakhir = $v;
-            }
-        }
-        $maxSakhir = $maxSakhir > 0 ? $maxSakhir : 1.0;
     @endphp
 
     <h1 class="title">Dashboard Sawn Timber</h1>
     <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') }}</p>
+    @if ($pdfTruncatedTypes)
+        <p style="margin: 0 0 10px 0; font-size: 9px; text-align: center;">
+            Menampilkan {{ count($types) }} dari {{ $pdfOriginalTypeCount }} jenis ST teratas untuk menjaga render PDF tetap stabil.
+        </p>
+    @endif
 
-    <table>
+    <table class="report-table">
         <thead>
-            <tr class="headers-row" style="border: 1px solid #000;
+            <tr class="headers-row">
+                <th style="width: 7%;">No</th>
+                <th style="width: 33%;">Jenis</th>
+                <th style="width: 20%;">Total Masuk</th>
+                <th style="width: 20%;">Total Keluar</th>
+                <th style="width: 20%;">Net</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($types as $idx => $type)
+                @php
+                    $inVal = (float) ($totalsByType[$type]['in'] ?? 0);
                     $outVal = (float) ($totalsByType[$type]['out'] ?? 0);
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="number" style="text-align: center">{{ $idx + 1 }}</td>
-                    <td class="label">{{ $type }}</td>
-                    <td class="number">{{ $fmt1($inVal) }}</td>
-                    <td class="number">{{ $fmt1($outVal) }}</td>
-                    <td class="number">{{ $fmt1($inVal - $outVal) }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell number" style="text-align: center">{{ $idx + 1 }}</td>
+                    <td class="data-cell label">{{ $type }}</td>
+                    <td class="data-cell number">{{ $fmt1($inVal) }}</td>
+                    <td class="data-cell number">{{ $fmt1($outVal) }}</td>
+                    <td class="data-cell number">{{ $fmt1($inVal - $outVal) }}</td>
                 </tr>
             @endforeach
         </tbody>
-    </table>
-
-    <div class="chart-wrap">
-        <p class="chart-title">Trend Harian Total Masuk vs Keluar</p>
-        <svg width="{{ $lineW }}" height="{{ $lineH }}"
-            viewBox="0 0 {{ $lineW }} {{ $lineH }}" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="0" width="{{ $lineW }}" height="{{ $lineH }}" fill="#fff" />
-            <line x1="{{ $padL }}" y1="{{ $padT + $plotH }}" x2="{{ $padL + $plotW }}"
-                y2="{{ $padT + $plotH }}" stroke="#333" stroke-width="1" />
-            <line x1="{{ $padL }}" y1="{{ $padT }}" x2="{{ $padL }}"
-                y2="{{ $padT + $plotH }}" stroke="#333" stroke-width="1" />
-            @for ($i = 0; $i <= $yTicks; $i++)
-                @php
-                    $y = $padT + $plotH - ($plotH / $yTicks) * $i;
-                    $tick = $yStep * $i;
-                @endphp
-                <line x1="{{ $padL }}" y1="{{ $y }}" x2="{{ $padL + $plotW }}"
-                    y2="{{ $y }}" stroke="#e3e3e3" stroke-width="1" />
-                <text x="{{ $padL - 6 }}" y="{{ $y + 3 }}" text-anchor="end" font-size="9">
-                    {{ number_format($tick, 0, '.', ',') }}</text>
-            @endfor
-            @foreach ($dates as $idx => $date)
-                @php
-                    $x = $padL + $idx * $xStep;
-                    $d = \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('d-M-y');
-                @endphp
-                <text x="{{ $x }}" y="{{ $padT + $plotH + 14 }}" text-anchor="middle"
-                    font-size="8">{{ $d }}</text>
-            @endforeach
-            @php
-                $inPts = [];
-                $outPts = [];
-                foreach ($dates as $idx => $date) {
-                    $x = $padL + $idx * $xStep;
-                    $inVal = (float) ($dailyIn[$idx] ?? 0);
-                    $outVal = (float) ($dailyOut[$idx] ?? 0);
-                    $inY = $padT + $plotH - ($inVal / $maxLine) * $plotH;
-                    $outY = $padT + $plotH - ($outVal / $maxLine) * $plotH;
-                    $inPts[] = round($x, 2) . ',' . round($inY, 2);
-                    $outPts[] = round($x, 2) . ',' . round($outY, 2);
-                }
-            @endphp
-            <polyline points="{{ implode(' ', $inPts) }}" fill="none" stroke="#0d6efd" stroke-width="1.8" />
-            <polyline points="{{ implode(' ', $outPts) }}" fill="none" stroke="#dc3545" stroke-width="1.8" />
-            <text x="{{ $padL + 8 }}" y="{{ $padT + 10 }}" font-size="9" fill="#0d6efd">Masuk</text>
-            <text x="{{ $padL + 50 }}" y="{{ $padT + 10 }}" font-size="9" fill="#dc3545">Keluar</text>
-        </svg>
-    </div>
-
-
-    <table>
-        <thead>
-            <tr class="headers-row" style="border: 1px solid #000; text-align: center; font-size: 11px;">Total</td>
-                <td class="number" style="font-weight:bold;font-size: 11px;">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}
-                </td>
-                <td class="number" style="font-weight:bold;font-size: 11px;">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
+        <tfoot>
+            <tr class="totals-row">
+                <td colspan="2" class="number" style="text-align: center;">Total</td>
+                <td class="number">{{ $fmt1($totalInAll) }}</td>
+                <td class="number">{{ $fmt1($totalOutAll) }}</td>
+                <td class="number">{{ $fmt1($netAll) }}</td>
             </tr>
-        </tbody>
+            <tr class="table-end-line">
+                <td colspan="5"></td>
+            </tr>
+        </tfoot>
     </table>
 
-    <div class="chart-wrap">
-        <p class="chart-title">S Akhir per Jenis</p>
-        <svg width="{{ $barW }}" height="{{ $barH }}"
-            viewBox="0 0 {{ $barW }} {{ $barH }}" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="0" width="{{ $barW }}" height="{{ $barH }}" fill="#fff" />
+    <table class="report-table">
+        <thead>
+            <tr class="headers-row">
+                <th style="width: 7%;">No</th>
+                <th style="width: 43%;">Jenis</th>
+                <th style="width: 25%;">S Akhir</th>
+                <th style="width: 25%;">#Ctr</th>
+            </tr>
+        </thead>
+        <tbody>
             @foreach ($types as $idx => $type)
-                @php
-                    $val = (float) ($stockByType[$type]['s_akhir'] ?? 0);
-                    $barLen = ($val / $maxSakhir) * $barPlotW;
-                    $y = $barPadT + $idx * $barRowH + 2;
-                    $h = max($barRowH - 4, 4);
-                @endphp
-                <text x="{{ $barPadL - 6 }}" y="{{ $y + $h / 2 + 3 }}" text-anchor="end"
-                    font-size="8">{{ $type }}</text>
-                <rect x="{{ $barPadL }}" y="{{ $y }}" width="{{ $barLen }}"
-                    height="{{ $h }}" fill="#198754" />
-                <text x="{{ $barPadL + $barLen + 4 }}" y="{{ $y + $h / 2 + 3 }}"
-                    font-size="8">{{ number_format($val, 1, '.', ',') }}</text>
+                @php $stockRow = $stockByType[$type] ?? []; @endphp
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell number" style="text-align: center">{{ $idx + 1 }}</td>
+                    <td class="data-cell label">{{ $type }}</td>
+                    <td class="data-cell number">{{ $fmt1($stockRow['s_akhir'] ?? 0) }}</td>
+                    <td class="data-cell number">{{ $fmt2($stockRow['ctr'] ?? 0) }}</td>
+                </tr>
             @endforeach
-        </svg>
-    </div>
+        </tbody>
+        <tfoot>
+            <tr class="totals-row">
+                <td colspan="2" class="number" style="text-align: center;">Total</td>
+                <td class="number">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}</td>
+                <td class="number">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
+            </tr>
+            <tr class="table-end-line">
+                <td colspan="4"></td>
+            </tr>
+        </tfoot>
+    </table>
 
     <p style="font-size: 10px; margin-bottom: 5px; font-weight: bold; text-decoration: underline;">Summary :</p>
     <ul class="summary-list">
@@ -320,7 +266,7 @@
         <li><span class="summary-label">Jumlah Seluruh Jenis ST :</span>
             {{ number_format(count($types), 0, '.', ',') }} Jenis</li>
         <li><span class="summary-label">Jumlah Baris Raw Data Terhitung :</span>
-            {{ number_format(count($rawRows), 0, '.', ',') }} Baris Data</li>
+            {{ number_format($rawRowCount, 0, '.', ',') }} Baris Data</li>
         <li><span class="summary-label">Total Masuk Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($totalInAll) }}</li>
         <li><span class="summary-label">Total Keluar Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($totalOutAll) }}
         </li>

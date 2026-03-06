@@ -34,6 +34,7 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
+use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\StockSTBasahController;
@@ -57,9 +58,14 @@ use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
 use App\Http\Controllers\PPS\RekapProduksiInjectController;
 use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
+use App\Http\Controllers\PPS\RekapProduksiCrusherController;
+use App\Http\Controllers\PPS\RekapProduksiGilinganController;
+use App\Http\Controllers\PPS\RekapProduksiMixerController;
+use App\Http\Controllers\PPS\RekapProduksiBrokerController;
 use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
 use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
+use App\Http\Controllers\PPS\RekapProduksiWashingController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -108,6 +114,41 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [RekapProduksiSpannerFwipController::class, 'download'])->name('download');
         Route::post('/preview', [RekapProduksiSpannerFwipController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapProduksiSpannerFwipController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/broker')->name('rekap-produksi.broker.')->group(function (): void {
+        Route::get('/', [RekapProduksiBrokerController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiBrokerController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiBrokerController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiBrokerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/washing')->name('rekap-produksi.washing.')->group(function (): void {
+        Route::get('/', [RekapProduksiWashingController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiWashingController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiWashingController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiWashingController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/mixer')->name('rekap-produksi.mixer.')->group(function (): void {
+        Route::get('/', [RekapProduksiMixerController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiMixerController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiMixerController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiMixerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/gilingan')->name('rekap-produksi.gilingan.')->group(function (): void {
+        Route::get('/', [RekapProduksiGilinganController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiGilinganController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiGilinganController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiGilinganController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-produksi/crusher')->name('rekap-produksi.crusher.')->group(function (): void {
+        Route::get('/', [RekapProduksiCrusherController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiCrusherController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapProduksiCrusherController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiCrusherController::class, 'health'])->name('health');
     });
 });
 
@@ -196,6 +237,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/download', [PenerimaanStSawmillKgController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [PenerimaanStSawmillKgController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [PenerimaanStSawmillKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Rekap hasil sawmill per-meja upah borongan V2 routes. */
+    Route::prefix('rekap-hasil-sawmill-per-meja-upah-borongan-v2')->name('rekap-hasil-sawmill-per-meja-upah-borongan-v2.')->group(function (): void {
+        Route::get('/', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'health'])->name('health');
     });
 
     /** Lembar tally hasil sawmill routes. */

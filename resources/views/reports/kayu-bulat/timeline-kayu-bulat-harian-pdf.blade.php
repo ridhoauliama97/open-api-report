@@ -41,12 +41,18 @@
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -105,13 +111,36 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table {
+            border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -279,7 +308,7 @@
     </p>
 
     @if ($canPivot && $dayHeaders !== [])
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 34px;">No</th>
@@ -292,18 +321,19 @@
             </thead>
             <tbody>
                 @forelse ($pivotRows as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
-                        <td style="text-align: left;">{{ $row['supplier'] }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
+                        <td class="data-cell" style="text-align: left;">{{ $row['supplier'] }}</td>
                         @foreach ($dayHeaders as $day)
-                            <td class="number-right">{{ $formatNumber($row['days'][$day] ?? null) }}</td>
+                            <td class="number-right data-cell">{{ $formatNumber($row['days'][$day] ?? null) }}</td>
                         @endforeach
-                        <td class="number-right" style="font-weight: bold">{{ $formatNumber($row['total'] ?? null) }}
+                        <td class="number-right data-cell" style="font-weight: bold">
+                            {{ $formatNumber($row['total'] ?? null) }}
                         </td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="{{ count($dayHeaders) + 3 }}" class="center">Tidak ada data.</td>
+                    <tr class="data-row">
+                        <td colspan="{{ count($dayHeaders) + 3 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
                 @endforelse
                 @if ($pivotRows !== [])
@@ -317,9 +347,14 @@
                     </tr>
                 @endif
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($dayHeaders) + 3 }}"></td>
+                </tr>
+            </tfoot>
         </table>
     @else
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 34px;">No</th>
@@ -330,18 +365,23 @@
             </thead>
             <tbody>
                 @forelse ($rowsData as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
                         @foreach ($columns as $column)
-                            <td class="center">{{ (string) ($row[$column] ?? '') }}</td>
+                            <td class="center data-cell">{{ (string) ($row[$column] ?? '') }}</td>
                         @endforeach
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
+                    <tr class="data-row">
+                        <td colspan="{{ count($columns) + 1 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($columns) + 1 }}"></td>
+                </tr>
+            </tfoot>
         </table>
     @endif
 

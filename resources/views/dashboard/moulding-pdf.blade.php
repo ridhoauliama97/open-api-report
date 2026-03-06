@@ -52,6 +52,12 @@
             page-break-inside: auto;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
         }
@@ -61,7 +67,6 @@
         }
 
         tr {
-            border: 1px solid #000;
             page-break-inside: avoid;
             page-break-after: auto;
         }
@@ -98,15 +103,32 @@
         }
 
         .headers-row th {
-            border: 1px solid #000;
             font-weight: bold;
             font-size: 11px;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
 
         .highlight-col {
@@ -155,7 +177,7 @@
     <h1 class="report-title">Laporan Dashboard Moulding</h1>
     <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="width: 58px;">Tanggal</th>
@@ -173,18 +195,21 @@
         </thead>
         <tbody>
             @forelse ($rows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="label" style="text-align: center;">
-                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell label" style="text-align: center;">
+                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}
+                    </td>
                     @foreach ($columns as $column)
                         @php
                             $inflow = (float) ($row['cells'][$column]['in'] ?? 0 ?: 0);
                             $outflow = (float) ($row['cells'][$column]['out'] ?? 0 ?: 0);
                             $isHighlight = in_array($column, $highlightColumns, true);
                         @endphp
-                        <td class="number {{ $isHighlight && abs($inflow) >= 0.000001 ? 'highlight-col' : '' }}">
+                        <td
+                            class="data-cell number {{ $isHighlight && abs($inflow) >= 0.000001 ? 'highlight-col' : '' }}">
                             {{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}</td>
-                        <td class="number {{ $isHighlight && abs($outflow) >= 0.000001 ? 'highlight-col' : '' }}">
+                        <td
+                            class="data-cell number {{ $isHighlight && abs($outflow) >= 0.000001 ? 'highlight-col' : '' }}">
                             {{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}</td>
                     @endforeach
                 </tr>
@@ -213,6 +238,9 @@
                     <td class="number" colspan="2" style="text-align: center;">
                         {{ abs($ctrValue) < 0.000001 ? '' : $fmt2($ctrValue) }}</td>
                 @endforeach
+            </tr>
+            <tr class="table-end-line">
+                <td colspan="{{ 1 + count($columns) * 2 }}"></td>
             </tr>
         </tfoot>
     </table>

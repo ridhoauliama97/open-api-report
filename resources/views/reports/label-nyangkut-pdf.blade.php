@@ -125,6 +125,45 @@
             font-size: 11px;
             border: 1px solid #000;
         }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        .report-table thead {
+            display: table-header-group;
+        }
+
+        .report-table tfoot {
+            display: table-row-group;
+        }
+
+        .report-table .headers-row th {
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        .report-table tbody tr.data-row td.data-cell,
+        .report-table tfoot tr.totals-row td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+
+        .table-end-line td {
+            padding: 0;
+            height: 0;
+            line-height: 0;
+            border: 0;
+            border-top: 1px solid #000;
+            background: transparent;
+        }
     </style>
 </head>
 
@@ -164,25 +203,25 @@
                 return null;
             }
 
-            $normalized = str_replace(' ','', $normalized);
+            $normalized = str_replace(' ', '', $normalized);
 
             // Handle 1,234.56 and 1.234,56 formats.
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',','.', $normalized);
+                $normalized = str_replace(',', '.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
 
         $normalizeColumnName = static function (string $column): string {
-            return strtolower(str_replace([' ','_'], '', trim($column)));
+            return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
 
         $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
@@ -201,11 +240,11 @@
         };
 
         $findGroupColumn = static function (array $availableColumns): ?string {
-            $priorities = ['ket','keterangan','namagroup','group','namaproses'];
+            $priorities = ['ket', 'keterangan', 'namagroup', 'group', 'namaproses'];
 
             foreach ($priorities as $candidate) {
                 foreach ($availableColumns as $column) {
-                    $normalized = strtolower(str_replace([' ','_'], '', trim($column)));
+                    $normalized = strtolower(str_replace([' ', '_'], '', trim($column)));
                     if ($normalized === $candidate) {
                         return $column;
                     }
@@ -213,7 +252,7 @@
             }
 
             foreach ($availableColumns as $column) {
-                $normalized = strtolower(str_replace([' ','_'], '', trim($column)));
+                $normalized = strtolower(str_replace([' ', '_'], '', trim($column)));
                 if (in_array($normalized, $priorities, true)) {
                     return $column;
                 }
@@ -226,8 +265,8 @@
         $columns = array_values(
             array_filter($columns, static fn(string $column): bool => $normalizeColumnName($column) !== 'rendemen'),
         );
-        $jmlhBatangColumn = $findColumnByNames($columns, ['JmlhBatang','Jmlh Btg','JmlBatang','JumlahBatang']);
-        $lokasiColumn = $findColumnByNames($columns, ['Description','Lokasi']);
+        $jmlhBatangColumn = $findColumnByNames($columns, ['JmlhBatang', 'Jmlh Btg', 'JmlBatang', 'JumlahBatang']);
+        $lokasiColumn = $findColumnByNames($columns, ['Description', 'Lokasi']);
 
         $jmlhBatangSwapIndex = $jmlhBatangColumn !== null ? array_search($jmlhBatangColumn, $columns, true) : false;
         $lokasiSwapIndex = $lokasiColumn !== null ? array_search($lokasiColumn, $columns, true) : false;
@@ -325,46 +364,54 @@
     @endphp
 
     <h1 class="report-title">Laporan Label Nyangkut</h1>
-    <p class="report-subtitle">Per-{{ $generatedDateText }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $generatedDateText }}</p>
 
     @forelse ($tableGroups as $group)
         <div class="section-title">
             {{ $group['name'] }}
         </div>
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 34px; text-align:center">No</th>
                     @foreach ($columns as $column)
-                        <th>{{ $normalizeColumnName($column) === 'description' ? 'Lokasi' : $column }}</th>
+                        <th>
+                            {{ match ($normalizeColumnName($column)) {
+                                'description' => 'Lokasi',
+                                'nonyangkut' => 'No Nyangkut',
+                                'nolabel' => 'No Label',
+                                'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
+                                default => $column,
+                            } }}
+                        </th>
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 @forelse ($group['rows'] as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell center">{{ $loop->iteration }}</td>
                         @foreach ($columns as $column)
                             @php
                                 $value = $row[$column] ?? null;
                                 $numeric = $isNumericColumn($column, $group['rows']);
                                 $isLabelOutColumn = in_array(
                                     $normalizeColumnName($column),
-                                    ['labelout','labeloutput'],
+                                    ['labelout', 'labeloutput'],
                                     true,
                                 );
                             @endphp
                             @if ($isLabelOutColumn)
-                                <td class="number">
+                                <td class="data-cell number">
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
                             @elseif ($totalColumn !== null && $column === $totalColumn)
-                                <td class="number">
+                                <td class="data-cell number">
                                     {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}</td>
                             @elseif ($numeric)
-                                <td class="number">
+                                <td class="data-cell number">
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
                             @else
-                                <td class="label">{{ (string) $value }}</td>
+                                <td class="data-cell label">{{ (string) $value }}</td>
                             @endif
                         @endforeach
                     </tr>
@@ -373,11 +420,13 @@
                         <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
                     </tr>
                 @endforelse
-                @if ($hasSummaryColumns)
-                    @php
-                        $groupJmlhBatang = $sumColumn($group['rows'], $jmlhBatangColumn);
-                        $groupTotalValue = $sumColumn($group['rows'], $totalColumn);
-                    @endphp
+            </tbody>
+            @if ($hasSummaryColumns)
+                @php
+                    $groupJmlhBatang = $sumColumn($group['rows'], $jmlhBatangColumn);
+                    $groupTotalValue = $sumColumn($group['rows'], $totalColumn);
+                @endphp
+                <tfoot>
                     <tr class="totals-row">
                         <td colspan="{{ $summaryStartIndex + 1 }}" class="number" style="font-weight:bold;">
                             Total {{ $group['name'] }}
@@ -399,16 +448,46 @@
                             @endif
                         @endfor
                     </tr>
-                @endif
-            </tbody>
+                    <tr class="table-end-line">
+                        <td colspan="{{ count($columns) + 1 }}"></td>
+                    </tr>
+                </tfoot>
+            @else
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="{{ count($columns) + 1 }}"></td>
+                    </tr>
+                </tfoot>
+            @endif
         </table>
     @empty
-        <table>
+        <table class="report-table">
+            <thead>
+                <tr class="headers-row">
+                    <th style="width: 34px; text-align:center">No</th>
+                    @foreach ($columns as $column)
+                        <th>
+                            {{ match ($normalizeColumnName($column)) {
+                                'description' => 'Lokasi',
+                                'nonyangkut' => 'No Nyangkut',
+                                'nolabel' => 'No Label',
+                                'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
+                                default => $column,
+                            } }}
+                        </th>
+                    @endforeach
+                </tr>
+            </thead>
             <tbody>
                 <tr>
-                    <td class="center">Tidak ada data.</td>
+                    <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
                 </tr>
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($columns) + 1 }}"></td>
+                </tr>
+            </tfoot>
         </table>
     @endforelse
 

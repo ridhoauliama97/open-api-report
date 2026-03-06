@@ -54,8 +54,18 @@
             table-layout: fixed;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
         }
 
         tr {
@@ -120,13 +130,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
     </style>
 </head>
@@ -160,7 +187,7 @@
             }
 
             if (is_string($value)) {
-                $normalized = str_replace(',','.', trim($value));
+                $normalized = str_replace(',', '.', trim($value));
                 if (is_numeric($normalized)) {
                     return (float) $normalized;
                 }
@@ -170,7 +197,7 @@
         };
 
         $normalizeColumnName = static function (string $column): string {
-            return strtolower(str_replace([' ','_'], '', trim($column)));
+            return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
 
         $isNamaMesinColumn = static function (string $column) use ($normalizeColumnName): bool {
@@ -203,7 +230,7 @@
         $findGroupColumn = static function (array $availableColumns): ?string {
             foreach ($availableColumns as $column) {
                 $normalized = strtolower(trim($column));
-                if (in_array($normalized, ['nama group','nama_group','group','nama proses'], true)) {
+                if (in_array($normalized, ['nama group', 'nama_group', 'group', 'nama proses'], true)) {
                     return $column;
                 }
             }
@@ -213,8 +240,8 @@
 
         $groupColumn = $findGroupColumn($columns);
         $rendemenColumn = $findColumnByNames($columns, ['Rendemen']);
-        $kubikInputColumn = $findColumnByNames($columns, ['Kubik Input','kubik_input','KubikIN','Kubik In']);
-        $kubikOutputColumn = $findColumnByNames($columns, ['Kubik Output','kubik_output','KubikOut','Kubik Out']);
+        $kubikInputColumn = $findColumnByNames($columns, ['Kubik Input', 'kubik_input', 'KubikIN', 'Kubik In']);
+        $kubikOutputColumn = $findColumnByNames($columns, ['Kubik Output', 'kubik_output', 'KubikOut', 'Kubik Out']);
 
         $tableGroups = [];
 
@@ -332,7 +359,7 @@
         <p class="group-title">
             {{ $group['name'] }}
         </p>
-        <table>
+        <table class="report-table">
             <colgroup>
                 <col style="width: {{ $widthText($noWidth) }};">
                 @foreach ($columns as $column)
@@ -352,8 +379,10 @@
             </thead>
             <tbody>
                 @forelse ($group['rows'] as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center" style="width: {{ $widthText($noWidth) }};">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell center" style="width: {{ $widthText($noWidth) }};">
+                            {{ $loop->iteration }}
+                        </td>
                         @foreach ($columns as $column)
                             @php
                                 $value = $row[$column] ?? null;
@@ -361,23 +390,24 @@
                                 $isRendemenColumn = $normalizeColumnName($column) === 'rendemen';
                                 $isLabelOutColumn = in_array(
                                     $normalizeColumnName($column),
-                                    ['labelout','labeloutput'],
+                                    ['labelout', 'labeloutput'],
                                     true,
                                 );
                                 $cellWidth = $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth);
                             @endphp
                             @if ($isRendemenColumn)
-                                <td class="number" style="width: {{ $cellWidth }};">
+                                <td class="data-cell number" style="width: {{ $cellWidth }};">
                                     {{ is_numeric($value) ? number_format((float) $value, 1, '.', ',') . '%' : '' }}
                                 </td>
                             @elseif ($isLabelOutColumn)
-                                <td class="number" style="width: {{ $cellWidth }};">
+                                <td class="data-cell number" style="width: {{ $cellWidth }};">
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
                             @elseif ($numeric)
-                                <td class="number" style="width: {{ $cellWidth }};">
+                                <td class="data-cell number" style="width: {{ $cellWidth }};">
                                     {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}</td>
                             @else
-                                <td class="label" style="width: {{ $cellWidth }};">{{ (string) $value }}</td>
+                                <td class="data-cell label" style="width: {{ $cellWidth }};">{{ (string) $value }}
+                                </td>
                             @endif
                         @endforeach
                     </tr>
@@ -387,6 +417,11 @@
                     </tr>
                 @endforelse
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($columns) + 1 }}"></td>
+                </tr>
+            </tfoot>
         </table>
     @empty
         <table>

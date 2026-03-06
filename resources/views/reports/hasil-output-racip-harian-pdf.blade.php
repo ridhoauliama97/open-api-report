@@ -47,8 +47,18 @@
             table-layout: fixed;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
         }
 
         tr {
@@ -82,7 +92,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .row-odd td {
@@ -98,6 +109,22 @@
             font-size: 11px;
             border: 1px solid #000;
             background: #fff;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
 
         .footer-wrap {
@@ -175,7 +202,7 @@
     <h1 class="report-title">Laporan Hasil Output Racip Harian</h1>
     <p class="report-subtitle">Per Tanggal : {{ $end }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th style="width: 40px;">No</th>
@@ -186,13 +213,13 @@
         </thead>
         <tbody>
             @forelse ($rows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell center">{{ $loop->iteration }}</td>
                     @foreach ($columns as $column)
                         @if (($numericColumns[$column] ?? false) === true)
-                            <td class="number">{{ $formatNumber($row[$column] ?? null, $column) }}</td>
+                            <td class="data-cell number">{{ $formatNumber($row[$column] ?? null, $column) }}</td>
                         @else
-                            <td>{{ (string) ($row[$column] ?? '') }}</td>
+                            <td class="data-cell">{{ (string) ($row[$column] ?? '') }}</td>
                         @endif
                     @endforeach
                 </tr>
@@ -201,16 +228,20 @@
                     <td colspan="{{ $visibleColumnCount + 1 }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
-
-            @if ($rows !== [] && $totals !== [])
+        </tbody>
+        @if ($rows !== [] && $totals !== [])
+            <tfoot>
                 <tr class="totals-row">
                     <td colspan="{{ count($columns) }}" class="center">Total</td>
                     <td class="number">
                         {{ $lastMasukColumn !== null ? $formatNumber($totals[$lastMasukColumn] ?? null, $lastMasukColumn) : '' }}
                     </td>
                 </tr>
-            @endif
-        </tbody>
+                <tr class="table-end-line">
+                    <td colspan="{{ $visibleColumnCount + 1 }}"></td>
+                </tr>
+            </tfoot>
+        @endif
     </table>
 
     <htmlpagefooter name="reportFooter">

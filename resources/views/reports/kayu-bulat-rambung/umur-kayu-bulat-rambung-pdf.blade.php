@@ -47,7 +47,8 @@
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-bottom: 6px;
             page-break-inside: auto;
             table-layout: fixed;
@@ -107,6 +108,10 @@
             display: table-header-group;
         }
 
+        tfoot {
+            display: table-footer-group;
+        }
+
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
@@ -164,7 +169,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table {
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
 
         .group-summary {
@@ -448,7 +476,7 @@
 
     @forelse ($groupedRows as $groupName => $groupRows)
         <div class="section-title">Status : {{ $groupName }}</div>
-        <table class="umur-rambung-table">
+        <table class="umur-rambung-table report-table">
             <thead>
                 <tr class="headers-row">
                     <th>No</th>
@@ -459,20 +487,25 @@
             </thead>
             <tbody>
                 @foreach ($groupRows as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $loop->iteration }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $loop->iteration }}</td>
                         @foreach ($displayColumns as $column)
                             @php
                                 $value = $row[$column] ?? null;
                                 $isTonCell = $tonColumn !== null && $normalize($column) === $normalize($tonColumn);
                             @endphp
-                            <td class="{{ $isTonCell ? 'number' : 'center' }}">
+                            <td class="data-cell {{ $isTonCell ? 'number' : 'center' }}">
                                 {{ $formatCellValue($value, $column) }}
                             </td>
                         @endforeach
                     </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($displayColumns) + 1 }}"></td>
+                </tr>
+            </tfoot>
         </table>
         <div class="group-summary">
             <span class="label">Total :</span>
@@ -481,12 +514,17 @@
             Truk)
         </div>
     @empty
-        <table>
+        <table class="report-table">
             <tbody>
-                <tr>
-                    <td class="center">Tidak ada data.</td>
+                <tr class="data-row">
+                    <td class="center data-cell">Tidak ada data.</td>
                 </tr>
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td></td>
+                </tr>
+            </tfoot>
         </table>
     @endforelse
 

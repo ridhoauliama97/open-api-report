@@ -82,6 +82,7 @@ class StockRacipKayuLatController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Stok-Racip-Kayu-Lat-%s.pdf', $endDate);

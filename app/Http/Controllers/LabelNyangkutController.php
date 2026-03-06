@@ -59,6 +59,7 @@ class LabelNyangkutController extends Controller
             'rows' => $rows,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $tglCetak = now()->format('Y-m-d');

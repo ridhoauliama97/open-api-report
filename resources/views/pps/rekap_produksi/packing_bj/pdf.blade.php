@@ -111,6 +111,41 @@
             font-style: italic;
             text-align: right;
         }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        .report-table thead {
+            display: table-header-group;
+        }
+
+        .report-table tfoot {
+            display: table-row-group;
+        }
+
+        .report-table .headers-row th {
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0;
+            border-bottom: 0;
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+
+        .table-end-line td {
+            padding: 0;
+            height: 0;
+            line-height: 0;
+            border: 0;
+            border-top: 1px solid #000;
+            background: transparent;
+        }
     </style>
 </head>
 
@@ -128,7 +163,7 @@
         $sections = [
             'Output Produksi Harian (Packing - Barang Jadi)' => ['Output'],
             'Input' => ['Input'],
-            'Waste' => ['Waste'] ,
+            'Waste' => ['Waste'],
         ];
 
         $normalizeDimType = static function ($value): string {
@@ -172,9 +207,9 @@
 
     @foreach ($groupedRows as $sectionTitle => $sectionRows)
         <div class="section-title">{{ $sectionTitle }}</div>
-        <table>
+        <table class="report-table">
             <thead>
-                <tr>
+                <tr class="headers-row">
                     <th style="width: 120px;">Kode Barang</th>
                     <th>Jenis</th>
                     <th style="width: 70px;">Pcs</th>
@@ -189,19 +224,26 @@
                         $berat = $toFloat($row['Berat'] ?? null);
                         $rowClass = $loop->odd ? 'row-odd' : 'row-even';
                     @endphp
-                    <tr class="{{ $rowClass }}">
-                        <td>{{ (string) ($row['ItemCode'] ?? '') }}</td>
-                        <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
-                        <td class="number">{{ $pcs === null ? '' : number_format($pcs, 0, '.', ',') }}</td>
-                        <td class="number">{{ $berat === null ? '' : number_format($berat, 2, '.', ',') }}</td>
-                        <td class="number" style="text-align: center">{{ (string) ($row['IdWarehouse'] ?? '') }}</td>
+                    <tr class="data-row {{ $rowClass }}">
+                        <td class="data-cell">{{ (string) ($row['ItemCode'] ?? '') }}</td>
+                        <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td class="data-cell number">{{ $pcs === null ? '' : number_format($pcs, 0, '.', ',') }}</td>
+                        <td class="data-cell number">{{ $berat === null ? '' : number_format($berat, 2, '.', ',') }}
+                        </td>
+                        <td class="data-cell number" style="text-align: center">
+                            {{ (string) ($row['IdWarehouse'] ?? '') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align: center;">Data tidak ditemukan</td>
+                        <td colspan="5" style="text-align: center;">Tidak ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="5"></td>
+                </tr>
+            </tfoot>
         </table>
     @endforeach
 
@@ -215,5 +257,3 @@
 </body>
 
 </html>
-
-

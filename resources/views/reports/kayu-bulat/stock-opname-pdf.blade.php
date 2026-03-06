@@ -51,6 +51,21 @@
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         th,
@@ -82,7 +97,8 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
@@ -116,6 +132,24 @@
             font-style: italic;
             text-align: right;
         }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -141,7 +175,7 @@
     <h1 class="report-title">Laporan Stock Opname Kayu Bulat</h1>
     <p class="report-subtitle"></p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th style="width: 30px;">No</th>
@@ -159,18 +193,25 @@
                 <th style="width: 66px;">Jmlh Ton</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="13"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">{{ (string) ($row['NoKayuBulat'] ?? '') }}</td>
-                    <td class="center">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="center data-cell">{{ (string) ($row['NoKayuBulat'] ?? '') }}</td>
+                    <td class="center data-cell">
                         @php
                             $tanggal = $row['Tanggal'] ?? null;
                             $tanggalText = '';
                             if ($tanggal) {
                                 try {
-                                    $tanggalText = \Carbon\Carbon::parse((string) $tanggal)->locale('id')->translatedFormat('d-M-y');
+                                    $tanggalText = \Carbon\Carbon::parse((string) $tanggal)
+                                        ->locale('id')
+                                        ->translatedFormat('d-M-y');
                                 } catch (\Throwable $exception) {
                                     $tanggalText = (string) $tanggal;
                                 }
@@ -178,16 +219,16 @@
                         @endphp
                         {{ $tanggalText }}
                     </td>
-                    <td>{{ strtoupper((string) ($row['JenisKayu'] ?? '')) }}</td>
-                    <td>{{ (string) ($row['Supplier'] ?? '') }}</td>
-                    <td>{{ (string) ($row['NoSuket'] ?? '') }}</td>
-                    <td>{{ (string) ($row['NoPlat'] ?? '') }}</td>
-                    <td class="center">{{ (string) ($row['NoTruk'] ?? '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Tebal'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Lebar'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Panjang'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="data-cell">{{ strtoupper((string) ($row['JenisKayu'] ?? '')) }}</td>
+                    <td class="data-cell">{{ (string) ($row['Supplier'] ?? '') }}</td>
+                    <td class="data-cell">{{ (string) ($row['NoSuket'] ?? '') }}</td>
+                    <td class="data-cell">{{ (string) ($row['NoPlat'] ?? '') }}</td>
+                    <td class="center data-cell">{{ (string) ($row['NoTruk'] ?? '') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['Tebal'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['Lebar'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['Panjang'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -198,33 +239,15 @@
     </table>
 
     <div class="section-title">Summary</div>
-    <table class="summary-table">
-        <tbody>
-            <tr class="headers-row">
-                <th style="width: 65%;">Keterangan</th>
-                <th>Nilai</th>
-            </tr>
-            <tr>
-                <td>Total Jumlah Data</td>
-                <td class="center" style="font-weight: bold">{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris</td>
-            </tr>
-            <tr>
-                <td>Total No Kayu Bulat</td>
-                <td class="center" style="font-weight: bold">{{ (int) ($summaryData['total_no_kayu_bulat'] ?? 0) }}
-                </td>
-            </tr>
-            <tr>
-                <td>Total Pcs</td>
-                <td class="center" style="font-weight: bold">
-                    {{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }} Pcs</td>
-            </tr>
-            <tr>
-                <td>Total Ton</td>
-                <td class="center" style="font-weight: bold">
-                    {{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }} Ton</td>
-            </tr>
-        </tbody>
-    </table>
+    <ul>
+        <li>Total Jumlah Data: <strong>{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris Data</strong></li>
+        <li>Total No Kayu Bulat:<strong> {{ (int) ($summaryData['total_no_kayu_bulat'] ?? 0) }}</strong></li>
+        <li>Total Pcs: <strong>{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }} Pcs </strong>
+        </li>
+        <li>Total Ton: <strong>{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }} Ton</strong>
+        </li>
+    </ul>
+
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

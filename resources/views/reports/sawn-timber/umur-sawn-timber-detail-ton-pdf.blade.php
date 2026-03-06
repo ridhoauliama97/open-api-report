@@ -53,8 +53,18 @@
             page-break-inside: auto;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
         }
 
         tr {
@@ -97,13 +107,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             border: 1px solid #000;
             background: #f8f9fc;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
 
         .footer-wrap {
@@ -188,7 +215,7 @@
 
     </p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th style="width: 4%;">No</th>
@@ -214,27 +241,29 @@
                     $rowPeriod5 = $toFloat($row['Period5'] ?? null) ?? 0.0;
                     $rowTotal = $rowPeriod1 + $rowPeriod2 + $rowPeriod3 + $rowPeriod4 + $rowPeriod5;
                 @endphp
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Tebal'] ?? null), 0) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Lebar'] ?? null), 0) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Panjang'] ?? null), 0) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Period1'] ?? null), 4) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Period2'] ?? null), 4) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Period3'] ?? null), 4) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Period4'] ?? null), 4) }}</td>
-                    <td class="number">{{ $formatDecimal($toFloat($row['Period5'] ?? null), 4) }}</td>
-                    <td class="number">{{ number_format($rowTotal, 4, '.', ',') }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell center">{{ $loop->iteration }}</td>
+                    <td class="data-cell center">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Tebal'] ?? null), 0) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Lebar'] ?? null), 0) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Panjang'] ?? null), 0) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Period1'] ?? null), 4) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Period2'] ?? null), 4) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Period3'] ?? null), 4) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Period4'] ?? null), 4) }}</td>
+                    <td class="data-cell number">{{ $formatDecimal($toFloat($row['Period5'] ?? null), 4) }}</td>
+                    <td class="data-cell number">{{ number_format($rowTotal, 4, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
                     <td class="center" colspan="11">Tidak ada data.</td>
                 </tr>
             @endforelse
+        </tbody>
+        <tfoot>
             @if (count($rowsData) > 0)
                 <tr class="totals-row">
-                    <td colspan="5" class="number"style="text-align: center;">Total</td>
+                    <td colspan="5" class="number" style="text-align: center;">Total</td>
                     <td class="number">{{ number_format($totals['Period1'], 4, '.', ',') }}</td>
                     <td class="number">{{ number_format($totals['Period2'], 4, '.', ',') }}</td>
                     <td class="number">{{ number_format($totals['Period3'], 4, '.', ',') }}</td>
@@ -243,7 +272,10 @@
                     <td class="number">{{ number_format($totals['RowTotal'], 4, '.', ',') }}</td>
                 </tr>
             @endif
-        </tbody>
+            <tr class="table-end-line">
+                <td colspan="11"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <htmlpagefooter name="reportFooter">

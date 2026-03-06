@@ -79,6 +79,7 @@ class TargetMasukBBBulananController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Target-Masuk-BB-Bulanan-%s-sd-%s.pdf', $startDate, $endDate);

@@ -46,12 +46,21 @@
             page-break-inside: auto;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
         }
 
+        tfoot {
+            display: table-row-group;
+        }
+
         tr {
-            border: 1px solid #000;
             page-break-inside: avoid;
             page-break-after: auto;
         }
@@ -84,15 +93,32 @@
         }
 
         .headers-row th {
-            border: 1px solid #000;
             font-weight: bold;
             font-size: 11px;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
 
         .footer-wrap {
@@ -131,7 +157,7 @@
     <h1 class="report-title">Laporan Dashboard S4S</h1>
     <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="width: 40px;">Tanggal</th>
@@ -149,18 +175,19 @@
         </thead>
         <tbody>
             @forelse ($rows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td style="text-align: center;">
-                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell" style="text-align: center;">
+                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}
+                    </td>
                     @foreach ($groups as $groupKey => $group)
                         @php
                             $masuk = (float) ($row['cells'][$groupKey]['masuk'] ?? 0);
                             $keluar = (float) ($row['cells'][$groupKey]['keluar'] ?? 0);
                             $akhir = (float) ($row['cells'][$groupKey]['akhir'] ?? 0);
                         @endphp
-                        <td class="number">{{ abs($masuk) < 0.000001 ? '' : $fmt1($masuk) }}</td>
-                        <td class="number">{{ abs($keluar) < 0.000001 ? '' : $fmt1($keluar) }}</td>
-                        <td class="number">{{ abs($akhir) < 0.000001 ? '' : $fmt1($akhir) }}</td>
+                        <td class="data-cell number">{{ abs($masuk) < 0.000001 ? '' : $fmt1($masuk) }}</td>
+                        <td class="data-cell number">{{ abs($keluar) < 0.000001 ? '' : $fmt1($keluar) }}</td>
+                        <td class="data-cell number">{{ abs($akhir) < 0.000001 ? '' : $fmt1($akhir) }}</td>
                     @endforeach
                 </tr>
             @empty
@@ -168,6 +195,8 @@
                     <td colspan="{{ 1 + count($groups) * 3 }}" style="text-align: center;">Data tidak tersedia.</td>
                 </tr>
             @endforelse
+        </tbody>
+        <tfoot>
             <tr class="totals-row">
                 <td>Jumlah Container</td>
                 @foreach ($groups as $group)
@@ -175,7 +204,10 @@
                     </td>
                 @endforeach
             </tr>
-        </tbody>
+            <tr class="table-end-line">
+                <td colspan="{{ 1 + count($groups) * 3 }}"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <htmlpagefooter name="reportFooter">

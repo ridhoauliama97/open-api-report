@@ -53,8 +53,18 @@
             page-break-inside: auto;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
         }
 
         tr {
@@ -119,13 +129,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
     </style>
 </head>
@@ -179,9 +206,33 @@
     <h1 class="report-title">Laporan Rangkuman Bahan Terpakai</h1>
     <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
-    @foreach ($subGroups as $groupName => $groupRows)
-        <p class="group-title">{{ $groupName }}</p>
-        <table>
+    @php
+        $renderedSubGroups = !empty($subGroups)
+            ? array_map(
+                static fn($rows, $name): array => ['name' => (string) $name, 'rows' => $rows, 'show_title' => true],
+                $subGroups,
+                array_keys($subGroups),
+            )
+            : [['name' => '', 'rows' => [], 'show_title' => false]];
+
+        $renderedMainGroups = !empty($mainGroups)
+            ? array_map(
+                static fn($rows, $name): array => ['name' => (string) $name, 'rows' => $rows, 'show_title' => true],
+                $mainGroups,
+                array_keys($mainGroups),
+            )
+            : [['name' => '', 'rows' => [], 'show_title' => false]];
+    @endphp
+
+    @foreach ($renderedSubGroups as $group)
+        @php
+            $groupName = $group['name'];
+            $groupRows = $group['rows'];
+        @endphp
+        @if ($group['show_title'])
+            <p class="group-title">{{ $groupName }}</p>
+        @endif
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th>NamaMesin</th>
@@ -193,20 +244,26 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($groupRows as $row)
+                @forelse ($groupRows as $row)
                     @php
                         $ton = $toFloat($row['Ton'] ?? null);
                         $m3 = $ton !== null ? $ton * $tonToM3Factor : null;
                     @endphp
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
-                        <td class="label">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                        <td class="number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
-                        <td class="number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
-                        <td class="number">{{ $formatNumber($ton, 4) }}</td>
-                        <td class="number">{{ $formatNumber($m3, 4) }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
+                        <td class="data-cell label">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($ton, 4) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($m3, 4) }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr class="data-row row-odd">
+                        <td class="data-cell" colspan="6" style="text-align: center;">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+            <tfoot>
                 @php
                     $totalTon = collect($groupRows)->sum(
                         static fn(array $row): float => $toFloat($row['Ton'] ?? null) ?? 0.0,
@@ -215,16 +272,29 @@
                 @endphp
                 <tr class="totals-row">
                     <td colspan="4" class="number" style="font-weight: bold; text-align: center;">Total</td>
-                    <td class="number" style="font-weight: bold">{{ $formatNumber($totalTon, 4) }}</td>
-                    <td class="number" style="font-weight: bold">{{ $formatNumber($totalM3, 4) }}</td>
+                    <td class="number" style="font-weight: bold">
+                        {{ count($groupRows) > 0 ? $formatNumber($totalTon, 4) : '' }}
+                    </td>
+                    <td class="number" style="font-weight: bold">
+                        {{ count($groupRows) > 0 ? $formatNumber($totalM3, 4) : '' }}
+                    </td>
                 </tr>
-            </tbody>
+                <tr class="table-end-line">
+                    <td colspan="6"></td>
+                </tr>
+            </tfoot>
         </table>
     @endforeach
 
-    @foreach ($mainGroups as $groupName => $groupRows)
-        <p class="group-title">{{ $groupName }}</p>
-        <table>
+    @foreach ($renderedMainGroups as $group)
+        @php
+            $groupName = $group['name'];
+            $groupRows = $group['rows'];
+        @endphp
+        @if ($group['show_title'])
+            <p class="group-title">{{ $groupName }}</p>
+        @endif
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th>NamaMesin</th>
@@ -237,17 +307,23 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($groupRows as $row)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
-                        <td class="label">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                        <td class="number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
-                        <td class="number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
-                        <td class="number">{{ $formatNumber($row['Panjang'] ?? null, 0) }}</td>
-                        <td class="number">{{ $formatNumber($row['JmlhBatang'] ?? null, 0) }}</td>
-                        <td class="number">{{ $formatNumber($row['KubikIN'] ?? null, 4) }}</td>
+                @forelse ($groupRows as $row)
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
+                        <td class="data-cell label">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Panjang'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['JmlhBatang'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['KubikIN'] ?? null, 4) }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr class="data-row row-odd">
+                        <td class="data-cell" colspan="7" style="text-align: center;">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+            <tfoot>
                 @php
                     $totalBatang = collect($groupRows)->sum(
                         static fn(array $row): float => $toFloat($row['JmlhBatang'] ?? null) ?? 0.0,
@@ -258,22 +334,19 @@
                 @endphp
                 <tr class="total-row totals-row">
                     <td colspan="5" class="number" style="text-align: center; font-weight: bold;">Total</td>
-                    <td class="number" style="font-weight: bold;">{{ $formatNumber($totalBatang, 0) }}</td>
-                    <td class="number" style="font-weight: bold;">{{ $formatNumber($totalKubik, 4) }}</td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ count($groupRows) > 0 ? $formatNumber($totalBatang, 0) : '' }}
+                    </td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ count($groupRows) > 0 ? $formatNumber($totalKubik, 4) : '' }}
+                    </td>
                 </tr>
-            </tbody>
+                <tr class="table-end-line">
+                    <td colspan="7"></td>
+                </tr>
+            </tfoot>
         </table>
     @endforeach
-
-    @if (!$hasData)
-        <table>
-            <tbody>
-                <tr>
-                    <td style="text-align: center;">Tidak ada data.</td>
-                </tr>
-            </tbody>
-        </table>
-    @endif
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

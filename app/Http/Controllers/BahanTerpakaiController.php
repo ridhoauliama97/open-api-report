@@ -65,6 +65,7 @@ class BahanTerpakaiController extends Controller
             'tonToM3Factor' => (float) config('reports.bahan_terpakai.ton_to_m3_factor', 1.416),
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Bahan-Terpakai-%s.pdf', $reportDate);

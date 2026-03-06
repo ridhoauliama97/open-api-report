@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 8px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -28,26 +28,32 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 8px 0;
+            margin: 2px 0 20px 0;
             font-size: 10px;
             color: #636466;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -64,17 +70,12 @@
             white-space: nowrap;
         }
 
-        th {
-            background: #f3f3f3;
-            font-weight: 700;
-        }
-
         tbody tr:nth-child(odd) td {
-            background: #f4f7fb;
+            background: #c9d1df;
         }
 
         tbody tr:nth-child(even) td {
-            background: #ffffff;
+            background: #eef2f8;
         }
 
         .lb-head {
@@ -92,6 +93,10 @@
             width: 180px;
         }
 
+        .report-table {
+            border: 1px solid #000;
+        }
+
         .chart-wrap {
             margin-top: 8px;
         }
@@ -103,12 +108,12 @@
         }
 
         .footer-left {
-            font-size: 7px;
+            font-size: 8px;
             font-style: italic;
         }
 
         .footer-right {
-            font-size: 7px;
+            font-size: 8px;
             font-style: italic;
             text-align: right;
         }
@@ -116,13 +121,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -132,7 +156,7 @@
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $safeDateText = static function ($value): ?string {
-            if ($value === null || is_array($value) || is_object($value) && ! $value instanceof \DateTimeInterface) {
+            if ($value === null || is_array($value) || (is_object($value) && !$value instanceof \DateTimeInterface)) {
                 return null;
             }
 
@@ -145,11 +169,13 @@
         $startText = $safeDateText($startDate ?? null);
         $endText = $safeDateText($endDate ?? null);
         $periodSubtitle =
-            $startText && $endText ? "Periode {$startText} s/d {$endText}" : ($reportData['period_text'] ?? '');
+            $startText && $endText ? "Periode {$startText} s/d {$endText}" : $reportData['period_text'] ?? '';
         $dayColumns = $reportData['day_columns'] ?? [];
         $tableRows = $reportData['table_rows'] ?? [];
         $summaryRows = $reportData['summary_rows'] ?? [];
-        $monthTitle = $safeDateText($startDate ?? null) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('F') : '';
+        $monthTitle = $safeDateText($startDate ?? null)
+            ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('F')
+            : '';
         $chartLabels = $reportData['chart_labels'] ?? [];
         $chartSeries = $reportData['chart_series'] ?? [];
         $resolveSeriesColor = static function (string $seriesName): string {
@@ -202,12 +228,12 @@
     <h1 class="report-title">Laporan Target Masuk Bahan Baku Harian</h1>
     <p class="report-subtitle">{{ $periodSubtitle }}</p>
 
-    <table>
+    <table class="report-table">
         <thead>
             <tr class="headers-row">
                 <th rowspan="2">Jenis</th>
-                <th rowspan="2">Tgt Hari</th>
-                <th rowspan="2">Tgt Bulan</th>
+                <th rowspan="2">Target <br /> Hari</th>
+                <th rowspan="2">Target <br /> Bulan</th>
                 <th colspan="{{ count($dayColumns) + count($reportData['lb_columns'] ?? []) }}">
                     {{ ucfirst($monthTitle) }}</th>
                 <th rowspan="2" style="font-weight: bold">Total</th>
@@ -223,31 +249,38 @@
         </thead>
         <tbody>
             @forelse ($tableRows as $row)
-                <tr>
-                    <td class="row-label">{{ $row['jenis'] }}</td>
-                    <td>{{ number_format((float) $row['target_harian'], 0, '.', ',') }}</td>
-                    <td>{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
+                <tr class="data-row">
+                    <td class="row-label data-cell">{{ $row['jenis'] }}</td>
+                    <td class="data-cell">{{ number_format((float) $row['target_harian'], 0, '.', ',') }}</td>
+                    <td class="data-cell">{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                     @foreach ($row['daily_values'] as $index => $value)
-                        <td>{{ number_format((float) $value, 0, '.', ',') }}</td>
+                        <td class="data-cell">{{ number_format((float) $value, 0, '.', ',') }}</td>
                         @if (($dayColumns[$index]['is_lb_after'] ?? false) === true)
                             @php $lbLabel = $dayColumns[$index]['label']; @endphp
-                            <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, '.', ',') }}</td>
+                            <td class="data-cell">
+                                {{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, '.', ',') }}</td>
                         @endif
                     @endforeach
-                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, '.', ',') }}</td>
+                    <td class="data-cell" style="font-weight: bold">
+                        {{ number_format((float) $row['total'], 0, '.', ',') }}</td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="99">Tidak ada data.</td>
+                <tr class="data-row">
+                    <td class="data-cell" colspan="99">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($dayColumns) + count($reportData['lb_columns'] ?? []) + 4 }}"></td>
+            </tr>
+        </tfoot>
     </table>
 
-    <table class="summary-table">
+    <table class="report-table summary-table">
         <thead>
             <tr class="headers-row">
-                <th></th>
+                <th>Jenis</th>
                 <th>Avg</th>
                 <th>Min</th>
                 <th>Max</th>
@@ -255,18 +288,23 @@
         </thead>
         <tbody>
             @forelse ($summaryRows as $summary)
-                <tr>
-                    <td class="row-label">{{ $summary['jenis'] }}</td>
-                    <td>{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
-                    <td>{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
-                    <td>{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
+                <tr class="data-row">
+                    <td class="row-label data-cell">{{ $summary['jenis'] }}</td>
+                    <td class="data-cell">{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
+                    <td class="data-cell">{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
+                    <td class="data-cell">{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="4">-</td>
+                <tr class="data-row">
+                    <td class="data-cell" colspan="4">-</td>
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="4"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <div class="chart-wrap">

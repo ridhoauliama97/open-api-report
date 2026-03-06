@@ -71,6 +71,7 @@ class SupplierIntelController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'parameterCount' => (int) config('reports.supplier_intel.parameter_count', 0),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-supplier-intel-%s-sd-%s.pdf', $startDate, $endDate);
@@ -142,5 +143,4 @@ class SupplierIntelController extends Controller
         return [$request->startDate(), $request->endDate()];
     }
 }
-
 

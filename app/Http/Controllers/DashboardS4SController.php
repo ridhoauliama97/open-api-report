@@ -130,6 +130,7 @@ class DashboardS4SController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Dashboard-S4S-%s-sd-%s.pdf', $startDate, $endDate);

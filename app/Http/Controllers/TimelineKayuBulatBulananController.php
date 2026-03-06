@@ -70,6 +70,7 @@ class TimelineKayuBulatBulananController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Bulanan-JTG-PLI-%s-sd-%s.pdf', $startDate, $endDate);

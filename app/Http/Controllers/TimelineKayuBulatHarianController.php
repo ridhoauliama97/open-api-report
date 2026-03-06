@@ -70,6 +70,7 @@ class TimelineKayuBulatHarianController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Harian-JTG-PLI-%s-sd-%s.pdf', $startDate, $endDate);
@@ -141,4 +142,3 @@ class TimelineKayuBulatHarianController extends Controller
         return [$request->startDate(), $request->endDate()];
     }
 }
-

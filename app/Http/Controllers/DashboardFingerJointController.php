@@ -129,6 +129,7 @@ class DashboardFingerJointController extends Controller
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Dashboard-Finger-Joint-%s-sd-%s.pdf', $startDate, $endDate);

@@ -47,8 +47,18 @@
             table-layout: fixed;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
         }
 
         tr {
@@ -136,13 +146,30 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border: 0 !important;
+            border-top: 1px solid #000 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: transparent !important;
         }
     </style>
 </head>
@@ -331,7 +358,9 @@
             $pcsColumn,
             $tonColumn,
         ];
-        $tableColumns = array_values(array_unique(array_filter($desiredColumns, static fn($column): bool => $column !== null)));
+        $tableColumns = array_values(
+            array_unique(array_filter($desiredColumns, static fn($column): bool => $column !== null)),
+        );
 
         $maxSortRows = (int) config('reports.stock_st_basah.max_sort_rows', 3000);
         if ($maxSortRows > 0 && count($rowsData) > $maxSortRows) {
@@ -432,7 +461,7 @@
                 $subtotalTon = (float) ($produkData['subtotal_ton'] ?? 0.0);
             @endphp
             <p class="produk-title">{{ $produkName }}</p>
-            <table>
+            <table class="report-table">
                 <colgroup>
                     <col style="width: {{ number_format($equalColumnWidth, 6, '.', ',') }}%;">
                     @foreach ($tableColumns as $column)
@@ -449,8 +478,8 @@
                 </thead>
                 <tbody>
                     @foreach ($produkRows as $row)
-                        <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="center">{{ $loop->iteration }}</td>
+                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                            <td class="data-cell center">{{ $loop->iteration }}</td>
                             @foreach ($tableColumns as $column)
                                 @php
                                     $value = $row[$column] ?? null;
@@ -461,25 +490,27 @@
                                     $isDateColumn = $dateColumn !== null && $column === $dateColumn;
                                 @endphp
                                 @if ($isDateColumn)
-                                    <td class="center">{{ $formatDate($value) }}</td>
+                                    <td class="data-cell center">{{ $formatDate($value) }}</td>
                                 @elseif ($isTonColumn)
-                                    <td class="number">
+                                    <td class="data-cell number">
                                         {{ $floatValue !== null ? number_format($floatValue, 4, '.', ',') : '' }}
                                     </td>
                                 @elseif ($isPcsColumn)
-                                    <td class="number">
+                                    <td class="data-cell number">
                                         {{ $floatValue !== null ? number_format($floatValue, 0, '.', ',') : '' }}
                                     </td>
                                 @elseif ($numeric)
-                                    <td class="number">
+                                    <td class="data-cell number">
                                         {{ $floatValue !== null ? number_format($floatValue, 0, '.', ',') : '' }}
                                     </td>
                                 @else
-                                    <td>{{ (string) $value }}</td>
+                                    <td class="data-cell">{{ (string) $value }}</td>
                                 @endif
                             @endforeach
                         </tr>
                     @endforeach
+                </tbody>
+                <tfoot>
                     @if ($totalRows > 0)
                         <tr class="subtotal-row totals-row">
                             @if (is_int($pcsIndex) || is_int($tonIndex))
@@ -512,7 +543,10 @@
                             @endif
                         </tr>
                     @endif
-                </tbody>
+                    <tr class="table-end-line">
+                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
+                    </tr>
+                </tfoot>
             </table>
         @endforeach
     @empty

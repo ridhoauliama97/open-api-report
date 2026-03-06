@@ -130,6 +130,36 @@
                                 Laporan Produksi Harian - Spanner (FWIP)
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.rekap-produksi.broker.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Harian - Broker
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.rekap-produksi.washing.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Harian - Washing
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.rekap-produksi.mixer.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Harian - Mixer
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.rekap-produksi.gilingan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Harian - Gilingan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.rekap-produksi.crusher.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Harian - Crusher
+                            </a>
+                        </div>
                     </div>
 
                     <h2 class="h5 mb-3">Mutasi</h2>
@@ -454,6 +484,12 @@
                             <a href="{{ route('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Penerimaan ST Dari Sawmill - Timbang KG
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Hasil Sawmill Per-Meja (Semua Meja)
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

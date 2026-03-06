@@ -40,6 +40,7 @@ class StockOpnameKayuBulatController extends Controller
             'summary' => $reportData['summary'],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = 'Laporan-Stock-Opname-Kayu-Bulat.pdf';

@@ -129,6 +129,7 @@ class DashboardCrossCutAkhirController extends Controller
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Dashboard-Cross-Cut-Akhir-%s-sd-%s.pdf', $startDate, $endDate);

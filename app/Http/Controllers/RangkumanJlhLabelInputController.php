@@ -63,6 +63,7 @@ class RangkumanJlhLabelInputController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Rangkuman-Label-Input-%s-sd-%s.pdf', $startDate, $endDate);

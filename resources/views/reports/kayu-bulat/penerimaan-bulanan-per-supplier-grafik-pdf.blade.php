@@ -53,6 +53,20 @@
             table-layout: fixed;
         }
 
+        .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
         th,
         td {
             border: 1px solid #000;
@@ -86,14 +100,33 @@
 
         .headers-row th {
             font-weight: bold;
-            border: 1px solid #000;
             font-size: 11px;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             border: 1px solid #000;
             font-size: 11px;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
 
         .section-break {
@@ -255,7 +288,7 @@
         @endphp
 
         <div class="group-title">{{ $groupName }}</div>
-        <table>
+        <table class="report-table">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 20%">Supplier</th>
@@ -267,13 +300,18 @@
                     @endforeach
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ 2 + count($monthKeys) }}"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @forelse ($suppliers as $supplierRow)
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td>{{ (string) ($supplierRow['supplier'] ?? '') }}</td>
-                        <td class="number">{{ $fmt4BlankZero($supplierRow['total'] ?? 0) }}</td>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell">{{ (string) ($supplierRow['supplier'] ?? '') }}</td>
+                        <td class="number data-cell">{{ $fmt4BlankZero($supplierRow['total'] ?? 0) }}</td>
                         @foreach ($monthKeys as $monthKey)
-                            <td class="number">{{ $fmt4BlankZero($supplierRow['month_values'][$monthKey] ?? 0) }}</td>
+                            <td class="number data-cell">{{ $fmt4BlankZero($supplierRow['month_values'][$monthKey] ?? 0) }}</td>
                         @endforeach
                     </tr>
                 @empty
@@ -376,7 +414,12 @@
             <div class="section-break"></div>
         @endif
     @empty
-        <table>
+        <table class="report-table">
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="1"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 <tr>
                     <td class="center">Tidak ada data untuk periode ini.</td>

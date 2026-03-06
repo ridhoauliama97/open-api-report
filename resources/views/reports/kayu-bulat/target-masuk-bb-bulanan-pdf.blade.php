@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 8px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -28,26 +28,32 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
-            font-size: 10px;
+            font-size: 12px;
             color: #636466;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-bottom: 6px;
             page-break-inside: auto;
+            table-layout: fixed;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -87,8 +93,21 @@
             width: 360px;
         }
 
+        .report-table {
+            border: 1px solid #000;
+        }
+
         .chart-wrap {
             margin-top: 8px;
+            border: 1px solid #000;
+            padding: 8px 8px 6px 8px;
+        }
+
+        .chart-title {
+            margin: 0 0 6px 0;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
         }
 
         .footer-wrap {
@@ -98,12 +117,12 @@
         }
 
         .footer-left {
-            font-size: 7px;
+            font-size: 8px;
             font-style: italic;
         }
 
         .footer-right {
-            font-size: 7px;
+            font-size: 8px;
             font-style: italic;
             text-align: right;
         }
@@ -111,13 +130,32 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
         }
     </style>
 </head>
@@ -143,8 +181,8 @@
                 return '';
             }
 
-            $normalized = str_replace(['/','.',' '], '-', strtoupper($text));
-            foreach (['M-y','M-Y','m-y','m-Y','Y-m','Y-M'] as $pattern) {
+            $normalized = str_replace(['/', '.', ' '], '-', strtoupper($text));
+            foreach (['M-y', 'M-Y', 'm-y', 'm-Y', 'Y-m', 'Y-M'] as $pattern) {
                 try {
                     return \Carbon\Carbon::createFromFormat($pattern, $normalized)
                         ->locale('id')
@@ -252,7 +290,7 @@
     <h1 class="report-title">Laporan Target Masuk Bahan Baku Bulanan</h1>
     <p class="report-subtitle">{{ $periodSubtitle }}</p>
 
-    <table style="margin-bottom: 20px">
+    <table class="report-table" style="margin-bottom: 20px">
         <thead>
             <tr class="headers-row">
                 <th>Nama Group</th>
@@ -265,23 +303,29 @@
         </thead>
         <tbody>
             @forelse ($tableRows as $row)
-                <tr>
-                    <td class="row-label">{{ $row['jenis'] }}</td>
-                    <td>{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
+                <tr class="data-row">
+                    <td class="row-label data-cell">{{ $row['jenis'] }}</td>
+                    <td class="data-cell">{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                     @foreach ($row['monthly_values'] as $value)
-                        <td>{{ number_format((float) $value, 0, '.', ',') }}</td>
+                        <td class="data-cell">{{ number_format((float) $value, 0, '.', ',') }}</td>
                     @endforeach
-                    <td style="font-weight: bold">{{ number_format((float) $row['total'], 0, '.', ',') }}</td>
+                    <td class="data-cell" style="font-weight: bold">
+                        {{ number_format((float) $row['total'], 0, '.', ',') }}</td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="99">Tidak ada data.</td>
+                <tr class="data-row">
+                    <td class="data-cell" colspan="99">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($monthColumnsDisplay) + 3 }}"></td>
+            </tr>
+        </tfoot>
     </table>
 
-    <table class="summary-table" style="margin-bottom: 20px">
+    <table class="report-table summary-table" style="margin-bottom: 20px">
         <thead>
             <tr class="headers-row">
                 <th>Nama Group</th>
@@ -294,24 +338,30 @@
         </thead>
         <tbody>
             @forelse ($summaryRows as $summary)
-                <tr>
-                    <td class="row-label">{{ $summary['jenis'] }}</td>
-                    <td>{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
-                    <td>{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
-                    <td>{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
-                    <td>{{ $summary['bulan_capai'] }}/{{ $summary['total_bulan_target'] }}</td>
-                    <td style="font-weight: bold">
+                <tr class="data-row">
+                    <td class="row-label data-cell">{{ $summary['jenis'] }}</td>
+                    <td class="data-cell">{{ number_format((float) $summary['avg'], 0, '.', ',') }}</td>
+                    <td class="data-cell">{{ number_format((float) $summary['min'], 0, '.', ',') }}</td>
+                    <td class="data-cell">{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
+                    <td class="data-cell">{{ $summary['bulan_capai'] }}/{{ $summary['total_bulan_target'] }}</td>
+                    <td class="data-cell" style="font-weight: bold">
                         {{ number_format((float) $summary['persen_capai_group'], 2, '.', ',') }}%</td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="6">-</td>
+                <tr class="data-row">
+                    <td class="data-cell" colspan="6">-</td>
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <div class="chart-wrap">
+        <p class="chart-title">Grafik Target Masuk Bahan Baku Bulanan</p>
         <svg width="{{ $svgWidth }}" height="{{ $svgHeight }}" xmlns="http://www.w3.org/2000/svg">
             @for ($y = 0; $y <= $maxChartValue; $y += $yStep)
                 @php

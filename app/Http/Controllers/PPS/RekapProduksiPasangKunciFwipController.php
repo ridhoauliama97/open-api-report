@@ -51,7 +51,7 @@ class RekapProduksiPasangKunciFwipController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_column_count' => $columnCount,
-            'pdf_simple_tables' => true,
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Pasang-Kunci-FWIP-%s.pdf', $endDate);
@@ -142,4 +142,3 @@ class RekapProduksiPasangKunciFwipController extends Controller
         return (object) ['name' => 'sistem'];
     }
 }
-
