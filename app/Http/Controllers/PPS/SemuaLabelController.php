@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Http\Controllers\PPS;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PPS\GenerateSemuaLabelReportRequest;
+use App\Services\PdfGenerator;
+use App\Services\PPS\SemuaLabelReportService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use RuntimeException;
+
+class SemuaLabelController extends Controller
+{
+    public function index(): View
+    {
+        return view('pps.semua_label.form');
+    }
+
+    public function download(
+        GenerateSemuaLabelReportRequest $request,
+        SemuaLabelReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        $reportDate = $request->reportDate();
+        $startDate = $reportDate;
+        $endDate = $reportDate;
+        $generatedBy = $this->resolveGeneratedBy($request);
+
+        try {
+            $rows = $reportService->fetch($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $exception->getMessage()], 422);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => $exception->getMessage()]);
+        }
+
+        $pdf = $pdfGenerator->render('pps.semua_label.pdf', [
+            'rows' => $rows,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'generatedBy' => $generatedBy,
+            'generatedAt' => now(),
+            'pdf_simple_tables' => false,
+        ]);
+
+        $filename = sprintf('Laporan-Semua-Label-%s.pdf', $endDate);
+        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+        ]);
+    }
+
+    public function preview(
+        GenerateSemuaLabelReportRequest $request,
+        SemuaLabelReportService $reportService,
+    ): JsonResponse {
+        $reportDate = $request->reportDate();
+        $startDate = $reportDate;
+        $endDate = $reportDate;
+
+        try {
+            $rows = $reportService->fetch($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => 'Preview laporan berhasil diambil.',
+            'meta' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'TglAwal' => $startDate,
+                'TglAkhir' => $endDate,
+                'total_rows' => count($rows),
+                'column_order' => array_keys($rows[0] ?? []),
+            ],
+            'data' => $rows,
+        ]);
+    }
+
+    public function health(
+        GenerateSemuaLabelReportRequest $request,
+        SemuaLabelReportService $reportService,
+    ): JsonResponse {
+        $reportDate = $request->reportDate();
+        $startDate = $reportDate;
+        $endDate = $reportDate;
+
+        try {
+            $result = $reportService->healthCheck($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => $result['is_healthy']
+                ? 'Struktur output SP_LaporanSemuaLabel valid.'
+                : 'Struktur output SP_LaporanSemuaLabel berubah.',
+            'meta' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'TglAwal' => $startDate,
+                'TglAkhir' => $endDate,
+            ],
+            'health' => $result,
+        ]);
+    }
+
+    private function resolveGeneratedBy(GenerateSemuaLabelReportRequest $request): object
+    {
+        $webUser = $request->user() ?? auth('api')->user();
+        if ($webUser !== null) {
+            $name = (string) ($webUser->name ?? $webUser->Username ?? 'sistem');
+
+            return (object) ['name' => $name];
+        }
+
+        $claims = $request->attributes->get('report_token_claims');
+        if (is_array($claims)) {
+            $name = (string) ($claims['name'] ?? $claims['username'] ?? 'api');
+
+            return (object) ['name' => $name];
+        }
+
+        return (object) ['name' => 'sistem'];
+    }
+}

@@ -22,8 +22,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="#">WPS</a>
-                    <a class="nav-link active" aria-current="page" href="#">PPS</a>
+                    <a class="nav-link" href="#wps-reports">WPS</a>
+                    <a class="nav-link" href="#pps-reports">PPS</a>
                 </div>
             </div>
         </div>
@@ -88,11 +88,194 @@
         </div>
 
 
+        <div id="pps-reports" class="mb-3">
+            <h2 class="h4 fw-bold mb-0">PPS</h2>
+        </div>
 
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Bahan Baku</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.bahan-baku.mutasi-bahan-baku.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Mutasi Bahan Baku
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Barang Jadi</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.barang-jadi.mutasi-barang-jadi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Mutasi Barang Jadi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Broker</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Bonggolan</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Crusher</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Gilingan</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Mixer</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Washing</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Furniture WIP</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Komponen Pendukung</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Reject</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Good Transfer</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
-                    <h2 class="h5 mb-3">PPS</h2>
+                    <h2 class="h5 mb-3">Rekap Produksi</h2>
                     <div class="row g-2 mb-3">
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.rekap-produksi.inject.index') }}"
@@ -161,7 +344,94 @@
                             </a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Semua Label</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Stok</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Dashboard</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">QC</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Adjustment</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Label
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+
+
+        <div id="wps-reports" class="mb-3">
+            <h2 class="h4 fw-bold mb-0">WPS</h2>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
                     <h2 class="h5 mb-3">Mutasi</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
@@ -515,6 +785,58 @@
             </div>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reportCards = Array.from(document.querySelectorAll('main > .col-12 > .card'));
+
+            reportCards.forEach((card, index) => {
+                const body = card.querySelector(':scope > .card-body');
+                const title = body?.querySelector(':scope > h2');
+
+                if (!body || !title) {
+                    return;
+                }
+
+                const collapseId = `reportCardCollapse${index + 1}`;
+                const sectionTitle = title.textContent.trim();
+                const collapse = document.createElement('div');
+                collapse.className = 'collapse show';
+                collapse.id = collapseId;
+
+                while (body.firstChild) {
+                    if (body.firstChild === title) {
+                        body.removeChild(title);
+                        continue;
+                    }
+
+                    collapse.appendChild(body.firstChild);
+                }
+
+                body.className = 'card-header bg-white border-0 p-0';
+                body.innerHTML = `
+                    <button class="btn btn-light w-100 text-start d-flex justify-content-between align-items-center p-4"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#${collapseId}"
+                        aria-expanded="true"
+                        aria-controls="${collapseId}">
+                        <span class="h5 mb-0">${sectionTitle}</span>
+                        <span class="small text-secondary">Buka / Tutup</span>
+                    </button>
+                `;
+
+                const collapseBody = document.createElement('div');
+                collapseBody.className = 'card-body p-4';
+                while (collapse.firstChild) {
+                    collapseBody.appendChild(collapse.firstChild);
+                }
+
+                collapse.appendChild(collapseBody);
+                card.appendChild(collapse);
+            });
+        });
+    </script>
 </body>
 
 </html>

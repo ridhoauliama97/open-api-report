@@ -59,6 +59,9 @@ use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
 use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
+use App\Http\Controllers\PPS\MutasiBahanBakuController;
+use App\Http\Controllers\PPS\MutasiBarangJadiPpsController;
+use App\Http\Controllers\PPS\SemuaLabelController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
@@ -175,6 +178,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/rekap-produksi/mixer', 'api.reports.pps.rekap-produksi.mixer', RekapProduksiMixerController::class],
         ['/reports/pps/rekap-produksi/gilingan', 'api.reports.pps.rekap-produksi.gilingan', RekapProduksiGilinganController::class],
         ['/reports/pps/rekap-produksi/crusher', 'api.reports.pps.rekap-produksi.crusher', RekapProduksiCrusherController::class],
+        ['/reports/pps/semua-label', 'api.reports.pps.semua-label', SemuaLabelController::class],
+        ['/reports/pps/bahan-baku/mutasi-bahan-baku', 'api.reports.pps.bahan-baku.mutasi-bahan-baku', MutasiBahanBakuController::class],
+        ['/reports/pps/barang-jadi/mutasi-barang-jadi', 'api.reports.pps.barang-jadi.mutasi-barang-jadi', MutasiBarangJadiPpsController::class],
         ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
         ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],
         ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],

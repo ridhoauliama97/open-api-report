@@ -66,6 +66,9 @@ use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
 use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
+use App\Http\Controllers\PPS\MutasiBahanBakuController;
+use App\Http\Controllers\PPS\MutasiBarangJadiPpsController;
+use App\Http\Controllers\PPS\SemuaLabelController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -149,6 +152,27 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [RekapProduksiCrusherController::class, 'download'])->name('download');
         Route::post('/preview', [RekapProduksiCrusherController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapProduksiCrusherController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('semua-label')->name('semua-label.')->group(function (): void {
+        Route::get('/', [SemuaLabelController::class, 'index'])->name('index');
+        Route::post('/download', [SemuaLabelController::class, 'download'])->name('download');
+        Route::post('/preview', [SemuaLabelController::class, 'preview'])->name('preview');
+        Route::post('/health', [SemuaLabelController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('bahan-baku/mutasi-bahan-baku')->name('bahan-baku.mutasi-bahan-baku.')->group(function (): void {
+        Route::get('/', [MutasiBahanBakuController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiBahanBakuController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiBahanBakuController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiBahanBakuController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('barang-jadi/mutasi-barang-jadi')->name('barang-jadi.mutasi-barang-jadi.')->group(function (): void {
+        Route::get('/', [MutasiBarangJadiPpsController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiBarangJadiPpsController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiBarangJadiPpsController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiBarangJadiPpsController::class, 'health'])->name('health');
     });
 });
 

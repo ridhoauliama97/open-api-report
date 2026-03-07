@@ -676,6 +676,46 @@ return [
             'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
         )))),
     ],
+    'pps_semua_label' => [
+        'database_connection' => env('PPS_SEMUA_LABEL_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_SEMUA_LABEL_REPORT_PROCEDURE', 'SP_LaporanSemuaLabel'),
+        'call_syntax' => env('PPS_SEMUA_LABEL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_SEMUA_LABEL_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_SEMUA_LABEL_REPORT_PARAMETER_COUNT', 0),
+        'single_parameter_name' => env('PPS_SEMUA_LABEL_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_SEMUA_LABEL_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
+    'pps_mutasi_bahan_baku' => [
+        'database_connection' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_PROCEDURE', 'SP_PPSLapMutasiBahanBaku'),
+        'call_syntax' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_MUTASI_BAHAN_BAKU_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BAHAN_BAKU_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Awal,MasukProd,Keluar,Akhir,BSUOutput,BSUInput,BrokerInputBahanBaku,MixerInputBahanBaku,WashInput,Masuk'
+        )))),
+    ],
+    'pps_mutasi_barang_jadi' => [
+        'database_connection' => env('PPS_MUTASI_BARANG_JADI_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_BARANG_JADI_REPORT_PROCEDURE', 'SP_PPSLapMutasiBarangJadi'),
+        'sub_stored_procedure' => env('PPS_MUTASI_BARANG_JADI_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiBarangJadi'),
+        'call_syntax' => env('PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_BARANG_JADI_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_BARANG_JADI_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BARANG_JADI_REPORT_EXPECTED_COLUMNS',
+            'NamaBJ,Awal,Masuk,Keluar,Akhir,PackOutput,InjectOutput,BSUOutput,BSUInput,BJJual,BSortInput,ReturOutput'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BARANG_JADI_SUB_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
 
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
