@@ -1,6 +1,6 @@
 # API Route Docs
 
-Total routes terdokumentasi: 162
+Total routes terdokumentasi: 168
 
 - [api.auth.login](./api.auth.login.md) - `POST /api/auth/login`
 - [api.auth.logout](./api.auth.logout.md) - `POST /api/auth/logout`
@@ -65,9 +65,15 @@ Total routes terdokumentasi: 162
 - [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.health](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.health.md) - `POST /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/health`
 - [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.pdf](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/pdf`
 - [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview.md) - `POST /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2`
+- [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.health](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.health.md) - `POST /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2-kg/health`
+- [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.pdf](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2-kg/pdf`
+- [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.preview](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.preview.md) - `POST /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2-kg`
 - [api.reports.kayu-bulat.rekap-pembelian-kg.health](./api.reports.kayu-bulat.rekap-pembelian-kg.health.md) - `POST /api/reports/kayu-bulat/rekap-pembelian-kg/health`
 - [api.reports.kayu-bulat.rekap-pembelian-kg.pdf](./api.reports.kayu-bulat.rekap-pembelian-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/rekap-pembelian-kg/pdf`
 - [api.reports.kayu-bulat.rekap-pembelian-kg.preview](./api.reports.kayu-bulat.rekap-pembelian-kg.preview.md) - `POST /api/reports/kayu-bulat/rekap-pembelian-kg`
+- [api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.health](./api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.health.md) - `POST /api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg/health`
+- [api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.pdf](./api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg/pdf`
+- [api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.preview](./api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.preview.md) - `POST /api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg`
 - [api.reports.kayu-bulat.saldo.health](./api.reports.kayu-bulat.saldo.health.md) - `POST /api/reports/kayu-bulat/saldo/health`
 - [api.reports.kayu-bulat.saldo.pdf](./api.reports.kayu-bulat.saldo.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/saldo/pdf`
 - [api.reports.kayu-bulat.saldo.preview](./api.reports.kayu-bulat.saldo.preview.md) - `POST /api/reports/kayu-bulat/saldo`

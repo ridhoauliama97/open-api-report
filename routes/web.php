@@ -35,8 +35,10 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
+use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
+use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoHidupKayuBulatKgController;
@@ -471,6 +473,14 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::post('/preview', [RekapPembelianKayuBulatKgController::class, 'preview'])->name('preview');
     });
 
+    /** Rekap penerimaan ST dari sawmill timbang KG routes. */
+    Route::prefix('rekap-penerimaan-st-dari-sawmill-kg')->name('rekap-penerimaan-st-dari-sawmill-kg.')->group(function (): void {
+        Route::get('/', [RekapPenerimaanSTDariSawmillKgController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPenerimaanSTDariSawmillKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPenerimaanSTDariSawmillKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPenerimaanSTDariSawmillKgController::class, 'preview'])->name('preview');
+    });
+
     /** Target masuk bahan baku routes. */
     Route::prefix('target-masuk-bb')->name('target-masuk-bb.')->group(function (): void {
         Route::get('/', [TargetMasukBBController::class, 'index'])->name('index');
@@ -551,6 +561,14 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::post('/download', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'download'])->name('download');
         Route::post('/preview-pdf', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [PerbandinganKbMasukPeriode1Dan2Controller::class, 'preview'])->name('preview');
+    });
+
+    /** Perbandingan KB masuk periode routes (Timbang KG). */
+    Route::prefix('perbandingan-kb-masuk-periode-1-dan-2-kg')->name('perbandingan-kb-masuk-periode-1-dan-2-kg.')->group(function (): void {
+        Route::get('/', [PerbandinganKbMasukPeriode1Dan2KgController::class, 'index'])->name('index');
+        Route::post('/download', [PerbandinganKbMasukPeriode1Dan2KgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PerbandinganKbMasukPeriode1Dan2KgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PerbandinganKbMasukPeriode1Dan2KgController::class, 'preview'])->name('preview');
     });
 
     /** KB khusus bangkang routes. */

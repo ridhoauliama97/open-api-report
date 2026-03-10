@@ -240,6 +240,17 @@ return [
             'NamaGrade,Berat'
         )))),
     ],
+    'rekap_penerimaan_st_dari_sawmill_kg' => [
+        'database_connection' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PROCEDURE', 'SP_LapRekapPenerimaanSTDariSawmill'),
+        'call_syntax' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,NamaGrade,InOut,Berat'
+        )))),
+    ],
     'rekap_pembelian_kayu_bulat_kg' => [
         'database_connection' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_PROCEDURE', 'SP_LapRekapPembelianKayuBulat'),
@@ -327,6 +338,17 @@ return [
         'parameter_count' => (int) env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_PARAMETER_COUNT', 4),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
+    'perbandingan_kb_masuk_periode_1_dan_2_kg' => [
+        'database_connection' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_PROCEDURE', 'sp_LapPerbandinganKBMasukPeriode1dan2KG'),
+        'call_syntax' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_QUERY'),
+        'parameter_count' => (int) env('PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_EXPECTED_COLUMNS',
             ''
         )))),
     ],

@@ -603,6 +603,7 @@
                                 Laporan Perbandingan KB Masuk Periode 1 & 2
                             </a>
                         </div>
+
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.kayu-bulat.kb-khusus-bangkang.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
@@ -687,6 +688,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Penerimaan ST Dari Sawmill - Timbang KG
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Time Line KB - Bulanan (Rambung)
@@ -696,6 +703,12 @@
                             <a href="{{ route('reports.kayu-bulat.timeline-kayu-bulat-harian-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Time Line KB - Harian (Rambung)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Perbanding KB Masuk Periode 1 & 2 - Timbang KG
                             </a>
                         </div>
                     </div>
