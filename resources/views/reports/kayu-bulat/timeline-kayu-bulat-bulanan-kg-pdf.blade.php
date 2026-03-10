@@ -41,8 +41,8 @@
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
+            margin-bottom: 6px;
             page-break-inside: auto;
             table-layout: fixed;
         }
@@ -122,6 +122,8 @@
         }
 
         .report-table {
+            border-collapse: separate;
+            border-spacing: 0;
             border: 1px solid #000;
         }
 
@@ -284,7 +286,7 @@
 
         $formatMonthLabel = static function (string $monthKey): string {
             try {
-                return \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M y');
+                return \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M-y');
             } catch (\Throwable $exception) {
                 return $monthKey;
             }
@@ -384,161 +386,103 @@
             $pivotRows,
             static fn(array $a, array $b): int => strcmp((string) $a['supplier'], (string) $b['supplier']),
         );
-        $pivotChunkSize = 45;
-        $rawChunkSize = 45;
-        $pivotRowChunks = array_chunk($pivotRows, $pivotChunkSize);
-        $rawRowChunks = array_chunk($rowsData, $rawChunkSize);
     @endphp
 
-    <h1 class="report-title">Laporan Time Line Kayu Bulat - Bulanan (JTG/PLI)</h1>
+    <h1 class="report-title">Laporan Time Line KB - Bulanan (Rambung) </h1>
     <p class="report-subtitle">
         Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
     </p>
 
     @if ($canPivot && $monthHeaders !== [])
-        @forelse ($pivotRowChunks as $chunkIndex => $pivotChunk)
-            <table class="report-table"
-                style="{{ $chunkIndex < count($pivotRowChunks) - 1 ? 'page-break-after: always;' : '' }}">
-                <colgroup>
-                    <col class="number-column">
-                    <col class="supplier-column">
+        <table class="report-table">
+            <colgroup>
+                <col class="number-column">
+                <col class="supplier-column">
+                @foreach ($monthHeaders as $monthKey)
+                    <col class="month-column">
+                @endforeach
+                <col class="total-column">
+            </colgroup>
+            <thead>
+                <tr class="headers-row">
+                    <th rowspan="2">No</th>
+                    <th rowspan="2" style="text-align: center;">Nama Supplier</th>
+                    <th colspan="{{ count($monthHeaders) }}">{{ $displayYear }}</th>
+                    <th rowspan="2">Total</th>
+                </tr>
+                <tr class="headers-row">
                     @foreach ($monthHeaders as $monthKey)
-                        <col class="month-column">
+                        <th>{{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
+                        </th>
                     @endforeach
-                    <col class="total-column">
-                </colgroup>
-                <thead>
-                    <tr class="headers-row">
-                        <th rowspan="2">No</th>
-                        <th rowspan="2" style="text-align: center;">Nama Supplier</th>
-                        <th colspan="{{ count($monthHeaders) }}">{{ $displayYear }}</th>
-                        <th rowspan="2">Total</th>
-                    </tr>
-                    <tr class="headers-row">
+                </tr>
+            </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($monthHeaders) + 3 }}"></td>
+                </tr>
+            </tfoot>
+            <tbody>
+                @forelse ($pivotRows as $row)
+                    @php $rowNumber = $loop->iteration; @endphp
+                    <tr class="data-row {{ $rowNumber % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $rowNumber }}</td>
+                        <td class="data-cell" style="text-align: left;">{{ $row['supplier'] }}</td>
                         @foreach ($monthHeaders as $monthKey)
-                            <th>{{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
-                            </th>
+                            <td class="number-right data-cell">{{ $formatNumber($row['months'][$monthKey] ?? null) }}
+                            </td>
                         @endforeach
+                        <td class="number-right data-cell" style="font-weight: bold">
+                            {{ $formatNumber($row['total'] ?? null) }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach ($pivotChunk as $row)
-                        @php $rowNumber = ($chunkIndex * $pivotChunkSize) + $loop->iteration; @endphp
-                        <tr class="data-row {{ $rowNumber % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            <td class="center data-cell">{{ $rowNumber }}</td>
-                            <td class="data-cell" style="text-align: left;">{{ $row['supplier'] }}</td>
-                            @foreach ($monthHeaders as $monthKey)
-                                <td class="number-right data-cell">
-                                    {{ $formatNumber($row['months'][$monthKey] ?? null) }}</td>
-                            @endforeach
-                            <td class="number-right data-cell" style="font-weight: bold">
-                                {{ $formatNumber($row['total'] ?? null) }}</td>
-                        </tr>
-                    @endforeach
-                    @if ($chunkIndex === count($pivotRowChunks) - 1 && $pivotRows !== [])
-                        <tr class="totals-row">
-                            <td colspan="2">Total :</td>
-                            @foreach ($monthHeaders as $monthKey)
-                                <td class="number-right">{{ $formatNumber($grandByMonth[$monthKey] ?? null) }}</td>
-                            @endforeach
-                            <td class="number-right">{{ $formatNumber($grandTotal) }}</td>
-                        </tr>
-                    @endif
-                </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($monthHeaders) + 4 }}"></td>
-                    </tr>
-                </tfoot>
-            </table>
-        @empty
-            <table class="report-table">
-                <colgroup>
-                    <col class="number-column">
-                    <col class="supplier-column">
-                    @foreach ($monthHeaders as $monthKey)
-                        <col class="month-column">
-                    @endforeach
-                    <col class="total-column">
-                </colgroup>
-                <thead>
-                    <tr class="headers-row">
-                        <th rowspan="2">No</th>
-                        <th rowspan="2" style="text-align: center;">Nama Supplier</th>
-                        <th colspan="{{ count($monthHeaders) }}">{{ $displayYear }}</th>
-                        <th rowspan="2">Total</th>
-                    </tr>
-                    <tr class="headers-row">
-                        @foreach ($monthHeaders as $monthKey)
-                            <th>{{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
-                            </th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
+                @empty
                     <tr class="data-row">
-                        <td colspan="{{ count($monthHeaders) + 4 }}" class="center data-cell">Tidak ada data.</td>
+                        <td colspan="{{ count($monthHeaders) + 3 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($monthHeaders) + 4 }}"></td>
+                @endforelse
+                @if ($pivotRows !== [])
+                    <tr class="totals-row">
+                        <td colspan="2">Total :</td>
+                        @foreach ($monthHeaders as $monthKey)
+                            <td class="number-right">{{ $formatNumber($grandByMonth[$monthKey] ?? null) }}</td>
+                        @endforeach
+                        <td class="number-right">{{ $formatNumber($grandTotal) }}</td>
                     </tr>
-                </tfoot>
-            </table>
-        @endforelse
+                @endif
+            </tbody>
+        </table>
     @else
-        @forelse ($rawRowChunks as $chunkIndex => $rowChunk)
-            <table class="report-table"
-                style="{{ $chunkIndex < count($rawRowChunks) - 1 ? 'page-break-after: always;' : '' }}">
-                <thead>
-                    <tr class="headers-row">
-                        <th style="width: 34px;">No</th>
-                        @foreach ($columns as $column)
-                            <th>{{ (string) $column }}</th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($rowChunk as $row)
-                        @php $rowNumber = ($chunkIndex * $rawChunkSize) + $loop->iteration; @endphp
-                        <tr class="data-row {{ $rowNumber % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            <td class="center data-cell">{{ $rowNumber }}</td>
-                            @foreach ($columns as $column)
-                                <td class="center data-cell">{{ (string) ($row[$column] ?? '') }}</td>
-                            @endforeach
-                        </tr>
+        <table class="report-table">
+            <thead>
+                <tr class="headers-row">
+                    <th style="width: 34px;">No</th>
+                    @foreach ($columns as $column)
+                        <th>{{ (string) $column }}</th>
                     @endforeach
-                </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($columns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
-            </table>
-        @empty
-            <table class="report-table">
-                <thead>
-                    <tr class="headers-row">
-                        <th style="width: 34px;">No</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($columns) + 1 }}"></td>
+                </tr>
+            </tfoot>
+            <tbody>
+                @forelse ($rowsData as $row)
+                    @php $rowNumber = $loop->iteration; @endphp
+                    <tr class="data-row {{ $rowNumber % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $rowNumber }}</td>
                         @foreach ($columns as $column)
-                            <th>{{ (string) $column }}</th>
+                            <td class="center data-cell">{{ (string) ($row[$column] ?? '') }}</td>
                         @endforeach
                     </tr>
-                </thead>
-                <tbody>
+                @empty
                     <tr class="data-row">
                         <td colspan="{{ count($columns) + 1 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($columns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
-            </table>
-        @endforelse
+                @endforelse
+            </tbody>
+        </table>
     @endif
 
     <htmlpagefooter name="reportFooter">

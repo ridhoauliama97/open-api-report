@@ -5,43 +5,28 @@ namespace App\Services\PPS;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class MutasiBarangJadiPpsReportService
+class MutasiCrusherReportService
 {
     /**
-     * Kolom standar dari output SP_PPSLapMutasiBarangJadi.
-     *
      * @var array<int, string>
      */
     private const EXPECTED_COLUMNS = [
-        'NamaBJ',
-        'Awal',
-        'Masuk',
-        'Keluar',
-        'Akhir',
-        'PackOutput',
-        'InjectOutput',
-        'BSUOutput',
-        'BSUInput',
-        'BJJual',
-        'BSortInput',
-        'ReturOutput',
+        'NamaCrusher',
+        'BeratAwal',
+        'BeratMasuk',
+        'BeratKeluar',
+        'BeratAkhir',
+        'BeratBSUInput',
+        'BeratBROKInput',
+        'BeratGILInput',
+        'BeratProdOutput',
+        'BeratBSUOutput',
     ];
 
     /**
-     * Kolom standar dari output SP_PPSLapSubMutasiBarangJadi.
-     *
      * @var array<int, string>
      */
     private const EXPECTED_SUB_COLUMNS = [
-        'Jenis',
-    ];
-
-    /**
-     * Kolom standar dari output SP_PPSLapWasteMutasiBarangJadi.
-     *
-     * @var array<int, string>
-     */
-    private const EXPECTED_WASTE_COLUMNS = [
         'Jenis',
         'Berat',
     ];
@@ -51,7 +36,7 @@ class MutasiBarangJadiPpsReportService
      */
     public function fetch(string $startDate, string $endDate): array
     {
-        $rows = $this->runProcedureQuery($startDate, $endDate, false);
+        $rows = $this->runProcedureQuery($startDate, $endDate, 'main');
 
         return $this->normalizeReportRows($this->normalizeRows($rows));
     }
@@ -67,21 +52,11 @@ class MutasiBarangJadiPpsReportService
     }
 
     /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function fetchWasteReport(string $startDate, string $endDate): array
-    {
-        $rows = $this->runProcedureQuery($startDate, $endDate, 'waste');
-
-        return $this->normalizeWasteReportRows($this->normalizeRows($rows));
-    }
-
-    /**
      * @return array<string, mixed>
      */
     public function healthCheck(string $startDate, string $endDate): array
     {
-        $rows = $this->normalizeRows($this->runProcedureQuery($startDate, $endDate, false));
+        $rows = $this->normalizeRows($this->runProcedureQuery($startDate, $endDate, 'main'));
         $detectedColumns = array_keys($rows[0] ?? []);
         $missingColumns = array_values(array_diff(self::EXPECTED_COLUMNS, $detectedColumns));
         $extraColumns = array_values(array_diff($detectedColumns, self::EXPECTED_COLUMNS));
@@ -102,10 +77,7 @@ class MutasiBarangJadiPpsReportService
      */
     private function normalizeRows(array $rows): array
     {
-        // Ubah setiap baris object dari database menjadi array asosiatif.
-        return array_map(function ($row) {
-            return (array) $row;
-        }, $rows);
+        return array_map(static fn($row): array => (array) $row, $rows);
     }
 
     /**
@@ -122,27 +94,23 @@ class MutasiBarangJadiPpsReportService
      */
     private function runProcedureQuery(string $startDate, string $endDate, string $procedureType = 'main'): array
     {
-        $connectionName = config('reports.pps_mutasi_barang_jadi.database_connection');
-        $procedureConfig = match ($procedureType) {
-            'sub' => 'reports.pps_mutasi_barang_jadi.sub_stored_procedure',
-            'waste' => 'reports.pps_mutasi_barang_jadi.waste_stored_procedure',
-            default => 'reports.pps_mutasi_barang_jadi.stored_procedure',
-        };
-        $queryConfig = match ($procedureType) {
-            'sub' => 'reports.pps_mutasi_barang_jadi.sub_query',
-            'waste' => 'reports.pps_mutasi_barang_jadi.waste_query',
-            default => 'reports.pps_mutasi_barang_jadi.query',
-        };
+        $connectionName = config('reports.pps_mutasi_crusher.database_connection');
+        $procedureConfig = $procedureType === 'sub'
+            ? 'reports.pps_mutasi_crusher.sub_stored_procedure'
+            : 'reports.pps_mutasi_crusher.stored_procedure';
+        $queryConfig = $procedureType === 'sub'
+            ? 'reports.pps_mutasi_crusher.sub_query'
+            : 'reports.pps_mutasi_crusher.query';
         $procedure = (string) config($procedureConfig);
-        $syntax = (string) config('reports.pps_mutasi_barang_jadi.call_syntax', 'exec');
+        $syntax = (string) config('reports.pps_mutasi_crusher.call_syntax', 'exec');
         $customQuery = config($queryConfig);
 
         if ($procedure === '' && !is_string($customQuery)) {
-            throw new RuntimeException(match ($procedureType) {
-                'sub' => 'Stored procedure sub laporan PPS mutasi barang jadi belum dikonfigurasi.',
-                'waste' => 'Stored procedure waste laporan PPS mutasi barang jadi belum dikonfigurasi.',
-                default => 'Stored procedure laporan PPS mutasi barang jadi belum dikonfigurasi.',
-            });
+            throw new RuntimeException(
+                $procedureType === 'sub'
+                    ? 'Stored procedure sub laporan PPS mutasi crusher belum dikonfigurasi.'
+                    : 'Stored procedure laporan PPS mutasi crusher belum dikonfigurasi.'
+            );
         }
 
         $connection = DB::connection($connectionName ?: null);
@@ -151,8 +119,8 @@ class MutasiBarangJadiPpsReportService
 
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
-                'Laporan PPS mutasi barang jadi dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                'Laporan PPS mutasi crusher dikonfigurasi untuk SQL Server. '
+                . 'Set PPS_MUTASI_CRUSHER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -160,8 +128,8 @@ class MutasiBarangJadiPpsReportService
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
                 : throw new RuntimeException(
-                    'PPS_MUTASI_BARANG_JADI_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
+                    'PPS_MUTASI_CRUSHER_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan PPS_MUTASI_CRUSHER_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
@@ -200,25 +168,19 @@ class MutasiBarangJadiPpsReportService
 
         if (!empty($missingColumns)) {
             throw new RuntimeException(
-                'Output SP_PPSLapMutasiBarangJadi tidak sesuai. Kolom tidak ditemukan: '
+                'Output SP_PPSLapMutasiCrusher tidak sesuai. Kolom tidak ditemukan: '
                 . implode(', ', $missingColumns),
             );
         }
 
-        $normalized = [];
-
-        foreach ($rows as $row) {
+        return array_map(static function (array $row): array {
             $entry = [];
-
             foreach (self::EXPECTED_COLUMNS as $column) {
-                // Pertahankan nilai asli dari SP (termasuk NULL) agar output identik.
                 $entry[$column] = $row[$column] ?? null;
             }
 
-            $normalized[] = $entry;
-        }
-
-        return $normalized;
+            return $entry;
+        }, $rows);
     }
 
     /**
@@ -231,28 +193,15 @@ class MutasiBarangJadiPpsReportService
             return [];
         }
 
-        return $rows;
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $rows
-     * @return array<int, array<string, mixed>>
-     */
-    private function normalizeWasteReportRows(array $rows): array
-    {
-        if (empty($rows)) {
-            return [];
-        }
-
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
-            self::EXPECTED_WASTE_COLUMNS,
+            self::EXPECTED_SUB_COLUMNS,
             static fn(string $column): bool => !array_key_exists($column, $sample),
         ));
 
         if (!empty($missingColumns)) {
             throw new RuntimeException(
-                'Output SP_PPSLapWasteMutasiBarangJadi tidak sesuai. Kolom tidak ditemukan: '
+                'Output SP_PPSLapSubMutasiCrusher tidak sesuai. Kolom tidak ditemukan: '
                 . implode(', ', $missingColumns),
             );
         }
@@ -265,4 +214,3 @@ class MutasiBarangJadiPpsReportService
         }, $rows);
     }
 }
-

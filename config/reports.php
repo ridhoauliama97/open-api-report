@@ -213,6 +213,65 @@ return [
         'query' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'penerimaan_kayu_bulat_per_supplier_kg' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_PROCEDURE', 'SP_LapPenerimaanKBPerSupplier'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_QUERY'),
+        'parameter_count' => (int) env('PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_EXPECTED_COLUMNS',
+            'No Kayu Bulat,Tanggal,Nama Supplier,Jenis,No Truk,Berat'
+        )))),
+    ],
+    'saldo_hidup_kayu_bulat_kg' => [
+        'database_connection' => env('SALDO_HIDUP_KAYU_BULAT_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SALDO_HIDUP_KAYU_BULAT_KG_REPORT_PROCEDURE', 'SP_LapSaldoHidupKayuBulatKG'),
+        'sub_stored_procedure' => env('SALDO_HIDUP_KAYU_BULAT_KG_SUB_REPORT_PROCEDURE', 'SP_LapSaldoHidupKayuBulatKGSub'),
+        'call_syntax' => env('SALDO_HIDUP_KAYU_BULAT_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SALDO_HIDUP_KAYU_BULAT_KG_REPORT_QUERY'),
+        'sub_query' => env('SALDO_HIDUP_KAYU_BULAT_KG_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SALDO_HIDUP_KAYU_BULAT_KG_REPORT_EXPECTED_COLUMNS',
+            'NoKayuBulat,DateCreate,JenisKayu,NoTruk,Suket,NmSupplier,Bruto,Tara,NamaGrade,Berat'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SALDO_HIDUP_KAYU_BULAT_KG_SUB_REPORT_EXPECTED_COLUMNS',
+            'NamaGrade,Berat'
+        )))),
+    ],
+    'rekap_pembelian_kayu_bulat_kg' => [
+        'database_connection' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_PROCEDURE', 'SP_LapRekapPembelianKayuBulat'),
+        'call_syntax' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_EXPECTED_COLUMNS',
+            'Tahun,Bulan,Ton'
+        )))),
+    ],
+    'timeline_kayu_bulat_bulanan_kg' => [
+        'database_connection' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_PROCEDURE', 'SP_LapTimelineKBBulananKG'),
+        'call_syntax' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_QUERY'),
+        'parameter_count' => (int) env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_EXPECTED_COLUMNS',
+            'Tahun,Bulan,NmSupplier,TonBerat,Ranking'
+        )))),
+    ],
+    'timeline_kayu_bulat_harian_kg' => [
+        'database_connection' => env('TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_PROCEDURE', 'SP_LapTimelineKBHarianKG'),
+        'call_syntax' => env('TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_QUERY'),
+        'parameter_count' => (int) env('TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,NmSupplier,TonBerat,Ranking'
+        )))),
+    ],
     'stock_opname_kayu_bulat' => [
         'database_connection' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('STOCK_OPNAME_KAYU_BULAT_REPORT_PROCEDURE', 'sp_LapStockOpnameKB'),
@@ -704,9 +763,11 @@ return [
         'database_connection' => env('PPS_MUTASI_BARANG_JADI_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_MUTASI_BARANG_JADI_REPORT_PROCEDURE', 'SP_PPSLapMutasiBarangJadi'),
         'sub_stored_procedure' => env('PPS_MUTASI_BARANG_JADI_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiBarangJadi'),
+        'waste_stored_procedure' => env('PPS_MUTASI_BARANG_JADI_WASTE_REPORT_PROCEDURE', 'SP_PPSLapWasteMutasiBarangJadi'),
         'call_syntax' => env('PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('PPS_MUTASI_BARANG_JADI_REPORT_QUERY'),
         'sub_query' => env('PPS_MUTASI_BARANG_JADI_SUB_REPORT_QUERY'),
+        'waste_query' => env('PPS_MUTASI_BARANG_JADI_WASTE_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_MUTASI_BARANG_JADI_REPORT_EXPECTED_COLUMNS',
             'NamaBJ,Awal,Masuk,Keluar,Akhir,PackOutput,InjectOutput,BSUOutput,BSUInput,BJJual,BSortInput,ReturOutput'
@@ -714,6 +775,118 @@ return [
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_MUTASI_BARANG_JADI_SUB_REPORT_EXPECTED_COLUMNS',
             ''
+        )))),
+        'expected_waste_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BARANG_JADI_WASTE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Berat'
+        )))),
+    ],
+    'pps_mutasi_broker' => [
+        'database_connection' => env('PPS_MUTASI_BROKER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_BROKER_REPORT_PROCEDURE', 'SP_PPSLapMutasiBroker'),
+        'sub_stored_procedure' => env('PPS_MUTASI_BROKER_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiBroker'),
+        'waste_stored_procedure' => env('PPS_MUTASI_BROKER_WASTE_REPORT_PROCEDURE', 'SP_PPSLapWasteMutasiBroker'),
+        'call_syntax' => env('PPS_MUTASI_BROKER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_BROKER_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_BROKER_SUB_REPORT_QUERY'),
+        'waste_query' => env('PPS_MUTASI_BROKER_WASTE_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BROKER_REPORT_EXPECTED_COLUMNS',
+            'Jenis,BeratAwal,BeratMasuk,BeratKeluar,BeratAkhir,OutputBSU,OutputBroker,InputBSU,InputBroker,InputInject,InputMixer'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BROKER_SUB_REPORT_EXPECTED_COLUMNS',
+            'DimType,Jenis,InputBroker,InputBahanBaku,InputCrusher,InputGilingan,InputMixer,InputWashing,InputReject,OutputWaste'
+        )))),
+        'expected_waste_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BROKER_WASTE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,OutputWaste'
+        )))),
+    ],
+    'pps_mutasi_bonggolan' => [
+        'database_connection' => env('PPS_MUTASI_BONGGOLAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_BONGGOLAN_REPORT_PROCEDURE', 'SP_PPSLapMutasiBonggolan'),
+        'sub_stored_procedure' => env('PPS_MUTASI_BONGGOLAN_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiBonggolan'),
+        'call_syntax' => env('PPS_MUTASI_BONGGOLAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_BONGGOLAN_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_BONGGOLAN_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BONGGOLAN_REPORT_EXPECTED_COLUMNS',
+            'NamaBonggolan,BeratAwal,BeratMasuk,BeratKeluar,BeratAkhir,BeratADJKeluar,BeratBSUKeluar,BeratCRUSKeluar,BeratBROKMasuk,BeratINJCMasuk,BeratADJMasuk,BeratBSUMasuk,BeratGILKeluar,KeluarNot,MasukNot'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_BONGGOLAN_SUB_REPORT_EXPECTED_COLUMNS',
+            'NamaBonggolan,Berat'
+        )))),
+    ],
+    'pps_mutasi_crusher' => [
+        'database_connection' => env('PPS_MUTASI_CRUSHER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_CRUSHER_REPORT_PROCEDURE', 'SP_PPSLapMutasiCrusher'),
+        'sub_stored_procedure' => env('PPS_MUTASI_CRUSHER_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiCrusher'),
+        'call_syntax' => env('PPS_MUTASI_CRUSHER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_CRUSHER_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_CRUSHER_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_CRUSHER_REPORT_EXPECTED_COLUMNS',
+            'NamaCrusher,BeratAwal,BeratMasuk,BeratKeluar,BeratAkhir,BeratBSUInput,BeratBROKInput,BeratGILInput,BeratProdOutput,BeratBSUOutput'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_CRUSHER_SUB_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Berat'
+        )))),
+    ],
+    'pps_mutasi_gilingan' => [
+        'database_connection' => env('PPS_MUTASI_GILINGAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_GILINGAN_REPORT_PROCEDURE', 'SP_PPSLapMutasiGilingan'),
+        'sub_stored_procedure' => env('PPS_MUTASI_GILINGAN_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiGilingan'),
+        'call_syntax' => env('PPS_MUTASI_GILINGAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_GILINGAN_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_GILINGAN_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_GILINGAN_REPORT_EXPECTED_COLUMNS',
+            'NamaGilingan,Awal,BeratMasuk,BeratKeluar,Akhir,BeratProdOutput,BeratBSUOutput,BrokInput,InjectInput,MixInput,BeratBSUInput,WashInput'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_GILINGAN_SUB_REPORT_EXPECTED_COLUMNS',
+            'Jenis,BeratBong,BeratCrsh,BeratRejc'
+        )))),
+    ],
+    'pps_mutasi_mixer' => [
+        'database_connection' => env('PPS_MUTASI_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_MIXER_REPORT_PROCEDURE', 'SP_PPSLapMutasiMixer'),
+        'sub_stored_procedure' => env('PPS_MUTASI_MIXER_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiMixer'),
+        'call_syntax' => env('PPS_MUTASI_MIXER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_MIXER_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_MIXER_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_MIXER_REPORT_EXPECTED_COLUMNS',
+            'Jenis,BeratAwal,BeratMasuk,MixProdOutput,MixInjectOutput,MixBSUOutput,BeratKeluar,BeratAkhir,InjectInput,BrokInput,MixerInput,BSUInput'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_MIXER_SUB_REPORT_EXPECTED_COLUMNS',
+            'Jenis,MixInputBroker,MixInputMix,MixInputGil,MixInputBB'
+        )))),
+    ],
+    'pps_mutasi_furniture_wip' => [
+        'database_connection' => env('PPS_MUTASI_FURNITURE_WIP_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_FURNITURE_WIP_REPORT_PROCEDURE', 'SP_PPSLapMutasiFurnitureWIP'),
+        'sub_stored_procedure' => env('PPS_MUTASI_FURNITURE_WIP_SUB_REPORT_PROCEDURE', 'SP_PPSLapSubMutasiFurnitureWIP'),
+        'waste_stored_procedure' => env('PPS_MUTASI_FURNITURE_WIP_WASTE_REPORT_PROCEDURE', 'SP_PPSLapWasteMutasiFurnitureWIP'),
+        'call_syntax' => env('PPS_MUTASI_FURNITURE_WIP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_FURNITURE_WIP_REPORT_QUERY'),
+        'sub_query' => env('PPS_MUTASI_FURNITURE_WIP_SUB_REPORT_QUERY'),
+        'waste_query' => env('PPS_MUTASI_FURNITURE_WIP_WASTE_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_FURNITURE_WIP_REPORT_EXPECTED_COLUMNS',
+            'Nama,Awal,Masuk,Keluar,Akhir,OutputInjc,OutHStamp,OutputPKunci,OutputSpan,InputBJSort,InputHStamp,InputPack,InputPKunci,InputSpaner,InputBSU'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_FURNITURE_WIP_SUB_REPORT_EXPECTED_COLUMNS',
+            'DimType,Jenis,BeratInjctBroker,BeratInjctMixer,BeratInjcGili,PcsInjcFWIP,PcsHStamFWIP,PcsPKunciFWIP,PcsSpanFWIP,PcsHStampMaterial,PcsPkncMaterial,PcsSPNMaterial,PcsINJCMaterial'
+        )))),
+        'expected_waste_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_FURNITURE_WIP_WASTE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Berat'
         )))),
     ],
 

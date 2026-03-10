@@ -3,29 +3,29 @@
 namespace App\Http\Controllers\PPS;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PPS\GenerateMutasiBarangJadiPpsReportRequest;
+use App\Http\Requests\PPS\GenerateMutasiBrokerReportRequest;
 use App\Services\PdfGenerator;
-use App\Services\PPS\MutasiBarangJadiPpsReportService;
+use App\Services\PPS\MutasiBrokerReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
-class MutasiBarangJadiPpsController extends Controller
+class MutasiBrokerController extends Controller
 {
     /**
      * Display the default page for this resource.
      */
     public function index(): View
     {
-        return view('pps.barang_jadi.mutasi_barang_jadi.form');
+        return view('pps.broker.mutasi_broker.form');
     }
 
     /**
      * Execute download logic.
      */
     public function download(
-        GenerateMutasiBarangJadiPpsReportRequest $request,
-        MutasiBarangJadiPpsReportService $mutasiBarangJadiReportService,
+        GenerateMutasiBrokerReportRequest $request,
+        MutasiBrokerReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -45,9 +45,9 @@ class MutasiBarangJadiPpsController extends Controller
         [$startDate, $endDate] = $this->extractDates($request);
 
         try {
-            $rows = $this->fetchRows($mutasiBarangJadiReportService, $startDate, $endDate);
-            $subRows = $this->fetchSubRows($mutasiBarangJadiReportService, $startDate, $endDate);
-            $wasteRows = $this->fetchWasteRows($mutasiBarangJadiReportService, $startDate, $endDate);
+            $rows = $this->fetchRows($reportService, $startDate, $endDate);
+            $subRows = $this->fetchSubRows($reportService, $startDate, $endDate);
+            $wasteRows = $this->fetchWasteRows($reportService, $startDate, $endDate);
         } catch (RuntimeException $exception) {
             if ($request->expectsJson()) {
                 return response()->json([
@@ -60,7 +60,7 @@ class MutasiBarangJadiPpsController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('pps.barang_jadi.mutasi_barang_jadi.pdf', [
+        $pdf = $pdfGenerator->render('pps.broker.mutasi_broker.pdf', [
             'rows' => $rows,
             'subRows' => $subRows,
             'wasteRows' => $wasteRows,
@@ -71,7 +71,7 @@ class MutasiBarangJadiPpsController extends Controller
             'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan-Mutasi-Barang-Jadi-PPS-%s-sd-%s.pdf', $startDate, $endDate);
+        $filename = sprintf('Laporan-Mutasi-Broker-PPS-%s-sd-%s.pdf', $startDate, $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -83,15 +83,15 @@ class MutasiBarangJadiPpsController extends Controller
      * Execute preview logic.
      */
     public function preview(
-        GenerateMutasiBarangJadiPpsReportRequest $request,
-        MutasiBarangJadiPpsReportService $mutasiBarangJadiReportService,
+        GenerateMutasiBrokerReportRequest $request,
+        MutasiBrokerReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $this->extractDates($request);
 
         try {
-            $rows = $this->fetchRows($mutasiBarangJadiReportService, $startDate, $endDate);
-            $subRows = $this->fetchSubRows($mutasiBarangJadiReportService, $startDate, $endDate);
-            $wasteRows = $this->fetchWasteRows($mutasiBarangJadiReportService, $startDate, $endDate);
+            $rows = $this->fetchRows($reportService, $startDate, $endDate);
+            $subRows = $this->fetchSubRows($reportService, $startDate, $endDate);
+            $wasteRows = $this->fetchWasteRows($reportService, $startDate, $endDate);
         } catch (RuntimeException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
@@ -109,18 +109,17 @@ class MutasiBarangJadiPpsController extends Controller
                 'total_sub_rows' => count($subRows),
                 'total_waste_rows' => count($wasteRows),
                 'column_order' => [
-                    'NamaBJ',
-                    'Awal',
-                    'PackOutput',
-                    'InjectOutput',
-                    'BSUOutput',
-                    'ReturOutput',
-                    'Masuk',
-                    'BSUInput',
-                    'BSortInput',
-                    'BJJual',
-                    'Keluar',
-                    'Akhir',
+                    'Jenis',
+                    'BeratAwal',
+                    'OutputBSU',
+                    'OutputBroker',
+                    'BeratMasuk',
+                    'InputBSU',
+                    'InputBroker',
+                    'InputInject',
+                    'InputMixer',
+                    'BeratKeluar',
+                    'BeratAkhir',
                 ],
             ],
             'data' => $rows,
@@ -133,13 +132,13 @@ class MutasiBarangJadiPpsController extends Controller
      * Execute health logic.
      */
     public function health(
-        GenerateMutasiBarangJadiPpsReportRequest $request,
-        MutasiBarangJadiPpsReportService $mutasiBarangJadiReportService,
+        GenerateMutasiBrokerReportRequest $request,
+        MutasiBrokerReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $this->extractDates($request);
 
         try {
-            $result = $mutasiBarangJadiReportService->healthCheck($startDate, $endDate);
+            $result = $reportService->healthCheck($startDate, $endDate);
         } catch (RuntimeException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
@@ -148,8 +147,8 @@ class MutasiBarangJadiPpsController extends Controller
 
         return response()->json([
             'message' => $result['is_healthy']
-                ? 'Struktur output SP_PPSLapMutasiBarangJadi valid.'
-                : 'Struktur output SP_PPSLapMutasiBarangJadi berubah.',
+                ? 'Struktur output SP_PPSLapMutasiBroker valid.'
+                : 'Struktur output SP_PPSLapMutasiBroker berubah.',
             'meta' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -163,7 +162,7 @@ class MutasiBarangJadiPpsController extends Controller
     /**
      * @return array{0: string, 1: string}
      */
-    private function extractDates(GenerateMutasiBarangJadiPpsReportRequest $request): array
+    private function extractDates(GenerateMutasiBrokerReportRequest $request): array
     {
         $startDate = $request->input('start_date', $request->input('TglAwal'));
         $endDate = $request->input('end_date', $request->input('TglAkhir'));
@@ -177,24 +176,24 @@ class MutasiBarangJadiPpsController extends Controller
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function fetchRows(MutasiBarangJadiPpsReportService $mutasiBarangJadiReportService, string $startDate, string $endDate): array
+    private function fetchRows(MutasiBrokerReportService $reportService, string $startDate, string $endDate): array
     {
-        return $mutasiBarangJadiReportService->fetch($startDate, $endDate);
+        return $reportService->fetch($startDate, $endDate);
     }
 
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function fetchSubRows(MutasiBarangJadiPpsReportService $mutasiBarangJadiReportService, string $startDate, string $endDate): array
+    private function fetchSubRows(MutasiBrokerReportService $reportService, string $startDate, string $endDate): array
     {
-        return $mutasiBarangJadiReportService->fetchSubReport($startDate, $endDate);
+        return $reportService->fetchSubReport($startDate, $endDate);
     }
 
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function fetchWasteRows(MutasiBarangJadiPpsReportService $mutasiBarangJadiReportService, string $startDate, string $endDate): array
+    private function fetchWasteRows(MutasiBrokerReportService $reportService, string $startDate, string $endDate): array
     {
-        return $mutasiBarangJadiReportService->fetchWasteReport($startDate, $endDate);
+        return $reportService->fetchWasteReport($startDate, $endDate);
     }
 }

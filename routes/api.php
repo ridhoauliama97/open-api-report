@@ -33,18 +33,23 @@ use App\Http\Controllers\MutasiHasilRacipController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
+use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
+use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
+use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockSTKeringController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
+use App\Http\Controllers\TimelineKayuBulatHarianKgController;
+use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
@@ -53,6 +58,7 @@ use App\Http\Controllers\PPS\RekapProduksiInjectController;
 use App\Http\Controllers\PPS\RekapProduksiBrokerController;
 use App\Http\Controllers\PPS\RekapProduksiCrusherController;
 use App\Http\Controllers\PPS\RekapProduksiGilinganController;
+use App\Http\Controllers\PPS\MutasiGilinganController;
 use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
 use App\Http\Controllers\PPS\RekapProduksiMixerController;
 use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
@@ -60,6 +66,11 @@ use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
+use App\Http\Controllers\PPS\MutasiBonggolanController;
+use App\Http\Controllers\PPS\MutasiCrusherController;
+use App\Http\Controllers\PPS\MutasiBrokerController;
+use App\Http\Controllers\PPS\MutasiFurnitureWipController;
+use App\Http\Controllers\PPS\MutasiMixerController;
 use App\Http\Controllers\PPS\MutasiBarangJadiPpsController;
 use App\Http\Controllers\PPS\SemuaLabelController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
@@ -129,6 +140,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/penerimaan-bulanan-per-supplier', 'api.reports.kayu-bulat.penerimaan-bulanan-per-supplier', PenerimaanKayuBulatBulananPerSupplierController::class],
         ['/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik', 'api.reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik', PenerimaanKayuBulatPerSupplierBulananGrafikController::class],
         ['/reports/kayu-bulat/penerimaan-per-supplier-group', 'api.reports.kayu-bulat.penerimaan-per-supplier-group', PenerimaanKayuBulatPerSupplierGroupController::class],
+        ['/reports/kayu-bulat/penerimaan-per-supplier-kg', 'api.reports.kayu-bulat.penerimaan-per-supplier-kg', PenerimaanKayuBulatPerSupplierKgController::class],
+        ['/reports/kayu-bulat/saldo-hidup-kg', 'api.reports.kayu-bulat.saldo-hidup-kg', SaldoHidupKayuBulatKgController::class],
+        ['/reports/kayu-bulat/rekap-pembelian-kg', 'api.reports.kayu-bulat.rekap-pembelian-kg', RekapPembelianKayuBulatKgController::class],
         ['/reports/kayu-bulat/stock-opname', 'api.reports.kayu-bulat.stock-opname', StockOpnameKayuBulatController::class],
         ['/reports/kayu-bulat/hidup-per-group', 'api.reports.kayu-bulat.hidup-per-group', HidupKBPerGroupController::class],
         ['/reports/kayu-bulat/hidup', 'api.reports.kayu-bulat.hidup', KayuBulatHidupController::class],
@@ -137,6 +151,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/balok-sudah-semprot', 'api.reports.kayu-bulat.balok-sudah-semprot', BalokSudahSemprotController::class],
         ['/reports/kayu-bulat/timeline-kayu-bulat-harian', 'api.reports.kayu-bulat.timeline-kayu-bulat-harian', TimelineKayuBulatHarianController::class],
         ['/reports/kayu-bulat/timeline-kayu-bulat-bulanan', 'api.reports.kayu-bulat.timeline-kayu-bulat-bulanan', TimelineKayuBulatBulananController::class],
+        ['/reports/kayu-bulat/timeline-kayu-bulat-harian-kg', 'api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg', TimelineKayuBulatHarianKgController::class],
+        ['/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg', 'api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg', TimelineKayuBulatBulananKgController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-non-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-non-rambung', UmurKayuBulatNonRambungController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-rambung', UmurKayuBulatRambungController::class],
         ['/reports/kayu-bulat/supplier-intel', 'api.reports.kayu-bulat.supplier-intel', SupplierIntelController::class],
@@ -181,6 +197,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/semua-label', 'api.reports.pps.semua-label', SemuaLabelController::class],
         ['/reports/pps/bahan-baku/mutasi-bahan-baku', 'api.reports.pps.bahan-baku.mutasi-bahan-baku', MutasiBahanBakuController::class],
         ['/reports/pps/barang-jadi/mutasi-barang-jadi', 'api.reports.pps.barang-jadi.mutasi-barang-jadi', MutasiBarangJadiPpsController::class],
+        ['/reports/pps/broker/mutasi-broker', 'api.reports.pps.broker.mutasi-broker', MutasiBrokerController::class],
+        ['/reports/pps/bonggolan/mutasi-bonggolan', 'api.reports.pps.bonggolan.mutasi-bonggolan', MutasiBonggolanController::class],
+        ['/reports/pps/crusher/mutasi-crusher', 'api.reports.pps.crusher.mutasi-crusher', MutasiCrusherController::class],
+        ['/reports/pps/gilingan/mutasi-gilingan', 'api.reports.pps.gilingan.mutasi-gilingan', MutasiGilinganController::class],
+        ['/reports/pps/mixer/mutasi-mixer', 'api.reports.pps.mixer.mutasi-mixer', MutasiMixerController::class],
+        ['/reports/pps/furniture-wip/mutasi-furniture-wip', 'api.reports.pps.furniture-wip.mutasi-furniture-wip', MutasiFurnitureWipController::class],
         ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
         ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],
         ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],

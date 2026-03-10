@@ -5,45 +5,48 @@ namespace App\Services\PPS;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class MutasiBarangJadiPpsReportService
+class MutasiBrokerReportService
 {
     /**
-     * Kolom standar dari output SP_PPSLapMutasiBarangJadi.
-     *
      * @var array<int, string>
+     *
      */
     private const EXPECTED_COLUMNS = [
-        'NamaBJ',
-        'Awal',
-        'Masuk',
-        'Keluar',
-        'Akhir',
-        'PackOutput',
-        'InjectOutput',
-        'BSUOutput',
-        'BSUInput',
-        'BJJual',
-        'BSortInput',
-        'ReturOutput',
+        'Jenis',
+        'BeratAwal',
+        'BeratMasuk',
+        'BeratKeluar',
+        'BeratAkhir',
+        'OutputBSU',
+        'OutputBroker',
+        'InputBSU',
+        'InputBroker',
+        'InputInject',
+        'InputMixer',
     ];
 
     /**
-     * Kolom standar dari output SP_PPSLapSubMutasiBarangJadi.
-     *
      * @var array<int, string>
      */
     private const EXPECTED_SUB_COLUMNS = [
+        'DimType',
         'Jenis',
+        'InputBroker',
+        'InputBahanBaku',
+        'InputCrusher',
+        'InputGilingan',
+        'InputMixer',
+        'InputWashing',
+        'InputReject',
+        'OutputWaste',
     ];
 
     /**
-     * Kolom standar dari output SP_PPSLapWasteMutasiBarangJadi.
-     *
      * @var array<int, string>
      */
     private const EXPECTED_WASTE_COLUMNS = [
         'Jenis',
-        'Berat',
+        'OutputWaste',
     ];
 
     /**
@@ -51,7 +54,7 @@ class MutasiBarangJadiPpsReportService
      */
     public function fetch(string $startDate, string $endDate): array
     {
-        $rows = $this->runProcedureQuery($startDate, $endDate, false);
+        $rows = $this->runProcedureQuery($startDate, $endDate, 'main');
 
         return $this->normalizeReportRows($this->normalizeRows($rows));
     }
@@ -81,7 +84,7 @@ class MutasiBarangJadiPpsReportService
      */
     public function healthCheck(string $startDate, string $endDate): array
     {
-        $rows = $this->normalizeRows($this->runProcedureQuery($startDate, $endDate, false));
+        $rows = $this->normalizeRows($this->runProcedureQuery($startDate, $endDate, 'main'));
         $detectedColumns = array_keys($rows[0] ?? []);
         $missingColumns = array_values(array_diff(self::EXPECTED_COLUMNS, $detectedColumns));
         $extraColumns = array_values(array_diff($detectedColumns, self::EXPECTED_COLUMNS));
@@ -122,26 +125,26 @@ class MutasiBarangJadiPpsReportService
      */
     private function runProcedureQuery(string $startDate, string $endDate, string $procedureType = 'main'): array
     {
-        $connectionName = config('reports.pps_mutasi_barang_jadi.database_connection');
+        $connectionName = config('reports.pps_mutasi_broker.database_connection');
         $procedureConfig = match ($procedureType) {
-            'sub' => 'reports.pps_mutasi_barang_jadi.sub_stored_procedure',
-            'waste' => 'reports.pps_mutasi_barang_jadi.waste_stored_procedure',
-            default => 'reports.pps_mutasi_barang_jadi.stored_procedure',
+            'sub' => 'reports.pps_mutasi_broker.sub_stored_procedure',
+            'waste' => 'reports.pps_mutasi_broker.waste_stored_procedure',
+            default => 'reports.pps_mutasi_broker.stored_procedure',
         };
         $queryConfig = match ($procedureType) {
-            'sub' => 'reports.pps_mutasi_barang_jadi.sub_query',
-            'waste' => 'reports.pps_mutasi_barang_jadi.waste_query',
-            default => 'reports.pps_mutasi_barang_jadi.query',
+            'sub' => 'reports.pps_mutasi_broker.sub_query',
+            'waste' => 'reports.pps_mutasi_broker.waste_query',
+            default => 'reports.pps_mutasi_broker.query',
         };
         $procedure = (string) config($procedureConfig);
-        $syntax = (string) config('reports.pps_mutasi_barang_jadi.call_syntax', 'exec');
+        $syntax = (string) config('reports.pps_mutasi_broker.call_syntax', 'exec');
         $customQuery = config($queryConfig);
 
         if ($procedure === '' && !is_string($customQuery)) {
             throw new RuntimeException(match ($procedureType) {
-                'sub' => 'Stored procedure sub laporan PPS mutasi barang jadi belum dikonfigurasi.',
-                'waste' => 'Stored procedure waste laporan PPS mutasi barang jadi belum dikonfigurasi.',
-                default => 'Stored procedure laporan PPS mutasi barang jadi belum dikonfigurasi.',
+                'sub' => 'Stored procedure sub laporan PPS mutasi broker belum dikonfigurasi.',
+                'waste' => 'Stored procedure waste laporan PPS mutasi broker belum dikonfigurasi.',
+                default => 'Stored procedure laporan PPS mutasi broker belum dikonfigurasi.',
             });
         }
 
@@ -151,8 +154,8 @@ class MutasiBarangJadiPpsReportService
 
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
-                'Laporan PPS mutasi barang jadi dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                'Laporan PPS mutasi broker dikonfigurasi untuk SQL Server. '
+                . 'Set PPS_MUTASI_BROKER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -160,8 +163,8 @@ class MutasiBarangJadiPpsReportService
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
                 : throw new RuntimeException(
-                    'PPS_MUTASI_BARANG_JADI_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
+                    'PPS_MUTASI_BROKER_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan PPS_MUTASI_BROKER_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
@@ -200,7 +203,7 @@ class MutasiBarangJadiPpsReportService
 
         if (!empty($missingColumns)) {
             throw new RuntimeException(
-                'Output SP_PPSLapMutasiBarangJadi tidak sesuai. Kolom tidak ditemukan: '
+                'Output SP_PPSLapMutasiBroker tidak sesuai. Kolom tidak ditemukan: '
                 . implode(', ', $missingColumns),
             );
         }
@@ -211,7 +214,6 @@ class MutasiBarangJadiPpsReportService
             $entry = [];
 
             foreach (self::EXPECTED_COLUMNS as $column) {
-                // Pertahankan nilai asli dari SP (termasuk NULL) agar output identik.
                 $entry[$column] = $row[$column] ?? null;
             }
 
@@ -231,7 +233,27 @@ class MutasiBarangJadiPpsReportService
             return [];
         }
 
-        return $rows;
+        $sample = $rows[0];
+        $missingColumns = array_values(array_filter(
+            self::EXPECTED_SUB_COLUMNS,
+            static fn(string $column): bool => !array_key_exists($column, $sample),
+        ));
+
+        if (!empty($missingColumns)) {
+            throw new RuntimeException(
+                'Output SP_PPSLapSubMutasiBroker tidak sesuai. Kolom tidak ditemukan: '
+                . implode(', ', $missingColumns),
+            );
+        }
+
+        return array_map(static function (array $row): array {
+            $entry = [];
+            foreach (self::EXPECTED_SUB_COLUMNS as $column) {
+                $entry[$column] = $row[$column] ?? null;
+            }
+
+            return $entry;
+        }, $rows);
     }
 
     /**
@@ -252,7 +274,7 @@ class MutasiBarangJadiPpsReportService
 
         if (!empty($missingColumns)) {
             throw new RuntimeException(
-                'Output SP_PPSLapWasteMutasiBarangJadi tidak sesuai. Kolom tidak ditemukan: '
+                'Output SP_PPSLapWasteMutasiBroker tidak sesuai. Kolom tidak ditemukan: '
                 . implode(', ', $missingColumns),
             );
         }
@@ -260,7 +282,7 @@ class MutasiBarangJadiPpsReportService
         return array_map(static function (array $row): array {
             return [
                 'Jenis' => $row['Jenis'] ?? null,
-                'Berat' => $row['Berat'] ?? null,
+                'OutputWaste' => $row['OutputWaste'] ?? null,
             ];
         }, $rows);
     }

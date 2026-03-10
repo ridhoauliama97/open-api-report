@@ -7,164 +7,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        @page {
-            margin: 24mm 10mm 18mm 10mm;
-            footer: html_reportFooter;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-        }
-
-        .report-table th,
-        .report-table td {
-            border: 1px solid #000;
-            border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        .report-table tbody td {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-        }
-
-        .report-table thead th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        td.center {
-            text-align: center;
-        }
-
-        td.number {
-            text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .report-table tbody tr.row-odd td {
-            background: #c9d1df;
-        }
-
-        .report-table tbody tr.row-even td {
-            background: #eef2f8;
-        }
-
-        .report-table tbody tr:first-child td {
-            border-top: 0;
-            padding-top: 3px;
-        }
-
-        .report-table tbody tr.row-last td {
-            border: 1px solid #000 !important;
-        }
-
-        .header-line-1 th {
-            border: 1px solid #000;
-            border: 1px solid #000;
-        }
-
-        .summary-page {
-            page-break-before: auto;
-            margin-top: 8px;
-        }
-
-        .summary-title {
-            margin: 0 0 10px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .summary-list {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            font-size: 10px;
-            font-weight: bold;
-            line-height: 1.1;
-        }
-
-        .summary-list li {
-            margin: 0 0 1px;
-            white-space: nowrap;
-        }
-
-        .summary-dot {
-            display: inline-block;
-            width: 4px;
-            height: 4px;
-            margin-right: 8px;
-            border-radius: 999px;
-            vertical-align: middle;
-        }
-
-        .summary-label {
-            display: inline-block;
-            width: 168px;
-            vertical-align: middle;
-        }
-
-        .summary-separator {
-            display: inline-block;
-            width: 10px;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .summary-value {
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-    </style>
+    @include('reports.partials.pdf-reference-style', [
+        'pageMargin' => '24mm 10mm 18mm 10mm',
+        'subtitleMargin' => '2px 0 20px 0',
+    ])
 </head>
 
 <body>
@@ -196,9 +42,9 @@
         </thead>
         <tbody>
             @forelse ($rowsData as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
+                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="center data-cell">
                         @php
                             $tanggal = $row['Tanggal'] ?? null;
                             $tanggalText = '';
@@ -214,8 +60,8 @@
                         @endphp
                         {{ $tanggalText }}
                     </td>
-                    <td>{{ (string) ($row['Supplier'] ?? '') }}</td>
-                    <td class="number" style="text-align: center;">
+                    <td class="data-cell">{{ (string) ($row['Supplier'] ?? '') }}</td>
+                    <td class="number data-cell" style="text-align: center;">
                         @php
                             $noTrukRaw = (string) ($row['NoTruk'] ?? '');
                             $noTrukNumeric = str_replace(',', '', $noTrukRaw);
@@ -225,11 +71,11 @@
                         @endphp
                         {{ $noTrukText }}
                     </td>
-                    <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number">{{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}
+                    <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number data-cell">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}
                     </td>
-                    <td class="number">
+                    <td class="number data-cell">
                         @php
                             $fisik = (float) ($row['FisikBatangBalokDiLapangan'] ?? 0);
                         @endphp
@@ -248,42 +94,23 @@
         <h2 class="summary-title">Keterangan:</h2>
         <ul class="summary-list">
             <li>
-                <span class="summary-dot"></span>
-                <span class="summary-label">Total Seluruh Data</span>
-                <span class="summary-separator">:</span>
-                <span class="summary-value">{{ (int) ($summaryData['total_rows'] ?? 0) }}</span>
+                Total Seluruh Data: {{ (int) ($summaryData['total_rows'] ?? 0) }}
             </li>
             <li>
-                <span class="summary-dot"></span>
-                <span class="summary-label">Total Balok Masuk</span>
-                <span class="summary-separator">:</span>
-                <span
-                    class="summary-value">{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }}</span>
+                Total Balok Masuk: {{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }}
             </li>
             <li>
-                <span class="summary-dot"></span>
-                <span class="summary-label">Total Balok Terpakai</span>
-                <span class="summary-separator">:</span>
-                <span
-                    class="summary-value">{{ number_format((float) ($summaryData['total_blk_terpakai'] ?? 0), 0, '.', ',') }}</span>
+                Total Balok Terpakai:
+                {{ number_format((float) ($summaryData['total_blk_terpakai'] ?? 0), 0, '.', ',') }}
             </li>
             <li>
-                <span class="summary-dot"></span>
-                <span class="summary-label">Total Fisik Di Lapangan</span>
-                <span class="summary-separator">:</span>
-                <span
-                    class="summary-value">{{ number_format((float) ($summaryData['total_fisik_lapangan'] ?? 0), 0, '.', ',') }}</span>
+                Total Fisik Di Lapangan:
+                {{ number_format((float) ($summaryData['total_fisik_lapangan'] ?? 0), 0, '.', ',') }}
             </li>
         </ul>
     </section>
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-reference-footer')
 </body>
 
 </html>

@@ -128,10 +128,10 @@
                     <h2 class="h5 mb-3">Broker</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.broker.mutasi-broker.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Mutasi Broker
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -143,10 +143,10 @@
                     <h2 class="h5 mb-3">Bonggolan</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.bonggolan.mutasi-bonggolan.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Mutasi Bonggolan
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -158,10 +158,10 @@
                     <h2 class="h5 mb-3">Crusher</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.crusher.mutasi-crusher.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Mutasi Crusher
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -173,10 +173,10 @@
                     <h2 class="h5 mb-3">Gilingan</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.gilingan.mutasi-gilingan.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Mutasi Gilingan
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -188,10 +188,10 @@
                     <h2 class="h5 mb-3">Mixer</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.mixer.mutasi-mixer.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Mutasi Mixer
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -218,10 +218,10 @@
                     <h2 class="h5 mb-3">Furniture WIP</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.furniture-wip.mutasi-furniture-wip.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Mutasi Furniture WIP
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -319,6 +319,7 @@
                                 Laporan Produksi Harian - Broker
                             </a>
                         </div>
+
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.rekap-produksi.washing.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
@@ -575,6 +576,9 @@
                                 Laporan Penerimaan Kayu Bulat Per-Supplier Berdasarkan Group Kayu
                             </a>
                         </div>
+                        {{-- <div class="col-12 col-md-6">
+
+                        </div> --}}
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.kayu-bulat.stock-opname.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
@@ -662,6 +666,36 @@
                             <a href="{{ route('reports.kayu-bulat.supplier-intel.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Supplier Intel
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.penerimaan-per-supplier-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penerimaan Kayu Bulat Per-Supplier - Timbang KG
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.saldo-hidup-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Saldo Hidup Kayu Bulat - Timbang KG
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.rekap-pembelian-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Pembelian Kayu Bulat (Ton) - Timbang KG
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Time Line KB - Bulanan (Rambung)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.timeline-kayu-bulat-harian-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Time Line KB - Harian (Rambung)
                             </a>
                         </div>
                     </div>

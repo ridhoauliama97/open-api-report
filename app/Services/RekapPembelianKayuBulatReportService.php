@@ -440,14 +440,14 @@ class RekapPembelianKayuBulatReportService
 
         $sql = match ($syntax) {
             'exec' => $parameterCount === 0
-                ? "SET NOCOUNT ON; EXEC {$procedure}"
-                : "SET NOCOUNT ON; EXEC {$procedure} {$placeholders}",
+            ? "SET NOCOUNT ON; EXEC {$procedure}"
+            : "SET NOCOUNT ON; EXEC {$procedure} {$placeholders}",
             'call' => "CALL {$procedure}({$placeholders})",
             default => $driver === 'sqlsrv'
-                ? ($parameterCount === 0
-                    ? "SET NOCOUNT ON; EXEC {$procedure}"
-                    : "SET NOCOUNT ON; EXEC {$procedure} {$placeholders}")
-                : "CALL {$procedure}({$placeholders})",
+            ? ($parameterCount === 0
+                ? "SET NOCOUNT ON; EXEC {$procedure}"
+                : "SET NOCOUNT ON; EXEC {$procedure} {$placeholders}")
+            : "CALL {$procedure}({$placeholders})",
         };
 
         try {

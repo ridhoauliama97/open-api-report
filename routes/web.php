@@ -31,17 +31,22 @@ use App\Http\Controllers\MutasiRacipDetailController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
+use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
+use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
+use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
+use App\Http\Controllers\TimelineKayuBulatHarianKgController;
+use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
@@ -60,6 +65,7 @@ use App\Http\Controllers\PPS\RekapProduksiInjectController;
 use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
 use App\Http\Controllers\PPS\RekapProduksiCrusherController;
 use App\Http\Controllers\PPS\RekapProduksiGilinganController;
+use App\Http\Controllers\PPS\MutasiGilinganController;
 use App\Http\Controllers\PPS\RekapProduksiMixerController;
 use App\Http\Controllers\PPS\RekapProduksiBrokerController;
 use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
@@ -67,6 +73,11 @@ use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
+use App\Http\Controllers\PPS\MutasiBonggolanController;
+use App\Http\Controllers\PPS\MutasiCrusherController;
+use App\Http\Controllers\PPS\MutasiBrokerController;
+use App\Http\Controllers\PPS\MutasiFurnitureWipController;
+use App\Http\Controllers\PPS\MutasiMixerController;
 use App\Http\Controllers\PPS\MutasiBarangJadiPpsController;
 use App\Http\Controllers\PPS\SemuaLabelController;
 use Illuminate\Support\Facades\Route;
@@ -173,6 +184,48 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [MutasiBarangJadiPpsController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiBarangJadiPpsController::class, 'preview'])->name('preview');
         Route::post('/health', [MutasiBarangJadiPpsController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('broker/mutasi-broker')->name('broker.mutasi-broker.')->group(function (): void {
+        Route::get('/', [MutasiBrokerController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiBrokerController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiBrokerController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiBrokerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('bonggolan/mutasi-bonggolan')->name('bonggolan.mutasi-bonggolan.')->group(function (): void {
+        Route::get('/', [MutasiBonggolanController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiBonggolanController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiBonggolanController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiBonggolanController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('crusher/mutasi-crusher')->name('crusher.mutasi-crusher.')->group(function (): void {
+        Route::get('/', [MutasiCrusherController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiCrusherController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiCrusherController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiCrusherController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('gilingan/mutasi-gilingan')->name('gilingan.mutasi-gilingan.')->group(function (): void {
+        Route::get('/', [MutasiGilinganController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiGilinganController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiGilinganController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiGilinganController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('mixer/mutasi-mixer')->name('mixer.mutasi-mixer.')->group(function (): void {
+        Route::get('/', [MutasiMixerController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiMixerController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiMixerController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiMixerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('furniture-wip/mutasi-furniture-wip')->name('furniture-wip.mutasi-furniture-wip.')->group(function (): void {
+        Route::get('/', [MutasiFurnitureWipController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiFurnitureWipController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiFurnitureWipController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiFurnitureWipController::class, 'health'])->name('health');
     });
 });
 
@@ -410,6 +463,14 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::match(['get', 'post'], '/download', [RekapPembelianKayuBulatController::class, 'download'])->name('download');
     });
 
+    /** Rekap pembelian kayu bulat timbang KG routes. */
+    Route::prefix('rekap-pembelian-kg')->name('rekap-pembelian-kg.')->group(function (): void {
+        Route::get('/', [RekapPembelianKayuBulatKgController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPembelianKayuBulatKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPembelianKayuBulatKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPembelianKayuBulatKgController::class, 'preview'])->name('preview');
+    });
+
     /** Target masuk bahan baku routes. */
     Route::prefix('target-masuk-bb')->name('target-masuk-bb.')->group(function (): void {
         Route::get('/', [TargetMasukBBController::class, 'index'])->name('index');
@@ -443,6 +504,22 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::get('/', [PenerimaanKayuBulatPerSupplierGroupController::class, 'index'])->name('index');
         Route::post('/download', [PenerimaanKayuBulatPerSupplierGroupController::class, 'download'])->name('download');
         Route::post('/preview', [PenerimaanKayuBulatPerSupplierGroupController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan per supplier timbang KG routes. */
+    Route::prefix('penerimaan-per-supplier-kg')->name('penerimaan-per-supplier-kg.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatPerSupplierKgController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatPerSupplierKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanKayuBulatPerSupplierKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanKayuBulatPerSupplierKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Saldo hidup kayu bulat timbang KG routes. */
+    Route::prefix('saldo-hidup-kg')->name('saldo-hidup-kg.')->group(function (): void {
+        Route::get('/', [SaldoHidupKayuBulatKgController::class, 'index'])->name('index');
+        Route::post('/download', [SaldoHidupKayuBulatKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [SaldoHidupKayuBulatKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [SaldoHidupKayuBulatKgController::class, 'preview'])->name('preview');
     });
 
     /** Stock opname kayu bulat routes. */
@@ -500,12 +577,28 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::post('/preview', [TimelineKayuBulatHarianController::class, 'preview'])->name('preview');
     });
 
+    /** Timeline kayu bulat harian timbang KG routes. */
+    Route::prefix('timeline-kayu-bulat-harian-kg')->name('timeline-kayu-bulat-harian-kg.')->group(function (): void {
+        Route::get('/', [TimelineKayuBulatHarianKgController::class, 'index'])->name('index');
+        Route::post('/download', [TimelineKayuBulatHarianKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TimelineKayuBulatHarianKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TimelineKayuBulatHarianKgController::class, 'preview'])->name('preview');
+    });
+
     /** Timeline kayu bulat bulanan routes. */
     Route::prefix('timeline-kayu-bulat-bulanan')->name('timeline-kayu-bulat-bulanan.')->group(function (): void {
         Route::get('/', [TimelineKayuBulatBulananController::class, 'index'])->name('index');
         Route::post('/download', [TimelineKayuBulatBulananController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [TimelineKayuBulatBulananController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [TimelineKayuBulatBulananController::class, 'preview'])->name('preview');
+    });
+
+    /** Timeline kayu bulat bulanan timbang KG routes. */
+    Route::prefix('timeline-kayu-bulat-bulanan-kg')->name('timeline-kayu-bulat-bulanan-kg.')->group(function (): void {
+        Route::get('/', [TimelineKayuBulatBulananKgController::class, 'index'])->name('index');
+        Route::post('/download', [TimelineKayuBulatBulananKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TimelineKayuBulatBulananKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TimelineKayuBulatBulananKgController::class, 'preview'])->name('preview');
     });
 
     /** Umur kayu bulat non-rambung routes. */

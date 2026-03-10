@@ -186,6 +186,12 @@
                     ? $subRows
                     : collect($subRows)->values()->all())
                 : [];
+        $wasteRowsData =
+            isset($wasteRows) && is_iterable($wasteRows)
+                ? (is_array($wasteRows)
+                    ? $wasteRows
+                    : collect($wasteRows)->values()->all())
+                : [];
 
         usort(
             $rowsData,
@@ -197,7 +203,7 @@
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $fmt = static function ($value, bool $blankWhenZero = true): string {
+        $fmtMain = static function ($value, bool $blankWhenZero = true): string {
             if (!is_numeric($value)) {
                 return '';
             }
@@ -207,7 +213,20 @@
                 return '';
             }
 
-            return number_format($float, 0, '.', ',');
+            return number_format($float, 2, '.', ',');
+        };
+
+        $fmtSub = static function ($value, bool $blankWhenZero = true): string {
+            if (!is_numeric($value)) {
+                return '';
+            }
+
+            $float = (float) $value;
+            if ($blankWhenZero && abs($float) < 0.0000001) {
+                return '';
+            }
+
+            return number_format($float, 2, '.', ',');
         };
 
         $num = static fn(array $row, string $key): float => is_numeric($row[$key] ?? null) ? (float) $row[$key] : 0.0;
@@ -227,44 +246,10 @@
         ];
 
         $subInputRows = [];
-        $subWasteRows = [];
 
         foreach ($subRowsData as $row) {
-            $dimType = strtolower((string) ($row['DimType'] ?? ''));
-            $jenis = strtolower((string) ($row['Jenis'] ?? ''));
-            $beratBroker = $num($row, 'BeratBroker');
-            $beratMixer = $num($row, 'BeratInjctMixer');
-            $beratGili = $num($row, 'BeratInjcGili');
-            $pcsInjcFwip = $num($row, 'PcsInjcFWIP');
-            $pcsPackFwip = $num($row, 'PcsPackFWIP');
-            $pcsMatPack = $num($row, 'PcsMatPack');
-            $pcsMatInjc = $num($row, 'PcsMatInjc');
-
-            $hasWeightValue = $beratBroker > 0 || $beratMixer > 0 || $beratGili > 0;
-            $hasPcsValue = $pcsInjcFwip > 0 || $pcsPackFwip > 0 || $pcsMatPack > 0 || $pcsMatInjc > 0;
-            $isKnownInputType = in_array($dimType, ['cabinetwip', 'mixer'], true);
-            $isWaste =
-                str_contains($dimType, 'waste') ||
-                str_contains($jenis, 'bonggolan') ||
-                str_contains($jenis, 'reject') ||
-                (str_contains($jenis, 'waste') && $hasWeightValue) ||
-                (!$isKnownInputType && $hasWeightValue && !$hasPcsValue);
-
-            if ($isWaste) {
-                $subWasteRows[] = $row;
-                continue;
-            }
-
             $subInputRows[] = $row;
         }
-
-        $subWeight = static function (array $row): float {
-            $beratBroker = is_numeric($row['BeratBroker'] ?? null) ? (float) $row['BeratBroker'] : 0.0;
-            $beratMixer = is_numeric($row['BeratInjctMixer'] ?? null) ? (float) $row['BeratInjctMixer'] : 0.0;
-            $beratGili = is_numeric($row['BeratInjcGili'] ?? null) ? (float) $row['BeratInjcGili'] : 0.0;
-
-            return $beratBroker + $beratMixer + $beratGili;
-        };
 
         $subInputTotals = [
             'BeratBroker' => 0.0,
@@ -287,8 +272,8 @@
         }
 
         $subWasteTotal = 0.0;
-        foreach ($subWasteRows as $row) {
-            $subWasteTotal += $subWeight($row);
+        foreach ($wasteRowsData as $row) {
+            $subWasteTotal += $num($row, 'Berat');
         }
     @endphp
 
@@ -354,17 +339,17 @@
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="center data-cell">{{ $loop->iteration }}</td>
                             <td class="label data-cell">{{ $row['NamaBJ'] ?? '' }}</td>
-                            <td class="number data-cell">{{ $fmt($awal, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($packOutput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($injectOutput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($bsuOutput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($returOutput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($bsuInput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($bsortInput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($bjJual, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($awal, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($packOutput, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($injectOutput, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($bsuOutput, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($returOutput, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($totalMasuk, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($bsuInput, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($bsortInput, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($bjJual, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($totalKeluar, true) }}</td>
+                            <td class="number data-cell">{{ $fmtMain($akhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -374,17 +359,17 @@
                     @if (!empty($rowsData))
                         <tr class="totals-row">
                             <td colspan="2" style="text-align:center">Total</td>
-                            <td class="number">{{ $fmt($totals['Awal'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['PackOutput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['InjectOutput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BSUOutput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['ReturOutput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['Masuk'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BSUInput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BSortInput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BJJual'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['Keluar'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['Akhir'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['Awal'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['PackOutput'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['InjectOutput'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['BSUOutput'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['ReturOutput'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['Masuk'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['BSUInput'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['BSortInput'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['BJJual'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['Keluar'], true) }}</td>
+                            <td class="number">{{ $fmtMain($totals['Akhir'], true) }}</td>
                         </tr>
                     @endif
                 </tbody>
@@ -393,10 +378,9 @@
     </div>
 
     @if (!empty($subRowsData))
-        <div class="section-title"></div>
         <div class="container-fluid">
             @if (!empty($subInputRows))
-                <div class="section-title" style="margin-top: 0;">Input</div>
+                <div class="section-title" style="margin-top: 20px;">Input</div>
                 <div class="table-responsive">
                     <table class="report-table">
                         <thead>
@@ -420,24 +404,26 @@
                             @foreach ($subInputRows as $row)
                                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                                     <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['BeratBroker'] ?? null, true) }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['BeratInjctMixer'] ?? null, true) }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['BeratInjcGili'] ?? null, true) }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['PcsInjcFWIP'] ?? null, true) }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['PcsPackFWIP'] ?? null, true) }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['PcsMatInjc'] ?? null, true) }}</td>
-                                    <td class="number data-cell">{{ $fmt($row['PcsMatPack'] ?? null, true) }}</td>
+                                    <td class="number data-cell">{{ $fmtSub($row['BeratBroker'] ?? null, true) }}</td>
+                                    <td class="number data-cell">{{ $fmtSub($row['BeratInjctMixer'] ?? null, true) }}
+                                    </td>
+                                    <td class="number data-cell">{{ $fmtSub($row['BeratInjcGili'] ?? null, true) }}
+                                    </td>
+                                    <td class="number data-cell">{{ $fmtSub($row['PcsInjcFWIP'] ?? null, true) }}</td>
+                                    <td class="number data-cell">{{ $fmtSub($row['PcsPackFWIP'] ?? null, true) }}</td>
+                                    <td class="number data-cell">{{ $fmtSub($row['PcsMatInjc'] ?? null, true) }}</td>
+                                    <td class="number data-cell">{{ $fmtSub($row['PcsMatPack'] ?? null, true) }}</td>
                                 </tr>
                             @endforeach
                             <tr class="totals-row">
-                                <td style="text-align:right;">Total :</td>
-                                <td class="number">{{ $fmt($subInputTotals['BeratBroker'], false) }}</td>
-                                <td class="number">{{ $fmt($subInputTotals['BeratInjctMixer'], false) }}</td>
-                                <td class="number">{{ $fmt($subInputTotals['BeratInjcGili'], false) }}</td>
-                                <td class="number">{{ $fmt($subInputTotals['PcsInjcFWIP'], false) }}</td>
-                                <td class="number">{{ $fmt($subInputTotals['PcsPackFWIP'], false) }}</td>
-                                <td class="number">{{ $fmt($subInputTotals['PcsMatInjc'], false) }}</td>
-                                <td class="number">{{ $fmt($subInputTotals['PcsMatPack'], false) }}</td>
+                                <td style="text-align:center;">Total</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['BeratBroker'], true) }}</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['BeratInjctMixer'], true) }}</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['BeratInjcGili'], true) }}</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['PcsInjcFWIP'], true) }}</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['PcsPackFWIP'], true) }}</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['PcsMatInjc'], true) }}</td>
+                                <td class="number">{{ $fmtSub($subInputTotals['PcsMatPack'], true) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -459,10 +445,10 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        @forelse ($subWasteRows as $row)
+                        @forelse ($wasteRowsData as $row)
                             <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                                 <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
-                                <td class="number data-cell">{{ $fmt($subWeight($row), true) }}</td>
+                                <td class="number data-cell">{{ $fmtSub($row['Berat'] ?? null, true) }}</td>
                             </tr>
                         @empty
                             <tr class="data-row row-even">
@@ -471,8 +457,8 @@
                             </tr>
                         @endforelse
                         <tr class="totals-row">
-                            <td style="text-align:right;">Total :</td>
-                            <td class="number">{{ $fmt($subWasteTotal, false) }}</td>
+                            <td style="text-align:center;">Total</td>
+                            <td class="number">{{ $fmtSub($subWasteTotal, false) }}</td>
                         </tr>
                     </tbody>
                 </table>
