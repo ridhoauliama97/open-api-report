@@ -1,6 +1,6 @@
 # API Route Docs
 
-Total routes terdokumentasi: 147
+Total routes terdokumentasi: 162
 
 - [api.auth.login](./api.auth.login.md) - `POST /api/auth/login`
 - [api.auth.logout](./api.auth.logout.md) - `POST /api/auth/logout`
@@ -59,12 +59,21 @@ Total routes terdokumentasi: 147
 - [api.reports.kayu-bulat.penerimaan-per-supplier-group.health](./api.reports.kayu-bulat.penerimaan-per-supplier-group.health.md) - `POST /api/reports/kayu-bulat/penerimaan-per-supplier-group/health`
 - [api.reports.kayu-bulat.penerimaan-per-supplier-group.pdf](./api.reports.kayu-bulat.penerimaan-per-supplier-group.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/penerimaan-per-supplier-group/pdf`
 - [api.reports.kayu-bulat.penerimaan-per-supplier-group.preview](./api.reports.kayu-bulat.penerimaan-per-supplier-group.preview.md) - `POST /api/reports/kayu-bulat/penerimaan-per-supplier-group`
+- [api.reports.kayu-bulat.penerimaan-per-supplier-kg.health](./api.reports.kayu-bulat.penerimaan-per-supplier-kg.health.md) - `POST /api/reports/kayu-bulat/penerimaan-per-supplier-kg/health`
+- [api.reports.kayu-bulat.penerimaan-per-supplier-kg.pdf](./api.reports.kayu-bulat.penerimaan-per-supplier-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/penerimaan-per-supplier-kg/pdf`
+- [api.reports.kayu-bulat.penerimaan-per-supplier-kg.preview](./api.reports.kayu-bulat.penerimaan-per-supplier-kg.preview.md) - `POST /api/reports/kayu-bulat/penerimaan-per-supplier-kg`
 - [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.health](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.health.md) - `POST /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/health`
 - [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.pdf](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/pdf`
 - [api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview](./api.reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2.preview.md) - `POST /api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2`
+- [api.reports.kayu-bulat.rekap-pembelian-kg.health](./api.reports.kayu-bulat.rekap-pembelian-kg.health.md) - `POST /api/reports/kayu-bulat/rekap-pembelian-kg/health`
+- [api.reports.kayu-bulat.rekap-pembelian-kg.pdf](./api.reports.kayu-bulat.rekap-pembelian-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/rekap-pembelian-kg/pdf`
+- [api.reports.kayu-bulat.rekap-pembelian-kg.preview](./api.reports.kayu-bulat.rekap-pembelian-kg.preview.md) - `POST /api/reports/kayu-bulat/rekap-pembelian-kg`
 - [api.reports.kayu-bulat.saldo.health](./api.reports.kayu-bulat.saldo.health.md) - `POST /api/reports/kayu-bulat/saldo/health`
 - [api.reports.kayu-bulat.saldo.pdf](./api.reports.kayu-bulat.saldo.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/saldo/pdf`
 - [api.reports.kayu-bulat.saldo.preview](./api.reports.kayu-bulat.saldo.preview.md) - `POST /api/reports/kayu-bulat/saldo`
+- [api.reports.kayu-bulat.saldo-hidup-kg.health](./api.reports.kayu-bulat.saldo-hidup-kg.health.md) - `POST /api/reports/kayu-bulat/saldo-hidup-kg/health`
+- [api.reports.kayu-bulat.saldo-hidup-kg.pdf](./api.reports.kayu-bulat.saldo-hidup-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/saldo-hidup-kg/pdf`
+- [api.reports.kayu-bulat.saldo-hidup-kg.preview](./api.reports.kayu-bulat.saldo-hidup-kg.preview.md) - `POST /api/reports/kayu-bulat/saldo-hidup-kg`
 - [api.reports.kayu-bulat.stock-opname.health](./api.reports.kayu-bulat.stock-opname.health.md) - `POST /api/reports/kayu-bulat/stock-opname/health`
 - [api.reports.kayu-bulat.stock-opname.pdf](./api.reports.kayu-bulat.stock-opname.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/stock-opname/pdf`
 - [api.reports.kayu-bulat.stock-opname.preview](./api.reports.kayu-bulat.stock-opname.preview.md) - `POST /api/reports/kayu-bulat/stock-opname`
@@ -74,9 +83,15 @@ Total routes terdokumentasi: 147
 - [api.reports.kayu-bulat.timeline-kayu-bulat-bulanan.health](./api.reports.kayu-bulat.timeline-kayu-bulat-bulanan.health.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-bulanan/health`
 - [api.reports.kayu-bulat.timeline-kayu-bulat-bulanan.pdf](./api.reports.kayu-bulat.timeline-kayu-bulat-bulanan.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/timeline-kayu-bulat-bulanan/pdf`
 - [api.reports.kayu-bulat.timeline-kayu-bulat-bulanan.preview](./api.reports.kayu-bulat.timeline-kayu-bulat-bulanan.preview.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-bulanan`
+- [api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.health](./api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.health.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg/health`
+- [api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.pdf](./api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg/pdf`
+- [api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.preview](./api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.preview.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg`
 - [api.reports.kayu-bulat.timeline-kayu-bulat-harian.health](./api.reports.kayu-bulat.timeline-kayu-bulat-harian.health.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-harian/health`
 - [api.reports.kayu-bulat.timeline-kayu-bulat-harian.pdf](./api.reports.kayu-bulat.timeline-kayu-bulat-harian.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/timeline-kayu-bulat-harian/pdf`
 - [api.reports.kayu-bulat.timeline-kayu-bulat-harian.preview](./api.reports.kayu-bulat.timeline-kayu-bulat-harian.preview.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-harian`
+- [api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg.health](./api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg.health.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-harian-kg/health`
+- [api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg.pdf](./api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/timeline-kayu-bulat-harian-kg/pdf`
+- [api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg.preview](./api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg.preview.md) - `POST /api/reports/kayu-bulat/timeline-kayu-bulat-harian-kg`
 - [api.reports.kayu-bulat.umur-kayu-bulat-non-rambung.health](./api.reports.kayu-bulat.umur-kayu-bulat-non-rambung.health.md) - `POST /api/reports/kayu-bulat/umur-kayu-bulat-non-rambung/health`
 - [api.reports.kayu-bulat.umur-kayu-bulat-non-rambung.pdf](./api.reports.kayu-bulat.umur-kayu-bulat-non-rambung.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/umur-kayu-bulat-non-rambung/pdf`
 - [api.reports.kayu-bulat.umur-kayu-bulat-non-rambung.preview](./api.reports.kayu-bulat.umur-kayu-bulat-non-rambung.preview.md) - `POST /api/reports/kayu-bulat/umur-kayu-bulat-non-rambung`
