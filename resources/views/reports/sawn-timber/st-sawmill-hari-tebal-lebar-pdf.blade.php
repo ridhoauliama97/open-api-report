@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.15;
             color: #000;
         }
@@ -98,6 +98,21 @@
             page-break-before: always;
         }
 
+        .section-title {
+            margin: 0 0 6px 0;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .rangkuman-table {
+            width: 360px;
+        }
+
+        .rangkuman-table th,
+        .rangkuman-table td {
+            padding: 2px 3px;
+        }
+
         .footer-wrap {
             display: flex;
             justify-content: space-between;
@@ -121,6 +136,12 @@
         $data = is_array($reportData ?? null) ? $reportData : [];
         $dateChunks = is_array($data['date_chunks'] ?? null) ? $data['date_chunks'] : [];
         $isGroupBlocks = is_array($data['is_group_blocks'] ?? null) ? $data['is_group_blocks'] : [];
+        $grandTotalsByDate = is_array($data['grand_totals_by_date'] ?? null) ? $data['grand_totals_by_date'] : [];
+        $grandTotal = (float) ($data['grand_total'] ?? 0.0);
+        $rangkuman = is_array($data['rangkuman'] ?? null) ? $data['rangkuman'] : [];
+        $rangkumanItems = is_array($rangkuman['items'] ?? null) ? $rangkuman['items'] : [];
+        $rangkumanTotalsByJenis = is_array($rangkuman['totals_by_jenis'] ?? null) ? $rangkuman['totals_by_jenis'] : [];
+        $rangkumanGrandTotal = (float) ($rangkuman['grand_total'] ?? 0.0);
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
@@ -146,6 +167,8 @@
             }
             return $sum;
         };
+
+        $fmtPct = static fn(float $v): string => number_format($v, 0, '.', '') . '%';
     @endphp
 
     <h1 class="report-title">Laporan ST Sawmill / Hari / Tebal / Lebar</h1>
@@ -223,7 +246,8 @@
                                         </td>
                                         @php $printedTebal = true; @endphp
                                     @endif
-                                    <td class="center">{{ rtrim(rtrim(number_format($lebar, 1, '.', ','), '0'), '.') }}</td>
+                                    <td class="center">{{ rtrim(rtrim(number_format($lebar, 1, '.', ','), '0'), '.') }}
+                                    </td>
                                     @foreach ($chunkDates as $dk)
                                         <td class="number">{{ $fmt((float) ($values[$dk] ?? 0.0)) }}</td>
                                     @endforeach
@@ -261,26 +285,117 @@
                             @endforeach
                             <td class="number">{{ $fmtTotal($chunkTotal) }}</td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="{{ 4 + count($chunkDates) }}" class="center">Tidak ada data.</td>
-                        </tr>
-                    @endforelse
+                        @empty
+                            <tr>
+                                <td colspan="{{ 4 + count($chunkDates) }}" class="center">Tidak ada data.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            @endforeach
+
+            @php
+                $chunkGrandTotal = $sumForDates($grandTotalsByDate, $chunkDates);
+            @endphp
+            <div class="section-title">Grand Total</div>
+            <table style="margin-bottom: 14px;">
+                <thead>
+                    <tr>
+                        <th colspan="3">Grand Total</th>
+                        @foreach ($chunkDates as $dk)
+                            <th style="width: 48px;">{{ $dateLabel($dk) }}</th>
+                        @endforeach
+                        <th style="width: 56px;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="totals-row">
+                        <td colspan="3" class="center">Total (Ton)</td>
+                        @foreach ($chunkDates as $dk)
+                            <td class="number">{{ $fmtTotal((float) ($grandTotalsByDate[$dk] ?? 0.0)) }}</td>
+                        @endforeach
+                        <td class="number">{{ $fmtTotal($chunkGrandTotal) }}</td>
+                    </tr>
                 </tbody>
             </table>
-        @endforeach
-    @empty
-        <div class="center">Tidak ada data.</div>
-    @endforelse
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
-</body>
+            @if ($chunkIndex === count($dateChunks) - 1 && $rangkumanItems !== [])
+                <div class="section-title">Rangkuman</div>
+                <table class="rangkuman-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 160px;">Jenis Kayu</th>
+                            <th style="width: 50px;">Tebal</th>
+                            <th style="width: 80px;">Total</th>
+                            <th style="width: 60px;">Persen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $rowsPerJenis = [];
+                            foreach ($rangkumanItems as $it) {
+                                $j = (string) ($it['jenis'] ?? '');
+                                $rowsPerJenis[$j] = ($rowsPerJenis[$j] ?? 0) + 1;
+                            }
 
-</html>
+                            $currentJenis = null;
+                        @endphp
 
+                        @foreach ($rangkumanItems as $idx => $it)
+                            @php
+                                $jenis = (string) ($it['jenis'] ?? '');
+                                $tebal = (float) ($it['tebal'] ?? 0.0);
+                                $total = (float) ($it['total'] ?? 0.0);
+                                $percent = (float) ($it['percent'] ?? 0.0);
+
+                                $isNewJenis = $currentJenis !== $jenis;
+                                if ($isNewJenis) {
+                                    $currentJenis = $jenis;
+                                    $jenisRowspan = (int) ($rowsPerJenis[$jenis] ?? 1) + 1; // + subtotal row
+                                }
+                            @endphp
+                            <tr>
+                                @if ($isNewJenis)
+                                    <td rowspan="{{ $jenisRowspan }}" style="vertical-align: top;">{{ $jenis }}</td>
+                                @endif
+                                <td class="center">{{ rtrim(rtrim(number_format($tebal, 1, '.', ','), '0'), '.') }}</td>
+                                <td class="number">{{ $fmtTotal($total) }}</td>
+                                <td class="center">{{ $fmtPct($percent) }}</td>
+                            </tr>
+
+                            @php
+                                $nextJenis = (string) ($rangkumanItems[$idx + 1]['jenis'] ?? '');
+                                $isLastOfJenis = $idx === count($rangkumanItems) - 1 || $nextJenis !== $jenis;
+                            @endphp
+                            @if ($isLastOfJenis)
+                                @php $jenisTotal = (float) ($rangkumanTotalsByJenis[$jenis] ?? 0.0); @endphp
+                                <tr class="totals-row">
+                                    <td colspan="2" class="center">Total</td>
+                                    <td class="number">{{ $fmtTotal($jenisTotal) }}</td>
+                                    <td class="center">100%</td>
+                                </tr>
+                            @endif
+                        @endforeach
+
+                        <tr class="totals-row">
+                            <td colspan="2" class="center">Total</td>
+                            <td class="number">{{ $fmtTotal($rangkumanGrandTotal) }}</td>
+                            <td class="center"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
+        @empty
+            <div class="center">Tidak ada data.</div>
+        @endforelse
+
+        <htmlpagefooter name="reportFooter">
+            <div class="footer-wrap">
+                <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
+                <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
+            </div>
+        </htmlpagefooter>
+        <sethtmlpagefooter name="reportFooter" value="on" />
+    </body>
+
+    </html>

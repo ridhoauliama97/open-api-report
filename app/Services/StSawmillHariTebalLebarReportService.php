@@ -30,12 +30,18 @@ class StSawmillHariTebalLebarReportService
         $dateChunks = array_chunk($dateKeys, $maxDatesPerTable);
 
         $isGroupBlocks = $this->buildBlocks($rows, $dateKeys);
+        $grandTotalsByDate = $this->buildGrandTotalsByDate($isGroupBlocks, $dateKeys);
+        $grandTotal = array_sum(array_map(static fn($v): float => (float) $v, $grandTotalsByDate));
+        $rangkuman = $this->buildRangkuman($rows);
 
         return [
             'rows' => $rows,
             'date_keys' => $dateKeys,
             'date_chunks' => $dateChunks,
             'is_group_blocks' => $isGroupBlocks,
+            'grand_totals_by_date' => $grandTotalsByDate,
+            'grand_total' => $grandTotal,
+            'rangkuman' => $rangkuman,
             'summary' => [
                 'total_rows' => count($rows),
                 'total_dates' => count($dateKeys),
@@ -277,6 +283,87 @@ class StSawmillHariTebalLebarReportService
     }
 
     /**
+     * @param array<int, array{is_group: int, totals_by_date: array<string, float>}> $isGroupBlocks
+     * @param array<int, string> $dateKeys
+     * @return array<string, float>
+     */
+    private function buildGrandTotalsByDate(array $isGroupBlocks, array $dateKeys): array
+    {
+        $totals = array_fill_keys($dateKeys, 0.0);
+
+        foreach ($isGroupBlocks as $ig) {
+            $byDate = is_array($ig['totals_by_date'] ?? null) ? $ig['totals_by_date'] : [];
+            foreach ($dateKeys as $dk) {
+                $totals[$dk] = (float) ($totals[$dk] ?? 0.0) + (float) ($byDate[$dk] ?? 0.0);
+            }
+        }
+
+        return $totals;
+    }
+
+    /**
+     * Build "Rangkuman" rows: totals by Jenis Kayu (Group) and Tebal (sum across Lebar and dates),
+     * with percent within each Jenis Kayu.
+     *
+     * @param array<int, array<string, mixed>> $rows
+     * @return array{items: array<int, array{jenis: string, tebal: float, total: float, percent: float}>, totals_by_jenis: array<string, float>, grand_total: float}
+     */
+    private function buildRangkuman(array $rows): array
+    {
+        /** @var array<string, array<string, float>> $byJenisTebal */
+        $byJenisTebal = [];
+
+        foreach ($rows as $row) {
+            $jenis = trim((string) ($row['Group'] ?? ''));
+            $tebal = (float) ($row['Tebal'] ?? 0.0);
+            $value = (float) ($row['STton'] ?? 0.0);
+
+            if ($jenis === '') {
+                continue;
+            }
+
+            $tKey = (string) $tebal;
+            if (!isset($byJenisTebal[$jenis])) {
+                $byJenisTebal[$jenis] = [];
+            }
+            $byJenisTebal[$jenis][$tKey] = (float) ($byJenisTebal[$jenis][$tKey] ?? 0.0) + $value;
+        }
+
+        ksort($byJenisTebal);
+
+        $totalsByJenis = [];
+        foreach ($byJenisTebal as $jenis => $tebalMap) {
+            $totalsByJenis[$jenis] = array_sum(array_map(static fn($v): float => (float) $v, $tebalMap));
+        }
+
+        $items = [];
+        foreach ($byJenisTebal as $jenis => $tebalMap) {
+            $jenisTotal = (float) ($totalsByJenis[$jenis] ?? 0.0);
+            $tebals = array_keys($tebalMap);
+            usort($tebals, static fn(string $a, string $b): int => ((float) $a) <=> ((float) $b));
+
+            foreach ($tebals as $tKey) {
+                $total = (float) ($tebalMap[$tKey] ?? 0.0);
+                $percent = $jenisTotal > 0.0000001 ? ($total / $jenisTotal) * 100.0 : 0.0;
+                $items[] = [
+                    'jenis' => $jenis,
+                    'tebal' => (float) $tKey,
+                    'total' => $total,
+                    'percent' => $percent,
+                ];
+            }
+        }
+
+        $grandTotal = array_sum(array_map(static fn($v): float => (float) $v, $totalsByJenis));
+
+        return [
+            'items' => $items,
+            'totals_by_jenis' => $totalsByJenis,
+            'grand_total' => $grandTotal,
+        ];
+    }
+
+    /**
      * @return array<int, object>
      */
     private function runProcedureQuery(string $startDate, string $endDate): array
@@ -357,4 +444,3 @@ class StSawmillHariTebalLebarReportService
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }
-
