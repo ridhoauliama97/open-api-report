@@ -71,7 +71,9 @@ class StSawmillHariTebalLebarController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => true,
+            // Ensure mPDF respects the "vertical lines only" table styling.
+            'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-ST-Sawmill-Hari-Tebal-Lebar-%s-sd-%s.pdf', $startDate, $endDate);
@@ -145,4 +147,3 @@ class StSawmillHariTebalLebarController extends Controller
         return [$request->startDate(), $request->endDate()];
     }
 }
-

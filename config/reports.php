@@ -358,6 +358,28 @@ return [
             'NoMeja,TglSawmill,Tebal,UOM,TonRacip'
         )))),
     ],
+    'rekap_produktivitas_sawmill' => [
+        'database_connection' => env('REKAP_PRODUKTIVITAS_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKTIVITAS_SAWMILL_REPORT_PROCEDURE', 'SPWps_LapRekapProduktivitasSawmill'),
+        'call_syntax' => env('REKAP_PRODUKTIVITAS_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKTIVITAS_SAWMILL_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKTIVITAS_SAWMILL_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKTIVITAS_SAWMILL_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,JumlahMeja,JABON,RAMBUNG KAYU L,RAMBUNG MC 1,RAMBUNG MC 2,RAMBUNG STD,Total'
+        )))),
+    ],
+    'pemakaian_obat_vacuum' => [
+        'database_connection' => env('PEMAKAIAN_OBAT_VACUUM_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PEMAKAIAN_OBAT_VACUUM_REPORT_PROCEDURE', 'SP_LapPemakaianObatVacuum'),
+        'call_syntax' => env('PEMAKAIAN_OBAT_VACUUM_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PEMAKAIAN_OBAT_VACUUM_REPORT_QUERY'),
+        'parameter_count' => (int) env('PEMAKAIAN_OBAT_VACUUM_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PEMAKAIAN_OBAT_VACUUM_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
     'hidup_kb_per_group' => [
         'database_connection' => env('HIDUP_KB_PER_GROUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('HIDUP_KB_PER_GROUP_REPORT_PROCEDURE', 'sp_LapHidupKBPerGroup'),

@@ -49,10 +49,15 @@
             width: 100%;
             border-collapse: collapse;
             page-break-inside: auto;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -62,13 +67,34 @@
 
         th,
         td {
-            border: 1px solid #000;
+            /* Default: hanya garis vertikal antar kolom (tanpa garis horizontal antar baris data). */
+            border: 0;
+            border-left: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
 
+        th:first-child,
+        td:first-child {
+            border-left: 0;
+        }
+
         th {
             text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+        }
+
+        /* Hilangkan garis horizontal antar baris data. */
+        tbody td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        /* Khusus kolom Group: tampilkan garis horizontal antar baris (hanya kolom ini saja). */
+        tbody td.col-group {
+            border-bottom: 1px solid #000;
+            background: #c9d1df !important;
             font-weight: bold;
         }
 
@@ -101,6 +127,16 @@
 
         .totals-row td {
             font-weight: bold;
+            border-top: 1px solid #000;
+        }
+
+        /* Footer line to “close” the table on each page fragment when table is split across pages. */
+        .tfoot-line td {
+            border-top: 1px solid #000;
+            padding: 0;
+            height: 0;
+            line-height: 0;
+            font-size: 0;
         }
 
         .page-break {
@@ -113,13 +149,25 @@
             font-weight: bold;
         }
 
+        .grand-total-table {
+            width: 420px !important;
+            table-layout: fixed;
+        }
+
         .rangkuman-table {
-            width: 360px;
+            width: 360px !important;
+            table-layout: fixed;
         }
 
         .rangkuman-table th,
         .rangkuman-table td {
             padding: 2px 3px;
+        }
+
+        .rangkuman-table td.jenis-cell {
+            font-weight: bold;
+            vertical-align: top;
+            background: #c9d1df !important;
         }
 
         .footer-wrap {
@@ -215,6 +263,12 @@
                         <th style="width: 56px;">Total</th>
                     </tr>
                 </thead>
+                {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tbody>. --}}
+                <tfoot>
+                    <tr class="tfoot-line">
+                        <td colspan="{{ 4 + count($chunkDates) }}">&nbsp;</td>
+                    </tr>
+                </tfoot>
                 <tbody>
                     @forelse ($groups as $g)
                         @php
@@ -249,7 +303,7 @@
                                 @endphp
                                 <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                                     @if (!$printedGroup)
-                                        <td class="center" rowspan="{{ $groupRowspan }}">{{ $groupName }}</td>
+                                        <td class="center col-group" rowspan="{{ $groupRowspan }}">{{ $groupName }}</td>
                                         @php $printedGroup = true; @endphp
                                     @endif
                                     @if (!$printedTebal)
@@ -311,13 +365,18 @@
 
         @if ($isGroupBlocks !== [])
             <div class="section-title">Grand Total (Seluruh Tanggal)</div>
-            <table class="zebra-table" style="width: 420px; margin-bottom: 14px;">
+            <table class="grand-total-table zebra-table" style="margin-bottom: 14px;">
                 <thead>
                     <tr>
                         <th style="width: 140px;">Group</th>
                         <th style="width: 120px;">Total</th>
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr class="tfoot-line">
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
+                </tfoot>
                 <tbody>
                     @foreach ($grandTotalsByIsGroup as $ig => $total)
                         <tr>
@@ -326,8 +385,8 @@
                         </tr>
                     @endforeach
                     <tr class="totals-row">
-                        <td class="center">Grand Total</td>
-                        <td class="number">{{ $fmtTotal($grandTotal) }}</td>
+                        <td class="center" style="background: none; font-size: 11px;">Grand Total</td>
+                        <td class="number" style="background: none; font-size: 11px;">{{ $fmtTotal($grandTotal) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -343,6 +402,11 @@
                             <th style="width: 60px;">Persen</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr class="tfoot-line">
+                            <td colspan="4">&nbsp;</td>
+                        </tr>
+                    </tfoot>
                     <tbody>
                         @php
                             $rowsPerJenis = [];
@@ -369,8 +433,7 @@
                             @endphp
                             <tr>
                                 @if ($isNewJenis)
-                                    <td rowspan="{{ $jenisRowspan }}" style="vertical-align: top;">{{ $jenis }}
-                                    </td>
+                                    <td rowspan="{{ $jenisRowspan }}" class="jenis-cell">{{ $jenis }}</td>
                                 @endif
                                 <td class="center">{{ rtrim(rtrim(number_format($tebal, 1, '.', ','), '0'), '.') }}</td>
                                 <td class="number">{{ $fmtTotal($total) }}</td>
@@ -384,7 +447,7 @@
                             @if ($isLastOfJenis)
                                 @php $jenisTotal = (float) ($rangkumanTotalsByJenis[$jenis] ?? 0.0); @endphp
                                 <tr class="totals-row">
-                                    <td colspan="2" class="center">Total</td>
+                                    <td class="center">Total</td>
                                     <td class="number">{{ $fmtTotal($jenisTotal) }}</td>
                                     <td class="center">100%</td>
                                 </tr>
@@ -392,9 +455,10 @@
                         @endforeach
 
                         <tr class="totals-row">
-                            <td colspan="2" class="center">Total</td>
-                            <td class="number">{{ $fmtTotal($rangkumanGrandTotal) }}</td>
-                            <td class="center"></td>
+                            <td colspan="2" class="center" style="background: none; font-size: 11px;">Total</td>
+                            <td class="number" style="background: none; font-size: 11px;">
+                                {{ $fmtTotal($rangkumanGrandTotal) }}</td>
+                            <td class="center" style="background: none; font-size: 11px;">100%</td>
                         </tr>
                     </tbody>
                 </table>

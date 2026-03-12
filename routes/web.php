@@ -36,9 +36,11 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
+use App\Http\Controllers\PemakaianObatVacuumController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
+use App\Http\Controllers\RekapProduktivitasSawmillSawnTimberController;
 use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
@@ -357,6 +359,24 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [RekapHasilSawmillPerMejaController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapHasilSawmillPerMejaController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapHasilSawmillPerMejaController::class, 'health'])->name('health');
+    });
+
+    /** Rekap produktivitas sawmill routes. */
+    Route::prefix('rekap-produktivitas-sawmill')->name('rekap-produktivitas-sawmill.')->group(function (): void {
+        Route::get('/', [RekapProduktivitasSawmillSawnTimberController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduktivitasSawmillSawnTimberController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduktivitasSawmillSawnTimberController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduktivitasSawmillSawnTimberController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduktivitasSawmillSawnTimberController::class, 'health'])->name('health');
+    });
+
+    /** Pemakaian obat vacuum routes. */
+    Route::prefix('pemakaian-obat-vacuum')->name('pemakaian-obat-vacuum.')->group(function (): void {
+        Route::get('/', [PemakaianObatVacuumController::class, 'index'])->name('index');
+        Route::post('/download', [PemakaianObatVacuumController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PemakaianObatVacuumController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PemakaianObatVacuumController::class, 'preview'])->name('preview');
+        Route::post('/health', [PemakaianObatVacuumController::class, 'health'])->name('health');
     });
 
     /** ST sawmill per hari/tebal/lebar routes. */

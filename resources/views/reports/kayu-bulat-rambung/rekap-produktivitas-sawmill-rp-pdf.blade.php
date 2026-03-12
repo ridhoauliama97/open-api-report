@@ -311,7 +311,7 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan Rekap Produktivitas Sawmill (Rambung)</h1>
+    <h1 class="report-title">Laporan Rekap Penerimaan ST Dari Sawmill + Costing (Rambung)</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @forelse ($dateGroups as $group)

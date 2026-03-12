@@ -43,10 +43,15 @@
             width: 100%;
             border-collapse: collapse;
             page-break-inside: auto;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         tr {
@@ -56,14 +61,28 @@
 
         th,
         td {
-            border: 1px solid #000;
+            /* Default: hanya garis vertikal antar kolom (seperti laporan-laporan lain). */
+            border: 0;
+            border-left: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: 0;
         }
 
         th {
             text-align: center;
             font-weight: bold;
+            border-bottom: 1px solid #000;
+        }
+
+        /* Hilangkan garis horizontal antar baris data (tetap sisakan garis vertikal antar kolom). */
+        tbody td {
+            border-top: 0;
+            border-bottom: 0;
         }
 
         .row-odd td {
@@ -87,6 +106,16 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
+            border-top: 1px solid #000;
+        }
+
+        /* Footer line to “close” the table on each page fragment when table is split across pages. */
+        .tfoot-line td {
+            border-top: 1px solid #000;
+            padding: 0;
+            height: 0;
+            line-height: 0;
+            font-size: 0;
         }
 
         .kesimpulan-title {
@@ -217,6 +246,12 @@
                 <th style="width: 56px;">Total</th>
             </tr>
         </thead>
+        {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tbody>. --}}
+        <tfoot>
+            <tr class="tfoot-line">
+                <td colspan="{{ 4 + count($dateKeys) }}">&nbsp;</td>
+            </tr>
+        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
 

@@ -41,13 +41,13 @@
 
         .meja-title {
             margin: 8px 0 3px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
         }
 
         .session-meta {
             margin: 0 0 3px;
-            font-size: 9px;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -91,7 +91,7 @@
         }
 
         .headers-row th {
-            font-size: 9px;
+            font-size: 11px;
             border-top: 0;
             border-bottom: 1px solid #000;
         }
@@ -129,7 +129,7 @@
         }
 
         .table-end-line td {
-            border-top: 2px solid #000 !important;
+            border-top: 1px solid #000 !important;
             border-right: 0 !important;
             border-bottom: 0 !important;
             border-left: 0 !important;
