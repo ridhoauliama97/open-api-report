@@ -626,6 +626,18 @@ return [
             'Group,Jenis,Tebal,STTon'
         )))),
     ],
+    'st_sawmill_hari_tebal_lebar' => [
+        'database_connection' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_PROCEDURE', 'SPWps_LapSTSawmillPerHariPerTebalPerLebar'),
+        'call_syntax' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_PARAMETER_COUNT', 2),
+        'max_dates_per_table' => (int) env('ST_SAWMILL_HARI_TEBAL_LEBAR_MAX_DATES_PER_TABLE', 10),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_EXPECTED_COLUMNS',
+            'TglSawmill,Group,Tebal,Lebar,STton,IsGroup'
+        )))),
+    ],
 
     // Laporan Verifikasi :
     'rangkuman_jlh_label_input' => [

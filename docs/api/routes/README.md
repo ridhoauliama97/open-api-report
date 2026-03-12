@@ -1,6 +1,6 @@
 # API Route Docs
 
-Total routes terdokumentasi: 174
+Total routes terdokumentasi: 177
 
 - [api.auth.login](./api.auth.login.md) - `POST /api/auth/login`
 - [api.auth.logout](./api.auth.logout.md) - `POST /api/auth/logout`
@@ -173,6 +173,9 @@ Total routes terdokumentasi: 174
 - [api.reports.sawn-timber.st-sawmill-masuk-per-group.health](./api.reports.sawn-timber.st-sawmill-masuk-per-group.health.md) - `POST /api/reports/sawn-timber/st-sawmill-masuk-per-group/health`
 - [api.reports.sawn-timber.st-sawmill-masuk-per-group.pdf](./api.reports.sawn-timber.st-sawmill-masuk-per-group.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/st-sawmill-masuk-per-group/pdf`
 - [api.reports.sawn-timber.st-sawmill-masuk-per-group.preview](./api.reports.sawn-timber.st-sawmill-masuk-per-group.preview.md) - `POST /api/reports/sawn-timber/st-sawmill-masuk-per-group`
+- [api.reports.sawn-timber.st-sawmill-hari-tebal-lebar.health](./api.reports.sawn-timber.st-sawmill-hari-tebal-lebar.health.md) - `POST /api/reports/sawn-timber/st-sawmill-hari-tebal-lebar/health`
+- [api.reports.sawn-timber.st-sawmill-hari-tebal-lebar.pdf](./api.reports.sawn-timber.st-sawmill-hari-tebal-lebar.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/st-sawmill-hari-tebal-lebar/pdf`
+- [api.reports.sawn-timber.st-sawmill-hari-tebal-lebar.preview](./api.reports.sawn-timber.st-sawmill-hari-tebal-lebar.preview.md) - `POST /api/reports/sawn-timber/st-sawmill-hari-tebal-lebar`
 - [api.reports.sawn-timber.umur-sawn-timber-detail-ton.health](./api.reports.sawn-timber.umur-sawn-timber-detail-ton.health.md) - `POST /api/reports/sawn-timber/umur-sawn-timber-detail-ton/health`
 - [api.reports.sawn-timber.umur-sawn-timber-detail-ton.pdf](./api.reports.sawn-timber.umur-sawn-timber-detail-ton.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/umur-sawn-timber-detail-ton/pdf`
 - [api.reports.sawn-timber.umur-sawn-timber-detail-ton.preview](./api.reports.sawn-timber.umur-sawn-timber-detail-ton.preview.md) - `POST /api/reports/sawn-timber/umur-sawn-timber-detail-ton`

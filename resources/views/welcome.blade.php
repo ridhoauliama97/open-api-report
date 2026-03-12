@@ -839,6 +839,12 @@
                                 Laporan ST (Sawmill) Masuk Per-Group
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-sawmill-hari-tebal-lebar.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Sawmill / Hari / Tebal / Lebar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

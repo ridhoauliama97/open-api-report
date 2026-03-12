@@ -38,6 +38,7 @@ use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
+use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
@@ -336,6 +337,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [RekapHasilSawmillPerMejaController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapHasilSawmillPerMejaController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapHasilSawmillPerMejaController::class, 'health'])->name('health');
+    });
+
+    /** ST sawmill per hari/tebal/lebar routes. */
+    Route::prefix('st-sawmill-hari-tebal-lebar')->name('st-sawmill-hari-tebal-lebar.')->group(function (): void {
+        Route::get('/', [StSawmillHariTebalLebarController::class, 'index'])->name('index');
+        Route::post('/download', [StSawmillHariTebalLebarController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StSawmillHariTebalLebarController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StSawmillHariTebalLebarController::class, 'preview'])->name('preview');
+        Route::post('/health', [StSawmillHariTebalLebarController::class, 'health'])->name('health');
     });
 
     /** Lembar tally hasil sawmill routes. */
