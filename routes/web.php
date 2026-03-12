@@ -333,6 +333,7 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
     Route::prefix('rekap-hasil-sawmill-per-meja')->name('rekap-hasil-sawmill-per-meja.')->group(function (): void {
         Route::get('/', [RekapHasilSawmillPerMejaController::class, 'index'])->name('index');
         Route::post('/download', [RekapHasilSawmillPerMejaController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapHasilSawmillPerMejaController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapHasilSawmillPerMejaController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapHasilSawmillPerMejaController::class, 'health'])->name('health');
     });

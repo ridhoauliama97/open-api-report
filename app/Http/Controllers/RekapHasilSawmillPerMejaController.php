@@ -16,10 +16,27 @@ class RekapHasilSawmillPerMejaController extends Controller
         return view('reports.sawn-timber.rekap-hasil-sawmill-per-meja-form');
     }
 
+    public function previewPdf(
+        GenerateRekapHasilSawmillPerMejaReportRequest $request,
+        RekapHasilSawmillPerMejaReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderPdf($request, $reportService, $pdfGenerator, true);
+    }
+
     public function download(
         GenerateRekapHasilSawmillPerMejaReportRequest $request,
         RekapHasilSawmillPerMejaReportService $reportService,
         PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderPdf($request, $reportService, $pdfGenerator, false);
+    }
+
+    private function renderPdf(
+        GenerateRekapHasilSawmillPerMejaReportRequest $request,
+        RekapHasilSawmillPerMejaReportService $reportService,
+        PdfGenerator $pdfGenerator,
+        bool $inline,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -61,7 +78,7 @@ class RekapHasilSawmillPerMejaController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('%s; filename="%s"', $inline ? 'inline' : 'attachment', $filename),
         ]);
     }
 
@@ -128,4 +145,3 @@ class RekapHasilSawmillPerMejaController extends Controller
         return [$request->startDate(), $request->endDate()];
     }
 }
-
