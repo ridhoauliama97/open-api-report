@@ -130,7 +130,7 @@
 
         .table-end-line td {
             border: 0 !important;
-            border-top: 1px solid #000 !important;
+            border-top: 2px solid #000 !important;
             padding: 0 !important;
             height: 0 !important;
             line-height: 0 !important;
@@ -327,9 +327,23 @@
                 if ($buffer !== []) {
                     $pairedRows[] = $buffer;
                 }
+
+                $operators = [];
+                foreach ($rowsData as $row) {
+                    $op = trim((string) ($row['Operator'] ?? ''));
+                    if ($op !== '') {
+                        $operators[$op] = true;
+                    }
+                }
+                $operatorText = implode(', ', array_keys($operators));
             @endphp
 
-            <p class="session-meta">Tanggal: {{ $formatDate($dateKey) }}</p>
+            <p class="session-meta">
+                Tanggal: {{ $formatDate($dateKey) }}
+                @if ($operatorText !== '')
+                    | Operator: {{ $operatorText }}
+                @endif
+            </p>
 
             <table class="report-table">
                 <thead>
@@ -473,4 +487,3 @@
 </body>
 
 </html>
-
