@@ -95,26 +95,44 @@
             font-weight: bold;
         }
 
-        .kesimpulan-table {
-            width: 100%;
-            border-collapse: collapse;
+        .kesimpulan-wrap {
+            display: flex;
+            gap: 20px;
             margin-top: 2px;
         }
 
-        .kesimpulan-table td {
-            border: none;
+        .kesimpulan-col {
+            width: 50%;
+        }
+
+        .kesimpulan-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .kesimpulan-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
             padding: 1px 0;
-            vertical-align: top;
         }
 
-        .kesimpulan-label {
+        .kesimpulan-item .label {
+            font-weight: bold;
             white-space: nowrap;
-            padding-right: 6px;
         }
 
-        .kesimpulan-sep {
+        .kesimpulan-item .sep {
             width: 8px;
             text-align: center;
+            flex: 0 0 auto;
+        }
+
+        .kesimpulan-item .value {
+            margin-left: auto;
+            text-align: right;
+            white-space: nowrap;
         }
 
         .footer-wrap {
@@ -247,39 +265,37 @@
         </tbody>
     </table>
 
-    <div class="kesimpulan-title">Kesimpulan</div>
-    <table class="kesimpulan-table">
-        <tr>
-            <td style="width: 50%;">
-                <table class="kesimpulan-table">
-                    <tr>
-                        <td class="kesimpulan-label">Jumlah HK</td>
-                        <td class="kesimpulan-sep">:</td>
-                        <td class="number">{{ $jumlahHk }}</td>
-                    </tr>
-                    <tr>
-                        <td class="kesimpulan-label">Ton/Hari</td>
-                        <td class="kesimpulan-sep">:</td>
-                        <td class="number">{{ $fmtTotal($tonPerHari) }}</td>
-                    </tr>
-                </table>
-            </td>
-            <td style="width: 50%;">
-                <table class="kesimpulan-table">
-                    <tr>
-                        <td class="kesimpulan-label">Jumlah HK Meja Sawmill</td>
-                        <td class="kesimpulan-sep">:</td>
-                        <td class="number">{{ $jumlahHkMeja }}</td>
-                    </tr>
-                    <tr>
-                        <td class="kesimpulan-label">Ton/Meja/Hari</td>
-                        <td class="kesimpulan-sep">:</td>
-                        <td class="number">{{ $fmtTotal($tonPerMejaPerHari) }}</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+    <div class="kesimpulan-title" style="margin-top:30px;">Kesimpulan</div>
+    <div class="kesimpulan-wrap">
+        <div class="kesimpulan-col">
+            <ul class="kesimpulan-list">
+                <li class="kesimpulan-item">
+                    <span class="label">Jumlah HK</span>
+                    <span class="sep">:</span>
+                    <span class="value">{{ $jumlahHk }}</span>
+                </li>
+                <li class="kesimpulan-item">
+                    <span class="label">Ton/Hari</span>
+                    <span class="sep">:</span>
+                    <span class="value">{{ $fmtTotal($tonPerHari) }}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="kesimpulan-col">
+            <ul class="kesimpulan-list">
+                <li class="kesimpulan-item">
+                    <span class="label">Jumlah HK Meja Sawmill</span>
+                    <span class="sep">:</span>
+                    <span class="value">{{ $jumlahHkMeja }}</span>
+                </li>
+                <li class="kesimpulan-item">
+                    <span class="label">Ton/Meja/Hari</span>
+                    <span class="sep">:</span>
+                    <span class="value">{{ $fmtTotal($tonPerMejaPerHari) }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">
