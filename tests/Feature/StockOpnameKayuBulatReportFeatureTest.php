@@ -106,11 +106,12 @@ class StockOpnameKayuBulatReportFeatureTest extends TestCase
         $this->app->instance(StockOpnameKayuBulatReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/kayu-bulat/stock-opname/download', [])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="laporan-stock-opname-kayu-bulat.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'laporan stock opname kayu bulat');
     }
 
     public function test_health_endpoint_returns_structure_status(): void

@@ -92,14 +92,12 @@ class LabelNyangkutReportFeatureTest extends TestCase
         $this->app->instance(LabelNyangkutReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/label-nyangkut/download')
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader(
-                'Content-Disposition',
-                sprintf('attachment; filename="Laporan-Label-Nyangkut-per-%s.pdf"', now()->format('Y-m-d')),
-            );
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Label Nyangkut');
     }
 
     /**

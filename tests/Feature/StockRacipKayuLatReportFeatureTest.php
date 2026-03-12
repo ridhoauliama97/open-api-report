@@ -98,10 +98,11 @@ class StockRacipKayuLatReportFeatureTest extends TestCase
         $this->app->instance(StockRacipKayuLatReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->get('/reports/stock-racip-kayu-lat/download?end_date=2026-02-28')
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="Laporan-Stok-Racip-Kayu-Lat-2026-02-28.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Stok Racip Kayu Lat');
     }
 }

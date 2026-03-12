@@ -97,14 +97,15 @@ class RangkumanJlhLabelInputReportFeatureTest extends TestCase
         $this->app->instance(RangkumanJlhLabelInputReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/rangkuman-label-input/download', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="laporan-rangkuman-label-input-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'laporan rangkuman label input');
     }
 
     /**

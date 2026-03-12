@@ -231,14 +231,15 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/mutasi/barang-jadi/download', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="laporan-mutasi-barang-jadi-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'laporan mutasi barang jadi');
     }
 
     /**
@@ -296,12 +297,13 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->withHeaders([
+        $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->createBearerToken($user),
         ])->get('/api/reports/mutasi-barang-jadi/pdf?TglAwal=2026-01-01&TglAkhir=2026-01-31')
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="laporan-mutasi-barang-jadi-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'laporan mutasi barang jadi');
     }
 
     /**

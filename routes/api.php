@@ -38,9 +38,11 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
+use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
+use App\Http\Controllers\RekapHasilSawmillPerMejaController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
@@ -146,6 +148,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/saldo-hidup-kg', 'api.reports.kayu-bulat.saldo-hidup-kg', SaldoHidupKayuBulatKgController::class],
         ['/reports/kayu-bulat/rekap-pembelian-kg', 'api.reports.kayu-bulat.rekap-pembelian-kg', RekapPembelianKayuBulatKgController::class],
         ['/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg', 'api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg', RekapPenerimaanSTDariSawmillKgController::class],
+        ['/reports/kayu-bulat/rekap-produktivitas-sawmill-rp', 'api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp', RekapProduktivitasSawmillRpController::class],
         ['/reports/kayu-bulat/stock-opname', 'api.reports.kayu-bulat.stock-opname', StockOpnameKayuBulatController::class],
         ['/reports/kayu-bulat/hidup-per-group', 'api.reports.kayu-bulat.hidup-per-group', HidupKBPerGroupController::class],
         ['/reports/kayu-bulat/hidup', 'api.reports.kayu-bulat.hidup', KayuBulatHidupController::class],
@@ -172,6 +175,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/stock-st-kering', 'api.reports.sawn-timber.stock-st-kering', StockSTKeringController::class],
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
+        ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja', RekapHasilSawmillPerMejaController::class],
         ['/reports/sawn-timber/umur-sawn-timber-detail-ton', 'api.reports.sawn-timber.umur-sawn-timber-detail-ton', UmurSawnTimberDetailTonController::class],
         ['/reports/sawn-timber/st-sawmill-masuk-per-group', 'api.reports.sawn-timber.st-sawmill-masuk-per-group', StSawmillMasukPerGroupController::class],
     ];

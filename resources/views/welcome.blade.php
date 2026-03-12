@@ -694,6 +694,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.rekap-produktivitas-sawmill-rp.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produktivitas Sawmill
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Time Line KB - Bulanan (Rambung)

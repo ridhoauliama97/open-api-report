@@ -251,6 +251,26 @@ return [
             'Tanggal,NamaGrade,InOut,Berat'
         )))),
     ],
+    'rekap_produktivitas_sawmill_rp' => [
+        'database_connection' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_PROCEDURE', 'SPWps_LapRekapPenerimaanSawmilRp'),
+        'sub_stored_procedure' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_SUB_REPORT_PROCEDURE', 'SPWps_LapSubRekapPenerimaanSawmilRp'),
+        'call_syntax' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_QUERY'),
+        'sub_query' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_SUB_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_PARAMETER_COUNT', 2),
+        'sub_parameter_count' => (int) env('REKAP_PRODUKTIVITAS_SAWMILL_RP_SUB_REPORT_PARAMETER_COUNT', 2),
+        // If the SP doesn't return Upah (Rp), approximate: Upah = ST(Kg) * upah_per_kg.
+        'upah_per_kg' => (float) env('REKAP_PRODUKTIVITAS_SAWMILL_RP_UPAH_PER_KG', '450'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,NamaGrade,InOut,Rp'
+        )))),
+        'sub_expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKTIVITAS_SAWMILL_RP_SUB_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,NamaGrade,InOut,Rp'
+        )))),
+    ],
     'rekap_pembelian_kayu_bulat_kg' => [
         'database_connection' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_PROCEDURE', 'SP_LapRekapPembelianKayuBulat'),
@@ -308,6 +328,17 @@ return [
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_SUB_REPORT_EXPECTED_COLUMNS',
             'NoMeja,NamaMeja,TglSawmill,Jenis,Operator,Tebal,Lebar,UOM,TonRacip,IdSawmillSpecialCondition,Condition,SM,IsBorongan'
+        )))),
+    ],
+    'rekap_hasil_sawmill_per_meja' => [
+        'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_PROCEDURE', 'SPWps_LapRekapHasilSawmillPerMeja'),
+        'call_syntax' => env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_EXPECTED_COLUMNS',
+            'NoMeja,TglSawmill,Tebal,UOM,TonRacip'
         )))),
     ],
     'hidup_kb_per_group' => [

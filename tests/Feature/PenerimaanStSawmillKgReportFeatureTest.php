@@ -112,14 +112,15 @@ class PenerimaanStSawmillKgReportFeatureTest extends TestCase
         $this->app->instance(PenerimaanStSawmillKgReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/download', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="Laporan-Penerimaan-ST-Dari-Sawmill-Timbang-KG-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Penerimaan ST Dari Sawmill Timbang KG');
     }
 
     public function test_health_endpoint_returns_structure_status(): void

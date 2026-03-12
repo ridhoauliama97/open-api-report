@@ -87,11 +87,12 @@ class HidupKBPerGroupReportFeatureTest extends TestCase
         $this->app->instance(HidupKBPerGroupReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/kayu-bulat/hidup-per-group/download', [])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="laporan-hidup-kb-per-group.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'laporan hidup kb per group');
     }
 
     public function test_health_endpoint_returns_structure_status(): void

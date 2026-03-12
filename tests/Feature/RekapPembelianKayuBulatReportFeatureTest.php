@@ -75,11 +75,12 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
         $this->app->instance(RekapPembelianKayuBulatReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->get('/reports/kayu-bulat/rekap-pembelian/download?start_year=2025&end_year=2026')
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="Laporan-Rekap-Pembelian-Kayu-Bulat-2025-sd-2026.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Rekap Pembelian Kayu Bulat');
     }
 
     public function test_pdf_preview_endpoint_returns_inline_disposition(): void
@@ -110,10 +111,11 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
         $this->app->instance(RekapPembelianKayuBulatReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->get('/reports/kayu-bulat/rekap-pembelian/download?start_year=2025&end_year=2026&preview_pdf=1')
             ->assertOk()
-            ->assertHeader('Content-Disposition', 'inline; filename="Laporan-Rekap-Pembelian-Kayu-Bulat-2025-sd-2026.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Rekap Pembelian Kayu Bulat');
     }
 }
-

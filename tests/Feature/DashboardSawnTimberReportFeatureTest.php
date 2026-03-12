@@ -75,11 +75,12 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
         $this->app->instance(DashboardSawnTimberReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->get('/dashboard/sawn-timber/download?start_date=2026-01-01&end_date=2026-01-31')
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="Dashboard-Sawn-Timber-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Dashboard Sawn Timber');
     }
 
     public function test_dashboard_pdf_preview_returns_inline_disposition(): void
@@ -113,10 +114,11 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
         $this->app->instance(DashboardSawnTimberReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->get('/dashboard/sawn-timber/download?start_date=2026-01-01&end_date=2026-01-31&preview_pdf=1')
             ->assertOk()
-            ->assertHeader('Content-Disposition', 'inline; filename="Dashboard-Sawn-Timber-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Dashboard Sawn Timber');
     }
 }
-

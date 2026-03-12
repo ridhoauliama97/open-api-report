@@ -58,7 +58,7 @@ class AuthApiFeatureTest extends TestCase
         $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/me')
             ->assertOk()
-            ->assertJsonPath('user.Username', 'login-user');
+            ->assertJsonPath('user.username', 'login-user');
     }
 
     /**

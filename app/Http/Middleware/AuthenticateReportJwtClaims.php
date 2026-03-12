@@ -7,6 +7,7 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthenticateReportJwtClaims
 {
@@ -23,7 +24,18 @@ class AuthenticateReportJwtClaims
 
         $decoded = $this->decodeToken($token);
         if ($decoded === null) {
-            return $this->unauthenticated('Token tidak valid.');
+            // Backward compatible: allow Sanctum personal access tokens for first-party auth flows.
+            $sanctum = $this->resolveSanctumUser($token);
+            if ($sanctum === null) {
+                return $this->unauthenticated('Token tidak valid.');
+            }
+
+            [$user, $tokenClaims] = $sanctum;
+
+            $request->setUserResolver(static fn() => $user);
+            $request->attributes->set('report_token_claims', $tokenClaims);
+
+            return $next($request);
         }
 
         if (!$this->isSignatureValid($decoded)) {
@@ -80,6 +92,65 @@ class AuthenticateReportJwtClaims
         ]);
 
         return $next($request);
+    }
+
+    /**
+     * Try resolving a Sanctum personal access token into a user and synthetic claims.
+     *
+     * @return array{0: \Illuminate\Contracts\Auth\Authenticatable, 1: array<string, mixed>}|null
+     */
+    private function resolveSanctumUser(string $token): ?array
+    {
+        // Sanctum tokens are opaque strings (not three-part JWT). If a token looks like JWT, skip.
+        if (substr_count($token, '.') === 2) {
+            return null;
+        }
+
+        $accessToken = PersonalAccessToken::findToken($token);
+        if (!$accessToken) {
+            return null;
+        }
+
+        if ($accessToken->expires_at !== null && $accessToken->expires_at->getTimestamp() < time()) {
+            return null;
+        }
+
+        $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
+        if ($requiredScope !== '' && !$this->sanctumHasScope($accessToken, $requiredScope)) {
+            return null;
+        }
+
+        $tokenable = $accessToken->tokenable;
+        if ($tokenable === null) {
+            return null;
+        }
+
+        // Map to the same claim keys used by downstream report views/footers.
+        $username = (string) ($tokenable->Username ?? $tokenable->username ?? '');
+        $name = (string) ($tokenable->Nama ?? $tokenable->name ?? $username);
+        $email = (string) ($tokenable->Email ?? $tokenable->email ?? '');
+        $sub = (string) ($tokenable->getAuthIdentifier() ?? $username);
+
+        $user = $tokenable;
+        $claims = [
+            'sub' => $sub,
+            'username' => $username !== '' ? $username : $sub,
+            'name' => $name !== '' ? $name : ($username !== '' ? $username : $sub),
+            'email' => $email,
+        ];
+
+        return [$user, $claims];
+    }
+
+    private function sanctumHasScope(PersonalAccessToken $accessToken, string $requiredScope): bool
+    {
+        // Wildcard tokens are allowed.
+        $abilities = $accessToken->abilities ?? [];
+        if (is_array($abilities) && in_array('*', $abilities, true)) {
+            return true;
+        }
+
+        return $accessToken->can($requiredScope);
     }
 
     /**

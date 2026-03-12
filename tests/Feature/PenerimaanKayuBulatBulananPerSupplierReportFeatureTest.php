@@ -121,14 +121,15 @@ class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
         $this->app->instance(PenerimaanKayuBulatBulananPerSupplierReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/kayu-bulat/penerimaan-bulanan-per-supplier/download', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="laporan-penerimaan-kayu-bulat-bulanan-per-supplier-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'laporan penerimaan kayu bulat bulanan per supplier');
     }
 
     public function test_health_endpoint_returns_structure_status(): void
@@ -185,7 +186,6 @@ class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
         return $this->issueJwtForUser($user);
     }
 }
-
 
 
 

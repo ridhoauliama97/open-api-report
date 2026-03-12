@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\RekapPembelianKayuBulatKgReportService;
 use App\Services\RekapPenerimaanSTDariSawmillKgReportService;
+use App\Services\RekapProduktivitasSawmillRpReportService;
 use App\Services\SaldoHidupKayuBulatKgReportService;
 use App\Services\TimelineKayuBulatBulananKgReportService;
 use App\Services\TimelineKayuBulatHarianKgReportService;
@@ -37,6 +38,7 @@ class KayuBulatKgReportsFeatureTest extends TestCase
         $this->get('/reports/kayu-bulat/saldo-hidup-kg')->assertOk()->assertSee('Laporan Saldo Hidup Kayu Bulat - Timbang KG');
         $this->get('/reports/kayu-bulat/rekap-pembelian-kg')->assertOk()->assertSee('Laporan Rekap Pembelian Kayu Bulat (Ton) - Timbang KG');
         $this->get('/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg')->assertOk()->assertSee('Laporan Rekap Penerimaan ST Dari Sawmill - Timbang KG');
+        $this->get('/reports/kayu-bulat/rekap-produktivitas-sawmill-rp')->assertOk()->assertSee('Rekap Produktivitas Sawmill');
         $this->get('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2-kg')->assertOk()->assertSee('Laporan Perbanding KB Masuk Periode 1 dan 2 - Timbang KG');
         $this->get('/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg')->assertOk()->assertSee('Laporan Time Line KB - Bulanan (Rambung)');
         $this->get('/reports/kayu-bulat/timeline-kayu-bulat-harian-kg')->assertOk()->assertSee('Laporan Time Line KB - Harian (Rambung)');
@@ -113,6 +115,41 @@ class KayuBulatKgReportsFeatureTest extends TestCase
             ->assertJsonPath('meta.total_dates', 1)
             ->assertJsonPath('meta.total_receipts', 1)
             ->assertJsonPath('grouped_data.0.date_key', '2026-01-01');
+    }
+
+    public function test_rekap_produktivitas_sawmill_rp_preview_returns_grouped_dates_and_rows(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+        $service = Mockery::mock(RekapProduktivitasSawmillRpReportService::class);
+        $service->shouldReceive('buildReportData')->once()->with('2026-01-01', '2026-01-02')->andReturn([
+            'rows' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Rp' => 10000]],
+            'rows_sub' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Rp' => 10000]],
+            'date_groups' => [[
+                'date_key' => '2026-01-01',
+                'date_label' => '01-Jan-26',
+                'receipts' => [[
+                    'meta' => ['no_pen_st' => 'B.1', 'tgl_penerimaan_st' => '2026-01-01'],
+                    'rows' => [
+                        'input' => [['grade' => 'A', 'kb' => 10000.0, 'st' => 0.0, 'percent' => 0.0]],
+                        'output' => [],
+                    ],
+                    'totals' => ['kb_total' => 10000.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+                ]],
+            ]],
+            'summary' => ['total_rows' => 1, 'total_dates' => 1, 'total_receipts' => 1],
+        ]);
+        $this->app->instance(RekapProduktivitasSawmillRpReportService::class, $service);
+
+        $this->withHeaders($this->authJsonHeaders($user))
+            ->postJson('/api/reports/kayu-bulat/rekap-produktivitas-sawmill-rp', [
+                'TglAwal' => '2026-01-01',
+                'TglAkhir' => '2026-01-02',
+            ])
+            ->assertOk()
+            ->assertJsonPath('meta.total_dates', 1)
+            ->assertJsonPath('meta.total_receipts', 1)
+            ->assertJsonPath('grouped_data.0.date_key', '2026-01-01')
+            ->assertJsonPath('sub_data.0.Rp', 10000);
     }
 
     public function test_timeline_kg_previews_return_grouped_periods(): void

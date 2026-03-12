@@ -37,8 +37,10 @@ use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
+use App\Http\Controllers\RekapHasilSawmillPerMejaController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
+use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoHidupKayuBulatKgController;
@@ -327,6 +329,14 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/health', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'health'])->name('health');
     });
 
+    /** Rekap hasil sawmill per-meja routes. */
+    Route::prefix('rekap-hasil-sawmill-per-meja')->name('rekap-hasil-sawmill-per-meja.')->group(function (): void {
+        Route::get('/', [RekapHasilSawmillPerMejaController::class, 'index'])->name('index');
+        Route::post('/download', [RekapHasilSawmillPerMejaController::class, 'download'])->name('download');
+        Route::post('/preview', [RekapHasilSawmillPerMejaController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapHasilSawmillPerMejaController::class, 'health'])->name('health');
+    });
+
     /** Lembar tally hasil sawmill routes. */
     Route::prefix('lembar-tally-hasil-sawmill')->name('lembar-tally-hasil-sawmill.')->group(function (): void {
         Route::get('/', [LembarTallyHasilSawmillController::class, 'index'])->name('index');
@@ -479,6 +489,14 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::post('/download', [RekapPenerimaanSTDariSawmillKgController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [RekapPenerimaanSTDariSawmillKgController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapPenerimaanSTDariSawmillKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Rekap produktivitas sawmill (Rp) routes. */
+    Route::prefix('rekap-produktivitas-sawmill-rp')->name('rekap-produktivitas-sawmill-rp.')->group(function (): void {
+        Route::get('/', [RekapProduktivitasSawmillRpController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduktivitasSawmillRpController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduktivitasSawmillRpController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduktivitasSawmillRpController::class, 'preview'])->name('preview');
     });
 
     /** Target masuk bahan baku routes. */

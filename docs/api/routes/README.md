@@ -1,6 +1,6 @@
 # API Route Docs
 
-Total routes terdokumentasi: 168
+Total routes terdokumentasi: 174
 
 - [api.auth.login](./api.auth.login.md) - `POST /api/auth/login`
 - [api.auth.logout](./api.auth.logout.md) - `POST /api/auth/logout`
@@ -74,6 +74,9 @@ Total routes terdokumentasi: 168
 - [api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.health](./api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.health.md) - `POST /api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg/health`
 - [api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.pdf](./api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg/pdf`
 - [api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.preview](./api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg.preview.md) - `POST /api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg`
+- [api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp.health](./api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp.health.md) - `POST /api/reports/kayu-bulat/rekap-produktivitas-sawmill-rp/health`
+- [api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp.pdf](./api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/rekap-produktivitas-sawmill-rp/pdf`
+- [api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp.preview](./api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp.preview.md) - `POST /api/reports/kayu-bulat/rekap-produktivitas-sawmill-rp`
 - [api.reports.kayu-bulat.saldo.health](./api.reports.kayu-bulat.saldo.health.md) - `POST /api/reports/kayu-bulat/saldo/health`
 - [api.reports.kayu-bulat.saldo.pdf](./api.reports.kayu-bulat.saldo.pdf.md) - `GET|POST|HEAD /api/reports/kayu-bulat/saldo/pdf`
 - [api.reports.kayu-bulat.saldo.preview](./api.reports.kayu-bulat.saldo.preview.md) - `POST /api/reports/kayu-bulat/saldo`
@@ -155,6 +158,9 @@ Total routes terdokumentasi: 168
 - [api.reports.sawn-timber.lembar-tally-hasil-sawmill.health](./api.reports.sawn-timber.lembar-tally-hasil-sawmill.health.md) - `POST /api/reports/sawn-timber/lembar-tally-hasil-sawmill/health`
 - [api.reports.sawn-timber.lembar-tally-hasil-sawmill.pdf](./api.reports.sawn-timber.lembar-tally-hasil-sawmill.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/lembar-tally-hasil-sawmill/pdf`
 - [api.reports.sawn-timber.lembar-tally-hasil-sawmill.preview](./api.reports.sawn-timber.lembar-tally-hasil-sawmill.preview.md) - `POST /api/reports/sawn-timber/lembar-tally-hasil-sawmill`
+- [api.reports.sawn-timber.rekap-hasil-sawmill-per-meja.health](./api.reports.sawn-timber.rekap-hasil-sawmill-per-meja.health.md) - `POST /api/reports/sawn-timber/rekap-hasil-sawmill-per-meja/health`
+- [api.reports.sawn-timber.rekap-hasil-sawmill-per-meja.pdf](./api.reports.sawn-timber.rekap-hasil-sawmill-per-meja.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/rekap-hasil-sawmill-per-meja/pdf`
+- [api.reports.sawn-timber.rekap-hasil-sawmill-per-meja.preview](./api.reports.sawn-timber.rekap-hasil-sawmill-per-meja.preview.md) - `POST /api/reports/sawn-timber/rekap-hasil-sawmill-per-meja`
 - [api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg.health](./api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg.health.md) - `POST /api/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/health`
 - [api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg.pdf](./api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg.pdf.md) - `GET|POST|HEAD /api/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/pdf`
 - [api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg.preview](./api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg.preview.md) - `POST /api/reports/sawn-timber/penerimaan-st-dari-sawmill-kg`

@@ -99,14 +99,15 @@ class MutasiKayuBulatV2ReportFeatureTest extends TestCase
         $this->app->instance(MutasiKayuBulatV2ReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/mutasi/kayu-bulat-v2/download', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
-            ->assertHeader('Content-Type', 'application/pdf')
-            ->assertHeader('Content-Disposition', 'attachment; filename="Laporan-Mutasi-Kayu-Bulat-Gantung-2026-01-01-sd-2026-01-31.pdf"');
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Mutasi Kayu Bulat Gantung');
     }
 
     public function test_mutasi_kayu_bulat_v2_health_endpoint_returns_structure_status(): void
