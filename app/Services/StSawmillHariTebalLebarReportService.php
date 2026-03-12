@@ -32,6 +32,7 @@ class StSawmillHariTebalLebarReportService
         $isGroupBlocks = $this->buildBlocks($rows, $dateKeys);
         $grandTotalsByDate = $this->buildGrandTotalsByDate($isGroupBlocks, $dateKeys);
         $grandTotal = array_sum(array_map(static fn($v): float => (float) $v, $grandTotalsByDate));
+        $grandTotalsByIsGroup = $this->buildGrandTotalsByIsGroup($isGroupBlocks);
         $rangkuman = $this->buildRangkuman($rows);
 
         return [
@@ -41,6 +42,7 @@ class StSawmillHariTebalLebarReportService
             'is_group_blocks' => $isGroupBlocks,
             'grand_totals_by_date' => $grandTotalsByDate,
             'grand_total' => $grandTotal,
+            'grand_totals_by_is_group' => $grandTotalsByIsGroup,
             'rangkuman' => $rangkuman,
             'summary' => [
                 'total_rows' => count($rows),
@@ -299,6 +301,24 @@ class StSawmillHariTebalLebarReportService
         }
 
         return $totals;
+    }
+
+    /**
+     * @param array<int, array{is_group: int, totals_by_date: array<string, float>}> $isGroupBlocks
+     * @return array<int, float>
+     */
+    private function buildGrandTotalsByIsGroup(array $isGroupBlocks): array
+    {
+        $out = [];
+        foreach ($isGroupBlocks as $ig) {
+            $isGroup = (int) ($ig['is_group'] ?? 0);
+            $byDate = is_array($ig['totals_by_date'] ?? null) ? $ig['totals_by_date'] : [];
+            $out[$isGroup] = array_sum(array_map(static fn($v): float => (float) $v, $byDate));
+        }
+
+        ksort($out);
+
+        return $out;
     }
 
     /**

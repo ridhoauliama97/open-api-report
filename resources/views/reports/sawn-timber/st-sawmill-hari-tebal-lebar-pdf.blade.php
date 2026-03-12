@@ -138,6 +138,7 @@
         $isGroupBlocks = is_array($data['is_group_blocks'] ?? null) ? $data['is_group_blocks'] : [];
         $grandTotalsByDate = is_array($data['grand_totals_by_date'] ?? null) ? $data['grand_totals_by_date'] : [];
         $grandTotal = (float) ($data['grand_total'] ?? 0.0);
+        $grandTotalsByIsGroup = is_array($data['grand_totals_by_is_group'] ?? null) ? $data['grand_totals_by_is_group'] : [];
         $rangkuman = is_array($data['rangkuman'] ?? null) ? $data['rangkuman'] : [];
         $rangkumanItems = is_array($rangkuman['items'] ?? null) ? $rangkuman['items'] : [];
         $rangkumanTotalsByJenis = is_array($rangkuman['totals_by_jenis'] ?? null) ? $rangkuman['totals_by_jenis'] : [];
@@ -293,33 +294,34 @@
                     </tbody>
                 </table>
             @endforeach
+        @empty
+            <div class="center">Tidak ada data.</div>
+        @endforelse
 
-            @php
-                $chunkGrandTotal = $sumForDates($grandTotalsByDate, $chunkDates);
-            @endphp
-            <div class="section-title">Grand Total</div>
-            <table style="margin-bottom: 14px;">
+        @if ($isGroupBlocks !== [])
+            <div class="section-title">Grand Total (Seluruh Tanggal)</div>
+            <table style="width: 420px; margin-bottom: 14px;">
                 <thead>
                     <tr>
-                        <th colspan="3">Grand Total</th>
-                        @foreach ($chunkDates as $dk)
-                            <th style="width: 48px;">{{ $dateLabel($dk) }}</th>
-                        @endforeach
-                        <th style="width: 56px;">Total</th>
+                        <th style="width: 140px;">Group</th>
+                        <th style="width: 120px;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($grandTotalsByIsGroup as $ig => $total)
+                        <tr>
+                            <td class="center">Group {{ (int) $ig }}</td>
+                            <td class="number">{{ $fmtTotal((float) $total) }}</td>
+                        </tr>
+                    @endforeach
                     <tr class="totals-row">
-                        <td colspan="3" class="center">Total (Ton)</td>
-                        @foreach ($chunkDates as $dk)
-                            <td class="number">{{ $fmtTotal((float) ($grandTotalsByDate[$dk] ?? 0.0)) }}</td>
-                        @endforeach
-                        <td class="number">{{ $fmtTotal($chunkGrandTotal) }}</td>
+                        <td class="center">Grand Total</td>
+                        <td class="number">{{ $fmtTotal($grandTotal) }}</td>
                     </tr>
                 </tbody>
             </table>
 
-            @if ($chunkIndex === count($dateChunks) - 1 && $rangkumanItems !== [])
+            @if ($rangkumanItems !== [])
                 <div class="section-title">Rangkuman</div>
                 <table class="rangkuman-table">
                     <thead>
@@ -385,9 +387,7 @@
                     </tbody>
                 </table>
             @endif
-        @empty
-            <div class="center">Tidak ada data.</div>
-        @endforelse
+        @endif
 
         <htmlpagefooter name="reportFooter">
             <div class="footer-wrap">
