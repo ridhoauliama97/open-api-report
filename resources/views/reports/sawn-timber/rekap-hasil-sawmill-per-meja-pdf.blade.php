@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.15;
             color: #000;
         }
@@ -86,6 +86,35 @@
 
         .totals-row td {
             font-weight: bold;
+            font-size: 11px;
+        }
+
+        .kesimpulan-title {
+            margin: 10px 0 4px 0;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .kesimpulan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2px;
+        }
+
+        .kesimpulan-table td {
+            border: none;
+            padding: 1px 0;
+            vertical-align: top;
+        }
+
+        .kesimpulan-label {
+            white-space: nowrap;
+            padding-right: 6px;
+        }
+
+        .kesimpulan-sep {
+            width: 8px;
+            text-align: center;
         }
 
         .footer-wrap {
@@ -114,6 +143,28 @@
         $totalsByDate = is_array($data['totals_by_date'] ?? null) ? $data['totals_by_date'] : [];
         $grandTotal = (float) ($data['grand_total'] ?? 0.0);
 
+        $jumlahHk = count($dateKeys);
+
+        // HK meja sawmill = total kombinasi meja x tanggal yang punya ton > 0 (di semua tebal/UOM).
+        $jumlahHkMeja = 0;
+        $eps = 0.0000001;
+        foreach ($mejaGroups as $g) {
+            $rows = is_array($g['rows'] ?? null) ? $g['rows'] : [];
+            foreach ($dateKeys as $dk) {
+                $sum = 0.0;
+                foreach ($rows as $r) {
+                    $values = is_array($r['values'] ?? null) ? $r['values'] : [];
+                    $sum += (float) ($values[$dk] ?? 0.0);
+                }
+                if (abs($sum) >= $eps) {
+                    $jumlahHkMeja++;
+                }
+            }
+        }
+
+        $tonPerHari = $jumlahHk > 0 ? $grandTotal / $jumlahHk : 0.0;
+        $tonPerMejaPerHari = $jumlahHkMeja > 0 ? $grandTotal / $jumlahHkMeja : 0.0;
+
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $start = \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y');
@@ -123,7 +174,7 @@
         $fmtTotal = static fn(float $v): string => number_format($v, 4, '.', ',');
         $dateLabel = static function (string $key): string {
             try {
-                return \Carbon\Carbon::parse($key)->format('d/m/Y');
+                return \Carbon\Carbon::parse($key)->format('d-M');
             } catch (\Throwable $exception) {
                 return $key;
             }
@@ -136,7 +187,7 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2" style="width: 46px;">No.Meja</th>
+                <th rowspan="2" style="width: 46px;">No. Meja</th>
                 <th rowspan="2" style="width: 56px;">Tebal</th>
                 <th rowspan="2" style="width: 40px;">UOM</th>
                 <th colspan="{{ count($dateKeys) + 1 }}">Tanggal</th>
@@ -175,7 +226,7 @@
                         @foreach ($dateKeys as $dk)
                             <td class="number">{{ $fmt((float) ($values[$dk] ?? 0.0)) }}</td>
                         @endforeach
-                        <td class="number">{{ $fmtTotal($rowTotal) }}</td>
+                        <td class="number" style="font-weight: bold; font-size: 11px;">{{ $fmtTotal($rowTotal) }}</td>
                     </tr>
                 @endforeach
             @empty
@@ -186,7 +237,7 @@
 
             @if ($mejaGroups !== [])
                 <tr class="totals-row">
-                    <td colspan="3" class="center">Total (ton)</td>
+                    <td colspan="3" class="center">Total (Ton)</td>
                     @foreach ($dateKeys as $dk)
                         <td class="number">{{ $fmtTotal((float) ($totalsByDate[$dk] ?? 0.0)) }}</td>
                     @endforeach
@@ -194,6 +245,40 @@
                 </tr>
             @endif
         </tbody>
+    </table>
+
+    <div class="kesimpulan-title">Kesimpulan</div>
+    <table class="kesimpulan-table">
+        <tr>
+            <td style="width: 50%;">
+                <table class="kesimpulan-table">
+                    <tr>
+                        <td class="kesimpulan-label">Jumlah HK</td>
+                        <td class="kesimpulan-sep">:</td>
+                        <td class="number">{{ $jumlahHk }}</td>
+                    </tr>
+                    <tr>
+                        <td class="kesimpulan-label">Ton/Hari</td>
+                        <td class="kesimpulan-sep">:</td>
+                        <td class="number">{{ $fmtTotal($tonPerHari) }}</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 50%;">
+                <table class="kesimpulan-table">
+                    <tr>
+                        <td class="kesimpulan-label">Jumlah HK Meja Sawmill</td>
+                        <td class="kesimpulan-sep">:</td>
+                        <td class="number">{{ $jumlahHkMeja }}</td>
+                    </tr>
+                    <tr>
+                        <td class="kesimpulan-label">Ton/Meja/Hari</td>
+                        <td class="kesimpulan-sep">:</td>
+                        <td class="number">{{ $fmtTotal($tonPerMejaPerHari) }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
     </table>
 
     <htmlpagefooter name="reportFooter">
