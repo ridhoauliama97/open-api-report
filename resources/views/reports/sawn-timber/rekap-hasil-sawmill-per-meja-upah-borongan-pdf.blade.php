@@ -69,7 +69,7 @@
         }
 
         tfoot {
-            display: table-row-group;
+            display: table-footer-group;
         }
 
         tr {
@@ -129,12 +129,14 @@
         }
 
         .table-end-line td {
-            border: 0 !important;
             border-top: 2px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
             padding: 0 !important;
             height: 0 !important;
             line-height: 0 !important;
-            background: transparent !important;
+            background: #fff !important;
         }
 
         .summary-title {
@@ -174,10 +176,14 @@
 <body>
     @php
         $mainGroups = is_iterable($groupedRows ?? null)
-            ? (is_array($groupedRows) ? $groupedRows : collect($groupedRows)->values()->all())
+            ? (is_array($groupedRows)
+                ? $groupedRows
+                : collect($groupedRows)->values()->all())
             : [];
         $subGroups = is_iterable($groupedSubRows ?? null)
-            ? (is_array($groupedSubRows) ? $groupedSubRows : collect($groupedSubRows)->values()->all())
+            ? (is_array($groupedSubRows)
+                ? $groupedSubRows
+                : collect($groupedSubRows)->values()->all())
             : [];
         $startText = \Carbon\Carbon::parse((string) ($startDate ?? now()))->locale('id')->translatedFormat('d/m/Y');
         $endText = \Carbon\Carbon::parse((string) ($endDate ?? now()))->locale('id')->translatedFormat('d/m/Y');
