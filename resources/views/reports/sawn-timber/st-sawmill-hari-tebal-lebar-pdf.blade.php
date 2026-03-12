@@ -162,7 +162,7 @@
 
         $eps = 0.0000001;
         $fmt = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 4, '.', ',');
-        $fmtTotal = static fn(float $v): string => number_format($v, 4, '.', ',');
+        $fmtTotal = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 4, '.', ',');
 
         $dateLabel = static function (string $key): string {
             try {
@@ -180,7 +180,7 @@
             return $sum;
         };
 
-        $fmtPct = static fn(float $v): string => number_format($v, 0, '.', '') . '%';
+        $fmtPct = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 0, '.', '') . '%';
     @endphp
 
     <h1 class="report-title">Laporan ST Sawmill / Hari / Tebal / Lebar</h1>
