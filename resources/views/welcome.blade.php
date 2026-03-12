@@ -816,6 +816,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-hasil-sawmill-per-meja.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Hasil Sawmill / Meja
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.lembar-tally-hasil-sawmill.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Lembar Tally Hasil Sawmill
