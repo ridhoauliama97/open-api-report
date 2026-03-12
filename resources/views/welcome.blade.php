@@ -810,9 +810,21 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Penerimaan ST Dari Sawmill (Non Rambung)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan-v2.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Rekap Hasil Sawmill Per-Meja (Semua Meja)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Hasil Sawmill Per-Meja (Upah Borongan)
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

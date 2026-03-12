@@ -37,10 +37,12 @@ use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
+use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
 use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
+use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
@@ -321,6 +323,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview', [PenerimaanStSawmillKgController::class, 'preview'])->name('preview');
     });
 
+    /** Rekap penerimaan ST dari sawmill (Non Rambung) routes. */
+    Route::prefix('rekap-penerimaan-st-dari-sawmill-non-rambung')->name('rekap-penerimaan-st-dari-sawmill-non-rambung.')->group(function (): void {
+        Route::get('/', [RekapPenerimaanSTDariSawmillNonRambungController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPenerimaanSTDariSawmillNonRambungController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPenerimaanSTDariSawmillNonRambungController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPenerimaanSTDariSawmillNonRambungController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapPenerimaanSTDariSawmillNonRambungController::class, 'health'])->name('health');
+    });
+
     /** Rekap hasil sawmill per-meja upah borongan V2 routes. */
     Route::prefix('rekap-hasil-sawmill-per-meja-upah-borongan-v2')->name('rekap-hasil-sawmill-per-meja-upah-borongan-v2.')->group(function (): void {
         Route::get('/', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'index'])->name('index');
@@ -328,6 +339,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'preview'])->name('preview');
         Route::post('/health', [RekapHasilSawmillPerMejaUpahBoronganV2Controller::class, 'health'])->name('health');
+    });
+
+    /** Rekap hasil sawmill per-meja (upah borongan) routes. */
+    Route::prefix('rekap-hasil-sawmill-per-meja-upah-borongan')->name('rekap-hasil-sawmill-per-meja-upah-borongan.')->group(function (): void {
+        Route::get('/', [RekapHasilSawmillPerMejaUpahBoronganController::class, 'index'])->name('index');
+        Route::post('/download', [RekapHasilSawmillPerMejaUpahBoronganController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapHasilSawmillPerMejaUpahBoronganController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapHasilSawmillPerMejaUpahBoronganController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapHasilSawmillPerMejaUpahBoronganController::class, 'health'])->name('health');
     });
 
     /** Rekap hasil sawmill per-meja routes. */

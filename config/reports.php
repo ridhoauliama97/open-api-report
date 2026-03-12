@@ -330,6 +330,23 @@ return [
             'NoMeja,NamaMeja,TglSawmill,Jenis,Operator,Tebal,Lebar,UOM,TonRacip,IdSawmillSpecialCondition,Condition,SM,IsBorongan'
         )))),
     ],
+    'rekap_hasil_sawmill_per_meja_upah_borongan' => [
+        'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBorongan'),
+        'sub_stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_SUB_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBorongan_Sub'),
+        'call_syntax' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_QUERY'),
+        'sub_query' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_SUB_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_EXPECTED_COLUMNS',
+            'NoMeja,TglSawmill,Jenis,Operator,Tebal,Lebar,UOM,TonRacip,IdSawmillSpecialCondition,Condition,IsBorongan,NamaMeja'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_SUB_REPORT_EXPECTED_COLUMNS',
+            'NoMeja,NamaMeja,TglSawmill,Jenis,Operator,Tebal,Lebar,UOM,TonRacip,IdSawmillSpecialCondition,Condition,SM,IsBorongan'
+        )))),
+    ],
     'rekap_hasil_sawmill_per_meja' => [
         'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_PROCEDURE', 'SPWps_LapRekapHasilSawmillPerMeja'),
@@ -595,6 +612,14 @@ return [
         'query' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_QUERY'),
         'parameter_count' => (int) env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+    'rekap_penerimaan_st_dari_sawmill_non_rambung' => [
+        'database_connection' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_PROCEDURE', 'SPWps_LapRekapPenSTDariSawmill'),
+        'call_syntax' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_EXPECTED_COLUMNS', '')))),
     ],
     'lembar_tally_hasil_sawmill' => [
         'database_connection' => env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
