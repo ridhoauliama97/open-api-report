@@ -2,6 +2,10 @@
 <html lang="id">
 
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <meta charset="utf-8">
     <style>
         * {
@@ -24,14 +28,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 10px 0;
-            font-size: 11px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -60,7 +64,6 @@
         th {
             text-align: center;
             font-weight: bold;
-            background: #fff;
         }
 
         .row-odd td {
@@ -83,7 +86,6 @@
 
         .totals-row td {
             font-weight: bold;
-            background: #fff;
         }
 
         .footer-wrap {
@@ -134,7 +136,6 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2" style="width: 28px;">No.</th>
                 <th rowspan="2" style="width: 46px;">No.Meja</th>
                 <th rowspan="2" style="width: 56px;">Tebal</th>
                 <th rowspan="2" style="width: 40px;">UOM</th>
@@ -167,7 +168,6 @@
                     @endphp
                     <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         @if ($ridx === 0)
-                            <td class="center" rowspan="{{ $rowspan }}">{{ $mejaIndex + 1 }}</td>
                             <td class="center" rowspan="{{ $rowspan }}">{{ $noMeja }}</td>
                         @endif
                         <td class="center">{{ rtrim(rtrim(number_format($tebal, 1, '.', ','), '0'), '.') }}</td>
@@ -180,13 +180,13 @@
                 @endforeach
             @empty
                 <tr>
-                    <td colspan="{{ 5 + count($dateKeys) }}" class="center">Tidak ada data.</td>
+                    <td colspan="{{ 4 + count($dateKeys) }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
 
             @if ($mejaGroups !== [])
                 <tr class="totals-row">
-                    <td colspan="4" class="center">Total (ton)</td>
+                    <td colspan="3" class="center">Total (ton)</td>
                     @foreach ($dateKeys as $dk)
                         <td class="number">{{ $fmtTotal((float) ($totalsByDate[$dk] ?? 0.0)) }}</td>
                     @endforeach
@@ -206,4 +206,3 @@
 </body>
 
 </html>
-
