@@ -80,6 +80,15 @@
             background: #eef2f8;
         }
 
+        /* Zebra rows for summary tables (Grand Total + Rangkuman) */
+        .zebra-table tbody tr:nth-child(odd) td {
+            background: #c9d1df;
+        }
+
+        .zebra-table tbody tr:nth-child(even) td {
+            background: #eef2f8;
+        }
+
         .number {
             text-align: right;
             white-space: nowrap;
@@ -138,7 +147,9 @@
         $isGroupBlocks = is_array($data['is_group_blocks'] ?? null) ? $data['is_group_blocks'] : [];
         $grandTotalsByDate = is_array($data['grand_totals_by_date'] ?? null) ? $data['grand_totals_by_date'] : [];
         $grandTotal = (float) ($data['grand_total'] ?? 0.0);
-        $grandTotalsByIsGroup = is_array($data['grand_totals_by_is_group'] ?? null) ? $data['grand_totals_by_is_group'] : [];
+        $grandTotalsByIsGroup = is_array($data['grand_totals_by_is_group'] ?? null)
+            ? $data['grand_totals_by_is_group']
+            : [];
         $rangkuman = is_array($data['rangkuman'] ?? null) ? $data['rangkuman'] : [];
         $rangkumanItems = is_array($rangkuman['items'] ?? null) ? $rangkuman['items'] : [];
         $rangkumanTotalsByJenis = is_array($rangkuman['totals_by_jenis'] ?? null) ? $rangkuman['totals_by_jenis'] : [];
@@ -300,7 +311,7 @@
 
         @if ($isGroupBlocks !== [])
             <div class="section-title">Grand Total (Seluruh Tanggal)</div>
-            <table style="width: 420px; margin-bottom: 14px;">
+            <table class="zebra-table" style="width: 420px; margin-bottom: 14px;">
                 <thead>
                     <tr>
                         <th style="width: 140px;">Group</th>
@@ -323,7 +334,7 @@
 
             @if ($rangkumanItems !== [])
                 <div class="section-title">Rangkuman</div>
-                <table class="rangkuman-table">
+                <table class="rangkuman-table zebra-table">
                     <thead>
                         <tr>
                             <th style="width: 160px;">Jenis Kayu</th>
@@ -358,7 +369,8 @@
                             @endphp
                             <tr>
                                 @if ($isNewJenis)
-                                    <td rowspan="{{ $jenisRowspan }}" style="vertical-align: top;">{{ $jenis }}</td>
+                                    <td rowspan="{{ $jenisRowspan }}" style="vertical-align: top;">{{ $jenis }}
+                                    </td>
                                 @endif
                                 <td class="center">{{ rtrim(rtrim(number_format($tebal, 1, '.', ','), '0'), '.') }}</td>
                                 <td class="number">{{ $fmtTotal($total) }}</td>
