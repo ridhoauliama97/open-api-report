@@ -69,6 +69,9 @@ use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\StockSTKeringController;
 use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
+use App\Http\Controllers\KdKeluarMasukController;
+use App\Http\Controllers\RekapKamarKdController;
+use App\Http\Controllers\MutasiKdController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
@@ -328,6 +331,33 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [StBasahHidupPerUmurKayuTonController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StBasahHidupPerUmurKayuTonController::class, 'preview'])->name('preview');
         Route::post('/health', [StBasahHidupPerUmurKayuTonController::class, 'health'])->name('health');
+    });
+
+    /** KD keluar - masuk routes. */
+    Route::prefix('kd-keluar-masuk')->name('kd-keluar-masuk.')->group(function (): void {
+        Route::get('/', [KdKeluarMasukController::class, 'index'])->name('index');
+        Route::post('/download', [KdKeluarMasukController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KdKeluarMasukController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KdKeluarMasukController::class, 'preview'])->name('preview');
+        Route::post('/health', [KdKeluarMasukController::class, 'health'])->name('health');
+    });
+
+    /** Rekap kamar KD routes. */
+    Route::prefix('rekap-kamar-kd')->name('rekap-kamar-kd.')->group(function (): void {
+        Route::get('/', [RekapKamarKdController::class, 'index'])->name('index');
+        Route::post('/download', [RekapKamarKdController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapKamarKdController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapKamarKdController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapKamarKdController::class, 'health'])->name('health');
+    });
+
+    /** Mutasi KD routes. */
+    Route::prefix('mutasi-kd')->name('mutasi-kd.')->group(function (): void {
+        Route::get('/', [MutasiKdController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiKdController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [MutasiKdController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [MutasiKdController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiKdController::class, 'health'])->name('health');
     });
 
     /** Penerimaan ST dari sawmill KG routes. */

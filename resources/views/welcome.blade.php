@@ -810,6 +810,24 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.kd-keluar-masuk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan KD (Keluar - Masuk)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-kamar-kd.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Kamar KD
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.mutasi-kd.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Mutasi KD
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Penerimaan ST Dari Sawmill - Timbang KG

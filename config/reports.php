@@ -638,6 +638,53 @@ return [
             'Group,Ton2WkLess,Ton2to4Wk,Ton4to6Wk,Ton6to8Wk,Ton8WkMore'
         )))),
     ],
+    'kd_keluar_masuk' => [
+        'database_connection' => env('KD_KELUAR_MASUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KD_KELUAR_MASUK_REPORT_PROCEDURE', 'SP_LapKDKeluarMasuk'),
+        'call_syntax' => env('KD_KELUAR_MASUK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KD_KELUAR_MASUK_REPORT_QUERY'),
+        'parameter_count' => (int) env('KD_KELUAR_MASUK_REPORT_PARAMETER_COUNT', 3),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KD_KELUAR_MASUK_REPORT_EXPECTED_COLUMNS',
+            'NoKamarKD,TglMasuk,TglKeluar,JmlhHari,Group,AveTebal,Ton'
+        )))),
+    ],
+    'rekap_kamar_kd' => [
+        'database_connection' => env('REKAP_KAMAR_KD_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_KAMAR_KD_REPORT_PROCEDURE', 'SP_LapRekapKamarKD'),
+        'sub1_stored_procedure' => env('REKAP_KAMAR_KD_SUB1_REPORT_PROCEDURE', 'SP_LapRekapKamarKD_Sub1'),
+        'sub2_stored_procedure' => env('REKAP_KAMAR_KD_SUB2_REPORT_PROCEDURE', 'SP_LapRekapKamarKD_Sub2'),
+        'call_syntax' => env('REKAP_KAMAR_KD_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_KAMAR_KD_REPORT_QUERY'),
+        'sub1_query' => env('REKAP_KAMAR_KD_SUB1_REPORT_QUERY'),
+        'sub2_query' => env('REKAP_KAMAR_KD_SUB2_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_KAMAR_KD_REPORT_PARAMETER_COUNT', 2),
+        'sub1_parameter_count' => (int) env('REKAP_KAMAR_KD_SUB1_REPORT_PARAMETER_COUNT', 2),
+        'sub2_parameter_count' => (int) env('REKAP_KAMAR_KD_SUB2_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_KAMAR_KD_REPORT_EXPECTED_COLUMNS',
+            'NoRuangKD,TglMasuk,TglKeluar,Hari,Jenis,Tebal,Lebar,Ton,AveTebal,AvePanjang'
+        )))),
+        'expected_sub1_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_KAMAR_KD_SUB1_REPORT_EXPECTED_COLUMNS',
+            'NoRuangKD,Jenis,Tebal,Ton,m3'
+        )))),
+        'expected_sub2_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_KAMAR_KD_SUB2_REPORT_EXPECTED_COLUMNS',
+            'NoRuangKD,Jenis'
+        )))),
+    ],
+    'mutasi_kd' => [
+        'database_connection' => env('MUTASI_KD_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_KD_REPORT_PROCEDURE', 'SP_LapMutasiKD'),
+        'call_syntax' => env('MUTASI_KD_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_KD_REPORT_QUERY'),
+        'parameter_count' => (int) env('MUTASI_KD_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'MUTASI_KD_REPORT_EXPECTED_COLUMNS',
+            'NoRuangKD,TglMasuk,TonIn,TglKeluar,TonOut'
+        )))),
+    ],
     'penerimaan_st_dari_sawmill_kg' => [
         'database_connection' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PROCEDURE', 'SPWps_LapRekapPenerimaanSawmilRp'),
