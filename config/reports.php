@@ -673,6 +673,37 @@ return [
             'Group,Jenis,Tebal,STTon'
         )))),
     ],
+    'st_sawmill_masuk_per_group_meja' => [
+        'database_connection' => env('ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_PROCEDURE', 'SP_LapSTSawmillMasukPerGroup'),
+        'call_syntax' => env('ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_EXPECTED_COLUMNS',
+            'Group,Jenis,Tebal,NoMeja,MasukTon'
+        )))),
+    ],
+    'saldo_st_hidup_per_produk' => [
+        'database_connection' => env('SALDO_ST_HIDUP_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SALDO_ST_HIDUP_PER_PRODUK_REPORT_PROCEDURE', 'SPWps_LapSTHidupPerProduk'),
+        'call_syntax' => env('SALDO_ST_HIDUP_PER_PRODUK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SALDO_ST_HIDUP_PER_PRODUK_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SALDO_ST_HIDUP_PER_PRODUK_REPORT_EXPECTED_COLUMNS',
+            'Group,Produk,Tebal,Lebar,UOM,BasahTon,KDTon,KeringTon,TotalTon'
+        )))),
+    ],
+    'st_hidup_per_spk' => [
+        'database_connection' => env('ST_HIDUP_PER_SPK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_HIDUP_PER_SPK_REPORT_PROCEDURE', 'SPWps_LapSTHidupPerProdukV2'),
+        'call_syntax' => env('ST_HIDUP_PER_SPK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_HIDUP_PER_SPK_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_HIDUP_PER_SPK_REPORT_EXPECTED_COLUMNS',
+            'Group,Produk,NoSPK,Tebal,Lebar,UOM,BasahTon,KDTon,KeringTon,TotalTon'
+        )))),
+    ],
     'st_sawmill_hari_tebal_lebar' => [
         'database_connection' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_PROCEDURE', 'SPWps_LapSTSawmillPerHariPerTebalPerLebar'),

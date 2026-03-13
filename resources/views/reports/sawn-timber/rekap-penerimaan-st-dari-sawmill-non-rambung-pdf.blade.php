@@ -246,7 +246,7 @@
             $rendPct = $supplierSummary['rend_percent'] ?? null;
         @endphp
 
-        <div class="group-title">Supplier: {{ $supplierName }}</div>
+        <div class="group-title">{{ $supplierName }}</div>
 
         <table>
             <thead>
@@ -292,7 +292,8 @@
                         $labelSpan = $tonKbIndex !== null ? 1 + $tonKbIndex : 1;
                     @endphp
                     <tr>
-                        <td class="number" colspan="{{ $labelSpan }}"><strong>Total :</strong></td>
+                        <td class="number" style="text-align: center;" colspan="{{ $labelSpan }}"><strong>Total
+                                :</strong></td>
                         @foreach ($schema as $index => $colSpec)
                             @if ($tonKbIndex !== null && $index < $tonKbIndex)
                                 @continue
@@ -452,9 +453,11 @@
                     <td class="number"><strong>{{ $formatNumber($grandSt, 4) }}</strong></td>
                     <td></td>
                     <td class="number">
-                        <strong>{{ $grandDia === null ? '' : $formatNumber((float) $grandDia, 1) }}</strong></td>
+                        <strong>{{ $grandDia === null ? '' : $formatNumber((float) $grandDia, 1) }}</strong>
+                    </td>
                     <td class="number">
-                        <strong>{{ $grandTbl === null ? '' : $formatNumber((float) $grandTbl, 1) }}</strong></td>
+                        <strong>{{ $grandTbl === null ? '' : $formatNumber((float) $grandTbl, 1) }}</strong>
+                    </td>
                     <td class="number">
                         <strong>{{ $grandRend === null ? '' : $formatNumber((float) $grandRend, 2) . '%' }}</strong>
                     </td>

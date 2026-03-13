@@ -57,6 +57,10 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $aveTblSource = $this->resolveAveTblColumn($columns);
         $potongSource = $this->resolvePotongColumn($columns);
         $rendSource = $this->resolveRendStKbColumn($columns);
+        $areaSource = $this->resolveAreaColumn($columns);
+        $pcsKbSource = $this->resolvePcsKbColumn($columns);
+        $pcsStSource = $this->resolvePcsStColumn($columns);
+        $totalTblStSource = $this->resolveTotalTblStColumn($columns);
 
         $schema = self::OUTPUT_SCHEMA;
         $schemaKeys = array_values(array_map(static fn(array $spec): string => (string) ($spec['key'] ?? ''), $schema));
@@ -76,18 +80,40 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                 $rend = $st / $kb; // ratio 0.xx, view formats as percent
             }
 
+            // Derive Ave Dia / Ave Tbl from SP aggregate columns when explicit columns aren't present.
+            // - Ave Dia = sqrt(Area / PcsKB)
+            // - Ave Tbl = TotalTblST / PcsST
+            $area = $areaSource !== null ? $this->toFloat($rawRow[$areaSource] ?? null) : null;
+            $pcsKb = $pcsKbSource !== null ? $this->toFloat($rawRow[$pcsKbSource] ?? null) : null;
+            $pcsSt = $pcsStSource !== null ? $this->toFloat($rawRow[$pcsStSource] ?? null) : null;
+            $totalTblSt = $totalTblStSource !== null ? $this->toFloat($rawRow[$totalTblStSource] ?? null) : null;
+
+            $aveDia = null;
+            if ($aveDiaSource !== null) {
+                $aveDia = $this->toFloat($rawRow[$aveDiaSource] ?? null);
+            } elseif ($area !== null && $area > 0.0000001 && $pcsKb !== null && $pcsKb > 0.0000001) {
+                $aveDia = sqrt($area / $pcsKb);
+            }
+
+            $aveTbl = null;
+            if ($aveTblSource !== null) {
+                $aveTbl = $this->toFloat($rawRow[$aveTblSource] ?? null);
+            } elseif ($totalTblSt !== null && $totalTblSt > 0.0000001 && $pcsSt !== null && $pcsSt > 0.0000001) {
+                $aveTbl = $totalTblSt / $pcsSt;
+            }
+
             $mapped = [
                 'No ST' => $noStSource !== null ? ($rawRow[$noStSource] ?? null) : null,
                 'NoTruk' => $noTrukSource !== null ? $this->formatNoTruk($rawRow[$noTrukSource] ?? null) : null,
-                'Meja' => $mejaSource !== null ? ($rawRow[$mejaSource] ?? null) : null,
+                'Meja' => $mejaSource !== null ? $this->formatMeja($rawRow[$mejaSource] ?? null) : null,
                 'Tanggal' => $dateSource !== null ? ($rawRow[$dateSource] ?? null) : null,
                 'No.KB' => $noKbSource !== null ? ($rawRow[$noKbSource] ?? null) : null,
                 'Jenis Kayu Bulat' => $jenisKbSource !== null ? ($rawRow[$jenisKbSource] ?? null) : null,
                 'Ton (KB)' => $tonKbSource !== null ? ($rawRow[$tonKbSource] ?? null) : null,
                 'Ton (ST)' => $tonStSource !== null ? ($rawRow[$tonStSource] ?? null) : null,
-                'Ave Dia' => $aveDiaSource !== null ? ($rawRow[$aveDiaSource] ?? null) : null,
-                'Ave Tbl' => $aveTblSource !== null ? ($rawRow[$aveTblSource] ?? null) : null,
-                'Potong' => $potongSource !== null ? ($rawRow[$potongSource] ?? null) : null,
+                'Ave Dia' => $aveDia,
+                'Ave Tbl' => $aveTbl,
+                'Potong' => $potongSource !== null ? $this->formatPotong($rawRow[$potongSource] ?? null) : null,
                 'Rend ST-KB' => $rend,
             ];
 
@@ -99,6 +125,10 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
             $rowsBySupplier[$supplierName][] = [
                 'sort_date' => $sortDate,
                 'row' => $ordered,
+                'area' => $area,
+                'pcs_kb' => $pcsKb,
+                'pcs_st' => $pcsSt,
+                'total_tbl_st' => $totalTblSt,
             ];
             $mappedRows[] = $ordered;
         }
@@ -116,11 +146,59 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $grandTblCount = 0;
 
         foreach ($rowsBySupplier as $supplierName => $items) {
+            $kbSum = 0.0;
+            $stSum = 0.0;
+            $areaSum = 0.0;
+            $pcsKbSum = 0.0;
+            $totalTblStSum = 0.0;
+            $pcsStSum = 0.0;
+
+            foreach ($items as $it) {
+                $row = (array) ($it['row'] ?? []);
+                $kb = $this->toFloat($row['Ton (KB)'] ?? null);
+                $st = $this->toFloat($row['Ton (ST)'] ?? null);
+
+                $kbSum += (float) ($kb ?? 0.0);
+                $stSum += (float) ($st ?? 0.0);
+
+                $areaSum += (float) ($this->toFloat($it['area'] ?? null) ?? 0.0);
+                $pcsKbSum += (float) ($this->toFloat($it['pcs_kb'] ?? null) ?? 0.0);
+                $totalTblStSum += (float) ($this->toFloat($it['total_tbl_st'] ?? null) ?? 0.0);
+                $pcsStSum += (float) ($this->toFloat($it['pcs_st'] ?? null) ?? 0.0);
+            }
+
             usort($items, static function (array $a, array $b): int {
                 $da = (string) ($a['sort_date'] ?? '');
                 $db = (string) ($b['sort_date'] ?? '');
 
                 if ($da === $db) {
+                    $ra = (array) ($a['row'] ?? []);
+                    $rb = (array) ($b['row'] ?? []);
+
+                    $noSta = strtoupper(trim((string) ($ra['No ST'] ?? '')));
+                    $noStb = strtoupper(trim((string) ($rb['No ST'] ?? '')));
+                    if ($noSta !== $noStb) {
+                        if ($noSta === '') {
+                            return 1;
+                        }
+                        if ($noStb === '') {
+                            return -1;
+                        }
+                        return strcmp($noSta, $noStb);
+                    }
+
+                    $noKba = strtoupper(trim((string) ($ra['No.KB'] ?? '')));
+                    $noKbb = strtoupper(trim((string) ($rb['No.KB'] ?? '')));
+                    if ($noKba !== $noKbb) {
+                        if ($noKba === '') {
+                            return 1;
+                        }
+                        if ($noKbb === '') {
+                            return -1;
+                        }
+                        return strcmp($noKba, $noKbb);
+                    }
+
                     return 0;
                 }
 
@@ -137,34 +215,8 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
 
             $rowsForSupplier = array_values(array_map(static fn(array $item): array => (array) ($item['row'] ?? []), $items));
 
-            $kbSum = 0.0;
-            $stSum = 0.0;
-            $diaSum = 0.0;
-            $diaCount = 0;
-            $tblSum = 0.0;
-            $tblCount = 0;
-
-            foreach ($rowsForSupplier as $row) {
-                $kb = $this->toFloat($row['Ton (KB)'] ?? null);
-                $st = $this->toFloat($row['Ton (ST)'] ?? null);
-                $dia = $this->toFloat($row['Ave Dia'] ?? null);
-                $tbl = $this->toFloat($row['Ave Tbl'] ?? null);
-
-                $kbSum += (float) ($kb ?? 0.0);
-                $stSum += (float) ($st ?? 0.0);
-
-                if ($dia !== null) {
-                    $diaSum += $dia;
-                    $diaCount++;
-                }
-                if ($tbl !== null) {
-                    $tblSum += $tbl;
-                    $tblCount++;
-                }
-            }
-
-            $diaAvg = $diaCount > 0 ? $diaSum / $diaCount : null;
-            $tblAvg = $tblCount > 0 ? $tblSum / $tblCount : null;
+            $diaAvg = $areaSum > 0.0000001 && $pcsKbSum > 0.0000001 ? sqrt($areaSum / $pcsKbSum) : null;
+            $tblAvg = $totalTblStSum > 0.0000001 && $pcsStSum > 0.0000001 ? ($totalTblStSum / $pcsStSum) : null;
             $rendPercent = $kbSum > 0.0000001 ? ($stSum / $kbSum) * 100.0 : null;
 
             $supplierGroups[] = [
@@ -183,14 +235,14 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
 
             $grandKb += $kbSum;
             $grandSt += $stSum;
-            $grandDiaSum += $diaSum;
-            $grandDiaCount += $diaCount;
-            $grandTblSum += $tblSum;
-            $grandTblCount += $tblCount;
+            $grandDiaSum += $areaSum;
+            $grandDiaCount += $pcsKbSum;
+            $grandTblSum += $totalTblStSum;
+            $grandTblCount += $pcsStSum;
         }
 
-        $grandDiaAvg = $grandDiaCount > 0 ? $grandDiaSum / $grandDiaCount : null;
-        $grandTblAvg = $grandTblCount > 0 ? $grandTblSum / $grandTblCount : null;
+        $grandDiaAvg = $grandDiaSum > 0.0000001 && $grandDiaCount > 0.0000001 ? sqrt($grandDiaSum / $grandDiaCount) : null;
+        $grandTblAvg = $grandTblSum > 0.0000001 && $grandTblCount > 0.0000001 ? ($grandTblSum / $grandTblCount) : null;
         $grandRendPercent = $grandKb > 0.0000001 ? ($grandSt / $grandKb) * 100.0 : null;
 
         foreach ($supplierSummaries as $index => $summary) {
@@ -235,6 +287,10 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                 'ave_tbl' => $aveTblSource,
                 'potong' => $potongSource,
                 'rend' => $rendSource,
+                'area' => $areaSource,
+                'pcs_kb' => $pcsKbSource,
+                'pcs_st' => $pcsStSource,
+                'total_tbl_st' => $totalTblStSource,
             ],
         ];
     }
@@ -709,6 +765,106 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         return null;
     }
 
+    /**
+     * @param array<int, string> $columns
+     */
+    private function resolveAreaColumn(array $columns): ?string
+    {
+        $candidates = ['Area', 'AreaKB', 'AreaKBulat', 'Luas', 'LuasArea'];
+
+        foreach ($candidates as $candidate) {
+            foreach ($columns as $column) {
+                if (strcasecmp(trim($column), $candidate) === 0) {
+                    return $column;
+                }
+            }
+        }
+
+        foreach ($columns as $column) {
+            $normalized = strtolower(str_replace([' ', '_', '-'], '', $column));
+            if ($normalized === 'area' || str_contains($normalized, 'area')) {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<int, string> $columns
+     */
+    private function resolvePcsKbColumn(array $columns): ?string
+    {
+        $candidates = ['PcsKB', 'Pcs KB', 'PcsKayuBulat', 'PcsKayu', 'BatangKB', 'Batang KB', 'JmlhBatangKB'];
+
+        foreach ($candidates as $candidate) {
+            foreach ($columns as $column) {
+                if (strcasecmp(trim($column), $candidate) === 0) {
+                    return $column;
+                }
+            }
+        }
+
+        foreach ($columns as $column) {
+            $normalized = strtolower(str_replace([' ', '_', '-'], '', $column));
+            if (str_contains($normalized, 'pcskb') || (str_contains($normalized, 'pcs') && str_contains($normalized, 'kb'))) {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<int, string> $columns
+     */
+    private function resolvePcsStColumn(array $columns): ?string
+    {
+        $candidates = ['PcsST', 'Pcs ST', 'PcsSawnTimber', 'PcsSTimber', 'PcsSawn', 'PcsOutput', 'Pcs'];
+
+        foreach ($candidates as $candidate) {
+            foreach ($columns as $column) {
+                if (strcasecmp(trim($column), $candidate) === 0) {
+                    return $column;
+                }
+            }
+        }
+
+        foreach ($columns as $column) {
+            $normalized = strtolower(str_replace([' ', '_', '-'], '', $column));
+            if (str_contains($normalized, 'pcsst') || (str_contains($normalized, 'pcs') && str_contains($normalized, 'st'))) {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<int, string> $columns
+     */
+    private function resolveTotalTblStColumn(array $columns): ?string
+    {
+        $candidates = ['TotalTblST', 'Total Tbl ST', 'TotalTebalST', 'TotalTebal', 'SumTblST'];
+
+        foreach ($candidates as $candidate) {
+            foreach ($columns as $column) {
+                if (strcasecmp(trim($column), $candidate) === 0) {
+                    return $column;
+                }
+            }
+        }
+
+        foreach ($columns as $column) {
+            $normalized = strtolower(str_replace([' ', '_', '-'], '', $column));
+            if (str_contains($normalized, 'totaltblst') || (str_contains($normalized, 'total') && str_contains($normalized, 'tbl') && str_contains($normalized, 'st'))) {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
     private function toFloat(mixed $value): ?float
     {
         if ($value === null) {
@@ -755,6 +911,50 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $raw = trim((string) $value);
 
         return $raw;
+    }
+
+    private function formatMeja(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        $raw = trim((string) $value);
+        if ($raw === '') {
+            return '';
+        }
+
+        // Normalize comma-separated meja list: "2,4,15" -> "2, 4, 15".
+        $raw = preg_replace('/\\s*,\\s*/', ', ', $raw) ?? $raw;
+
+        return $raw;
+    }
+
+    private function formatPotong(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        $raw = trim((string) $value);
+        if ($raw === '') {
+            return '';
+        }
+
+        // Keep already formatted values (e.g. 2").
+        if (str_contains($raw, '"')) {
+            return $raw;
+        }
+
+        $n = is_numeric($raw) ? (int) $raw : null;
+        if ($n === null || $n <= 0) {
+            return $raw;
+        }
+
+        // In some datasets the SP returns "coded" values (e.g. 11 == 2", 12 == 3").
+        $inch = $n >= 10 ? ($n - 9) : $n;
+
+        return $inch > 0 ? ($inch . '"') : '';
     }
 
     /**

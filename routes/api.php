@@ -82,6 +82,7 @@ use App\Http\Controllers\PPS\MutasiMixerController;
 use App\Http\Controllers\PPS\MutasiBarangJadiPpsController;
 use App\Http\Controllers\PPS\SemuaLabelController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
+use App\Http\Controllers\StSawmillMasukPerGroupMejaController;
 use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
@@ -188,6 +189,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/st-sawmill-hari-tebal-lebar', 'api.reports.sawn-timber.st-sawmill-hari-tebal-lebar', StSawmillHariTebalLebarController::class],
         ['/reports/sawn-timber/umur-sawn-timber-detail-ton', 'api.reports.sawn-timber.umur-sawn-timber-detail-ton', UmurSawnTimberDetailTonController::class],
         ['/reports/sawn-timber/st-sawmill-masuk-per-group', 'api.reports.sawn-timber.st-sawmill-masuk-per-group', StSawmillMasukPerGroupController::class],
+        ['/reports/sawn-timber/st-sawmill-masuk-per-group-meja', 'api.reports.sawn-timber.st-sawmill-masuk-per-group-meja', StSawmillMasukPerGroupMejaController::class],
     ];
 
     /**

@@ -860,7 +860,25 @@
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.st-sawmill-masuk-per-group.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Masuk Per-Group
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-sawmill-masuk-per-group-meja.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
                                 Laporan ST (Sawmill) Masuk Per-Group
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.saldo-st-hidup-per-produk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Saldo ST Hidup Per-Jenis Per-Tebal (Per-Group Jenis Kayu)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-hidup-per-spk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Hidup per SPK, per Jenis, per Tebal, per Group Jenis Kayu
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

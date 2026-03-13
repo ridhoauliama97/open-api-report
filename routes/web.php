@@ -60,6 +60,7 @@ use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
+use App\Http\Controllers\StSawmillMasukPerGroupMejaController;
 use App\Http\Controllers\StockRacipKayuLatController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\LabelNyangkutController;
@@ -69,6 +70,8 @@ use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\StockSTKeringController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
+use App\Http\Controllers\SaldoStHidupPerProdukController;
+use App\Http\Controllers\StHidupPerSpkController;
 use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
 use App\Http\Controllers\PPS\RekapProduksiInjectController;
 use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
@@ -408,6 +411,30 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::get('/', [StSawmillMasukPerGroupController::class, 'index'])->name('index');
         Route::post('/download', [StSawmillMasukPerGroupController::class, 'download'])->name('download');
         Route::post('/preview', [StSawmillMasukPerGroupController::class, 'preview'])->name('preview');
+    });
+
+    /** ST (sawmill) masuk per-group (pivot meja) routes. */
+    Route::prefix('st-sawmill-masuk-per-group-meja')->name('st-sawmill-masuk-per-group-meja.')->group(function (): void {
+        Route::get('/', [StSawmillMasukPerGroupMejaController::class, 'index'])->name('index');
+        Route::post('/download', [StSawmillMasukPerGroupMejaController::class, 'download'])->name('download');
+        Route::post('/preview', [StSawmillMasukPerGroupMejaController::class, 'preview'])->name('preview');
+        Route::post('/health', [StSawmillMasukPerGroupMejaController::class, 'health'])->name('health');
+    });
+
+    /** Saldo ST hidup per produk routes. */
+    Route::prefix('saldo-st-hidup-per-produk')->name('saldo-st-hidup-per-produk.')->group(function (): void {
+        Route::get('/', [SaldoStHidupPerProdukController::class, 'index'])->name('index');
+        Route::post('/download', [SaldoStHidupPerProdukController::class, 'download'])->name('download');
+        Route::post('/preview', [SaldoStHidupPerProdukController::class, 'preview'])->name('preview');
+        Route::post('/health', [SaldoStHidupPerProdukController::class, 'health'])->name('health');
+    });
+
+    /** ST hidup per SPK routes. */
+    Route::prefix('st-hidup-per-spk')->name('st-hidup-per-spk.')->group(function (): void {
+        Route::get('/', [StHidupPerSpkController::class, 'index'])->name('index');
+        Route::post('/download', [StHidupPerSpkController::class, 'download'])->name('download');
+        Route::post('/preview', [StHidupPerSpkController::class, 'preview'])->name('preview');
+        Route::post('/health', [StHidupPerSpkController::class, 'health'])->name('health');
     });
 });
 

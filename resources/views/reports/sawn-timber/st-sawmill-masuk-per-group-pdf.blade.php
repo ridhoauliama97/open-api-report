@@ -34,7 +34,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 14px;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
@@ -64,8 +64,6 @@
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #fff;
         }
 
         td.center {
@@ -95,7 +93,43 @@
         .totals-row td {
             font-weight: bold;
             border: 1px solid #000;
-            background: #f8f9fc;
+        }
+
+        .group-section-title {
+            font-weight: bold;
+            margin: 10px 0 4px 0;
+        }
+
+        .group-summary-list {
+            list-style: none;
+            margin: 2px 0 10px 0;
+            padding: 0;
+        }
+
+        .group-summary-item {
+            /* Avoid CSS grid/flex to keep mPDF output stable. */
+            margin: 1px 0;
+            line-height: 1.2;
+        }
+
+        .group-summary-item .label {
+            display: inline-block;
+            width: 110px;
+            white-space: nowrap;
+        }
+
+        .group-summary-item .sep {
+            display: inline-block;
+            width: 10px;
+            text-align: center;
+        }
+
+        .group-summary-item .value {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .footer-wrap {
@@ -128,127 +162,96 @@
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $grandTotalTon = (float) ($summary['grand_total_ton'] ?? 0.0);
 
-        $toFloat = static function ($value): ?float {
-            if (is_numeric($value)) {
+        $toFloat = static function (mixed $value): ?float {
+            if ($value === null) {
+                return null;
+            }
+            if (is_int($value) || is_float($value)) {
                 return (float) $value;
+            }
+            if (is_string($value)) {
+                $t = trim($value);
+                if ($t === '') {
+                    return null;
+                }
+                $t = str_replace(',', '', $t);
+                return is_numeric($t) ? (float) $t : null;
             }
             return null;
         };
 
-        $mejaSet = [];
-        foreach ($groups as $group) {
+    @endphp
+
+    <h1 class="report-title">Laporan ST Masuk Per-Group</h1>
+    <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
+
+    @forelse ($groups as $gidx => $group)
+        @php
+            $groupName = trim((string) ($group['name'] ?? ''));
+            $groupName = $groupName !== '' ? $groupName : 'Tanpa Group';
             $rows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
-            foreach ($rows as $row) {
-                $tebal = $toFloat($row['Tebal'] ?? null);
+
+            // Aggregate by Tebal to avoid duplicates from SP output.
+            $byTebal = [];
+            foreach ($rows as $r) {
+                $tebal = $toFloat($r['Tebal'] ?? null);
                 if ($tebal === null) {
                     continue;
                 }
-                $mejaSet[(string) (int) round($tebal)] = (int) round($tebal);
+                $key = number_format($tebal, 2, '.', ''); // stable key
+                $byTebal[$key] = ($byTebal[$key] ?? 0.0) + (float) ($toFloat($r['STTon'] ?? null) ?? 0.0);
             }
-        }
-        $mejaColumns = array_values($mejaSet);
-        sort($mejaColumns, SORT_NUMERIC);
+            ksort($byTebal, SORT_NATURAL);
 
-        $grandByMeja = [];
-        foreach ($mejaColumns as $meja) {
-            $grandByMeja[$meja] = 0.0;
-        }
-    @endphp
+            $items = [];
+            $sumTon = 0.0;
+            foreach ($byTebal as $tebalKey => $tonSum) {
+                $items[] = ['tebal' => (float) $tebalKey, 'ton' => (float) $tonSum];
+                $sumTon += (float) $tonSum;
+            }
+        @endphp
 
-    <h1 class="report-title">Laporan ST (Sawmill) Masuk Per-Group</h1>
-    <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
+        <div class="group-section-title">{{ $gidx + 1 }} {{ $groupName }}</div>
 
-    <table>
-        <thead>
-            <tr class="headers-row">
-                <th rowspan="2" style="width: 12%;">Group Jenis</th>
-                <th rowspan="2" style="width: 10%;">Jenis Kayu</th>
-                <th rowspan="2" style="width: 8%;">Tebal</th>
-                <th colspan="{{ max(1, count($mejaColumns)) }}">Meja ke :</th>
-                <th rowspan="2" style="width: 10%;">Jumlah</th>
-            </tr>
-            <tr class="headers-row">
-                @forelse ($mejaColumns as $meja)
-                    <th>{{ $meja }}</th>
-                @empty
-                    <th>-</th>
-                @endforelse
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($groups as $group)
-                @php
-                    $groupName = (string) ($group['name'] ?? 'Tanpa Group');
-                    $rows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
-                    usort($rows, static function (array $a, array $b): int {
-                        $left = is_numeric($a['Tebal'] ?? null) ? (float) $a['Tebal'] : 0.0;
-                        $right = is_numeric($b['Tebal'] ?? null) ? (float) $b['Tebal'] : 0.0;
-                        return $left <=> $right;
-                    });
-                    $groupJenis = '-';
-                    foreach ($rows as $candidateRow) {
-                        $candidateJenis = trim((string) ($candidateRow['Jenis'] ?? ''));
-                        if ($candidateJenis !== '') {
-                            $groupJenis = $candidateJenis;
-                            break;
-                        }
-                    }
-                    $groupByMeja = [];
-                    foreach ($mejaColumns as $meja) {
-                        $groupByMeja[$meja] = 0.0;
-                    }
-                @endphp
-
-                @foreach ($rows as $row)
-                    @php
-                        $tebalInt = is_numeric($row['Tebal'] ?? null) ? (int) round((float) $row['Tebal']) : null;
-                        $ton = (float) ($row['STTon'] ?? 0.0);
-                        if ($tebalInt !== null && array_key_exists($tebalInt, $groupByMeja)) {
-                            $groupByMeja[$tebalInt] += $ton;
-                            $grandByMeja[$tebalInt] += $ton;
-                        }
-                    @endphp
-                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        @if ($loop->first)
-                            <td class="center" rowspan="{{ max(1, count($rows) + 1) }}">{{ $groupName }}</td>
-                            <td class="center" rowspan="{{ max(1, count($rows) + 1) }}">{{ $groupJenis }}</td>
-                        @endif
-                        <td class="center">{{ $tebalInt !== null ? $tebalInt : '' }}</td>
-                        @foreach ($mejaColumns as $meja)
-                            <td class="number">
-                                {{ $tebalInt === $meja ? number_format($ton, 4, '.', ',') : '' }}
-                            </td>
-                        @endforeach
-                        <td class="number">{{ number_format($ton, 4, '.', ',') }}</td>
+        <table style="width: 220px; margin-left: 12px;">
+            <thead>
+                <tr class="headers-row">
+                    <th style="width: 36px;">No</th>
+                    <th style="width: 70px;">Tebal</th>
+                    <th>ST (Ton)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($items as $idx => $it)
+                    <tr class="{{ ($idx + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                        <td class="center">{{ $idx + 1 }}</td>
+                        <td class="number">{{ number_format((float) $it['tebal'], 2, '.', ',') }}</td>
+                        <td class="number">{{ number_format((float) $it['ton'], 4, '.', ',') }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td class="center" colspan="3">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-                <tr class="totals-row">
-                    <td class="center">Jumlah</td>
-                    @foreach ($mejaColumns as $meja)
-                        <td class="number">
-                            {{ $groupByMeja[$meja] > 0 ? number_format($groupByMeja[$meja], 4, '.', ',') : '' }}</td>
-                    @endforeach
-                    <td class="number">{{ number_format((float) ($group['total_ton'] ?? 0.0), 4, '.', ',') }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td class="center" colspan="{{ 4 + max(1, count($mejaColumns)) }}">Tidak ada data.</td>
-                </tr>
-            @endforelse
+        <ul class="group-summary-list" style="width: 220px; margin-left: 12px;">
+            <li class="group-summary-item">
+                <span class="label">Jmlh Per-Jenis</span>
+                <span class="sep">:</span>
+                <span class="value">{{ number_format($sumTon, 4, '.', ',') }}</span>
+            </li>
+            <li class="group-summary-item">
+                <span class="label">Jmlh Per-Group</span>
+                <span class="sep">:</span>
+                <span class="value">{{ number_format($sumTon, 2, '.', ',') }}</span>
+            </li>
+        </ul>
 
-            @if (count($groups) > 0)
-                <tr class="totals-row">
-                    <td colspan="3" class="center">Total</td>
-                    @foreach ($mejaColumns as $meja)
-                        <td class="number">
-                            {{ $grandByMeja[$meja] > 0 ? number_format($grandByMeja[$meja], 4, '.', ',') : '' }}</td>
-                    @endforeach
-                    <td class="number">{{ number_format($grandTotalTon, 4, '.', ',') }}</td>
-                </tr>
-            @endif
-        </tbody>
-    </table>
+    @empty
+        <div class="center">Tidak ada data.</div>
+    @endforelse
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">
