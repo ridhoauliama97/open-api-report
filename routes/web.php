@@ -72,6 +72,8 @@ use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\KdKeluarMasukController;
 use App\Http\Controllers\RekapKamarKdController;
 use App\Http\Controllers\MutasiKdController;
+use App\Http\Controllers\RekapStPenjualanController;
+use App\Http\Controllers\PembelianStPerSupplierTonController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
@@ -358,6 +360,24 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [MutasiKdController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [MutasiKdController::class, 'preview'])->name('preview');
         Route::post('/health', [MutasiKdController::class, 'health'])->name('health');
+    });
+
+    /** Rekap ST Penjualan routes. */
+    Route::prefix('rekap-st-penjualan')->name('rekap-st-penjualan.')->group(function (): void {
+        Route::get('/', [RekapStPenjualanController::class, 'index'])->name('index');
+        Route::post('/download', [RekapStPenjualanController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapStPenjualanController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapStPenjualanController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapStPenjualanController::class, 'health'])->name('health');
+    });
+
+    /** Pembelian ST per supplier (Ton) routes. */
+    Route::prefix('pembelian-st-per-supplier-ton')->name('pembelian-st-per-supplier-ton.')->group(function (): void {
+        Route::get('/', [PembelianStPerSupplierTonController::class, 'index'])->name('index');
+        Route::post('/download', [PembelianStPerSupplierTonController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PembelianStPerSupplierTonController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PembelianStPerSupplierTonController::class, 'preview'])->name('preview');
+        Route::post('/health', [PembelianStPerSupplierTonController::class, 'health'])->name('health');
     });
 
     /** Penerimaan ST dari sawmill KG routes. */

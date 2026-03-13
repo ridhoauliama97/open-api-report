@@ -88,6 +88,8 @@ use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\KdKeluarMasukController;
 use App\Http\Controllers\RekapKamarKdController;
 use App\Http\Controllers\MutasiKdController;
+use App\Http\Controllers\RekapStPenjualanController;
+use App\Http\Controllers\PembelianStPerSupplierTonController;
 use App\Http\Controllers\StockOpnameKayuBulatController;
 use Illuminate\Support\Facades\Route;
 
@@ -187,6 +189,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/kd-keluar-masuk', 'api.reports.sawn-timber.kd-keluar-masuk', KdKeluarMasukController::class],
         ['/reports/sawn-timber/rekap-kamar-kd', 'api.reports.sawn-timber.rekap-kamar-kd', RekapKamarKdController::class],
         ['/reports/sawn-timber/mutasi-kd', 'api.reports.sawn-timber.mutasi-kd', MutasiKdController::class],
+        ['/reports/sawn-timber/rekap-st-penjualan', 'api.reports.sawn-timber.rekap-st-penjualan', RekapStPenjualanController::class],
+        ['/reports/sawn-timber/pembelian-st-per-supplier-ton', 'api.reports.sawn-timber.pembelian-st-per-supplier-ton', PembelianStPerSupplierTonController::class],
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung', 'api.reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung', RekapPenerimaanSTDariSawmillNonRambungController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],

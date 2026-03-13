@@ -1091,6 +1091,32 @@ return [
         )))),
     ],
 
+    // Sawn timber: Rekap ST Penjualan
+    'rekap_st_penjualan' => [
+        'database_connection' => env('REKAP_ST_PENJUALAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_ST_PENJUALAN_REPORT_PROCEDURE', 'SP_LapRekapSTPenjualan'),
+        'call_syntax' => env('REKAP_ST_PENJUALAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_ST_PENJUALAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_ST_PENJUALAN_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_ST_PENJUALAN_REPORT_EXPECTED_COLUMNS',
+            'Pembeli,NoSTJual,DateCreate,Jenis,Tebal,Lebar,IdUOMTblLebar,Panjang,IdUOMPanjang,JmlhBatang,Ton'
+        )))),
+    ],
+
+    // Sawn timber: Pembelian ST per supplier (Ton)
+    'pembelian_st_per_supplier_ton' => [
+        'database_connection' => env('PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_PROCEDURE', 'SP_LapPembelianSTPerSupplier'),
+        'call_syntax' => env('PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_QUERY'),
+        'parameter_count' => (int) env('PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_EXPECTED_COLUMNS',
+            'NmSupplier,Jenis,TglLaporan,STTon'
+        )))),
+    ],
+
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [

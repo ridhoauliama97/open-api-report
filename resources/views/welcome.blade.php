@@ -828,6 +828,18 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-st-penjualan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap ST Penjualan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.pembelian-st-per-supplier-ton.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Pembelian ST Per Supplier (Ton)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Penerimaan ST Dari Sawmill - Timbang KG
