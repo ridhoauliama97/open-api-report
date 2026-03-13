@@ -627,6 +627,17 @@ return [
         'preview_pdf_max_rows' => (int) env('STOCK_ST_KERING_PREVIEW_PDF_MAX_ROWS', 0),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_KERING_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'st_basah_hidup_per_umur_kayu_ton' => [
+        'database_connection' => env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_PROCEDURE', 'SP_LapSTBasahHidupPerUmurKayu'),
+        'call_syntax' => env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_EXPECTED_COLUMNS',
+            'Group,Ton2WkLess,Ton2to4Wk,Ton4to6Wk,Ton6to8Wk,Ton8WkMore'
+        )))),
+    ],
     'penerimaan_st_dari_sawmill_kg' => [
         'database_connection' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PROCEDURE', 'SPWps_LapRekapPenerimaanSawmilRp'),

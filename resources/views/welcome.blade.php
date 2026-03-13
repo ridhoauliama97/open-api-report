@@ -804,6 +804,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-basah-hidup-per-umur-kayu-ton.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Basah Hidup Per-Umur Kayu (Ton)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.penerimaan-st-dari-sawmill-kg.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Penerimaan ST Dari Sawmill - Timbang KG

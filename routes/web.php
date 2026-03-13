@@ -68,6 +68,7 @@ use App\Http\Controllers\LembarTallyHasilSawmillController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\StockSTKeringController;
+use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
@@ -318,6 +319,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/download', [StockSTKeringController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [StockSTKeringController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StockSTKeringController::class, 'preview'])->name('preview');
+    });
+
+    /** ST basah hidup per-umur kayu (Ton) routes. */
+    Route::prefix('st-basah-hidup-per-umur-kayu-ton')->name('st-basah-hidup-per-umur-kayu-ton.')->group(function (): void {
+        Route::get('/', [StBasahHidupPerUmurKayuTonController::class, 'index'])->name('index');
+        Route::post('/download', [StBasahHidupPerUmurKayuTonController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StBasahHidupPerUmurKayuTonController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StBasahHidupPerUmurKayuTonController::class, 'preview'])->name('preview');
+        Route::post('/health', [StBasahHidupPerUmurKayuTonController::class, 'health'])->name('health');
     });
 
     /** Penerimaan ST dari sawmill KG routes. */
