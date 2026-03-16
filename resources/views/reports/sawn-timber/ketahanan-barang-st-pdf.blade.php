@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <meta charset="utf-8">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        @page {
+            margin: 12mm 10mm 14mm 10mm;
+            footer: html_reportFooter;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Noto Serif", serif;
+            font-size: 10px;
+            line-height: 1.15;
+            color: #000;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 10px;
+            border: 1px solid #000;
+            table-layout: fixed;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        table.data-table th,
+        table.data-table td {
+            border: 0;
+            border-left: 1px solid #000;
+            padding: 2px 3px;
+            vertical-align: middle;
+        }
+
+        table.data-table th:first-child,
+        table.data-table td:first-child {
+            border-left: 0;
+        }
+
+        table.data-table th {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11px;
+            border-bottom: 1px solid #000;
+            background: #fff;
+        }
+
+        /* Hilangkan garis horizontal antar baris data. */
+        table.data-table tbody td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        /* Tfoot untuk "garis akhir tabel" ketika page break terjadi di tengah data. */
+        table.data-table tfoot td {
+            border-top: 1px solid #000;
+            font-weight: bold;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .footer-table td {
+            font-size: 8px;
+            font-style: italic;
+            padding: 0;
+            border: 0;
+            vertical-align: bottom;
+        }
+
+        .footer-print {
+            width: 65%;
+        }
+
+        .footer-spacer {
+            width: 10%;
+        }
+
+        .footer-page-cell {
+            width: 25%;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* Nudge page text to align with table's right outer border. */
+        .footer-page {
+            display: inline-block;
+            position: relative;
+            right: -4px;
+        }
+
+        @include('reports.partials.pdf-footer-table-style')
+    </style>
+</head>
+
+<body>
+    @php
+        $data = is_array($reportData ?? null) ? $reportData : [];
+        $rows = is_array($data['rows'] ?? null) ? $data['rows'] : [];
+
+        $generatedByName = $generatedBy?->name ?? 'sistem';
+        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $start = \Carbon\Carbon::parse((string) ($startDate ?? ''))->locale('id')->translatedFormat('d-M-y');
+        $end = \Carbon\Carbon::parse((string) ($endDate ?? ''))->locale('id')->translatedFormat('d-M-y');
+
+        $fmt2OrBlank = static function ($v): string {
+            $n = (float) ($v ?? 0.0);
+            if (abs($n) < 0.0000001) {
+                return '';
+            }
+            return number_format($n, 2, '.', '');
+        };
+
+    @endphp
+
+    <h1 class="report-title">Laporan Ketahanan Barang Dagang ST</h1>
+    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 6%;">No</th>
+                <th style="width: 44%;">Jenis</th>
+                <th style="width: 12%;">Stock</th>
+                <th style="width: 12%;">Penjualan</th>
+                <th style="width: 14%;">Avg Penjualan</th>
+                <th style="width: 12%;">Ketahanan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php $i = 0; @endphp
+            @forelse ($rows as $r)
+                @php $i++; @endphp
+                <tr class="{{ $i % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                    <td class="center">{{ $i }}</td>
+                    <td>{{ (string) ($r['Jenis'] ?? '') }}</td>
+                    <td class="number">{{ $fmt2OrBlank($r['Stock'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2OrBlank($r['Penjualan'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2OrBlank($r['AvgPenjualan'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2OrBlank($r['Ketahanan'] ?? 0) }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="center">Tidak ada data.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    @include('reports.partials.pdf-footer-table')
+</body>
+
+</html>

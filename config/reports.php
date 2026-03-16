@@ -1117,6 +1117,84 @@ return [
         )))),
     ],
 
+    // Sawn timber: Pembelian ST time line (Ton)
+    'pembelian_st_timeline_ton' => [
+        'database_connection' => env('PEMBELIAN_ST_TIMELINE_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PEMBELIAN_ST_TIMELINE_TON_REPORT_PROCEDURE', 'SP_LapPembelianSTTimeline'),
+        'call_syntax' => env('PEMBELIAN_ST_TIMELINE_TON_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PEMBELIAN_ST_TIMELINE_TON_REPORT_QUERY'),
+        'parameter_count' => (int) env('PEMBELIAN_ST_TIMELINE_TON_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PEMBELIAN_ST_TIMELINE_TON_REPORT_EXPECTED_COLUMNS',
+            'TglLaporan,Jenis,STTon'
+        )))),
+    ],
+
+    // Sawn timber: Label ST (Hidup) Detail
+    'label_st_hidup_detail' => [
+        'database_connection' => env('LABEL_ST_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('LABEL_ST_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapLabelSTHidupDetail'),
+        'call_syntax' => env('LABEL_ST_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LABEL_ST_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('LABEL_ST_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'LABEL_ST_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoST,DateCreate,NoSPK,Jenis,Tebal,Lebar,Panjang,JmlhBatang,Awal,IdLokasi'
+        )))),
+    ],
+
+    // Sawn timber: Ketahanan Barang Dagang ST
+    'ketahanan_barang_st' => [
+        'database_connection' => env('KETAHANAN_BARANG_ST_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_ST_REPORT_PROCEDURE', 'SP_LapKetahananBarangST'),
+        'call_syntax' => env('KETAHANAN_BARANG_ST_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_ST_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_ST_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_ST_REPORT_EXPECTED_COLUMNS',
+            'Jenis,StockTon,Ton'
+        )))),
+    ],
+
+    // Sawn timber: ST Rambung MC1 & MC2 (Detail)
+    'st_rambung_mc1_mc2_detail' => [
+        'database_connection' => env('ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_PROCEDURE', 'SP_LapSTRambungMC1danMC2Detail'),
+        'call_syntax' => env('ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'IdJenisKayu,StartKering,JenisKayu,IsKering,NoST,Tebal,Lebar,Panjang,Pcs,Ton,Kubik'
+        )))),
+    ],
+
+    // Sawn timber: ST Rambung MC1 & MC2 (Rangkuman)
+    'st_rambung_mc1_mc2_rangkuman' => [
+        'database_connection' => env('ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_PROCEDURE', 'SP_LapSTRambungMC1danMC2Rangkuman'),
+        'call_syntax' => env('ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_EXPECTED_COLUMNS',
+            'IdJenisKayu,StartKering,JenisKayu,IsKering,Tebal,Lebar,Panjang,Pcs,Ton,Kubik'
+        )))),
+    ],
+
+    // Sawn timber: ST Hidup Kering
+    'st_hidup_kering' => [
+        'database_connection' => env('ST_HIDUP_KERING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('ST_HIDUP_KERING_REPORT_PROCEDURE', 'SP_LapSTHidupKering'),
+        'call_syntax' => env('ST_HIDUP_KERING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('ST_HIDUP_KERING_REPORT_QUERY'),
+        'parameter_count' => (int) env('ST_HIDUP_KERING_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'ST_HIDUP_KERING_REPORT_EXPECTED_COLUMNS',
+            'NoST,Tebal,Lebar,JmlhBatang,IdLokasi,UsiaHari,Jenis,BB'
+        )))),
+    ],
+
 
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [

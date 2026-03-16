@@ -74,10 +74,16 @@ use App\Http\Controllers\RekapKamarKdController;
 use App\Http\Controllers\MutasiKdController;
 use App\Http\Controllers\RekapStPenjualanController;
 use App\Http\Controllers\PembelianStPerSupplierTonController;
+use App\Http\Controllers\PembelianStTimelineTonController;
+use App\Http\Controllers\LabelStHidupDetailController;
+use App\Http\Controllers\KetahananBarangDagangStController;
+use App\Http\Controllers\StRambungMc1Mc2DetailController;
+use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
 use App\Http\Controllers\StHidupPerSpkController;
+use App\Http\Controllers\StHidupKeringController;
 use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
 use App\Http\Controllers\PPS\RekapProduksiInjectController;
 use App\Http\Controllers\PPS\RekapProduksiHotStampingFwipController;
@@ -380,6 +386,51 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/health', [PembelianStPerSupplierTonController::class, 'health'])->name('health');
     });
 
+    /** Pembelian ST time line (Ton) routes. */
+    Route::prefix('pembelian-st-timeline-ton')->name('pembelian-st-timeline-ton.')->group(function (): void {
+        Route::get('/', [PembelianStTimelineTonController::class, 'index'])->name('index');
+        Route::post('/download', [PembelianStTimelineTonController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PembelianStTimelineTonController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PembelianStTimelineTonController::class, 'preview'])->name('preview');
+        Route::post('/health', [PembelianStTimelineTonController::class, 'health'])->name('health');
+    });
+
+    /** Label ST (Hidup) Detail routes. */
+    Route::prefix('label-st-hidup-detail')->name('label-st-hidup-detail.')->group(function (): void {
+        Route::get('/', [LabelStHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [LabelStHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [LabelStHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [LabelStHidupDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [LabelStHidupDetailController::class, 'health'])->name('health');
+    });
+
+    /** Ketahanan barang dagang ST routes. */
+    Route::prefix('ketahanan-barang-st')->name('ketahanan-barang-st.')->group(function (): void {
+        Route::get('/', [KetahananBarangDagangStController::class, 'index'])->name('index');
+        Route::post('/download', [KetahananBarangDagangStController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KetahananBarangDagangStController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KetahananBarangDagangStController::class, 'preview'])->name('preview');
+        Route::post('/health', [KetahananBarangDagangStController::class, 'health'])->name('health');
+    });
+
+    /** ST Rambung MC1 dan MC2 (Detail) routes. */
+    Route::prefix('st-rambung-mc1-mc2-detail')->name('st-rambung-mc1-mc2-detail.')->group(function (): void {
+        Route::get('/', [StRambungMc1Mc2DetailController::class, 'index'])->name('index');
+        Route::post('/download', [StRambungMc1Mc2DetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StRambungMc1Mc2DetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StRambungMc1Mc2DetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [StRambungMc1Mc2DetailController::class, 'health'])->name('health');
+    });
+
+    /** ST Rambung MC1 dan MC2 (Rangkuman) routes. */
+    Route::prefix('st-rambung-mc1-mc2-rangkuman')->name('st-rambung-mc1-mc2-rangkuman.')->group(function (): void {
+        Route::get('/', [StRambungMc1Mc2RangkumanController::class, 'index'])->name('index');
+        Route::post('/download', [StRambungMc1Mc2RangkumanController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StRambungMc1Mc2RangkumanController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StRambungMc1Mc2RangkumanController::class, 'preview'])->name('preview');
+        Route::post('/health', [StRambungMc1Mc2RangkumanController::class, 'health'])->name('health');
+    });
+
     /** Penerimaan ST dari sawmill KG routes. */
     Route::prefix('penerimaan-st-dari-sawmill-kg')->name('penerimaan-st-dari-sawmill-kg.')->group(function (): void {
         Route::get('/', [PenerimaanStSawmillKgController::class, 'index'])->name('index');
@@ -495,6 +546,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/download', [StHidupPerSpkController::class, 'download'])->name('download');
         Route::post('/preview', [StHidupPerSpkController::class, 'preview'])->name('preview');
         Route::post('/health', [StHidupPerSpkController::class, 'health'])->name('health');
+    });
+
+    /** ST hidup kering routes. */
+    Route::prefix('st-hidup-kering')->name('st-hidup-kering.')->group(function (): void {
+        Route::get('/', [StHidupKeringController::class, 'index'])->name('index');
+        Route::post('/download', [StHidupKeringController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StHidupKeringController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StHidupKeringController::class, 'preview'])->name('preview');
+        Route::post('/health', [StHidupKeringController::class, 'health'])->name('health');
     });
 });
 

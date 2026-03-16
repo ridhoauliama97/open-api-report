@@ -155,11 +155,11 @@ php artisan test
 Untuk memahami struktur database yang dipakai laporan stored procedure (tables, kolom, PK/FK, views, functions, procedures, parameter, dan dependency), jalankan:
 
 ```bash
-php artisan db:export-structure sqlsrv
+# php artisan db:export-structure sqlsrv
 ```
 
 Jika ingin ikut mengekspor definisi SQL setiap stored procedure:
 
 ```bash
-php artisan db:export-structure sqlsrv --with-definitions
+# php artisan db:export-structure sqlsrv --with-definitions
 ```

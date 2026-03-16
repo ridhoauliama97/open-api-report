@@ -144,6 +144,8 @@
             text-align: right;
         }
 
+        @include('reports.partials.pdf-footer-table-style')
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -506,7 +508,8 @@
                                     $columnStyle = $columnWidthStyles[$column] ?? '';
                                 @endphp
                                 @if ($isDateColumn)
-                                    <td class="data-cell center" style="{{ $columnStyle }}">{{ $formatDate($value) }}</td>
+                                    <td class="data-cell center" style="{{ $columnStyle }}">{{ $formatDate($value) }}
+                                    </td>
                                 @elseif ($isTonColumn)
                                     <td class="data-cell number" style="{{ $columnStyle }}">
                                         {{ $floatValue !== null ? number_format($floatValue, 4, '.', ',') : '' }}
@@ -612,13 +615,7 @@
         </tbody>
     </table>
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

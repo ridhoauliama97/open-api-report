@@ -187,4 +187,6 @@
     .footer-right {
         text-align: right;
     }
+
+    @include('reports.partials.pdf-footer-table-style')
 </style>

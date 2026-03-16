@@ -78,6 +78,7 @@ class PdfGenerator
         $format = $this->resolveFormat($data);
         $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
         $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
+        $defaultFont = (string) ($data['pdf_default_font'] ?? 'dejavusans');
 
         $mpdf = new Mpdf([
             'tempDir' => storage_path('app/mpdf-temp'),
@@ -85,7 +86,7 @@ class PdfGenerator
             'orientation' => $orientation,
             'simpleTables' => $simpleTables,
             'packTableData' => $packTableData,
-            'default_font' => 'dejavusans',
+            'default_font' => $defaultFont,
             'autoScriptToLang' => false,
             'autoLangToFont' => false,
         ]);
@@ -110,6 +111,51 @@ class PdfGenerator
         }
 
         return $mpdf->Output('', Destination::STRING_RETURN);
+    }
+
+    /**
+     * Render to a file to avoid holding the entire PDF bytes in memory.
+     */
+    public function renderToFile(string $view, array $data, string $outputPath): void
+    {
+        $html = view($view, $data)->render();
+        $html = $this->stripExternalFontLinks($html);
+        $html = $this->sanitizeUtf8($html);
+        $orientation = $this->resolveOrientation($data);
+        $format = $this->resolveFormat($data);
+        $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
+        $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
+        $defaultFont = (string) ($data['pdf_default_font'] ?? 'dejavusans');
+
+        $mpdf = new Mpdf([
+            'tempDir' => storage_path('app/mpdf-temp'),
+            'format' => $format,
+            'orientation' => $orientation,
+            'simpleTables' => $simpleTables,
+            'packTableData' => $packTableData,
+            'default_font' => $defaultFont,
+            'autoScriptToLang' => false,
+            'autoLangToFont' => false,
+        ]);
+
+        if (isset($data['pdf_shrink_tables_to_fit']) && is_numeric($data['pdf_shrink_tables_to_fit'])) {
+            $mpdf->shrink_tables_to_fit = (float) $data['pdf_shrink_tables_to_fit'];
+        }
+
+        if (!empty($data['pdf_disable_auto_page_break'])) {
+            $mpdf->SetAutoPageBreak(false);
+        }
+
+        @ini_set('pcre.backtrack_limit', '10000000');
+        @ini_set('pcre.recursion_limit', '1000000');
+
+        if (!empty($data['pdf_disable_chunking'])) {
+            $mpdf->WriteHTML($html);
+        } else {
+            $this->writeHtmlInChunks($mpdf, $html);
+        }
+
+        $mpdf->Output($outputPath, Destination::FILE);
     }
 
 

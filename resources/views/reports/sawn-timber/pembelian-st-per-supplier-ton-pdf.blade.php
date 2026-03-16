@@ -74,6 +74,10 @@
             border-bottom: 1px solid #000;
         }
 
+        table.data-table td {
+            text-align: center;
+        }
+
         table.data-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
@@ -90,6 +94,7 @@
         }
 
         .supplier {
+            text-align: left;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -102,16 +107,17 @@
         }
 
         .cell-pre {
+            font-family: "Calibri", "Courier New", monospace;
             display: block;
             white-space: pre;
-            font-family: "Calibri", "Courier New", monospace;
-            text-align: left;
+            text-align: center;
         }
 
         .totals-row td {
             border-top: 1px solid #000 !important;
             font-weight: bold;
             background: #fff;
+            font-size: 11px;
         }
 
         .table-end-line td {
@@ -144,6 +150,8 @@
         .footer-right {
             text-align: right;
         }
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -196,13 +204,14 @@
         $pivotColumns[] = 'Total';
 
         $jenisCount = max(1, count($pivotColumns));
-        $supplierWidth = 28.0;
-        $colWidth = (100.0 - $supplierWidth) / $jenisCount;
+        $noWidth = 6.0;
+        $supplierWidth = 24.0;
+        $colWidth = (100.0 - $noWidth - $supplierWidth) / $jenisCount;
         // Make the last column absorb rounding so total stays 100%.
         $widths = [];
         for ($i = 0; $i < $jenisCount; $i++) {
             if ($i === $jenisCount - 1) {
-                $used = $supplierWidth + $colWidth * ($jenisCount - 1);
+                $used = $noWidth + $supplierWidth + $colWidth * ($jenisCount - 1);
                 $widths[] = max(0.0, 100.0 - $used);
             } else {
                 $widths[] = $colWidth;
@@ -215,6 +224,7 @@
 
     <table class="data-table">
         <colgroup>
+            <col style="width: {{ $noWidth }}%;">
             <col style="width: {{ $supplierWidth }}%;">
             @foreach ($pivotColumns as $i => $jenis)
                 <col style="width: {{ number_format((float) ($widths[$i] ?? 0), 4, '.', '') }}%;">
@@ -222,6 +232,7 @@
         </colgroup>
         <thead>
             <tr>
+                <th>No</th>
                 <th>Supplier</th>
                 @foreach ($jenisColumns as $jenis)
                     <th>{{ $jenis }}</th>
@@ -232,7 +243,7 @@
         @if ($rows !== [])
             <tfoot>
                 <tr class="table-end-line">
-                    <td colspan="{{ 2 + count($jenisColumns) }}"></td>
+                    <td colspan="{{ 3 + count($jenisColumns) }}"></td>
                 </tr>
             </tfoot>
         @endif
@@ -246,7 +257,8 @@
                     $rowTotal = 0.0;
                 @endphp
                 <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell supplier">{{ $supplier }}</td>
+                    <td class="center data-cell">{{ $rowIndex }}</td>
+                    <td class="data-cell" style="text-align: left">{{ $supplier }}</td>
                     @foreach ($jenisColumns as $jenis)
                         @php
                             $ton = (float) ($values[$jenis] ?? 0.0);
@@ -273,13 +285,13 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ 2 + count($jenisColumns) }}" class="center">Tidak ada data.</td>
+                    <td colspan="{{ 3 + count($jenisColumns) }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
 
             @if ($rows !== [])
                 <tr class="totals-row">
-                    <td class="data-cell">Total</td>
+                    <td class="data-cell" colspan="2" style="text-align: center">Total</td>
                     @foreach ($jenisColumns as $jenis)
                         @php
                             $colTotal = (float) ($totalsByJenis[$jenis] ?? 0.0);
@@ -304,13 +316,7 @@
         </tbody>
     </table>
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

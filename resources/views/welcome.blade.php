@@ -810,6 +810,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-hidup-kering.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Hidup Kering
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.kd-keluar-masuk.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan KD (Keluar - Masuk)
@@ -837,6 +843,36 @@
                             <a href="{{ route('reports.sawn-timber.pembelian-st-per-supplier-ton.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Pembelian ST Per Supplier (Ton)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.pembelian-st-timeline-ton.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Pembelian ST Time Line (Ton)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.label-st-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Label ST (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.ketahanan-barang-st.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Ketahanan Barang Dagang ST
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-rambung-mc1-mc2-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Rambung MC1 dan MC2 (Detail)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.st-rambung-mc1-mc2-rangkuman.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan ST Rambung MC1 dan MC2 (Rangkuman)
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

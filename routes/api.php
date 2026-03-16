@@ -43,6 +43,12 @@ use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\RekapProduktivitasSawmillSawnTimberController;
 use App\Http\Controllers\PemakaianObatVacuumController;
 use App\Http\Controllers\MutasiS4SController;
+use App\Http\Controllers\PembelianStTimelineTonController;
+use App\Http\Controllers\LabelStHidupDetailController;
+use App\Http\Controllers\KetahananBarangDagangStController;
+use App\Http\Controllers\StRambungMc1Mc2DetailController;
+use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
+use App\Http\Controllers\StHidupKeringController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
@@ -191,6 +197,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/mutasi-kd', 'api.reports.sawn-timber.mutasi-kd', MutasiKdController::class],
         ['/reports/sawn-timber/rekap-st-penjualan', 'api.reports.sawn-timber.rekap-st-penjualan', RekapStPenjualanController::class],
         ['/reports/sawn-timber/pembelian-st-per-supplier-ton', 'api.reports.sawn-timber.pembelian-st-per-supplier-ton', PembelianStPerSupplierTonController::class],
+        ['/reports/sawn-timber/pembelian-st-timeline-ton', 'api.reports.sawn-timber.pembelian-st-timeline-ton', PembelianStTimelineTonController::class],
+        ['/reports/sawn-timber/label-st-hidup-detail', 'api.reports.sawn-timber.label-st-hidup-detail', LabelStHidupDetailController::class],
+        ['/reports/sawn-timber/ketahanan-barang-st', 'api.reports.sawn-timber.ketahanan-barang-st', KetahananBarangDagangStController::class],
+        ['/reports/sawn-timber/st-rambung-mc1-mc2-detail', 'api.reports.sawn-timber.st-rambung-mc1-mc2-detail', StRambungMc1Mc2DetailController::class],
+        ['/reports/sawn-timber/st-rambung-mc1-mc2-rangkuman', 'api.reports.sawn-timber.st-rambung-mc1-mc2-rangkuman', StRambungMc1Mc2RangkumanController::class],
+        ['/reports/sawn-timber/st-hidup-kering', 'api.reports.sawn-timber.st-hidup-kering', StHidupKeringController::class],
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung', 'api.reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung', RekapPenerimaanSTDariSawmillNonRambungController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],

@@ -154,7 +154,7 @@
             text-align: right;
         }
 
-        .footer-wrap {}
+        @include('reports.partials.pdf-footer-table-style') .footer-wrap {}
 
         .headers-row th {
             font-weight: bold;
@@ -252,7 +252,7 @@
         ];
     @endphp
 
-    <h1 class="report-title">Laporan Mutasi Barang Jadi (m3)</h1>
+    <h1 class="report-title">Laporan Mutasi Barang Jadi ( m<sup>3</sup> )</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
     <div class="container-fluid">
@@ -469,13 +469,7 @@
         </div>
     </div>
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap d-flex justify-content-between align-items-end">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>
