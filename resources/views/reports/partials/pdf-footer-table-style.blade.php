@@ -2,6 +2,8 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+    border: 0 !important;
+    margin: 0 !important;
 }
 
 .footer-table td {
@@ -31,4 +33,3 @@
     position: relative;
     right: -4px;
 }
-

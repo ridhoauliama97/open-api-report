@@ -164,6 +164,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -275,15 +276,7 @@
         </tbody>
     </table>
 
-    <htmlpagefooter name="reportFooter">
-        <table class="footer-wrap">
-            <tr>
-                <td class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</td>
-                <td class="footer-right">Halaman {PAGENO} dari {nbpg}</td>
-            </tr>
-        </table>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

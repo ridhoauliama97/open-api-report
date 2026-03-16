@@ -131,39 +131,7 @@
             background: #eef2f8;
         }
 
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .footer-table td {
-            font-size: 8px;
-            font-style: italic;
-            padding: 0;
-            border: 0;
-            vertical-align: bottom;
-        }
-
-        .footer-print {
-            width: 65%;
-        }
-
-        .footer-spacer {
-            width: 10%;
-        }
-
-        .footer-page-cell {
-            width: 25%;
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .footer-page {
-            display: inline-block;
-            position: relative;
-            right: -4px;
-        }
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -285,23 +253,7 @@
         </tbody>
     </table>
 
-    <htmlpagefooter name="reportFooter">
-        <table class="footer-table">
-            <colgroup>
-                <col style="width: 25%;">
-                <col style="width: 25%;">
-                <col style="width: 25%;">
-                <col style="width: 25%;">
-            </colgroup>
-            <tr>
-                <td colspan="2" class="footer-print">Dicetak oleh: {{ $generatedByName }} pada
-                    {{ $generatedAtText }}</td>
-                <td class="footer-spacer"></td>
-                <td class="footer-page-cell"><span class="footer-page">Halaman {PAGENO} dari {nbpg}</span></td>
-            </tr>
-        </table>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

@@ -161,6 +161,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -317,13 +318,7 @@
             {{ $totalTrucks }} truk, total {{ $fmtTon($totalTon) }} ton.</p>
     </div>
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>
