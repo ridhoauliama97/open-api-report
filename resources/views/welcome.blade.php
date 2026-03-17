@@ -552,11 +552,13 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.s4s.label-s4s-hidup-per-produk-per-jenis-kayu.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Label S4S (Hidup) Per-Produk & Per-Jenis Kayu</a>
+                                class="btn btn-outline-primary w-100 text-start">Label S4S (Hidup) Per-Produk &
+                                Per-Jenis Kayu</a>
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.s4s.rekap-produksi-s4s-per-jenis-per-grade.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi S4S Per-Jenis & Per-Grade (m3)</a>
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi S4S Per-Jenis &
+                                Per-Grade (m3)</a>
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.s4s.ketahanan-barang-s4s.index') }}"
@@ -573,6 +575,38 @@
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.s4s.rekap-produksi-rambung-per-grade.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">Rekap Produksi Rambung Per Grade</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Finger Joint</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.finger-joint.umur-finger-joint-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Umur Finger Joint Detail</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.finger-joint.rekap-produksi-finger-joint-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Finger Joint
+                                Consolidated</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.finger-joint.rekap-produksi-finger-joint-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Finger Joint Per-Jenis &
+                                Per-Grade (m3)</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.finger-joint.finger-joint-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Finger Joint (Hidup) Detail</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.finger-joint.ketahanan-barang-finger-joint.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Ketahanan Barang Dagang Finger Joint</a>
                         </div>
                     </div>
                 </div>

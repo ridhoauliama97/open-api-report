@@ -731,6 +731,67 @@ return [
             'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
         )))),
     ],
+    'umur_finger_joint_detail' => [
+        'database_connection' => env('UMUR_FINGER_JOINT_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_FINGER_JOINT_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurFingerJoint'),
+        'call_syntax' => env('UMUR_FINGER_JOINT_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_FINGER_JOINT_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_FINGER_JOINT_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_FINGER_JOINT_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'rekap_produksi_finger_joint_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiFingerJointConsolidated'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,CCAkhir,S4S,OutputFJ'
+        )))),
+    ],
+    'rekap_produksi_finger_joint_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_FINGER_JOINT_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_FINGER_JOINT_PER_JENIS_PER_GRADE_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiFingerJointPerJenisPerGrade'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_FINGER_JOINT_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_FINGER_JOINT_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_FINGER_JOINT_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_FINGER_JOINT_PER_JENIS_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'JenisKayu,NamaGrade,InS4S,InCCAkhir,InWIP,Output'
+        )))),
+    ],
+    'finger_joint_hidup_detail' => [
+        'database_connection' => env('FINGER_JOINT_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('FINGER_JOINT_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapFingerJointHidupDetail'),
+        'call_syntax' => env('FINGER_JOINT_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('FINGER_JOINT_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('FINGER_JOINT_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'FINGER_JOINT_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoFJ,DateCreate,NoSPK,Jenis,Tebal,Lebar,Panjang,JmlhBatang,M3,Lokasi'
+        )))),
+    ],
+    'ketahanan_barang_finger_joint' => [
+        'database_connection' => env('KETAHANAN_BARANG_FINGER_JOINT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_FINGER_JOINT_REPORT_PROCEDURE', 'SP_LapKetahananBarangFingerJoint'),
+        'call_syntax' => env('KETAHANAN_BARANG_FINGER_JOINT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_FINGER_JOINT_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_FINGER_JOINT_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_FINGER_JOINT_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
+        )))),
+    ],
     's4s_hidup_detail' => [
         'database_connection' => env('S4S_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('S4S_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapS4SHidupDetail'),

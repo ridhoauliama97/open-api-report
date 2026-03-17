@@ -59,6 +59,9 @@ use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurS4SDetailController;
+use App\Http\Controllers\UmurFingerJointDetailController;
+use App\Http\Controllers\FingerJointHidupDetailController;
+use App\Http\Controllers\RekapProduksiFingerJointPerJenisPerGradeController;
 use App\Http\Controllers\RekapProduksiS4SConsolidatedController;
 use App\Http\Controllers\S4SHidupDetailController;
 use App\Http\Controllers\LabelS4SHidupPerJenisKayuController;
@@ -84,9 +87,11 @@ use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\LabelStHidupDetailController;
 use App\Http\Controllers\KetahananBarangDagangStController;
 use App\Http\Controllers\KetahananBarangDagangS4sController;
+use App\Http\Controllers\KetahananBarangDagangFingerJointController;
 use App\Http\Controllers\OutputProduksiS4sPerGradeController;
 use App\Http\Controllers\GradeAbcHarianController;
 use App\Http\Controllers\RekapProduksiS4sRambungPerGradeController;
+use App\Http\Controllers\RekapProduksiFingerJointConsolidatedController;
 use App\Http\Controllers\StRambungMc1Mc2DetailController;
 use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\SupplierIntelController;
@@ -927,6 +932,50 @@ Route::prefix('reports')->name('reports.')->group(function (): void {
         Route::post('/download', [UmurS4SDetailController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [UmurS4SDetailController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [UmurS4SDetailController::class, 'preview'])->name('preview');
+    });
+
+    /** Umur Finger Joint detail routes. */
+    Route::prefix('finger-joint/umur-finger-joint-detail')->name('finger-joint.umur-finger-joint-detail.')->group(function (): void {
+        Route::get('/', [UmurFingerJointDetailController::class, 'index'])->name('index');
+        Route::post('/download', [UmurFingerJointDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [UmurFingerJointDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [UmurFingerJointDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [UmurFingerJointDetailController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Finger Joint Consolidated routes. */
+    Route::prefix('finger-joint/rekap-produksi-finger-joint-consolidated')->name('finger-joint.rekap-produksi-finger-joint-consolidated.')->group(function (): void {
+        Route::get('/', [RekapProduksiFingerJointConsolidatedController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiFingerJointConsolidatedController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiFingerJointConsolidatedController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiFingerJointConsolidatedController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiFingerJointConsolidatedController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Finger Joint per-jenis dan per-grade routes. */
+    Route::prefix('finger-joint/rekap-produksi-finger-joint-per-jenis-per-grade')->name('finger-joint.rekap-produksi-finger-joint-per-jenis-per-grade.')->group(function (): void {
+        Route::get('/', [RekapProduksiFingerJointPerJenisPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiFingerJointPerJenisPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiFingerJointPerJenisPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiFingerJointPerJenisPerGradeController::class, 'preview'])->name('preview');
+    });
+
+    /** Finger Joint (Hidup) detail routes. */
+    Route::prefix('finger-joint/finger-joint-hidup-detail')->name('finger-joint.finger-joint-hidup-detail.')->group(function (): void {
+        Route::get('/', [FingerJointHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [FingerJointHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [FingerJointHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [FingerJointHidupDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [FingerJointHidupDetailController::class, 'health'])->name('health');
+    });
+
+    /** Ketahanan Barang Dagang Finger Joint routes. */
+    Route::prefix('finger-joint/ketahanan-barang-finger-joint')->name('finger-joint.ketahanan-barang-finger-joint.')->group(function (): void {
+        Route::get('/', [KetahananBarangDagangFingerJointController::class, 'index'])->name('index');
+        Route::post('/download', [KetahananBarangDagangFingerJointController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KetahananBarangDagangFingerJointController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KetahananBarangDagangFingerJointController::class, 'preview'])->name('preview');
+        Route::post('/health', [KetahananBarangDagangFingerJointController::class, 'health'])->name('health');
     });
 
     /** S4S (Hidup) detail routes. */

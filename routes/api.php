@@ -47,10 +47,12 @@ use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\LabelStHidupDetailController;
 use App\Http\Controllers\KetahananBarangDagangStController;
 use App\Http\Controllers\KetahananBarangDagangS4sController;
+use App\Http\Controllers\KetahananBarangDagangFingerJointController;
 use App\Http\Controllers\GradeAbcHarianController;
 use App\Http\Controllers\RekapProduksiS4sRambungPerGradeController;
 use App\Http\Controllers\OutputProduksiS4sPerGradeController;
 use App\Http\Controllers\StRambungMc1Mc2DetailController;
+use App\Http\Controllers\RekapProduksiFingerJointConsolidatedController;
 use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\StHidupKeringController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
@@ -70,6 +72,7 @@ use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
+use App\Http\Controllers\UmurFingerJointDetailController;
 use App\Http\Controllers\UmurS4SDetailController;
 use App\Http\Controllers\RekapProduksiS4SConsolidatedController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
@@ -233,6 +236,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],
         ['/reports/bahan-terpakai', 'api.reports.bahan-terpakai', BahanTerpakaiController::class],
+        ['/reports/finger-joint/umur-finger-joint-detail', 'api.reports.finger-joint.umur-finger-joint-detail', UmurFingerJointDetailController::class],
+        ['/reports/finger-joint/rekap-produksi-finger-joint-consolidated', 'api.reports.finger-joint.rekap-produksi-finger-joint-consolidated', RekapProduksiFingerJointConsolidatedController::class],
+        ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],
         ['/reports/s4s/umur-s4s-detail', 'api.reports.s4s.umur-s4s-detail', UmurS4SDetailController::class],
         ['/reports/s4s/rekap-produksi-s4s-consolidated', 'api.reports.s4s.rekap-produksi-s4s-consolidated', RekapProduksiS4SConsolidatedController::class],
         ['/reports/s4s/ketahanan-barang-s4s', 'api.reports.s4s.ketahanan-barang-s4s', KetahananBarangDagangS4sController::class],
