@@ -14,7 +14,7 @@
 
         @page {
             margin: 16mm 8mm 18mm 8mm;
-            footer: html_reportFooter;
+            /* footer: html_reportFooter; */
         }
 
         body {
@@ -157,6 +157,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>

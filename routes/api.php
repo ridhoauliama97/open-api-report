@@ -46,6 +46,10 @@ use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\LabelStHidupDetailController;
 use App\Http\Controllers\KetahananBarangDagangStController;
+use App\Http\Controllers\KetahananBarangDagangS4sController;
+use App\Http\Controllers\GradeAbcHarianController;
+use App\Http\Controllers\RekapProduksiS4sRambungPerGradeController;
+use App\Http\Controllers\OutputProduksiS4sPerGradeController;
 use App\Http\Controllers\StRambungMc1Mc2DetailController;
 use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\StHidupKeringController;
@@ -66,6 +70,8 @@ use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
+use App\Http\Controllers\UmurS4SDetailController;
+use App\Http\Controllers\RekapProduksiS4SConsolidatedController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
 use App\Http\Controllers\PPS\RekapProduksiInjectBjController;
 use App\Http\Controllers\PPS\RekapProduksiInjectController;
@@ -227,6 +233,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],
         ['/reports/bahan-terpakai', 'api.reports.bahan-terpakai', BahanTerpakaiController::class],
+        ['/reports/s4s/umur-s4s-detail', 'api.reports.s4s.umur-s4s-detail', UmurS4SDetailController::class],
+        ['/reports/s4s/rekap-produksi-s4s-consolidated', 'api.reports.s4s.rekap-produksi-s4s-consolidated', RekapProduksiS4SConsolidatedController::class],
+        ['/reports/s4s/ketahanan-barang-s4s', 'api.reports.s4s.ketahanan-barang-s4s', KetahananBarangDagangS4sController::class],
+        ['/reports/s4s/output-produksi-s4s-per-grade', 'api.reports.s4s.output-produksi-s4s-per-grade', OutputProduksiS4sPerGradeController::class],
+        ['/reports/s4s/grade-abc-harian', 'api.reports.s4s.grade-abc-harian', GradeAbcHarianController::class],
+        ['/reports/s4s/rekap-produksi-rambung-per-grade', 'api.reports.s4s.rekap-produksi-rambung-per-grade', RekapProduksiS4sRambungPerGradeController::class],
         ['/reports/pps/rekap-produksi/inject', 'api.reports.pps.rekap-produksi.inject', RekapProduksiInjectController::class],
         ['/reports/pps/rekap-produksi/inject-bj', 'api.reports.pps.rekap-produksi.inject-bj', RekapProduksiInjectBjController::class],
         ['/reports/pps/rekap-produksi/hot-stamping-fwip', 'api.reports.pps.rekap-produksi.hot-stamping-fwip', RekapProduksiHotStampingFwipController::class],

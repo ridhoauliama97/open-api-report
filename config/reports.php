@@ -720,6 +720,66 @@ return [
             'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5'
         )))),
     ],
+    'umur_s4s_detail' => [
+        'database_connection' => env('UMUR_S4S_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_S4S_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurS4S'),
+        'call_syntax' => env('UMUR_S4S_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_S4S_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_S4S_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_S4S_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    's4s_hidup_detail' => [
+        'database_connection' => env('S4S_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('S4S_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapS4SHidupDetail'),
+        'call_syntax' => env('S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('S4S_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('S4S_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'S4S_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoS4S,DateCreate,NoSPK,Jenis,Tebal,Lebar,Panjang,JmlhBatang,Kubik,Lokasi'
+        )))),
+    ],
+    'label_s4s_hidup_per_jenis_kayu' => [
+        'database_connection' => env('LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_PROCEDURE', 'SP_LapS4SPerJenisKayu'),
+        'call_syntax' => env('LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_QUERY'),
+        'parameter_count' => (int) env('LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_PARAMETER_COUNT', 0),
+    ],
+    'label_s4s_hidup_per_produk_per_jenis_kayu' => [
+        'database_connection' => env('LABEL_S4S_HIDUP_PER_PRODUK_PER_JENIS_KAYU_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'LABEL_S4S_HIDUP_PER_PRODUK_PER_JENIS_KAYU_REPORT_PROCEDURE',
+            'SP_LapS4SHidupPerProdukdanPerJenis'
+        ),
+        'call_syntax' => env('LABEL_S4S_HIDUP_PER_PRODUK_PER_JENIS_KAYU_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LABEL_S4S_HIDUP_PER_PRODUK_PER_JENIS_KAYU_REPORT_QUERY'),
+        'parameter_count' => (int) env('LABEL_S4S_HIDUP_PER_PRODUK_PER_JENIS_KAYU_REPORT_PARAMETER_COUNT', 0),
+    ],
+    'rekap_produksi_s4s_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_S4S_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_S4S_PER_JENIS_PER_GRADE_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiS4SPerJenisPerGrade'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_S4S_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_S4S_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_S4S_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'rekap_produksi_s4s_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_PROCEDURE', 'SP_LapRekapProduksiS4SConsolidated'),
+        'call_syntax' => env('REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
+            'NoProduksi,Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,CCAkhir,Reproses,S4S,ST,WIP,OutputS4S'
+        )))),
+    ],
     'st_sawmill_masuk_per_group' => [
         'database_connection' => env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('ST_SAWMILL_MASUK_PER_GROUP_REPORT_PROCEDURE', 'SPWps_LapSTMasukPerGroup'),
@@ -1153,6 +1213,58 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'KETAHANAN_BARANG_ST_REPORT_EXPECTED_COLUMNS',
             'Jenis,StockTon,Ton'
+        )))),
+    ],
+
+    // S4S: Ketahanan Barang Dagang S4S
+    'ketahanan_barang_s4s' => [
+        'database_connection' => env('KETAHANAN_BARANG_S4S_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_S4S_REPORT_PROCEDURE', 'SP_LapKetahananBarangS4S'),
+        'call_syntax' => env('KETAHANAN_BARANG_S4S_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_S4S_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_S4S_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_S4S_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
+        )))),
+    ],
+
+    // S4S: Output Produksi S4S Per Grade
+    'output_produksi_s4s_per_grade' => [
+        'database_connection' => env('OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_PROCEDURE', 'SPWps_LapProduksiOutputS4SPerGrade'),
+        'call_syntax' => env('OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'NoProduksi,Tanggal,Hari,NamaMesin,Jenis,Target,Output,Jns'
+        )))),
+    ],
+
+    // S4S: Grade ABC Harian
+    'grade_abc_harian' => [
+        'database_connection' => env('GRADE_ABC_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('GRADE_ABC_HARIAN_REPORT_PROCEDURE', 'SPWps_LapGradeABCHarian'),
+        'call_syntax' => env('GRADE_ABC_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('GRADE_ABC_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('GRADE_ABC_HARIAN_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'GRADE_ABC_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'DATE,IdGradeAbc,NamaGrade,JmlhBatang'
+        )))),
+    ],
+
+    // S4S: Rekap Produksi Rambung per Grade
+    'rekap_produksi_s4s_rambung_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_PROCEDURE', 'SP_LapRekapProduksiS4SRambungPerGrade'),
+        'call_syntax' => env('REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'Group,Type,Tanggal,Jenis,Total,GrandTotalPerGroup,RatioDecimal,Ratio'
         )))),
     ],
 

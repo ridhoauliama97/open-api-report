@@ -58,6 +58,12 @@ use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
+use App\Http\Controllers\UmurS4SDetailController;
+use App\Http\Controllers\RekapProduksiS4SConsolidatedController;
+use App\Http\Controllers\S4SHidupDetailController;
+use App\Http\Controllers\LabelS4SHidupPerJenisKayuController;
+use App\Http\Controllers\LabelS4SHidupPerProdukPerJenisKayuController;
+use App\Http\Controllers\RekapProduksiS4SPerJenisPerGradeController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StSawmillMasukPerGroupMejaController;
@@ -77,6 +83,10 @@ use App\Http\Controllers\PembelianStPerSupplierTonController;
 use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\LabelStHidupDetailController;
 use App\Http\Controllers\KetahananBarangDagangStController;
+use App\Http\Controllers\KetahananBarangDagangS4sController;
+use App\Http\Controllers\OutputProduksiS4sPerGradeController;
+use App\Http\Controllers\GradeAbcHarianController;
+use App\Http\Controllers\RekapProduksiS4sRambungPerGradeController;
 use App\Http\Controllers\StRambungMc1Mc2DetailController;
 use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\SupplierIntelController;
@@ -909,6 +919,90 @@ Route::prefix('reports')->name('reports.')->group(function (): void {
         Route::get('/', [BahanTerpakaiController::class, 'index'])->name('index');
         Route::post('/download', [BahanTerpakaiController::class, 'download'])->name('download');
         Route::post('/preview', [BahanTerpakaiController::class, 'preview'])->name('preview');
+    });
+
+    /** Umur S4S detail routes. */
+    Route::prefix('s4s/umur-s4s-detail')->name('s4s.umur-s4s-detail.')->group(function (): void {
+        Route::get('/', [UmurS4SDetailController::class, 'index'])->name('index');
+        Route::post('/download', [UmurS4SDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [UmurS4SDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [UmurS4SDetailController::class, 'preview'])->name('preview');
+    });
+
+    /** S4S (Hidup) detail routes. */
+    Route::prefix('s4s/s4s-hidup-detail')->name('s4s.s4s-hidup-detail.')->group(function (): void {
+        Route::get('/', [S4SHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [S4SHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [S4SHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [S4SHidupDetailController::class, 'preview'])->name('preview');
+    });
+
+    /** Label S4S (Hidup) per-jenis kayu routes. */
+    Route::prefix('s4s/label-s4s-hidup-per-jenis-kayu')->name('s4s.label-s4s-hidup-per-jenis-kayu.')->group(function (): void {
+        Route::get('/', [LabelS4SHidupPerJenisKayuController::class, 'index'])->name('index');
+        Route::post('/download', [LabelS4SHidupPerJenisKayuController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [LabelS4SHidupPerJenisKayuController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [LabelS4SHidupPerJenisKayuController::class, 'preview'])->name('preview');
+    });
+
+    /** Label S4S (Hidup) per-produk dan per-jenis kayu routes. */
+    Route::prefix('s4s/label-s4s-hidup-per-produk-per-jenis-kayu')->name('s4s.label-s4s-hidup-per-produk-per-jenis-kayu.')->group(function (): void {
+        Route::get('/', [LabelS4SHidupPerProdukPerJenisKayuController::class, 'index'])->name('index');
+        Route::post('/download', [LabelS4SHidupPerProdukPerJenisKayuController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [LabelS4SHidupPerProdukPerJenisKayuController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [LabelS4SHidupPerProdukPerJenisKayuController::class, 'preview'])->name('preview');
+    });
+
+    /** Rekap Produksi S4S per-jenis dan per-grade routes. */
+    Route::prefix('s4s/rekap-produksi-s4s-per-jenis-per-grade')->name('s4s.rekap-produksi-s4s-per-jenis-per-grade.')->group(function (): void {
+        Route::get('/', [RekapProduksiS4SPerJenisPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiS4SPerJenisPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiS4SPerJenisPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiS4SPerJenisPerGradeController::class, 'preview'])->name('preview');
+    });
+
+    /** Rekap Produksi S4S Consolidated routes. */
+    Route::prefix('s4s/rekap-produksi-s4s-consolidated')->name('s4s.rekap-produksi-s4s-consolidated.')->group(function (): void {
+        Route::get('/', [RekapProduksiS4SConsolidatedController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiS4SConsolidatedController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiS4SConsolidatedController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiS4SConsolidatedController::class, 'preview'])->name('preview');
+    });
+
+    /** Ketahanan Barang Dagang S4S routes. */
+    Route::prefix('s4s/ketahanan-barang-s4s')->name('s4s.ketahanan-barang-s4s.')->group(function (): void {
+        Route::get('/', [KetahananBarangDagangS4sController::class, 'index'])->name('index');
+        Route::post('/download', [KetahananBarangDagangS4sController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KetahananBarangDagangS4sController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KetahananBarangDagangS4sController::class, 'preview'])->name('preview');
+        Route::post('/health', [KetahananBarangDagangS4sController::class, 'health'])->name('health');
+    });
+
+    /** Output Produksi S4S Per Grade routes. */
+    Route::prefix('s4s/output-produksi-s4s-per-grade')->name('s4s.output-produksi-s4s-per-grade.')->group(function (): void {
+        Route::get('/', [OutputProduksiS4sPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [OutputProduksiS4sPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [OutputProduksiS4sPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [OutputProduksiS4sPerGradeController::class, 'preview'])->name('preview');
+        Route::post('/health', [OutputProduksiS4sPerGradeController::class, 'health'])->name('health');
+    });
+
+    /** Grade ABC Harian routes. */
+    Route::prefix('s4s/grade-abc-harian')->name('s4s.grade-abc-harian.')->group(function (): void {
+        Route::get('/', [GradeAbcHarianController::class, 'index'])->name('index');
+        Route::post('/download', [GradeAbcHarianController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [GradeAbcHarianController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [GradeAbcHarianController::class, 'preview'])->name('preview');
+        Route::post('/health', [GradeAbcHarianController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Rambung Per Grade routes. */
+    Route::prefix('s4s/rekap-produksi-rambung-per-grade')->name('s4s.rekap-produksi-rambung-per-grade.')->group(function (): void {
+        Route::get('/', [RekapProduksiS4sRambungPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiS4sRambungPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiS4sRambungPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiS4sRambungPerGradeController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiS4sRambungPerGradeController::class, 'health'])->name('health');
     });
 });
 

@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-light border-bottom">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold" href="#">{{ config('app.name', 'Laravel') }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
@@ -523,6 +523,56 @@
                                 class="btn btn-outline-primary w-100 text-start">
                                 Bahan Terpakai
                             </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">S4S</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.umur-s4s-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Umur S4S Detail</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.rekap-produksi-s4s-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi S4S Consolidated</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.s4s-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">S4S (Hidup) Detail</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.label-s4s-hidup-per-jenis-kayu.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Label S4S (Hidup) Per-Jenis Kayu</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.label-s4s-hidup-per-produk-per-jenis-kayu.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Label S4S (Hidup) Per-Produk & Per-Jenis Kayu</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.rekap-produksi-s4s-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi S4S Per-Jenis & Per-Grade (m3)</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.ketahanan-barang-s4s.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Ketahanan Barang Dagang S4S</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.output-produksi-s4s-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Output Produksi S4S Per Grade</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.grade-abc-harian.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Grade ABC Harian</a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.s4s.rekap-produksi-rambung-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Rambung Per Grade</a>
                         </div>
                     </div>
                 </div>
