@@ -597,7 +597,8 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.finger-joint.rekap-produksi-finger-joint-per-jenis-per-grade.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Finger Joint Per-Jenis &
+                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Finger Joint Per-Jenis
+                                &
                                 Per-Grade (m3)</a>
                         </div>
                         <div class="col-12 col-md-6">
@@ -606,7 +607,81 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.finger-joint.ketahanan-barang-finger-joint.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Ketahanan Barang Dagang Finger Joint</a>
+                                class="btn btn-outline-primary w-100 text-start">Ketahanan Barang Dagang Finger
+                                Joint</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Laminating</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.laminating.umur-laminating-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Umur Laminating Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.laminating.rekap-produksi-laminating-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Laminating Consolidated
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.laminating.laminating-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Laminating (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.laminating.rekap-produksi-laminating-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Laminating Per-Jenis & Per-Grade (m3)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.laminating.ketahanan-barang-laminating.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Ketahanan Barang Dagang Laminating
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Moulding</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.moulding.rekap-produksi-moulding-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Moulding Consolidated
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.moulding.moulding-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Moulding (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.moulding.rekap-produksi-moulding-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Moulding Per-Jenis & Per-Grade (m3)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.moulding.ketahanan-barang-moulding.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Ketahanan Barang Dagang Moulding
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -742,6 +742,117 @@ return [
             'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
         )))),
     ],
+    'umur_laminating_detail' => [
+        'database_connection' => env('UMUR_LAMINATING_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_LAMINATING_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurLaminating'),
+        'call_syntax' => env('UMUR_LAMINATING_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_LAMINATING_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_LAMINATING_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_LAMINATING_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'rekap_produksi_laminating_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiLaminatingConsolidated'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,Moulding,Reproses,Sanding,OutputLaminating'
+        )))),
+    ],
+    'laminating_hidup_detail' => [
+        'database_connection' => env('LAMINATING_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('LAMINATING_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapLaminatingHidupDetail'),
+        'call_syntax' => env('LAMINATING_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LAMINATING_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('LAMINATING_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'LAMINATING_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoLaminating,DateCreate,NoSPK,Jenis,Tebal,Lebar,Panjang,JmlhBatang,Kubik,Lokasi'
+        )))),
+    ],
+    'rekap_produksi_laminating_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_LAMINATING_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_LAMINATING_PER_JENIS_PER_GRADE_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiLaminatingPerJenisPerGrade'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_LAMINATING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_LAMINATING_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_LAMINATING_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_LAMINATING_PER_JENIS_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,NamaGrade,Moulding,Sanding,WIP,Reproses,Output'
+        )))),
+    ],
+    'ketahanan_barang_laminating' => [
+        'database_connection' => env('KETAHANAN_BARANG_LAMINATING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_LAMINATING_REPORT_PROCEDURE', 'SP_LapKetahananBarangLaminating'),
+        'call_syntax' => env('KETAHANAN_BARANG_LAMINATING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_LAMINATING_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_LAMINATING_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_LAMINATING_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
+        )))),
+    ],
+    'rekap_produksi_moulding_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiMouldingConsolidated'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,OutputMoulding,OutputReproses'
+        )))),
+    ],
+    'moulding_hidup_detail' => [
+        'database_connection' => env('MOULDING_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MOULDING_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapMouldingHidupDetail'),
+        'call_syntax' => env('MOULDING_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MOULDING_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('MOULDING_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'MOULDING_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoMoulding,Tanggal,NoSPK,Jenis,Tebal,Lebar,Panjang,JmlhBatang,M3,Lokasi'
+        )))),
+    ],
+    'rekap_produksi_moulding_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_MOULDING_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_MOULDING_PER_JENIS_PER_GRADE_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiMouldingPerJenisPerGrade'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_MOULDING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_MOULDING_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_MOULDING_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_MOULDING_PER_JENIS_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,NamaGrade,S4S,FJ,Moulding,Laminating,CCAkhir,WIP,Reproses,Output,OutputReproses'
+        )))),
+    ],
+    'ketahanan_barang_moulding' => [
+        'database_connection' => env('KETAHANAN_BARANG_MOULDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_MOULDING_REPORT_PROCEDURE', 'SP_LapKetahananBarangMoulding'),
+        'call_syntax' => env('KETAHANAN_BARANG_MOULDING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_MOULDING_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_MOULDING_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_MOULDING_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
+        )))),
+    ],
     'rekap_produksi_finger_joint_consolidated' => [
         'database_connection' => env('REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env(

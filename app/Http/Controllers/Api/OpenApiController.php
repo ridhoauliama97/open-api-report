@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Router;
 
 class OpenApiController extends Controller
 {
@@ -12,7 +13,7 @@ class OpenApiController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json([
+        $spec = [
             'openapi' => '3.0.3',
             'info' => [
                 'title' => 'Open API Report',
@@ -3127,11 +3128,242 @@ class OpenApiController extends Controller
                     ],
                 ],
             ],
-        ]);
+        ];
+
+        $this->augmentReportPaths($spec);
+
+        return response()->json($spec);
+    }
+
+    /**
+     * OpenAPI di repo ini awalnya hard-coded, dan mudah tertinggal ketika report baru ditambahkan.
+     * Ini memastikan semua endpoint `api/reports/*` selalu terdaftar minimal sebagai "generic report".
+     *
+     * @param array<string, mixed> $spec
+     */
+    private function augmentReportPaths(array &$spec): void
+    {
+        /** @var Router $router */
+        $router = app(Router::class);
+
+        $spec['paths'] = is_array($spec['paths'] ?? null) ? $spec['paths'] : [];
+        $paths = &$spec['paths'];
+
+        $schemas = &$spec['components']['schemas'];
+        if (!is_array($schemas ?? null)) {
+            $spec['components']['schemas'] = [];
+            $schemas = &$spec['components']['schemas'];
+        }
+
+        // Generic schemas: keep it flexible (additionalProperties) because each report has different columns.
+        $schemas['GenericReportRequest'] ??= [
+            'type' => 'object',
+            'additionalProperties' => true,
+            'description' => 'Request generic untuk endpoint laporan (bisa berupa date range / parameter lain tergantung SP).',
+        ];
+        $schemas['GenericReportPreviewResponse'] ??= [
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => [
+                'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                'meta' => ['type' => 'object', 'additionalProperties' => true],
+                'summary' => ['type' => 'object', 'additionalProperties' => true],
+                'data' => ['type' => 'array', 'items' => ['type' => 'object', 'additionalProperties' => true]],
+            ],
+        ];
+        $schemas['GenericReportHealthResponse'] ??= [
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => [
+                'message' => ['type' => 'string'],
+                'meta' => ['type' => 'object', 'additionalProperties' => true],
+                'health' => ['type' => 'object', 'additionalProperties' => true],
+            ],
+        ];
+
+        // 1) Always include every registered `api/reports/*` route as a generic OpenAPI path.
+        foreach ($router->getRoutes() as $route) {
+            $uri = (string) $route->uri();
+            if (!str_starts_with($uri, 'api/reports/')) {
+                continue;
+            }
+
+            $path = '/' . $uri;
+            $paths[$path] ??= [];
+
+            $actionMethod = method_exists($route, 'getActionMethod') ? (string) $route->getActionMethod() : '';
+            $methods = method_exists($route, 'methods') ? (array) $route->methods() : [];
+
+            foreach ($methods as $m) {
+                $method = strtolower((string) $m);
+                if ($method === 'head') {
+                    continue;
+                }
+                if (isset($paths[$path][$method])) {
+                    continue;
+                }
+
+                $isPdf = str_ends_with($path, '/pdf') || str_ends_with($path, '/download') || $actionMethod === 'download';
+                $isHealth = str_ends_with($path, '/health') || $actionMethod === 'health';
+
+                $op = [
+                    'summary' => match (true) {
+                        $isHealth => 'Health check struktur output SP',
+                        $isPdf => 'Download PDF laporan',
+                        default => 'Endpoint laporan',
+                    },
+                    'security' => [['bearerAuth' => []]],
+                    'responses' => [
+                        '200' => [
+                            'description' => $isPdf ? 'PDF' : 'OK',
+                            'content' => $isPdf
+                                ? [
+                                    'application/pdf' => [
+                                        'schema' => ['type' => 'string', 'format' => 'binary'],
+                                    ],
+                                ]
+                                : [
+                                    'application/json' => [
+                                        'schema' => [
+                                            '$ref' => $isHealth
+                                                ? '#/components/schemas/GenericReportHealthResponse'
+                                                : '#/components/schemas/GenericReportPreviewResponse',
+                                        ],
+                                    ],
+                                ],
+                        ],
+                        '401' => ['description' => 'Unauthenticated'],
+                        '422' => ['description' => 'Validasi gagal / SP error'],
+                    ],
+                ];
+
+                if ($method !== 'get') {
+                    $op['requestBody'] = [
+                        'required' => false,
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/GenericReportRequest',
+                                ],
+                            ],
+                        ],
+                    ];
+                }
+
+                $paths[$path][$method] = $op;
+            }
+        }
+
+        // 2) Auto-generate standard triplet siblings for "normal" base report preview paths:
+        // /api/reports/<slug> (preview) -> /pdf and /health.
+        $bases = [];
+        foreach ($router->getRoutes() as $route) {
+            $uri = (string) $route->uri();
+            if (!str_starts_with($uri, 'api/reports/')) {
+                continue;
+            }
+
+            $actionMethod = method_exists($route, 'getActionMethod') ? (string) $route->getActionMethod() : '';
+            if ($actionMethod !== 'preview') {
+                continue;
+            }
+
+            $path = '/' . $uri;
+            if (preg_match('#/(preview|download)$#', $path) === 1) {
+                continue;
+            }
+
+            $bases[$path] = true;
+        }
+
+        foreach (array_keys($bases) as $base) {
+            // Preview
+            $paths[$base] ??= [
+                'post' => [
+                    'summary' => 'Preview laporan',
+                    'security' => [['bearerAuth' => []]],
+                    'requestBody' => [
+                        'required' => false,
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/GenericReportRequest',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'responses' => [
+                        '200' => [
+                            'description' => 'Preview berhasil',
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/GenericReportPreviewResponse',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        '401' => ['description' => 'Unauthenticated'],
+                        '422' => ['description' => 'Validasi gagal / SP error'],
+                    ],
+                ],
+            ];
+
+            // PDF
+            $pdfPath = $base . '/pdf';
+            $paths[$pdfPath] ??= [];
+            $paths[$pdfPath]['get'] ??= $paths[$pdfPath]['get'] ?? [
+                'summary' => 'Download PDF laporan',
+                'security' => [['bearerAuth' => []]],
+                'responses' => [
+                    '200' => [
+                        'description' => 'PDF',
+                        'content' => [
+                            'application/pdf' => [
+                                'schema' => ['type' => 'string', 'format' => 'binary'],
+                            ],
+                        ],
+                    ],
+                    '401' => ['description' => 'Unauthenticated'],
+                    '422' => ['description' => 'Validasi gagal / SP error'],
+                ],
+            ];
+            $paths[$pdfPath]['post'] ??= $paths[$pdfPath]['get'];
+
+            // Health
+            $healthPath = $base . '/health';
+            $paths[$healthPath] ??= [
+                'post' => [
+                    'summary' => 'Health check struktur output SP',
+                    'security' => [['bearerAuth' => []]],
+                    'requestBody' => [
+                        'required' => false,
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/GenericReportRequest',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'responses' => [
+                        '200' => [
+                            'description' => 'Health result',
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/GenericReportHealthResponse',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        '401' => ['description' => 'Unauthenticated'],
+                        '422' => ['description' => 'Validasi gagal / SP error'],
+                    ],
+                ],
+            ];
+        }
     }
 }
-
-
-
 
 

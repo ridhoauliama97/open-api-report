@@ -163,3 +163,8 @@ Jika ingin ikut mengekspor definisi SQL setiap stored procedure:
 ```bash
 # php artisan db:export-structure sqlsrv --with-definitions
 ```
+
+Audit Command
+```bash
+php artisan reports:audit-api
+```

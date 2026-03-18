@@ -60,6 +60,15 @@ use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurS4SDetailController;
 use App\Http\Controllers\UmurFingerJointDetailController;
+use App\Http\Controllers\UmurLaminatingDetailController;
+use App\Http\Controllers\RekapProduksiLaminatingConsolidatedController;
+use App\Http\Controllers\RekapProduksiLaminatingPerJenisPerGradeController;
+use App\Http\Controllers\LaminatingHidupDetailController;
+use App\Http\Controllers\KetahananBarangDagangLaminatingController;
+use App\Http\Controllers\RekapProduksiMouldingConsolidatedController;
+use App\Http\Controllers\MouldingHidupDetailController;
+use App\Http\Controllers\RekapProduksiMouldingPerJenisPerGradeController;
+use App\Http\Controllers\KetahananBarangDagangMouldingController;
 use App\Http\Controllers\FingerJointHidupDetailController;
 use App\Http\Controllers\RekapProduksiFingerJointPerJenisPerGradeController;
 use App\Http\Controllers\RekapProduksiS4SConsolidatedController;
@@ -941,6 +950,87 @@ Route::prefix('reports')->name('reports.')->group(function (): void {
         Route::post('/preview-pdf', [UmurFingerJointDetailController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [UmurFingerJointDetailController::class, 'preview'])->name('preview');
         Route::post('/health', [UmurFingerJointDetailController::class, 'health'])->name('health');
+    });
+
+    /** Umur laminating detail routes. */
+    Route::prefix('laminating/umur-laminating-detail')->name('laminating.umur-laminating-detail.')->group(function (): void {
+        Route::get('/', [UmurLaminatingDetailController::class, 'index'])->name('index');
+        Route::post('/download', [UmurLaminatingDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [UmurLaminatingDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [UmurLaminatingDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [UmurLaminatingDetailController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Laminating Consolidated routes. */
+    Route::prefix('laminating/rekap-produksi-laminating-consolidated')->name('laminating.rekap-produksi-laminating-consolidated.')->group(function (): void {
+        Route::get('/', [RekapProduksiLaminatingConsolidatedController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiLaminatingConsolidatedController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiLaminatingConsolidatedController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiLaminatingConsolidatedController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiLaminatingConsolidatedController::class, 'health'])->name('health');
+    });
+
+    /** Laminating (Hidup) detail routes. */
+    Route::prefix('laminating/laminating-hidup-detail')->name('laminating.laminating-hidup-detail.')->group(function (): void {
+        Route::get('/', [LaminatingHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [LaminatingHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [LaminatingHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [LaminatingHidupDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [LaminatingHidupDetailController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Laminating per-jenis dan per-grade routes. */
+    Route::prefix('laminating/rekap-produksi-laminating-per-jenis-per-grade')->name('laminating.rekap-produksi-laminating-per-jenis-per-grade.')->group(function (): void {
+        Route::get('/', [RekapProduksiLaminatingPerJenisPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiLaminatingPerJenisPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiLaminatingPerJenisPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiLaminatingPerJenisPerGradeController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiLaminatingPerJenisPerGradeController::class, 'health'])->name('health');
+    });
+
+    /** Ketahanan Barang Dagang Laminating routes. */
+    Route::prefix('laminating/ketahanan-barang-laminating')->name('laminating.ketahanan-barang-laminating.')->group(function (): void {
+        Route::get('/', [KetahananBarangDagangLaminatingController::class, 'index'])->name('index');
+        Route::post('/download', [KetahananBarangDagangLaminatingController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KetahananBarangDagangLaminatingController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KetahananBarangDagangLaminatingController::class, 'preview'])->name('preview');
+        Route::post('/health', [KetahananBarangDagangLaminatingController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Moulding Consolidated routes. */
+    Route::prefix('moulding/rekap-produksi-moulding-consolidated')->name('moulding.rekap-produksi-moulding-consolidated.')->group(function (): void {
+        Route::get('/', [RekapProduksiMouldingConsolidatedController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiMouldingConsolidatedController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiMouldingConsolidatedController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiMouldingConsolidatedController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiMouldingConsolidatedController::class, 'health'])->name('health');
+    });
+
+    /** Moulding (Hidup) Detail routes. */
+    Route::prefix('moulding/moulding-hidup-detail')->name('moulding.moulding-hidup-detail.')->group(function (): void {
+        Route::get('/', [MouldingHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [MouldingHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [MouldingHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [MouldingHidupDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [MouldingHidupDetailController::class, 'health'])->name('health');
+    });
+
+    /** Rekap Produksi Moulding per-jenis dan per-grade routes. */
+    Route::prefix('moulding/rekap-produksi-moulding-per-jenis-per-grade')->name('moulding.rekap-produksi-moulding-per-jenis-per-grade.')->group(function (): void {
+        Route::get('/', [RekapProduksiMouldingPerJenisPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiMouldingPerJenisPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiMouldingPerJenisPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiMouldingPerJenisPerGradeController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiMouldingPerJenisPerGradeController::class, 'health'])->name('health');
+    });
+
+    /** Ketahanan Barang Dagang Moulding routes. */
+    Route::prefix('moulding/ketahanan-barang-moulding')->name('moulding.ketahanan-barang-moulding.')->group(function (): void {
+        Route::get('/', [KetahananBarangDagangMouldingController::class, 'index'])->name('index');
+        Route::post('/download', [KetahananBarangDagangMouldingController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KetahananBarangDagangMouldingController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KetahananBarangDagangMouldingController::class, 'preview'])->name('preview');
+        Route::post('/health', [KetahananBarangDagangMouldingController::class, 'health'])->name('health');
     });
 
     /** Rekap Produksi Finger Joint Consolidated routes. */

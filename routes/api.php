@@ -73,6 +73,15 @@ use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurFingerJointDetailController;
+use App\Http\Controllers\UmurLaminatingDetailController;
+use App\Http\Controllers\RekapProduksiLaminatingConsolidatedController;
+use App\Http\Controllers\RekapProduksiLaminatingPerJenisPerGradeController;
+use App\Http\Controllers\LaminatingHidupDetailController;
+use App\Http\Controllers\KetahananBarangDagangLaminatingController;
+use App\Http\Controllers\RekapProduksiMouldingConsolidatedController;
+use App\Http\Controllers\MouldingHidupDetailController;
+use App\Http\Controllers\RekapProduksiMouldingPerJenisPerGradeController;
+use App\Http\Controllers\KetahananBarangDagangMouldingController;
 use App\Http\Controllers\UmurS4SDetailController;
 use App\Http\Controllers\RekapProduksiS4SConsolidatedController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
@@ -239,6 +248,15 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/finger-joint/umur-finger-joint-detail', 'api.reports.finger-joint.umur-finger-joint-detail', UmurFingerJointDetailController::class],
         ['/reports/finger-joint/rekap-produksi-finger-joint-consolidated', 'api.reports.finger-joint.rekap-produksi-finger-joint-consolidated', RekapProduksiFingerJointConsolidatedController::class],
         ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],
+        ['/reports/laminating/umur-laminating-detail', 'api.reports.laminating.umur-laminating-detail', UmurLaminatingDetailController::class],
+        ['/reports/laminating/rekap-produksi-laminating-consolidated', 'api.reports.laminating.rekap-produksi-laminating-consolidated', RekapProduksiLaminatingConsolidatedController::class],
+        ['/reports/laminating/laminating-hidup-detail', 'api.reports.laminating.laminating-hidup-detail', LaminatingHidupDetailController::class],
+        ['/reports/laminating/rekap-produksi-laminating-per-jenis-per-grade', 'api.reports.laminating.rekap-produksi-laminating-per-jenis-per-grade', RekapProduksiLaminatingPerJenisPerGradeController::class],
+        ['/reports/laminating/ketahanan-barang-laminating', 'api.reports.laminating.ketahanan-barang-laminating', KetahananBarangDagangLaminatingController::class],
+        ['/reports/moulding/rekap-produksi-moulding-consolidated', 'api.reports.moulding.rekap-produksi-moulding-consolidated', RekapProduksiMouldingConsolidatedController::class],
+        ['/reports/moulding/moulding-hidup-detail', 'api.reports.moulding.moulding-hidup-detail', MouldingHidupDetailController::class],
+        ['/reports/moulding/rekap-produksi-moulding-per-jenis-per-grade', 'api.reports.moulding.rekap-produksi-moulding-per-jenis-per-grade', RekapProduksiMouldingPerJenisPerGradeController::class],
+        ['/reports/moulding/ketahanan-barang-moulding', 'api.reports.moulding.ketahanan-barang-moulding', KetahananBarangDagangMouldingController::class],
         ['/reports/s4s/umur-s4s-detail', 'api.reports.s4s.umur-s4s-detail', UmurS4SDetailController::class],
         ['/reports/s4s/rekap-produksi-s4s-consolidated', 'api.reports.s4s.rekap-produksi-s4s-consolidated', RekapProduksiS4SConsolidatedController::class],
         ['/reports/s4s/ketahanan-barang-s4s', 'api.reports.s4s.ketahanan-barang-s4s', KetahananBarangDagangS4sController::class],
