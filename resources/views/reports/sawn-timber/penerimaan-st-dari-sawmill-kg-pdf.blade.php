@@ -147,24 +147,7 @@
             width: 48%;
             margin-top: 8px;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left,
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            text-align: right;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
+@include('reports.partials.pdf-footer-table-style')
 
         .headers-row th {
             font-weight: bold;

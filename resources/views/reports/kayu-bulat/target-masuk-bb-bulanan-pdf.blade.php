@@ -109,25 +109,7 @@
             font-size: 11px;
             font-weight: 700;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-
-        .headers-row th {
+.headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;

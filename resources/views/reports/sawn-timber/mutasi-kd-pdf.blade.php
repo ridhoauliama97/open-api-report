@@ -110,20 +110,7 @@
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left,
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
+@include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 

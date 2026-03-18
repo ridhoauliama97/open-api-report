@@ -95,31 +95,7 @@
             font-weight: bold;
             font-size: 12px;
         }
-
-        .footer-wrap {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .footer-wrap td {
-            border: none;
-            padding: 0;
-            background: transparent;
-        }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-            text-align: left;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-
-        .trend-up {
+.trend-up {
             color: #0b8f3c;
             font-weight: bold;
         }

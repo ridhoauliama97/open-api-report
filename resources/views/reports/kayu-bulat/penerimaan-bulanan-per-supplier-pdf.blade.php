@@ -143,25 +143,7 @@
             font-size: 11px;
             border: 1px solid #000;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-
-        .totals-row td {
+.totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;

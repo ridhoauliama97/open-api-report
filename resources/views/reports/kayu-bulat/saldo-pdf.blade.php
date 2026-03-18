@@ -114,24 +114,7 @@
             border-top: 0;
             border-bottom: 0;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-        @include('reports.partials.pdf-footer-table-style')
+@include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 

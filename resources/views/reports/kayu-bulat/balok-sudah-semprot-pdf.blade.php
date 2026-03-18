@@ -102,24 +102,7 @@
         .row-even td {
             background: #eef2f8;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left,
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            text-align: right;
-        }
-
-        .headers-row th {
+.headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;

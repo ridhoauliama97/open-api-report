@@ -141,30 +141,8 @@
         .totals-row td.blank {
             background: transparent;
         }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
-
-        .footer-wrap {}
-
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
+@include('reports.partials.pdf-footer-table-style')
+.report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;

@@ -108,25 +108,7 @@
             font-weight: 700;
             background: #fff;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-            text-align: right;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
+@include('reports.partials.pdf-footer-table-style')
 
         .headers-row th {
             font-weight: bold;

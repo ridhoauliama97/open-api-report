@@ -1,35 +1,34 @@
-.footer-table {
-width: 100%;
-border-collapse: collapse;
-table-layout: fixed;
-border: 0 !important;
-margin: 0 !important;
+htmlpagefooter table.footer-table {
+    width: 100%;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    table-layout: fixed;
+    border: 0 !important;
+    margin: 0 !important;
 }
 
-.footer-table td {
-font-size: 8px;
-font-style: italic;
-padding: 0;
-border: 0;
-vertical-align: bottom;
+htmlpagefooter table.footer-table tr,
+htmlpagefooter table.footer-table td {
+    border: 0 !important;
+    background: transparent !important;
 }
 
-.footer-print {
-width: 65%;
+htmlpagefooter table.footer-table td {
+    font-family: "Noto Serif", serif !important;
+    font-size: 8px !important;
+    font-style: italic !important;
+    font-weight: normal !important;
+    line-height: 1.2 !important;
+    padding: 0 !important;
+    vertical-align: bottom !important;
 }
 
-.footer-spacer {
-width: 10%;
+htmlpagefooter table.footer-table td.footer-print {
+    text-align: left !important;
+    white-space: nowrap;
 }
 
-.footer-page-cell {
-width: 25%;
-text-align: right;
-white-space: nowrap;
-}
-
-.footer-page {
-display: inline-block;
-position: relative;
-right: -4px;
+htmlpagefooter table.footer-table td.footer-page-cell {
+    text-align: right !important;
+    white-space: nowrap;
 }

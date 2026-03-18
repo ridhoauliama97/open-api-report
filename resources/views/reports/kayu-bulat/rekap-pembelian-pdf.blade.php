@@ -98,25 +98,7 @@
             margin-top: 15px;
             text-decoration: underline;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left {
-            font-size: 7px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            font-size: 7px;
-            font-style: italic;
-            text-align: right;
-        }
-
-        .chart-wrap {
+.chart-wrap {
             border: 1px solid #000;
             padding: 6px;
             margin-top: 10px;

@@ -97,24 +97,7 @@
         .row-even td {
             background: #eef2f8;
         }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left,
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            text-align: right;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
+@include('reports.partials.pdf-footer-table-style')
 
         .totals-row td {
             font-weight: bold;
