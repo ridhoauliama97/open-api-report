@@ -169,6 +169,11 @@
                 @endforeach
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ $visibleColumnCount + 1 }}"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

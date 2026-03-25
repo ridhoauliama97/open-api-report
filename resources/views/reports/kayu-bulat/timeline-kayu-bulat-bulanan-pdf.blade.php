@@ -406,6 +406,11 @@
                         @endforeach
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="{{ count($monthHeaders) + 4 }}"></td>
+                    </tr>
+                </tfoot>
                 <tbody>
                     @foreach ($pivotChunk as $row)
                         @php $rowNumber = ($chunkIndex * $pivotChunkSize) + $loop->iteration; @endphp
@@ -430,11 +435,6 @@
                         </tr>
                     @endif
                 </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($monthHeaders) + 4 }}"></td>
-                    </tr>
-                </tfoot>
             </table>
         @empty
             <table class="report-table">
@@ -460,16 +460,16 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                     <tr class="data-row">
                         <td colspan="{{ count($monthHeaders) + 4 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($monthHeaders) + 4 }}"></td>
-                    </tr>
-                </tfoot>
             </table>
         @endforelse
     @else
@@ -484,7 +484,12 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                     @foreach ($rowChunk as $row)
                         @php $rowNumber = ($chunkIndex * $rawChunkSize) + $loop->iteration; @endphp
                         <tr class="data-row {{ $rowNumber % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -495,11 +500,6 @@
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($columns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
             </table>
         @empty
             <table class="report-table">
@@ -511,16 +511,16 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                     <tr class="data-row">
                         <td colspan="{{ count($columns) + 1 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($columns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
             </table>
         @endforelse
     @endif

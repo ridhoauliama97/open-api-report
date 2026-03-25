@@ -227,26 +227,6 @@
                     <th style="width: 90px;">m3</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse ($groupRows as $row)
-                    @php
-                        $ton = $toFloat($row['Ton'] ?? null);
-                        $m3 = $ton !== null ? $ton * $tonToM3Factor : null;
-                    @endphp
-                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="data-cell label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
-                        <td class="data-cell label">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                        <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($ton, 4) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($m3, 4) }}</td>
-                    </tr>
-                @empty
-                    <tr class="data-row row-odd">
-                        <td class="data-cell" colspan="6" style="text-align: center;">Tidak ada data.</td>
-                    </tr>
-                @endforelse
-            </tbody>
             <tfoot>
                 @php
                     $totalTon = collect($groupRows)->sum(
@@ -267,6 +247,48 @@
                     <td colspan="6"></td>
                 </tr>
             </tfoot>
+<tfoot>
+                @php
+                    $totalBatang = collect($groupRows)->sum(
+                        static fn(array $row): float => $toFloat($row['JmlhBatang'] ?? null) ?? 0.0,
+                    );
+                    $totalKubik = collect($groupRows)->sum(
+                        static fn(array $row): float => $toFloat($row['KubikIN'] ?? null) ?? 0.0,
+                    );
+                @endphp
+                <tr class="total-row totals-row">
+                    <td colspan="5" class="number" style="text-align: center; font-weight: bold;">Total</td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ count($groupRows) > 0 ? $formatNumber($totalBatang, 0) : '' }}
+                    </td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ count($groupRows) > 0 ? $formatNumber($totalKubik, 4) : '' }}
+                    </td>
+                </tr>
+                <tr class="table-end-line">
+                    <td colspan="7"></td>
+                </tr>
+            </tfoot>
+<tbody>
+                @forelse ($groupRows as $row)
+                    @php
+                        $ton = $toFloat($row['Ton'] ?? null);
+                        $m3 = $ton !== null ? $ton * $tonToM3Factor : null;
+                    @endphp
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
+                        <td class="data-cell label">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($ton, 4) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($m3, 4) }}</td>
+                    </tr>
+                @empty
+                    <tr class="data-row row-odd">
+                        <td class="data-cell" colspan="6" style="text-align: center;">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
         </table>
     @endforeach
 
@@ -290,7 +312,12 @@
                     <th style="width: 90px;">Kubik</th>
                 </tr>
             </thead>
-            <tbody>
+            <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @forelse ($groupRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="data-cell label">{{ (string) ($row['NamaMesin'] ?? '') }}</td>
@@ -307,28 +334,6 @@
                     </tr>
                 @endforelse
             </tbody>
-            <tfoot>
-                @php
-                    $totalBatang = collect($groupRows)->sum(
-                        static fn(array $row): float => $toFloat($row['JmlhBatang'] ?? null) ?? 0.0,
-                    );
-                    $totalKubik = collect($groupRows)->sum(
-                        static fn(array $row): float => $toFloat($row['KubikIN'] ?? null) ?? 0.0,
-                    );
-                @endphp
-                <tr class="total-row totals-row">
-                    <td colspan="5" class="number" style="text-align: center; font-weight: bold;">Total</td>
-                    <td class="number" style="font-weight: bold;">
-                        {{ count($groupRows) > 0 ? $formatNumber($totalBatang, 0) : '' }}
-                    </td>
-                    <td class="number" style="font-weight: bold;">
-                        {{ count($groupRows) > 0 ? $formatNumber($totalKubik, 4) : '' }}
-                    </td>
-                </tr>
-                <tr class="table-end-line">
-                    <td colspan="7"></td>
-                </tr>
-            </tfoot>
         </table>
     @endforeach
 

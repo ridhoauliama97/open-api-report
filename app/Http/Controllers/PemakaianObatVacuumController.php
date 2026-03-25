@@ -72,6 +72,7 @@ class PemakaianObatVacuumController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-Pemakaian-Obat-Vacuum-%s-sd-%s.pdf', $startDate, $endDate);

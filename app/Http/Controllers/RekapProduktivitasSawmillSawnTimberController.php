@@ -72,6 +72,7 @@ class RekapProduktivitasSawmillSawnTimberController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produktivitas-Sawmill-%s-sd-%s.pdf', $startDate, $endDate);

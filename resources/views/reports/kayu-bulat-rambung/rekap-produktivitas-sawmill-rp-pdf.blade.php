@@ -490,7 +490,12 @@
                                 <th style="width: 55px;">%</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                             @if ($balokRows === [])
                                 <tr>
                                     <td class="label" colspan="4" style="text-align: center;">
@@ -525,7 +530,12 @@
                     <th>Tidak ada data.</th>
                 </tr>
             </thead>
-            <tbody>
+            <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 <tr class="data-row row-odd">
                     <td class="data-cell">Tidak ada data.</td>
                 </tr>

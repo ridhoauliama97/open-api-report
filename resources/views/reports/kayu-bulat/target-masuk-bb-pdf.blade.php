@@ -232,7 +232,12 @@
                 @endforeach
             </tr>
         </thead>
-        <tbody>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($dayColumns) + count($reportData['lb_columns'] ?? []) + 4 }}"></td>
+            </tr>
+        </tfoot>
+<tbody>
             @forelse ($tableRows as $row)
                 <tr class="data-row">
                     <td class="row-label data-cell">{{ $row['jenis'] }}</td>
@@ -255,11 +260,6 @@
                 </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($dayColumns) + count($reportData['lb_columns'] ?? []) + 4 }}"></td>
-            </tr>
-        </tfoot>
     </table>
 
     <table class="report-table summary-table">
@@ -271,6 +271,11 @@
                 <th>Max</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="4"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($summaryRows as $summary)
                 <tr class="data-row">
@@ -285,11 +290,6 @@
                 </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="4"></td>
-            </tr>
-        </tfoot>
     </table>
 
     <div class="chart-wrap">

@@ -152,7 +152,23 @@
             text-align: left;
             width: 40%;
         }
-        @include('reports.partials.pdf-footer-table-style')
+        
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
+@include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -494,7 +510,13 @@
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @foreach ($groupRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
@@ -528,7 +550,8 @@
         </table>
     @empty
         <table>
-            <tbody>
+            
+        <tbody>
                 <tr>
                     <td class="center">Tidak ada data.</td>
                 </tr>
@@ -539,6 +562,7 @@
     <div class="section-title">Summary :</div>
 
     <table class="summary-table">
+        
         <tbody>
             <tr>
                 <th>Total Supplier</th>

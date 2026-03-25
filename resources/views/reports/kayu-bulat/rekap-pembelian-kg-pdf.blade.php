@@ -129,6 +129,11 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
+
+        tfoot {
+            display: table-footer-group;
+        }
 @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>

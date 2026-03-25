@@ -424,7 +424,17 @@
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($displayColumns) + 1 }}"></td>
+                </tr>
+            </tfoot>
+<tfoot>
+                <tr class="table-end-line">
+                    <td></td>
+                </tr>
+            </tfoot>
+<tbody>
                 @foreach ($groupRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
@@ -440,11 +450,6 @@
                     </tr>
                 @endforeach
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($displayColumns) + 1 }}"></td>
-                </tr>
-            </tfoot>
         </table>
         <div class="group-summary">
             <span class="label">Total :</span>
@@ -459,11 +464,6 @@
                     <td class="center data-cell">Tidak ada data.</td>
                 </tr>
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td></td>
-                </tr>
-            </tfoot>
         </table>
     @endforelse
 

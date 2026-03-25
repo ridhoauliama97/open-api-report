@@ -65,11 +65,10 @@ class PembelianStTimelineTonController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $jenisColumns = is_array($reportData['jenis_columns'] ?? null) ? $reportData['jenis_columns'] : [];
-        $orientation = count($jenisColumns) > 6 ? 'landscape' : 'portrait';
+        $monthColumns = is_array($reportData['month_columns'] ?? null) ? $reportData['month_columns'] : [];
+        $orientation = count($monthColumns) > 6 ? 'landscape' : 'portrait';
 
-        // Pivot table: Tanggal + (jenis columns) + Total
-        $pdfColumnCount = max(3, 2 + count($jenisColumns));
+        $pdfColumnCount = max(3, 3 + count($monthColumns));
 
         $pdf = $pdfGenerator->render('reports.sawn-timber.pembelian-st-timeline-ton-pdf', [
             'reportData' => $reportData,

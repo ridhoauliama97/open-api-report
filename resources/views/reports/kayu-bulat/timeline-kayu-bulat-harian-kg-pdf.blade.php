@@ -238,7 +238,13 @@
                         <th class="col-total" style="width: 72px;">Total</th>
                     </tr>
                 </thead>
-                <tbody>
+                
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                     @forelse ($supplierRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="center col-left">{{ $loop->iteration }}</td>

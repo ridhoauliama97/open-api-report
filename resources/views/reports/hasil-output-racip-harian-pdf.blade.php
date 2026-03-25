@@ -215,6 +215,9 @@
         </tbody>
         @if ($rows !== [] && $totals !== [])
             <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ $visibleColumnCount + 1 }}"></td>
+                </tr>
                 <tr class="totals-row">
                     <td colspan="{{ count($columns) }}" class="center">Total</td>
                     <td class="number">

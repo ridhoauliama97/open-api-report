@@ -475,7 +475,12 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
+                    </tr>
+                </tfoot>
+<tbody>
                     @foreach ($produkRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="data-cell center" style="{{ $noWidthStyle }}">{{ $loop->iteration }}</td>
@@ -510,9 +515,7 @@
                             @endforeach
                         </tr>
                     @endforeach
-                </tbody>
-                <tfoot>
-                    @if ($totalRows > 0)
+                    @if (count($produkRows) > 0)
                         <tr class="subtotal-row totals-row">
                             @if (is_int($pcsIndex) || is_int($tonIndex))
                                 @php
@@ -523,8 +526,8 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number" style="font-weight: bold"
-                                    style="text-align: center;">
+                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number"
+                                    style="font-weight: bold; text-align: center;">
                                     Jumlah {{ $produkName }} :
                                 </td>
                                 @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
@@ -546,10 +549,7 @@
                             @endif
                         </tr>
                     @endif
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
+                </tbody>
             </table>
         @endforeach
     @empty

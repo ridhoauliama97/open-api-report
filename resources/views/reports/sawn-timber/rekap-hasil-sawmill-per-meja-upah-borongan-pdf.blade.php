@@ -353,7 +353,12 @@
                         <th style="width: 8%;">Ton Racip</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="12"></td>
+                    </tr>
+                </tfoot>
+<tbody>
                     @foreach ($pairedRows as $pair)
                         @php
                             $left = $pair[0] ?? null;
@@ -377,11 +382,6 @@
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="12"></td>
-                    </tr>
-                </tfoot>
             </table>
         @endforeach
 
@@ -429,7 +429,12 @@
                         <th style="width: 8%;">SM</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="6"></td>
+                    </tr>
+                </tfoot>
+        <tbody>
                     @foreach ($rowsByMeja as $row)
                         @php
                             $grand['RB STD (Tbl 14/16/18/23)'] += (float) ($row['RB STD (Tbl 14/16/18/23)'] ?? 0);
@@ -451,19 +456,6 @@
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
-                    <tr class="totals-row">
-                        <td class="center">Total</td>
-                        <td class="number">{{ $formatNumber($grand['RB STD (Tbl 14/16/18/23)']) }}</td>
-                        <td class="number">{{ $formatNumber($grand['RB STD']) }}</td>
-                        <td class="number">{{ $formatNumber($grand['RB MC + Lain-Lain']) }}</td>
-                        <td class="number">{{ $formatNumber($grand['Jumlah']) }}</td>
-                        <td class="number">{{ $formatNumber($grand['SM']) }}</td>
-                    </tr>
-                    <tr class="table-end-line">
-                        <td colspan="6"></td>
-                    </tr>
-                </tfoot>
             </table>
         @endforeach
     @endif

@@ -215,7 +215,23 @@
                 <th style="width: 10%;">Total</th>
             </tr>
         </thead>
-        <tbody>
+        <tfoot>
+            @if (count($rowsData) > 0)
+                <tr class="totals-row">
+                    <td colspan="5" class="number" style="text-align: center;">Total</td>
+                    <td class="number">{{ number_format($totals['Period1'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period2'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period3'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period4'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['Period5'], 4, '.', ',') }}</td>
+                    <td class="number">{{ number_format($totals['RowTotal'], 4, '.', ',') }}</td>
+                </tr>
+            @endif
+            <tr class="table-end-line">
+                <td colspan="11"></td>
+            </tr>
+        </tfoot>
+<tbody>
             @forelse ($rowsData as $row)
                 @php
                     $rowPeriod1 = $toFloat($row['Period1'] ?? null) ?? 0.0;
@@ -244,22 +260,6 @@
                 </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            @if (count($rowsData) > 0)
-                <tr class="totals-row">
-                    <td colspan="5" class="number" style="text-align: center;">Total</td>
-                    <td class="number">{{ number_format($totals['Period1'], 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format($totals['Period2'], 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format($totals['Period3'], 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format($totals['Period4'], 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format($totals['Period5'], 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format($totals['RowTotal'], 4, '.', ',') }}</td>
-                </tr>
-            @endif
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
     </table>
 
     @include('reports.partials.pdf-footer-table')

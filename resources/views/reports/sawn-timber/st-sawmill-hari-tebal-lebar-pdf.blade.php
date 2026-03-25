@@ -169,6 +169,17 @@
             vertical-align: top;
             background: #c9d1df !important;
         }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
 @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -248,7 +259,12 @@
                         <th style="width: 56px;">Total</th>
                     </tr>
                 </thead>
-                {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tbody>. --}}
+                {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>. --}}
                 <tfoot>
                     <tr class="tfoot-line">
                         <td colspan="{{ 4 + count($chunkDates) }}">&nbsp;</td>
@@ -362,7 +378,12 @@
                         <td colspan="2">&nbsp;</td>
                     </tr>
                 </tfoot>
-                <tbody>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
+        <tbody>
                     @foreach ($grandTotalsByIsGroup as $ig => $total)
                         <tr>
                             <td class="center">Group {{ (int) $ig }}</td>
@@ -392,7 +413,12 @@
                             <td colspan="4">&nbsp;</td>
                         </tr>
                     </tfoot>
-                    <tbody>
+                    <tfoot>
+                        <tr class="table-end-line">
+                            <td colspan="4"></td>
+                        </tr>
+                    </tfoot>
+        <tbody>
                         @php
                             $rowsPerJenis = [];
                             foreach ($rangkumanItems as $it) {

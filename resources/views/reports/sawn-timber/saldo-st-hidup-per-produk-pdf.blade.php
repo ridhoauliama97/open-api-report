@@ -76,7 +76,12 @@
                         <th>Total (Ton)</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+            <tr class="table-end-line">
+                <td colspan="8"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                     @forelse ($rows as $ridx => $row)
                         @php
                             $no++;
@@ -101,8 +106,6 @@
                             <td colspan="8" class="center">Tidak ada data.</td>
                         </tr>
                     @endforelse
-                </tbody>
-                <tfoot>
                     <tr class="totals-row">
                         <td class="center" colspan="4">Jumlah :</td>
                         <td class="number">{{ number_format((float) ($totals['basah'] ?? 0), 4, '.', ',') }}</td>
@@ -110,7 +113,7 @@
                         <td class="number">{{ number_format((float) ($totals['kering'] ?? 0), 4, '.', ',') }}</td>
                         <td class="number">{{ number_format((float) ($totals['total'] ?? 0), 4, '.', ',') }}</td>
                     </tr>
-                </tfoot>
+                </tbody>
             </table>
         @endforeach
 

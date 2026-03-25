@@ -75,6 +75,7 @@ class KdKeluarMasukController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $suffix = $noKd ? "-KD-{$noKd}" : '';
@@ -151,4 +152,3 @@ class KdKeluarMasukController extends Controller
         ]);
     }
 }
-

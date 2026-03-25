@@ -40,6 +40,12 @@
                 <th>Fisik Batang Balok<br>Di Lapangan</th>
             </tr>
         </thead>
+        
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="8"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">

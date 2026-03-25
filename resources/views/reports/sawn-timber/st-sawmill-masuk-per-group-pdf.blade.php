@@ -131,6 +131,22 @@
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
+
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
 @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -206,7 +222,13 @@
                     <th>ST (Ton)</th>
                 </tr>
             </thead>
-            <tbody>
+            
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @forelse ($items as $idx => $it)
                     <tr class="{{ ($idx + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $idx + 1 }}</td>

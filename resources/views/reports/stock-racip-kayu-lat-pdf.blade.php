@@ -231,7 +231,12 @@
                             <th style="width: 28%;">Hasil</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tfoot>
+                        <tr class="table-end-line">
+                            <td colspan="6"></td>
+                        </tr>
+                    </tfoot>
+<tbody>
                         @foreach ($groupRows as $row)
                             <tr class="data-row center">
                                 <td class="data-cell">{{ $loop->iteration }}</td>
@@ -242,17 +247,12 @@
                                 <td class="data-cell">{{ $fmt4($row['Hasil'] ?? 0) }}</td>
                             </tr>
                         @endforeach
-                    </tbody>
-                    <tfoot>
                         <tr class="totals-row">
                             <td colspan="4">Jumlah</td>
                             <td>{{ $fmtInt($sumBatang) }}</td>
                             <td>{{ $fmt4($sumHasil) }}</td>
                         </tr>
-                        <tr class="table-end-line">
-                            <td colspan="6"></td>
-                        </tr>
-                    </tfoot>
+                    </tbody>
                 </table>
             </div>
         @endforeach

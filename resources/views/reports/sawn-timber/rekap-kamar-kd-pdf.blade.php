@@ -213,6 +213,22 @@
         .page-break {
             page-break-after: always;
         }
+
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
 @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -309,6 +325,11 @@
                                     </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot>
+                                <tr class="table-end-line">
+                                    <td colspan="3"></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </td>
                     <td class="right-col">
@@ -341,6 +362,11 @@
                                     </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot>
+                                <tr class="table-end-line">
+                                    <td colspan="6"></td>
+                                </tr>
+                            </tfoot>
                         </table>
 
                         <div class="meta-lines">

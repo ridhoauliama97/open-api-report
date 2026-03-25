@@ -303,6 +303,11 @@
                     <th>Total</th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($dayHeaders) + 3 }}"></td>
+                </tr>
+            </tfoot>
             <tbody>
                 @forelse ($pivotRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -331,11 +336,6 @@
                     </tr>
                 @endif
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($dayHeaders) + 3 }}"></td>
-                </tr>
-            </tfoot>
         </table>
     @else
         <table class="report-table">
@@ -347,7 +347,12 @@
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            <tfoot>
+            <tr class="table-end-line">
+                <td colspan="99"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @forelse ($rowsData as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
@@ -361,11 +366,6 @@
                     </tr>
                 @endforelse
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($columns) + 1 }}"></td>
-                </tr>
-            </tfoot>
         </table>
     @endif
 

@@ -361,7 +361,12 @@
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="{{ count($columns) + 1 }}"></td>
+                </tr>
+            </tfoot>
+<tbody>
                 @forelse ($group['rows'] as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="data-cell center" style="width: {{ $widthText($noWidth) }};">
@@ -401,11 +406,6 @@
                     </tr>
                 @endforelse
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($columns) + 1 }}"></td>
-                </tr>
-            </tfoot>
         </table>
     @empty
         <table>

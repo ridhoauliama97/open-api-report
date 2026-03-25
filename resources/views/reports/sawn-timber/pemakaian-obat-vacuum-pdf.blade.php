@@ -109,6 +109,22 @@
             font-size: 11px;
             border-top: 1px solid #000;
         }
+
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
 @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -238,6 +254,12 @@
                 @endforeach
             </tr>
         </thead>
+        
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="19"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
 

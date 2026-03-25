@@ -217,36 +217,46 @@
         <colgroup>
             <col style="width: {{ $noWidth }}%;">
             <col style="width: {{ $supplierWidth }}%;">
-            @foreach ($monthKeys as $i => $mk)
-                <col style="width: {{ number_format((float) ($widths[$i] ?? 0), 4, '.', '') }}%;">
-            @endforeach
+            @if ($monthKeys !== [])
+                @foreach ($monthKeys as $i => $mk)
+                    <col style="width: {{ number_format((float) ($widths[$i] ?? 0), 4, '.', '') }}%;">
+                @endforeach
+            @endif
             <col style="width: {{ $totalWidth }}%;">
         </colgroup>
         <thead>
-            <tr>
-                <th rowspan="2">No</th>
-                <th rowspan="2">Supplier</th>
-                @if ($hasYears)
-                    @foreach ($yearGroups as $g)
-                        @php
-                            $y = (int) ($g['year'] ?? 0);
-                            $months = is_array($g['months'] ?? null) ? $g['months'] : [];
-                            $span = count($months);
-                        @endphp
-                        @if ($span > 0)
-                            <th colspan="{{ $span }}">{{ $y }}</th>
-                        @endif
+            @if ($monthKeys !== [])
+                <tr>
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Supplier</th>
+                    @if ($hasYears)
+                        @foreach ($yearGroups as $g)
+                            @php
+                                $y = (int) ($g['year'] ?? 0);
+                                $months = is_array($g['months'] ?? null) ? $g['months'] : [];
+                                $span = count($months);
+                            @endphp
+                            @if ($span > 0)
+                                <th colspan="{{ $span }}">{{ $y }}</th>
+                            @endif
+                        @endforeach
+                    @else
+                        <th colspan="{{ count($monthKeys) }}">&nbsp;</th>
+                    @endif
+                    <th rowspan="2">Total</th>
+                </tr>
+                <tr>
+                    @foreach ($monthKeys as $mk)
+                        <th>{{ $monthLabelByKey[$mk] ?? $mk }}</th>
                     @endforeach
-                @else
-                    <th colspan="{{ count($monthKeys) }}">&nbsp;</th>
-                @endif
-                <th rowspan="2">Total</th>
-            </tr>
-            <tr>
-                @foreach ($monthKeys as $mk)
-                    <th>{{ $monthLabelByKey[$mk] ?? $mk }}</th>
-                @endforeach
-            </tr>
+                </tr>
+            @else
+                <tr>
+                    <th>No</th>
+                    <th>Supplier</th>
+                    <th>Total</th>
+                </tr>
+            @endif
         </thead>
         @if ($rows !== [])
             <tfoot>
@@ -293,7 +303,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ 3 + count($monthKeys) }}" style="text-align: center;">Tidak ada data.</td>
+                    <td colspan="{{ $monthKeys !== [] ? 3 + count($monthKeys) : 3 }}" style="text-align: center;">Tidak ada data.</td>
                 </tr>
             @endforelse
 

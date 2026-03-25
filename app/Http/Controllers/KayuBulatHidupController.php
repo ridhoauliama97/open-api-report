@@ -82,6 +82,7 @@ class KayuBulatHidupController extends Controller
             'generatedAt' => now(),
             'pdf_column_count' => 8,
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $startLabel = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');

@@ -134,6 +134,8 @@ class PenerimaanStSawmillKgController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-Penerimaan-ST-Dari-Sawmill-Timbang-KG-%s-sd-%s.pdf', $startDate, $endDate);

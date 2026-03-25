@@ -285,7 +285,12 @@
                 <th style="font-weight: bold">Total</th>
             </tr>
         </thead>
-        <tbody>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ count($monthColumnsDisplay) + 3 }}"></td>
+            </tr>
+        </tfoot>
+<tbody>
             @forelse ($tableRows as $row)
                 <tr class="data-row">
                     <td class="row-label data-cell">{{ $row['jenis'] }}</td>
@@ -302,11 +307,6 @@
                 </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($monthColumnsDisplay) + 3 }}"></td>
-            </tr>
-        </tfoot>
     </table>
 
     <table class="report-table summary-table" style="margin-bottom: 20px">
@@ -320,6 +320,11 @@
                 <th style="font-weight: bold">% Capai</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($summaryRows as $summary)
                 <tr class="data-row">
@@ -337,11 +342,6 @@
                 </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
     </table>
 
     <div class="chart-wrap">

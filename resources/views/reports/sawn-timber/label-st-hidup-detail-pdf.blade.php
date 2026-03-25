@@ -105,7 +105,24 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -174,6 +191,12 @@
                 <th style="width: 10%;">Total (Ton)</th>
             </tr>
         </thead>
+
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="11"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @php $i = 0; @endphp
             @forelse ($rows as $r)

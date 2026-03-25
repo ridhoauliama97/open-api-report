@@ -68,6 +68,7 @@ class StBasahHidupPerUmurKayuTonController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $filename = 'Laporan-ST-Basah-Hidup-Per-Umur-Kayu-Ton.pdf';
@@ -121,4 +122,3 @@ class StBasahHidupPerUmurKayuTonController extends Controller
         ]);
     }
 }
-

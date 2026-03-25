@@ -94,6 +94,22 @@
         td.center {
             text-align: center;
         }
+
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
 @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -242,7 +258,13 @@
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ max(1, count($schema) + 1) }}"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @php $rowIndex = 0; @endphp
                 @forelse ($groupRows as $row)
                     @php
@@ -327,7 +349,8 @@
         @endphp
 
         <table>
-            <tbody>
+            
+        <tbody>
                 <tr>
                     <td class="number" colspan="{{ $labelSpan }}"><strong>Grand Total :</strong></td>
                     @foreach ($schema as $index => $colSpec)
@@ -379,7 +402,13 @@
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="{{ 1 + count($historis['diameters']) }}"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @php $ri = 0; @endphp
                 @foreach ($historis['rows'] as $potong => $vals)
                     @php $ri++; @endphp
@@ -407,7 +436,13 @@
                     <th style="width: 80px;">Rend ST-KB</th>
                 </tr>
             </thead>
-            <tbody>
+            
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="8"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                 @php $si = 0; @endphp
                 @foreach ($summaries as $s)
                     @php

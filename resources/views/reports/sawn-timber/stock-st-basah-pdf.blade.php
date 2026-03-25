@@ -460,7 +460,12 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
+                    </tr>
+                </tfoot>
+<tbody>
                     @foreach ($produkRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="data-cell center">{{ $loop->iteration }}</td>
@@ -493,9 +498,7 @@
                             @endforeach
                         </tr>
                     @endforeach
-                </tbody>
-                <tfoot>
-                    @if ($totalRows > 0)
+                    @if (count($produkRows) > 0)
                         <tr class="subtotal-row totals-row">
                             @if (is_int($pcsIndex) || is_int($tonIndex))
                                 @php
@@ -527,10 +530,7 @@
                             @endif
                         </tr>
                     @endif
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
+                </tbody>
             </table>
         @endforeach
     @empty

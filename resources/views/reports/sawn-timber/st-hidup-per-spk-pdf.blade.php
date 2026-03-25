@@ -164,7 +164,12 @@
                             <th>Total (Ton)</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tfoot>
+            <tr class="table-end-line">
+                <td colspan="8"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                         @forelse ($rows as $idx => $row)
                             @php
                                 $basah = (float) ($row['BasahTon'] ?? 0);
@@ -187,8 +192,6 @@
                                 <td colspan="8" class="center">Tidak ada data.</td>
                             </tr>
                         @endforelse
-                    </tbody>
-                    <tfoot>
                         <tr class="totals-row">
                             <td class="center" colspan="4">Total</td>
                             <td class="number">{{ $fmtTon($sumBasah) }}</td>
@@ -196,7 +199,7 @@
                             <td class="number">{{ $fmtTon($sumKering) }}</td>
                             <td class="number">{{ $fmtTon($sumTotal) }}</td>
                         </tr>
-                    </tfoot>
+                    </tbody>
                 </table>
             @endforeach
 
@@ -259,7 +262,12 @@
                         <th>Total (Ton)</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tfoot>
+            <tr class="table-end-line">
+                <td colspan="5"></td>
+            </tr>
+        </tfoot>
+        <tbody>
                     @forelse ($products as $p)
                         @php
                             $pt = is_array($p['totals'] ?? null) ? $p['totals'] : ['basah' => 0, 'kd' => 0, 'kering' => 0, 'total' => 0];
@@ -276,8 +284,6 @@
                             <td class="center" colspan="5">Tidak ada data.</td>
                         </tr>
                     @endforelse
-                </tbody>
-                <tfoot>
                     <tr class="totals-row">
                         <td class="center">Total</td>
                         <td class="number">{{ $fmtTon((float) ($tot['basah'] ?? 0)) }}</td>
@@ -285,7 +291,7 @@
                         <td class="number">{{ $fmtTon((float) ($tot['kering'] ?? 0)) }}</td>
                         <td class="number">{{ $fmtTon((float) ($tot['total'] ?? 0)) }}</td>
                     </tr>
-                </tfoot>
+                </tbody>
             </table>
         @endforeach
     @endif

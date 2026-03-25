@@ -147,6 +147,7 @@
             width: 48%;
             margin-top: 8px;
         }
+
 @include('reports.partials.pdf-footer-table-style')
 
         .headers-row th {
@@ -390,6 +391,18 @@
                 }
             }
 
+            $cleanSupplier = trim(
+                (string) (
+                    $contextRow['NmSupplier3'] ??
+                    $contextRow['NmSupplier2'] ??
+                    $contextRow[$supplierColumnResolved] ??
+                    $supplierName
+                ),
+            );
+            if ($cleanSupplier === '') {
+                $cleanSupplier = $supplierName;
+            }
+
             $displayNoPenSt =
                 $noPenStColumn !== null ? $contextRow[$noPenStColumn] ?? $noPenerimaanSt : $noPenerimaanSt;
             $displayTglPenerimaan = $dateColumn !== null ? $formatDate($contextRow[$dateColumn] ?? '') : '';
@@ -550,10 +563,6 @@
 
             $metaPairs = [
                 'No Pen ST' => $displayNoPenSt,
-                'Supplier' =>
-                    $supplierColumnResolved !== null
-                        ? $contextRow[$supplierColumnResolved] ?? $supplierName
-                        : $supplierName,
                 'No KB' => $displayNoKb,
                 'Tgl Penerimaan ST Sawmill' => $displayTglPenerimaan,
                 'Jenis Kayu' => $displayJenisKayu,
@@ -562,13 +571,14 @@
             ];
         @endphp
         <div class="supplier-block">
-            <p class="supplier-title">Supplier : {{ $supplierName }}</p>
+            <p class="supplier-title">Supplier : {{ $cleanSupplier }}</p>
 
             <table class="meta-list">
-                <tbody>
+                
+        <tbody>
                     <tr>
-                        <td class="meta-label">Supplier</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['Supplier'] ?: '-') }}</td>
+                        <td class="meta-label">No Pen ST</td>
+                        <td class="meta-value">{{ (string) ($metaPairs['No Pen ST'] ?: '-') }}</td>
                         <td class="meta-label">No KB</td>
                         <td class="meta-value">{{ (string) ($metaPairs['No KB'] ?: '-') }}</td>
                     </tr>
@@ -599,6 +609,7 @@
                         <th style="width: 90px;">Persentase Output (%)</th>
                     </tr>
                 </thead>
+                
                 <tbody>
                     @foreach ($renderRows as $sectionBlock)
                         @php
@@ -645,7 +656,8 @@
         </div>
     @empty
         <table>
-            <tbody>
+            
+        <tbody>
                 <tr>
                     <td class="center">Tidak ada data.</td>
                 </tr>
@@ -654,6 +666,7 @@
     @endforelse
 
     <table class="summary-table">
+        
         <tbody>
             <tr>
                 <th style="width: 70%;">Keterangan</th>

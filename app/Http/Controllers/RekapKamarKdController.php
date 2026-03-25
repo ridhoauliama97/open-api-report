@@ -74,6 +74,7 @@ class RekapKamarKdController extends Controller
             'pdf_orientation' => 'portrait',
             // Avoid mPDF table border edge-cases; we'll handle borders in CSS.
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
         ]);
 
         $filename = 'Laporan-Rekap-Kamar-KD.pdf';
