@@ -7,113 +7,78 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @php
+        $pageMargin = '18mm 10mm 18mm 10mm';
+        $bodyFontSize = '10px';
+        $titleFontSize = '16px';
+        $subtitleMargin = '2px 0 18px 0';
+        $tableMarginBottom = '8px';
+    @endphp
     <style>
         * {
             box-sizing: border-box;
         }
 
         @page {
-            margin: 18mm 10mm 18mm 10mm;
+            margin: {{ $pageMargin }};
             footer: html_reportFooter;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 10px;
+            font-size: {{ $bodyFontSize }};
             line-height: 1.2;
             color: #000;
         }
 
         .report-title {
-            text-align: center;
             margin: 0;
-            font-size: 13px;
-            font-weight: 700;
+            text-align: center;
+            font-size: {{ $titleFontSize }};
+            font-weight: bold;
         }
 
         .report-subtitle {
-            text-align: left;
-            margin: 2px 0 10px 0;
-            font-size: 9px;
-            color: #636466;
-        }
-
-        .supplier-block {
-            margin: 8px 0 12px 0;
-            page-break-inside: avoid;
-        }
-
-        .supplier-title {
-            margin: 0 0 5px 0;
-            font-size: 11px;
-            font-weight: 700;
-            border: 1px solid #000;
-            padding-bottom: 2px;
-        }
-
-        .meta-list {
-            width: 100%;
-            border: 1px solid #000;
-            background: #f8fafc;
-            border-radius: 2px;
-            margin-bottom: 6px;
-            border-collapse: collapse;
-        }
-
-        .meta-list td {
-            border: none;
-            padding: 3px 5px;
-            vertical-align: top;
-            font-size: 9px;
-        }
-
-        .meta-label {
-            color: #4b5563;
-            width: 25%;
-            white-space: nowrap;
-        }
-
-        .meta-value {
-            color: #111827;
-            font-weight: 600;
-            width: 25%;
-        }
-
-        .section-label {
-            width: 58px;
+            margin: {{ $subtitleMargin }};
             text-align: center;
-            font-weight: 700;
-            background: #eef2f7;
+            font-size: 12px;
+            color: #636466;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            margin-bottom: {{ $tableMarginBottom }};
             page-break-inside: auto;
+            table-layout: fixed;
+        }
+
+        .report-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         thead {
             display: table-header-group;
         }
 
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+        tfoot {
+            display: table-footer-group;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2.5px 4px;
+            padding: 3px 4px;
             vertical-align: middle;
         }
 
         th {
             text-align: center;
-            font-weight: 700;
-            background: #e5eaf1;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         td.center {
@@ -122,45 +87,100 @@
 
         td.number {
             text-align: right;
+            white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        td.grade-output {
-            text-align: right;
-            padding-right: 10px;
-            white-space: nowrap;
-        }
-
-        .subtotal-row td {
-            font-weight: 700;
-            background: #edf2f8 !important;
-        }
-
-        .rendemen {
-            text-align: right;
-            font-size: 9.5px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-        }
-
-        .summary-table {
-            width: 48%;
-            margin-top: 8px;
-        }
-
-@include('reports.partials.pdf-footer-table-style')
-
         .headers-row th {
-            font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
+            border-top: none !important;
+            border-bottom: none !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .report-table tbody tr.row-last td.data-cell {
+            border-bottom: 1px solid #000 !important;
         }
 
         .totals-row td {
-            font-weight: bold;
             font-size: 11px;
+            font-weight: bold;
             border: 1px solid #000;
         }
+
+        .report-table tbody tr.totals-row:last-child td {
+            border-bottom: 0 !important;
+        }
+
+        .table-end-line td {
+            border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            background: #fff !important;
+        }
+
+        .group-title {
+            margin: 10px 0 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .meta-block {
+            margin: 0 0 6px;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        .meta-row {
+            margin: 0 0 2px;
+        }
+
+        .meta-label {
+            display: inline-block;
+            min-width: 120px;
+            font-weight: bold;
+        }
+
+        .date-separator {
+            border-top: 1px solid #000;
+            margin: 12px 0 8px;
+        }
+
+        .section-cell {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .grade-output {
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .rendemen-row {
+            margin: 2px 0 10px;
+            text-align: right;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
@@ -206,18 +226,6 @@
             return is_numeric($normalized) ? (float) $normalized : null;
         };
 
-        $isDateLike = static function (?string $column): bool {
-            if ($column === null) {
-                return false;
-            }
-
-            $normalized = strtolower(str_replace([' ', '_'], '', $column));
-
-            return str_contains($normalized, 'tgl') ||
-                str_contains($normalized, 'tanggal') ||
-                str_contains($normalized, 'date');
-        };
-
         $normalizeName = static function (?string $name): string {
             $raw = (string) ($name ?? '');
             return strtolower(preg_replace('/[^a-z0-9]/', '', $raw) ?? '');
@@ -244,10 +252,45 @@
             }
 
             try {
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d M Y');
+            } catch (\Throwable $exception) {
+                return (string) $value;
+            }
+        };
+
+        $formatDateShort = static function ($value): string {
+            if ($value === null || $value === '') {
+                return '';
+            }
+
+            try {
                 return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
+        };
+
+        $formatTruck = static function ($value): string {
+            $raw = trim((string) ($value ?? ''));
+            if ($raw === '' || $raw === '0' || $raw === '0.0') {
+                return '';
+            }
+
+            return $raw;
+        };
+
+        $formatDetail = static function ($value, int $decimals): string {
+            $number = is_numeric($value) ? (float) $value : 0.0;
+            return abs($number) < 0.0000001 ? '' : number_format($number, $decimals, '.', ',');
+        };
+
+        $formatPercent = static function ($value, int $decimals = 1): string {
+            $number = is_numeric($value) ? (float) $value : 0.0;
+            return abs($number) < 0.0000001 ? '' : number_format($number, $decimals, '.', ',') . '%';
+        };
+
+        $formatTotal = static function ($value, int $decimals): string {
+            return number_format((float) $value, $decimals, '.', ',');
         };
 
         $dateColumn = $findColumn($availableColumns, [
@@ -260,27 +303,16 @@
         ]);
         $supplierColumnResolved =
             $supplierColumn ?? $findColumn($availableColumns, ['Supplier', 'NmSupplier', 'Nama Supplier']);
-        $sawmillColumn = $findColumn($availableColumns, ['Sawmill', 'NamaSawmill']);
         $noPenStColumn = $findColumn($availableColumns, ['NoPenST', 'No Pen ST', 'NoPenerimaanST']);
         $noKbColumn = $findColumn($availableColumns, ['NoKB', 'No KB', 'NoKayuBulat']);
         $jenisKayuColumn = $findColumn($availableColumns, ['JenisKayu', 'Jenis Kayu', 'Jenis']);
         $trukColumn = $findColumn($availableColumns, ['NoTruk', 'Truk']);
         $mejaColumn = $findColumn($availableColumns, ['Meja', 'NoMeja']);
-        $sectionColumn = $findColumn($availableColumns, [
-            'InOut',
-            'InputOutput',
-            'Kelompok',
-            'Kategori',
-            'Status',
-            'Posisi',
-        ]);
+        $sectionColumn = $findColumn($availableColumns, ['InOut', 'InputOutput', 'Kelompok', 'Kategori']);
         $gradeColumn = $findColumn($availableColumns, ['Grade', 'NamaGrade']);
         $jmlhTrukColumn = $findColumn($availableColumns, ['JmlhTruk', 'JumlahTruk', 'JmlTruk']);
-        $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)', 'KBTon', 'TonKB', 'KBTon']);
+        $kbTonColumn = $findColumn($availableColumns, ['KB (Ton)', 'KBTon', 'TonKB']);
         $stTonColumn = $findColumn($availableColumns, ['ST (Ton)', 'STTon', 'TonST', 'TonKG']);
-        $summaryData = is_array($summary ?? null) ? $summary : [];
-        $summarySuppliers = (int) ($summaryData['total_suppliers'] ?? count($groupsData));
-        $summaryRows = (int) ($summaryData['total_rows'] ?? count($rowsData));
 
         $gradeSortRank = static function (string $section, string $grade): int {
             $upper = strtoupper(trim($grade));
@@ -333,13 +365,8 @@
                 return true;
             }
 
-            // Input grades usually contain source/type prefix (e.g. RAMBUNG - STD-630).
             if (str_contains($upper, '-')) {
                 return false;
-            }
-
-            if (str_contains($upper, 'STD') && !str_contains($upper, 'RAMBUNG')) {
-                return true;
             }
 
             return $stTon > 0 && $kbTon <= 0;
@@ -370,7 +397,6 @@
     <p class="report-subtitle">
         Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
-        | Group by Supplier
     </p>
 
     @forelse ($groupsData as $group)
@@ -378,13 +404,12 @@
             $noPenerimaanSt = (string) ($group['no_penerimaan_st'] ?? ($group['supplier'] ?? 'Tanpa No Penerimaan ST'));
             $supplierName = (string) ($group['supplier'] ?? 'Tanpa Supplier');
             $groupRows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
-            $headRow = $groupRows[0] ?? [];
-            $contextRow = $headRow;
+            $contextRow = $groupRows[0] ?? [];
+
             foreach ($groupRows as $row) {
                 $inOutValue = $sectionColumn !== null ? trim((string) ($row[$sectionColumn] ?? '')) : '';
                 $hasDate = $dateColumn !== null ? trim((string) ($row[$dateColumn] ?? '')) !== '' : false;
                 $hasNoKb = $noKbColumn !== null ? trim((string) ($row[$noKbColumn] ?? '')) !== '' : false;
-
                 if ($inOutValue === '1' && ($hasDate || $hasNoKb)) {
                     $contextRow = $row;
                     break;
@@ -405,14 +430,12 @@
 
             $displayNoPenSt =
                 $noPenStColumn !== null ? $contextRow[$noPenStColumn] ?? $noPenerimaanSt : $noPenerimaanSt;
-            $displayTglPenerimaan = $dateColumn !== null ? $formatDate($contextRow[$dateColumn] ?? '') : '';
+            $displayTanggal = $dateColumn !== null ? $formatDate($contextRow[$dateColumn] ?? '') : '';
             $displayNoKb = $noKbColumn !== null ? $contextRow[$noKbColumn] ?? '' : '';
             $displayJenisKayu = $jenisKayuColumn !== null ? $contextRow[$jenisKayuColumn] ?? '' : '';
             $displayTruk = $trukColumn !== null ? $contextRow[$trukColumn] ?? '' : '';
             $displayMeja = $mejaColumn !== null ? $contextRow[$mejaColumn] ?? '' : '';
 
-            $inputRows = [];
-            $outputRows = [];
             $inputByGrade = [];
             $outputByGrade = [];
 
@@ -423,26 +446,16 @@
                 $jmlhTrukValue = $jmlhTrukColumn !== null ? $toFloat($row[$jmlhTrukColumn] ?? null) ?? 0.0 : 0.0;
 
                 $rawSection = $sectionColumn !== null ? strtoupper(trim((string) ($row[$sectionColumn] ?? ''))) : '';
-                $resolvedSection = '';
                 if ($rawSection !== '') {
-                    if (is_numeric($rawSection)) {
-                        $resolvedSection = ((int) $rawSection) === 0 ? 'OUTPUT' : 'INPUT';
-                    } else {
-                        $resolvedSection = str_contains($rawSection, 'OUT') ? 'OUTPUT' : 'INPUT';
-                    }
+                    $resolvedSection = is_numeric($rawSection)
+                        ? ((int) $rawSection === 0 ? 'OUTPUT' : 'INPUT')
+                        : (str_contains($rawSection, 'OUT') ? 'OUTPUT' : 'INPUT');
                 } else {
                     $resolvedSection = $isOutputGrade($gradeName, $kbTonValue, $stTonValue) ? 'OUTPUT' : 'INPUT';
                 }
 
-                $normalized = [
-                    'grade' => $gradeName !== '' ? $gradeName : '-',
-                    'jmlh_truk' => $jmlhTrukValue,
-                    'kb_ton' => $kbTonValue,
-                    'st_ton' => $stTonValue,
-                ];
-
                 if ($resolvedSection === 'OUTPUT') {
-                    $gradeKey = $normalizeOutputGradeKey((string) $normalized['grade']);
+                    $gradeKey = $normalizeOutputGradeKey($gradeName !== '' ? $gradeName : '-');
                     if (!isset($outputByGrade[$gradeKey])) {
                         $outputByGrade[$gradeKey] = [
                             'grade' => $gradeKey,
@@ -451,23 +464,26 @@
                             'st_ton' => 0.0,
                         ];
                     }
-                    $outputByGrade[$gradeKey]['st_ton'] += (float) $normalized['st_ton'];
+                    $outputByGrade[$gradeKey]['st_ton'] += $stTonValue;
                 } else {
-                    $gradeKey = strtoupper(trim((string) $normalized['grade']));
+                    $gradeKey = strtoupper(trim($gradeName !== '' ? $gradeName : '-'));
                     if (!isset($inputByGrade[$gradeKey])) {
                         $inputByGrade[$gradeKey] = [
-                            'grade' => (string) $normalized['grade'],
+                            'grade' => $gradeName !== '' ? $gradeName : '-',
                             'jmlh_truk' => 0.0,
                             'kb_ton' => 0.0,
                             'st_ton' => 0.0,
                         ];
                     }
-                    $inputByGrade[$gradeKey]['jmlh_truk'] += (float) $normalized['jmlh_truk'];
-                    $inputByGrade[$gradeKey]['kb_ton'] += (float) $normalized['kb_ton'];
+                    $inputByGrade[$gradeKey]['jmlh_truk'] += $jmlhTrukValue;
+                    $inputByGrade[$gradeKey]['kb_ton'] += $kbTonValue;
                 }
             }
 
             $inputRows = array_values($inputByGrade);
+            usort($inputRows, function (array $a, array $b) use ($gradeSortRank): int {
+                return $gradeSortRank('INPUT', (string) $a['grade']) <=> $gradeSortRank('INPUT', (string) $b['grade']);
+            });
 
             $expectedOutputOrder = ['KAYU LAT', 'MC 1', 'MC 2', 'STD'];
             $outputRows = [];
@@ -491,197 +507,143 @@
                     'st_ton' => (float) ($existing['st_ton'] ?? 0.0),
                 ];
             }
-
-            usort($inputRows, function (array $a, array $b) use ($gradeSortRank): int {
-                return $gradeSortRank('INPUT', (string) $a['grade']) <=> $gradeSortRank('INPUT', (string) $b['grade']);
-            });
             usort($outputRows, function (array $a, array $b) use ($gradeSortRank): int {
-                return $gradeSortRank('OUTPUT', (string) $a['grade']) <=>
-                    $gradeSortRank('OUTPUT', (string) $b['grade']);
+                return $gradeSortRank('OUTPUT', (string) $a['grade']) <=> $gradeSortRank('OUTPUT', (string) $b['grade']);
             });
 
-            $totalInputKb = 0.0;
-            foreach ($inputRows as $item) {
-                $totalInputKb += (float) $item['kb_ton'];
-            }
-
-            $totalOutputSt = 0.0;
-            foreach ($outputRows as $item) {
-                $totalOutputSt += (float) $item['st_ton'];
-            }
-
-            $totalKb = $totalInputKb;
-            $totalSt = $totalOutputSt;
-            $rendemen = $totalKb > 0 ? ($totalSt / $totalKb) * 100 : 0.0;
+            $totalInputKb = array_reduce($inputRows, fn($carry, $item) => $carry + (float) $item['kb_ton'], 0.0);
+            $totalOutputSt = array_reduce($outputRows, fn($carry, $item) => $carry + (float) $item['st_ton'], 0.0);
+            $rendemen = $totalInputKb > 0 ? ($totalOutputSt / $totalInputKb) * 100 : 0.0;
 
             $inputRows = array_map(static function (array $item) use ($totalInputKb): array {
                 $item['input_percent'] = $totalInputKb > 0 ? ((float) $item['kb_ton'] / $totalInputKb) * 100 : 0.0;
-                $item['output_percent'] = 0.0;
                 return $item;
             }, $inputRows);
 
             $outputRows = array_map(static function (array $item) use ($totalOutputSt): array {
-                $item['input_percent'] = 0.0;
                 $item['output_percent'] = $totalOutputSt > 0 ? ((float) $item['st_ton'] / $totalOutputSt) * 100 : 0.0;
                 return $item;
             }, $outputRows);
-
-            $renderRows = [
-                [
-                    'section' => 'INPUT',
-                    'rows' =>
-                        count($inputRows) > 0
-                            ? $inputRows
-                            : [
-                                [
-                                    'grade' => '-',
-                                    'jmlh_truk' => 0.0,
-                                    'kb_ton' => 0.0,
-                                    'st_ton' => 0.0,
-                                    'input_percent' => 0.0,
-                                    'output_percent' => 0.0,
-                                ],
-                            ],
-                ],
-                [
-                    'section' => 'OUTPUT',
-                    'rows' =>
-                        count($outputRows) > 0
-                            ? $outputRows
-                            : [
-                                [
-                                    'grade' => '-',
-                                    'jmlh_truk' => 0.0,
-                                    'kb_ton' => 0.0,
-                                    'st_ton' => 0.0,
-                                    'input_percent' => 0.0,
-                                    'output_percent' => 0.0,
-                                ],
-                            ],
-                ],
-            ];
-
-            $metaPairs = [
-                'No Pen ST' => $displayNoPenSt,
-                'No KB' => $displayNoKb,
-                'Tgl Penerimaan ST Sawmill' => $displayTglPenerimaan,
-                'Jenis Kayu' => $displayJenisKayu,
-                'Truk' => $displayTruk,
-                'Meja' => $displayMeja,
-            ];
         @endphp
-        <div class="supplier-block">
-            <p class="supplier-title">Supplier : {{ $cleanSupplier }}</p>
 
-            <table class="meta-list">
-                
-        <tbody>
-                    <tr>
-                        <td class="meta-label">No Pen ST</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['No Pen ST'] ?: '-') }}</td>
-                        <td class="meta-label">No KB</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['No KB'] ?: '-') }}</td>
-                    </tr>
-                    <tr>
-                        <td class="meta-label">Tgl Penerimaan ST Sawmill</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['Tgl Penerimaan ST Sawmill'] ?: '-') }}</td>
-                        <td class="meta-label">Jenis Kayu</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['Jenis Kayu'] ?: '-') }}</td>
-                    </tr>
-                    <tr>
-                        <td class="meta-label">Truk</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['Truk'] ?: '-') }}</td>
-                        <td class="meta-label">Meja</td>
-                        <td class="meta-value">{{ (string) ($metaPairs['Meja'] ?: '-') }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        @if (!$loop->first)
+            <div class="date-separator"></div>
+        @endif
 
-            <table>
-                <thead>
-                    <tr class="headers-row">
-                        <th style="width: 58px;"></th>
-                        <th>Grade</th>
-                        <th style="width: 76px;">Jmlh Truk</th>
-                        <th style="width: 84px;">KB (Ton)</th>
-                        <th style="width: 84px;">ST (Ton)</th>
-                        <th style="width: 86px;">Persentase Input (%)</th>
-                        <th style="width: 90px;">Persentase Output (%)</th>
-                    </tr>
-                </thead>
-                
-                <tbody>
-                    @foreach ($renderRows as $sectionBlock)
-                        @php
-                            $sectionName = $sectionBlock['section'];
-                            $sectionRows = $sectionBlock['rows'];
-                            $rowCount = count($sectionRows);
-                        @endphp
-                        @foreach ($sectionRows as $rowIndex => $row)
-                            <tr>
-                                @if ($rowIndex === 0)
-                                    <td class="section-label" rowspan="{{ $rowCount }}">{{ $sectionName }}</td>
-                                @endif
-                                <td class="{{ $sectionName === 'OUTPUT' ? 'grade-output' : '' }}">
-                                    {{ (string) ($row['grade'] ?? '-') }}
-                                </td>
-                                <td class="center">
-                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['jmlh_truk'] ?? 0), 0, '.', ',') : '' }}
-                                </td>
-                                <td class="number">
-                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['kb_ton'] ?? 0), 2, '.', ',') : '' }}
-                                </td>
-                                <td class="number">
-                                    {{ $sectionName === 'OUTPUT' ? number_format((float) ($row['st_ton'] ?? 0), 4, '.', ',') : '' }}
-                                </td>
-                                <td class="number">
-                                    {{ $sectionName === 'INPUT' ? number_format((float) ($row['input_percent'] ?? 0), 1, '.', ',') . '%' : '' }}
-                                </td>
-                                <td class="number">
-                                    {{ $sectionName === 'OUTPUT' ? number_format((float) ($row['output_percent'] ?? 0), 1, '.', ',') . '%' : '' }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                    <tr class="subtotal-row totals-row">
-                        <td class="number" colspan="3">Jumlah:</td>
-                        <td class="number">{{ number_format($totalKb, 2, '.', ',') }}</td>
-                        <td class="number">{{ number_format($totalSt, 4, '.', ',') }}</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p class="rendemen">RENDEMEN: {{ number_format($rendemen, 1, '.', ',') }}%</p>
+        <div class="group-title">Supplier : {{ $cleanSupplier }}</div>
+
+        <div class="meta-block">
+            <div class="meta-row"><span class="meta-label">No Pen ST</span>: {{ $displayNoPenSt !== '' ? $displayNoPenSt : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">No KB</span>: {{ $displayNoKb !== '' ? $displayNoKb : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">Tanggal Penerimaan</span>: {{ $displayTanggal !== '' ? $displayTanggal : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">Truk</span>: {{ $displayTruk !== '' ? $displayTruk : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">Meja</span>: {{ $displayMeja !== '' ? $displayMeja : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">Jenis Kayu</span>: {{ $displayJenisKayu !== '' ? $displayJenisKayu : '-' }}</div>
         </div>
+
+        <table class="report-table">
+            <colgroup>
+                <col style="width: 68px;">
+                <col style="width: auto;">
+                <col style="width: 72px;">
+                <col style="width: 84px;">
+                <col style="width: 84px;">
+                <col style="width: 88px;">
+                <col style="width: 92px;">
+            </colgroup>
+            <thead>
+                <tr class="headers-row">
+                    <th>Kategori</th>
+                    <th>Grade</th>
+                    <th>Jmlh Truk</th>
+                    <th>KB (Ton)</th>
+                    <th>ST (Ton)</th>
+                    <th>Persentase Input (%)</th>
+                    <th>Persentase Output (%)</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="7"></td>
+                </tr>
+            </tfoot>
+            <tbody>
+                @php $rowIndex = 0; @endphp
+
+                @if ($inputRows !== [])
+                    @php $rowspan = count($inputRows); @endphp
+                    @foreach ($inputRows as $line)
+                        @php $rowIndex++; @endphp
+                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                            @if ($loop->first)
+                                <td class="data-cell section-cell" rowspan="{{ $rowspan }}">INPUT</td>
+                            @endif
+                            <td class="data-cell">{{ (string) ($line['grade'] ?? '') }}</td>
+                            <td class="data-cell center">{{ $formatTruck($line['jmlh_truk'] ?? '') }}</td>
+                            <td class="data-cell number">{{ $formatDetail((float) ($line['kb_ton'] ?? 0.0), 2) }}</td>
+                            <td class="data-cell center"></td>
+                            <td class="data-cell number">{{ $formatPercent((float) ($line['input_percent'] ?? 0.0), 1) }}</td>
+                            <td class="data-cell center"></td>
+                        </tr>
+                    @endforeach
+                @endif
+
+                @if ($outputRows !== [])
+                    @php $rowspan = count($outputRows); @endphp
+                    @foreach ($outputRows as $line)
+                        @php $rowIndex++; @endphp
+                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                            @if ($loop->first)
+                                <td class="data-cell section-cell" rowspan="{{ $rowspan }}">OUTPUT</td>
+                            @endif
+                            <td class="data-cell grade-output">{{ (string) ($line['grade'] ?? '') }}</td>
+                            <td class="data-cell center"></td>
+                            <td class="data-cell center"></td>
+                            <td class="data-cell number">{{ $formatDetail((float) ($line['st_ton'] ?? 0.0), 4) }}</td>
+                            <td class="data-cell center"></td>
+                            <td class="data-cell number">{{ $formatPercent((float) ($line['output_percent'] ?? 0.0), 1) }}</td>
+                        </tr>
+                    @endforeach
+                @endif
+
+                @if ($inputRows === [] && $outputRows === [])
+                    <tr class="data-row row-odd">
+                        <td class="data-cell center" colspan="7">Tidak ada data.</td>
+                    </tr>
+                @else
+                    <tr class="totals-row">
+                        <td colspan="3" class="center">Jumlah:</td>
+                        <td class="number">{{ $formatTotal($totalInputKb, 2) }}</td>
+                        <td class="number">{{ $formatTotal($totalOutputSt, 4) }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+
+        @if ($inputRows !== [] || $outputRows !== [])
+            <div class="rendemen-row">RENDEMEN : {{ number_format($rendemen, 1, '.', ',') }}%</div>
+        @endif
     @empty
-        <table>
-            
-        <tbody>
-                <tr>
-                    <td class="center">Tidak ada data.</td>
+        <table class="report-table">
+            <thead>
+                <tr class="headers-row">
+                    <th>Penerimaan ST Dari Sawmill - Timbang KG</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr class="table-end-line">
+                    <td colspan="1"></td>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr class="data-row row-odd">
+                    <td class="data-cell center">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>
     @endforelse
-
-    <table class="summary-table">
-        
-        <tbody>
-            <tr>
-                <th style="width: 70%;">Keterangan</th>
-                <th>Nilai</th>
-            </tr>
-            <tr>
-                <td>Total supplier</td>
-                <td class="center">{{ number_format($summarySuppliers, 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total baris data</td>
-                <td class="center">{{ number_format($summaryRows, 0, '.', ',') }}</td>
-            </tr>
-        </tbody>
-    </table>
 
     @include('reports.partials.pdf-footer-table')
 </body>
