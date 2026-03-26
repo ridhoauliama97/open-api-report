@@ -490,12 +490,7 @@
                                 <th style="width: 55px;">%</th>
                             </tr>
                         </thead>
-                        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+                        <tbody>
                             @if ($balokRows === [])
                                 <tr>
                                     <td class="label" colspan="4" style="text-align: center;">

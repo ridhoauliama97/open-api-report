@@ -138,7 +138,7 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th>No</th>
+                <th style="width: 44px;">No</th>
                 <th>Group</th>
                 <th style="width: 120px;">Ton</th>
                 <th style="width: 120px;">Rasio (%)</th>
@@ -152,7 +152,7 @@
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center data-cell">{{ $loop->iteration }}</td>
+                    <td class="center data-cell" style="width: 44px;">{{ $loop->iteration }}</td>
                     <td class="data-cell">{{ (string) ($row['Group'] ?? '') }}</td>
                     <td class="number data-cell">{{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
                     <td class="number data-cell">{{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>

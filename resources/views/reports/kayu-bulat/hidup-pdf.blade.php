@@ -96,7 +96,7 @@
         </tbody>
     </table>
 
-    <section class="summary-page">
+    <section class="summary-page" style="page-break-before: auto; margin-top: 4px;">
         <h2 class="summary-title">Keterangan:</h2>
         <ul class="summary-list">
             <li>
