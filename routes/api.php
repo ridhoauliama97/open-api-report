@@ -6,6 +6,11 @@ use App\Http\Controllers\Api\OpenApiController;
 use App\Http\Controllers\BalokSudahSemprotController;
 use App\Http\Controllers\DashboardBarangJadiController;
 use App\Http\Controllers\DashboardCrossCutAkhirController;
+use App\Http\Controllers\RekapProduksiCrossCutAkhirConsolidatedController;
+use App\Http\Controllers\RekapProduksiCrossCutAkhirPerJenisPerGradeController;
+use App\Http\Controllers\KetahananBarangDagangCrossCutAkhirController;
+use App\Http\Controllers\CrossCutAkhirHidupDetailController;
+use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\DashboardFingerJointController;
 use App\Http\Controllers\DashboardLaminatingController;
 use App\Http\Controllers\DashboardMouldingController;
@@ -74,6 +79,12 @@ use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurFingerJointDetailController;
 use App\Http\Controllers\UmurLaminatingDetailController;
+use App\Http\Controllers\UmurMouldingDetailController;
+use App\Http\Controllers\UmurSandingDetailController;
+use App\Http\Controllers\RekapProduksiSandingConsolidatedController;
+use App\Http\Controllers\RekapProduksiSandingPerJenisPerGradeController;
+use App\Http\Controllers\KetahananBarangDagangSandingController;
+use App\Http\Controllers\SandingHidupDetailController;
 use App\Http\Controllers\RekapProduksiLaminatingConsolidatedController;
 use App\Http\Controllers\RekapProduksiLaminatingPerJenisPerGradeController;
 use App\Http\Controllers\LaminatingHidupDetailController;
@@ -249,6 +260,17 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/finger-joint/rekap-produksi-finger-joint-consolidated', 'api.reports.finger-joint.rekap-produksi-finger-joint-consolidated', RekapProduksiFingerJointConsolidatedController::class],
         ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],
         ['/reports/laminating/umur-laminating-detail', 'api.reports.laminating.umur-laminating-detail', UmurLaminatingDetailController::class],
+        ['/reports/moulding/umur-moulding-detail', 'api.reports.moulding.umur-moulding-detail', UmurMouldingDetailController::class],
+        ['/reports/cross-cut-akhir/umur-cc-akhir-detail', 'api.reports.cross-cut-akhir.umur-cc-akhir-detail', UmurCrossCutAkhirDetailController::class],
+        ['/reports/cross-cut-akhir/cc-akhir-hidup-detail', 'api.reports.cross-cut-akhir.cc-akhir-hidup-detail', CrossCutAkhirHidupDetailController::class],
+        ['/reports/cross-cut-akhir/rekap-produksi-cc-akhir-consolidated', 'api.reports.cross-cut-akhir.rekap-produksi-cc-akhir-consolidated', RekapProduksiCrossCutAkhirConsolidatedController::class],
+        ['/reports/cross-cut-akhir/rekap-produksi-cc-akhir-per-jenis-per-grade', 'api.reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade', RekapProduksiCrossCutAkhirPerJenisPerGradeController::class],
+        ['/reports/cross-cut-akhir/ketahanan-barang-cc-akhir', 'api.reports.cross-cut-akhir.ketahanan-barang-cc-akhir', KetahananBarangDagangCrossCutAkhirController::class],
+        ['/reports/sanding/umur-sanding-detail', 'api.reports.sanding.umur-sanding-detail', UmurSandingDetailController::class],
+        ['/reports/sanding/sanding-hidup-detail', 'api.reports.sanding.sanding-hidup-detail', SandingHidupDetailController::class],
+        ['/reports/sanding/rekap-produksi-sanding-consolidated', 'api.reports.sanding.rekap-produksi-sanding-consolidated', RekapProduksiSandingConsolidatedController::class],
+        ['/reports/sanding/rekap-produksi-sanding-per-jenis-per-grade', 'api.reports.sanding.rekap-produksi-sanding-per-jenis-per-grade', RekapProduksiSandingPerJenisPerGradeController::class],
+        ['/reports/sanding/ketahanan-barang-sanding', 'api.reports.sanding.ketahanan-barang-sanding', KetahananBarangDagangSandingController::class],
         ['/reports/laminating/rekap-produksi-laminating-consolidated', 'api.reports.laminating.rekap-produksi-laminating-consolidated', RekapProduksiLaminatingConsolidatedController::class],
         ['/reports/laminating/laminating-hidup-detail', 'api.reports.laminating.laminating-hidup-detail', LaminatingHidupDetailController::class],
         ['/reports/laminating/rekap-produksi-laminating-per-jenis-per-grade', 'api.reports.laminating.rekap-produksi-laminating-per-jenis-per-grade', RekapProduksiLaminatingPerJenisPerGradeController::class],

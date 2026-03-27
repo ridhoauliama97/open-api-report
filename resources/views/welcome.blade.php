@@ -433,6 +433,97 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Cross Cut Akhir</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.cross-cut-akhir.umur-cc-akhir-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Umur CCAkhir Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.cross-cut-akhir.cc-akhir-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Cross Cut Akhir (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.cross-cut-akhir.rekap-produksi-cc-akhir-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi CCAkhir Consolidated
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi CCAkhir Per-Jenis &amp; Per-Grade (m3)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.cross-cut-akhir.ketahanan-barang-cc-akhir.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Ketahanan Barang Dagang CCAkhir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Sanding</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sanding.umur-sanding-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Umur Sanding Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sanding.sanding-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Sanding (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sanding.rekap-produksi-sanding-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Sanding Consolidated
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sanding.rekap-produksi-sanding-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Sanding Per-Jenis &amp; Per-Grade (m3)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sanding.ketahanan-barang-sanding.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Ketahanan Barang Dagang Sanding
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Reproses</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
                     <h2 class="h5 mb-3">Mutasi</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
@@ -659,6 +750,12 @@
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Moulding</h2>
                     <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.moulding.umur-moulding-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Umur Moulding Detail
+                            </a>
+                        </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.moulding.rekap-produksi-moulding-consolidated.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">

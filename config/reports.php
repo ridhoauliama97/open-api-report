@@ -753,6 +753,83 @@ return [
             'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
         )))),
     ],
+    'umur_moulding_detail' => [
+        'database_connection' => env('UMUR_MOULDING_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_MOULDING_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurMoulding'),
+        'call_syntax' => env('UMUR_MOULDING_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_MOULDING_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_MOULDING_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_MOULDING_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'umur_cross_cut_akhir_detail' => [
+        'database_connection' => env('UMUR_CROSS_CUT_AKHIR_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_CROSS_CUT_AKHIR_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurCrossCutAkhir'),
+        'call_syntax' => env('UMUR_CROSS_CUT_AKHIR_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_CROSS_CUT_AKHIR_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_CROSS_CUT_AKHIR_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_CROSS_CUT_AKHIR_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'cross_cut_akhir_hidup_detail' => [
+        'database_connection' => env('CROSS_CUT_AKHIR_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('CROSS_CUT_AKHIR_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapCCAkhirHidupDetail'),
+        'call_syntax' => env('CROSS_CUT_AKHIR_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('CROSS_CUT_AKHIR_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('CROSS_CUT_AKHIR_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'CROSS_CUT_AKHIR_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoCCAkhir,DateCreate,NoSPK,Jenis,NamaGrade,Tebal,Lebar,Panjang,JmlhBatang,Kubik,IdLokasi'
+        )))),
+    ],
+    'rekap_produksi_cross_cut_akhir_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_PROCEDURE', 'SP_LapRekapProduksiCrossCutAkhirConsolidated'),
+        'call_syntax' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,FJ,Laminating,Moulding,Reproses,Wip,OutputCCAkhir'
+        )))),
+    ],
+    'umur_sanding_detail' => [
+        'database_connection' => env('UMUR_SANDING_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_SANDING_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurSanding'),
+        'call_syntax' => env('UMUR_SANDING_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_SANDING_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_SANDING_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_SANDING_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'sanding_hidup_detail' => [
+        'database_connection' => env('SANDING_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SANDING_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapSandingHidupDetail'),
+        'call_syntax' => env('SANDING_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SANDING_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('SANDING_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SANDING_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoSanding,DateCreate,NoSPK,Jenis,NamaGrade,Tebal,Lebar,Panjang,JmlhBatang,Kubik,IdLokasi'
+        )))),
+    ],
+    'rekap_produksi_sanding_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_PROCEDURE', 'SP_LapRekapProduksiSandingConsolidated'),
+        'call_syntax' => env('REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Moulding,Reproses,Wip,OutputSanding'
+        )))),
+    ],
     'rekap_produksi_laminating_consolidated' => [
         'database_connection' => env('REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env(
@@ -1004,6 +1081,56 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_EXPECTED_COLUMNS',
             'TglSawmill,Group,Tebal,Lebar,STton,IsGroup'
+        )))),
+    ],
+    'rekap_produksi_cross_cut_akhir_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiCCAkhirPerJenisPerGrade'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,NamaGrade,FJ,Laminating,WIP,Reproses,Output'
+        )))),
+    ],
+    'rekap_produksi_sanding_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_PROCEDURE',
+            'SP_LapRekapProduksiSandingPerJenisPerGrade'
+        ),
+        'call_syntax' => env('REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_EXPECTED_COLUMNS',
+            'Jenis,NamaGrade,FJ,Moulding,CCAkhir,WIP,Reproses,Output'
+        )))),
+    ],
+    'ketahanan_barang_cross_cut_akhir' => [
+        'database_connection' => env('KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_PROCEDURE', 'SP_LapKetahananBarangCCAkhir'),
+        'call_syntax' => env('KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
+        )))),
+    ],
+    'ketahanan_barang_sanding' => [
+        'database_connection' => env('KETAHANAN_BARANG_SANDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_SANDING_REPORT_PROCEDURE', 'SP_LapKetahananBarangSanding'),
+        'call_syntax' => env('KETAHANAN_BARANG_SANDING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_SANDING_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_SANDING_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_SANDING_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
         )))),
     ],
 
