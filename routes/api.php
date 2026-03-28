@@ -14,6 +14,7 @@ use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\DashboardFingerJointController;
 use App\Http\Controllers\DashboardLaminatingController;
 use App\Http\Controllers\DashboardMouldingController;
+use App\Http\Controllers\DashboardReprosesController;
 use App\Http\Controllers\DashboardS4SController;
 use App\Http\Controllers\DashboardS4SV2Controller;
 use App\Http\Controllers\DashboardSandingController;
@@ -80,6 +81,9 @@ use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurFingerJointDetailController;
 use App\Http\Controllers\UmurLaminatingDetailController;
 use App\Http\Controllers\UmurMouldingDetailController;
+use App\Http\Controllers\UmurReprosesDetailController;
+use App\Http\Controllers\ReprosesHidupDetailController;
+use App\Http\Controllers\KetahananBarangDagangReprosesController;
 use App\Http\Controllers\UmurSandingDetailController;
 use App\Http\Controllers\RekapProduksiSandingConsolidatedController;
 use App\Http\Controllers\RekapProduksiSandingPerJenisPerGradeController;
@@ -261,6 +265,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],
         ['/reports/laminating/umur-laminating-detail', 'api.reports.laminating.umur-laminating-detail', UmurLaminatingDetailController::class],
         ['/reports/moulding/umur-moulding-detail', 'api.reports.moulding.umur-moulding-detail', UmurMouldingDetailController::class],
+        ['/reports/reproses/umur-reproses-detail', 'api.reports.reproses.umur-reproses-detail', UmurReprosesDetailController::class],
+        ['/reports/reproses/reproses-hidup-detail', 'api.reports.reproses.reproses-hidup-detail', ReprosesHidupDetailController::class],
+        ['/reports/reproses/ketahanan-barang-reproses', 'api.reports.reproses.ketahanan-barang-reproses', KetahananBarangDagangReprosesController::class],
         ['/reports/cross-cut-akhir/umur-cc-akhir-detail', 'api.reports.cross-cut-akhir.umur-cc-akhir-detail', UmurCrossCutAkhirDetailController::class],
         ['/reports/cross-cut-akhir/cc-akhir-hidup-detail', 'api.reports.cross-cut-akhir.cc-akhir-hidup-detail', CrossCutAkhirHidupDetailController::class],
         ['/reports/cross-cut-akhir/rekap-produksi-cc-akhir-consolidated', 'api.reports.cross-cut-akhir.rekap-produksi-cc-akhir-consolidated', RekapProduksiCrossCutAkhirConsolidatedController::class],
@@ -310,6 +317,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],
         ['/reports/dashboard-laminating', 'api.reports.dashboard-laminating', DashboardLaminatingController::class],
         ['/reports/dashboard-moulding', 'api.reports.dashboard-moulding', DashboardMouldingController::class],
+        ['/reports/dashboard-reproses', 'api.reports.dashboard-reproses', DashboardReprosesController::class],
         ['/reports/dashboard-sanding', 'api.reports.dashboard-sanding', DashboardSandingController::class],
         ['/reports/dashboard-s4s', 'api.reports.dashboard-s4s', DashboardS4SController::class],
         ['/reports/dashboard-s4s-v2', 'api.reports.dashboard-s4s-v2', DashboardS4SV2Controller::class],

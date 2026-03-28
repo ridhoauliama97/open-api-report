@@ -575,6 +575,18 @@ return [
             'JABON A/A,JABON ISOBO,JABON NISOBO,JABON TASOBO,PULAI ISOBO,PULAI NISOBO,PULAI TASOBO,RAMBUNG A/A,RAMBUNG A/B,RAMBUNG C/C'
         )))),
     ],
+    'dashboard_reproses' => [
+        'database_connection' => env('DASHBOARD_REPROSES_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_REPROSES_REPORT_PROCEDURE', 'SPWps_LapDashboardReproses'),
+        'call_syntax' => env('DASHBOARD_REPROSES_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_REPROSES_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_REPROSES_REPORT_PARAMETER_COUNT', 2),
+        'ctr_divisor' => (float) env('DASHBOARD_REPROSES_CTR_DIVISOR', '65'),
+        'column_order' => array_filter(array_map('trim', explode(',', (string) env(
+            'DASHBOARD_REPROSES_COLUMN_ORDER',
+            'JABON A/A,JABON ISOBO,JABON NISOBO,JABON TASOBO,PULAI ISOBO,PULAI NISOBO,PULAI TASOBO,RAMBUNG A/A,RAMBUNG A/B,RAMBUNG C/C'
+        )))),
+    ],
     'dashboard_sanding' => [
         'database_connection' => env('DASHBOARD_SANDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('DASHBOARD_SANDING_REPORT_PROCEDURE', 'SPWps_LapDashboardSanding'),
@@ -762,6 +774,39 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'UMUR_MOULDING_DETAIL_REPORT_EXPECTED_COLUMNS',
             'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'umur_reproses_detail' => [
+        'database_connection' => env('UMUR_REPROSES_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_REPROSES_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurReproses'),
+        'call_syntax' => env('UMUR_REPROSES_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_REPROSES_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_REPROSES_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_REPROSES_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'reproses_hidup_detail' => [
+        'database_connection' => env('REPROSES_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REPROSES_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapReprosesHidupDetail'),
+        'call_syntax' => env('REPROSES_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REPROSES_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('REPROSES_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REPROSES_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoReproses,DateCreate,NoSPK,Jenis,NamaGrade,Tebal,Lebar,Panjang,JmlhBatang,Kubik,IdLokasi'
+        )))),
+    ],
+    'ketahanan_barang_reproses' => [
+        'database_connection' => env('KETAHANAN_BARANG_REPROSES_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KETAHANAN_BARANG_REPROSES_REPORT_PROCEDURE', 'SP_LapKetahananBarangReproses'),
+        'call_syntax' => env('KETAHANAN_BARANG_REPROSES_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KETAHANAN_BARANG_REPROSES_REPORT_QUERY'),
+        'parameter_count' => (int) env('KETAHANAN_BARANG_REPROSES_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KETAHANAN_BARANG_REPROSES_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Stockm3,m3'
         )))),
     ],
     'umur_cross_cut_akhir_detail' => [

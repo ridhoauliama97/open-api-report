@@ -12,6 +12,7 @@ use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\DashboardFingerJointController;
 use App\Http\Controllers\DashboardLaminatingController;
 use App\Http\Controllers\DashboardMouldingController;
+use App\Http\Controllers\DashboardReprosesController;
 use App\Http\Controllers\DashboardS4SController;
 use App\Http\Controllers\DashboardS4SV2Controller;
 use App\Http\Controllers\DashboardSandingController;
@@ -67,6 +68,9 @@ use App\Http\Controllers\UmurS4SDetailController;
 use App\Http\Controllers\UmurFingerJointDetailController;
 use App\Http\Controllers\UmurLaminatingDetailController;
 use App\Http\Controllers\UmurMouldingDetailController;
+use App\Http\Controllers\UmurReprosesDetailController;
+use App\Http\Controllers\ReprosesHidupDetailController;
+use App\Http\Controllers\KetahananBarangDagangReprosesController;
 use App\Http\Controllers\UmurSandingDetailController;
 use App\Http\Controllers\RekapProduksiSandingConsolidatedController;
 use App\Http\Controllers\RekapProduksiSandingPerJenisPerGradeController;
@@ -327,6 +331,12 @@ Route::prefix('dashboard/moulding')->name('dashboard.moulding.')->group(function
     Route::get('/', [DashboardMouldingController::class, 'index'])->name('index');
     Route::get('/preview', [DashboardMouldingController::class, 'preview'])->name('preview');
     Route::match(['get', 'post'], '/download', [DashboardMouldingController::class, 'download'])->name('download');
+});
+
+Route::prefix('dashboard/reproses')->name('dashboard.reproses.')->group(function (): void {
+    Route::get('/', [DashboardReprosesController::class, 'index'])->name('index');
+    Route::get('/preview', [DashboardReprosesController::class, 'preview'])->name('preview');
+    Route::match(['get', 'post'], '/download', [DashboardReprosesController::class, 'download'])->name('download');
 });
 
 Route::prefix('dashboard/sanding')->name('dashboard.sanding.')->group(function (): void {
@@ -979,6 +989,33 @@ Route::prefix('reports')->name('reports.')->group(function (): void {
         Route::post('/preview-pdf', [UmurMouldingDetailController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [UmurMouldingDetailController::class, 'preview'])->name('preview');
         Route::post('/health', [UmurMouldingDetailController::class, 'health'])->name('health');
+    });
+
+    /** Umur reproses detail routes. */
+    Route::prefix('reproses/umur-reproses-detail')->name('reproses.umur-reproses-detail.')->group(function (): void {
+        Route::get('/', [UmurReprosesDetailController::class, 'index'])->name('index');
+        Route::post('/download', [UmurReprosesDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [UmurReprosesDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [UmurReprosesDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [UmurReprosesDetailController::class, 'health'])->name('health');
+    });
+
+    /** Reproses (Hidup) detail routes. */
+    Route::prefix('reproses/reproses-hidup-detail')->name('reproses.reproses-hidup-detail.')->group(function (): void {
+        Route::get('/', [ReprosesHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [ReprosesHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ReprosesHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [ReprosesHidupDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [ReprosesHidupDetailController::class, 'health'])->name('health');
+    });
+
+    /** Ketahanan Barang Dagang Reproses routes. */
+    Route::prefix('reproses/ketahanan-barang-reproses')->name('reproses.ketahanan-barang-reproses.')->group(function (): void {
+        Route::get('/', [KetahananBarangDagangReprosesController::class, 'index'])->name('index');
+        Route::post('/download', [KetahananBarangDagangReprosesController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KetahananBarangDagangReprosesController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KetahananBarangDagangReprosesController::class, 'preview'])->name('preview');
+        Route::post('/health', [KetahananBarangDagangReprosesController::class, 'health'])->name('health');
     });
 
     /** Umur CCAkhir detail routes. */

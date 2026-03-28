@@ -514,6 +514,33 @@
                     <h2 class="h5 mb-3">Reproses</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.reproses.umur-reproses-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Umur Reproses Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.reproses.reproses-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Reproses (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.reproses.ketahanan-barang-reproses.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Ketahanan Barang Dagang Reproses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Barang Jadi</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
 
                         </div>
                     </div>
@@ -1017,6 +1044,12 @@
                             <a href="{{ route('dashboard.moulding.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Dashboard Moulding
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('dashboard.reproses.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Dashboard Reproses
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
