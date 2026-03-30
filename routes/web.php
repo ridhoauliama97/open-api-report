@@ -3,6 +3,10 @@
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\BalokSudahSemprotController;
 use App\Http\Controllers\DashboardBarangJadiController;
+use App\Http\Controllers\BarangJadiHidupDetailController;
+use App\Http\Controllers\UmurBarangJadiDetailController;
+use App\Http\Controllers\RekapProduksiBarangJadiConsolidatedController;
+use App\Http\Controllers\RekapProduksiPackingPerJenisPerGradeController;
 use App\Http\Controllers\DashboardCrossCutAkhirController;
 use App\Http\Controllers\RekapProduksiCrossCutAkhirConsolidatedController;
 use App\Http\Controllers\RekapProduksiCrossCutAkhirPerJenisPerGradeController;
@@ -22,6 +26,8 @@ use App\Http\Controllers\HasilOutputRacipHarianController;
 use App\Http\Controllers\KbKhususBangkangController;
 use App\Http\Controllers\KayuBulatHidupController;
 use App\Http\Controllers\MutasiBarangJadiController;
+use App\Http\Controllers\MutasiBarangJadiPerJenisPerUkuranController;
+use App\Http\Controllers\SaldoBarangJadiHidupPerJenisPerProdukController;
 use App\Http\Controllers\MutasiCCAkhirController;
 use App\Http\Controllers\MutasiFingerJointController;
 use App\Http\Controllers\MutasiKayuBulatController;
@@ -707,6 +713,49 @@ Route::prefix('reports/mutasi')->name('reports.mutasi.')->group(function (): voi
         Route::get('/', [MutasiKayuBulatKGController::class, 'index'])->name('index');
         Route::post('/download', [MutasiKayuBulatKGController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiKayuBulatKGController::class, 'preview'])->name('preview');
+    });
+});
+
+Route::prefix('reports/barang-jadi')->name('reports.barang-jadi.')->group(function (): void {
+    Route::prefix('mutasi-barang-jadi-per-jenis-per-ukuran')->name('mutasi-barang-jadi-per-jenis-per-ukuran.')->group(function (): void {
+        Route::get('/', [MutasiBarangJadiPerJenisPerUkuranController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiBarangJadiPerJenisPerUkuranController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [MutasiBarangJadiPerJenisPerUkuranController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [MutasiBarangJadiPerJenisPerUkuranController::class, 'preview'])->name('preview');
+    });
+    Route::prefix('saldo-barang-jadi-hidup-per-jenis-per-produk')->name('saldo-barang-jadi-hidup-per-jenis-per-produk.')->group(function (): void {
+        Route::get('/', [SaldoBarangJadiHidupPerJenisPerProdukController::class, 'index'])->name('index');
+        Route::post('/download', [SaldoBarangJadiHidupPerJenisPerProdukController::class, 'download'])->name('download');
+        Route::post('/preview', [SaldoBarangJadiHidupPerJenisPerProdukController::class, 'preview'])->name('preview');
+        Route::post('/preview-pdf', [SaldoBarangJadiHidupPerJenisPerProdukController::class, 'download'])->name('preview-pdf');
+    });
+    Route::prefix('barang-jadi-hidup-detail')->name('barang-jadi-hidup-detail.')->group(function (): void {
+        Route::get('/', [BarangJadiHidupDetailController::class, 'index'])->name('index');
+        Route::post('/download', [BarangJadiHidupDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [BarangJadiHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [BarangJadiHidupDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [BarangJadiHidupDetailController::class, 'health'])->name('health');
+    });
+    Route::prefix('umur-barang-jadi-detail')->name('umur-barang-jadi-detail.')->group(function (): void {
+        Route::get('/', [UmurBarangJadiDetailController::class, 'index'])->name('index');
+        Route::post('/download', [UmurBarangJadiDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [UmurBarangJadiDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [UmurBarangJadiDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [UmurBarangJadiDetailController::class, 'health'])->name('health');
+    });
+    Route::prefix('rekap-produksi-barang-jadi-consolidated')->name('rekap-produksi-barang-jadi-consolidated.')->group(function (): void {
+        Route::get('/', [RekapProduksiBarangJadiConsolidatedController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiBarangJadiConsolidatedController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiBarangJadiConsolidatedController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiBarangJadiConsolidatedController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiBarangJadiConsolidatedController::class, 'health'])->name('health');
+    });
+    Route::prefix('rekap-produksi-packing-per-jenis-per-grade')->name('rekap-produksi-packing-per-jenis-per-grade.')->group(function (): void {
+        Route::get('/', [RekapProduksiPackingPerJenisPerGradeController::class, 'index'])->name('index');
+        Route::post('/download', [RekapProduksiPackingPerJenisPerGradeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapProduksiPackingPerJenisPerGradeController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapProduksiPackingPerJenisPerGradeController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapProduksiPackingPerJenisPerGradeController::class, 'health'])->name('health');
     });
 });
 

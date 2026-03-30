@@ -5,6 +5,10 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
 use App\Http\Controllers\BalokSudahSemprotController;
 use App\Http\Controllers\DashboardBarangJadiController;
+use App\Http\Controllers\BarangJadiHidupDetailController;
+use App\Http\Controllers\UmurBarangJadiDetailController;
+use App\Http\Controllers\RekapProduksiBarangJadiConsolidatedController;
+use App\Http\Controllers\RekapProduksiPackingPerJenisPerGradeController;
 use App\Http\Controllers\DashboardCrossCutAkhirController;
 use App\Http\Controllers\RekapProduksiCrossCutAkhirConsolidatedController;
 use App\Http\Controllers\RekapProduksiCrossCutAkhirPerJenisPerGradeController;
@@ -25,6 +29,8 @@ use App\Http\Controllers\KbKhususBangkangController;
 use App\Http\Controllers\LabelNyangkutController;
 use App\Http\Controllers\LembarTallyHasilSawmillController;
 use App\Http\Controllers\MutasiBarangJadiController;
+use App\Http\Controllers\MutasiBarangJadiPerJenisPerUkuranController;
+use App\Http\Controllers\SaldoBarangJadiHidupPerJenisPerProdukController;
 use App\Http\Controllers\MutasiCCAkhirController;
 use App\Http\Controllers\MutasiFingerJointController;
 use App\Http\Controllers\MutasiKayuBulatController;
@@ -172,6 +178,12 @@ Route::middleware('report.jwt.claims')->group(function (): void {
      */
     $mutasiReportRouteDefinitions = [
         ['/reports/mutasi-barang-jadi', 'api.reports.mutasi-barang-jadi', MutasiBarangJadiController::class],
+        ['/reports/barang-jadi/mutasi-barang-jadi-per-jenis-per-ukuran', 'api.reports.barang-jadi.mutasi-barang-jadi-per-jenis-per-ukuran', MutasiBarangJadiPerJenisPerUkuranController::class],
+        ['/reports/barang-jadi/saldo-barang-jadi-hidup-per-jenis-per-produk', 'api.reports.barang-jadi.saldo-barang-jadi-hidup-per-jenis-per-produk', SaldoBarangJadiHidupPerJenisPerProdukController::class],
+        ['/reports/barang-jadi/barang-jadi-hidup-detail', 'api.reports.barang-jadi.barang-jadi-hidup-detail', BarangJadiHidupDetailController::class],
+        ['/reports/barang-jadi/umur-barang-jadi-detail', 'api.reports.barang-jadi.umur-barang-jadi-detail', UmurBarangJadiDetailController::class],
+        ['/reports/barang-jadi/rekap-produksi-barang-jadi-consolidated', 'api.reports.barang-jadi.rekap-produksi-barang-jadi-consolidated', RekapProduksiBarangJadiConsolidatedController::class],
+        ['/reports/barang-jadi/rekap-produksi-packing-per-jenis-per-grade', 'api.reports.barang-jadi.rekap-produksi-packing-per-jenis-per-grade', RekapProduksiPackingPerJenisPerGradeController::class],
         ['/reports/mutasi-finger-joint', 'api.reports.mutasi-finger-joint', MutasiFingerJointController::class],
         ['/reports/mutasi-moulding', 'api.reports.mutasi-moulding', MutasiMouldingController::class],
         ['/reports/mutasi-laminating', 'api.reports.mutasi-laminating', MutasiLaminatingController::class],

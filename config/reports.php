@@ -11,6 +11,62 @@ return [
         'query' => env('MUTASI_BARANG_JADI_REPORT_QUERY'),
         'sub_query' => env('MUTASI_BARANG_JADI_SUB_REPORT_QUERY'),
     ],
+    'mutasi_barang_jadi_per_jenis_per_ukuran' => [
+        'database_connection' => env('MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_PROCEDURE', 'SP_LapMutasiBJPerJenisPerUkuran'),
+        'call_syntax' => env('MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,AwalPcs,AwalM3,MasukPcs,MasukM3,MinusPcs,MinusM3,JualPcs,JualM3,AkhirPcs,AkhirM3'
+        )))),
+    ],
+    'saldo_barang_jadi_hidup_per_jenis_per_produk' => [
+        'database_connection' => env('SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_PROCEDURE', 'SP_LapBJHidupPerProduk'),
+        'call_syntax' => env('SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_EXPECTED_COLUMNS',
+            'Jenis,NamaBarangJadi,Tebal,Lebar,Panjang,Pcs,M3'
+        )))),
+    ],
+    'barang_jadi_hidup_detail' => [
+        'database_connection' => env('BARANG_JADI_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('BARANG_JADI_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapBJHidupDetail'),
+        'call_syntax' => env('BARANG_JADI_HIDUP_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('BARANG_JADI_HIDUP_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('BARANG_JADI_HIDUP_DETAIL_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'BARANG_JADI_HIDUP_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NoBJ,Tanggal,NoSPK,Jenis,Tebal,Lebar,Panjang,JmlhBatang,M3,Lokasi'
+        )))),
+    ],
+    'umur_barang_jadi_detail' => [
+        'database_connection' => env('UMUR_BARANG_JADI_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('UMUR_BARANG_JADI_DETAIL_REPORT_PROCEDURE', 'SP_LapUmurBarangJadi'),
+        'call_syntax' => env('UMUR_BARANG_JADI_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('UMUR_BARANG_JADI_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('UMUR_BARANG_JADI_DETAIL_REPORT_PARAMETER_COUNT', 4),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'UMUR_BARANG_JADI_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
+        )))),
+    ],
+    'rekap_produksi_barang_jadi_consolidated' => [
+        'database_connection' => env('REKAP_PRODUKSI_BARANG_JADI_CONSOLIDATED_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKSI_BARANG_JADI_CONSOLIDATED_REPORT_PROCEDURE', 'SP_LapRekapProduksiBarangJadiConsolidated'),
+        'call_syntax' => env('REKAP_PRODUKSI_BARANG_JADI_CONSOLIDATED_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_BARANG_JADI_CONSOLIDATED_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_BARANG_JADI_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'rekap_produksi_packing_per_jenis_per_grade' => [
+        'database_connection' => env('REKAP_PRODUKSI_PACKING_PER_JENIS_PER_GRADE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PRODUKSI_PACKING_PER_JENIS_PER_GRADE_REPORT_PROCEDURE', 'SP_LapRekapProduksiBarangJadiPerJenisPerGrade'),
+        'call_syntax' => env('REKAP_PRODUKSI_PACKING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PRODUKSI_PACKING_PER_JENIS_PER_GRADE_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PRODUKSI_PACKING_PER_JENIS_PER_GRADE_REPORT_PARAMETER_COUNT', 2),
+    ],
     'mutasi_finger_joint' => [
         'database_connection' => env('MUTASI_FINGER_JOINT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('MUTASI_FINGER_JOINT_REPORT_PROCEDURE', 'SP_Mutasi_FingerJoint'),

@@ -541,7 +541,40 @@
                     <h2 class="h5 mb-3">Barang Jadi</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-
+                            <a href="{{ route('reports.barang-jadi.mutasi-barang-jadi-per-jenis-per-ukuran.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Mutasi Barang Jadi Per-Jenis Per-Ukuran (M3)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.barang-jadi.saldo-barang-jadi-hidup-per-jenis-per-produk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Saldo Barang Jadi Hidup Per-Jenis Per-Produk
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.barang-jadi.barang-jadi-hidup-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Barang Jadi (Hidup) Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.barang-jadi.umur-barang-jadi-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Umur Barang Jadi Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.barang-jadi.rekap-produksi-barang-jadi-consolidated.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Packing Consolidated
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.barang-jadi.rekap-produksi-packing-per-jenis-per-grade.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Produksi Packing Per-Jenis Per-Grade (m3)
+                            </a>
                         </div>
                     </div>
                 </div>
