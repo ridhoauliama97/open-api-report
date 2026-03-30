@@ -33,7 +33,7 @@ class RekapProduktivitasSawmillRpReportService
     /**
      * @return array<string, mixed>
      */
-    public function buildReportData(string $startDate, string $endDate): array
+    public function buildReportData(string $startDate, string $endDate, ?float $upahRacip = null): array
     {
         $mainRows = $this->fetchMain($startDate, $endDate);
         $subRows = $this->fetchSub($startDate, $endDate);
@@ -65,7 +65,7 @@ class RekapProduktivitasSawmillRpReportService
 
         $moneyColumns = $this->resolveMoneyColumns($columns);
         $hargaColumn = $this->resolveHargaColumn($columns);
-        $upahPerKg = (float) config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 0.0);
+        $upahPerKg = $upahRacip ?? (float) config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 0.0);
         $shouldCalcMoneyFromHarga =
             $moneyColumns['st'] === null
             && $moneyColumns['kb'] === null
@@ -379,6 +379,7 @@ class RekapProduktivitasSawmillRpReportService
                 'grand_kb' => $grandKb,
                 'grand_st' => $grandSt,
                 'grand_rendemen' => $grandKb > 0.0 ? (($grandSt / $grandKb) * 100.0) : 0.0,
+                'upah_racip' => $upahPerKg,
             ],
         ];
     }

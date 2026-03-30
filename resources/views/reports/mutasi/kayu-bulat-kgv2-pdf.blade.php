@@ -254,14 +254,43 @@
             return false;
         };
 
-        $fmt = static function ($value, bool $blankWhenZero = true): string {
-            if (!is_numeric($value)) {
+        $fmt = static function ($value, bool $blankWhenZero = true) use ($toFloat): string {
+            $float = $toFloat($value);
+            if ($float === null) {
                 return '';
             }
 
-            $float = (float) $value;
             if ($blankWhenZero && abs($float) < 0.0000001) {
                 return '';
+            }
+
+            if (is_string($value)) {
+                $normalized = trim(str_replace(' ', '', $value));
+                if ($normalized !== '') {
+                    if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
+                        if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
+                            $normalized = str_replace('.', '', $normalized);
+                            $normalized = str_replace(',', '.', $normalized);
+                        } else {
+                            $normalized = str_replace(',', '', $normalized);
+                        }
+                    } elseif (str_contains($normalized, ',')) {
+                        if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
+                            $normalized = str_replace(',', '', $normalized);
+                        } else {
+                            $normalized = str_replace(',', '.', $normalized);
+                        }
+                    }
+
+                    if (preg_match('/^(-?)(\d+)(?:\.(\d+))?$/', $normalized, $matches) === 1) {
+                        $sign = $matches[1] === '-' ? '-' : '';
+                        $integerPart = $matches[2];
+                        $decimalPart = str_pad(substr($matches[3] ?? '', 0, 2), 2, '0');
+                        $integerPart = preg_replace('/\B(?=(\d{3})+(?!\d))/', ',', $integerPart);
+
+                        return $sign . $integerPart . '.' . $decimalPart;
+                    }
+                }
             }
 
             return number_format($float, 2, '.', ',');
@@ -322,7 +351,7 @@
                         @endphp
                         @if ($isNumeric)
                             <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
-                                {{ $fmt($floatValue ?? 0.0, true) }}
+                                {{ $fmt($value, true) }}
                             </td>
                         @else
                             <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
@@ -389,7 +418,7 @@
                             @if ($isNumeric)
                                 <td
                                     class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
-                                    {{ $fmt($floatValue ?? 0.0, true) }}
+                                    {{ $fmt($value, true) }}
                                 </td>
                             @else
                                 <td

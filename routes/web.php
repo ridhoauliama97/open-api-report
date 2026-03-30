@@ -57,6 +57,7 @@ use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
+use App\Http\Controllers\RekapRendemenNonRambungController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
@@ -607,6 +608,16 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [StHidupKeringController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StHidupKeringController::class, 'preview'])->name('preview');
         Route::post('/health', [StHidupKeringController::class, 'health'])->name('health');
+    });
+});
+
+Route::prefix('reports/rendemen-kayu')->name('reports.rendemen-kayu.')->group(function (): void {
+    Route::prefix('rekap-rendemen-non-rambung')->name('rekap-rendemen-non-rambung.')->group(function (): void {
+        Route::get('/', [RekapRendemenNonRambungController::class, 'index'])->name('index');
+        Route::post('/download', [RekapRendemenNonRambungController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapRendemenNonRambungController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapRendemenNonRambungController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapRendemenNonRambungController::class, 'health'])->name('health');
     });
 });
 

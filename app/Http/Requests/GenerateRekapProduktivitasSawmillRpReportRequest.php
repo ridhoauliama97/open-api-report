@@ -24,6 +24,8 @@ class GenerateRekapProduktivitasSawmillRpReportRequest extends BaseReportRequest
             'end_date' => ['nullable', 'date', ...($requiresDateRange ? ['required_without:TglAkhir'] : [])],
             'TglAwal' => ['nullable', 'date', ...($requiresDateRange ? ['required_without:start_date'] : [])],
             'TglAkhir' => ['nullable', 'date', ...($requiresDateRange ? ['required_without:end_date'] : [])],
+            'upah_racip' => ['nullable', 'numeric', 'min:0'],
+            'UpahRacip' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -35,6 +37,17 @@ class GenerateRekapProduktivitasSawmillRpReportRequest extends BaseReportRequest
     public function endDate(): string
     {
         return (string) $this->input('end_date', $this->input('TglAkhir'));
+    }
+
+    public function upahRacip(): ?float
+    {
+        $value = $this->input('upah_racip', $this->input('UpahRacip'));
+
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return is_numeric($value) ? (float) $value : null;
     }
 
     public function withValidator(Validator $validator): void
@@ -58,4 +71,3 @@ class GenerateRekapProduktivitasSawmillRpReportRequest extends BaseReportRequest
         });
     }
 }
-

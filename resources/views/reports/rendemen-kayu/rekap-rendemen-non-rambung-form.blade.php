@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <title>Generate Laporan Rekap Produktivitas Sawmill</title>
+    <title>Generate Laporan Rekap Rendemen Non Rambung</title>
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
@@ -23,10 +23,10 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Rekap Produktivitas Sawmill (PDF)</h1>
+                <h1 class="h3 mb-3">Generate Laporan Rekap Rendemen Non Rambung (PDF)</h1>
                 <p class="text-secondary mb-4">
-                    Laporan ini mengambil data dari <code>SPWps_LapRekapPenerimaanSawmilRp</code> dan
-                    <code>SPWps_LapSubRekapPenerimaanSawmilRp</code> berdasarkan rentang tanggal.
+                    Laporan ini mengambil data dari stored procedure <code>SP_LapRekapRendemenNonRambung</code>.
+                    Stored procedure ini menggunakan parameter <code>@Tahun</code> dan <code>@Bulan</code>.
                 </p>
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -39,29 +39,24 @@
                 @endif
 
                 <form method="POST"
-                    action="{{ route('reports.kayu-bulat.rekap-produktivitas-sawmill-rp.download') }}"
+                    action="{{ route('reports.rendemen-kayu.rekap-rendemen-non-rambung.download') }}"
                     class="row g-3">
                     @csrf
-                    <div class="col-md-6">
-                        <label for="TglAwal" class="form-label">Tanggal Awal</label>
-                        <input type="date" id="TglAwal" name="TglAwal" class="form-control" required
-                            value="{{ old('TglAwal', old('start_date')) }}">
+                    <div class="col-md-4">
+                        <label for="year" class="form-label">Tahun</label>
+                        <input type="number" id="year" name="year" class="form-control" min="1900" max="2999"
+                            value="{{ old('year', old('Tahun', now()->year)) }}" required>
                     </div>
-                    <div class="col-md-6">
-                        <label for="TglAkhir" class="form-label">Tanggal Akhir</label>
-                        <input type="date" id="TglAkhir" name="TglAkhir" class="form-control" required
-                            value="{{ old('TglAkhir', old('end_date')) }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="UpahRacip" class="form-label">Upah Racip</label>
-                        <input type="number" step="0.01" min="0" id="UpahRacip" name="UpahRacip"
-                            class="form-control" value="{{ old('UpahRacip', old('upah_racip', config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 450))) }}">
+                    <div class="col-md-4">
+                        <label for="month" class="form-label">Bulan</label>
+                        <input type="number" id="month" name="month" class="form-control" min="1" max="12"
+                            value="{{ old('month', old('Bulan', now()->month)) }}" required>
                     </div>
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
                             <button type="submit" class="btn btn-outline-primary"
-                                formaction="{{ route('reports.kayu-bulat.rekap-produktivitas-sawmill-rp.preview-pdf') }}"
+                                formaction="{{ route('reports.rendemen-kayu.rekap-rendemen-non-rambung.preview-pdf') }}"
                                 formtarget="_blank">Preview PDF</button>
                             <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Raw SP
                                 (JSON)</button>
@@ -71,8 +66,7 @@
 
                 <div id="previewJsonWrapper" class="mt-4 d-none">
                     <h2 class="h6 mb-2">Preview Raw SP (JSON)</h2>
-                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0"
-                        style="max-height: 360px; overflow: auto;"></pre>
+                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0" style="max-height: 360px; overflow: auto;"></pre>
                 </div>
             </div>
         </div>
@@ -83,10 +77,10 @@
             const previewButton = document.getElementById('previewJsonBtn');
             const previewWrapper = document.getElementById('previewJsonWrapper');
             const previewOutput = document.getElementById('previewJsonOutput');
-            const startDateInput = document.getElementById('TglAwal');
-            const endDateInput = document.getElementById('TglAkhir');
+            const yearInput = document.getElementById('year');
+            const monthInput = document.getElementById('month');
 
-            if (!previewButton || !previewWrapper || !previewOutput || !startDateInput || !endDateInput) {
+            if (!previewButton || !previewWrapper || !previewOutput || !yearInput || !monthInput) {
                 return;
             }
 
@@ -96,7 +90,7 @@
 
                 try {
                     const response = await fetch(
-                        '{{ route('reports.kayu-bulat.rekap-produktivitas-sawmill-rp.preview') }}', {
+                        '{{ route('reports.rendemen-kayu.rekap-rendemen-non-rambung.preview') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -104,9 +98,8 @@
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             },
                             body: JSON.stringify({
-                                TglAwal: startDateInput.value,
-                                TglAkhir: endDateInput.value,
-                                UpahRacip: document.getElementById('UpahRacip')?.value ?? null,
+                                year: yearInput.value,
+                                month: monthInput.value,
                             }),
                         });
 

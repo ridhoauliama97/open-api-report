@@ -586,7 +586,10 @@
                     <h2 class="h5 mb-3">Rendemen Kayu</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-
+                            <a href="{{ route('reports.rendemen-kayu.rekap-rendemen-non-rambung.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Rendemen Non Rambung
+                            </a>
                         </div>
                     </div>
                 </div>
