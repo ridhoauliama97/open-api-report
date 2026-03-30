@@ -1171,21 +1171,23 @@ class RekapProduktivitasSawmillRpReportService
             $label = '';
             if ($labelCol !== null) {
                 $label = trim((string) ($row[$labelCol] ?? ''));
-            }
-
-            $meja = '';
-            if ($label === '' && $mejaCol !== null) {
-                $meja = trim((string) ($row[$mejaCol] ?? ''));
-                if ($meja !== '') {
-                    $label = "NoMeja {$meja}";
+                if (strcasecmp($label, 'Average') === 0) {
+                    $label = '';
                 }
             }
 
-            // If there's no explicit label/meja, show group total.
+            $meja = '';
             if ($label === '' && $groupCol !== null) {
                 $group = trim((string) ($row[$groupCol] ?? ''));
                 if ($group !== '') {
                     $label = "Total {$group}";
+                }
+            }
+
+            if ($label === '' && $mejaCol !== null) {
+                $meja = trim((string) ($row[$mejaCol] ?? ''));
+                if ($meja !== '') {
+                    $label = "NoMeja {$meja}";
                 }
             }
 
@@ -1202,7 +1204,11 @@ class RekapProduktivitasSawmillRpReportService
                 ];
             }
 
-            if ($rawInOut !== '' && $this->normalizeKategori($rawInOut) === 'output') {
+            if (abs($kb) > self::EPS && abs($st) > self::EPS) {
+                // Sub report rows can already carry both KB and ST on the same line.
+                $out[$key][$label]['kb'] += $kb;
+                $out[$key][$label]['st'] += $st;
+            } elseif ($rawInOut !== '' && $this->normalizeKategori($rawInOut) === 'output') {
                 $out[$key][$label]['st'] += $st;
             } elseif ($rawInOut !== '' && $this->normalizeKategori($rawInOut) === 'input') {
                 $out[$key][$label]['kb'] += $kb;

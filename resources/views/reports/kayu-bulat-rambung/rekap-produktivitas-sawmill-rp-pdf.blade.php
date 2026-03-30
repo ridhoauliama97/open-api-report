@@ -145,9 +145,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .bottom-section {
+        @include('reports.partials.pdf-footer-table-style') .bottom-section {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -481,13 +480,13 @@
 
                 <div class="btul-box" style="margin-top: 5px;">
                     <div class="btul-title">Average</div>
-                    <table class="mini-table">
+                    <table class="mini-table" style="width: 245px;">
                         <thead>
                             <tr>
-                                <th style="width: 130px;"></th>
-                                <th style="width: 60px;">KB (Ton)</th>
-                                <th style="width: 60px;">ST (Ton)</th>
-                                <th style="width: 55px;">%</th>
+                                <th style="width: 105px;"></th>
+                                <th style="width: 45px;">KBTon</th>
+                                <th style="width: 45px;">STTon</th>
+                                <th style="width: 35px;">%</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -526,11 +525,11 @@
                 </tr>
             </thead>
             <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+                <tr class="table-end-line">
+                    <td colspan="99"></td>
+                </tr>
+            </tfoot>
+            <tbody>
                 <tr class="data-row row-odd">
                     <td class="data-cell">Tidak ada data.</td>
                 </tr>

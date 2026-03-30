@@ -114,7 +114,8 @@
             border: 1px solid #000;
             text-align: center;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -156,6 +157,7 @@
         .col-uniform {
             width: 72px;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -262,7 +264,7 @@
                 return '';
             }
 
-            return number_format($float, 0, '.', ',');
+            return number_format($float, 2, '.', ',');
         };
 
         $mainNumericColumns = [];
@@ -385,11 +387,13 @@
                                 }
                             @endphp
                             @if ($isNumeric)
-                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
+                                <td
+                                    class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ $fmt($floatValue ?? 0.0, true) }}
                                 </td>
                             @else
-                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
+                                <td
+                                    class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ (string) $value }}
                                 </td>
                             @endif
