@@ -90,18 +90,22 @@ class KayuBulatKgReportsFeatureTest extends TestCase
         $service = Mockery::mock(RekapPenerimaanSTDariSawmillKgReportService::class);
         $service->shouldReceive('buildReportData')->once()->with('2026-01-01', '2026-01-02')->andReturn([
             'rows' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Berat' => 10]],
-            'date_groups' => [[
-                'date_key' => '2026-01-01',
-                'date_label' => '01-Jan-26',
-                'receipts' => [[
-                    'meta' => ['no_pen_st' => 'B.1', 'tgl_penerimaan_st' => '2026-01-01'],
-                    'rows' => [
-                        'input' => [['grade' => 'A', 'kb' => 10.0, 'st' => 0.0, 'percent' => 0.0]],
-                        'output' => [],
+            'date_groups' => [
+                [
+                    'date_key' => '2026-01-01',
+                    'date_label' => '01-Jan-26',
+                    'receipts' => [
+                        [
+                            'meta' => ['no_pen_st' => 'B.1', 'tgl_penerimaan_st' => '2026-01-01'],
+                            'rows' => [
+                                'input' => [['grade' => 'A', 'kb' => 10.0, 'st' => 0.0, 'percent' => 0.0]],
+                                'output' => [],
+                            ],
+                            'totals' => ['kb_total' => 10.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+                        ]
                     ],
-                    'totals' => ['kb_total' => 10.0, 'st_total' => 0.0, 'rendemen' => 0.0],
-                ]],
-            ]],
+                ]
+            ],
             'summary' => ['total_rows' => 1, 'total_dates' => 1, 'total_receipts' => 1],
         ]);
         $this->app->instance(RekapPenerimaanSTDariSawmillKgReportService::class, $service);
@@ -121,21 +125,25 @@ class KayuBulatKgReportsFeatureTest extends TestCase
     {
         $user = User::factory()->make(['id' => 1]);
         $service = Mockery::mock(RekapProduktivitasSawmillRpReportService::class);
-        $service->shouldReceive('buildReportData')->once()->with('2026-01-01', '2026-01-02')->andReturn([
+        $service->shouldReceive('buildReportData')->once()->with('2026-01-01', '2026-01-02', null)->andReturn([
             'rows' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Rp' => 10000]],
             'rows_sub' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Rp' => 10000]],
-            'date_groups' => [[
-                'date_key' => '2026-01-01',
-                'date_label' => '01-Jan-26',
-                'receipts' => [[
-                    'meta' => ['no_pen_st' => 'B.1', 'tgl_penerimaan_st' => '2026-01-01'],
-                    'rows' => [
-                        'input' => [['grade' => 'A', 'kb' => 10000.0, 'st' => 0.0, 'percent' => 0.0]],
-                        'output' => [],
+            'date_groups' => [
+                [
+                    'date_key' => '2026-01-01',
+                    'date_label' => '01-Jan-26',
+                    'receipts' => [
+                        [
+                            'meta' => ['no_pen_st' => 'B.1', 'tgl_penerimaan_st' => '2026-01-01'],
+                            'rows' => [
+                                'input' => [['grade' => 'A', 'kb' => 10000.0, 'st' => 0.0, 'percent' => 0.0]],
+                                'output' => [],
+                            ],
+                            'totals' => ['kb_total' => 10000.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+                        ]
                     ],
-                    'totals' => ['kb_total' => 10000.0, 'st_total' => 0.0, 'rendemen' => 0.0],
-                ]],
-            ]],
+                ]
+            ],
             'summary' => ['total_rows' => 1, 'total_dates' => 1, 'total_receipts' => 1],
         ]);
         $this->app->instance(RekapProduktivitasSawmillRpReportService::class, $service);

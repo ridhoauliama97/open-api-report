@@ -76,12 +76,50 @@ class RekapProduktivitasSawmillRpReportService
         // Sub-report: attach "balok timbang ulang" rows per receipt (best-effort).
         $subIndex = $this->buildSubIndex($subRows);
 
+        // Decide receipt-level group by sub-report indicators, prefer single-group receipts.
+        $receiptGroupMap = [];
+        foreach ($subIndex as $receiptKey => $subLines) {
+            $hasBansaw = false;
+            $hasSlp = false;
+            foreach ($subLines as $subLine) {
+                $label = trim((string) ($subLine['label'] ?? ''));
+                if (stripos($label, 'Total BANSAW') !== false) {
+                    $hasBansaw = true;
+                }
+                if (stripos($label, 'Total SLP') !== false) {
+                    $hasSlp = true;
+                }
+            }
+            if ($hasBansaw && !$hasSlp) {
+                $receiptGroupMap[$receiptKey] = 'bansaw';
+            } elseif ($hasSlp && !$hasBansaw) {
+                $receiptGroupMap[$receiptKey] = 'slp';
+            } elseif ($hasBansaw && $hasSlp) {
+                $receiptGroupMap[$receiptKey] = 'mixed';
+            } else {
+                $receiptGroupMap[$receiptKey] = 'unknown';
+            }
+        }
+
         $byDate = [];
         $grandKb = 0.0;
         $grandSt = 0.0;
+        $grandMoney = ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0];
         $grandByGrade = [
             'input' => [],
             'output' => [],
+        ];
+        $grandByGradeByGroup = [
+            'bansaw' => ['input' => [], 'output' => []],
+            'slp' => ['input' => [], 'output' => []],
+            'mixed' => ['input' => [], 'output' => []],
+            'unknown' => ['input' => [], 'output' => []],
+        ];
+        $grandMoneyByGroup = [
+            'bansaw' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+            'slp' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+            'mixed' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+            'unknown' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
         ];
 
         // Output rows from the SP often have NULL date/meta fields; index receipt date by NoPenerimaanST
@@ -283,6 +321,20 @@ class RekapProduktivitasSawmillRpReportService
             }
             $grandByGrade[$kategori][$gradeKey]['kb'] += $kb;
             $grandByGrade[$kategori][$gradeKey]['st'] += $st;
+
+            $receiptGroup = $receiptGroupMap[$receiptKey] ?? 'unknown';
+            if (!isset($grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey])) {
+                $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey] = [
+                    'kategori' => $kategori,
+                    'grade' => $grade,
+                    'jmlh_truk' => $kategori === 'input' ? '1' : '0',
+                    'kb' => 0.0,
+                    'st' => 0.0,
+                    'percent' => 0.0,
+                ];
+            }
+            $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['kb'] += $kb;
+            $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['st'] += $st;
         }
 
         foreach ($byDate as $dateKey => $dateGroup) {
@@ -314,6 +366,21 @@ class RekapProduktivitasSawmillRpReportService
                     $receipt['money']['hasil'] = $moneySt - $moneyKb - $moneyUpah;
                 }
 
+                // Accumulate group-level and overall money totals
+                $grandMoney['st'] += $receipt['money']['st'];
+                $grandMoney['kb'] += $receipt['money']['kb'];
+                $grandMoney['upah'] += $receipt['money']['upah'];
+                $grandMoney['hasil'] += $receipt['money']['hasil'];
+
+                $receiptGroup = $receiptGroupMap[$receiptKey] ?? 'unknown';
+                if (!isset($grandMoneyByGroup[$receiptGroup])) {
+                    $grandMoneyByGroup[$receiptGroup] = ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0];
+                }
+                $grandMoneyByGroup[$receiptGroup]['st'] += $receipt['money']['st'];
+                $grandMoneyByGroup[$receiptGroup]['kb'] += $receipt['money']['kb'];
+                $grandMoneyByGroup[$receiptGroup]['upah'] += $receipt['money']['upah'];
+                $grandMoneyByGroup[$receiptGroup]['hasil'] += $receipt['money']['hasil'];
+
                 $byDate[$dateKey]['receipts'][$receiptKey] = $receipt;
             }
 
@@ -329,6 +396,35 @@ class RekapProduktivitasSawmillRpReportService
         $grandKbTotal = array_sum(array_map(static fn(array $l): float => (float) ($l['kb'] ?? 0.0), $grandInputRows));
         $grandStTotal = array_sum(array_map(static fn(array $l): float => (float) ($l['st'] ?? 0.0), $grandOutputRows));
         $grandRendemen = $grandKbTotal > 0.0 ? (($grandStTotal / $grandKbTotal) * 100.0) : 0.0;
+
+        $grandGroupInputRows = [];
+        $grandGroupOutputRows = [];
+        $grandGroupTotals = [];
+        foreach (['bansaw', 'slp'] as $groupName) {
+            $groupInputRows = array_values($grandByGradeByGroup[$groupName]['input'] ?? []);
+            $groupOutputRows = array_values($grandByGradeByGroup[$groupName]['output'] ?? []);
+
+            $groupKb = array_sum(array_map(static fn(array $l): float => (float) ($l['kb'] ?? 0.0), $groupInputRows));
+            $groupSt = array_sum(array_map(static fn(array $l): float => (float) ($l['st'] ?? 0.0), $groupOutputRows));
+            $groupRendemen = $groupKb > 0.0 ? (($groupSt / $groupKb) * 100.0) : 0.0;
+
+            foreach ($groupInputRows as $idx => $line) {
+                $kb = (float) ($line['kb'] ?? 0.0);
+                $groupInputRows[$idx]['percent'] = $groupKb > 0.0 ? (($kb / $groupKb) * 100.0) : 0.0;
+            }
+            foreach ($groupOutputRows as $idx => $line) {
+                $st = (float) ($line['st'] ?? 0.0);
+                $groupOutputRows[$idx]['percent'] = $groupSt > 0.0 ? (($st / $groupSt) * 100.0) : 0.0;
+            }
+
+            $grandGroupInputRows[$groupName] = $groupInputRows;
+            $grandGroupOutputRows[$groupName] = $groupOutputRows;
+            $grandGroupTotals[$groupName] = [
+                'kb_total' => $groupKb,
+                'st_total' => $groupSt,
+                'rendemen' => $groupRendemen,
+            ];
+        }
 
         foreach ($grandInputRows as $idx => $line) {
             $kb = (float) ($line['kb'] ?? 0.0);
@@ -370,6 +466,25 @@ class RekapProduktivitasSawmillRpReportService
                     'kb_total' => $grandKbTotal,
                     'st_total' => $grandStTotal,
                     'rendemen' => $grandRendemen,
+                ],
+                'money' => $grandMoney,
+            ],
+            'grand_totals_by_group' => [
+                'bansaw' => [
+                    'rows' => [
+                        'input' => $grandGroupInputRows['bansaw'] ?? [],
+                        'output' => $grandGroupOutputRows['bansaw'] ?? [],
+                    ],
+                    'totals' => $grandGroupTotals['bansaw'] ?? ['kb_total' => 0.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+                    'money' => $grandMoneyByGroup['bansaw'] ?? ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+                ],
+                'slp' => [
+                    'rows' => [
+                        'input' => $grandGroupInputRows['slp'] ?? [],
+                        'output' => $grandGroupOutputRows['slp'] ?? [],
+                    ],
+                    'totals' => $grandGroupTotals['slp'] ?? ['kb_total' => 0.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+                    'money' => $grandMoneyByGroup['slp'] ?? ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
                 ],
             ],
             'summary' => [
@@ -443,8 +558,8 @@ class RekapProduktivitasSawmillRpReportService
         if ($procedure === '' && !is_string($customQuery)) {
             throw new RuntimeException(
                 $procedureType === 'sub'
-                    ? 'Stored procedure sub laporan rekap produktivitas sawmill belum dikonfigurasi.'
-                    : 'Stored procedure laporan rekap produktivitas sawmill belum dikonfigurasi.',
+                ? 'Stored procedure sub laporan rekap produktivitas sawmill belum dikonfigurasi.'
+                : 'Stored procedure laporan rekap produktivitas sawmill belum dikonfigurasi.',
             );
         }
 
@@ -482,8 +597,8 @@ class RekapProduktivitasSawmillRpReportService
             'exec' => $placeholders !== '' ? "EXEC {$procedure} {$placeholders}" : "EXEC {$procedure}",
             'call' => "CALL {$procedure}({$placeholders})",
             default => $driver === 'sqlsrv'
-                ? ($placeholders !== '' ? "EXEC {$procedure} {$placeholders}" : "EXEC {$procedure}")
-                : "CALL {$procedure}({$placeholders})",
+            ? ($placeholders !== '' ? "EXEC {$procedure} {$placeholders}" : "EXEC {$procedure}")
+            : "CALL {$procedure}({$placeholders})",
         };
 
         return $connection->select($sql, $bindings);
@@ -1162,12 +1277,14 @@ class RekapProduktivitasSawmillRpReportService
         $mejaCol = $this->resolveMejaColumn($columns) ?? $this->findColumnByCandidates($columns, ['NoMeja', 'Meja']);
 
         $out = [];
+        $groupTotals = []; // Track totals by Grup for aggregate rows
         foreach ($subRows as $row) {
             $key = $this->resolveReceiptKey($row, $noPenColumn, $noKbColumn, $supplierColumn, $noTrukColumn);
 
             $kb = $kbCol !== null ? ($this->toFloat($row[$kbCol] ?? null) ?? 0.0) : 0.0;
             $st = $stCol !== null ? ($this->toFloat($row[$stCol] ?? null) ?? 0.0) : 0.0;
             $rawInOut = trim((string) ($row['InOut'] ?? ($row['inout'] ?? '')));
+            $grup = trim((string) ($row[$groupCol] ?? ''));
 
             $label = '';
             if ($labelCol !== null) {
@@ -1178,11 +1295,8 @@ class RekapProduktivitasSawmillRpReportService
             }
 
             $meja = '';
-            if ($label === '' && $groupCol !== null) {
-                $group = trim((string) ($row[$groupCol] ?? ''));
-                if ($group !== '') {
-                    $label = "Total {$group}";
-                }
+            if ($label === '' && $groupCol !== null && $grup !== '') {
+                // Don't auto-generate label from Grup
             }
 
             if ($label === '' && $mejaCol !== null) {
@@ -1195,6 +1309,7 @@ class RekapProduktivitasSawmillRpReportService
             // Merge kb/st from separate InOut rows into a single line per label.
             if (!isset($out[$key])) {
                 $out[$key] = [];
+                $groupTotals[$key] = [];
             }
             if (!isset($out[$key][$label])) {
                 $out[$key][$label] = [
@@ -1218,6 +1333,15 @@ class RekapProduktivitasSawmillRpReportService
                 $out[$key][$label]['kb'] += $kb;
                 $out[$key][$label]['st'] += $st;
             }
+
+            // Track group totals
+            if ($grup !== '') {
+                if (!isset($groupTotals[$key][$grup])) {
+                    $groupTotals[$key][$grup] = ['kb' => 0.0, 'st' => 0.0];
+                }
+                $groupTotals[$key][$grup]['kb'] += $kb;
+                $groupTotals[$key][$grup]['st'] += $st;
+            }
         }
 
         // Finalize percent and normalize to list.
@@ -1229,6 +1353,22 @@ class RekapProduktivitasSawmillRpReportService
                 $st = (float) ($line['st'] ?? 0.0);
                 $lines[$idx]['percent'] = $kb > 0.0 ? (($st / $kb) * 100.0) : 0.0;
             }
+
+            // Add aggregate rows for each Grup
+            $grupsWithTotals = isset($groupTotals[$key]) ? $groupTotals[$key] : [];
+            foreach ($grupsWithTotals as $grupName => $totals) {
+                $kb = (float) ($totals['kb'] ?? 0.0);
+                $st = (float) ($totals['st'] ?? 0.0);
+                $percent = $kb > 0.0 ? (($st / $kb) * 100.0) : 0.0;
+
+                $lines[] = [
+                    'label' => "Total {$grupName}",
+                    'kb' => $kb,
+                    'st' => $st,
+                    'percent' => $percent,
+                ];
+            }
+
             $final[$key] = $lines;
         }
 
