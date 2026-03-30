@@ -56,6 +56,7 @@ use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\StockSTBasahController;
+use App\Http\Controllers\StockHidupPerNoSpkController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
@@ -600,6 +601,16 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [StHidupKeringController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StHidupKeringController::class, 'preview'])->name('preview');
         Route::post('/health', [StHidupKeringController::class, 'health'])->name('health');
+    });
+});
+
+Route::prefix('reports/management')->name('reports.management.')->group(function (): void {
+    Route::prefix('stock-hidup-per-nospk')->name('stock-hidup-per-nospk.')->group(function (): void {
+        Route::get('/', [StockHidupPerNoSpkController::class, 'index'])->name('index');
+        Route::post('/download', [StockHidupPerNoSpkController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StockHidupPerNoSpkController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [StockHidupPerNoSpkController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockHidupPerNoSpkController::class, 'health'])->name('health');
     });
 });
 

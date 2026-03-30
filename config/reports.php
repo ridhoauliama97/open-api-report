@@ -639,6 +639,16 @@ return [
         'preview_pdf_max_rows' => (int) env('STOCK_ST_KERING_PREVIEW_PDF_MAX_ROWS', 0),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_KERING_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'stock_hidup_per_nospk' => [
+        'database_connection' => env('STOCK_HIDUP_PER_NOSPK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOCK_HIDUP_PER_NOSPK_REPORT_PROCEDURE', 'SP_LapSemuaStockHidupPerSPK'),
+        'call_syntax' => env('STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOCK_HIDUP_PER_NOSPK_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'STOCK_HIDUP_PER_NOSPK_REPORT_EXPECTED_COLUMNS',
+            'Kategori,NoSPK,Jenis,Tebal,Lebar,Panjang,Total,NoContract,Tujuan,Buyer'
+        )))),
+    ],
     'st_basah_hidup_per_umur_kayu_ton' => [
         'database_connection' => env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_PROCEDURE', 'SP_LapSTBasahHidupPerUmurKayu'),

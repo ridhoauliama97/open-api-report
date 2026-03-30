@@ -70,6 +70,7 @@ use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\StockSTBasahController;
+use App\Http\Controllers\StockHidupPerNoSpkController;
 use App\Http\Controllers\StockSTKeringController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
@@ -260,6 +261,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],
         ['/reports/bahan-terpakai', 'api.reports.bahan-terpakai', BahanTerpakaiController::class],
+        ['/reports/management/stock-hidup-per-nospk', 'api.reports.management.stock-hidup-per-nospk', StockHidupPerNoSpkController::class],
         ['/reports/finger-joint/umur-finger-joint-detail', 'api.reports.finger-joint.umur-finger-joint-detail', UmurFingerJointDetailController::class],
         ['/reports/finger-joint/rekap-produksi-finger-joint-consolidated', 'api.reports.finger-joint.rekap-produksi-finger-joint-consolidated', RekapProduksiFingerJointConsolidatedController::class],
         ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],
