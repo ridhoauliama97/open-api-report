@@ -591,6 +591,18 @@
                                 Laporan Rekap Rendemen Non Rambung
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.rendemen-kayu.rekap-rendemen-rambung.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Rendemen Rambung
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.rendemen-kayu.rendemen-semua-proses.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rendemen Semua Proses
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

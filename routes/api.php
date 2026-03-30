@@ -52,6 +52,8 @@ use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
+use App\Http\Controllers\RekapRendemenRambungController;
+use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\RekapProduktivitasSawmillSawnTimberController;
 use App\Http\Controllers\PemakaianObatVacuumController;
@@ -308,6 +310,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/s4s/grade-abc-harian', 'api.reports.s4s.grade-abc-harian', GradeAbcHarianController::class],
         ['/reports/s4s/rekap-produksi-rambung-per-grade', 'api.reports.s4s.rekap-produksi-rambung-per-grade', RekapProduksiS4sRambungPerGradeController::class],
         ['/reports/rendemen-kayu/rekap-rendemen-non-rambung', 'api.reports.rendemen-kayu.rekap-rendemen-non-rambung', RekapRendemenNonRambungController::class],
+        ['/reports/rendemen-kayu/rekap-rendemen-rambung', 'api.reports.rendemen-kayu.rekap-rendemen-rambung', RekapRendemenRambungController::class],
+        ['/reports/rendemen-kayu/rendemen-semua-proses', 'api.reports.rendemen-kayu.rendemen-semua-proses', RendemenSemuaProsesController::class],
         ['/reports/pps/rekap-produksi/inject', 'api.reports.pps.rekap-produksi.inject', RekapProduksiInjectController::class],
         ['/reports/pps/rekap-produksi/inject-bj', 'api.reports.pps.rekap-produksi.inject-bj', RekapProduksiInjectBjController::class],
         ['/reports/pps/rekap-produksi/hot-stamping-fwip', 'api.reports.pps.rekap-produksi.hot-stamping-fwip', RekapProduksiHotStampingFwipController::class],

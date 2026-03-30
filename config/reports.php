@@ -380,6 +380,28 @@ return [
             'Tahun,Bulan,KBKeluarTon,STMasukTon,STKeluarTon,WIPMasukM3,WIPPemakaianNetM3,BJMasukM3'
         )))),
     ],
+    'rekap_rendemen_rambung' => [
+        'database_connection' => env('REKAP_RENDEMEN_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_RENDEMEN_RAMBUNG_REPORT_PROCEDURE', 'SP_LapRekapRendemenRambung'),
+        'call_syntax' => env('REKAP_RENDEMEN_RAMBUNG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_RENDEMEN_RAMBUNG_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_RENDEMEN_RAMBUNG_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_RENDEMEN_RAMBUNG_REPORT_EXPECTED_COLUMNS',
+            'Tahun,Bulan,KBKeluarTon,STMasukTon,STKeluarTon,WIPMasukM3,WIPPemakaianNetM3,BJMasukM3'
+        )))),
+    ],
+    'rendemen_semua_proses' => [
+        'database_connection' => env('RENDEMEN_SEMUA_PROSES_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('RENDEMEN_SEMUA_PROSES_REPORT_PROCEDURE', 'SP_LapRekapRendemenSemuaProses'),
+        'call_syntax' => env('RENDEMEN_SEMUA_PROSES_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('RENDEMEN_SEMUA_PROSES_REPORT_QUERY'),
+        'parameter_count' => (int) env('RENDEMEN_SEMUA_PROSES_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'RENDEMEN_SEMUA_PROSES_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,Input,Output,GRP'
+        )))),
+    ],
     'rekap_hasil_sawmill_per_meja_upah_borongan_v2' => [
         'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBoronganV2'),

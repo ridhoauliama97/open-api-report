@@ -58,6 +58,8 @@ use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
+use App\Http\Controllers\RekapRendemenRambungController;
+use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\MutasiS4SController;
 use App\Http\Controllers\SaldoKayuBulatController;
@@ -618,6 +620,22 @@ Route::prefix('reports/rendemen-kayu')->name('reports.rendemen-kayu.')->group(fu
         Route::post('/preview-pdf', [RekapRendemenNonRambungController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapRendemenNonRambungController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapRendemenNonRambungController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-rendemen-rambung')->name('rekap-rendemen-rambung.')->group(function (): void {
+        Route::get('/', [RekapRendemenRambungController::class, 'index'])->name('index');
+        Route::post('/download', [RekapRendemenRambungController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapRendemenRambungController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapRendemenRambungController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapRendemenRambungController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rendemen-semua-proses')->name('rendemen-semua-proses.')->group(function (): void {
+        Route::get('/', [RendemenSemuaProsesController::class, 'index'])->name('index');
+        Route::post('/download', [RendemenSemuaProsesController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RendemenSemuaProsesController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RendemenSemuaProsesController::class, 'preview'])->name('preview');
+        Route::post('/health', [RendemenSemuaProsesController::class, 'health'])->name('health');
     });
 });
 

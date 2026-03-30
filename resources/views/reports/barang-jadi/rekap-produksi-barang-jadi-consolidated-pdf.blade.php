@@ -45,6 +45,12 @@
             font-weight: bold;
         }
 
+        .group-title {
+            margin: 10px 0 4px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -118,6 +124,11 @@
             font-size: 11px;
             border-top: 1px solid #000;
             background: #fff;
+        }
+
+        .summary-block {
+            margin-top: 10px;
+            page-break-inside: avoid;
         }
 
         .table-end-line td {
@@ -300,30 +311,23 @@
     @endforeach
 
     @if ($machines !== [])
-        <table style="margin-top: 10px;">
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="13"></td>
-                </tr>
-            </tfoot>
-            <tbody>
-                <tr class="totals-row">
-                    <td style="width: 130px;" class="center"><strong>Grand Total :</strong></td>
-                    <td class="number">{{ $fmtBlank($grandTotals['BJ']) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['Moulding']) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['Sanding']) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['TotalInput']) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['OutputPacking']) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['OutputReproses']) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['TotalOutput']) }}</td>
-                    <td class="center">{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</td>
-                    <td class="center">{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</td>
-                    <td class="number">{{ $fmtRatioBlank($grandTotals['M3Jam']) }}</td>
-                    <td class="number">{{ $fmtRatioBlank($grandTotals['M3JamOrg']) }}</td>
-                    <td class="number">{{ $fmtPercentBlank($grandTotals['Rend']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="summary-block">
+            <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
+            <ul style="margin: 0; padding-left: 18px;">
+                <li>BJ : <strong>{{ $fmtBlank($grandTotals['BJ']) }}</strong></li>
+                <li>Moulding : <strong>{{ $fmtBlank($grandTotals['Moulding']) }}</strong></li>
+                <li>Sanding : <strong>{{ $fmtBlank($grandTotals['Sanding']) }}</strong></li>
+                <li>Total Input : <strong>{{ $fmtBlank($grandTotals['TotalInput']) }}</strong></li>
+                <li>Output Packing : <strong>{{ $fmtBlank($grandTotals['OutputPacking']) }}</strong></li>
+                <li>Output Reproses : <strong>{{ $fmtBlank($grandTotals['OutputReproses']) }}</strong></li>
+                <li>Total Output : <strong>{{ $fmtBlank($grandTotals['TotalOutput']) }}</strong></li>
+                <li>Jam : <strong>{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</strong></li>
+                <li>Org : <strong>{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</strong></li>
+                <li>M3/Jam : <strong>{{ $fmtRatioBlank($grandTotals['M3Jam']) }}</strong></li>
+                <li>M3/jam/Org : <strong>{{ $fmtRatioBlank($grandTotals['M3JamOrg']) }}</strong></li>
+                <li>Rend (%) : <strong>{{ $fmtPercentBlank($grandTotals['Rend']) }}</strong></li>
+            </ul>
+        </div>
     @endif
 
     @include('reports.partials.pdf-footer-table')

@@ -119,7 +119,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+@include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -132,20 +132,7 @@
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $reportYear = (string) ($year ?? '');
         $reportMonth = (int) ($month ?? 0);
-        $monthLabels = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
+        $monthLabels = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
         $reportMonthText = $monthLabels[$reportMonth] ?? (string) $reportMonth;
 
         $toFloat = static function (mixed $value): ?float {
@@ -237,7 +224,7 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan Rekap Rendemen Non Rambung</h1>
+    <h1 class="report-title">Laporan Rekap Rendemen Rambung</h1>
     <div class="report-subtitle">Mulai Periode: {{ $reportMonthText }} {{ $reportYear }}</div>
 
     <table>
@@ -252,7 +239,7 @@
                             'Bulan' => '34px',
                             'KB Keluar (Ton)', 'ST Masuk (Ton)', 'ST Keluar (M3)' => '78px',
                             'WIP Masuk (M3)', 'WIP Pemakaian Net (M3)', 'BJ Masuk (M3)' => '86px',
-                            '% ST/KB', '% WIP/ST', '% BJ/WIP', '% BJ/ST', '% Total' => '56px',
+                            '%ST/KB', '%WIP/ST', '%BJ/WIP', '%BJ/ST', '%Total' => '56px',
                             default => 'auto',
                         };
                     @endphp
