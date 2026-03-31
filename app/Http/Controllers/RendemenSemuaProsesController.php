@@ -121,6 +121,7 @@ class RendemenSemuaProsesController extends Controller
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
             'pdf_pack_table_data' => false,
         ]);

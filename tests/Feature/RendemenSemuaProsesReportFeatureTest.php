@@ -86,7 +86,10 @@ class RendemenSemuaProsesReportFeatureTest extends TestCase
             ]);
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
-        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+        $pdfGenerator->shouldReceive('render')
+            ->once()
+            ->with('reports.rendemen-kayu.rendemen-semua-proses-pdf', Mockery::on(fn($data) => isset($data['pdf_orientation']) && $data['pdf_orientation'] === 'landscape'))
+            ->andReturn('%PDF-1.4 mocked content');
 
         $this->app->instance(RendemenSemuaProsesReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);

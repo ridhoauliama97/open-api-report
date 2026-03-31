@@ -469,6 +469,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
@@ -508,6 +509,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
@@ -535,6 +537,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
@@ -580,6 +583,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
@@ -607,6 +611,20 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4 h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Penjualan Kayu</h2>
+                    <div class="row g-2 mb-4">
+                        <div class="col-12 col-md-6">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
@@ -785,14 +803,13 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.finger-joint.rekap-produksi-finger-joint-consolidated.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Finger Joint
-                                Consolidated</a>
+                                class="btn btn-outline-primary w-100 text-start">
+                                Rekap Produksi Finger Joint Consolidated</a>
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.finger-joint.rekap-produksi-finger-joint-per-jenis-per-grade.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Rekap Produksi Finger Joint Per-Jenis
-                                &
-                                Per-Grade (m3)</a>
+                                class="btn btn-outline-primary w-100 text-start">
+                                Rekap Produksi Finger Joint Per-Jenis & Per-Grade (m3)</a>
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.finger-joint.finger-joint-hidup-detail.index') }}"
@@ -800,8 +817,8 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.finger-joint.ketahanan-barang-finger-joint.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">Ketahanan Barang Dagang Finger
-                                Joint</a>
+                                class="btn btn-outline-primary w-100 text-start">
+                                Ketahanan Barang Dagang Finger Joint</a>
                         </div>
                     </div>
                 </div>
@@ -847,6 +864,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
