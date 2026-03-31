@@ -60,6 +60,8 @@ use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
 use App\Http\Controllers\RekapRendemenRambungController;
 use App\Http\Controllers\RekapPenjualanPerProdukController;
+use App\Http\Controllers\RekapPenjualanEksporPerProdukPerBuyerController;
+use App\Http\Controllers\RekapPenjualanEksporPerBuyerPerProdukController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
 use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
@@ -657,6 +659,22 @@ Route::prefix('reports/penjualan-kayu')->name('reports.penjualan-kayu.')->group(
         Route::post('/preview-pdf', [RekapPenjualanPerProdukController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapPenjualanPerProdukController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapPenjualanPerProdukController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-penjualan-ekspor-per-produk-per-buyer')->name('rekap-penjualan-ekspor-per-produk-per-buyer.')->group(function (): void {
+        Route::get('/', [RekapPenjualanEksporPerProdukPerBuyerController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPenjualanEksporPerProdukPerBuyerController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPenjualanEksporPerProdukPerBuyerController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPenjualanEksporPerProdukPerBuyerController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapPenjualanEksporPerProdukPerBuyerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-penjualan-ekspor-per-buyer-per-produk')->name('rekap-penjualan-ekspor-per-buyer-per-produk.')->group(function (): void {
+        Route::get('/', [RekapPenjualanEksporPerBuyerPerProdukController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPenjualanEksporPerBuyerPerProdukController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPenjualanEksporPerBuyerPerProdukController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPenjualanEksporPerBuyerPerProdukController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapPenjualanEksporPerBuyerPerProdukController::class, 'health'])->name('health');
     });
 
     Route::prefix('timeline-rekap-penjualan-per-produk')->name('timeline-rekap-penjualan-per-produk.')->group(function (): void {

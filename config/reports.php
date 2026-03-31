@@ -434,6 +434,28 @@ return [
             'Product,Tebal,Lebar,Panjang,JmlhBatang,M3,BJM3,TglJual'
         )))),
     ],
+    'rekap_penjualan_ekspor_per_produk_per_buyer' => [
+        'database_connection' => env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_PROCEDURE', 'SP_LapJualPerProdukPerBuyer'),
+        'call_syntax' => env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_EXPECTED_COLUMNS',
+            'Product,Pembeli,Tebal,Lebar,Panjang,JmlhBatang,BJM3,PembeliBJM3,M3'
+        )))),
+    ],
+    'rekap_penjualan_ekspor_per_buyer_per_produk' => [
+        'database_connection' => env('REKAP_PENJUALAN_EKSPOR_PER_BUYER_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PENJUALAN_EKSPOR_PER_BUYER_PER_PRODUK_REPORT_PROCEDURE', 'SP_LapJualPerBuyerPerProduk'),
+        'call_syntax' => env('REKAP_PENJUALAN_EKSPOR_PER_BUYER_PER_PRODUK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PENJUALAN_EKSPOR_PER_BUYER_PER_PRODUK_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PENJUALAN_EKSPOR_PER_BUYER_PER_PRODUK_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PENJUALAN_EKSPOR_PER_BUYER_PER_PRODUK_REPORT_EXPECTED_COLUMNS',
+            'Pembeli,Product,Tebal,Lebar,Panjang,JmlhBatang,PembeliM3,PembeliBJM3,M3'
+        )))),
+    ],
     'rekap_hasil_sawmill_per_meja_upah_borongan_v2' => [
         'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBoronganV2'),

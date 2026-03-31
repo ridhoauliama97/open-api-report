@@ -635,6 +635,18 @@
                                 Laporan Timeline Rekap Penjualan Per-Produk
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan-kayu.rekap-penjualan-ekspor-per-produk-per-buyer.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Penjualan Ekspor Per-Produk dan Per-Buyer
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan-kayu.rekap-penjualan-ekspor-per-buyer-per-produk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Penjualan Ekspor Per-Buyer dan Per-Produk
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

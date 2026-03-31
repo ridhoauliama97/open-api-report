@@ -54,6 +54,8 @@ use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
 use App\Http\Controllers\RekapRendemenRambungController;
 use App\Http\Controllers\RekapPenjualanPerProdukController;
+use App\Http\Controllers\RekapPenjualanEksporPerProdukPerBuyerController;
+use App\Http\Controllers\RekapPenjualanEksporPerBuyerPerProdukController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
 use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
@@ -317,6 +319,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/rendemen-kayu/rendemen-semua-proses', 'api.reports.rendemen-kayu.rendemen-semua-proses', RendemenSemuaProsesController::class],
         ['/reports/rendemen-kayu/produksi-per-spk', 'api.reports.rendemen-kayu.produksi-per-spk', ProduksiPerSpkController::class],
         ['/reports/penjualan-kayu/rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-per-produk', RekapPenjualanPerProdukController::class],
+        ['/reports/penjualan-kayu/rekap-penjualan-ekspor-per-produk-per-buyer', 'api.reports.penjualan-kayu.rekap-penjualan-ekspor-per-produk-per-buyer', RekapPenjualanEksporPerProdukPerBuyerController::class],
+        ['/reports/penjualan-kayu/rekap-penjualan-ekspor-per-buyer-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-ekspor-per-buyer-per-produk', RekapPenjualanEksporPerBuyerPerProdukController::class],
         ['/reports/penjualan-kayu/timeline-rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.timeline-rekap-penjualan-per-produk', TimelineRekapPenjualanPerProdukController::class],
         ['/reports/pps/rekap-produksi/inject', 'api.reports.pps.rekap-produksi.inject', RekapProduksiInjectController::class],
         ['/reports/pps/rekap-produksi/inject-bj', 'api.reports.pps.rekap-produksi.inject-bj', RekapProduksiInjectBjController::class],
