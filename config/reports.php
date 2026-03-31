@@ -456,6 +456,21 @@ return [
             'Pembeli,Product,Tebal,Lebar,Panjang,JmlhBatang,PembeliM3,PembeliBJM3,M3'
         )))),
     ],
+    'koordinat_tanah' => [
+        'database_connection' => env('KOORDINAT_TANAH_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KOORDINAT_TANAH_REPORT_PROCEDURE', 'SP_PrintCariKoordinatTanah'),
+        'call_syntax' => env('KOORDINAT_TANAH_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KOORDINAT_TANAH_REPORT_QUERY'),
+        'parameter_count' => (int) env('KOORDINAT_TANAH_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KOORDINAT_TANAH_REPORT_EXPECTED_COLUMNS',
+            'NoSPK,Tanggal,Buyer,Tujuan,Jenis,NamaBarangJadi,Tebal,Lebar,Panjang,Bundle,PcsPerBundle,Keterangan,NamaTanah,NamaPemilik,DesaKelurahan,KabupatenKota,Provinsi,NoSuratTanah,Luas,Koordinat,Periode'
+        )))),
+        'expected_percentage_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KOORDINAT_TANAH_REPORT_EXPECTED_PERCENTAGE_COLUMNS',
+            'Jenis,Total,Persen,Koordinat,NoSPK,Buyer,Tujuan,NamaPemilik,Tahun'
+        )))),
+    ],
     'rekap_hasil_sawmill_per_meja_upah_borongan_v2' => [
         'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBoronganV2'),

@@ -57,6 +57,8 @@ use App\Http\Controllers\RekapPenjualanPerProdukController;
 use App\Http\Controllers\RekapPenjualanEksporPerProdukPerBuyerController;
 use App\Http\Controllers\RekapPenjualanEksporPerBuyerPerProdukController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
+use App\Http\Controllers\PenjualanLokalController;
+use App\Http\Controllers\KoordinatTanahController;
 use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
@@ -318,6 +320,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/rendemen-kayu/rekap-rendemen-rambung', 'api.reports.rendemen-kayu.rekap-rendemen-rambung', RekapRendemenRambungController::class],
         ['/reports/rendemen-kayu/rendemen-semua-proses', 'api.reports.rendemen-kayu.rendemen-semua-proses', RendemenSemuaProsesController::class],
         ['/reports/rendemen-kayu/produksi-per-spk', 'api.reports.rendemen-kayu.produksi-per-spk', ProduksiPerSpkController::class],
+        ['/reports/penjualan-kayu/penjualan-lokal', 'api.reports.penjualan-kayu.penjualan-lokal', PenjualanLokalController::class],
+        ['/reports/penjualan-kayu/koordinat-tanah', 'api.reports.penjualan-kayu.koordinat-tanah', KoordinatTanahController::class],
         ['/reports/penjualan-kayu/rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-per-produk', RekapPenjualanPerProdukController::class],
         ['/reports/penjualan-kayu/rekap-penjualan-ekspor-per-produk-per-buyer', 'api.reports.penjualan-kayu.rekap-penjualan-ekspor-per-produk-per-buyer', RekapPenjualanEksporPerProdukPerBuyerController::class],
         ['/reports/penjualan-kayu/rekap-penjualan-ekspor-per-buyer-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-ekspor-per-buyer-per-produk', RekapPenjualanEksporPerBuyerPerProdukController::class],

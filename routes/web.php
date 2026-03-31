@@ -63,6 +63,8 @@ use App\Http\Controllers\RekapPenjualanPerProdukController;
 use App\Http\Controllers\RekapPenjualanEksporPerProdukPerBuyerController;
 use App\Http\Controllers\RekapPenjualanEksporPerBuyerPerProdukController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
+use App\Http\Controllers\PenjualanLokalController;
+use App\Http\Controllers\KoordinatTanahController;
 use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
@@ -653,6 +655,22 @@ Route::prefix('reports/rendemen-kayu')->name('reports.rendemen-kayu.')->group(fu
 });
 
 Route::prefix('reports/penjualan-kayu')->name('reports.penjualan-kayu.')->group(function (): void {
+    Route::prefix('penjualan-lokal')->name('penjualan-lokal.')->group(function (): void {
+        Route::get('/', [PenjualanLokalController::class, 'index'])->name('index');
+        Route::post('/download', [PenjualanLokalController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenjualanLokalController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenjualanLokalController::class, 'preview'])->name('preview');
+        Route::post('/health', [PenjualanLokalController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('koordinat-tanah')->name('koordinat-tanah.')->group(function (): void {
+        Route::get('/', [KoordinatTanahController::class, 'index'])->name('index');
+        Route::post('/download', [KoordinatTanahController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KoordinatTanahController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [KoordinatTanahController::class, 'preview'])->name('preview');
+        Route::post('/health', [KoordinatTanahController::class, 'health'])->name('health');
+    });
+
     Route::prefix('rekap-penjualan-per-produk')->name('rekap-penjualan-per-produk.')->group(function (): void {
         Route::get('/', [RekapPenjualanPerProdukController::class, 'index'])->name('index');
         Route::post('/download', [RekapPenjualanPerProdukController::class, 'download'])->name('download');

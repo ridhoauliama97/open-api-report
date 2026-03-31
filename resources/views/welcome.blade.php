@@ -624,6 +624,18 @@
                     <h2 class="h5 mb-3">Penjualan Kayu</h2>
                     <div class="row g-2 mb-4">
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan-kayu.penjualan-lokal.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penjualan Lokal
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan-kayu.koordinat-tanah.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Koordinat Tanah
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.penjualan-kayu.rekap-penjualan-per-produk.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Rekap Penjualan Per-Produk
