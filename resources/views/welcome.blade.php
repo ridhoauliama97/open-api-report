@@ -607,6 +607,12 @@
                                 Laporan Rendemen Semua Proses
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.rendemen-kayu.produksi-per-spk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per SPK
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -618,7 +624,16 @@
                     <h2 class="h5 mb-3">Penjualan Kayu</h2>
                     <div class="row g-2 mb-4">
                         <div class="col-12 col-md-6">
-
+                            <a href="{{ route('reports.penjualan-kayu.rekap-penjualan-per-produk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Penjualan Per-Produk
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan-kayu.timeline-rekap-penjualan-per-produk.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Timeline Rekap Penjualan Per-Produk
+                            </a>
                         </div>
                     </div>
                 </div>

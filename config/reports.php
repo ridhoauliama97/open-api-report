@@ -402,6 +402,38 @@ return [
             'Tanggal,Input,Output,GRP'
         )))),
     ],
+    'produksi_per_spk' => [
+        'database_connection' => env('PRODUKSI_PER_SPK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PRODUKSI_PER_SPK_REPORT_PROCEDURE', 'SP_LapProduksiPerSPK'),
+        'call_syntax' => env('PRODUKSI_PER_SPK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PRODUKSI_PER_SPK_REPORT_QUERY'),
+        'parameter_count' => (int) env('PRODUKSI_PER_SPK_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PRODUKSI_PER_SPK_REPORT_EXPECTED_COLUMNS',
+            'Group,Output,Input,Rend,RendGlobal'
+        )))),
+    ],
+    'rekap_penjualan_per_produk' => [
+        'database_connection' => env('REKAP_PENJUALAN_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PENJUALAN_PER_PRODUK_REPORT_PROCEDURE', 'SP_LapJualPerProduk'),
+        'call_syntax' => env('REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PENJUALAN_PER_PRODUK_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PENJUALAN_PER_PRODUK_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PENJUALAN_PER_PRODUK_REPORT_EXPECTED_COLUMNS',
+            'Product,Tebal,Lebar,Panjang,JmlhBatang,M3,BJM3'
+        )))),
+    ],
+    'timeline_rekap_penjualan_per_produk' => [
+        'database_connection' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_PROCEDURE', 'SP_LapJualPerProdukTimeLine'),
+        'call_syntax' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_EXPECTED_COLUMNS',
+            'Product,Tebal,Lebar,Panjang,JmlhBatang,M3,BJM3,TglJual'
+        )))),
+    ],
     'rekap_hasil_sawmill_per_meja_upah_borongan_v2' => [
         'database_connection' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_V2_REPORT_PROCEDURE', 'dbo.SPWps_LapRekapHasilSawmillPerMejaUpahBoronganV2'),

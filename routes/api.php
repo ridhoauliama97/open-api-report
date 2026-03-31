@@ -53,6 +53,9 @@ use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
 use App\Http\Controllers\RekapRendemenRambungController;
+use App\Http\Controllers\RekapPenjualanPerProdukController;
+use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
+use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\RekapProduktivitasSawmillSawnTimberController;
@@ -312,6 +315,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/rendemen-kayu/rekap-rendemen-non-rambung', 'api.reports.rendemen-kayu.rekap-rendemen-non-rambung', RekapRendemenNonRambungController::class],
         ['/reports/rendemen-kayu/rekap-rendemen-rambung', 'api.reports.rendemen-kayu.rekap-rendemen-rambung', RekapRendemenRambungController::class],
         ['/reports/rendemen-kayu/rendemen-semua-proses', 'api.reports.rendemen-kayu.rendemen-semua-proses', RendemenSemuaProsesController::class],
+        ['/reports/rendemen-kayu/produksi-per-spk', 'api.reports.rendemen-kayu.produksi-per-spk', ProduksiPerSpkController::class],
+        ['/reports/penjualan-kayu/rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-per-produk', RekapPenjualanPerProdukController::class],
+        ['/reports/penjualan-kayu/timeline-rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.timeline-rekap-penjualan-per-produk', TimelineRekapPenjualanPerProdukController::class],
         ['/reports/pps/rekap-produksi/inject', 'api.reports.pps.rekap-produksi.inject', RekapProduksiInjectController::class],
         ['/reports/pps/rekap-produksi/inject-bj', 'api.reports.pps.rekap-produksi.inject-bj', RekapProduksiInjectBjController::class],
         ['/reports/pps/rekap-produksi/hot-stamping-fwip', 'api.reports.pps.rekap-produksi.hot-stamping-fwip', RekapProduksiHotStampingFwipController::class],

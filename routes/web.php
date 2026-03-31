@@ -59,6 +59,9 @@ use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
 use App\Http\Controllers\RekapRendemenRambungController;
+use App\Http\Controllers\RekapPenjualanPerProdukController;
+use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
+use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
 use App\Http\Controllers\MutasiS4SController;
@@ -636,6 +639,32 @@ Route::prefix('reports/rendemen-kayu')->name('reports.rendemen-kayu.')->group(fu
         Route::post('/preview-pdf', [RendemenSemuaProsesController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RendemenSemuaProsesController::class, 'preview'])->name('preview');
         Route::post('/health', [RendemenSemuaProsesController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('produksi-per-spk')->name('produksi-per-spk.')->group(function (): void {
+        Route::get('/', [ProduksiPerSpkController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiPerSpkController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiPerSpkController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiPerSpkController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiPerSpkController::class, 'health'])->name('health');
+    });
+});
+
+Route::prefix('reports/penjualan-kayu')->name('reports.penjualan-kayu.')->group(function (): void {
+    Route::prefix('rekap-penjualan-per-produk')->name('rekap-penjualan-per-produk.')->group(function (): void {
+        Route::get('/', [RekapPenjualanPerProdukController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPenjualanPerProdukController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPenjualanPerProdukController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPenjualanPerProdukController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapPenjualanPerProdukController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('timeline-rekap-penjualan-per-produk')->name('timeline-rekap-penjualan-per-produk.')->group(function (): void {
+        Route::get('/', [TimelineRekapPenjualanPerProdukController::class, 'index'])->name('index');
+        Route::post('/download', [TimelineRekapPenjualanPerProdukController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TimelineRekapPenjualanPerProdukController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TimelineRekapPenjualanPerProdukController::class, 'preview'])->name('preview');
+        Route::post('/health', [TimelineRekapPenjualanPerProdukController::class, 'health'])->name('health');
     });
 });
 
