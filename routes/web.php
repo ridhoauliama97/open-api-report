@@ -73,6 +73,8 @@ use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockHidupPerNoSpkController;
+use App\Http\Controllers\StockHidupPerNoSpkDiscrepancyController;
+use App\Http\Controllers\DiscrepancyRekapMutasiController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
@@ -711,6 +713,21 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [StockHidupPerNoSpkController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [StockHidupPerNoSpkController::class, 'preview'])->name('preview');
         Route::post('/health', [StockHidupPerNoSpkController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('stock-hidup-per-nospk-discrepancy')->name('stock-hidup-per-nospk-discrepancy.')->group(function (): void {
+        Route::get('/', [StockHidupPerNoSpkDiscrepancyController::class, 'index'])->name('index');
+        Route::post('/download', [StockHidupPerNoSpkDiscrepancyController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StockHidupPerNoSpkDiscrepancyController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [StockHidupPerNoSpkDiscrepancyController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockHidupPerNoSpkDiscrepancyController::class, 'health'])->name('health');
+    });
+    Route::prefix('discrepancy-rekap-mutasi')->name('discrepancy-rekap-mutasi.')->group(function (): void {
+        Route::get('/', [DiscrepancyRekapMutasiController::class, 'index'])->name('index');
+        Route::post('/download', [DiscrepancyRekapMutasiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [DiscrepancyRekapMutasiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [DiscrepancyRekapMutasiController::class, 'preview'])->name('preview');
+        Route::post('/health', [DiscrepancyRekapMutasiController::class, 'health'])->name('health');
     });
 });
 

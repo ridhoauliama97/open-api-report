@@ -187,7 +187,7 @@
         $fmtTotal = static fn($value): string => $value === null ? '' : number_format((float) $value, 4, '.', ',');
     @endphp
 
-    <h1 class="report-title">Laporan Stock Hidup Per No SPK</h1>
+    <h1 class="report-title">Laporan Stock Hidup Per No SPK (Discrepancy)</h1>
     <div class="report-subtitle">Per Tanggal : {{ $tanggalText }}</div>
 
     @forelse ($categories as $category)
@@ -228,7 +228,7 @@
                         $buyer = trim((string) ($spk['buyer'] ?? ''));
                     @endphp
 
-                    @foreach ($rows as $index => $row)
+                    @foreach ($rows as $row)
                         <tr class="{{ $rowNo % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             <td class="center">{{ $rowNo }}</td>
                             <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
@@ -266,7 +266,7 @@
     @endforelse
 
     @if ($categories !== [])
-        <div class="summary-title">Rangkuman Hasil :</div>
+        <div class="summary-title">Rangkuman</div>
         <table class="summary-table">
             <tbody>
                 <tr>
@@ -289,7 +289,7 @@
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td>Grand Total (m3)</td>
+                    <td>Grand Total</td>
                     <td class="number">{{ $fmtTotal($summary['grand_total'] ?? null) }}</td>
                 </tr>
             </tbody>

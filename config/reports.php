@@ -802,9 +802,32 @@ return [
         'stored_procedure' => env('STOCK_HIDUP_PER_NOSPK_REPORT_PROCEDURE', 'SP_LapSemuaStockHidupPerSPK'),
         'call_syntax' => env('STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('STOCK_HIDUP_PER_NOSPK_REPORT_QUERY'),
+        'using_mode' => (int) env('STOCK_HIDUP_PER_NOSPK_REPORT_USING_MODE', 3),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'STOCK_HIDUP_PER_NOSPK_REPORT_EXPECTED_COLUMNS',
-            'Kategori,NoSPK,Jenis,Tebal,Lebar,Panjang,Total,NoContract,Tujuan,Buyer'
+            'Kategori,NoSPK,Jenis,Tebal,Lebar,Panjang,Pcs,Umur,Total,NoContract,Tujuan,Buyer'
+        )))),
+    ],
+    'stock_hidup_per_nospk_discrepancy' => [
+        'database_connection' => env('STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_PROCEDURE', 'SP_LapSemuaStockHidupPerSPK'),
+        'call_syntax' => env('STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_QUERY'),
+        'using_mode' => (int) env('STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_USING_MODE', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_EXPECTED_COLUMNS',
+            'Kategori,NoSPK,Jenis,Tebal,Lebar,Panjang,Pcs,Umur,Total,NoContract,Tujuan,Buyer'
+        )))),
+    ],
+    'discrepancy_rekap_mutasi' => [
+        'database_connection' => env('DISCREPANCY_REKAP_MUTASI_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DISCREPANCY_REKAP_MUTASI_REPORT_PROCEDURE', 'SP_LapRekapMutasiV2'),
+        'call_syntax' => env('DISCREPANCY_REKAP_MUTASI_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DISCREPANCY_REKAP_MUTASI_REPORT_QUERY'),
+        'parameter_count' => (int) env('DISCREPANCY_REKAP_MUTASI_REPORT_PARAMETER_COUNT', 3),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'DISCREPANCY_REKAP_MUTASI_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,BJadi,CCAkhir,FJ,KB,KBKG,LMT,MLD,S4S,SAND,ST,TotalAkhir'
         )))),
     ],
     'st_basah_hidup_per_umur_kayu_ton' => [

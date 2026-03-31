@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class StockHidupPerNoSpkReportService
+class StockHidupPerNoSpkDiscrepancyReportService
 {
     /**
      * @return array<int, array<string, mixed>>
@@ -49,8 +49,6 @@ class StockHidupPerNoSpkReportService
         $pcsCol = $this->pickColumn($columns, ['Pcs', 'PCS']);
         $umurCol = $this->pickColumn($columns, ['Umur', 'Aging']);
         $totalCol = $this->pickColumn($columns, ['Total', 'Ton', 'M3', 'Qty']);
-        $contractCol = $this->pickColumn($columns, ['NoContract', 'NoKontrak', 'Contract']);
-        $tujuanCol = $this->pickColumn($columns, ['Tujuan']);
         $buyerCol = $this->pickColumn($columns, ['Buyer']);
 
         $missing = array_values(array_filter([
@@ -93,8 +91,6 @@ class StockHidupPerNoSpkReportService
             if (!isset($categories[$kategori]['spks'][$noSpk])) {
                 $categories[$kategori]['spks'][$noSpk] = [
                     'no_spk' => $noSpk,
-                    'no_contract' => trim((string) ($contractCol ? ($row[$contractCol] ?? '') : '')),
-                    'tujuan' => trim((string) ($tujuanCol ? ($row[$tujuanCol] ?? '') : '')),
                     'buyer' => trim((string) ($buyerCol ? ($row[$buyerCol] ?? '') : '')),
                     'rows' => [],
                     'total' => 0.0,
@@ -179,7 +175,7 @@ class StockHidupPerNoSpkReportService
     {
         $rows = $this->fetch($tanggalAkhir);
         $detectedColumns = array_keys($rows[0] ?? []);
-        $expectedColumns = config('reports.stock_hidup_per_nospk.expected_columns', []);
+        $expectedColumns = config('reports.stock_hidup_per_nospk_discrepancy.expected_columns', []);
         $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
         $missingColumns = array_values(array_diff($expectedColumns, $detectedColumns));
         $extraColumns = array_values(array_diff($detectedColumns, $expectedColumns));
@@ -214,14 +210,14 @@ class StockHidupPerNoSpkReportService
      */
     private function runProcedureQuery(string $tanggalAkhir): array
     {
-        $connectionName = config('reports.stock_hidup_per_nospk.database_connection');
-        $procedure = (string) config('reports.stock_hidup_per_nospk.stored_procedure', 'SP_LapSemuaStockHidupPerSPK');
-        $syntax = (string) config('reports.stock_hidup_per_nospk.call_syntax', 'exec');
-        $customQuery = config('reports.stock_hidup_per_nospk.query');
-        $usingMode = (int) config('reports.stock_hidup_per_nospk.using_mode', 3);
+        $connectionName = config('reports.stock_hidup_per_nospk_discrepancy.database_connection');
+        $procedure = (string) config('reports.stock_hidup_per_nospk_discrepancy.stored_procedure', 'SP_LapSemuaStockHidupPerSPK');
+        $syntax = (string) config('reports.stock_hidup_per_nospk_discrepancy.call_syntax', 'exec');
+        $customQuery = config('reports.stock_hidup_per_nospk_discrepancy.query');
+        $usingMode = (int) config('reports.stock_hidup_per_nospk_discrepancy.using_mode', 1);
 
         if ($procedure === '' && !is_string($customQuery)) {
-            throw new RuntimeException('Stored procedure laporan stock hidup per NoSPK belum dikonfigurasi.');
+            throw new RuntimeException('Stored procedure laporan stock hidup per NoSPK (Discrepancy) belum dikonfigurasi.');
         }
 
         $connection = DB::connection($connectionName ?: null);
@@ -229,8 +225,8 @@ class StockHidupPerNoSpkReportService
 
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
-                'Laporan stock hidup per NoSPK dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                'Laporan stock hidup per NoSPK (Discrepancy) dikonfigurasi untuk SQL Server. '
+                . 'Set STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -238,8 +234,8 @@ class StockHidupPerNoSpkReportService
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
                 : throw new RuntimeException(
-                    'STOCK_HIDUP_PER_NOSPK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX=query.',
+                    'STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, [$tanggalAkhir, $usingMode]);

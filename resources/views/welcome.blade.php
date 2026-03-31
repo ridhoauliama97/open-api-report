@@ -675,6 +675,18 @@
                                 Laporan Stock Hidup Per NoSPK
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.stock-hidup-per-nospk-discrepancy.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Hidup Per NoSPK (Discrepancy)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.discrepancy-rekap-mutasi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Discrepancy Rekap Mutasi
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
