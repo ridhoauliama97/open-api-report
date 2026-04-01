@@ -78,6 +78,7 @@ use App\Http\Controllers\DiscrepancyRekapMutasiController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
+use App\Http\Controllers\LabelPerhariController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
 use App\Http\Controllers\ProduksiHuluHilirController;
 use App\Http\Controllers\TargetMasukBBController;
@@ -769,6 +770,22 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [HasilProduksiMesinLemburDanNonLemburController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [HasilProduksiMesinLemburDanNonLemburController::class, 'preview'])->name('preview');
         Route::post('/health', [HasilProduksiMesinLemburDanNonLemburController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('label-perhari')->name('label-perhari.')->group(function (): void {
+        Route::get('/', [LabelPerhariController::class, 'index'])->name('index');
+        Route::post('/download', [LabelPerhariController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [LabelPerhariController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [LabelPerhariController::class, 'preview'])->name('preview');
+        Route::post('/health', [LabelPerhariController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('rekap-stock-on-hand')->name('rekap-stock-on-hand.')->group(function (): void {
+        Route::get('/', [RekapStockOnHandController::class, 'index'])->name('index');
+        Route::post('/download', [RekapStockOnHandController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapStockOnHandController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [RekapStockOnHandController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapStockOnHandController::class, 'health'])->name('health');
     });
 });
 

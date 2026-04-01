@@ -717,6 +717,12 @@
                                 Laporan Hasil Produksi Mesin Lembur Dan Non Lembur
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.label-perhari.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Label Perhari
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -239,6 +239,14 @@ return [
         'query' => env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_QUERY'),
         'parameter_count' => (int) env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_PARAMETER_COUNT', 2),
     ],
+    'label_perhari' => [
+        'database_connection' => env('LABEL_PERHARI_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('LABEL_PERHARI_REPORT_PROCEDURE', 'SPWps_LapLabelPerhari'),
+        'call_syntax' => env('LABEL_PERHARI_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('LABEL_PERHARI_REPORT_QUERY'),
+        'parameter_count' => (int) env('LABEL_PERHARI_REPORT_PARAMETER_COUNT', 2),
+    ],
+
 
     // Kayu Bulat
     'saldo_kayu_bulat' => [
