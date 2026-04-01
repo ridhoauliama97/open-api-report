@@ -218,6 +218,16 @@ return [
         'query' => env('DASHBOARD_RU_REPORT_QUERY'),
         'parameter_count' => (int) env('DASHBOARD_RU_REPORT_PARAMETER_COUNT', 1),
     ],
+    'rekap_mutasi_cross_tab' => [
+        'database_connection' => env('REKAP_MUTASI_CROSS_TAB_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_MUTASI_CROSS_TAB_REPORT_PROCEDURE', 'SP_LapRekapMutasi'),
+        'call_syntax' => env('REKAP_MUTASI_CROSS_TAB_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_MUTASI_CROSS_TAB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_MUTASI_CROSS_TAB_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,BJadi,CCAkhir,FJ,KB,KBKG,LMT,MLD,S4S,SAND,ST,TotalAkhir'
+        )))),
+    ],
     'produksi_semua_mesin' => [
         'database_connection' => env('PRODUKSI_SEMUA_MESIN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('PRODUKSI_SEMUA_MESIN_REPORT_PROCEDURE', 'SPWps_LapProduksiSemuaMesin'),
@@ -870,6 +880,17 @@ return [
         'parameter_count' => (int) env('DISCREPANCY_REKAP_MUTASI_REPORT_PARAMETER_COUNT', 3),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'DISCREPANCY_REKAP_MUTASI_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,BJadi,CCAkhir,FJ,KB,KBKG,LMT,MLD,S4S,SAND,ST,TotalAkhir'
+        )))),
+    ],
+    'rekap_mutasi' => [
+        'database_connection' => env('REKAP_MUTASI_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_MUTASI_REPORT_PROCEDURE', 'SP_LapRekapMutasi'),
+        'call_syntax' => env('REKAP_MUTASI_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_MUTASI_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_MUTASI_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_MUTASI_REPORT_EXPECTED_COLUMNS',
             'Tanggal,BJadi,CCAkhir,FJ,KB,KBKG,LMT,MLD,S4S,SAND,ST,TotalAkhir'
         )))),
     ],

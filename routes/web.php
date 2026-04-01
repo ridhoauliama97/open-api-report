@@ -75,6 +75,8 @@ use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockHidupPerNoSpkController;
 use App\Http\Controllers\StockHidupPerNoSpkDiscrepancyController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
+use App\Http\Controllers\RekapMutasiController;
+use App\Http\Controllers\RekapMutasiCrossTabController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
@@ -734,6 +736,20 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [DiscrepancyRekapMutasiController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [DiscrepancyRekapMutasiController::class, 'preview'])->name('preview');
         Route::post('/health', [DiscrepancyRekapMutasiController::class, 'health'])->name('health');
+    });
+    Route::prefix('rekap-mutasi')->name('rekap-mutasi.')->group(function (): void {
+        Route::get('/', [RekapMutasiController::class, 'index'])->name('index');
+        Route::post('/download', [RekapMutasiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapMutasiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [RekapMutasiController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapMutasiController::class, 'health'])->name('health');
+    });
+    Route::prefix('rekap-mutasi-cross-tab')->name('rekap-mutasi-cross-tab.')->group(function (): void {
+        Route::get('/', [RekapMutasiCrossTabController::class, 'index'])->name('index');
+        Route::post('/download', [RekapMutasiCrossTabController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapMutasiCrossTabController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [RekapMutasiCrossTabController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapMutasiCrossTabController::class, 'health'])->name('health');
     });
     Route::prefix('flow-produksi-per-periode')->name('flow-produksi-per-periode.')->group(function (): void {
         Route::get('/', [FlowProduksiPerPeriodeController::class, 'index'])->name('index');

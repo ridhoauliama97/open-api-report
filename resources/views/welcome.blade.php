@@ -688,6 +688,18 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.rekap-mutasi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Mutasi
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.rekap-mutasi-cross-tab.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Mutasi (Cross Tab)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.management.flow-produksi-per-periode.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Flow Produksi Per-Periode

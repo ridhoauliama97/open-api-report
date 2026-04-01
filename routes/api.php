@@ -89,6 +89,8 @@ use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockHidupPerNoSpkController;
 use App\Http\Controllers\StockHidupPerNoSpkDiscrepancyController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
+use App\Http\Controllers\RekapMutasiController;
+use App\Http\Controllers\RekapMutasiCrossTabController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
@@ -294,6 +296,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/management/stock-hidup-per-nospk', 'api.reports.management.stock-hidup-per-nospk', StockHidupPerNoSpkController::class],
         ['/reports/management/stock-hidup-per-nospk-discrepancy', 'api.reports.management.stock-hidup-per-nospk-discrepancy', StockHidupPerNoSpkDiscrepancyController::class],
         ['/reports/management/discrepancy-rekap-mutasi', 'api.reports.management.discrepancy-rekap-mutasi', DiscrepancyRekapMutasiController::class],
+        ['/reports/management/rekap-mutasi', 'api.reports.management.rekap-mutasi', RekapMutasiController::class],
+        ['/reports/management/rekap-mutasi-cross-tab', 'api.reports.management.rekap-mutasi-cross-tab', RekapMutasiCrossTabController::class],
         ['/reports/management/flow-produksi-per-periode', 'api.reports.management.flow-produksi-per-periode', FlowProduksiPerPeriodeController::class],
         ['/reports/management/dashboard-ru', 'api.reports.management.dashboard-ru', DashboardRuController::class],
         ['/reports/management/produksi-semua-mesin', 'api.reports.management.produksi-semua-mesin', ProduksiSemuaMesinController::class],
