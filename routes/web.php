@@ -75,6 +75,8 @@ use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockHidupPerNoSpkController;
 use App\Http\Controllers\StockHidupPerNoSpkDiscrepancyController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
+use App\Http\Controllers\FlowProduksiPerPeriodeController;
+use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
@@ -728,6 +730,20 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [DiscrepancyRekapMutasiController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [DiscrepancyRekapMutasiController::class, 'preview'])->name('preview');
         Route::post('/health', [DiscrepancyRekapMutasiController::class, 'health'])->name('health');
+    });
+    Route::prefix('flow-produksi-per-periode')->name('flow-produksi-per-periode.')->group(function (): void {
+        Route::get('/', [FlowProduksiPerPeriodeController::class, 'index'])->name('index');
+        Route::post('/download', [FlowProduksiPerPeriodeController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [FlowProduksiPerPeriodeController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [FlowProduksiPerPeriodeController::class, 'preview'])->name('preview');
+        Route::post('/health', [FlowProduksiPerPeriodeController::class, 'health'])->name('health');
+    });
+    Route::prefix('dashboard-ru')->name('dashboard-ru.')->group(function (): void {
+        Route::get('/', [DashboardRuController::class, 'index'])->name('index');
+        Route::post('/download', [DashboardRuController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [DashboardRuController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [DashboardRuController::class, 'preview'])->name('preview');
+        Route::post('/health', [DashboardRuController::class, 'health'])->name('health');
     });
 });
 

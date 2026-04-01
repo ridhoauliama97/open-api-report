@@ -687,6 +687,18 @@
                                 Laporan Discrepancy Rekap Mutasi
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.flow-produksi-per-periode.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Flow Produksi Per-Periode
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.dashboard-ru.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Dashboard RU
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

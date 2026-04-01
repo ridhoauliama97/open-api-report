@@ -204,6 +204,20 @@ return [
             'Jenis,Tebal,Lebar,Panjang,Sawal,Sawal1,SawalJlhBtg,Masuk,MskJlhBtg,Keluar,KeluarJlhBtg,AdjusmentInput,AdjInJlhBtg,AdjusmentOutput,AdjOutJlhBtg,Akhir,AkhirJlhBtg'
         )))),
     ],
+    'flow_produksi_per_periode' => [
+        'database_connection' => env('FLOW_PRODUKSI_PER_PERIODE_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('FLOW_PRODUKSI_PER_PERIODE_REPORT_PROCEDURE', 'SPWps_LapFlowProduksiPerPeriode'),
+        'call_syntax' => env('FLOW_PRODUKSI_PER_PERIODE_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('FLOW_PRODUKSI_PER_PERIODE_REPORT_QUERY'),
+        'parameter_count' => (int) env('FLOW_PRODUKSI_PER_PERIODE_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'dashboard_ru' => [
+        'database_connection' => env('DASHBOARD_RU_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DASHBOARD_RU_REPORT_PROCEDURE', 'SP_LapProduktivitasDashboard'),
+        'call_syntax' => env('DASHBOARD_RU_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DASHBOARD_RU_REPORT_QUERY'),
+        'parameter_count' => (int) env('DASHBOARD_RU_REPORT_PARAMETER_COUNT', 1),
+    ],
 
     // Kayu Bulat
     'saldo_kayu_bulat' => [
