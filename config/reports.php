@@ -218,6 +218,27 @@ return [
         'query' => env('DASHBOARD_RU_REPORT_QUERY'),
         'parameter_count' => (int) env('DASHBOARD_RU_REPORT_PARAMETER_COUNT', 1),
     ],
+    'produksi_semua_mesin' => [
+        'database_connection' => env('PRODUKSI_SEMUA_MESIN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PRODUKSI_SEMUA_MESIN_REPORT_PROCEDURE', 'SPWps_LapProduksiSemuaMesin'),
+        'call_syntax' => env('PRODUKSI_SEMUA_MESIN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PRODUKSI_SEMUA_MESIN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PRODUKSI_SEMUA_MESIN_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'produksi_hulu_hilir' => [
+        'database_connection' => env('PRODUKSI_HULU_HILIR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PRODUKSI_HULU_HILIR_REPORT_PROCEDURE', 'SPWps_LapProduksiSemuaMesinV2'),
+        'call_syntax' => env('PRODUKSI_HULU_HILIR_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PRODUKSI_HULU_HILIR_REPORT_QUERY'),
+        'parameter_count' => (int) env('PRODUKSI_HULU_HILIR_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'hasil_produksi_mesin_lembur_dan_non_lembur' => [
+        'database_connection' => env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_PROCEDURE', 'SPWps_LapLemburPerMesin'),
+        'call_syntax' => env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_QUERY'),
+        'parameter_count' => (int) env('HASIL_PRODUKSI_MESIN_LEMBUR_DAN_NON_LEMBUR_REPORT_PARAMETER_COUNT', 2),
+    ],
 
     // Kayu Bulat
     'saldo_kayu_bulat' => [

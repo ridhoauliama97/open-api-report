@@ -91,6 +91,9 @@ use App\Http\Controllers\StockHidupPerNoSpkDiscrepancyController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
+use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
+use App\Http\Controllers\ProduksiSemuaMesinController;
+use App\Http\Controllers\ProduksiHuluHilirController;
 use App\Http\Controllers\StockSTKeringController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
@@ -292,6 +295,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/management/discrepancy-rekap-mutasi', 'api.reports.management.discrepancy-rekap-mutasi', DiscrepancyRekapMutasiController::class],
         ['/reports/management/flow-produksi-per-periode', 'api.reports.management.flow-produksi-per-periode', FlowProduksiPerPeriodeController::class],
         ['/reports/management/dashboard-ru', 'api.reports.management.dashboard-ru', DashboardRuController::class],
+        ['/reports/management/produksi-semua-mesin', 'api.reports.management.produksi-semua-mesin', ProduksiSemuaMesinController::class],
+        ['/reports/management/produksi-hulu-hilir', 'api.reports.management.produksi-hulu-hilir', ProduksiHuluHilirController::class],
+        ['/reports/management/hasil-produksi-mesin-lembur-dan-non-lembur', 'api.reports.management.hasil-produksi-mesin-lembur-dan-non-lembur', HasilProduksiMesinLemburDanNonLemburController::class],
         ['/reports/finger-joint/umur-finger-joint-detail', 'api.reports.finger-joint.umur-finger-joint-detail', UmurFingerJointDetailController::class],
         ['/reports/finger-joint/rekap-produksi-finger-joint-consolidated', 'api.reports.finger-joint.rekap-produksi-finger-joint-consolidated', RekapProduksiFingerJointConsolidatedController::class],
         ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],

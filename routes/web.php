@@ -77,6 +77,9 @@ use App\Http\Controllers\StockHidupPerNoSpkDiscrepancyController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
+use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
+use App\Http\Controllers\ProduksiSemuaMesinController;
+use App\Http\Controllers\ProduksiHuluHilirController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
@@ -744,6 +747,28 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [DashboardRuController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [DashboardRuController::class, 'preview'])->name('preview');
         Route::post('/health', [DashboardRuController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-semua-mesin')->name('produksi-semua-mesin.')->group(function (): void {
+        Route::get('/', [ProduksiSemuaMesinController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiSemuaMesinController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiSemuaMesinController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiSemuaMesinController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiSemuaMesinController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-hulu-hilir')->name('produksi-hulu-hilir.')->group(function (): void {
+        Route::get('/', [ProduksiHuluHilirController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiHuluHilirController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiHuluHilirController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiHuluHilirController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiHuluHilirController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('hasil-produksi-mesin-lembur-dan-non-lembur')->name('hasil-produksi-mesin-lembur-dan-non-lembur.')->group(function (): void {
+        Route::get('/', [HasilProduksiMesinLemburDanNonLemburController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiMesinLemburDanNonLemburController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [HasilProduksiMesinLemburDanNonLemburController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [HasilProduksiMesinLemburDanNonLemburController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiMesinLemburDanNonLemburController::class, 'health'])->name('health');
     });
 });
 

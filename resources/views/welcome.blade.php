@@ -699,6 +699,24 @@
                                 Laporan Dashboard RU
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.produksi-semua-mesin.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Semua Mesin
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.produksi-hulu-hilir.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Hulu Hilir
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.hasil-produksi-mesin-lembur-dan-non-lembur.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Hasil Produksi Mesin Lembur Dan Non Lembur
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
