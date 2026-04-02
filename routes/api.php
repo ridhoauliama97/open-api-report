@@ -95,6 +95,7 @@ use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
 use App\Http\Controllers\LabelPerhariController;
+use App\Http\Controllers\RekapStockOnHandController;
 use App\Http\Controllers\RangkumanBongkarSusunController;
 use App\Http\Controllers\KapasitasRacipKayuBulatHidupController;
 use App\Http\Controllers\BahanYangDihasilkanController;

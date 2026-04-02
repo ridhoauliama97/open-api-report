@@ -256,6 +256,46 @@ return [
         'query' => env('LABEL_PERHARI_REPORT_QUERY'),
         'parameter_count' => (int) env('LABEL_PERHARI_REPORT_PARAMETER_COUNT', 2),
     ],
+    'rekap_stock_on_hand_sub_bj' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_BJ_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_BJ_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubBJ'),
+    ],
+    'rekap_stock_on_hand_sub_cca_akhir' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_CCA_AKHIR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_CCA_AKHIR_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubCCAkhir'),
+    ],
+    'rekap_stock_on_hand_sub_fj' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_FJ_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_FJ_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubFJ'),
+    ],
+    'rekap_stock_on_hand_sub_kb' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_KB_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_KB_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubKB'),
+    ],
+    'rekap_stock_on_hand_sub_lmt' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_LMT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_LMT_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubLMT'),
+    ],
+    'rekap_stock_on_hand_sub_moulding' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_MOULDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_MOULDING_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubMoulding'),
+    ],
+    'rekap_stock_on_hand_sub_reproses' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_REPROSES_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_REPROSES_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubReproses'),
+    ],
+    'rekap_stock_on_hand_sub_s4s' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_S4S_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_S4S_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubS4S'),
+    ],
+    'rekap_stock_on_hand_sub_sanding' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_SANDING_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_SANDING_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubSanding'),
+    ],
+    'rekap_stock_on_hand_sub_st' => [
+        'database_connection' => env('REKAP_STOCK_ON_HAND_SUB_ST_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_STOCK_ON_HAND_SUB_ST_REPORT_PROCEDURE', 'SPWps_LapRekapStockOnHand_SubST'),
+    ],
     'rangkuman_bongkar_susun' => [
         'database_connection' => env('RANGKUMAN_BONGKAR_SUSUN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('RANGKUMAN_BONGKAR_SUSUN_REPORT_PROCEDURE', 'SPWps_LapRangkumanBongkarSusun'),

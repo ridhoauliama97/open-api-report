@@ -20,75 +20,85 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.25;
+            font-size: 11.5px;
+            line-height: 1.45;
             color: #000;
         }
 
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 18px 0;
-            font-size: 12px;
+            margin: 4px 0 22px 0;
+            font-size: 13px;
             color: #636466;
         }
 
-        .layout-table {
+        .section-title {
+            margin: 10px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-        }
-
-        .layout-table td {
-            vertical-align: top;
-            padding: 0;
-        }
-
-        .left-col {
-            width: 42%;
-            padding-right: 14px;
-        }
-
-        .right-col {
-            width: 58%;
-            padding-left: 14px;
-        }
-
-        .section-title {
-            margin: 0 0 6px 0;
-            font-size: 11px;
-            font-weight: bold;
-            text-decoration: underline;
         }
 
         .report-table {
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #000;
-            margin-bottom: 18px;
+            page-break-inside: auto;
         }
 
-        th,
-        td {
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        .report-table th,
+        .report-table td {
             border-left: 1px solid #000;
-            padding: 3px 5px;
+            padding: 4px 6px;
             vertical-align: middle;
         }
 
-        th:first-child,
-        td:first-child {
+        .report-table th:first-child,
+        .report-table td:first-child {
             border-left: 0;
         }
 
-        th {
+        .report-table th {
             text-align: center;
             font-weight: bold;
             border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
         }
 
         .number {
@@ -97,20 +107,36 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        .summary-line {
-            margin: 0 0 2px 0;
-            font-size: 11px;
+        .center {
+            text-align: center;
         }
 
-        .summary-label {
-            display: inline-block;
-            width: 132px;
+        .metrics-table {
+            width: 62%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+        }
+
+        .metrics-table td {
+            border: 0 !important;
+            padding: 3px 0 !important;
+            vertical-align: top;
+        }
+
+        .metrics-label {
+            width: 148px;
+            white-space: nowrap;
+        }
+
+        .metrics-sep {
+            width: 10px;
+            text-align: center;
         }
 
         .rule {
-            width: 180px;
+            width: 240px;
             border-top: 1px solid #000;
-            margin: 8px 0 6px 0;
+            margin: 12px 0 12px 0;
         }
 
         .block {
@@ -118,19 +144,47 @@
         }
 
         .conclusion {
-            margin-top: 8px;
-            font-size: 11px;
+            margin-top: 12px;
+            font-size: 11.5px;
+        }
+
+        .conclusion-title {
+            margin-bottom: 4px;
         }
 
         .bottom-summary {
-            margin-top: 8px;
-            font-size: 11px;
+            margin-top: 2px;
+            font-size: 11.5px;
         }
 
         .empty-state {
             text-align: center;
             padding: 12px;
             font-style: italic;
+        }
+
+        .summary-table {
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .summary-table td {
+            border: 0 !important;
+            padding: 2px 4px 2px 0;
+        }
+
+        .strong {
+            font-weight: bold;
+        }
+
+        .equation {
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .section-block {
+            margin-bottom: 22px;
         }
 
         @include('reports.partials.pdf-footer-table-style')
@@ -155,122 +209,128 @@
     <h1 class="report-title">Laporan Kapasitas Racip Kayu Bulat Hidup (Ton)</h1>
     <div class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</div>
 
-    <table class="layout-table">
-        <tr>
-            <td class="left-col">
-                <div class="block">
-                    <div class="section-title">Saldo Kayu Bulat Non Rambung :</div>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>Jenis Kayu</th>
-                                <th style="width: 70px;">Ton</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($nonRambung['rows'] ?? [] as $row)
-                                <tr>
-                                    <td>{{ ($row['JenisKayu'] ?? '') !== '' ? $row['JenisKayu'] : '-' }}</td>
-                                    <td class="number">{{ $fmtTon4($row['Ton'] ?? 0) }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2" class="empty-state">Tidak ada data.</td>
-                                </tr>
-                            @endforelse
-                            <tr>
-                                <td></td>
-                                <td class="number"><strong>{{ $fmtTon4($nonRambung['total_ton'] ?? 0) }}</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="section-block">
+        <div class="section-title">Saldo Kayu Bulat Non Rambung :</div>
+        <table class="report-table" style="width: 42%; margin-bottom: 12px;">
+            <thead>
+                <tr>
+                    <th>Jenis Kayu</th>
+                    <th style="width: 70px;">Ton</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($nonRambung['rows'] ?? [] as $row)
+                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td>{{ ($row['JenisKayu'] ?? '') !== '' ? $row['JenisKayu'] : '-' }}</td>
+                        <td class="number">{{ $fmtTon4($row['Ton'] ?? 0) }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="2" class="empty-state">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+                <tr>
+                    <td></td>
+                    <td class="number strong">{{ $fmtTon4($nonRambung['total_ton'] ?? 0) }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-                <div class="block">
-                    <div class="section-title">Saldo Kayu Bulat Rambung :</div>
-                    <table class="report-table" style="margin-bottom: 0;">
-                        <thead>
-                            <tr>
-                                <th>Nama Grade</th>
-                                <th style="width: 70px;">Berat</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($rambung['rows'] ?? [] as $row)
-                                <tr>
-                                    <td>{{ ($row['NamaGrade'] ?? '') !== '' ? $row['NamaGrade'] : '-' }}</td>
-                                    <td class="number">{{ $fmtTon2($row['Berat'] ?? 0) }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2" class="empty-state">Tidak ada data.</td>
-                                </tr>
-                            @endforelse
-                            <tr>
-                                <td></td>
-                                <td class="number"><strong>{{ $fmtTon2($rambung['total_berat'] ?? 0) }}</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="block">
-                    <div class="section-title">Kapasitas Racip Sawmill :</div>
-                    <p class="summary-line"><span class="summary-label">Jmlh HK</span>: {{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</p>
-                    <p class="summary-line"><span class="summary-label">Jmlh Meja Sawmill</span>: {{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</p>
-                    <p class="summary-line"><span class="summary-label">Jmlh Meja /Hari</span>: {{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</p>
-                    <p class="summary-line"><span class="summary-label">Total Ton</span>: {{ $fmtTon4($capacity['total_ton'] ?? 0) }}</p>
-                    <p class="summary-line"><span class="summary-label">Ton/Hari</span>: {{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</p>
-                    <p class="summary-line"><span class="summary-label">Ton/Hari/Meja</span>: {{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</p>
-                    <div class="rule"></div>
-                    <p class="summary-line">
-                        Rendemen Kayu (Non Rambung) :
-                        {{ number_format((float) ($nonRambung['rendemen_percent'] ?? 0), 0, '.', ',') }}% x
-                        {{ $fmtTon4($nonRambung['total_ton'] ?? 0) }} =
-                        {{ $fmtTon4($nonRambung['effective_ton'] ?? 0) }} Ton
-                    </p>
-                    <div class="conclusion">
-                        <div><u>Kesimpulan :</u></div>
-                        <div>
-                            Diperlukan Waktu : <strong>{{ $fmtDay($nonRambung['required_days'] ?? 0) }} Hari Kerja (Sawmill)</strong>
-                            Untuk Menyelesaikan Kayu Bulat : {{ $fmtTon4($nonRambung['total_ton'] ?? 0) }} Ton (inch)
-                        </div>
-                    </div>
-                </div>
+        <div class="section-title">Kapasitas Racip Sawmill :</div>
+        <table class="metrics-table">
+            <tbody>
+                <tr><td class="metrics-label">Jmlh HK</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</td></tr>
+                <tr><td class="metrics-label">Jmlh Meja Sawmill</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</td></tr>
+                <tr><td class="metrics-label">Jmlh Meja /Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</td></tr>
+                <tr><td class="metrics-label">Total Ton</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['total_ton'] ?? 0) }}</td></tr>
+                <tr><td class="metrics-label">Ton/Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</td></tr>
+                <tr><td class="metrics-label">Ton/Hari/Meja</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</td></tr>
+            </tbody>
+        </table>
+        <div class="rule"></div>
+        <div class="equation">
+            Rendemen Kayu (Non Rambung) :
+            {{ number_format((float) ($nonRambung['rendemen_percent'] ?? 0), 0, '.', ',') }}% x
+            {{ $fmtTon4($nonRambung['total_ton'] ?? 0) }} =
+            {{ $fmtTon4($nonRambung['effective_ton'] ?? 0) }} Ton
+        </div>
+        <div class="conclusion">
+            <div class="conclusion-title strong">Kesimpulan :</div>
+            <div>
+                Diperlukan Waktu : <span class="strong">{{ $fmtDay($nonRambung['required_days'] ?? 0) }}
+                    Hari Kerja (Sawmill)</span>
+                Untuk Menyelesaikan Kayu Bulat : {{ $fmtTon4($nonRambung['total_ton'] ?? 0) }} Ton (inch)
+            </div>
+        </div>
+    </div>
 
-                <div class="block">
-                    <div class="section-title">Kapasitas Racip Sawmill Rambung :</div>
-                    <p class="summary-line"><span class="summary-label">Jmlh HK</span>: {{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</p>
-                    <p class="summary-line"><span class="summary-label">Jmlh Meja Sawmill</span>: {{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</p>
-                    <p class="summary-line"><span class="summary-label">Jmlh Meja /Hari</span>: {{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</p>
-                    <p class="summary-line"><span class="summary-label">Total Ton</span>: {{ $fmtTon4($capacity['total_ton'] ?? 0) }}</p>
-                    <p class="summary-line"><span class="summary-label">Ton/Hari</span>: {{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</p>
-                    <p class="summary-line"><span class="summary-label">Ton/Hari/Meja</span>: {{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</p>
-                    <div class="rule"></div>
-                    <p class="summary-line">
-                        Rendemen Kayu (Rambung) :
-                        {{ number_format((float) ($rambung['rendemen_percent'] ?? 0), 0, '.', ',') }}% x
-                        {{ $fmtTon2($rambung['total_berat'] ?? 0) }} =
-                        {{ $fmtTon2($rambung['effective_ton'] ?? 0) }} Ton
-                    </p>
-                    <div class="conclusion">
-                        <div><u>Kesimpulan :</u></div>
-                        <div>
-                            Diperlukan Waktu : <strong>{{ $fmtDay($rambung['required_days'] ?? 0) }} Hari Kerja (Sawmill)</strong>
-                            Untuk Menyelesaikan Kayu Bulat (Rambung) : {{ $fmtTon2($rambung['total_berat'] ?? 0) }} Ton (Kg)
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div class="section-block">
+        <div class="section-title">Saldo Kayu Bulat Rambung :</div>
+        <table class="report-table" style="width: 42%; margin-bottom: 12px;">
+            <thead>
+                <tr>
+                    <th>Nama Grade</th>
+                    <th style="width: 70px;">Berat</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($rambung['rows'] ?? [] as $row)
+                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td>{{ ($row['NamaGrade'] ?? '') !== '' ? $row['NamaGrade'] : '-' }}</td>
+                        <td class="number">{{ $fmtTon2($row['Berat'] ?? 0) }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="2" class="empty-state">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+                <tr>
+                    <td></td>
+                    <td class="number strong">{{ $fmtTon2($rambung['total_berat'] ?? 0) }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">Kapasitas Racip Sawmill Rambung :</div>
+        <table class="metrics-table">
+            <tbody>
+                <tr><td class="metrics-label">Jmlh HK</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</td></tr>
+                <tr><td class="metrics-label">Jmlh Meja Sawmill</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</td></tr>
+                <tr><td class="metrics-label">Jmlh Meja /Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</td></tr>
+                <tr><td class="metrics-label">Total Ton</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['total_ton'] ?? 0) }}</td></tr>
+                <tr><td class="metrics-label">Ton/Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</td></tr>
+                <tr><td class="metrics-label">Ton/Hari/Meja</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</td></tr>
+            </tbody>
+        </table>
+        <div class="rule"></div>
+        <div class="equation">
+            Rendemen Kayu (Rambung) :
+            {{ number_format((float) ($rambung['rendemen_percent'] ?? 0), 0, '.', ',') }}% x
+            {{ $fmtTon2($rambung['total_berat'] ?? 0) }} =
+            {{ $fmtTon2($rambung['effective_ton'] ?? 0) }} Ton
+        </div>
+        <div class="conclusion">
+            <div class="conclusion-title strong">Kesimpulan :</div>
+            <div>
+                Diperlukan Waktu : <span class="strong">{{ $fmtDay($rambung['required_days'] ?? 0) }}
+                    Hari Kerja (Sawmill)</span>
+                Untuk Menyelesaikan Kayu Bulat (Rambung) : {{ $fmtTon2($rambung['total_berat'] ?? 0) }} Ton
+                (Kg)
+            </div>
+        </div>
+    </div>
 
     <div class="section-title" style="margin-top: 4px;">Rangkuman :</div>
-    <div class="bottom-summary">
-        Diperlukan Waktu : <strong>{{ $fmtDay($summary['required_days'] ?? 0) }} Hari Kerja (Sawmill)</strong> Untuk
-        Menyelesaikan Kayu Bulat (Non Rambung) dan (Rambung)
-    </div>
+    <table class="summary-table">
+        <tbody>
+            <tr>
+                <td style="width: 128px;">Diperlukan Waktu</td>
+                <td style="width: 12px;">:</td>
+                <td><span class="strong">{{ $fmtDay($summary['required_days'] ?? 0) }} Hari Kerja (Sawmill)</span> Untuk
+                    Menyelesaikan Kayu Bulat (Non Rambung) dan (Rambung)</td>
+            </tr>
+        </tbody>
+    </table>
 
     @include('reports.partials.pdf-footer-table')
 </body>

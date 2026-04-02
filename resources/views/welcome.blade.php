@@ -735,6 +735,12 @@
                                 Laporan Label Perhari
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.management.rekap-stock-on-hand.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Stock On Hand
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
