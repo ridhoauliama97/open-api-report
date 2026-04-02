@@ -82,6 +82,7 @@ use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
 use App\Http\Controllers\LabelPerhariController;
 use App\Http\Controllers\RangkumanBongkarSusunController;
+use App\Http\Controllers\KapasitasRacipKayuBulatHidupController;
 use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
 use App\Http\Controllers\ProduksiHuluHilirController;
@@ -821,6 +822,13 @@ Route::prefix('reports/verifikasi')->name('reports.verifikasi.')->group(function
         Route::post('/preview-pdf', [BahanYangDihasilkanController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [BahanYangDihasilkanController::class, 'preview'])->name('preview');
         Route::post('/health', [BahanYangDihasilkanController::class, 'health'])->name('health');
+    });
+    Route::prefix('kapasitas-racip-kayu-bulat-hidup')->name('kapasitas-racip-kayu-bulat-hidup.')->group(function (): void {
+        Route::get('/', [KapasitasRacipKayuBulatHidupController::class, 'index'])->name('index');
+        Route::post('/download', [KapasitasRacipKayuBulatHidupController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KapasitasRacipKayuBulatHidupController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [KapasitasRacipKayuBulatHidupController::class, 'preview'])->name('preview');
+        Route::post('/health', [KapasitasRacipKayuBulatHidupController::class, 'health'])->name('health');
     });
 });
 

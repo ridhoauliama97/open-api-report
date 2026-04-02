@@ -270,6 +270,34 @@ return [
         'query' => env('BAHAN_YANG_DIHASILKAN_REPORT_QUERY'),
         'parameter_count' => (int) env('BAHAN_YANG_DIHASILKAN_REPORT_PARAMETER_COUNT', 1),
     ],
+    'kapasitas_racip_kayu_bulat_hidup_non_rambung' => [
+        'database_connection' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_NON_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_NON_RAMBUNG_REPORT_PROCEDURE', 'SP_KapasitasRacipKayuBulatHidup'),
+        'call_syntax' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_NON_RAMBUNG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_NON_RAMBUNG_REPORT_QUERY'),
+        'parameter_count' => (int) env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_NON_RAMBUNG_REPORT_PARAMETER_COUNT', 0),
+    ],
+    'kapasitas_racip_kayu_bulat_hidup_jmlh_hk' => [
+        'database_connection' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_HK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_HK_REPORT_PROCEDURE', 'SP_KapasitasRacipKayuBulatHidupJmlhHK'),
+        'call_syntax' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_HK_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_HK_REPORT_QUERY'),
+        'parameter_count' => (int) env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_HK_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'kapasitas_racip_kayu_bulat_hidup_jmlh_meja' => [
+        'database_connection' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_MEJA_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_MEJA_REPORT_PROCEDURE', 'SP_KapasitasRacipKayuBulatHidupJmlhMeja'),
+        'call_syntax' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_MEJA_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_MEJA_REPORT_QUERY'),
+        'parameter_count' => (int) env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_JMLH_MEJA_REPORT_PARAMETER_COUNT', 2),
+    ],
+    'kapasitas_racip_kayu_bulat_hidup_rambung' => [
+        'database_connection' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_RAMBUNG_REPORT_PROCEDURE', 'SP_KapasitasRacipKayuBulatHidupKG'),
+        'call_syntax' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_RAMBUNG_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_RAMBUNG_REPORT_QUERY'),
+        'parameter_count' => (int) env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_RAMBUNG_REPORT_PARAMETER_COUNT', 0),
+    ],
 
 
     // Kayu Bulat

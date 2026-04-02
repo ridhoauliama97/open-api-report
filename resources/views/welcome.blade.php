@@ -846,6 +846,12 @@
                                 Laporan Rangkuman Bahan Yang Di Hasilkan
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.verifikasi.kapasitas-racip-kayu-bulat-hidup.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Kapasitas Racip Kayu Bulat Hidup (Ton)
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

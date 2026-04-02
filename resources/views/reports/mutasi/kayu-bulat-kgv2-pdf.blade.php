@@ -264,35 +264,6 @@
                 return '';
             }
 
-            if (is_string($value)) {
-                $normalized = trim(str_replace(' ', '', $value));
-                if ($normalized !== '') {
-                    if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
-                        if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                            $normalized = str_replace('.', '', $normalized);
-                            $normalized = str_replace(',', '.', $normalized);
-                        } else {
-                            $normalized = str_replace(',', '', $normalized);
-                        }
-                    } elseif (str_contains($normalized, ',')) {
-                        if (preg_match('/^-?\d{1,3}(,\d{3})+$/', $normalized) === 1) {
-                            $normalized = str_replace(',', '', $normalized);
-                        } else {
-                            $normalized = str_replace(',', '.', $normalized);
-                        }
-                    }
-
-                    if (preg_match('/^(-?)(\d+)(?:\.(\d+))?$/', $normalized, $matches) === 1) {
-                        $sign = $matches[1] === '-' ? '-' : '';
-                        $integerPart = $matches[2];
-                        $decimalPart = str_pad(substr($matches[3] ?? '', 0, 2), 2, '0');
-                        $integerPart = preg_replace('/\B(?=(\d{3})+(?!\d))/', ',', $integerPart);
-
-                        return $sign . $integerPart . '.' . $decimalPart;
-                    }
-                }
-            }
-
             return number_format($float, 2, '.', ',');
         };
 
