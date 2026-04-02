@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PpsUser;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -134,13 +137,18 @@ class AuthController extends Controller
 
         $accessToken = PersonalAccessToken::findToken($token);
 
-        if ($accessToken === null || !$accessToken->tokenable instanceof User) {
+        $tokenable = $accessToken?->tokenable;
+
+        if (
+            $accessToken === null
+            || (!$tokenable instanceof User && !$tokenable instanceof PpsUser)
+        ) {
             return response()->json([
                 'message' => 'Token tidak valid atau sudah kedaluwarsa.',
             ], 401);
         }
 
-        $user = $accessToken->tokenable;
+        $user = $tokenable;
         $abilities = $accessToken->abilities;
         $accessToken->delete();
         $newToken = $user->createToken('api-token', is_array($abilities) ? $abilities : ['*'])->plainTextToken;
@@ -151,7 +159,7 @@ class AuthController extends Controller
     /**
      * Execute respond with token logic.
      */
-    private function respondWithToken(string $token, ?User $authenticatedUser = null, int $status = 200): JsonResponse
+    private function respondWithToken(string $token, ?Authenticatable $authenticatedUser = null, int $status = 200): JsonResponse
     {
         return response()->json([
             'access_token' => $token,
@@ -159,13 +167,24 @@ class AuthController extends Controller
             'expires_in' => config('sanctum.expiration') !== null
                 ? (int) config('sanctum.expiration') * 60
                 : null,
-            'user' => $authenticatedUser,
+            'user' => $authenticatedUser instanceof Authenticatable
+                ? [
+                    'id' => (string) $authenticatedUser->getAuthIdentifier(),
+                    'username' => (string) data_get($authenticatedUser, 'Username', ''),
+                    'name' => (string) (data_get($authenticatedUser, 'Nama')
+                        ?? data_get($authenticatedUser, 'name')
+                        ?? data_get($authenticatedUser, 'Username', '')),
+                    'email' => data_get($authenticatedUser, 'Email')
+                        ?? data_get($authenticatedUser, 'email'),
+                    'source' => $authenticatedUser instanceof PpsUser ? 'pps' : 'wps',
+                ]
+                : null,
         ], $status);
     }
 
     /**
      * @param array<string, string> $credentials
-     * @return array{token: string, user: User}|false
+     * @return array{token: string, user: Authenticatable}|false
      */
     private function attemptWithConfiguredClaims(array $credentials): array|false
     {
@@ -176,24 +195,33 @@ class AuthController extends Controller
             return false;
         }
 
-        $user = User::query()->where('Username', $username)->first();
+        foreach ($this->candidateProviders() as [$modelClass, $providerName]) {
+            /** @var class-string<Authenticatable> $modelClass */
+            $user = $modelClass::query()->where('Username', $username)->first();
 
-        if (!$user instanceof User) {
-            return false;
+            if (!$user instanceof Authenticatable) {
+                continue;
+            }
+
+            $provider = Auth::createUserProvider($providerName);
+            if (!$provider instanceof UserProvider) {
+                continue;
+            }
+
+            if (!$provider->validateCredentials($user, ['password' => $plainPassword])) {
+                continue;
+            }
+
+            if (method_exists($provider, 'rehashPasswordIfRequired')) {
+                $provider->rehashPasswordIfRequired($user, ['password' => $plainPassword]);
+            }
+
+            $token = $user->createToken('api-token', $this->buildIssuedAbilities())->plainTextToken;
+
+            return ['token' => $token, 'user' => $user];
         }
 
-        /** @var \Illuminate\Auth\EloquentUserProvider $provider */
-        $provider = Auth::guard('web')->getProvider();
-
-        if (!$provider->validateCredentials($user, ['password' => $plainPassword])) {
-            return false;
-        }
-
-        $provider->rehashPasswordIfRequired($user, ['password' => $plainPassword]);
-
-        $token = $user->createToken('api-token', $this->buildIssuedAbilities())->plainTextToken;
-
-        return ['token' => $token, 'user' => $user];
+        return false;
     }
 
     /**
@@ -212,5 +240,16 @@ class AuthController extends Controller
         }
 
         return array_values(array_filter(preg_split('/\s+/', $scopeValue) ?: []));
+    }
+
+    /**
+     * @return array<int, array{0: class-string<Authenticatable>, 1: string}>
+     */
+    private function candidateProviders(): array
+    {
+        return [
+            [User::class, 'wps_users'],
+            [PpsUser::class, 'pps_users'],
+        ];
     }
 }

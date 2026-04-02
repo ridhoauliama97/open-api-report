@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Auth\DualLegacyPasswordUserProvider;
 use App\Auth\LegacyPasswordUserProvider;
 use App\Console\Commands\ExportDatabaseStructureCommand;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
 
         Auth::provider('legacy-eloquent', static function ($app, array $config) {
             return new LegacyPasswordUserProvider($app['hash'], $config['model']);
+        });
+
+        Auth::provider('dual-legacy-eloquent', static function ($app, array $config) {
+            return new DualLegacyPasswordUserProvider($app['hash'], $config['model']);
         });
 
         if ($this->app->runningInConsole()) {

@@ -65,8 +65,16 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'legacy-eloquent',
+            'driver' => 'dual-legacy-eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+        'wps_users' => [
+            'driver' => 'legacy-eloquent',
+            'model' => App\Models\User::class,
+        ],
+        'pps_users' => [
+            'driver' => 'legacy-eloquent',
+            'model' => App\Models\PpsUser::class,
         ],
 
         // 'users' => [

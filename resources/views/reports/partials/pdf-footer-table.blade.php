@@ -1,5 +1,7 @@
 @php
-    $footerGeneratedByName = $generatedByName ?? ($generatedBy?->name ?? 'sistem');
+    $footerGeneratedByName = $generatedByName
+        ?? ($generatedBy?->name
+            ?? ($generatedBy?->Username ?? 'sistem'));
     $footerGeneratedAtText = $generatedAtText
         ?? (isset($generatedAt) && method_exists($generatedAt, 'copy')
             ? $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i')
