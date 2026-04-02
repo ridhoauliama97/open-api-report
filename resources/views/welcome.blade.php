@@ -834,6 +834,18 @@
                                 Bahan Terpakai
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.verifikasi.rangkuman-bongkar-susun.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rangkuman Bongkar Susun
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.verifikasi.bahan-yang-dihasilkan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rangkuman Bahan Yang Di Hasilkan
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

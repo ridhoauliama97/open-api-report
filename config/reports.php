@@ -256,6 +256,20 @@ return [
         'query' => env('LABEL_PERHARI_REPORT_QUERY'),
         'parameter_count' => (int) env('LABEL_PERHARI_REPORT_PARAMETER_COUNT', 2),
     ],
+    'rangkuman_bongkar_susun' => [
+        'database_connection' => env('RANGKUMAN_BONGKAR_SUSUN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('RANGKUMAN_BONGKAR_SUSUN_REPORT_PROCEDURE', 'SPWps_LapRangkumanBongkarSusun'),
+        'call_syntax' => env('RANGKUMAN_BONGKAR_SUSUN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('RANGKUMAN_BONGKAR_SUSUN_REPORT_QUERY'),
+        'parameter_count' => (int) env('RANGKUMAN_BONGKAR_SUSUN_REPORT_PARAMETER_COUNT', 1),
+    ],
+    'bahan_yang_dihasilkan' => [
+        'database_connection' => env('BAHAN_YANG_DIHASILKAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('BAHAN_YANG_DIHASILKAN_REPORT_PROCEDURE', 'SPWps_LapBahanYangDihasilkan'),
+        'call_syntax' => env('BAHAN_YANG_DIHASILKAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('BAHAN_YANG_DIHASILKAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('BAHAN_YANG_DIHASILKAN_REPORT_PARAMETER_COUNT', 1),
+    ],
 
 
     // Kayu Bulat

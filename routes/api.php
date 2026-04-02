@@ -95,6 +95,8 @@ use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
 use App\Http\Controllers\LabelPerhariController;
+use App\Http\Controllers\RangkumanBongkarSusunController;
+use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
 use App\Http\Controllers\ProduksiHuluHilirController;
 use App\Http\Controllers\StockSTKeringController;
@@ -305,6 +307,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/management/hasil-produksi-mesin-lembur-dan-non-lembur', 'api.reports.management.hasil-produksi-mesin-lembur-dan-non-lembur', HasilProduksiMesinLemburDanNonLemburController::class],
         ['/reports/management/label-perhari', 'api.reports.management.label-perhari', LabelPerhariController::class],
         ['/reports/management/rekap-stock-on-hand', 'api.reports.management.rekap-stock-on-hand', RekapStockOnHandController::class],
+        ['/reports/verifikasi/rangkuman-bongkar-susun', 'api.reports.verifikasi.rangkuman-bongkar-susun', RangkumanBongkarSusunController::class],
+        ['/reports/verifikasi/bahan-yang-dihasilkan', 'api.reports.verifikasi.bahan-yang-dihasilkan', BahanYangDihasilkanController::class],
         ['/reports/finger-joint/umur-finger-joint-detail', 'api.reports.finger-joint.umur-finger-joint-detail', UmurFingerJointDetailController::class],
         ['/reports/finger-joint/rekap-produksi-finger-joint-consolidated', 'api.reports.finger-joint.rekap-produksi-finger-joint-consolidated', RekapProduksiFingerJointConsolidatedController::class],
         ['/reports/finger-joint/ketahanan-barang-finger-joint', 'api.reports.finger-joint.ketahanan-barang-finger-joint', KetahananBarangDagangFingerJointController::class],

@@ -81,6 +81,8 @@ use App\Http\Controllers\FlowProduksiPerPeriodeController;
 use App\Http\Controllers\DashboardRuController;
 use App\Http\Controllers\HasilProduksiMesinLemburDanNonLemburController;
 use App\Http\Controllers\LabelPerhariController;
+use App\Http\Controllers\RangkumanBongkarSusunController;
+use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
 use App\Http\Controllers\ProduksiHuluHilirController;
 use App\Http\Controllers\TargetMasukBBController;
@@ -802,6 +804,23 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [RekapStockOnHandController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [RekapStockOnHandController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapStockOnHandController::class, 'health'])->name('health');
+    });
+});
+
+Route::prefix('reports/verifikasi')->name('reports.verifikasi.')->group(function (): void {
+    Route::prefix('rangkuman-bongkar-susun')->name('rangkuman-bongkar-susun.')->group(function (): void {
+        Route::get('/', [RangkumanBongkarSusunController::class, 'index'])->name('index');
+        Route::post('/download', [RangkumanBongkarSusunController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RangkumanBongkarSusunController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [RangkumanBongkarSusunController::class, 'preview'])->name('preview');
+        Route::post('/health', [RangkumanBongkarSusunController::class, 'health'])->name('health');
+    });
+    Route::prefix('bahan-yang-dihasilkan')->name('bahan-yang-dihasilkan.')->group(function (): void {
+        Route::get('/', [BahanYangDihasilkanController::class, 'index'])->name('index');
+        Route::post('/download', [BahanYangDihasilkanController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [BahanYangDihasilkanController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [BahanYangDihasilkanController::class, 'preview'])->name('preview');
+        Route::post('/health', [BahanYangDihasilkanController::class, 'health'])->name('health');
     });
 });
 
