@@ -166,6 +166,7 @@ use App\Http\Controllers\PPS\RekapProduksiPackingBjController;
 use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
+use App\Http\Controllers\PPS\HasilProduksiHarianWashingProduksiController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
@@ -236,6 +237,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [RekapProduksiWashingController::class, 'download'])->name('download');
         Route::post('/preview', [RekapProduksiWashingController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapProduksiWashingController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('washing/washing-produksi')->name('washing.washing-produksi.')->group(function (): void {
+        Route::get('/', [HasilProduksiHarianWashingProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiHarianWashingProduksiController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilProduksiHarianWashingProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiHarianWashingProduksiController::class, 'health'])->name('health');
     });
 
     Route::prefix('rekap-produksi/mixer')->name('rekap-produksi.mixer.')->group(function (): void {

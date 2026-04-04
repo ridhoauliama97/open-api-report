@@ -1641,6 +1641,18 @@ return [
             'DimType,ItemCode,Jenis,Pcs,Berat,IdWarehouse'
         )))),
     ],
+    'pps_washing_produksi_harian' => [
+        'database_connection' => env('PPS_WASHING_PRODUKSI_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_WASHING_PRODUKSI_HARIAN_REPORT_PROCEDURE', 'SP_LapHasilProduksiHarianWashing'),
+        'call_syntax' => env('PPS_WASHING_PRODUKSI_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_WASHING_PRODUKSI_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_WASHING_PRODUKSI_HARIAN_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_WASHING_PRODUKSI_HARIAN_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_WASHING_PRODUKSI_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'Tipe,NoProduksi,NoLabel,Jenis,NamaMesin,TglProduksi,Shift,CreateBy,CheckBy1,CheckBy2,ApproveBy,Brt,Stat,JmlhAnggota,Hadir'
+        )))),
+    ],
     'pps_rekap_produksi_mixer' => [
         'database_connection' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_PROCEDURE', 'SP_LapRekapProduksiMixer'),

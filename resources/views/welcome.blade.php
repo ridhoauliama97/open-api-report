@@ -203,10 +203,10 @@
                     <h2 class="h5 mb-3">Washing</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.washing.washing-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Harian Hasil Washing Produksi
+                            </a>
                         </div>
                     </div>
                 </div>
