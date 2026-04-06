@@ -31,7 +31,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2 0 10px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #444;
         }
@@ -130,11 +130,11 @@
             background: #fff;
         }
 
-        .report-table .center {
+        .center {
             text-align: center;
         }
 
-        .report-table .number {
+        .number {
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
@@ -224,11 +224,21 @@
             '.',
             ',',
         );
+        $textOrBlank = static fn($value): string => trim((string) $value) !== '' ? e(trim((string) $value)) : '&nbsp;';
+        $outputNameOrFallback = static function (array $row): string {
+            $value = trim((string) ($row['output_nama_barang'] ?? ''));
+            if ($value !== '') {
+                return e($value);
+            }
+            $hasOutputContext =
+                trim((string) ($row['output_nomor_label'] ?? '')) !== '' ||
+                ($row['output_qty'] ?? null) !== null ||
+                trim((string) ($row['output_hasil_cek_qc'] ?? '')) !== '';
+            return $hasOutputContext ? '-' : '&nbsp;';
+        };
     @endphp
-
-    <h1 class="report-title">Laporan Harian Hasil Washing Produksi</h1>
+    <h1 class="report-title">Laporan Harian Hasil Gilingan Produksi</h1>
     <p class="report-subtitle"></p>
-
     <table class="summary-table">
         <tr>
             <td class="summary-label">No Produksi</td>
@@ -252,66 +262,51 @@
             <td>{{ $meta['shift'] ?? '' }}</td>
         </tr>
     </table>
-
     <table class="report-table">
         <colgroup>
-            <col style="width: 20%;">
+            <col style="width: 22%;">
+            <col style="width: 8%;">
+            <col style="width: 24%;">
+            <col style="width: 14%;">
+            <col style="width: 8%;">
+            <col style="width: 8%;">
             <col style="width: 6%;">
-            <col style="width: 19%;">
-            <col style="width: 9%;">
-            <col style="width: 7%;">
-            <col style="width: 6%;">
-            <col style="width: 6%;">
-            <col style="width: 6%;">
-            <col style="width: 5%;">
-            <col style="width: 13%;">
+            <col style="width: 10%;">
         </colgroup>
         <thead>
             <tr>
-                <th colspan="2">Pemakaian Bahan Baku</th>
-                <th colspan="5">Hasil Washing</th>
-                <th colspan="3">Downtime</th>
+                <th colspan="2">Pemakaian Bahan</th>
+                <th colspan="4">Hasil Gilingan</th>
+                <th colspan="2">Downtime</th>
             </tr>
             <tr>
-                <th rowspan="2">Nama Bahan</th>
-                <th rowspan="2">Qty<br>(Kg)</th>
-                <th rowspan="2">Nama Barang</th>
-                <th colspan="3">Bagus</th>
-                <th rowspan="2">Reject<br>(Kg)</th>
-                <th rowspan="2">Jam<br>Berhenti</th>
-                <th rowspan="2">Durasi</th>
-                <th rowspan="2">Keterangan</th>
-            </tr>
-            <tr>
+                <th>Nama Bahan</th>
+                <th>Qty<br>(Kg)</th>
+                <th>Nama Barang</th>
                 <th>Nomor<br>Label</th>
                 <th>Qty (Kg)</th>
                 <th>Hasil<br>Cek QC</th>
+                <th>Jam<br>Berhenti</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($detailRows as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell">{{ $row['input_nama_bahan'] !== '' ? $row['input_nama_bahan'] : '' }}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['input_nama_bahan'] ?? '') !!}</td>
                     <td class="data-cell number">
                         {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}</td>
-                    <td class="data-cell">{{ $row['output_nama_barang'] !== '' ? $row['output_nama_barang'] : '' }}</td>
-                    <td class="data-cell">{{ $row['output_nomor_label'] !== '' ? $row['output_nomor_label'] : '' }}</td>
+                    <td class="data-cell">{!! $outputNameOrFallback($row) !!}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['output_nomor_label'] ?? '') !!}</td>
                     <td class="data-cell number">
                         {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}</td>
-                    <td class="data-cell center">
-                        {{ $row['output_hasil_cek_qc'] !== '' ? $row['output_hasil_cek_qc'] : '' }}</td>
-                    <td class="data-cell number">
-                        {{ $row['reject_qty'] !== null ? $formatNumber($row['reject_qty']) : '' }}</td>
-                    <td class="data-cell center">{{ $row['downtime_jam_berhenti'] }}</td>
-                    <td class="data-cell center">{{ $row['downtime_durasi'] }}</td>
-                    <td class="data-cell">{{ $row['downtime_keterangan'] }}</td>
+                    <td class="data-cell center">{!! $textOrBlank($row['output_hasil_cek_qc'] ?? '') !!}</td>
+                    <td class="data-cell center">{!! $textOrBlank($row['downtime_jam_berhenti'] ?? '') !!}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['downtime_keterangan'] ?? '') !!}</td>
                 </tr>
             @endforeach
-
             @for ($i = 0; $i < $blankRowCount; $i++)
                 <tr class="filler-row {{ $i % 2 === 0 ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
                     <td class="data-cell">&nbsp;</td>
                     <td class="data-cell">&nbsp;</td>
                     <td class="data-cell">&nbsp;</td>
@@ -331,14 +326,11 @@
                 <td>&nbsp;</td>
                 <td class="number">{{ $formatNumber($totals['output_qty'] ?? 0) }}</td>
                 <td>&nbsp;</td>
-                <td class="number">{{ $formatNumber($totals['reject_qty'] ?? 0) }}</td>
-                <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             </tr>
         </tfoot>
     </table>
-
     <div class="signature-fixed">
         <table class="signature-table">
             <colgroup>
@@ -358,8 +350,8 @@
                 </tr>
                 <tr>
                     <th class="signature-role">Operator</th>
-                    <th class="signature-role">Ka. Regu Cuci</th>
-                    <th class="signature-role">Ka. Div, Cuci &amp; Broker</th>
+                    <th class="signature-role">Ka. Regu Gilingan</th>
+                    <th class="signature-role">Ka. Div, Gilingan</th>
                     <th class="signature-role">Ka. Dept, Produksi</th>
                 </tr>
             </thead>
@@ -371,8 +363,7 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">
-                                    {{ $approvals['operator'] !== '' ? $approvals['operator'] : '&nbsp;' }}</td>
+                                <td class="signature-inner-name">{!! ($approvals['operator'] ?? '') !== '' ? e($approvals['operator']) : '&nbsp;' !!}</td>
                             </tr>
                         </table>
                     </td>
@@ -382,7 +373,7 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_regu_cuci'] ?? '') !== '' ? e($approvals['ka_regu_cuci']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">{!! ($approvals['ka_regu_gilingan'] ?? '') !== '' ? e($approvals['ka_regu_gilingan']) : '&nbsp;' !!}</td>
                             </tr>
                         </table>
                     </td>
@@ -392,7 +383,7 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_div_cuci_broker'] ?? '') !== '' ? e($approvals['ka_div_cuci_broker']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">{!! ($approvals['ka_div_gilingan'] ?? '') !== '' ? e($approvals['ka_div_gilingan']) : '&nbsp;' !!}</td>
                             </tr>
                         </table>
                     </td>
@@ -420,7 +411,6 @@
             </tbody>
         </table>
     </div>
-
     @include('reports.partials.pdf-footer-table', [
         'generatedByName' => $generatedByName,
         'generatedAt' => $generatedAt,

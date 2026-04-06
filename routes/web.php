@@ -167,6 +167,9 @@ use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
 use App\Http\Controllers\PPS\HasilProduksiHarianWashingProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianBrokerProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianCrusherProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianGilinganProduksiController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
@@ -244,6 +247,27 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [HasilProduksiHarianWashingProduksiController::class, 'download'])->name('download');
         Route::post('/preview', [HasilProduksiHarianWashingProduksiController::class, 'preview'])->name('preview');
         Route::post('/health', [HasilProduksiHarianWashingProduksiController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('broker/broker-produksi')->name('broker.broker-produksi.')->group(function (): void {
+        Route::get('/', [HasilProduksiHarianBrokerProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiHarianBrokerProduksiController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilProduksiHarianBrokerProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiHarianBrokerProduksiController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('crusher/crusher-produksi')->name('crusher.crusher-produksi.')->group(function (): void {
+        Route::get('/', [HasilProduksiHarianCrusherProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiHarianCrusherProduksiController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilProduksiHarianCrusherProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiHarianCrusherProduksiController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('gilingan/gilingan-produksi')->name('gilingan.gilingan-produksi.')->group(function (): void {
+        Route::get('/', [HasilProduksiHarianGilinganProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiHarianGilinganProduksiController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilProduksiHarianGilinganProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiHarianGilinganProduksiController::class, 'health'])->name('health');
     });
 
     Route::prefix('rekap-produksi/mixer')->name('rekap-produksi.mixer.')->group(function (): void {

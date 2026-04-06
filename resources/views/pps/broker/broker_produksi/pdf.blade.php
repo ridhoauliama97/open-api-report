@@ -31,7 +31,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2 0 10px 0;
+            margin: 2px 0 10px 0;
             font-size: 12px;
             color: #444;
         }
@@ -130,11 +130,11 @@
             background: #fff;
         }
 
-        .report-table .center {
+        .center {
             text-align: center;
         }
 
-        .report-table .number {
+        .number {
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
@@ -224,9 +224,10 @@
             '.',
             ',',
         );
+        $formatPercent = static fn($value): string => number_format((float) $value, 1, '.', ',') . '%';
     @endphp
 
-    <h1 class="report-title">Laporan Harian Hasil Washing Produksi</h1>
+    <h1 class="report-title">Laporan Harian Hasil Broker Produksi</h1>
     <p class="report-subtitle"></p>
 
     <table class="summary-table">
@@ -255,31 +256,33 @@
 
     <table class="report-table">
         <colgroup>
-            <col style="width: 20%;">
+            <col style="width: 18%;">
+            <col style="width: 5%;">
+            <col style="width: 4%;">
+            <col style="width: 18%;">
+            <col style="width: 11%;">
             <col style="width: 6%;">
-            <col style="width: 19%;">
-            <col style="width: 9%;">
-            <col style="width: 7%;">
             <col style="width: 6%;">
             <col style="width: 6%;">
             <col style="width: 6%;">
             <col style="width: 5%;">
-            <col style="width: 13%;">
+            <col style="width: 15%;">
         </colgroup>
         <thead>
             <tr>
-                <th colspan="2">Pemakaian Bahan Baku</th>
-                <th colspan="5">Hasil Washing</th>
+                <th colspan="3">Pemakaian Bahan</th>
+                <th colspan="5">Hasil Broker</th>
                 <th colspan="3">Downtime</th>
             </tr>
             <tr>
                 <th rowspan="2">Nama Bahan</th>
                 <th rowspan="2">Qty<br>(Kg)</th>
+                <th rowspan="2">%</th>
                 <th rowspan="2">Nama Barang</th>
                 <th colspan="3">Bagus</th>
-                <th rowspan="2">Reject<br>(Kg)</th>
+                <th rowspan="2">Reject</th>
                 <th rowspan="2">Jam<br>Berhenti</th>
-                <th rowspan="2">Durasi</th>
+                <th rowspan="2">Durasi<br>(Menit)</th>
                 <th rowspan="2">Keterangan</th>
             </tr>
             <tr>
@@ -294,6 +297,8 @@
                     <td class="data-cell">{{ $row['input_nama_bahan'] !== '' ? $row['input_nama_bahan'] : '' }}</td>
                     <td class="data-cell number">
                         {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}</td>
+                    <td class="data-cell number">
+                        {{ $row['input_percent'] !== null ? $formatPercent($row['input_percent']) : '' }}</td>
                     <td class="data-cell">{{ $row['output_nama_barang'] !== '' ? $row['output_nama_barang'] : '' }}</td>
                     <td class="data-cell">{{ $row['output_nomor_label'] !== '' ? $row['output_nomor_label'] : '' }}</td>
                     <td class="data-cell number">
@@ -307,9 +312,9 @@
                     <td class="data-cell">{{ $row['downtime_keterangan'] }}</td>
                 </tr>
             @endforeach
-
             @for ($i = 0; $i < $blankRowCount; $i++)
                 <tr class="filler-row {{ $i % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                    <td class="data-cell">&nbsp;</td>
                     <td class="data-cell">&nbsp;</td>
                     <td class="data-cell">&nbsp;</td>
                     <td class="data-cell">&nbsp;</td>
@@ -327,6 +332,7 @@
             <tr class="total-row">
                 <td class="number">&nbsp;</td>
                 <td class="number">{{ $formatNumber($totals['input_qty'] ?? 0) }}</td>
+                <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td class="number">{{ $formatNumber($totals['output_qty'] ?? 0) }}</td>
@@ -358,8 +364,8 @@
                 </tr>
                 <tr>
                     <th class="signature-role">Operator</th>
-                    <th class="signature-role">Ka. Regu Cuci</th>
-                    <th class="signature-role">Ka. Div, Cuci &amp; Broker</th>
+                    <th class="signature-role">Ka. Regu Broker</th>
+                    <th class="signature-role">Ka. Div, Broker</th>
                     <th class="signature-role">Ka. Dept, Produksi</th>
                 </tr>
             </thead>
@@ -382,7 +388,7 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_regu_cuci'] ?? '') !== '' ? e($approvals['ka_regu_cuci']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">{!! ($approvals['ka_regu_broker'] ?? '') !== '' ? e($approvals['ka_regu_broker']) : '&nbsp;' !!}</td>
                             </tr>
                         </table>
                     </td>
@@ -392,7 +398,7 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_div_cuci_broker'] ?? '') !== '' ? e($approvals['ka_div_cuci_broker']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">{!! ($approvals['ka_div_broker'] ?? '') !== '' ? e($approvals['ka_div_broker']) : '&nbsp;' !!}</td>
                             </tr>
                         </table>
                     </td>

@@ -144,6 +144,10 @@ use App\Http\Controllers\PPS\RekapProduksiPasangKunciFwipController;
 use App\Http\Controllers\PPS\RekapProduksiSpannerFwipController;
 use App\Http\Controllers\PPS\RekapProduksiWashingController;
 use App\Http\Controllers\PPS\HasilProduksiHarianWashingProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianBrokerProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianCrusherProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianGilinganProduksiController;
+
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
@@ -364,6 +368,10 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/rekap-produksi/broker', 'api.reports.pps.rekap-produksi.broker', RekapProduksiBrokerController::class],
         ['/reports/pps/rekap-produksi/washing', 'api.reports.pps.rekap-produksi.washing', RekapProduksiWashingController::class],
         ['/reports/pps/washing/washing-produksi', 'api.reports.pps.washing.washing-produksi', HasilProduksiHarianWashingProduksiController::class],
+        ['/reports/pps/broker/broker-produksi', 'api.reports.pps.broker.broker-produksi', HasilProduksiHarianBrokerProduksiController::class],
+        ['/reports/pps/crusher/crusher-produksi', 'api.reports.pps.crusher.crusher-produksi', HasilProduksiHarianCrusherProduksiController::class],
+        ['/reports/pps/gilingan/gilingan-produksi', 'api.reports.pps.gilingan.gilingan-produksi', HasilProduksiHarianGilinganProduksiController::class],
+        ['/reports/pps/inject/hot-stamping/hot-stamping-produksi', 'api.reports.pps.inject.hot-stamping.hot-stamping-produksi', HasilProduksiHarianHotStampingProduksiController::class],
         ['/reports/pps/rekap-produksi/mixer', 'api.reports.pps.rekap-produksi.mixer', RekapProduksiMixerController::class],
         ['/reports/pps/rekap-produksi/gilingan', 'api.reports.pps.rekap-produksi.gilingan', RekapProduksiGilinganController::class],
         ['/reports/pps/rekap-produksi/crusher', 'api.reports.pps.rekap-produksi.crusher', RekapProduksiCrusherController::class],

@@ -157,15 +157,15 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
-    'mutasi_kayu_bulat_v2' => [
-        'database_connection' => env('MUTASI_KAYU_BULAT_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
-        'stored_procedure' => env('MUTASI_KAYU_BULAT_V2_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulatV2'),
-        'sub_stored_procedure' => env('MUTASI_KAYU_BULAT_V2_SUB_REPORT_PROCEDURE', ''),
-        'call_syntax' => env('MUTASI_KAYU_BULAT_V2_REPORT_CALL_SYNTAX', 'exec'),
-        'query' => env('MUTASI_KAYU_BULAT_V2_REPORT_QUERY'),
-        'sub_query' => env('MUTASI_KAYU_BULAT_V2_SUB_REPORT_QUERY'),
-        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_V2_REPORT_EXPECTED_COLUMNS', '')))),
-        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_V2_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    'mutasi_kayu_bulat_v2b' => [
+        'database_connection' => env('MUTASI_KAYU_BULAT_V2B_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('MUTASI_KAYU_BULAT_V2B_REPORT_PROCEDURE', 'SP_Mutasi_KayuBulatV2B'),
+        'sub_stored_procedure' => env('MUTASI_KAYU_BULAT_V2B_SUB_REPORT_PROCEDURE', ''),
+        'call_syntax' => env('MUTASI_KAYU_BULAT_V2B_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MUTASI_KAYU_BULAT_V2B_REPORT_QUERY'),
+        'sub_query' => env('MUTASI_KAYU_BULAT_V2B_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_V2B_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('MUTASI_KAYU_BULAT_V2B_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
     'mutasi_kayu_bulat_kgv2' => [
         'database_connection' => env('MUTASI_KAYU_BULAT_KGV2_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -1651,6 +1651,42 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_WASHING_PRODUKSI_HARIAN_REPORT_EXPECTED_COLUMNS',
             'Tipe,NoProduksi,NoLabel,Jenis,NamaMesin,TglProduksi,Shift,CreateBy,CheckBy1,CheckBy2,ApproveBy,Brt,Stat,JmlhAnggota,Hadir'
+        )))),
+    ],
+    'pps_broker_produksi_harian' => [
+        'database_connection' => env('PPS_BROKER_PRODUKSI_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_BROKER_PRODUKSI_HARIAN_REPORT_PROCEDURE', 'SP_LapHasilProduksiHarianBroker'),
+        'call_syntax' => env('PPS_BROKER_PRODUKSI_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_BROKER_PRODUKSI_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_BROKER_PRODUKSI_HARIAN_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_BROKER_PRODUKSI_HARIAN_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_BROKER_PRODUKSI_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'Tipe,NoProduksi,NoLabel,Jenis,NamaMesin,TglProduksi,Shift,CreateBy,CheckBy1,CheckBy2,ApproveBy,Brt,Stat,JmlhAnggota,Hadir'
+        )))),
+    ],
+    'pps_crusher_produksi_harian' => [
+        'database_connection' => env('PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_PROCEDURE', 'SP_LapHasilProduksiHarianCrusher'),
+        'call_syntax' => env('PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_SINGLE_PARAMETER_NAME', 'NoCrusherProduksi'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_CRUSHER_PRODUKSI_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'Tipe,Group,NoCrusherProduksi,NoLabel,Tanggal,NamaMesin,Shift,Jenis,Berat,CreateBy,CheckBy1,CheckBy2,ApproveBy,JmlhAnggota,Hadir,Stat'
+        )))),
+    ],
+    'pps_gilingan_produksi_harian' => [
+        'database_connection' => env('PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_PROCEDURE', 'SP_LapHasilProduksiHarianGilingan'),
+        'call_syntax' => env('PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_GILINGAN_PRODUKSI_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'Tipe,Group,NoProduksi,NoLabel,Tanggal,NamaMesin,Shift,Jenis,Berat,CreateBy,CheckBy1,CheckBy2,ApproveBy,JmlhAnggota,Hadir,Stat'
         )))),
     ],
     'pps_rekap_produksi_mixer' => [

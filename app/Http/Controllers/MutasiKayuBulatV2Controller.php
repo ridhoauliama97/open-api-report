@@ -109,8 +109,8 @@ class MutasiKayuBulatV2Controller extends Controller
 
         return response()->json([
             'message' => $result['is_healthy']
-                ? 'Struktur output SP_Mutasi_KayuBulatV2 valid.'
-                : 'Struktur output SP_Mutasi_KayuBulatV2 berubah.',
+                ? 'Struktur output SP_Mutasi_KayuBulatV2B valid.'
+                : 'Struktur output SP_Mutasi_KayuBulatV2B berubah.',
             'meta' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,

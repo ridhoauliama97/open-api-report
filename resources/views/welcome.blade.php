@@ -133,6 +133,12 @@
                                 Laporan Mutasi Broker
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.broker.broker-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Broker Produksi
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -163,6 +169,12 @@
                                 Laporan Mutasi Crusher
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.crusher.crusher-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Crusher Produksi
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -176,6 +188,12 @@
                             <a href="{{ route('reports.pps.gilingan.mutasi-gilingan.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Mutasi Gilingan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.gilingan.gilingan-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Gilingan Produksi
                             </a>
                         </div>
                     </div>
