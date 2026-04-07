@@ -152,8 +152,8 @@ class StHidupKeringReportService
             'exec' => "SET NOCOUNT ON; EXEC {$procedure} ?, ?",
             'call' => "CALL {$procedure}(?, ?)",
             default => $driver === 'sqlsrv'
-                ? "SET NOCOUNT ON; EXEC {$procedure} ?, ?"
-                : "CALL {$procedure}(?, ?)",
+            ? "SET NOCOUNT ON; EXEC {$procedure} ?, ?"
+            : "CALL {$procedure}(?, ?)",
         };
 
         return $connection->select($sql, [$hari, $mode]);

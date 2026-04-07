@@ -46,6 +46,10 @@
             table-layout: fixed;
         }
 
+        table.data-table.empty-state tbody td {
+            background: #c9d1df !important;
+        }
+
         thead {
             display: table-header-group;
         }
@@ -94,6 +98,18 @@
             background: #eef2f8;
         }
 
+        .empty-state-row td {
+            background: #c9d1df !important;
+        }
+
+        table.data-table tbody td[colspan] {
+            background: #c9d1df !important;
+        }
+
+        table.data-table tbody tr:not(.data-row):not(.totals-row) td {
+            background: #c9d1df !important;
+        }
+
         .supplier {
             text-align: left;
             white-space: nowrap;
@@ -125,7 +141,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -213,7 +230,7 @@
     <h1 class="report-title">Laporan Pembelian ST Time Line (Ton)</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-    <table class="data-table">
+    <table class="data-table{{ $rows === [] ? ' empty-state' : '' }}">
         <colgroup>
             <col style="width: {{ $noWidth }}%;">
             <col style="width: {{ $supplierWidth }}%;">
@@ -265,7 +282,7 @@
                 </tr>
             </tfoot>
         @endif
-        <tbody>
+        <tbody @if ($rows === []) style="background: #c9d1df;" @endif>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
                 @php
@@ -302,8 +319,9 @@
                     </td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="{{ $monthKeys !== [] ? 3 + count($monthKeys) : 3 }}" style="text-align: center;">Tidak ada data.</td>
+                <tr class="empty-state-row">
+                    <td colspan="{{ $monthKeys !== [] ? 3 + count($monthKeys) : 3 }}" style="text-align: center; font-weight: bold;">
+                        Tidak ada data.</td>
                 </tr>
             @endforelse
 

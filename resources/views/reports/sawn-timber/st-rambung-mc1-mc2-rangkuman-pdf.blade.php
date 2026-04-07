@@ -162,32 +162,17 @@
 
     <h1 class="report-title">Laporan ST Rambung MC1 dan MC2 (Rangkuman)</h1>
 
-    {{-- <div class="section-title">Rangkuman</div> --}}
-
-    <div class="sub-title">Total Masing-masing Tabel</div>
+    <div class="sub-title">Total Masing-masing Jenis Stock</div>
     <table class="data-table">
-        <colgroup>
-            <col style="width: 6%;"> {{-- No --}}
-            <col style="width: 34%;"> {{-- Jenis --}}
-            <col style="width: 26%;"> {{-- Tabel --}}
-            <col style="width: 10%;"> {{-- Pcs --}}
-            <col style="width: 12%;"> {{-- Ton --}}
-            <col style="width: 12%;"> {{-- Kubik --}}
-        </colgroup>
         <thead>
             <tr>
-                <th>No</th>
-                <th>Tabel</th>
-                <th>Jumlah Batang (Pcs)</th>
-                <th>Ton</th>
-                <th>Kubik (m<sup>3</sup>)</th>
+                <th style="width: 4%;">No</th>
+                <th style="width: 55%">Jenis Stock</th>
+                <th style="width: 17%">Jumlah Batang (Pcs)</th>
+                <th style="width: 12%">Ton</th>
+                <th style="width: 12%">Kubik (m<sup>3</sup>)</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($tableSummaryRows as $sr)
                 @php $rowIndex = ($loop->index ?? 0) + 1; @endphp
@@ -206,29 +191,17 @@
         </tbody>
     </table>
 
-    <div class="sub-title">Total Masing-masing Jenis Kayu</div>
+    <div class="sub-title">Grand Total Seluruh Group Stock</div>
     <table class="data-table">
-        <colgroup>
-            <col style="width: 6%;"> {{-- No --}}
-            <col style="width: 58%;"> {{-- Group --}}
-            <col style="width: 10%;"> {{-- Pcs --}}
-            <col style="width: 13%;"> {{-- Ton --}}
-            <col style="width: 13%;"> {{-- Kubik --}}
-        </colgroup>
         <thead>
             <tr>
-                <th>No</th>
-                <th>Jenis Kayu (Group)</th>
-                <th>Jumlah Batang (Pcs)</th>
-                <th>Ton</th>
-                <th>Kubik (m<sup>3</sup>)</th>
+                <th style="width: 4%;">No</th>
+                <th style="width: 55%">Group Stock</th>
+                <th style="width: 17%">Jumlah Batang (Pcs)</th>
+                <th style="width: 12%">Ton</th>
+                <th style="width: 12%">Kubik (m<sup>3</sup>)</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="5"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($groupSummaryRows as $sr)
                 @php $rowIndex = ($loop->index ?? 0) + 1; @endphp

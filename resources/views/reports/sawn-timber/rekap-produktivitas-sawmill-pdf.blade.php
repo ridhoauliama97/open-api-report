@@ -121,7 +121,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -170,22 +171,16 @@
     <table>
         <thead>
             <tr>
-                <th style="width: 70px;">Tanggal</th>
-                <th style="width: 72px;">Jumlah Meja</th>
-                <th>Jabon</th>
-                <th>Rambung Kayu L</th>
+                <th style="width: 10%;">Tanggal</th>
+                <th style="width: 12%;">Jumlah Meja</th>
+                <th style="width: 10%">Jabon</th>
+                <th>Rambung Kayu Lat</th>
                 <th>Rambung MC 1</th>
                 <th>Rambung MC 2</th>
                 <th>Rambung STD</th>
-                <th style="width: 72px;">Total</th>
+                <th style="width: 12%;">Total</th>
             </tr>
         </thead>
-        
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="8"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
 

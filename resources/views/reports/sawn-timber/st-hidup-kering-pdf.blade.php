@@ -44,7 +44,7 @@
             border-collapse: separate;
             border-spacing: 0;
             font-size: 10px;
-            border: 1px solid #000;
+            border: 1;
             table-layout: fixed;
         }
 
@@ -62,8 +62,7 @@
 
         table.data-table th,
         table.data-table td {
-            border: 0;
-            border-left: 1px solid #000;
+            border: 1;
             border-top: 0;
             border-bottom: 0;
             padding: 2px 3px;
@@ -71,9 +70,7 @@
         }
 
         table.data-table th:first-child,
-        table.data-table td:first-child {
-            border-left: 0;
-        }
+        table.data-table td:first-child {}
 
         table.data-table th {
             text-align: center;
@@ -144,23 +141,10 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan ST Hidup Kering</h1>
-    <p class="report-subtitle">
-        {{-- Hari &gt;= {{ (int) ($hari ?? 0) }} | Mode: {{ (string) ($mode ?? 'INCLUDE') }} --}}
-    </p>
+    <h1 class="report-title">Laporan Label ST Hidup (Kering)</h1>
+    <p class="report-subtitle"> </p>
 
     <table class="data-table">
-        <colgroup>
-            <col style="width: 6%;"> {{-- No --}}
-            <col style="width: 16%;"> {{-- No ST --}}
-            <col style="width: 8%;"> {{-- Tebal --}}
-            <col style="width: 8%;"> {{-- Lebar --}}
-            <col style="width: 12%;"> {{-- Jmlh Batang --}}
-            <col style="width: 10%;"> {{-- Lokasi --}}
-            <col style="width: 10%;"> {{-- Usia --}}
-            <col style="width: 22%;"> {{-- Jenis --}}
-            <col style="width: 8%;"> {{-- BB --}}
-        </colgroup>
         <thead>
             <tr>
                 <th>No</th>
@@ -174,13 +158,11 @@
                 <th>BB</th>
             </tr>
         </thead>
-        @if ($rows !== [])
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="9"></td>
-                </tr>
-            </tfoot>
-        @endif
+        <tfoot>
+            <tr class="table-end-line">
+                <td colspan="9"></td>
+            </tr>
+        </tfoot>
         <tbody>
             @forelse ($rows as $r)
                 @php $rowIndex = ($loop->index ?? 0) + 1; @endphp

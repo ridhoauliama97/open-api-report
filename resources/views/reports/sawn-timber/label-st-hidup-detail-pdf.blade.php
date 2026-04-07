@@ -2,11 +2,6 @@
 <html lang="id">
 
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <meta charset="utf-8">
     <style>
         * {
             box-sizing: border-box;
@@ -19,7 +14,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", "DejaVu Sans", sans-serif;
+            font-family: "Noto Serif", sans-serif !important;
             font-size: 10px;
             line-height: 1.15;
             color: #000;
@@ -100,13 +95,6 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        .text {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-
         tfoot {
             display: table-footer-group;
         }
@@ -140,7 +128,7 @@
                 return '';
             }
             try {
-                return \Carbon\Carbon::parse($t)->format('d-M-y');
+                return \Carbon\Carbon::parse((string) $t)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable) {
                 return $t;
             }
@@ -155,7 +143,7 @@
                 $t = is_string($v) ? trim($v) : '';
                 return $t;
             }
-            return number_format($n, 1, ',', '');
+            return number_format($n, 1, '.', ',');
         };
 
         $fmtInt = static function ($v): string {
@@ -191,22 +179,16 @@
                 <th style="width: 10%;">Total (Ton)</th>
             </tr>
         </thead>
-
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $i = 0; @endphp
             @forelse ($rows as $r)
                 @php $i++; @endphp
                 <tr class="{{ $i % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $i }}</td>
-                    <td class="text">{{ $r['NoST'] ?? '' }}</td>
-                    <td class="text">{{ $fmtDate($r['Date'] ?? '') }}</td>
-                    <td class="text">{{ $r['NoSPK'] ?? '' }}</td>
-                    <td class="text">{{ $r['Jenis'] ?? '' }}</td>
+                    <td>{{ $r['NoST'] ?? '' }}</td>
+                    <td>{{ $fmtDate($r['Date'] ?? '') }}</td>
+                    <td>{{ $r['NoSPK'] ?? '' }}</td>
+                    <td>{{ $r['Jenis'] ?? '' }}</td>
                     <td class="number">{{ $fmtDim($r['Tebal'] ?? '') }}</td>
                     <td class="number">{{ $fmtDim($r['Lebar'] ?? '') }}</td>
                     <td class="number">{{ $fmtDim($r['Panjang'] ?? '') }}</td>

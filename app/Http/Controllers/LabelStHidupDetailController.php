@@ -79,12 +79,9 @@ class LabelStHidupDetailController extends Controller
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            // Use core font to keep memory low for very large tables.
-            'pdf_default_font' => 'helvetica',
             'pdf_orientation' => 'portrait',
-            // Large tables: these options significantly reduce memory footprint in mPDF.
+            // Large tables: keep mPDF in its simpler table rendering mode.
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => true,
             'pdf_column_count' => 11,
         ];
 

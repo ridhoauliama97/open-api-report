@@ -47,7 +47,7 @@
 
         table.data-table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
             table-layout: fixed;
@@ -126,7 +126,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -145,7 +146,7 @@
             if (abs($n) < 0.0000001) {
                 return '';
             }
-            return number_format($n, 4, '.', '');
+            return number_format($n, 4, '.', ',');
         };
 
         $fmtDate = static function ($v): string {
@@ -159,6 +160,21 @@
                 return $t;
             }
         };
+
+        $calcDays = static function ($in, $out): string {
+            $inDate = is_string($in) ? trim($in) : '';
+            $outDate = is_string($out) ? trim($out) : '';
+
+            if ($inDate === '' || $outDate === '') {
+                return '';
+            }
+
+            try {
+                return (string) \Carbon\Carbon::parse($outDate)->diffInDays(\Carbon\Carbon::parse($inDate), false);
+            } catch (\Throwable $e) {
+                return '';
+            }
+        };
     @endphp
 
     <h1 class="report-title">Laporan Mutasi KD</h1>
@@ -169,25 +185,30 @@
             $kd = (int) ($group['no_ruang_kd'] ?? 0);
             $rows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
             $totals = is_array($group['totals'] ?? null) ? $group['totals'] : [];
+            $totalDays = 0;
+
+            foreach ($rows as $row) {
+                $days = $calcDays($row['TglKeluar'] ?? '', $row['TglMasuk'] ?? '');
+
+                if ($days !== '') {
+                    $totalDays += (int) $days;
+                }
+            }
         @endphp
 
         <div class="kd-title">No KD : {{ $kd }}</div>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 6%;">No</th>
-                    <th style="width: 25%;">Tanggal (In)</th>
-                    <th style="width: 22%;">Ton (In)</th>
-                    <th style="width: 25%;">Tanggal (Out)</th>
-                    <th style="width: 22%;">Ton (Out)</th>
+                    <th style="width: 4%;">No</th>
+                    <th style="width: 20%;">Tanggal (In)</th>
+                    <th style="width: 20%;">Ton (In)</th>
+                    <th style="width: 20%;">Tanggal (Out)</th>
+                    <th style="width: 20%;">Ton (Out)</th>
+                    <th style="width: 16%;">Jumlah Hari</th>
                 </tr>
             </thead>
-            <tfoot>
-            <tr class="table-end-line">
-                <td colspan="5"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+            <tbody>
                 @php $i = 0; @endphp
                 @forelse ($rows as $r)
                     @php $i++; @endphp
@@ -197,19 +218,21 @@
                         <td class="number">{{ $fmtTon($r['TonIn'] ?? 0) }}</td>
                         <td class="center">{{ $fmtDate($r['TglKeluar'] ?? '') }}</td>
                         <td class="number">{{ $fmtTon($r['TonOut'] ?? 0) }}</td>
+                        <td class="center">{{ $calcDays($r['TglKeluar'] ?? '', $r['TglMasuk'] ?? '') }} Hari</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="center">Tidak ada data.</td>
+                        <td colspan="6" class="center">Tidak ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="2" class="center" style="font-weight: bold;">Jmlh Ton :</td>
+                    <td colspan="2" class="center" style="font-weight: bold;">Total</td>
                     <td class="number">{{ $fmtTon($totals['ton_in'] ?? 0) }}</td>
                     <td></td>
                     <td class="number">{{ $fmtTon($totals['ton_out'] ?? 0) }}</td>
+                    <td class="center">{{ $totalDays }} Hari</td>
                 </tr>
             </tfoot>
         </table>

@@ -77,15 +77,15 @@ class PdfGenerator
         $orientation = $this->resolveOrientation($data);
         $format = $this->resolveFormat($data);
         $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
-        $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
-        $defaultFont = (string) ($data['pdf_default_font'] ?? 'dejavusans');
+        // $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
+        $defaultFont = (string) ($data['pdf_default_font'] ?? 'Noto Serif');
 
         $mpdf = new Mpdf([
             'tempDir' => storage_path('app/mpdf-temp'),
             'format' => $format,
             'orientation' => $orientation,
             'simpleTables' => $simpleTables,
-            'packTableData' => $packTableData,
+            // 'packTableData' => $packTableData,
             'default_font' => $defaultFont,
             'autoScriptToLang' => false,
             'autoLangToFont' => false,
@@ -95,8 +95,16 @@ class PdfGenerator
             $mpdf->shrink_tables_to_fit = (float) $data['pdf_shrink_tables_to_fit'];
         }
 
-        if (!empty($data['pdf_disable_auto_page_break'])) {
-            $mpdf->SetAutoPageBreak(false);
+        if (array_key_exists('pdf_disable_auto_page_break', $data)) {
+            $disableAutoPageBreak = filter_var(
+                $data['pdf_disable_auto_page_break'],
+                FILTER_VALIDATE_BOOL,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            if ($disableAutoPageBreak === true) {
+                $mpdf->SetAutoPageBreak(false);
+            }
         }
 
         // Keep limits high, but still stream HTML in chunks to avoid
@@ -124,7 +132,7 @@ class PdfGenerator
         $orientation = $this->resolveOrientation($data);
         $format = $this->resolveFormat($data);
         $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
-        $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
+        // $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
         $defaultFont = (string) ($data['pdf_default_font'] ?? 'dejavusans');
 
         $mpdf = new Mpdf([
@@ -132,7 +140,7 @@ class PdfGenerator
             'format' => $format,
             'orientation' => $orientation,
             'simpleTables' => $simpleTables,
-            'packTableData' => $packTableData,
+            // 'packTableData' => $packTableData,
             'default_font' => $defaultFont,
             'autoScriptToLang' => false,
             'autoLangToFont' => false,
@@ -142,8 +150,16 @@ class PdfGenerator
             $mpdf->shrink_tables_to_fit = (float) $data['pdf_shrink_tables_to_fit'];
         }
 
-        if (!empty($data['pdf_disable_auto_page_break'])) {
-            $mpdf->SetAutoPageBreak(false);
+        if (array_key_exists('pdf_disable_auto_page_break', $data)) {
+            $disableAutoPageBreak = filter_var(
+                $data['pdf_disable_auto_page_break'],
+                FILTER_VALIDATE_BOOL,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            if ($disableAutoPageBreak === true) {
+                $mpdf->SetAutoPageBreak(false);
+            }
         }
 
         @ini_set('pcre.backtrack_limit', '10000000');

@@ -50,7 +50,6 @@ class StHidupPerSpkController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
         ]);
 
         $filename = 'Laporan-ST-Hidup-per-SPK-per-Jenis-per-Tebal-per-Group-Jenis-Kayu.pdf';

@@ -46,6 +46,10 @@
             table-layout: fixed;
         }
 
+        table.data-table.empty-state tbody td {
+            background: #c9d1df !important;
+        }
+
         thead {
             display: table-header-group;
         }
@@ -78,6 +82,26 @@
             text-align: center;
         }
 
+        .empty-state-row td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        table.data-table tbody td[colspan] {
+            background: #c9d1df !important;
+        }
+
+        table.data-table tbody tr:not(.data-row):not(.totals-row) td {
+            background: #c9d1df !important;
+        }
+
+        table.data-table tbody td[colspan="3"] {
+            background: #c9d1df;
+        }
+
         table.data-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
@@ -87,10 +111,6 @@
 
         .row-odd td {
             background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
         }
 
         .supplier {
@@ -106,12 +126,6 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        .cell-pre {
-            font-family: "Calibri", "Courier New", monospace;
-            display: block;
-            white-space: pre;
-            text-align: center;
-        }
 
         .totals-row td {
             border-top: 1px solid #000 !important;
@@ -134,7 +148,8 @@
         .center {
             text-align: center;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -205,7 +220,7 @@
     <h1 class="report-title">Laporan Pembelian ST Per Supplier (Ton)</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-    <table class="data-table">
+    <table class="data-table{{ $rows === [] ? ' empty-state' : '' }}">
         <colgroup>
             <col style="width: {{ $noWidth }}%;">
             <col style="width: {{ $supplierWidth }}%;">
@@ -230,7 +245,7 @@
                 </tr>
             </tfoot>
         @endif
-        <tbody>
+        <tbody @if ($rows === []) style="background: #c9d1df;" @endif>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
                 @php
@@ -273,7 +288,7 @@
             @endforelse
 
             @if ($rows !== [])
-                <tr class="totals-row">
+                <tr class=" totals-row">
                     <td class="data-cell" colspan="2" style="text-align: center">Total</td>
                     @foreach ($jenisColumns as $jenis)
                         @php

@@ -125,7 +125,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -254,7 +255,7 @@
                 @endforeach
             </tr>
         </thead>
-        
+
         <tfoot>
             <tr class="table-end-line">
                 <td colspan="19"></td>

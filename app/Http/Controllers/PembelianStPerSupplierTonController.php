@@ -77,7 +77,6 @@ class PembelianStPerSupplierTonController extends Controller
             'pdf_orientation' => $orientation,
             // Keep consistent with other "vertical-only borders" reports.
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
         ]);
 
         $filename = 'Laporan-Pembelian-ST-Per-Supplier-Ton.pdf';

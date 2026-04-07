@@ -11,14 +11,18 @@
     }
 
     @page {
-        margin: {{ $pageMargin }};
+        margin:
+            {{ $pageMargin }}
+        ;
         footer: html_reportFooter;
     }
 
     body {
         margin: 0;
         font-family: "Noto Serif", serif;
-        font-size: {{ $bodyFontSize }};
+        font-size:
+            {{ $bodyFontSize }}
+        ;
         line-height: 1.2;
         color: #000;
     }
@@ -26,12 +30,16 @@
     .report-title {
         margin: 0;
         text-align: center;
-        font-size: {{ $titleFontSize }};
+        font-size:
+            {{ $titleFontSize }}
+        ;
         font-weight: bold;
     }
 
     .report-subtitle {
-        margin: {{ $subtitleMargin }};
+        margin:
+            {{ $subtitleMargin }}
+        ;
         text-align: center;
         font-size: 12px;
         color: #636466;
@@ -43,10 +51,20 @@
         font-weight: bold;
     }
 
+    .section-rangkuman-title {
+        margin: 10px 0 4px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: underline;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: {{ $tableMarginBottom }};
+        margin-bottom:
+            {{ $tableMarginBottom }}
+        ;
         page-break-inside: auto;
         table-layout: fixed;
     }
@@ -55,6 +73,17 @@
         border-collapse: collapse;
         border-spacing: 0;
         border: 1px solid #000;
+    }
+
+    .total-report-table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border: 0px;
+    }
+
+    .total-report-table th,
+    .total-report-table td {
+        border: none !important;
     }
 
     thead {

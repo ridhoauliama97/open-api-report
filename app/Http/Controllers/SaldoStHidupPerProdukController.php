@@ -50,7 +50,6 @@ class SaldoStHidupPerProdukController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
         ]);
 
         $filename = 'Laporan-Saldo-ST-Hidup-Per-Jenis-Per-Tebal-Per-Group-Jenis-Kayu.pdf';

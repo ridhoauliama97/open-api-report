@@ -73,7 +73,6 @@ class StHidupKeringController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-ST-Hidup-Kering-%s-%s.pdf', $hari, $mode);

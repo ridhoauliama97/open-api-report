@@ -70,23 +70,23 @@
         table.data-table th,
         table.data-table td {
             border: 0;
-            border-left: 1px solid #000;
+            border-left: 0.5px solid #000;
             border-top: 0;
             border-bottom: 0;
             padding: 2px 3px;
             vertical-align: middle;
         }
 
-        table.data-table th:first-child,
+        /* table.data-table th:first-child,
         table.data-table td:first-child {
             border-left: 0;
-        }
+        } */
 
         table.data-table th {
             text-align: center;
             font-weight: bold;
             background: #fff;
-            font-size: 10px;
+            font-size: 11px;
             white-space: nowrap;
             border-bottom: 1px solid #000;
         }
@@ -133,9 +133,7 @@
             background: #eef2f8;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
-
-        .section-title {
+        @include('reports.partials.pdf-footer-table-style') .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
@@ -174,7 +172,7 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan ST Rambung MC1 dan MC2 (Detail)</h1>
+    <h1 class="report-title">Laporan ST Hidup Rambung MC1 dan MC2 (Detail)</h1>
 
     @forelse ($groups as $group)
         @php
@@ -196,16 +194,6 @@
             @endif
 
             <table class="data-table">
-                <colgroup>
-                    <col style="width: 6%;"> {{-- No --}}
-                    <col style="width: 22%;"> {{-- No ST --}}
-                    <col style="width: 8%;"> {{-- Tebal --}}
-                    <col style="width: 8%;"> {{-- Lebar --}}
-                    <col style="width: 8%;"> {{-- Panjang --}}
-                    <col style="width: 10%;"> {{-- Pcs --}}
-                    <col style="width: 19%;"> {{-- Ton --}}
-                    <col style="width: 19%;"> {{-- Kubik --}}
-                </colgroup>
                 <thead>
                     <tr>
                         <th>No</th>
@@ -218,13 +206,11 @@
                         <th>Kubik (m<sup>3</sup>)</th>
                     </tr>
                 </thead>
-                @if ($rows !== [])
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="8"></td>
-                        </tr>
-                    </tfoot>
-                @endif
+                <tfoot>
+                    <tr class="table-end-line">
+                        <td colspan="9"></td>
+                    </tr>
+                </tfoot>
                 <tbody>
                     @forelse ($rows as $r)
                         @php $rowIndex = ($loop->index ?? 0) + 1; @endphp
@@ -270,30 +256,17 @@
         @endif
 
         @if ($tableSummaryRows !== [])
-            <div class="sub-title">Total Masing-masing Tabel</div>
+            <div class="sub-title">Total Masing-masing Jenis Stock</div>
             <table class="data-table">
-                <colgroup>
-                    <col style="width: 6%;"> {{-- No --}}
-                    <col style="width: 34%;"> {{-- Jenis --}}
-                    <col style="width: 26%;"> {{-- Tabel --}}
-                    <col style="width: 10%;"> {{-- Pcs --}}
-                    <col style="width: 12%;"> {{-- Ton --}}
-                    <col style="width: 12%;"> {{-- Kubik --}}
-                </colgroup>
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Tabel</th>
+                        <th style="width: 4%;">No</th>
+                        <th>Jenis Stock</th>
                         <th>Jumlah Batang (Pcs)</th>
                         <th>Ton</th>
                         <th>Kubik (m<sup>3</sup>)</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="6"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($tableSummaryRows as $sr)
                         @php $rowIndex = ($loop->index ?? 0) + 1; @endphp
@@ -310,29 +283,17 @@
         @endif
 
         @if ($groupSummaryRows !== [])
-            <div class="sub-title">Total Seluruh Group</div>
+            <div class="sub-title">Grand Total Seluruh Group Stock</div>
             <table class="data-table">
-                <colgroup>
-                    <col style="width: 6%;"> {{-- No --}}
-                    <col style="width: 58%;"> {{-- Group --}}
-                    <col style="width: 10%;"> {{-- Pcs --}}
-                    <col style="width: 13%;"> {{-- Ton --}}
-                    <col style="width: 13%;"> {{-- Kubik --}}
-                </colgroup>
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Group (Jenis Kayu)</th>
+                        <th style="width: 4%;">No</th>
+                        <th>Group Stock</th>
                         <th>Jumlah Batang (Pcs)</th>
                         <th>Ton</th>
                         <th>Kubik (m<sup>3</sup>)</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="5"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($groupSummaryRows as $sr)
                         @php $rowIndex = ($loop->index ?? 0) + 1; @endphp

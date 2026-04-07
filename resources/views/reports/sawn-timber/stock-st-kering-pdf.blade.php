@@ -40,17 +40,19 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: 65%;
             border-collapse: separate;
             border-spacing: 0;
             border: 1px solid #000;
+            margin: 2px 10px 0 10px;
+        }
+
+        .report-table {
+            width: 65%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #000;
+            margin: 2px 10px 0 10px;
         }
 
         thead {
@@ -86,7 +88,7 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", sans-serif;
         }
 
         .row-odd td {
@@ -98,14 +100,14 @@
         }
 
         .jenis-title {
-            margin: 10px 0 4px;
-            font-size: 10px;
+            margin: 10px 0 0 0;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
         }
 
         .produk-title {
-            margin: 6px 0 3px;
+            margin: 6px 0 0 10px;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
@@ -126,9 +128,26 @@
         .summary-table {
             width: 55%;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        .jenis-summary {
+            width: 70%;
+            margin: 0 0 10px -4px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 0 !important;
+            border-left: 0 ! important;
+            border-right: 0 ! important;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        table.jenis-summary tbody tr td {
+            border: 0;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -179,10 +198,10 @@
             'datecreate' => 'Tanggal',
             'date' => 'Tanggal',
             'tanggal' => 'Tanggal',
-            'jlhbtg' => 'Jumlah Batang',
-            'jmlhbatang' => 'Jumlah Batang',
-            'jumlahbatang' => 'Jumlah Batang',
-            'pcs' => 'Jumlah Batang',
+            'jlhbtg' => 'Jmlh <br/> Batang',
+            'jmlhbatang' => 'Jmlh <br/> Batang',
+            'jumlahbatang' => 'Jmlh <br/> Batang',
+            'pcs' => 'Jmlh <br/> Batang',
             'idlokasi' => 'Lokasi',
             'lokasi' => 'Lokasi',
             'location' => 'Lokasi',
@@ -304,7 +323,7 @@
             $columnHeaderOverrides[$dateColumn] = 'Tanggal';
         }
         if ($pcsColumn !== null) {
-            $columnHeaderOverrides[$pcsColumn] = 'Jumlah Batang';
+            $columnHeaderOverrides[$pcsColumn] = 'Jmlh Batang';
         }
         if ($lokasiColumn !== null) {
             $columnHeaderOverrides[$lokasiColumn] = 'Lokasi';
@@ -402,7 +421,7 @@
             $jenis = trim((string) ($jenisColumn !== null ? $row[$jenisColumn] ?? '' : ''));
             $produk = trim((string) ($produkColumn !== null ? $row[$produkColumn] ?? '' : ''));
             $jenis = $jenis !== '' ? $jenis : 'Tanpa Jenis';
-            $produk = $produk !== '' ? $produk : 'Tanpa Produk';
+            $produk = $produk !== '' ? $produk : 'Tanpa Grade';
             $grouped[$jenis][$produk]['rows'][] = $row;
             $grouped[$jenis][$produk]['subtotal_pcs'] =
                 ($grouped[$jenis][$produk]['subtotal_pcs'] ?? 0.0) +
@@ -459,6 +478,14 @@
 
     @forelse ($grouped as $jenisName => $produkGroups)
         <p class="jenis-title">{{ $jenisName }}</p>
+        @php
+            $jenisTotalPcs = (float) collect($produkGroups)->sum(
+                static fn(array $produkData): float => (float) ($produkData['subtotal_pcs'] ?? 0.0),
+            );
+            $jenisTotalTon = (float) collect($produkGroups)->sum(
+                static fn(array $produkData): float => (float) ($produkData['subtotal_ton'] ?? 0.0),
+            );
+        @endphp
         @foreach ($produkGroups as $produkName => $produkData)
             @php
                 $produkRows = $produkData['rows'] ?? [];
@@ -480,7 +507,7 @@
                         <td colspan="{{ count($tableColumns) + 1 }}"></td>
                     </tr>
                 </tfoot>
-<tbody>
+                <tbody>
                     @foreach ($produkRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="data-cell center" style="{{ $noWidthStyle }}">{{ $loop->iteration }}</td>
@@ -526,25 +553,27 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number"
+                                <td colspan="{{ $firstSummaryIndex + 1 }}"
                                     style="font-weight: bold; text-align: center;">
-                                    Jumlah {{ $produkName }} :
+                                    Sub Total {{ $produkName }}
                                 </td>
                                 @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
                                     @php $summaryColumn = $tableColumns[$idx]; @endphp
                                     @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
                                         <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalPcs, 0, '.', ',') }}</td>
+                                            {{ number_format($subtotalPcs, 0, '.', ',') }}
+                                        </td>
                                     @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
                                         <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalTon, 4, '.', ',') }}</td>
+                                            {{ number_format($subtotalTon, 4, '.', ',') }}
+                                        </td>
                                     @else
                                         <td></td>
                                     @endif
                                 @endfor
                             @else
-                                <td colspan="{{ count($tableColumns) + 1 }}" class="number" style="text-align: center">
-                                    Jumlah {{ $produkName }}
+                                <td colspan="{{ count($tableColumns) + 1 }}" style="text-align: center">
+                                    Sub Total {{ $produkName }}
                                     : {{ count($produkRows) }} baris</td>
                             @endif
                         </tr>
@@ -552,6 +581,17 @@
                 </tbody>
             </table>
         @endforeach
+        <table class="jenis-summary">
+            <tbody>
+                <tr>
+                    <td class="left" style="font-weight: bold; width: 83%">
+                        Total {{ $jenisName }}
+                    </td>
+                    <td class="number">{{ number_format($jenisTotalPcs, 0, '.', ',') }}</td>
+                    <td class="number">{{ number_format($jenisTotalTon, 4, '.', ',') }}</td>
+                </tr>
+            </tbody>
+        </table>
     @empty
         <table>
             <tbody>
@@ -561,41 +601,6 @@
             </tbody>
         </table>
     @endforelse
-
-    <p class="summary-title">Summary</p>
-    <table class="summary-table">
-        <tbody>
-            <tr>
-                <th style="width: 70%;">Keterangan</th>
-                <th>Nilai</th>
-            </tr>
-            <tr>
-                <td>Total jumlah data</td>
-                <td class="center">{{ number_format($summaryTotalRows, 0, '.', ',') }} baris</td>
-            </tr>
-            <tr>
-                <td>Total jenis</td>
-                <td class="center">{{ number_format($summaryTotalJenis, 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total produk (per grup jenis)</td>
-                <td class="center">{{ number_format($summaryTotalProduk, 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total produk unik</td>
-                <td class="center">{{ number_format($summaryTotalProdukUnik, 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total Jumlah Batang</td>
-                <td class="center">{{ number_format($summaryTotalPcs, 0, '.', ',') }} Batang</td>
-            </tr>
-            <tr>
-                <td>Total ton</td>
-                <td class="center">{{ number_format($summaryTotalTon, 4, '.', ',') }} Ton</td>
-            </tr>
-
-        </tbody>
-    </table>
 
     @include('reports.partials.pdf-footer-table')
 </body>

@@ -40,18 +40,20 @@
         }
 
         table {
-            width: 100%;
+            width: 65%;
             border-collapse: collapse;
-            margin-bottom: 6px;
             page-break-inside: auto;
+            border: 1;
             table-layout: fixed;
+            margin: 2px 0 6px 10px;
         }
 
-        .report-table {
+        /* .report-table {
             border-collapse: separate;
             border-spacing: 0;
             border: 1px solid #000;
-        }
+            margin: 2px 0 0 10px;
+        } */
 
         thead {
             display: table-header-group;
@@ -75,7 +77,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #fff;
         }
 
@@ -97,14 +99,14 @@
         }
 
         .jenis-title {
-            margin: 10px 0 4px;
-            font-size: 10px;
+            margin: 10px 0 0 0;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
         }
 
         .produk-title {
-            margin: 6px 0 3px;
+            margin: 6px 0 0 10px;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
@@ -125,9 +127,84 @@
         .summary-table {
             width: 55%;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        .jenis-summary {
+            width: 70%;
+            margin: 0 0 10px -4px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 0 !important;
+            border-left: 0 ! important;
+            border-right: 0 ! important;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        table.jenis-summary tbody tr td {
+            border: 0;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+
+        tfoot,
+        .table-end-line {
+            display: none !important;
+        }
+
+        table.data-table,
+        table.report-table,
+        table {
+            border-bottom: 0 !important;
+        }
+
+        table.data-table tbody td,
+        table.report-table tbody td,
+        tbody td {
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+        }
+
+        table.data-table tbody tr td,
+        table.report-table tbody tr td,
+        tbody tr td {
+            border-top: 0 !important;
+        }
+
+        table.data-table tbody tr.subtotal-row td,
+        table.data-table tbody tr.total-row td,
+        table.data-table tbody tr.totals-row td,
+        table.data-table tbody tr.group-total-row td,
+        table.data-table tbody tr.group-subtotal-row td,
+        table.report-table tbody tr.subtotal-row td,
+        table.report-table tbody tr.total-row td,
+        table.report-table tbody tr.totals-row td,
+        table.report-table tbody tr.group-total-row td,
+        table.report-table tbody tr.group-subtotal-row td,
+        tbody tr.subtotal-row td,
+        tbody tr.total-row td,
+        tbody tr.totals-row td,
+        tbody tr.group-total-row td,
+        tbody tr.group-subtotal-row td {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            font-weight: bold;
+            background: #fff !important;
+        }
+
+        table.data-table tbody tr:last-child td,
+        table.report-table tbody tr:last-child td,
+        tbody tr:last-child td {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        table.data-table tbody td:nth-child(7),
+        table.report-table tbody td:nth-child(7),
+        tbody td:nth-child(7) {
+            text-align: center !important;
+        }
+
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -178,10 +255,10 @@
             'datecreate' => 'Tanggal',
             'date' => 'Tanggal',
             'tanggal' => 'Tanggal',
-            'jlhbtg' => 'Jumlah Batang',
-            'jmlhbatang' => 'Jumlah Batang',
-            'jumlahbatang' => 'Jumlah Batang',
-            'pcs' => 'Jumlah Batang',
+            'jlhbtg' => 'Jmlh<br/>Batang',
+            'jmlhbatang' => 'Jmlh<br/>Batang',
+            'jumlahbatang' => 'Jmlh<br/>Batang',
+            'pcs' => 'Jmlh<br/>Batang',
             'idlokasi' => 'Lokasi',
             'lokasi' => 'Lokasi',
             'location' => 'Lokasi',
@@ -303,7 +380,7 @@
             $columnHeaderOverrides[$dateColumn] = 'Tanggal';
         }
         if ($pcsColumn !== null) {
-            $columnHeaderOverrides[$pcsColumn] = 'Jumlah Batang';
+            $columnHeaderOverrides[$pcsColumn] = 'Jmlh Batang';
         }
         if ($lokasiColumn !== null) {
             $columnHeaderOverrides[$lokasiColumn] = 'Lokasi';
@@ -401,7 +478,7 @@
             $jenis = trim((string) ($jenisColumn !== null ? $row[$jenisColumn] ?? '' : ''));
             $produk = trim((string) ($produkColumn !== null ? $row[$produkColumn] ?? '' : ''));
             $jenis = $jenis !== '' ? $jenis : 'Tanpa Jenis';
-            $produk = $produk !== '' ? $produk : 'Tanpa Produk';
+            $produk = $produk !== '' ? $produk : 'Tanpa Grade';
             $grouped[$jenis][$produk]['rows'][] = $row;
             $grouped[$jenis][$produk]['subtotal_pcs'] =
                 ($grouped[$jenis][$produk]['subtotal_pcs'] ?? 0.0) +
@@ -433,25 +510,35 @@
 
     <h1 class="report-title">Laporan Stock ST Basah</h1>
     <p class="report-subtitle">
-        Per-{{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
+        Per {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
     </p>
 
     @forelse ($grouped as $jenisName => $produkGroups)
+        @php
+            $jenisTotalPcs = 0.0;
+            $jenisTotalTon = 0.0;
+            foreach ($produkGroups as $produkData) {
+                $jenisTotalPcs += (float) ($produkData['subtotal_pcs'] ?? 0.0);
+                $jenisTotalTon += (float) ($produkData['subtotal_ton'] ?? 0.0);
+            }
+
+            $firstSummaryIndexForJenis = collect([$pcsIndex, $tonIndex])
+                ->filter(static fn($index): bool => is_int($index))
+                ->min();
+            $firstSummaryIndexForJenis = is_int($firstSummaryIndexForJenis)
+                ? $firstSummaryIndexForJenis
+                : count($tableColumns);
+        @endphp
         <p class="jenis-title">{{ $jenisName }}</p>
         @foreach ($produkGroups as $produkName => $produkData)
             @php
                 $produkRows = $produkData['rows'] ?? [];
                 $subtotalPcs = (float) ($produkData['subtotal_pcs'] ?? 0.0);
                 $subtotalTon = (float) ($produkData['subtotal_ton'] ?? 0.0);
+                $isLastProdukInJenis = $loop->last;
             @endphp
             <p class="produk-title">{{ $produkName }}</p>
             <table class="report-table">
-                <colgroup>
-                    <col style="width: {{ number_format($equalColumnWidth, 6, '.', ',') }}%;">
-                    @foreach ($tableColumns as $column)
-                        <col style="width: {{ number_format($equalColumnWidth, 6, '.', ',') }}%;">
-                    @endforeach
-                </colgroup>
                 <thead>
                     <tr class="headers-row">
                         <th>No</th>
@@ -465,7 +552,7 @@
                         <td colspan="{{ count($tableColumns) + 1 }}"></td>
                     </tr>
                 </tfoot>
-<tbody>
+                <tbody>
                     @foreach ($produkRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="data-cell center">{{ $loop->iteration }}</td>
@@ -509,17 +596,19 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="number" style="font-weight: bold">
-                                    Jumlah {{ $produkName }} :
+                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="center" style="font-weight: bold">
+                                    Sub Total {{ $produkName }}
                                 </td>
                                 @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
                                     @php $summaryColumn = $tableColumns[$idx]; @endphp
                                     @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
                                         <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalPcs, 0, '.', ',') }}</td>
+                                            {{ number_format($subtotalPcs, 0, '.', ',') }}
+                                        </td>
                                     @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
                                         <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalTon, 4, '.', ',') }}</td>
+                                            {{ number_format($subtotalTon, 4, '.', ',') }}
+                                        </td>
                                     @else
                                         <td></td>
                                     @endif
@@ -533,6 +622,17 @@
                 </tbody>
             </table>
         @endforeach
+        <table class="jenis-summary">
+            <tbody>
+                <tr>
+                    <td class="left" style="font-weight: bold; width: 70%">
+                        Total {{ $jenisName }}
+                    </td>
+                    <td class="number">{{ number_format($jenisTotalPcs, 0, '.', ',') }}</td>
+                    <td class="number" style="text-align: left;">{{ number_format($jenisTotalTon, 4, '.', ',') }}</td>
+                </tr>
+            </tbody>
+        </table>
     @empty
         <table>
             <tbody>
@@ -542,41 +642,6 @@
             </tbody>
         </table>
     @endforelse
-
-    <p class="summary-title">Summary</p>
-    <table class="summary-table">
-        <tbody>
-            <tr>
-                <th style="width: 100%;">Keterangan</th>
-                <th>Nilai</th>
-            </tr>
-            <tr>
-                <td>Total jumlah data</td>
-                <td class="center">{{ number_format($totalRows, 0, '.', ',') }} baris</td>
-            </tr>
-            <tr>
-                <td>Total jenis</td>
-                <td class="center">{{ number_format($totalJenis, 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total produk (per grup jenis)</td>
-                <td class="center">{{ number_format($totalProduk, 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total produk unik</td>
-                <td class="center">{{ number_format(count($allProdukNames), 0, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Total Jumlah Batang</td>
-                <td class="center">{{ number_format($totalPcs, 0, '.', ',') }} Batang</td>
-            </tr>
-            <tr>
-                <td>Total ton</td>
-                <td class="center">{{ number_format($totalTon, 4, '.', ',') }} Ton</td>
-            </tr>
-
-        </tbody>
-    </table>
 
     @include('reports.partials.pdf-footer-table')
 </body>

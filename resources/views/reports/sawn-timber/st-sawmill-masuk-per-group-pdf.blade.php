@@ -114,6 +114,8 @@
 
         .group-summary-item .label {
             display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
             width: 110px;
             white-space: nowrap;
         }
@@ -121,33 +123,24 @@
         .group-summary-item .sep {
             display: inline-block;
             width: 10px;
+            font-size: 11px;
+            font-weight: bold;
             text-align: center;
         }
 
         .group-summary-item .value {
             display: inline-block;
             width: 100px;
+            font-size: 11px;
+            font-weight: bold;
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
 
-        tfoot {
-            display: table-footer-group;
-        }
 
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-@include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -212,7 +205,7 @@
             }
         @endphp
 
-        <div class="group-section-title">{{ $gidx + 1 }} {{ $groupName }}</div>
+        <div class="group-section-title">{{ $gidx + 1 }}. {{ $groupName }}</div>
 
         <table style="width: 220px; margin-left: 12px;">
             <thead>
@@ -222,13 +215,8 @@
                     <th>ST (Ton)</th>
                 </tr>
             </thead>
-            
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="3"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+
+            <tbody>
                 @forelse ($items as $idx => $it)
                     <tr class="{{ ($idx + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $idx + 1 }}</td>
@@ -245,14 +233,9 @@
 
         <ul class="group-summary-list" style="width: 220px; margin-left: 12px;">
             <li class="group-summary-item">
-                <span class="label">Jmlh Per-Jenis</span>
-                <span class="sep">:</span>
-                <span class="value">{{ number_format($sumTon, 4, '.', ',') }}</span>
-            </li>
-            <li class="group-summary-item">
                 <span class="label">Jmlh Per-Group</span>
                 <span class="sep">:</span>
-                <span class="value">{{ number_format($sumTon, 2, '.', ',') }}</span>
+                <span class="value">{{ number_format($sumTon, 4, '.', ',') }}</span>
             </li>
         </ul>
 
