@@ -94,7 +94,10 @@
         }
 
         .report-table {
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         .chart-wrap {
@@ -109,23 +112,29 @@
             font-size: 11px;
             font-weight: 700;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -170,14 +179,14 @@
                 try {
                     return \Carbon\Carbon::createFromFormat($pattern, $normalized)
                         ->locale('id')
-                        ->translatedFormat('M y');
+                        ->translatedFormat('M-y');
                 } catch (\Throwable $exception) {
                     // try next pattern
                 }
             }
 
             try {
-                return \Carbon\Carbon::parse($text)->locale('id')->translatedFormat('M y');
+                return \Carbon\Carbon::parse($text)->locale('id')->translatedFormat('M-y');
             } catch (\Throwable $exception) {
                 $months = [
                     'JAN' => 'Jan',
@@ -242,7 +251,7 @@
                 $maxChartValue = max($maxChartValue, (int) round((float) $value));
             }
         }
-        $yStep = 500;
+        $yStep = 100;
         $maxChartValue = max($yStep, (int) ceil($maxChartValue / $yStep) * $yStep);
 
         $svgWidth = 980;
@@ -285,12 +294,7 @@
                 <th style="font-weight: bold">Total</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($monthColumnsDisplay) + 3 }}"></td>
-            </tr>
-        </tfoot>
-<tbody>
+        <tbody>
             @forelse ($tableRows as $row)
                 <tr class="data-row">
                     <td class="row-label data-cell">{{ $row['jenis'] }}</td>
@@ -320,11 +324,6 @@
                 <th style="font-weight: bold">% Capai</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($summaryRows as $summary)
                 <tr class="data-row">

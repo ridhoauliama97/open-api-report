@@ -56,7 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -127,32 +130,41 @@
 
         .recap-table th,
         .recap-table td {
-            font-size: 9px;
+            font-size: 10px;
             padding: 2px 2px;
         }
 
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .recap-total td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
-.totals-row td {
+
+        .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -170,6 +182,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -277,11 +290,6 @@
                     <th style="width:60px">Ton KG</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="8"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($rows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -310,21 +318,16 @@
                         <td class="number data-cell">{{ $fmt2($row['TonKG'] ?? 0) }}</td>
                     </tr>
                 @endforeach
+                @if ($rows !== [])
+                    <tr class="totals-row">
+                        <td colspan="5" class="center">Sub Total</td>
+                        <td class="number">{{ $fmtInt($sum['total_pcs'] ?? 0) }}</td>
+                        <td class="number">{{ $fmt2BlankZero($sum['total_ton_kb'] ?? 0) }}</td>
+                        <td class="number">{{ $fmt2($sum['total_ton_kg'] ?? 0) }}</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
-
-        {{-- <div class="summary-inline">
-            <table>
-                <tr>
-                    <td style="width: 20%;">Jmlh Truk : {{ (int) ($sum['total_trucks'] ?? 0) }}</td>
-                    <td style="width: 20%;">Jmlh Pcs : {{ $fmtInt($sum['total_pcs'] ?? 0) }}</td>
-                    <td style="width: 20%;">Jmlh HK : {{ (int) ($sum['total_hk'] ?? 0) }}</td>
-                    <td style="width: 20%;">Ton/HK : {{ $fmt2($sum['ton_per_hk'] ?? 0) }}</td>
-                    <td class="number" style="width: 20%; font-weight:700;">{{ $fmt2($sum['total_ton_kg'] ?? 0) }}
-                    </td>
-                </tr>
-            </table>
-        </div> --}}
     @endforeach
 
     <div class="recap-title">Rangkuman / Periode : {{ $start }} s/d {{ $end }}</div>
@@ -337,7 +340,7 @@
                 <th colspan="2" style="font-size: 11px">PULAI</th>
                 <th colspan="5" style="font-size: 11px">RAMBUNG (Ton)</th>
             </tr>
-            <tr class="headers-row">
+            <tr>
                 <th style="width: 30px;font-size: 11px">Truk</th>
                 <th style="width: 54px;font-size: 11px">Ton</th>
                 <th style="width: 30px;font-size: 11px">Truk</th>
@@ -351,11 +354,6 @@
                 <th style="width: 54px;font-size: 11px">Afkir</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="12"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($recapRows as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -395,26 +393,17 @@
             @if ($recapRows !== [])
                 <tr class="recap-total">
                     <td class="center">Total </td>
-                    <td class="number">{{ $fmtIntBlankZero($recapTotals['jabon_truk'] ?? 0) }}
-                    </td>
+                    <td class="number">{{ $fmtIntBlankZero($recapTotals['jabon_truk'] ?? 0) }}</td>
                     <td class="number">{{ $fmt2Smart($recapTotals['jabon_ton'] ?? 0) }}</td>
-                    <td class="number">
-                        {{ $fmtIntBlankZero($recapTotals['jabon_tgtd_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['jabon_tgtd_ton'] ?? 0) }}
-                    </td>
-                    <td class="number">{{ $fmtIntBlankZero($recapTotals['pulai_truk'] ?? 0) }}
-                    </td>
+                    <td class="number">{{ $fmtIntBlankZero($recapTotals['jabon_tgtd_truk'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['jabon_tgtd_ton'] ?? 0) }}</td>
+                    <td class="number">{{ $fmtIntBlankZero($recapTotals['pulai_truk'] ?? 0) }}</td>
                     <td class="number">{{ $fmt2Smart($recapTotals['pulai_ton'] ?? 0) }}</td>
-                    <td class="number">
-                        {{ $fmtIntBlankZero($recapTotals['rambung_truk'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_super_ton'] ?? 0) }}
-                    </td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_mc_ton'] ?? 0) }}
-                    </td>
-                    <td class="number">
-                        {{ $fmt2Smart($recapTotals['rambung_samsam_ton'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_afkir_ton'] ?? 0) }}
-                    </td>
+                    <td class="number">{{ $fmtIntBlankZero($recapTotals['rambung_truk'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_super_ton'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_mc_ton'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_samsam_ton'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt2Smart($recapTotals['rambung_afkir_ton'] ?? 0) }}</td>
                 </tr>
             @endif
         </tbody>

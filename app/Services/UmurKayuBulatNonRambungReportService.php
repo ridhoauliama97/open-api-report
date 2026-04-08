@@ -15,7 +15,7 @@ class UmurKayuBulatNonRambungReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return $this->normalizeRows($rows);
+        return $this->normalizeRows($rows, $endDate);
     }
 
     /**
@@ -44,26 +44,30 @@ class UmurKayuBulatNonRambungReportService
      * @param array<int, object> $rows
      * @return array<int, array<string, mixed>>
      */
-    private function normalizeRows(array $rows): array
+    private function normalizeRows(array $rows, string $endDate): array
     {
-        return array_map(function ($row): array {
+        $reportEndDate = $this->parseDate($endDate) ?? Carbon::today()->startOfDay();
+
+        return array_map(function ($row) use ($reportEndDate): array {
             $item = (array) $row;
 
             $status = is_numeric($item['Status'] ?? null) ? (string) (int) $item['Status'] : (string) ($item['Status'] ?? '');
             $dateCreate = $this->parseDate($item['DateCreate'] ?? null);
             $tanggalRacip = $this->parseDate($item['TanggalRacip'] ?? null);
+            $tanggalLamaRacip = $this->parseDate($item['TanggalLamaRacip'] ?? null);
             $dateUsage = $this->parseDate($item['DateUsage'] ?? null);
 
+            // Lama Racip: durasi dari mulai racip (TanggalRacip) ke selesai racip (TanggalLamaRacip)
             $lamaRacip = null;
-            if ($dateCreate && $tanggalRacip) {
-                $lamaRacip = $dateCreate->diffInDays($tanggalRacip, false);
+            if ($tanggalRacip && $tanggalLamaRacip) {
+                $lamaRacip = $tanggalRacip->diffInDays($tanggalLamaRacip, false);
                 $lamaRacip = $lamaRacip >= 0 ? $lamaRacip : null;
             }
 
-            // Lama tunggu dihitung dalam hari:
+            // Lama tunggu mengikuti konteks periode laporan:
             // - Status 1 (sudah mati): dari tanggal masuk ke DateUsage
-            // - Status 0 (masih hidup): dari tanggal masuk ke tanggal hari ini
-            $anchorDate = $status === '1' ? $dateUsage : Carbon::today();
+            // - Status 0 (masih hidup): dari tanggal masuk ke tanggal akhir periode laporan
+            $anchorDate = $status === '1' ? $dateUsage : $reportEndDate;
             $lamaTunggu = null;
             if ($dateCreate && $anchorDate) {
                 $lamaTunggu = $dateCreate->diffInDays($anchorDate, false);
@@ -79,6 +83,7 @@ class UmurKayuBulatNonRambungReportService
                 'Truk' => $item['NoTruk'] ?? null,
                 'Ton' => $this->toFloat($item['TonKBKG'] ?? null),
                 'Tanggal Racip' => $tanggalRacip?->toDateString() ?? ($item['TanggalRacip'] ?? null),
+                'Tanggal Lama Racip' => $tanggalLamaRacip?->toDateString() ?? ($item['TanggalLamaRacip'] ?? null),
                 'Lama Racip' => $lamaRacip,
                 'Lama Tunggu' => $lamaTunggu,
             ];
@@ -132,8 +137,8 @@ class UmurKayuBulatNonRambungReportService
             'exec' => $this->buildExecSql($procedure, $safeParameterCount),
             'call' => $this->buildCallSql($procedure, $safeParameterCount),
             default => $driver === 'sqlsrv'
-                ? $this->buildExecSql($procedure, $safeParameterCount)
-                : $this->buildCallSql($procedure, $safeParameterCount),
+            ? $this->buildExecSql($procedure, $safeParameterCount)
+            : $this->buildCallSql($procedure, $safeParameterCount),
         };
 
         return $connection->select($sqlWithParameters, $bindings);

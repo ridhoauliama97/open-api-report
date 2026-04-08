@@ -57,7 +57,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -97,8 +100,10 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
@@ -115,10 +120,11 @@
         .row-even td {
             background: #eef2f8;
         }
-.report-table tbody tr.data-row td.data-cell {
+
+        .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -132,6 +138,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -176,11 +183,6 @@
                 <th style="width: 66px;">Jmlh Ton</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="13"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -211,7 +213,8 @@
                     <td class="number data-cell">{{ number_format((float) ($row['Lebar'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number data-cell">{{ number_format((float) ($row['Panjang'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number data-cell">{{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number data-cell">{{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">
+                        {{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -221,9 +224,8 @@
         </tbody>
     </table>
 
-    <div class="section-title">Summary</div>
+    <div class="section-title">Rangkuman</div>
     <ul>
-        <li>Total Jumlah Data: <strong>{{ (int) ($summaryData['total_rows'] ?? 0) }} Baris Data</strong></li>
         <li>Total No Kayu Bulat:<strong> {{ (int) ($summaryData['total_no_kayu_bulat'] ?? 0) }}</strong></li>
         <li>Total Pcs: <strong>{{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }} Pcs </strong>
         </li>

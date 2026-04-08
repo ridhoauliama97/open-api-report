@@ -50,6 +50,7 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
+            border-right: 1px solid #000;
         }
 
         thead {
@@ -63,15 +64,22 @@
 
         th,
         td {
-            border: 1px solid #000;
+            border: 0;
+            border-left: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: 1px solid #000;
         }
 
         th {
             text-align: center;
             font-weight: bold;
             font-size: 11px;
+            border-bottom: 1px solid #000;
         }
 
         td.center {
@@ -100,13 +108,13 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -130,7 +138,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -174,12 +183,6 @@
                 <th style="width: 85px;">M3</th>
             </tr>
         </thead>
-        
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
@@ -195,8 +198,8 @@
                     </td>
                     <td class="label">{{ (string) ($row['Jenis'] ?? '') }}</td>
                     <td>{{ (string) ($row['NmSupplier'] ?? '') }}</td>
-                    <td class="number">{{ $fmt($ton, true) }}</td>
-                    <td class="number">{{ $fmt($m3, true) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmt($ton, true) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmt($m3, true) }}</td>
                 </tr>
             @empty
                 <tr>

@@ -41,7 +41,7 @@
         }
 
         table {
-            width: 100%;
+            width: 60%;
             border-collapse: collapse;
             margin-bottom: 6px;
             page-break-inside: auto;
@@ -52,7 +52,8 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
         }
 
         thead {
@@ -60,7 +61,7 @@
         }
 
         tfoot {
-            display: table-row-group;
+            display: table-footer-group;
         }
 
         tr {
@@ -70,16 +71,28 @@
 
         th,
         td {
-            border: 1px solid #000;
+            border: 0;
+            border-left: 1px solid #000;
             padding: 2px 2px;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
         }
 
+        th:first-child,
+        td:first-child {
+            border-left: 1px solid #000;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: 0;
+        }
+
         th {
             background: #fff;
             font-weight: 700;
+            border-bottom: 1px solid #000;
         }
 
         .row-label {
@@ -91,6 +104,7 @@
         .group-title {
             font-size: 10px;
             font-weight: bold;
+            margin: 0 0 4px 0;
         }
 
         .cell-right {
@@ -106,20 +120,15 @@
             background: #eef2f8;
         }
 
-        .zebra tbody tr:last-child td {
-            background: #ffffff;
-        }
-
+        .zebra tbody tr:last-child td,
         table tbody tr:last-child td {
-            background: #ffffff;
+            background: #fff;
         }
-@include('reports.partials.pdf-footer-table-style')
 
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
-            border-bottom: 1px solid #000;
         }
 
         .center td {
@@ -129,39 +138,27 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
-            background: #ffffff !important;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            background: #fff !important;
         }
 
         .zebra tbody tr.totals-row td {
-            background: #ffffff !important;
+            background: #fff !important;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border: 0 !important;
-            border-top: 1px solid #000 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: transparent !important;
         }
 
         .group-cols col.col-no {
-            width: 6%;
+            width: 8%;
         }
 
         .group-cols col.col-tebal,
-        .group-cols col.col-lebar {
-            width: 14%;
-        }
-
+        .group-cols col.col-lebar,
         .group-cols col.col-panjang {
             width: 14%;
         }
@@ -171,12 +168,14 @@
         }
 
         .group-cols col.col-hasil {
-            width: 28%;
+            width: 26%;
         }
 
         .equal-cols-2 col {
             width: 50%;
         }
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -192,7 +191,8 @@
             return abs($num) < 0.0000001 ? '' : number_format($num, 4, '.', ',');
         };
         $fmtInt = static function ($value): string {
-            return number_format((float) ($value = 0 ? '' : $value), 0, '.', ',');
+            $num = (float) ($value ?? 0);
+            return abs($num) < 0.0000001 ? '' : number_format($num, 0, '.', ',');
         };
     @endphp
 
@@ -214,29 +214,24 @@
                 <p class="group-title">{{ $group['jenis'] }}</p>
                 <table class="report-table zebra group-cols">
                     <colgroup class="group-cols">
-                        <col class="col-no" style="width: 6%;">
-                        <col class="col-tebal" style="width: 14%;">
-                        <col class="col-lebar" style="width: 14%;">
-                        <col class="col-panjang" style="width: 14%;">
-                        <col class="col-jumlah" style="width: 24%;">
-                        <col class="col-hasil" style="width: 28%;">
+                        <col class="col-no">
+                        <col class="col-tebal">
+                        <col class="col-lebar">
+                        <col class="col-panjang">
+                        <col class="col-jumlah">
+                        <col class="col-hasil">
                     </colgroup>
                     <thead>
                         <tr class="headers-row">
-                            <th style="width: 6%;">No</th>
-                            <th style="width: 14%;">Tebal (mm)</th>
-                            <th style="width: 14%;">Lebar (mm)</th>
-                            <th style="width: 14%;">Panjang (ft)</th>
-                            <th style="width: 24%;">Jumlah Batang (pcs)</th>
-                            <th style="width: 28%;">Hasil</th>
+                            <th>No</th>
+                            <th>Tebal (mm)</th>
+                            <th>Lebar (mm)</th>
+                            <th>Panjang (ft)</th>
+                            <th>Jumlah Batang (pcs)</th>
+                            <th>Hasil</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="6"></td>
-                        </tr>
-                    </tfoot>
-<tbody>
+                    <tbody>
                         @foreach ($groupRows as $row)
                             <tr class="data-row center">
                                 <td class="data-cell">{{ $loop->iteration }}</td>
@@ -265,33 +260,6 @@
             </tbody>
         </table>
     @endif
-
-    <div class="section">
-        <h4 class="group-title">Summary</h4>
-        <table class="equal-cols-2" style="width: 45%;">
-            <colgroup>
-                <col>
-                <col>
-            </colgroup>
-            <tbody>
-                <tr>
-                    <td class="row-label">Total Data</td>
-                    <td style="text-align: right; font-weight: bold;">
-                        {{ number_format((int) ($summary['total_rows'] ?? 0), 0, '.', ',') }} Data
-                    </td>
-                </tr>
-                <tr>
-                    <td class="row-label">Total Jumlah Batang</td>
-                    <td style="text-align: right; font-weight: bold;">{{ $fmtInt($summary['total_batang'] ?? 0) }} pcs
-                    </td>
-                </tr>
-                <tr>
-                    <td class="row-label">Grand Total Hasil</td>
-                    <td style="text-align: right; font-weight: bold;">{{ $fmt4($summary['total_hasil'] ?? 0) }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
     @include('reports.partials.pdf-footer-table')
 </body>

@@ -56,6 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -98,77 +102,60 @@
         .row-even td {
             background: #eef2f8;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
-        }
-
-        .summary-section {
-            margin-top: 12px;
-        }
-
-        .group-summary {
-            width: 100%;
-            text-align: right;
-            margin: 2px 0 14px 0;
-            font-size: 11px;
-        }
-
-        .group-summary .label {
-            display: inline-block;
-            min-width: 56px;
-            text-align: left;
-            font-weight: bold;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
             background: #fff;
+        }
+
+        .group-note {
+            width: 100%;
+            margin: 4px 0 14px 0;
+            font-size: 11px;
+        }
+
+        .group-note td {
+            border: 0;
+            padding: 0 4px;
+            background: transparent !important;
+            vertical-align: top;
+            white-space: nowrap;
+        }
+
+        .group-note .left {
+            text-align: left;
+        }
+
+        .group-note .center {
+            text-align: center;
+        }
+
+        .group-note .right {
+            text-align: right;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
-        .summary-table {
-            width: 50%;
-            table-layout: auto;
-        }
-
-        .summary-table th,
-        .summary-table td {
-            padding: 4px 6px;
-            font-size: 11px;
-        }
-
-        .summary-table th {
-            text-align: left;
-            width: 40%;
-        }
-        
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-@include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -179,8 +166,8 @@
         $columns = array_keys($rowsData[0] ?? []);
         $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') : null;
         $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') : null;
-        $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $reportEndReference = isset($endDate) ? \Carbon\Carbon::parse($endDate) : $generatedAt->copy();
 
         $normalize = static function (string $value): string {
             return strtolower(str_replace([' ', '_', '.'], '', trim($value)));
@@ -202,167 +189,87 @@
         };
 
         $formatHeaderLabel = static function (string $column) use ($normalize): string {
-            $normalized = $normalize($column);
-
-            return match ($normalized) {
-                'nokb' => 'No KB',
+            return match ($normalize($column)) {
+                'nokayubulat', 'nokb' => 'No KB',
+                'datecreate' => 'Tanggal',
+                'nmsupplier', 'namasupplier' => 'Nama Supplier',
                 'notruk', 'truk', 'mtruk' => 'No Truk',
-                'ton' => 'Berat Muatan (Ton)',
+                'tonkbkg', 'ton' => 'Berat Muatan (Ton)',
+                'tanggallamaracip' => 'Lama Racip',
                 default => $column,
             };
         };
 
-        $isNumericColumn = static function (string $column, array $rows): bool {
-            foreach ($rows as $row) {
-                $value = $row[$column] ?? null;
-                if ($value === null || $value === '') {
-                    continue;
-                }
-
-                if (is_numeric($value)) {
-                    return true;
-                }
-
-                if (!is_string($value)) {
-                    return false;
-                }
-
-                $normalized = str_replace([' ', ','], ['', '.'], trim($value));
-
-                return is_numeric($normalized);
-            }
-
-            return false;
-        };
-
         $statusColumn = $findColumnByCandidates($columns, ['Status']);
-        $tonColumn = $findColumnByCandidates($columns, ['Ton', 'JmlhTon', 'JumlahTon', 'Berat']);
-        $truckColumn = $findColumnByCandidates($columns, ['Truk', 'NoTruk', 'No Truk']);
-        $supplierColumn = $findColumnByCandidates($columns, ['Supplier', 'NamaSupplier', 'Nama Supplier']);
-        $jenisKayuColumn = $findColumnByCandidates($columns, ['JenisKayu', 'Jenis Kayu', 'Jenis']);
-        $lamaRacipColumn = $findColumnByCandidates($columns, ['Lama Racip', 'LamaRacip']);
-        $lamaTungguColumn = $findColumnByCandidates($columns, ['Lama Tunggu', 'LamaTunggu']);
-
-        if ($tonColumn === null) {
-            foreach ($columns as $column) {
-                if (str_contains($normalize($column), 'ton')) {
-                    $tonColumn = $column;
-                    break;
-                }
-            }
-        }
+        $noKayuBulatColumn = $findColumnByCandidates($columns, ['NoKayuBulat', 'No KB', 'NoKB']);
+        $dateCreateColumn = $findColumnByCandidates($columns, ['DateCreate', 'Tanggal']);
+        $jenisColumn = $findColumnByCandidates($columns, ['Jenis', 'JenisKayu', 'Jenis Kayu']);
+        $supplierColumn = $findColumnByCandidates($columns, ['NmSupplier', 'NamaSupplier', 'Nama Supplier']);
+        $truckColumn = $findColumnByCandidates($columns, ['NoTruk', 'No Truk', 'Truk']);
+        $tonColumn = $findColumnByCandidates($columns, ['TonKBKG', 'Ton', 'JmlhTon', 'JumlahTon', 'Berat']);
+        $tanggalRacipColumn = $findColumnByCandidates($columns, ['TanggalRacip', 'Tanggal Racip']);
+        $tanggalLamaRacipColumn = $findColumnByCandidates($columns, ['TanggalLamaRacip']);
+        $dateUsageColumn = $findColumnByCandidates($columns, ['DateUsage', 'Date Usage']);
 
         $displayColumns = array_values(
-            array_filter($columns, static fn(string $column): bool => $column !== $statusColumn),
+            array_filter([
+                $noKayuBulatColumn,
+                $dateCreateColumn,
+                $supplierColumn,
+                $jenisColumn,
+                $tanggalRacipColumn,
+                $tanggalLamaRacipColumn,
+                'LAMA_TUNGGU_VIRTUAL',
+                $truckColumn,
+                $tonColumn,
+            ], static fn($column): bool => is_string($column) && $column !== '')
         );
-        $displayColumns = array_values(
-            array_filter(
-                $displayColumns,
-                static fn(string $column): bool => $column !== $truckColumn && $column !== $tonColumn,
-            ),
-        );
-        if ($truckColumn !== null && in_array($truckColumn, $columns, true)) {
-            $displayColumns[] = $truckColumn;
-        }
-        if ($tonColumn !== null && in_array($tonColumn, $columns, true)) {
-            $displayColumns[] = $tonColumn;
-        }
 
         $columnWidths = [];
         foreach ($displayColumns as $column) {
             $normalizedColumn = $normalize($column);
             $columnWidths[$column] = match (true) {
-                str_contains($normalizedColumn, 'nokb') => 10,
-                str_contains($normalizedColumn, 'tanggal') && !str_contains($normalizedColumn, 'racip') => 12,
-                str_contains($normalizedColumn, 'namasupplier') => 15,
-                str_contains($normalizedColumn, 'jeniskayu') => 11,
+                str_contains($normalizedColumn, 'nokayu') || str_contains($normalizedColumn, 'nokb') => 10,
+                str_contains($normalizedColumn, 'datecreate') => 12,
+                str_contains($normalizedColumn, 'supplier') => 15,
+                str_contains($normalizedColumn, 'jenis') => 11,
                 str_contains($normalizedColumn, 'truk') => 7,
                 str_contains($normalizedColumn, 'ton') => 8,
-                str_contains($normalizedColumn, 'tanggalracip') => 14,
-                str_contains($normalizedColumn, 'lamaracip') => 11,
-                str_contains($normalizedColumn, 'lamatunggu') => 12,
-                default => null,
+                str_contains($normalizedColumn, 'tanggalracip') => 11,
+                str_contains($normalizedColumn, 'tanggallamaracip') => 11,
+                str_contains($normalizedColumn, 'virtual') => 10,
+                default => 10,
             };
         }
 
-        $knownWidthTotal = 0;
-        $unknownColumns = [];
-        foreach ($displayColumns as $column) {
-            $width = $columnWidths[$column] ?? null;
-            if (is_int($width)) {
-                $knownWidthTotal += $width;
-            } else {
-                $unknownColumns[] = $column;
-            }
-        }
-
-        $remainingWidth = max(0, 100 - $knownWidthTotal);
-        $unknownCount = count($unknownColumns);
-        if ($unknownCount > 0) {
-            $baseWidth = intdiv($remainingWidth, $unknownCount);
-            $remainder = $remainingWidth % $unknownCount;
-
-            foreach ($unknownColumns as $index => $column) {
-                $columnWidths[$column] = $baseWidth + ($index < $remainder ? 1 : 0);
-            }
-        }
-
+        $fullWidthTotal = array_sum($columnWidths);
         $finalColumnWidths = [];
-        $fullWidthTotal = array_sum(
-            array_map(static fn(string $column): int => (int) ($columnWidths[$column] ?? 0), $displayColumns),
-        );
-        $targetWidthWithoutNo = 96.0;
         foreach ($displayColumns as $column) {
             $base = (float) ($columnWidths[$column] ?? 0);
-            $finalColumnWidths[$column] = $fullWidthTotal > 0 ? ($base / $fullWidthTotal) * $targetWidthWithoutNo : 0.0;
+            $finalColumnWidths[$column] = $fullWidthTotal > 0 ? ($base / $fullWidthTotal) * 96.0 : 0.0;
         }
 
-        $formatCellValue = static function (mixed $value, string $column) use (
-            $normalize,
-            $tonColumn,
-            $truckColumn,
-            $lamaRacipColumn,
-            $lamaTungguColumn,
-        ): string {
+        $formatCellValue = static function (mixed $value, string $column) use ($normalize, $tonColumn): string {
             if ($value === null) {
                 return '';
             }
 
-            $normalizedColumn = $normalize($column);
             $textValue = trim((string) $value);
-            $numericValue = is_numeric($value)
-                ? (float) $value
-                : (is_numeric(str_replace([' ', ','], ['', '.'], $textValue))
-                    ? (float) str_replace([' ', ','], ['', '.'], $textValue)
-                    : null);
-
-            $isTonColumn =
-                ($tonColumn !== null && $normalize($tonColumn) === $normalizedColumn) ||
-                str_contains($normalizedColumn, 'ton');
-
-            if ($isTonColumn && $numericValue !== null) {
-                return number_format($numericValue, 4, '.', ',');
+            if ($textValue === '') {
+                return '';
             }
 
-            if (
-                (($truckColumn !== null && $normalize($truckColumn) === $normalizedColumn) ||
-                    ($lamaRacipColumn !== null && $normalize($lamaRacipColumn) === $normalizedColumn) ||
-                    ($lamaTungguColumn !== null && $normalize($lamaTungguColumn) === $normalizedColumn)) &&
-                $numericValue !== null
-            ) {
-                $formatted = (string) (int) round($numericValue);
-                if (
-                    ($lamaRacipColumn !== null && $normalize($lamaRacipColumn) === $normalizedColumn) ||
-                    ($lamaTungguColumn !== null && $normalize($lamaTungguColumn) === $normalizedColumn)
-                ) {
-                    return "{$formatted} hari";
-                }
-
-                return $formatted;
+            $normalizedColumn = $normalize($column);
+            if ($tonColumn !== null && $normalize($tonColumn) === $normalizedColumn && is_numeric($textValue)) {
+                return number_format((float) $textValue, 4, '.', ',');
             }
 
-            if (preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $textValue) === 1) {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $textValue) === 1) {
                 try {
+                    if (str_contains($normalizedColumn, 'racip')) {
+                        return \Carbon\Carbon::parse($textValue)->format('d/m/Y');
+                    }
+
                     return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
                 } catch (\Throwable $exception) {
                     return $textValue;
@@ -372,37 +279,30 @@
             return $textValue;
         };
 
-        $groupedRows = [];
-        foreach ($rowsData as $row) {
-            $statusRaw = $statusColumn !== null ? $row[$statusColumn] ?? null : null;
-            $statusText = is_numeric($statusRaw) ? (string) (int) $statusRaw : trim((string) $statusRaw);
-
-            $groupName = match ($statusText) {
-                '0' => 'Masih Hidup',
-                '1' => 'Sudah Mati',
-                default => $statusText !== '' ? $statusText : 'Tanpa Status',
-            };
-
-            $groupedRows[$groupName][] = $row;
-        }
-
-        $groupOrder = ['Masih Hidup', 'Sudah Mati'];
-        uksort($groupedRows, static function (string $left, string $right) use ($groupOrder): int {
-            $leftIndex = array_search($left, $groupOrder, true);
-            $rightIndex = array_search($right, $groupOrder, true);
-
-            if ($leftIndex !== false && $rightIndex !== false) {
-                return $leftIndex <=> $rightIndex;
-            }
-            if ($leftIndex !== false) {
-                return -1;
-            }
-            if ($rightIndex !== false) {
-                return 1;
+        $parseDateValue = static function (mixed $value): ?\Carbon\Carbon {
+            if ($value === null) {
+                return null;
             }
 
-            return strcasecmp($left, $right);
-        });
+            $text = trim((string) $value);
+            if ($text === '') {
+                return null;
+            }
+
+            try {
+                return \Carbon\Carbon::parse($text);
+            } catch (\Throwable $exception) {
+                return null;
+            }
+        };
+
+        $diffDays = static function (?\Carbon\Carbon $from, ?\Carbon\Carbon $to): ?int {
+            if ($from === null || $to === null) {
+                return null;
+            }
+
+            return max(0, (int) $from->diffInDays($to, false));
+        };
 
         $toFloat = static function (mixed $value): ?float {
             if (is_numeric($value)) {
@@ -419,7 +319,6 @@
             }
 
             $normalized = str_replace(' ', '', $normalized);
-
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
                     $normalized = str_replace('.', '', $normalized);
@@ -455,33 +354,34 @@
                 return count($rows);
             }
 
-            return count(
-                array_filter($rows, static fn(array $row): bool => trim((string) ($row[$truckColumn] ?? '')) !== ''),
-            );
-        };
-
-        $countDistinct = static function (array $rows, ?string $column): int {
-            if ($column === null) {
-                return 0;
-            }
-
-            $values = [];
+            $distinct = [];
             foreach ($rows as $row) {
-                $value = trim((string) ($row[$column] ?? ''));
-                if ($value === '') {
+                $truck = trim((string) ($row[$truckColumn] ?? ''));
+                if ($truck === '') {
                     continue;
                 }
 
-                $values[$value] = true;
+                $distinct[$truck] = true;
             }
 
-            return count($values);
+            return count($distinct);
         };
 
-        $summaryTotalSupplier = $countDistinct($rowsData, $supplierColumn);
-        $summaryTotalJenisKayu = $countDistinct($rowsData, $jenisKayuColumn);
-        $summaryTotalTruk = $countDistinct($rowsData, $truckColumn);
-        $summaryTotalMuatan = $sumTon($rowsData, $tonColumn);
+        $groupedRows = [];
+        foreach ($rowsData as $row) {
+            $statusRaw = $statusColumn !== null ? $row[$statusColumn] ?? null : null;
+            $statusText = is_numeric($statusRaw) ? (string) (int) $statusRaw : trim((string) $statusRaw);
+
+            $groupName = match ($statusText) {
+                '0' => 'Masih Hidup',
+                '1' => 'Sudah Mati',
+                default => $statusText !== '' ? $statusText : 'Tanpa Status',
+            };
+
+            $groupedRows[$groupName][] = $row;
+        }
+
+        $visualDisplayColumnsCount = count($displayColumns) + 2;
     @endphp
 
     <h1 class="report-title">Laporan Umur Kayu Bulat (NON RAMBUNG)</h1>
@@ -499,35 +399,82 @@
             <colgroup>
                 <col style="width: 4%">
                 @foreach ($displayColumns as $column)
-                    <col style="width: {{ number_format((float) ($finalColumnWidths[$column] ?? 0), 4, '.', ',') }}%">
+                    @php
+                        $baseWidth = (float) ($finalColumnWidths[$column] ?? 0);
+                    @endphp
+                    @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
+                        <col style="width: {{ number_format($baseWidth * 0.72, 4, '.', ',') }}%">
+                        <col style="width: {{ number_format($baseWidth * 0.28, 4, '.', ',') }}%">
+                    @else
+                        <col style="width: {{ number_format($baseWidth, 4, '.', ',') }}%">
+                    @endif
                 @endforeach
             </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>No</th>
                     @foreach ($displayColumns as $column)
-                        <th>{{ $formatHeaderLabel($column) }}</th>
+                        @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
+                            <th colspan="2">{{ $formatHeaderLabel($column) }}</th>
+                        @elseif ($column === 'LAMA_TUNGGU_VIRTUAL')
+                            <th>Lama Tunggu</th>
+                        @else
+                            <th>{{ $formatHeaderLabel($column) }}</th>
+                        @endif
                     @endforeach
                 </tr>
             </thead>
-            
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+            <tbody>
                 @foreach ($groupRows as $row)
+                    @php
+                        $dateCreateValue = $parseDateValue($dateCreateColumn !== null ? ($row[$dateCreateColumn] ?? null) : null);
+                        $tanggalRacipValue = $parseDateValue(
+                            $tanggalRacipColumn !== null ? ($row[$tanggalRacipColumn] ?? null) : null,
+                        );
+                        $tanggalLamaRacipValue = $parseDateValue(
+                            $tanggalLamaRacipColumn !== null ? ($row[$tanggalLamaRacipColumn] ?? null) : null,
+                        );
+                        $dateUsageValue = $parseDateValue($dateUsageColumn !== null ? ($row[$dateUsageColumn] ?? null) : null);
+
+                        $lamaAwalHari = $diffDays($dateCreateValue, $tanggalRacipValue);
+                        $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hr' : '';
+
+                        $lamaRacipHari = $diffDays($tanggalRacipValue, $tanggalLamaRacipValue);
+                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hr' : '';
+
+                        if ($dateUsageValue !== null && $dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, $dateUsageValue);
+                        } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
+                        } elseif ($tanggalRacipValue !== null && $dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, $tanggalRacipValue);
+                        } elseif ($dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, $reportEndReference);
+                        } else {
+                            $lamaTungguHari = null;
+                        }
+                        $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hr' : '';
+                    @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
                         @foreach ($displayColumns as $column)
                             @php
                                 $value = $row[$column] ?? null;
-                                $isTonCell = $tonColumn !== null && $normalize($column) === $normalize($tonColumn);
+                                $isTonCell = $tonColumn !== null && $column === $tonColumn;
                             @endphp
-                            <td class="data-cell {{ $isTonCell ? 'number' : 'center' }}">
-                                {{ $formatCellValue($value, $column) }}
-                            </td>
+                            @if ($column === $tanggalRacipColumn)
+                                <td class="data-cell center">{{ $formatCellValue($value, $column) }}</td>
+                                <td class="data-cell center">{{ $lamaAwalText }}</td>
+                            @elseif ($column === $tanggalLamaRacipColumn)
+                                <td class="data-cell center">{{ $formatCellValue($value, $column) }}</td>
+                                <td class="data-cell center">{{ $lamaRacipText }}</td>
+                            @elseif ($column === 'LAMA_TUNGGU_VIRTUAL')
+                                <td class="data-cell center">{{ $lamaTungguText }}</td>
+                            @else
+                                <td class="data-cell {{ $isTonCell ? 'number' : 'center' }}">
+                                    {{ $formatCellValue($value, $column) }}
+                                </td>
+                            @endif
                         @endforeach
                     </tr>
                 @endforeach
@@ -536,7 +483,7 @@
                         $hasTruckColumn = $truckColumn !== null && in_array($truckColumn, $displayColumns, true);
                         $hasTonColumn = $tonColumn !== null && in_array($tonColumn, $displayColumns, true);
                         $tailColumnsCount = ($hasTruckColumn ? 1 : 0) + ($hasTonColumn ? 1 : 0);
-                        $totalLabelColspan = max(1, 1 + count($displayColumns) - $tailColumnsCount);
+                        $totalLabelColspan = max(1, 1 + $visualDisplayColumnsCount - $tailColumnsCount);
                     @endphp
                     <td class="center" colspan="{{ $totalLabelColspan }}">Total :</td>
                     @if ($hasTruckColumn)
@@ -548,41 +495,34 @@
                 </tr>
             </tbody>
         </table>
+        @php
+            $groupTon = number_format($sumTon($groupRows, $tonColumn), 4, '.', ',');
+            $groupTruck = $countTruck($groupRows, $truckColumn);
+        @endphp
+        @if ($groupName === 'Masih Hidup')
+            <table class="group-note">
+                <tr>
+                    <td class="left" style="width:33.33%">Jmlh Belum Masuk Meja : {{ $groupTon }} Ton</td>
+                    <td class="center" style="width:33.33%">Jmlh Sudah Masuk Meja : Ton</td>
+                    <td class="right" style="width:33.33%">Jmlh : {{ $groupTon }} Ton ({{ $groupTruck }} Truk)</td>
+                </tr>
+            </table>
+        @elseif ($groupName === 'Sudah Mati')
+            <table class="group-note">
+                <tr>
+                    <td class="right">Jmlh : {{ $groupTon }} Ton ({{ $groupTruck }} Truk)</td>
+                </tr>
+            </table>
+        @endif
     @empty
         <table>
-            
-        <tbody>
+            <tbody>
                 <tr>
                     <td class="center">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>
     @endforelse
-
-    <div class="section-title">Summary :</div>
-
-    <table class="summary-table">
-        
-        <tbody>
-            <tr>
-                <th>Total Supplier</th>
-                <td class="center"><strong>{{ $summaryTotalSupplier }} Supplier</strong></td>
-            </tr>
-            <tr>
-                <th>Total Jenis Kayu</th>
-                <td class="center"><strong>{{ $summaryTotalJenisKayu }} Jenis Kayu</strong></td>
-            </tr>
-            <tr>
-                <th>Total Semua Truk</th>
-                <td class="center"><strong>{{ $summaryTotalTruk }} Truk</strong></td>
-            </tr>
-            <tr>
-                <th>Berat Semua Muatan</th>
-                <td class="center"><strong>{{ number_format($summaryTotalMuatan, 4, '.', ',') }} Ton</strong></td>
-            </tr>
-        </tbody>
-    </table>
-
 
     @include('reports.partials.pdf-footer-table')
 </body>

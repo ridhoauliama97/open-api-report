@@ -50,7 +50,8 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
         }
 
         thead {
@@ -58,7 +59,7 @@
         }
 
         tfoot {
-            display: table-row-group;
+            display: table-footer-group;
         }
 
         tr {
@@ -68,15 +69,27 @@
 
         th,
         td {
-            border: 1px solid #000;
+            border: 0;
+            border-left: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: 1px solid #000;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: 0;
         }
 
         th {
             text-align: center;
             font-weight: bold;
             font-size: 11px;
+            border-bottom: 1px solid #000;
         }
 
         td.center {
@@ -93,7 +106,6 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
-            border-bottom: 1px solid #000;
         }
 
         .row-odd td {
@@ -107,7 +119,8 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -115,18 +128,9 @@
             border-top: 0 !important;
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
         }
 
-        .table-end-line td {
-            border: 0 !important;
-            border-top: 1px solid #000 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: transparent !important;
-        }
-@include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -215,17 +219,11 @@
         </tbody>
         @if ($rows !== [] && $totals !== [])
             <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ $visibleColumnCount + 1 }}"></td>
-                </tr>
                 <tr class="totals-row">
                     <td colspan="{{ count($columns) }}" class="center">Total</td>
                     <td class="number">
                         {{ $lastMasukColumn !== null ? $formatNumber($totals[$lastMasukColumn] ?? null, $lastMasukColumn) : '' }}
                     </td>
-                </tr>
-                <tr class="table-end-line">
-                    <td colspan="{{ $visibleColumnCount + 1 }}"></td>
                 </tr>
             </tfoot>
         @endif

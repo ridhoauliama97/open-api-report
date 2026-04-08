@@ -60,29 +60,89 @@ class LabelStHidupDetailReportService
 
         $out = [];
         foreach ($raw as $row) {
-            $item = (array) $row;
-            foreach ($item as $k => $v) {
+            $item = [];
+            foreach ((array) $row as $k => $v) {
                 if (is_string($v)) {
-                    $item[$k] = trim($v);
+                    $v = trim($v);
                 }
+                $item[(string) $k] = $v;
             }
 
             $out[] = [
-                'NoST' => (string) ($item['NoST'] ?? $item['NoSt'] ?? $item['No_ST'] ?? $item['NoSTJual'] ?? ''),
-                'Date' => (string) ($item['Date'] ?? $item['Tanggal'] ?? $item['Tgl'] ?? $item['TglLaporan'] ?? $item['DateCreate'] ?? ''),
-                'NoSPK' => (string) ($item['NoSPK'] ?? $item['NoSpk'] ?? $item['SPK'] ?? ''),
-                'Jenis' => (string) ($item['Jenis'] ?? $item['NamaGrade'] ?? $item['Produk'] ?? ''),
-                'Tebal' => $this->toFloat($item['Tebal'] ?? null) ?? $item['Tebal'] ?? null,
-                'Lebar' => $this->toFloat($item['Lebar'] ?? null) ?? $item['Lebar'] ?? null,
-                'Panjang' => $this->toFloat($item['Panjang'] ?? null) ?? $item['Panjang'] ?? null,
-                'JmlhBatang' => (int) ($this->toFloat($item['JmlhBatang'] ?? $item['JumlahBatang'] ?? null) ?? 0),
-                'Lokasi' => (string) ($item['Lokasi'] ?? $item['IdLokasi'] ?? $item['Ruang'] ?? $item['NoRuang'] ?? ''),
+                'NoST' => $this->pickString($item, ['NoST', 'NoSt', 'No_ST', 'NoSTJual', 'NoLabelST']),
+                'Date' => $this->pickString($item, ['Date', 'Tanggal', 'Tgl', 'TglLaporan', 'DateCreate', 'TanggalST']),
+                'NoSPK' => $this->pickString($item, ['NoSPK', 'NoSpk', 'SPK', 'NoKontrak']),
+                'Jenis' => $this->pickString($item, ['Jenis', 'NamaGrade', 'Produk', 'JenisKayu', 'NamaJenis']),
+                'Tebal' => $this->pickFloatOrRaw($item, ['Tebal']),
+                'Lebar' => $this->pickFloatOrRaw($item, ['Lebar']),
+                'Panjang' => $this->pickFloatOrRaw($item, ['Panjang', 'PanjangFt']),
+                'JmlhBatang' => (int) ($this->pickFloat($item, ['JmlhBatang', 'JumlahBatang', 'Batang', 'Pcs']) ?? 0),
+                'Lokasi' => $this->pickString($item, ['Lokasi', 'IdLokasi', 'Ruang', 'NoRuang', 'KodeLokasi']),
                 // SP_LapLabelSTHidupDetail uses "Awal" as the ton/total-like measure.
-                'Total' => (float) ($this->toFloat($item['Total'] ?? $item['Awal'] ?? $item['Ton'] ?? $item['TonST'] ?? null) ?? 0.0),
+                'Total' => (float) ($this->pickFloat($item, ['Total', 'Awal', 'Ton', 'TonST', 'TotalTon']) ?? 0.0),
             ];
         }
 
         return $out;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @param array<int, string> $keys
+     */
+    private function pickString(array $item, array $keys): string
+    {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $item)) {
+                continue;
+            }
+
+            $value = $item[$key];
+            if ($value === null) {
+                return '';
+            }
+
+            return is_string($value) ? trim($value) : (string) $value;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @param array<int, string> $keys
+     */
+    private function pickFloat(array $item, array $keys): ?float
+    {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $item)) {
+                continue;
+            }
+
+            $value = $this->toFloat($item[$key]);
+            if ($value !== null) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @param array<int, string> $keys
+     */
+    private function pickFloatOrRaw(array $item, array $keys): mixed
+    {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $item)) {
+                continue;
+            }
+
+            return $this->toFloat($item[$key]) ?? $item[$key];
+        }
+
+        return null;
     }
 
     private function toFloat(mixed $value): ?float
@@ -154,8 +214,8 @@ class LabelStHidupDetailReportService
             'exec' => "SET NOCOUNT ON; EXEC {$procedure}",
             'call' => "CALL {$procedure}()",
             default => $driver === 'sqlsrv'
-                ? "SET NOCOUNT ON; EXEC {$procedure}"
-                : "CALL {$procedure}()",
+            ? "SET NOCOUNT ON; EXEC {$procedure}"
+            : "CALL {$procedure}()",
         };
 
         return $connection->select($sql);

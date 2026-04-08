@@ -27,9 +27,8 @@
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     <table class="report-table">
-
         <thead>
-            <tr class="header-line-1">
+            <tr>
                 <th>No</th>
                 <th>Tanggal</th>
                 <th>Supplier</th>
@@ -40,12 +39,6 @@
                 <th>Fisik Batang Balok<br>Di Lapangan</th>
             </tr>
         </thead>
-        
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="8"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
@@ -78,10 +71,12 @@
                         {{ $noTrukText }}
                     </td>
                     <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                    <td class="number data-cell">{{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number data-cell">{{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}
-                    </td>
                     <td class="number data-cell">
+                        {{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number data-cell">
+                        {{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}
+                    </td>
+                    <td class="number data-cell" style="font-weight:bold;">
                         @php
                             $fisik = (float) ($row['FisikBatangBalokDiLapangan'] ?? 0);
                         @endphp
@@ -96,12 +91,9 @@
         </tbody>
     </table>
 
-    <section class="summary-page" style="page-break-before: auto; margin-top: 4px;">
-        <h2 class="summary-title">Keterangan:</h2>
+    <section class="summary-page" style="page-break-before: auto; margin-top: 10px;">
+        <h2 class="summary-title">Rangkuman :</h2>
         <ul class="summary-list">
-            <li>
-                Total Seluruh Data: {{ (int) ($summaryData['total_rows'] ?? 0) }}
-            </li>
             <li>
                 Total Balok Masuk: {{ number_format((float) ($summaryData['total_pcs'] ?? 0), 0, '.', ',') }}
             </li>

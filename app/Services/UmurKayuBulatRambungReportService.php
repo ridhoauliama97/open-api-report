@@ -79,6 +79,7 @@ class UmurKayuBulatRambungReportService
                 'Truk' => $item['NoTruk'] ?? null,
                 'Ton' => $this->toFloat($item['TonKBKG'] ?? null),
                 'Tanggal Racip' => $tanggalRacip?->toDateString() ?? ($item['TanggalRacip'] ?? null),
+                'Tanggal Lama Racip' => $dateUsage?->toDateString() ?? ($item['TanggalLamaRacip'] ?? null),
                 'Lama Racip' => $lamaRacip,
                 'Lama Tunggu' => $lamaTunggu,
             ];
@@ -132,8 +133,8 @@ class UmurKayuBulatRambungReportService
             'exec' => $this->buildExecSql($procedure, $safeParameterCount),
             'call' => $this->buildCallSql($procedure, $safeParameterCount),
             default => $driver === 'sqlsrv'
-                ? $this->buildExecSql($procedure, $safeParameterCount)
-                : $this->buildCallSql($procedure, $safeParameterCount),
+            ? $this->buildExecSql($procedure, $safeParameterCount)
+            : $this->buildCallSql($procedure, $safeParameterCount),
         };
 
         return $connection->select($sqlWithParameters, $bindings);

@@ -768,7 +768,7 @@ return [
         'parameter_count' => (int) env('UMUR_KAYU_BULAT_NON_RAMBUNG_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'UMUR_KAYU_BULAT_NON_RAMBUNG_REPORT_EXPECTED_COLUMNS',
-            ''
+            'Status,No.KB,Tanggal,Nama Supplier,Jenis Kayu,Truk,Ton,Tanggal Racip,Tanggal Lama Racip,Lama Racip,Lama Tunggu'
         )))),
     ],
     'umur_kayu_bulat_rambung' => [
@@ -779,7 +779,7 @@ return [
         'parameter_count' => (int) env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'UMUR_KAYU_BULAT_RAMBUNG_REPORT_EXPECTED_COLUMNS',
-            ''
+            'Status,No.KB,Tanggal,Nama Supplier,Jenis Kayu,Truk,Ton,Tanggal Racip,Lama Racip,Lama Tunggu'
         )))),
     ],
     'supplier_intel' => [

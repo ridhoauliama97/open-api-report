@@ -109,6 +109,16 @@
             border-top: 1px solid #000;
         }
 
+        .group-start td {
+            border-top: 1px solid #000;
+        }
+
+        .subtotal-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
         /* Footer line to “close” the table on each page fragment when table is split across pages. */
         .tfoot-line td {
             border-top: 1px solid #000;
@@ -174,7 +184,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -242,17 +253,6 @@
                 <th style="width: 56px;">Total</th>
             </tr>
         </thead>
-        {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>. --}}
-        <tfoot>
-            <tr class="tfoot-line">
-                <td colspan="{{ 4 + count($dateKeys) }}">&nbsp;</td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
 
@@ -261,6 +261,11 @@
                     $noMeja = (int) ($group['no_meja'] ?? 0);
                     $rows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
                     $rowspan = max(1, count($rows));
+                    $subtotalByDate = [];
+                    foreach ($dateKeys as $dk) {
+                        $subtotalByDate[$dk] = 0.0;
+                    }
+                    $subtotalGroup = 0.0;
                 @endphp
 
                 @foreach ($rows as $ridx => $r)
@@ -270,8 +275,13 @@
                         $rowTotal = (float) ($r['row_total'] ?? 0.0);
                         $tebal = (float) ($r['tebal'] ?? 0.0);
                         $uom = (string) ($r['uom'] ?? '');
+                        foreach ($dateKeys as $dk) {
+                            $subtotalByDate[$dk] += (float) ($values[$dk] ?? 0.0);
+                        }
+                        $subtotalGroup += $rowTotal;
                     @endphp
-                    <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                    <tr
+                        class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}{{ $ridx === 0 ? ' group-start' : '' }}">
                         @if ($ridx === 0)
                             <td class="center" rowspan="{{ $rowspan }}">{{ $noMeja }}</td>
                         @endif
@@ -283,6 +293,16 @@
                         <td class="number" style="font-weight: bold; font-size: 11px;">{{ $fmtTotal($rowTotal) }}</td>
                     </tr>
                 @endforeach
+
+                @if ($rows !== [])
+                    <tr class="subtotal-row">
+                        <td colspan="3" class="center">Sub Total Meja {{ $noMeja }}</td>
+                        @foreach ($dateKeys as $dk)
+                            <td class="number">{{ $fmtTotal((float) ($subtotalByDate[$dk] ?? 0.0)) }}</td>
+                        @endforeach
+                        <td class="number">{{ $fmtTotal($subtotalGroup) }}</td>
+                    </tr>
+                @endif
             @empty
                 <tr>
                     <td colspan="{{ 4 + count($dateKeys) }}" class="center">Tidak ada data.</td>

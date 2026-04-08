@@ -55,7 +55,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -95,6 +98,10 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        td.weight-value {
+            font-weight: bold;
+        }
+
         .row-odd td {
             background: #c9d1df;
         }
@@ -102,11 +109,18 @@
         .row-even td {
             background: #eef2f8;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
+        }
+
+        .headers-row th:last-child {
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
@@ -118,7 +132,11 @@
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .report-table tbody tr.data-row td.data-cell:last-child {
             border-right: 1px solid #000 !important;
         }
 
@@ -202,11 +220,6 @@
                 @endforeach
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($columns) + 1 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -222,18 +235,18 @@
                             if ($isBeratColumn && is_numeric($value)) {
                                 $jenisValue =
                                     $jenisColumn !== null ? strtoupper(trim((string) ($row[$jenisColumn] ?? ''))) : '';
-                                if ($jenisValue === 'JABON') {
-                                    $displayValue = number_format((float) $value, 4, '.', ',') . ' Ton';
-                                } elseif ($jenisValue === 'RAMBUNG') {
+                                if ($jenisValue === 'RAMBUNG') {
                                     $displayValue = number_format((float) $value, 0, '.', ',') . ' Kg';
                                 } else {
-                                    $displayValue = number_format((float) $value, 2, '.', ',');
+                                    $displayValue = number_format((float) $value, 4, '.', ',') . ' Ton';
                                 }
                             } elseif ($isDateColumn) {
                                 $displayValue = $formatDateValue($value);
                             }
                         @endphp
-                        <td class="data-cell {{ $isBeratColumn ? 'number-right' : 'center' }}">{{ $displayValue }}</td>
+                        <td class="data-cell {{ $isBeratColumn ? 'number-right weight-value' : 'center' }}">
+                            {{ $displayValue }}
+                        </td>
                     @endforeach
                 </tr>
             @empty

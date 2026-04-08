@@ -23,7 +23,7 @@ class StockRacipKayuLatReportService
     public function buildReportData(string $endDate): array
     {
         $sourceRows = $this->fetch($endDate);
-        $rows = $this->aggregateRows($sourceRows);
+        $rows = $this->normalizeRows($sourceRows);
         $groupedRows = $this->groupByJenis($rows);
 
         $summary = [
@@ -50,42 +50,31 @@ class StockRacipKayuLatReportService
      * @param array<int, array<string, mixed>> $rows
      * @return array<int, array<string, mixed>>
      */
-    private function aggregateRows(array $rows): array
+    private function normalizeRows(array $rows): array
     {
-        $grouped = [];
-
+        $normalizedRows = [];
         foreach ($rows as $row) {
             $jenis = trim((string) ($row['Jenis'] ?? ''));
             $tebal = $this->toFloat($row['Tebal'] ?? null);
             $lebar = $this->toFloat($row['Lebar'] ?? null);
             $panjang = $this->toFloat($row['Panjang'] ?? null);
-
-            $key = implode('|', [$jenis, $tebal, $lebar, $panjang]);
-
-            if (!array_key_exists($key, $grouped)) {
-                $grouped[$key] = [
-                    'Jenis' => $jenis,
-                    'Tebal' => $tebal,
-                    'Lebar' => $lebar,
-                    'Panjang' => $panjang,
-                    'Hasil' => 0.0,
-                    'JmlhBatang' => 0.0,
-                ];
-            }
-
-            $grouped[$key]['Hasil'] += $this->toFloat($row['Hasil'] ?? null);
-            $grouped[$key]['JmlhBatang'] += $this->toFloat($row['JmlhBatang'] ?? null);
+            $normalizedRows[] = [
+                'Jenis' => $jenis,
+                'Tebal' => $tebal,
+                'Lebar' => $lebar,
+                'Panjang' => $panjang,
+                'Hasil' => $this->toFloat($row['Hasil'] ?? null),
+                'JmlhBatang' => $this->toFloat($row['JmlhBatang'] ?? null),
+            ];
         }
 
-        $aggregatedRows = array_values($grouped);
-
         usort(
-            $aggregatedRows,
+            $normalizedRows,
             static fn (array $a, array $b): int => [$a['Jenis'], $a['Tebal'], $a['Lebar'], $a['Panjang']]
                 <=> [$b['Jenis'], $b['Tebal'], $b['Lebar'], $b['Panjang']],
         );
 
-        return $aggregatedRows;
+        return $normalizedRows;
     }
 
     /**

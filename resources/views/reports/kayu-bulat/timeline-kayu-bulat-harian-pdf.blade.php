@@ -47,6 +47,11 @@
             table-layout: fixed;
         }
 
+        .report-table {
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+
         thead {
             display: table-header-group;
         }
@@ -62,17 +67,29 @@
 
         th,
         td {
-            border: 1px solid #000;
+            border: 0;
+            border-left: 1px solid #000;
             padding: 3px 4px;
             vertical-align: middle;
             word-break: break-word;
             text-align: center;
         }
 
+        th:first-child,
+        td:first-child {
+            border-left: 1px solid #000;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: 0;
+        }
+
         th {
             text-align: center;
             font-weight: bold;
             font-size: 11px;
+            border-bottom: 1px solid #000;
         }
 
         td.center {
@@ -91,39 +108,23 @@
         .row-even td {
             background: #eef2f8;
         }
-.headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
-            border-bottom: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
-        }
-
-        .report-table {
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
         }
         @include('reports.partials.pdf-footer-table-style')
     </style>
@@ -303,11 +304,6 @@
                     <th>Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($dayHeaders) + 3 }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($pivotRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -347,12 +343,7 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+            <tbody>
                 @forelse ($rowsData as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>

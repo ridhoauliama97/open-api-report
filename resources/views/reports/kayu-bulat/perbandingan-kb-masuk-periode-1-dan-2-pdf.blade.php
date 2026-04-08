@@ -49,7 +49,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -95,7 +98,8 @@
             font-weight: bold;
             font-size: 12px;
         }
-.trend-up {
+
+        .trend-up {
             color: #0b8f3c;
             font-weight: bold;
         }
@@ -110,23 +114,47 @@
             font-weight: bold;
         }
 
+        .trend-arrow {
+            display: inline-block;
+            margin-left: 3px;
+            font-weight: bold;
+            font-family: "DejaVu Sans", "Noto Serif", serif;
+        }
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
+        }
+
+        .headers-row th:last-child {
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
+            border-right: 1px solid #000;
+        }
+
+        .totals-row td:last-child {
+            border-right: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .report-table tbody tr.data-row td.data-cell:last-child {
             border-right: 1px solid #000 !important;
         }
 
@@ -140,6 +168,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -210,11 +239,6 @@
                 <th style="width: 110px;">Persen (%)</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rows as $row)
                 @php
@@ -222,7 +246,7 @@
                     $ton2 = is_numeric($row['Ton2'] ?? null) ? (float) $row['Ton2'] : 0.0;
                     $percent = $calculatePercent($ton1, $ton2);
                     $trendClass = $percent > 0 ? 'trend-up' : ($percent < 0 ? 'trend-down' : 'trend-flat');
-                    $trendIcon = $percent > 0 ? '' : ($percent < 0 ? '' : '');
+                    $trendIcon = $percent > 0 ? '↑' : ($percent < 0 ? '↓' : '→');
                     $percentText = $formatPercent($percent);
                 @endphp
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -232,7 +256,10 @@
                     <td class="number data-cell">{{ $formatNumber($ton1) }}</td>
                     <td class="number data-cell">{{ $formatNumber($ton2) }}</td>
                     <td class="number data-cell {{ $trendClass }}">
-                        {{ $percentText !== '' ? $percentText . '%' : '' }}{{ $percentText !== '' ? ' ' . $trendIcon : '' }}
+                        @if ($percentText !== '')
+                            {{ $percentText }}%
+                            <span class="trend-arrow">{{ $trendIcon }}</span>
+                        @endif
                     </td>
                 </tr>
             @empty
@@ -240,13 +267,21 @@
                     <td class="center" colspan="6">Tidak ada data.</td>
                 </tr>
             @endforelse
-            <tr class="grand-total-row totals-row" style="border: 1px solid #000">
+            <tr class="grand-total-row totals-row">
                 <td colspan="3" class="center">Grand Total</td>
                 <td class="number">{{ $formatNumber($totalTon1) }}</td>
                 <td class="number">{{ $formatNumber($totalTon2) }}</td>
-                <td
-                    class="number {{ $totalPercent > 0 ? 'trend-up' : ($totalPercent < 0 ? 'trend-down' : 'trend-flat') }}">
-                    {{ $formatPercent($totalPercent) !== '' ? $formatPercent($totalPercent) . '%' : '' }}{{ $formatPercent($totalPercent) !== '' ? ' ' . ($totalPercent > 0 ? '' : ($totalPercent < 0 ? '' : '')) : '' }}
+                @php
+                    $totalTrendClass =
+                        $totalPercent > 0 ? 'trend-up' : ($totalPercent < 0 ? 'trend-down' : 'trend-flat');
+                    $totalTrendIcon = $totalPercent > 0 ? '↑' : ($totalPercent < 0 ? '↓' : '→');
+                    $totalPercentText = $formatPercent($totalPercent);
+                @endphp
+                <td class="number {{ $totalTrendClass }}">
+                    @if ($totalPercentText !== '')
+                        {{ $totalPercentText }}%
+                        <span class="trend-arrow">{{ $totalTrendIcon }}</span>
+                    @endif
                 </td>
             </tr>
         </tbody>

@@ -40,12 +40,10 @@ class LabelStHidupDetailController extends Controller
         PdfGenerator $pdfGenerator,
         bool $inline,
     ) {
-        if (!$inline) {
-            // This report can be extremely large (10k+ rows). mPDF keeps page buffers in memory
-            // until final output, so raise memory limit for download requests.
-            @ini_set('memory_limit', (string) env('LABEL_ST_HIDUP_DETAIL_PDF_MEMORY_LIMIT', '2048M'));
-            @set_time_limit(0);
-        }
+        // This report can be extremely large (10k+ rows). mPDF keeps page buffers in memory
+        // until final output, so raise memory/time limits for both inline preview and download.
+        @ini_set('memory_limit', (string) env('LABEL_ST_HIDUP_DETAIL_PDF_MEMORY_LIMIT', '2048M'));
+        @set_time_limit(0);
 
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -69,10 +67,6 @@ class LabelStHidupDetailController extends Controller
             return back()
                 ->withInput()
                 ->withErrors(['report' => $exception->getMessage()]);
-        }
-
-        if ($inline) {
-            $reportData = $this->limitPreviewRows($reportData);
         }
 
         $payload = [

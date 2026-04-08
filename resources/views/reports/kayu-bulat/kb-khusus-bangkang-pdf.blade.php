@@ -47,8 +47,6 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
             border: 1px solid #000;
         }
 
@@ -86,8 +84,7 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
+            border: 1px solid #000;
         }
 
 
@@ -98,29 +95,32 @@
         .row-even td {
             background: #eef2f8;
         }
-.totals-row td {
+
+        .empty-row td {
+            background: #c9d1df;
+        }
+
+        .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
+            border: 1px solid #000 !important;
         }
 
         .table-end-line td {
             border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
+            border-right: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            border-left: 1px solid #000 !important;
             padding: 0 !important;
             height: 0 !important;
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -153,11 +153,6 @@
                 @endforeach
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ $visibleColumnCount + 1 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -167,7 +162,7 @@
                     @endforeach
                 </tr>
             @empty
-                <tr>
+                <tr class="empty-row">
                     <td colspan="{{ $visibleColumnCount + 1 }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse

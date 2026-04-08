@@ -51,7 +51,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -91,23 +94,29 @@
         .row-even td {
             background: #eef2f8;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -121,6 +130,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -144,18 +154,15 @@
                 <th style="width: 120px;">Rasio (%)</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="4"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center data-cell" style="width: 44px;">{{ $loop->iteration }}</td>
                     <td class="data-cell">{{ (string) ($row['Group'] ?? '') }}</td>
-                    <td class="number data-cell">{{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
-                    <td class="number data-cell">{{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>
+                    <td class="number data-cell" style="font-weight: bold;">
+                        {{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">
+                        {{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>
                 </tr>
             @empty
                 <tr>
@@ -164,11 +171,11 @@
             @endforelse
             @if ($rowsData !== [])
                 <tr class="totals-row">
-                    <td class="center" colspan="2" style="font-size: 11px"><strong>Total</strong></td>
-                    <td class="number">
-                        <strong>{{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }}</strong>
+                    <td class="center" colspan="2" style="font-size: 11px; font-weight: bold;">Total</td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ number_format((float) ($summaryData['total_ton'] ?? 0), 4, '.', ',') }}
                     </td>
-                    <td class="number"><strong>100.00 %</strong></td>
+                    <td class="number" style="font-weight: bold;">100.00 %</td>
                 </tr>
             @endif
         </tbody>

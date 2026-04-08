@@ -2,6 +2,11 @@
 <html lang="id">
 
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <meta charset="utf-8">
     <style>
         * {
             box-sizing: border-box;
@@ -14,7 +19,7 @@
 
         body {
             margin: 0;
-            font-family: "Noto Serif", sans-serif !important;
+            font-family: "Noto Serif", serif !important;
             font-size: 10px;
             line-height: 1.15;
             color: #000;
@@ -56,6 +61,7 @@
             border-left: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
+            font-family: "Noto Serif", serif;
         }
 
         table.data-table th:first-child,
@@ -166,14 +172,14 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 4%;">No</th>
+                <th style="width: 5%;">No</th>
                 <th style="width: 10%;">No ST</th>
                 <th style="width: 7%;">Tanggal</th>
                 <th style="width: 9%;">No SPK</th>
                 <th style="width: 15%;">Jenis</th>
                 <th style="width: 6%;">Tebal (mm)</th>
                 <th style="width: 6%;">Lebar (mm)</th>
-                <th style="width: 6%;">Panjang (ft)</th>
+                <th style="width: 8%;">Panjang (ft)</th>
                 <th style="width: 15%;">Jmlh Batang (pcs)</th>
                 <th style="width: 7%;">Lokasi</th>
                 <th style="width: 10%;">Total (Ton)</th>

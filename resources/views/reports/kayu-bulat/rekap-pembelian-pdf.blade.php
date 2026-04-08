@@ -50,7 +50,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -98,7 +101,8 @@
             margin-top: 15px;
             text-decoration: underline;
         }
-.chart-wrap {
+
+        .chart-wrap {
             border: 1px solid #000;
             padding: 6px;
             margin-top: 10px;
@@ -130,20 +134,25 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -157,6 +166,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -211,7 +221,7 @@
                 }
             }
         }
-        $yStep = 100.0;
+        $yStep = 10000.0;
         $maxValue = $maxValue > 0 ? ceil($maxValue / $yStep) * $yStep : $yStep;
         $monthCount = max(count($monthLabels), 1);
         $xStep = $monthCount > 1 ? $plotWidth / ($monthCount - 1) : 0;
@@ -231,11 +241,6 @@
                 <th style="font-weight: bold; font-size:11px">Total</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($monthLabels) + 2 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @foreach ($years as $year)
                 @php
@@ -245,70 +250,13 @@
                     <td class="label data-cell" style="text-align: center; font-weight: bold; font-size:11px;">
                         {{ $year }}</td>
                     @foreach ($monthLabels as $index => $month)
-                        <td class="number data-cell">
-                            {{ $fmt4($monthly[$index] ?? 0) }}</td>
+                        <td class="number data-cell">{{ $fmt4($monthly[$index] ?? 0) }}</td>
                     @endforeach
-                    <td class="number data-cell" style="font-weight: bold;">
-                        {{ $fmt4($yearlyTotals[$year] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($yearlyTotals[$year] ?? 0) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-
-    <div class="chart-wrap">
-        <p class="chart-title">Chart Pembelian Bulanan per Tahun</p>
-        <svg width="{{ $svgWidth }}" height="{{ $svgHeight }}"
-            viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="0" width="{{ $svgWidth }}" height="{{ $svgHeight }}" fill="#fff" />
-            <line x1="{{ $padLeft }}" y1="{{ $padTop + $plotHeight }}" x2="{{ $padLeft + $plotWidth }}"
-                y2="{{ $padTop + $plotHeight }}" stroke="#333" stroke-width="1" />
-            <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}"
-                y2="{{ $padTop + $plotHeight }}" stroke="#333" stroke-width="1" />
-
-            @for ($i = 0; $i <= $yTicks; $i++)
-                @php
-                    $tickVal = $yStep * $i;
-                    $y = $padTop + $plotHeight - $plotHeight * ($i / $yTicks);
-                @endphp
-                <line x1="{{ $padLeft }}" y1="{{ $y }}" x2="{{ $padLeft + $plotWidth }}"
-                    y2="{{ $y }}" stroke="#ddd" stroke-width="1" />
-                <text x="{{ $padLeft - 6 }}" y="{{ $y + 3 }}" font-size="9" text-anchor="end"
-                    fill="#444">{{ number_format($tickVal, 0, '.', ',') }}</text>
-            @endfor
-
-            @foreach ($monthLabels as $idx => $month)
-                @php $x = $padLeft + ($idx * $xStep); @endphp
-                <text x="{{ $x }}" y="{{ $padTop + $plotHeight + 14 }}" font-size="9" text-anchor="middle"
-                    fill="#444">{{ $month }}</text>
-            @endforeach
-
-            @foreach ($years as $yearIndex => $year)
-                @php
-                    $series = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
-                    $points = [];
-                    foreach ($monthLabels as $idx => $month) {
-                        $val = (float) ($series[$idx] ?? 0);
-                        $x = $padLeft + $idx * $xStep;
-                        $y = $padTop + $plotHeight - ($val / $maxValue) * $plotHeight;
-                        $points[] = round($x, 2) . ',' . round($y, 2);
-                    }
-                    $color = $palette[$yearIndex % count($palette)];
-                @endphp
-                @if (!empty($points))
-                    <polyline fill="none" stroke="{{ $color }}" stroke-width="1.8"
-                        points="{{ implode(' ', $points) }}" />
-                @endif
-            @endforeach
-        </svg>
-    </div>
-
-
-    <p class="section-summary">Summary</p>
-    <ul class="summary-list">
-        <li><span class="summary-label">Jumlah Baris Raw Data Berjumlah</span> {{ $fmtInt($rawCount) }}</li>
-        <li><span class="summary-label">Seluruh Total Pembelian (Ton) Berjumlah </span> {{ $fmt4($grandTotal) }} Ton
-        </li>
-    </ul>
 
     @include('reports.partials.pdf-footer-table')
 </body>

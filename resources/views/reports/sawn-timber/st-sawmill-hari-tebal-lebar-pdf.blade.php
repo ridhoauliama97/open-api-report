@@ -128,6 +128,11 @@
         .totals-row td {
             font-weight: bold;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        tbody tr:last-child.totals-row td {
+            border-bottom: 0;
         }
 
         /* Footer line to “close” the table on each page fragment when table is split across pages. */
@@ -145,7 +150,7 @@
 
         .section-title {
             margin: 0 0 6px 0;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -155,7 +160,7 @@
         }
 
         .rangkuman-table {
-            width: 360px !important;
+            width: 420px !important;
             table-layout: fixed;
         }
 
@@ -164,10 +169,20 @@
             padding: 2px 3px;
         }
 
+        .rangkuman-group {
+            page-break-inside: avoid;
+        }
+
+        .rangkuman-group-start td {
+            border-top: 1px solid #000 !important;
+        }
+
         .rangkuman-table td.jenis-cell {
             font-weight: bold;
-            vertical-align: top;
+            vertical-align: middle;
             background: #c9d1df !important;
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
         }
 
         .table-end-line td {
@@ -180,7 +195,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -188,8 +204,19 @@
     @php
         $data = is_array($reportData ?? null) ? $reportData : [];
         $dateChunks = is_array($data['date_chunks'] ?? null) ? $data['date_chunks'] : [];
+        $allDates = [];
+        foreach ($dateChunks as $chunk) {
+            if (!is_array($chunk)) {
+                continue;
+            }
+
+            foreach ($chunk as $dateKey) {
+                if (!in_array($dateKey, $allDates, true)) {
+                    $allDates[] = $dateKey;
+                }
+            }
+        }
         $isGroupBlocks = is_array($data['is_group_blocks'] ?? null) ? $data['is_group_blocks'] : [];
-        $grandTotalsByDate = is_array($data['grand_totals_by_date'] ?? null) ? $data['grand_totals_by_date'] : [];
         $grandTotal = (float) ($data['grand_total'] ?? 0.0);
         $grandTotalsByIsGroup = is_array($data['grand_totals_by_is_group'] ?? null)
             ? $data['grand_totals_by_is_group']
@@ -198,6 +225,12 @@
         $rangkumanItems = is_array($rangkuman['items'] ?? null) ? $rangkuman['items'] : [];
         $rangkumanTotalsByJenis = is_array($rangkuman['totals_by_jenis'] ?? null) ? $rangkuman['totals_by_jenis'] : [];
         $rangkumanGrandTotal = (float) ($rangkuman['grand_total'] ?? 0.0);
+        $rangkumanGrouped = [];
+        foreach ($rangkumanItems as $item) {
+            $jenisKey = (string) ($item['jenis'] ?? '');
+            $rangkumanGrouped[$jenisKey] ??= [];
+            $rangkumanGrouped[$jenisKey][] = $item;
+        }
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
@@ -207,10 +240,11 @@
         $eps = 0.0000001;
         $fmt = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 4, '.', ',');
         $fmtTotal = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 4, '.', ',');
+        $fmtDim = static fn(float $v): string => rtrim(rtrim(number_format($v, 1, '.', ','), '0'), '.');
 
         $dateLabel = static function (string $key): string {
             try {
-                return \Carbon\Carbon::parse($key)->format('d/m/Y');
+                return \Carbon\Carbon::parse($key)->format('d-M');
             } catch (\Throwable $exception) {
                 return $key;
             }
@@ -224,17 +258,13 @@
             return $sum;
         };
 
-        $fmtPct = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 0, '.', '') . '%';
+        $fmtPct = static fn(float $v): string => abs($v) < $eps ? '' : number_format($v, 0, '.', ',') . '%';
     @endphp
 
     <h1 class="report-title">Laporan ST Sawmill / Hari / Tebal / Lebar</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
-    @forelse ($dateChunks as $chunkIndex => $chunkDates)
-        @if ($chunkIndex > 0)
-            <div class="page-break"></div>
-        @endif
-
+    @if ($allDates !== [] && $isGroupBlocks !== [])
         @foreach ($isGroupBlocks as $ig)
             @php
                 $isGroupNo = (int) ($ig['is_group'] ?? 0);
@@ -250,26 +280,15 @@
                         <th rowspan="2" style="width: 140px;">Group</th>
                         <th rowspan="2" style="width: 44px;">Tebal</th>
                         <th rowspan="2" style="width: 44px;">Lebar</th>
-                        <th colspan="{{ count($chunkDates) + 1 }}">Tanggal</th>
+                        <th colspan="{{ count($allDates) + 1 }}">Tanggal</th>
                     </tr>
                     <tr>
-                        @foreach ($chunkDates as $dk)
+                        @foreach ($allDates as $dk)
                             <th style="width: 48px;">{{ $dateLabel($dk) }}</th>
                         @endforeach
                         <th style="width: 56px;">Total</th>
                     </tr>
                 </thead>
-                {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>. --}}
-                <tfoot>
-                    <tr class="tfoot-line">
-                        <td colspan="{{ 4 + count($chunkDates) }}">&nbsp;</td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($groups as $g)
                         @php
@@ -300,25 +319,25 @@
                                     $rowIndex++;
                                     $lebar = (float) ($lr['lebar'] ?? 0.0);
                                     $values = is_array($lr['values'] ?? null) ? $lr['values'] : [];
-                                    $chunkTotal = $sumForDates($values, $chunkDates);
+                                    $rowTotal = $sumForDates($values, $allDates);
                                 @endphp
                                 <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                                     @if (!$printedGroup)
-                                        <td class="center col-group" rowspan="{{ $groupRowspan }}">{{ $groupName }}</td>
+                                        <td class="center col-group" rowspan="{{ $groupRowspan }}">{{ $groupName }}
+                                        </td>
                                         @php $printedGroup = true; @endphp
                                     @endif
                                     @if (!$printedTebal)
                                         <td class="center" rowspan="{{ $tebalRowspan }}">
-                                            {{ rtrim(rtrim(number_format($tebal, 1, '.', ','), '0'), '.') }}
+                                            {{ $fmtDim($tebal) }}
                                         </td>
                                         @php $printedTebal = true; @endphp
                                     @endif
-                                    <td class="center">{{ rtrim(rtrim(number_format($lebar, 1, '.', ','), '0'), '.') }}
-                                    </td>
-                                    @foreach ($chunkDates as $dk)
+                                    <td class="center">{{ $fmtDim($lebar) }}</td>
+                                    @foreach ($allDates as $dk)
                                         <td class="number">{{ $fmt((float) ($values[$dk] ?? 0.0)) }}</td>
                                     @endforeach
-                                    <td class="number">{{ $fmtTotal($chunkTotal) }}</td>
+                                    <td class="number">{{ $fmtTotal($rowTotal) }}</td>
                                 </tr>
                             @empty
                                 @php
@@ -329,76 +348,43 @@
 
                             @php
                                 $rowIndex++;
-                                $chunkTotal = $sumForDates($tebalTotals, $chunkDates);
+                                $tebalTotal = $sumForDates($tebalTotals, $allDates);
                             @endphp
                             <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                                <td class="center">Total</td>
-                                @foreach ($chunkDates as $dk)
+                                <td class="center">Sub total</td>
+                                @foreach ($allDates as $dk)
                                     <td class="number">{{ $fmtTotal((float) ($tebalTotals[$dk] ?? 0.0)) }}</td>
                                 @endforeach
-                                <td class="number">{{ $fmtTotal($chunkTotal) }}</td>
+                                <td class="number">{{ $fmtTotal($tebalTotal) }}</td>
                             </tr>
                         @endforeach
 
                         @php
                             $rowIndex++;
-                            $chunkTotal = $sumForDates($groupTotals, $chunkDates);
+                            $groupTotal = $sumForDates($groupTotals, $allDates);
                         @endphp
                         <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            <td class="center"></td>
-                            <td class="center">Total</td>
-                            @foreach ($chunkDates as $dk)
+                            <td class="center" colspan="2">Total</td>
+                            @foreach ($allDates as $dk)
                                 <td class="number">{{ $fmtTotal((float) ($groupTotals[$dk] ?? 0.0)) }}</td>
                             @endforeach
-                            <td class="number">{{ $fmtTotal($chunkTotal) }}</td>
+                            <td class="number">{{ $fmtTotal($groupTotal) }}</td>
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ 4 + count($chunkDates) }}" class="center">Tidak ada data.</td>
+                                <td colspan="{{ 4 + count($allDates) }}" class="center">Tidak ada data.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             @endforeach
-        @empty
+        @else
             <div class="center">Tidak ada data.</div>
-        @endforelse
+        @endif
 
         @if ($isGroupBlocks !== [])
-            <div class="section-title">Grand Total (Seluruh Tanggal)</div>
-            <table class="grand-total-table zebra-table" style="margin-bottom: 14px;">
-                <thead>
-                    <tr>
-                        <th style="width: 140px;">Group</th>
-                        <th style="width: 120px;">Total</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr class="tfoot-line">
-                        <td colspan="2">&nbsp;</td>
-                    </tr>
-                </tfoot>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="2"></td>
-                    </tr>
-                </tfoot>
-        <tbody>
-                    @foreach ($grandTotalsByIsGroup as $ig => $total)
-                        <tr>
-                            <td class="center">Group {{ (int) $ig }}</td>
-                            <td class="number">{{ $fmtTotal((float) $total) }}</td>
-                        </tr>
-                    @endforeach
-                    <tr class="totals-row">
-                        <td class="center" style="background: none; font-size: 11px;">Grand Total</td>
-                        <td class="number" style="background: none; font-size: 11px;">{{ $fmtTotal($grandTotal) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
             @if ($rangkumanItems !== [])
-                <div class="section-title">Rangkuman</div>
+                <div class="section-title">Rangkuman Grand Total</div>
                 <table class="rangkuman-table zebra-table">
                     <thead>
                         <tr>
@@ -408,61 +394,35 @@
                             <th style="width: 60px;">Persen</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="tfoot-line">
-                            <td colspan="4">&nbsp;</td>
-                        </tr>
-                    </tfoot>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="4"></td>
-                        </tr>
-                    </tfoot>
-        <tbody>
-                        @php
-                            $rowsPerJenis = [];
-                            foreach ($rangkumanItems as $it) {
-                                $j = (string) ($it['jenis'] ?? '');
-                                $rowsPerJenis[$j] = ($rowsPerJenis[$j] ?? 0) + 1;
-                            }
 
-                            $currentJenis = null;
-                        @endphp
-
-                        @foreach ($rangkumanItems as $idx => $it)
+                    <tbody>
+                        @foreach ($rangkumanGrouped as $jenis => $jenisItems)
                             @php
-                                $jenis = (string) ($it['jenis'] ?? '');
-                                $tebal = (float) ($it['tebal'] ?? 0.0);
-                                $total = (float) ($it['total'] ?? 0.0);
-                                $percent = (float) ($it['percent'] ?? 0.0);
-
-                                $isNewJenis = $currentJenis !== $jenis;
-                                if ($isNewJenis) {
-                                    $currentJenis = $jenis;
-                                    $jenisRowspan = (int) ($rowsPerJenis[$jenis] ?? 1) + 1; // + subtotal row
-                                }
+                                $jenisRowspan = count($jenisItems) + 1;
+                                $jenisTotal = (float) ($rangkumanTotalsByJenis[$jenis] ?? 0.0);
                             @endphp
-                            <tr>
-                                @if ($isNewJenis)
-                                    <td rowspan="{{ $jenisRowspan }}" class="jenis-cell">{{ $jenis }}</td>
-                                @endif
-                                <td class="center">{{ rtrim(rtrim(number_format($tebal, 1, '.', ','), '0'), '.') }}</td>
-                                <td class="number">{{ $fmtTotal($total) }}</td>
-                                <td class="center">{{ $fmtPct($percent) }}</td>
-                            </tr>
 
-                            @php
-                                $nextJenis = (string) ($rangkumanItems[$idx + 1]['jenis'] ?? '');
-                                $isLastOfJenis = $idx === count($rangkumanItems) - 1 || $nextJenis !== $jenis;
-                            @endphp
-                            @if ($isLastOfJenis)
-                                @php $jenisTotal = (float) ($rangkumanTotalsByJenis[$jenis] ?? 0.0); @endphp
-                                <tr class="totals-row">
-                                    <td class="center">Total</td>
-                                    <td class="number">{{ $fmtTotal($jenisTotal) }}</td>
-                                    <td class="center">100%</td>
+                            @foreach ($jenisItems as $idx => $it)
+                                @php
+                                    $tebal = (float) ($it['tebal'] ?? 0.0);
+                                    $total = (float) ($it['total'] ?? 0.0);
+                                    $percent = (float) ($it['percent'] ?? 0.0);
+                                @endphp
+                                <tr class="rangkuman-group{{ $idx === 0 ? ' rangkuman-group-start' : '' }}">
+                                    @if ($idx === 0)
+                                        <td rowspan="{{ $jenisRowspan }}" class="jenis-cell">{{ $jenis }}</td>
+                                    @endif
+                                    <td class="center">{{ $fmtDim($tebal) }}</td>
+                                    <td class="number">{{ $fmtTotal($total) }}</td>
+                                    <td class="center">{{ $fmtPct($percent) }}</td>
                                 </tr>
-                            @endif
+                            @endforeach
+
+                            <tr class="totals-row rangkuman-group">
+                                <td class="center">Total</td>
+                                <td class="number">{{ $fmtTotal($jenisTotal) }}</td>
+                                <td class="center">100%</td>
+                            </tr>
                         @endforeach
 
                         <tr class="totals-row">
@@ -477,6 +437,6 @@
         @endif
 
         @include('reports.partials.pdf-footer-table')
-</body>
+    </body>
 
-</html>
+    </html>

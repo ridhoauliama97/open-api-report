@@ -56,7 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -101,20 +104,25 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
             font-size: 11px;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -154,7 +162,8 @@
         .summary-note .label {
             font-weight: bold;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -285,18 +294,14 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 2 + count($monthKeys) }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($suppliers as $supplierRow)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="data-cell">{{ (string) ($supplierRow['supplier'] ?? '') }}</td>
                         <td class="number data-cell">{{ $fmt4BlankZero($supplierRow['total'] ?? 0) }}</td>
                         @foreach ($monthKeys as $monthKey)
-                            <td class="number data-cell">{{ $fmt4BlankZero($supplierRow['month_values'][$monthKey] ?? 0) }}</td>
+                            <td class="number data-cell">
+                                {{ $fmt4BlankZero($supplierRow['month_values'][$monthKey] ?? 0) }}</td>
                         @endforeach
                     </tr>
                 @empty
@@ -345,7 +350,7 @@
             foreach ($suppliers as $s) {
                 $maxVal = max($maxVal, (float) ($s['total'] ?? 0));
             }
-            $yStep = 10.0;
+            $yStep = strtoupper(trim($groupName)) === 'RAMBUNG' ? 100.0 : 10.0;
             $maxVal = $maxVal > 0 ? $maxVal : $yStep;
             $maxVal = ceil($maxVal / $yStep) * $yStep;
             $yTicks = max(1, (int) ($maxVal / $yStep));
@@ -400,11 +405,6 @@
         @endif
     @empty
         <table class="report-table">
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="1"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 <tr>
                     <td class="center">Tidak ada data untuk periode ini.</td>
