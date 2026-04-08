@@ -56,7 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -74,14 +77,14 @@
 
         th,
         td {
-            border: 1px solid #000;
+            /* border: 1px solid #000; */
             padding: 2px 4px;
             vertical-align: middle;
         }
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #ffffff;
             color: #000;
         }
@@ -111,26 +114,34 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
-@include('reports.partials.pdf-footer-table-style')
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -273,11 +284,6 @@
                 <th style="width: 58px;">S4S Inpt S4S</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="16"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
@@ -327,15 +333,15 @@
                     <td class="number data-cell">{{ $fmt($bsOut, true) }}</td>
                     <td class="number data-cell">{{ $fmt($prodOut, true) }}</td>
                     <td class="number data-cell">{{ $fmt($ccaProd, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalMasuk, true) }}</td>
                     <td class="number data-cell">{{ $fmt($adjInpt, true) }}</td>
                     <td class="number data-cell">{{ $fmt($bsInpt, true) }}</td>
                     <td class="number data-cell">{{ $fmt($mldJual, true) }}</td>
                     <td class="number data-cell">{{ $fmt($fjInpt, true) }}</td>
                     <td class="number data-cell">{{ $fmt($mldInpt, true) }}</td>
                     <td class="number data-cell">{{ $fmt($s4sInpt, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -364,7 +370,7 @@
 
     @if ($subRowsData !== [])
         <div class="section-title">Input S4S Produksi</div>
-        <table class="report-table" style="width: 72%;">
+        <table class="report-table" style="width: 70%;">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 32px;">No</th>
@@ -375,11 +381,6 @@
                     <th style="width: 84px;">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="9"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
                     @php
@@ -406,7 +407,7 @@
                             $rowTotal = $rowTotal !== 0.0 ? $rowTotal : $calculatedTotal;
                             $subTotals['Total'] += $rowTotal;
                         @endphp
-                        <td class="number data-cell">{{ $fmt($rowTotal, true) }}</td>
+                        <td class="number data-cell" style="font-weight: bold;">{{ $fmt($rowTotal, true) }}</td>
                     </tr>
                 @endforeach
                 <tr class="totals-row">

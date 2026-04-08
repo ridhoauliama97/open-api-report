@@ -56,7 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -108,31 +111,39 @@
             font-weight: 700;
             background: #fff;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
 
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+            border-right: 1px solid #000;
         }
 
-        .totals-row td {
+        tfoot .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
         .table-end-line td {
-            border: 0 !important;
-            border-top: 1px solid #000 !important;
+            border-top: 0 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
             padding: 0 !important;
             height: 0 !important;
             line-height: 0 !important;
@@ -249,7 +260,7 @@
                     <td colspan="6"></td>
                 </tr>
             </tfoot>
-<tbody>
+            <tbody>
                 @forelse ($groupRows as $row)
                     @php
                         $ton = $toFloat($row['Ton'] ?? null);
@@ -260,8 +271,8 @@
                         <td class="data-cell label">{{ (string) ($row['Jenis'] ?? '') }}</td>
                         <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
                         <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($ton, 4) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($m3, 4) }}</td>
+                        <td class="data-cell number" style="font-weight: bold;">{{ $formatNumber($ton, 4) }}</td>
+                        <td class="data-cell number" style="font-weight: bold;">{{ $formatNumber($m3, 4) }}</td>
                     </tr>
                 @empty
                     <tr class="data-row row-odd">
@@ -324,8 +335,8 @@
                         <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
                         <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
                         <td class="data-cell number">{{ $formatNumber($row['Panjang'] ?? null, 0) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($row['JmlhBatang'] ?? null, 0) }}</td>
-                        <td class="data-cell number">{{ $formatNumber($row['KubikIN'] ?? null, 4) }}</td>
+                        <td class="data-cell number" style="font-weight: bold;">{{ $formatNumber($row['JmlhBatang'] ?? null, 0) }}</td>
+                        <td class="data-cell number" style="font-weight: bold;">{{ $formatNumber($row['KubikIN'] ?? null, 4) }}</td>
                     </tr>
                 @empty
                     <tr class="data-row row-odd">

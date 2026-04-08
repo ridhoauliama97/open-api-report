@@ -51,7 +51,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -101,27 +104,50 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+        }
+
+        .report-table thead tr.headers-row:first-child th {
+            border-top: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -244,34 +270,29 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th rowspan="2" style="width:30px">No</th>
-                <th rowspan="2" style="width:230px">Jenis</th>
-                <th rowspan="2" style="width:65px">Awal</th>
-                <th colspan="3">Masuk</th>
-                <th rowspan="2" style="width:70px">Total<br>Masuk</th>
-                <th colspan="8">Keluar</th>
-                <th rowspan="2" style="width:70px">Total<br>Keluar</th>
-                <th rowspan="2" style="width:65px">Akhir</th>
+                <th rowspan="2" style="width:30px; border-top: 1px solid #000;">No</th>
+                <th rowspan="2" style="width:230px; border-top: 1px solid #000;">Jenis</th>
+                <th rowspan="2" style="width:65px; border-top: 1px solid #000;">Awal</th>
+                <th colspan="3" style="border-top: 1px solid #000;">Masuk</th>
+                <th rowspan="2" style="width:70px; border-top: 1px solid #000;">Total<br>Masuk</th>
+                <th colspan="8" style="border-top: 1px solid #000;">Keluar</th>
+                <th rowspan="2" style="width:70px; border-top: 1px solid #000;">Total<br>Keluar</th>
+                <th rowspan="2" style="width:65px; border-top: 1px solid #000;">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th style="width:68px">Adj Outp<br>SAND</th>
-                <th style="width:68px">BS Outp<br>SAND</th>
-                <th style="width:68px">SAND Prod<br>Outp</th>
-                <th style="width:68px">Adj Inpt<br>SAND</th>
-                <th style="width:68px">BS Inpt<br>SAND</th>
-                <th style="width:68px">SAND<br>Jual</th>
-                <th style="width:68px">CCAInpt<br>SAND</th>
-                <th style="width:68px">LMT Inpt<br>SAND</th>
-                <th style="width:68px">MLD Inpt<br>SAND</th>
-                <th style="width:68px">PACKInpt<br>SAND</th>
-                <th style="width:68px">SAND Inpt<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">Adj Outp<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">BS Outp<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">SAND Prod<br>Outp</th>
+                <th style="width:68px; border-top: 1px solid #000;">Adj Inpt<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">BS Inpt<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">SAND<br>Jual</th>
+                <th style="width:68px; border-top: 1px solid #000;">CCA Input<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">LMT Inpt<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">MLD Inpt<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">PACK Inpt<br>SAND</th>
+                <th style="width:68px; border-top: 1px solid #000;">SAND Inpt<br>SAND</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="17"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
@@ -334,7 +355,7 @@
                     <td class="number data-cell">{{ $fmt($adjOut, true) }}</td>
                     <td class="number data-cell">{{ $fmt($bsOut, true) }}</td>
                     <td class="number data-cell">{{ $fmt($prodOut, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalMasuk, true) }}</td>
                     <td class="number data-cell">{{ $fmt($adjInp, true) }}</td>
                     <td class="number data-cell">{{ $fmt($bsInp, true) }}</td>
                     <td class="number data-cell">{{ $fmt($sndJual, true) }}</td>
@@ -343,8 +364,8 @@
                     <td class="number data-cell">{{ $fmt($mldProdInp, true) }}</td>
                     <td class="number data-cell">{{ $fmt($packProdInp, true) }}</td>
                     <td class="number data-cell">{{ $fmt($sndProdInp, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -374,22 +395,17 @@
 
     @if ($subRowsData !== [])
         <div class="section-title">Input Sanding Produksi</div>
-        <table class="report-table" style="width: 78%;">
+        <table class="report-table" style="width: 70%;">
             <thead>
                 <tr class="headers-row">
-                    <th style="width:30px">No</th>
-                    <th style="width:220px">Jenis</th>
+                    <th style="width:30px; border-top: 1px solid #000;">No</th>
+                    <th style="width:220px; border-top: 1px solid #000;">Jenis</th>
                     @foreach ($subSpec as $spec)
-                        <th style="width:78px">{{ $spec['label'] }}</th>
+                        <th style="width:78px; border-top: 1px solid #000;">{{ $spec['label'] }}</th>
                     @endforeach
-                    <th style="width:78px">Total</th>
+                    <th style="width:78px; border-top: 1px solid #000;">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="10"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
                     @php
@@ -409,7 +425,7 @@
                         @php
                             $subTotals['Total'] += $rowTotal;
                         @endphp
-                        <td class="number data-cell">{{ $fmt($rowTotal, true) }}</td>
+                        <td class="number data-cell" style="font-weight: bold;">{{ $fmt($rowTotal, true) }}</td>
                     </tr>
                 @endforeach
                 <tr class="totals-row">

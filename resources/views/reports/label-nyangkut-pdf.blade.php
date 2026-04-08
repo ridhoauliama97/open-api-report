@@ -96,24 +96,33 @@
         .row-even td {
             background: #eef2f8;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            border-left: 0;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table {
+            width: 80%;
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         .report-table thead {
@@ -125,7 +134,7 @@
         }
 
         .report-table .headers-row th {
-            border-top: 0;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
@@ -136,7 +145,7 @@
 
         .report-table tbody tr.data-row td.data-cell,
         .report-table tfoot tr.totals-row td {
-            border-left: 1px solid #000;
+            border-left: 0;
             border-right: 1px solid #000;
         }
 
@@ -144,8 +153,10 @@
             padding: 0;
             height: 0;
             line-height: 0;
-            border: 0;
             border-top: 1px solid #000;
+            border-right: 0;
+            border-bottom: 0;
+            border-left: 0;
             background: transparent;
         }
     </style>
@@ -345,9 +356,6 @@
             return $sum;
         };
 
-        $firstChunkRowsAfterContent = 45;
-        $fullPageChunkRows = 56;
-
     @endphp
 
     <h1 class="report-title">Laporan Label Nyangkut</h1>
@@ -363,109 +371,91 @@
         @php
             $groupJmlhBatang = $hasSummaryColumns ? $sumColumn($groupRows, $jmlhBatangColumn) : 0.0;
             $groupTotalValue = $hasSummaryColumns ? $sumColumn($groupRows, $totalColumn) : 0.0;
-            $rowChunks = [];
-
-            if (count($groupRows) <= $fullPageChunkRows) {
-                $rowChunks[] = $groupRows;
-            } else {
-                $remainingRows = $groupRows;
-
-                if (!$loop->first) {
-                    $rowChunks[] = array_splice($remainingRows, 0, $firstChunkRowsAfterContent);
-                }
-
-                foreach (array_chunk($remainingRows, $fullPageChunkRows) as $chunk) {
-                    $rowChunks[] = $chunk;
-                }
-            }
         @endphp
-        @foreach ($rowChunks as $chunkIndex => $rowChunk)
-            <table class="report-table" style="{{ $chunkIndex > 0 ? 'page-break-before: always;' : '' }}">
-                <thead>
-                    <tr class="headers-row">
-                        <th style="width: 34px; text-align:center">No</th>
+        <table class="report-table">
+            <thead>
+                <tr class="headers-row">
+                    <th style="width: 34px; text-align:center">No</th>
+                    @foreach ($columns as $column)
+                        <th>
+                            {{ match ($normalizeColumnName($column)) {
+                                'description' => 'Lokasi',
+                                'nonyangkut' => 'No Nyangkut',
+                                'nolabel' => 'No Label',
+                                'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
+                                default => $column,
+                            } }}
+                        </th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($groupRows as $row)
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="data-cell center">
+                            {{ $loop->iteration }}
+                        </td>
                         @foreach ($columns as $column)
-                            <th>
-                                {{ match ($normalizeColumnName($column)) {
-                                    'description' => 'Lokasi',
-                                    'nonyangkut' => 'No Nyangkut',
-                                    'nolabel' => 'No Label',
-                                    'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
-                                    default => $column,
-                                } }}
-                            </th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($columns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    @forelse ($rowChunk as $row)
-                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="data-cell center">
-                                {{ collect($rowChunks)->take($chunkIndex)->sum(static fn(array $chunk): int => count($chunk)) + $loop->iteration }}
-                            </td>
-                            @foreach ($columns as $column)
-                                @php
-                                    $value = $row[$column] ?? null;
-                                    $numeric = $isNumericColumn($column, $groupRows);
-                                    $isLabelOutColumn = in_array(
-                                        $normalizeColumnName($column),
-                                        ['labelout', 'labeloutput'],
-                                        true,
-                                    );
+                            @php
+                                $value = $row[$column] ?? null;
+                                $numeric = $isNumericColumn($column, $groupRows);
+                                $isLabelOutColumn = in_array(
+                                    $normalizeColumnName($column),
+                                    ['labelout', 'labeloutput'],
+                                    true,
+                                );
                                 @endphp
                                 @if ($isLabelOutColumn)
                                     <td class="data-cell number">
                                         {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
                                     </td>
                                 @elseif ($totalColumn !== null && $column === $totalColumn)
-                                    <td class="data-cell number">
+                                    <td class="data-cell number" style="font-weight: bold;">
                                         {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}
+                                    </td>
+                                @elseif ($jmlhBatangColumn !== null && $column === $jmlhBatangColumn)
+                                    <td class="data-cell number" style="font-weight: bold;">
+                                        {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
                                     </td>
                                 @elseif ($numeric)
                                     <td class="data-cell number">
                                         {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
                                     </td>
-                                @else
-                                    <td class="data-cell label">{{ (string) $value }}</td>
-                                @endif
-                            @endforeach
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
-                        </tr>
-                    @endforelse
-                    @if ($hasSummaryColumns && $chunkIndex === count($rowChunks) - 1 && count($groupRows) > 0)
-                        <tr class="totals-row">
-                            <td colspan="{{ $summaryStartIndex + 1 }}" class="number" style="font-weight:bold;">
-                                Total {{ $group['name'] }}
-                            </td>
-                            @for ($columnIndex = $summaryStartIndex; $columnIndex < count($columns); $columnIndex++)
-                                @php
-                                    $summaryColumn = $columns[$columnIndex];
-                                @endphp
-                                @if ($jmlhBatangColumn !== null && $summaryColumn === $jmlhBatangColumn)
-                                    <td class="number" style="font-weight:bold;">
-                                        {{ number_format($groupJmlhBatang, 0, '.', ',') }}
-                                    </td>
-                                @elseif ($totalColumn !== null && $summaryColumn === $totalColumn)
-                                    <td class="number" style="font-weight:bold;">
-                                        {{ number_format($groupTotalValue, 4, '.', ',') }}
-                                    </td>
-                                @else
-                                    <td></td>
-                                @endif
-                            @endfor
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
-        @endforeach
+                            @else
+                                <td class="data-cell label">{{ (string) $value }}</td>
+                            @endif
+                        @endforeach
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+                @if ($hasSummaryColumns && count($groupRows) > 0)
+                    <tr class="totals-row">
+                        <td colspan="{{ $summaryStartIndex + 1 }}" class="center" style="font-weight:bold;">
+                            Total {{ $group['name'] }}
+                        </td>
+                        @for ($columnIndex = $summaryStartIndex; $columnIndex < count($columns); $columnIndex++)
+                            @php
+                                $summaryColumn = $columns[$columnIndex];
+                            @endphp
+                            @if ($jmlhBatangColumn !== null && $summaryColumn === $jmlhBatangColumn)
+                                <td class="number" style="font-weight:bold;">
+                                    {{ number_format($groupJmlhBatang, 0, '.', ',') }}
+                                </td>
+                            @elseif ($totalColumn !== null && $summaryColumn === $totalColumn)
+                                <td class="number" style="font-weight:bold;">
+                                    {{ number_format($groupTotalValue, 4, '.', ',') }}
+                                </td>
+                            @else
+                                <td></td>
+                            @endif
+                        @endfor
+                    </tr>
+                @endif
+            </tbody>
+        </table>
     @empty
         <table class="report-table">
             <thead>
