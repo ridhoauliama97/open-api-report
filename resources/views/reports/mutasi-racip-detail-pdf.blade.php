@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 18mm 8mm 18mm 8mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -69,7 +69,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #fff;
         }
 
@@ -94,15 +94,19 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
         }
 
         .col-uniform {
@@ -116,13 +120,32 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th {
+            border-top: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -234,36 +257,32 @@
         </colgroup>
         <thead>
             <tr class="headers-row">
-                <th rowspan="2">No</th>
-                <th rowspan="2">Jenis</th>
-                <th rowspan="2">Tebal (mm)</th>
-                <th rowspan="2">Lebar (mm)</th>
-                <th rowspan="2">Panjang (ft)</th>
-                <th colspan="2">Saldo Awal</th>
-                <th colspan="4">Masuk</th>
-                <th colspan="4">Keluar</th>
-                <th colspan="2">Akhir</th>
+                <th rowspan="2" style="border-top: 1px solid #000;">No</th>
+                <th rowspan="2" style="border-top: 1px solid #000;">Jenis</th>
+                <th rowspan="2" style="border-top: 1px solid #000;">Tebal (mm)</th>
+                <th rowspan="2" style="border-top: 1px solid #000;">Lebar (mm)</th>
+                <th rowspan="2" style="border-top: 1px solid #000;">Panjang (ft)</th>
+                <th colspan="2" style="border-top: 1px solid #000;">Saldo Awal</th>
+                <th colspan="4" style="border-top: 1px solid #000;">Masuk</th>
+                <th colspan="4" style="border-top: 1px solid #000;">Keluar</th>
+                <th colspan="2" style="border-top: 1px solid #000;">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th>Saldo Awal</th>
-                <th>Jlh Batang</th>
-                <th>Masuk</th>
-                <th>Jlh Batang</th>
-                <th>Adj Outp</th>
-                <th>Jlh Batang</th>
-                <th>Keluar</th>
-                <th>Jlh Batang</th>
-                <th>Adj Inp</th>
-                <th>Jlh Batang</th>
-                <th>Akhir</th>
-                <th>Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Saldo Awal</th>
+                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Masuk</th>
+                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Adj Outp</th>
+                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Keluar</th>
+                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Adj Inp</th>
+                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Akhir</th>
+                <th style="border-top: 1px solid #000;">Jlh Batang</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="17"></td>
-            </tr>
-        </tfoot>
+
         <tbody>
             @forelse ($rows as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -276,21 +295,29 @@
                     <td class="number data-cell" style="text-align: center;">
                         {{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}</td>
                     <td class="number data-cell">{{ $formatNumeric('Sawal', $toFloat($row['Sawal'] ?? null)) }}</td>
-                    <td class="number data-cell">{{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">
+                        {{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
                     <td class="number data-cell">{{ $formatNumeric('Masuk', $toFloat($row['Masuk'] ?? null)) }}</td>
-                    <td class="number data-cell">{{ $formatNumeric('MskJlhBtg', $toFloat($row['MskJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">{{ $formatNumeric('MskJlhBtg', $toFloat($row['MskJlhBtg'] ?? null)) }}
+                    </td>
                     <td class="number data-cell">
                         {{ $formatNumeric('AdjusmentOutput', $toFloat($row['AdjusmentOutput'] ?? null)) }}</td>
-                    <td class="number data-cell">{{ $formatNumeric('AdjOutJlhBtg', $toFloat($row['AdjOutJlhBtg'] ?? null)) }}
+                    <td class="number data-cell">
+                        {{ $formatNumeric('AdjOutJlhBtg', $toFloat($row['AdjOutJlhBtg'] ?? null)) }}
                     </td>
                     <td class="number data-cell">{{ $formatNumeric('Keluar', $toFloat($row['Keluar'] ?? null)) }}</td>
-                    <td class="number data-cell">{{ $formatNumeric('KeluarJlhBtg', $toFloat($row['KeluarJlhBtg'] ?? null)) }}
+                    <td class="number data-cell">
+                        {{ $formatNumeric('KeluarJlhBtg', $toFloat($row['KeluarJlhBtg'] ?? null)) }}
                     </td>
-                    <td class="number data-cell">{{ $formatNumeric('AdjusmentInput', $toFloat($row['AdjusmentInput'] ?? null)) }}
+                    <td class="number data-cell">
+                        {{ $formatNumeric('AdjusmentInput', $toFloat($row['AdjusmentInput'] ?? null)) }}
                     </td>
-                    <td class="number data-cell">{{ $formatNumeric('AdjInJlhBtg', $toFloat($row['AdjInJlhBtg'] ?? null)) }}</td>
-                    <td class="number data-cell">{{ $formatNumeric('Akhir', $toFloat($row['Akhir'] ?? null)) }}</td>
-                    <td class="number data-cell">{{ $formatNumeric('AkhirJlhBtg', $toFloat($row['AkhirJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell">
+                        {{ $formatNumeric('AdjInJlhBtg', $toFloat($row['AdjInJlhBtg'] ?? null)) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">
+                        {{ $formatNumeric('Akhir', $toFloat($row['Akhir'] ?? null)) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">
+                        {{ $formatNumeric('AkhirJlhBtg', $toFloat($row['AkhirJlhBtg'] ?? null)) }}</td>
                 </tr>
             @empty
                 <tr>

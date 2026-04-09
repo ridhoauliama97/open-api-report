@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 16mm 8mm 18mm 8mm;
+            margin: 20mm 8mm 20mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -49,7 +49,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -95,26 +98,45 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
         .table-end-line td {
-            border: 0 !important;
             border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
             padding: 0 !important;
             height: 0 !important;
             line-height: 0 !important;
@@ -203,9 +225,6 @@
                     <td class="number" colspan="3" style="text-align: center;">{{ $fmt2($group['container'] ?? 0) }}
                     </td>
                 @endforeach
-            </tr>
-            <tr class="table-end-line">
-                <td colspan="{{ 1 + count($groups) * 3 }}"></td>
             </tr>
         </tfoot>
     </table>

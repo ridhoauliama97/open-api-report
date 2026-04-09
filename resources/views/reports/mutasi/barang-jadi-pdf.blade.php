@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -80,7 +80,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -105,7 +108,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #ffffff;
             color: #000;
         }
@@ -132,29 +135,48 @@
             background: #eef2f8;
         }
 
-
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             background: transparent;
         }
-        @include('reports.partials.pdf-footer-table-style')
 
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+        }
+
+        .report-table thead tr.headers-row:first-child th {
+            border-top: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -168,6 +190,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -248,34 +272,29 @@
             <table class="table table-striped report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th rowspan="2" style="width: 30px;">No</th>
-                        <th rowspan="2" style="width: 210px;">Jenis Kayu</th>
-                        <th rowspan="2" style="width: 55px;">Awal</th>
-                        <th colspan="3">Masuk</th>
-                        <th rowspan="2" style="width: 62px;">Total<br>Masuk</th>
-                        <th colspan="8">Keluar</th>
-                        <th rowspan="2" style="width: 62px;">Total<br>Keluar</th>
-                        <th rowspan="2" style="width: 55px;">Akhir</th>
+                        <th rowspan="2" style="width: 30px; border-top: 1px solid #000;">No</th>
+                        <th rowspan="2" style="width: 210px; border-top: 1px solid #000;">Jenis Kayu</th>
+                        <th rowspan="2" style="width: 55px; border-top: 1px solid #000;">Awal</th>
+                        <th colspan="3" style="border-top: 1px solid #000;">Masuk</th>
+                        <th rowspan="2" style="width: 62px; border-top: 1px solid #000;">Total<br>Masuk</th>
+                        <th colspan="8" style="border-top: 1px solid #000;">Keluar</th>
+                        <th rowspan="2" style="width: 62px; border-top: 1px solid #000;">Total<br>Keluar</th>
+                        <th rowspan="2" style="width: 55px; border-top: 1px solid #000;">Akhir</th>
                     </tr>
                     <tr class="headers-row">
-                        <th style="width: 58px;">Adj Output</th>
-                        <th style="width: 58px;">B.Susun Output</th>
-                        <th style="width: 58px;">Packing Outp</th>
-                        <th style="width: 58px;">Adj Input</th>
-                        <th style="width: 58px;">B.Susun Input</th>
-                        <th style="width: 58px;">Jual</th>
-                        <th style="width: 58px;">CCAProd Input</th>
-                        <th style="width: 58px;">LMT Prod Input</th>
-                        <th style="width: 58px;">MLD Prod Input</th>
-                        <th style="width: 58px;">Packing Prod Inpt</th>
-                        <th style="width: 58px;">SAND Prod Input</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Adj Output</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">B.Susun Output</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Packing Outp</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Adj Input</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">B.Susun Input</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Jual</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">CCAProd Input</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">LMT Prod Input</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">MLD Prod Input</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Packing Prod Inpt</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">SAND Prod Input</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="17"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($rowsData as $row)
                         @php
@@ -325,7 +344,7 @@
                             <td class="number data-cell">{{ $fmt($adjOutput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsOutput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($packingOutput, true) }}</td>
-                            <td class="number data-cell {{ $totalClass($totalMasuk) }}">
+                            <td class="number data-cell {{ $totalClass($totalMasuk) }}" style="font-weight: bold;">
                                 {{ $fmt($totalMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($adjInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsInput, true) }}</td>
@@ -335,9 +354,10 @@
                             <td class="number data-cell">{{ $fmt($mldInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($packingInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($sandInput, true) }}</td>
-                            <td class="number data-cell {{ $totalClass($totalKeluar) }}">
+                            <td class="number data-cell {{ $totalClass($totalKeluar) }}" style="font-weight: bold;">
                                 {{ $fmt($totalKeluar, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($row['Akhir'] ?? null, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">
+                                {{ $fmt($row['Akhir'] ?? null, true) }}</td>
                         </tr>
                     @endforeach
                     <tr class="totals-row">
@@ -388,21 +408,16 @@
             <table class="table table-striped report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th style="width: 32px;">No</th>
-                        <th style="width: 270px; text-align: center;">Jenis Kayu</th>
-                        <th style="width: 95px;">Barang Jadi</th>
-                        <th style="width: 95px;">CCAkhir</th>
-                        <th style="width: 95px;">Moulding</th>
-                        <th style="width: 95px;">Sanding</th>
-                        <th style="width: 95px;">WIP</th>
-                        <th style="width: 95px;">Total</th>
+                        <th style="width: 32px; border-top: 1px solid #000;">No</th>
+                        <th style="width: 270px; text-align: center; border-top: 1px solid #000;">Jenis Kayu</th>
+                        <th style="width: 95px; border-top: 1px solid #000;">Barang Jadi</th>
+                        <th style="width: 95px; border-top: 1px solid #000;">CCAkhir</th>
+                        <th style="width: 95px; border-top: 1px solid #000;">Moulding</th>
+                        <th style="width: 95px; border-top: 1px solid #000;">Sanding</th>
+                        <th style="width: 95px; border-top: 1px solid #000;">WIP</th>
+                        <th style="width: 95px; border-top: 1px solid #000;">Total</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="8"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($subRowsData as $row)
                         @php
@@ -428,7 +443,7 @@
                             <td class="number data-cell">{{ $fmt($moulding, true) }}</td>
                             <td class="number data-cell">{{ $fmt($sanding, true) }}</td>
                             <td class="number data-cell">{{ $fmt($wip, true) }}</td>
-                            <td class="number data-cell {{ $totalClass($total) }}">
+                            <td class="number data-cell {{ $totalClass($total) }}" style="font-weight: bold;">
                                 {{ $fmt($total, true) }}
                             </td>
                         </tr>

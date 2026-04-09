@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -80,7 +80,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -105,7 +108,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #ffffff;
             color: #000;
         }
@@ -135,17 +138,45 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             background: transparent;
         }
-@include('reports.partials.pdf-footer-table-style')
-.report-table tbody tr.data-row td.data-cell {
+
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border-top: 0;
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            border-left: 0;
+        }
+
+        .report-table thead tr.headers-row:first-child th {
+            border-top: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
+        }
+
+        .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -159,6 +190,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -213,7 +246,7 @@
         };
 
         $normalizeKey = static function (string $key): string {
-            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/','', $key));
+            return strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $key));
         };
 
         $valueFromAliases = static function (array $row, array $aliases) use ($normalizeKey): float {
@@ -268,37 +301,32 @@
             <table class="table table-striped report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th rowspan="2" style="width: 30px;">No</th>
-                        <th rowspan="2" style="width: 210px;">Jenis</th>
-                        <th rowspan="2" style="width: 60px;">FJ Awal</th>
-                        <th colspan="3">Masuk</th>
-                        <th rowspan="2" style="width: 62px;">Total<br>Masuk</th>
-                        <th colspan="7">Keluar</th>
-                        <th rowspan="2" style="width: 62px;">Total<br>Keluar</th>
-                        <th rowspan="2" style="width: 55px;">Akhir</th>
+                        <th rowspan="2" style="width: 30px; border-top: 1px solid #000;">No</th>
+                        <th rowspan="2" style="width: 210px; border-top: 1px solid #000;">Jenis</th>
+                        <th rowspan="2" style="width: 60px; border-top: 1px solid #000;">FJ Awal</th>
+                        <th colspan="3" style="border-top: 1px solid #000;">Masuk</th>
+                        <th rowspan="2" style="width: 62px; border-top: 1px solid #000;">Total<br>Masuk</th>
+                        <th colspan="7" style="border-top: 1px solid #000;">Keluar</th>
+                        <th rowspan="2" style="width: 62px; border-top: 1px solid #000;">Total<br>Keluar</th>
+                        <th rowspan="2" style="width: 55px; border-top: 1px solid #000;">Akhir</th>
                     </tr>
                     <tr class="headers-row">
-                        <th style="width: 58px;">Adj Out FJ</th>
-                        <th style="width: 58px;">BS Out FJ</th>
-                        <th style="width: 58px;">FJ Prod Out</th>
-                        <th style="width: 58px;">Adj Inp FJ</th>
-                        <th style="width: 58px;">BS Inp FJ</th>
-                        <th style="width: 58px;">FJ Jual</th>
-                        <th style="width: 58px;">CCAProd Inpt</th>
-                        <th style="width: 58px;">Mld Prod Inpt</th>
-                        <th style="width: 58px;">S4SProd Inpt</th>
-                        <th style="width: 58px;">SandProd Inpt</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Adj Out FJ</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">BS Out FJ</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">FJ Prod Out</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Adj Inp FJ</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">BS Inp FJ</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">FJ Jual</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">CCA Prod Inpt</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Mld Prod Inpt</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">S4S Prod Inpt</th>
+                        <th style="width: 58px; border-top: 1px solid #000;">Sand Prod Inpt</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="16"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
-                            $fjAwal = $valueFromAliases($row, ['FJAwal','FJ Awal','Awal','FJ_Awal']);
+                            $fjAwal = $valueFromAliases($row, ['FJAwal', 'FJ Awal', 'Awal', 'FJ_Awal']);
                             $adjOutFJ = $valueFromAliases($row, [
                                 'AdjOutFJ',
                                 'AdjOutputFJ',
@@ -327,7 +355,7 @@
                                 'FJMasuk',
                                 'Masuk',
                             ]);
-                            $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk','Total Masuk','TTL Masuk']);
+                            $totalMasukDirect = $valueFromAliases($row, ['TotalMasuk', 'Total Masuk', 'TTL Masuk']);
                             $totalMasuk =
                                 $totalMasukDirect !== 0.0 ? $totalMasukDirect : $adjOutFJ + $bsOutFJ + $fjProdOut;
 
@@ -353,7 +381,7 @@
                                 'BSInputFJ',
                                 'BSInput',
                             ]);
-                            $fjJual = $valueFromAliases($row, ['FJJual','FJ Jual','Jual FJ','JualFJ','Jual']);
+                            $fjJual = $valueFromAliases($row, ['FJJual', 'FJ Jual', 'Jual FJ', 'JualFJ', 'Jual']);
                             $ccaProdInpt = $valueFromAliases($row, [
                                 'CCAProdInpt',
                                 'CCAInptFJ',
@@ -403,7 +431,7 @@
                                 'Sand Input',
                                 'SANDInput',
                             ]);
-                            $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar','Total Keluar','TTL Keluar']);
+                            $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar', 'TTL Keluar']);
                             $totalKeluar =
                                 $totalKeluarDirect !== 0.0
                                     ? $totalKeluarDirect
@@ -415,7 +443,7 @@
                                         $s4sProdInpt +
                                         $sandProdInpt;
 
-                            $akhir = $valueFromAliases($row, ['Akhir','FJAkhir','FJ Akhir']);
+                            $akhir = $valueFromAliases($row, ['Akhir', 'FJAkhir', 'FJ Akhir']);
 
                             $mainTotals['FJAwal'] += $fjAwal;
                             $mainTotals['AdjOutFJ'] += $adjOutFJ;
@@ -439,7 +467,7 @@
                             <td class="number data-cell">{{ $fmt($adjOutFJ, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsOutFJ, true) }}</td>
                             <td class="number data-cell">{{ $fmt($fjProdOut, true) }}</td>
-                            <td class="number data-cell {{ $totalClass($totalMasuk) }}" style="font-weight: 700">
+                            <td class="number data-cell {{ $totalClass($totalMasuk) }}" style="font-weight: bold">
                                 {{ $fmt($totalMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($adjInpFJ, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsInpFJ, true) }}</td>
@@ -448,9 +476,9 @@
                             <td class="number data-cell">{{ $fmt($mldProdInpt, true) }}</td>
                             <td class="number data-cell">{{ $fmt($s4sProdInpt, true) }}</td>
                             <td class="number data-cell">{{ $fmt($sandProdInpt, true) }}</td>
-                            <td class="number data-cell {{ $totalClass($totalKeluar) }}" style="font-weight: 700">
+                            <td class="number data-cell {{ $totalClass($totalKeluar) }}" style="font-weight: bold">
                                 {{ $fmt($totalKeluar, true) }}</td>
-                            <td class="number data-cell" style="font-weight: 700">{{ $fmt($akhir, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold">{{ $fmt($akhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -501,23 +529,18 @@
                 <table class="table table-striped report-table">
                     <thead>
                         <tr class="headers-row">
-                            <th style="width: 32px;">No</th>
-                            <th style="width: 280px; text-align: center;">Jenis</th>
-                            <th style="width: 95px;">CCAkhir</th>
-                            <th style="width: 95px;">S4S</th>
-                            <th style="width: 95px;">Total</th>
+                            <th style="width: 32px; border-top: 1px solid #000;">No</th>
+                            <th style="width: 280px; text-align: center; border-top: 1px solid #000;">Jenis</th>
+                            <th style="width: 95px; border-top: 1px solid #000;">CCAkhir</th>
+                            <th style="width: 95px; border-top: 1px solid #000;">S4S</th>
+                            <th style="width: 95px; border-top: 1px solid #000;">Total</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="5"></td>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         @foreach ($subRowsData as $row)
                             @php
-                                $ccAkhir = $valueFromAliases($row, ['CCAkhir','CCA Akhir','CCA_Akhir']);
-                                $s4s = $valueFromAliases($row, ['S4S','S4S FJ','S4S_FJ']);
+                                $ccAkhir = $valueFromAliases($row, ['CCAkhir', 'CCA Akhir', 'CCA_Akhir']);
+                                $s4s = $valueFromAliases($row, ['S4S', 'S4S FJ', 'S4S_FJ']);
                                 $total = $ccAkhir + $s4s;
 
                                 $subTotals['CCAkhir'] += $ccAkhir;
@@ -529,7 +552,7 @@
                                 <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
                                 <td class="number data-cell">{{ $fmt($ccAkhir, true) }}</td>
                                 <td class="number data-cell">{{ $fmt($s4s, true) }}</td>
-                                <td class="number data-cell {{ $totalClass($total) }}">
+                                <td class="number data-cell {{ $totalClass($total) }}" style="font-weight: bold;">
                                     {{ $fmt($total, true) }}
                                 </td>
                             </tr>

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 18mm 10mm 18mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -48,7 +48,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         th,
@@ -95,7 +98,7 @@
         .summary-label {
             display: inline-block;
             min-width: 190px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .footer-wrap {
@@ -117,26 +120,33 @@
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
         }
 
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
         .table-end-line td {
-            border: 0 !important;
             border-top: 1px solid #000 !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
             padding: 0 !important;
             height: 0 !important;
             line-height: 0 !important;
@@ -184,8 +194,8 @@
     <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') }}</p>
     @if ($pdfTruncatedTypes)
-        <p style="margin: 0 0 10px 0; font-size: 9px; text-align: center;">
-            Menampilkan {{ count($types) }} dari {{ $pdfOriginalTypeCount }} jenis ST teratas untuk menjaga render PDF tetap stabil.
+        <p style="margin: 0 0 10px 0; font-size: 9px; text-align: center;"> Menampilkan {{ count($types) }} dari
+            {{ $pdfOriginalTypeCount }} jenis ST teratas untuk menjaga render PDFtetap stabil.
         </p>
     @endif
 
@@ -210,7 +220,7 @@
                     <td class="data-cell label">{{ $type }}</td>
                     <td class="data-cell number">{{ $fmt1($inVal) }}</td>
                     <td class="data-cell number">{{ $fmt1($outVal) }}</td>
-                    <td class="data-cell number">{{ $fmt1($inVal - $outVal) }}</td>
+                    <td class="data-cell number" style="font-weight: bold;">{{ $fmt1($inVal - $outVal) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -220,9 +230,6 @@
                 <td class="number">{{ $fmt1($totalInAll) }}</td>
                 <td class="number">{{ $fmt1($totalOutAll) }}</td>
                 <td class="number">{{ $fmt1($netAll) }}</td>
-            </tr>
-            <tr class="table-end-line">
-                <td colspan="5"></td>
             </tr>
         </tfoot>
     </table>
@@ -242,8 +249,8 @@
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell number" style="text-align: center">{{ $idx + 1 }}</td>
                     <td class="data-cell label">{{ $type }}</td>
-                    <td class="data-cell number">{{ $fmt1($stockRow['s_akhir'] ?? 0) }}</td>
-                    <td class="data-cell number">{{ $fmt2($stockRow['ctr'] ?? 0) }}</td>
+                    <td class="data-cell number" style="font-weight: bold;">{{ $fmt1($stockRow['s_akhir'] ?? 0) }}</td>
+                    <td class="data-cell number" style="font-weight: bold;">{{ $fmt2($stockRow['ctr'] ?? 0) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -253,25 +260,8 @@
                 <td class="number">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}</td>
                 <td class="number">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
             </tr>
-            <tr class="table-end-line">
-                <td colspan="4"></td>
-            </tr>
         </tfoot>
     </table>
-
-    <p style="font-size: 10px; margin-bottom: 5px; font-weight: bold; text-decoration: underline;">Summary :</p>
-    <ul class="summary-list">
-        <li><span class="summary-label">Jumlah Seluruh Hari :</span> {{ number_format(count($dates), 0, '.', ',') }}
-            Hari</li>
-        <li><span class="summary-label">Jumlah Seluruh Jenis ST :</span>
-            {{ number_format(count($types), 0, '.', ',') }} Jenis</li>
-        <li><span class="summary-label">Jumlah Baris Raw Data Terhitung :</span>
-            {{ number_format($rawRowCount, 0, '.', ',') }} Baris Data</li>
-        <li><span class="summary-label">Total Masuk Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($totalInAll) }}</li>
-        <li><span class="summary-label">Total Keluar Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($totalOutAll) }}
-        </li>
-        <li><span class="summary-label">Total Net Keseluruhan (Semua Jenis ST) :</span> {{ $fmt1($netAll) }}</li>
-    </ul>
 
 
     <htmlpagefooter name="reportFooter">

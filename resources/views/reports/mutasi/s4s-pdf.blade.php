@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -275,7 +275,7 @@
                 <th style="width: 58px;">Adj Out S4S</th>
                 <th style="width: 58px;">BS Out S4S</th>
                 <th style="width: 58px;">Prod Out S4S</th>
-                <th style="width: 58px;">CCAProd S4S</th>
+                <th style="width: 58px;">CCA Prod S4S</th>
                 <th style="width: 58px;">Adj Inpt S4S</th>
                 <th style="width: 58px;">BS Inpt S4S</th>
                 <th style="width: 58px;">S4S Jual</th>

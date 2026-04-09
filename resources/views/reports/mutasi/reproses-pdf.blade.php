@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 8mm 20mm 8mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -56,7 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -108,31 +111,58 @@
             background: #eef2f8;
         }
 
+        .empty-row td {
+            background: #c9d1df;
+            border-top: 0 !important;
+            border-right: 1px solid #000 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+        }
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
             text-align: center;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -261,11 +291,6 @@
                 <th style="width:58px">REPRO<br>Jual</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="18"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
@@ -325,7 +350,7 @@
                     <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
-                <tr>
+                <tr class="empty-row">
                     <td colspan="18" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse

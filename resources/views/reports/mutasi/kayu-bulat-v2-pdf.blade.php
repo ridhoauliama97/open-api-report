@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -75,7 +75,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #ffffff;
             color: #000;
         }
@@ -105,33 +105,44 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
             text-align: center;
         }
 
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
         }
 
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -198,6 +209,12 @@
             $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
 
             return str_starts_with($normalized, 'JENIS');
+        };
+
+        $isSaldoAkhirColumn = static function (string $column): bool {
+            $normalized = strtoupper((string) preg_replace('/[^a-zA-Z0-9]/', '', $column));
+
+            return in_array($normalized, ['SALDOAKHIR', 'AKHIR'], true);
         };
 
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
@@ -300,7 +317,8 @@
                             }
                         @endphp
                         @if ($isNumeric)
-                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
+                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell"
+                                @if ($isSaldoAkhirColumn($column)) style="font-weight: bold;" @endif>
                                 {{ $fmt($floatValue ?? 0.0, true) }}
                             </td>
                         @else
@@ -366,8 +384,8 @@
                                 }
                             @endphp
                             @if ($isNumeric)
-                                <td
-                                    class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell"
+                                    @if ($isSaldoAkhirColumn($column)) style="font-weight: bold;" @endif>
                                     {{ $fmt($floatValue ?? 0.0, true) }}
                                 </td>
                             @else

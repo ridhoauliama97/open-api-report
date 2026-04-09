@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 8mm 20mm 8mm;
+            margin: 20mm 8mm 20mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -56,7 +56,10 @@
         .report-table {
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid #000;
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
         }
 
         thead {
@@ -81,7 +84,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #ffffff;
             color: #000;
         }
@@ -111,28 +114,47 @@
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
         }
 
         .totals-row td.blank {
             font-weight: bold;
             font-size: 11px;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 0;
+            border-left: 0;
             text-align: center;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .headers-row th {
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
             border-bottom: 1px solid #000;
+            border-left: 0;
+        }
+
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
         }
 
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
+            border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
 
@@ -283,11 +305,6 @@
                 <th style="width:58px">CCA Prod<br>Inpt</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="20"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 @php
@@ -349,7 +366,7 @@
                     <td class="number data-cell">{{ $fmt($bsOut, true) }}</td>
                     <td class="number data-cell">{{ $fmt($prodOut, true) }}</td>
                     <td class="number data-cell">{{ $fmt($ccaMasuk, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalMasuk, true) }}</td>
                     <td class="number data-cell">{{ $fmt($adjIn, true) }}</td>
                     <td class="number data-cell">{{ $fmt($bsIn, true) }}</td>
                     <td class="number data-cell">{{ $fmt($ccaJual, true) }}</td>
@@ -360,8 +377,8 @@
                     <td class="number data-cell">{{ $fmt($sandInpt, true) }}</td>
                     <td class="number data-cell">{{ $fmt($packInpt, true) }}</td>
                     <td class="number data-cell">{{ $fmt($ccaProdInpt, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
-                    <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalKeluar, true) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -409,11 +426,6 @@
                     <th style="width:78px">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="10"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
                     @php
@@ -446,7 +458,7 @@
                         <td class="number data-cell">{{ $fmt($subMoulding, true) }}</td>
                         <td class="number data-cell">{{ $fmt($subReproses, true) }}</td>
                         <td class="number data-cell">{{ $fmt($subSanding, true) }}</td>
-                        <td class="number data-cell">{{ $fmt($subTotal, true) }}</td>
+                        <td class="number data-cell" style="font-weight: bold;">{{ $fmt($subTotal, true) }}</td>
                     </tr>
                 @endforeach
                 <tr class="totals-row">
