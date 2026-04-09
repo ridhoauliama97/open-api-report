@@ -135,6 +135,17 @@
             border: 1px solid #000;
         }
 
+        .section-separator td {
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            border-top: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            background: #fff !important;
+        }
+
         .table-end-line td {
             border-top: 1px solid #000 !important;
             border-right: 0 !important;
@@ -146,70 +157,161 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            margin: 0 0 10px 0;
+        .receipt-block {
+            margin: 0 0 12px 0;
+        }
+
+        .receipt-separator {
+            border-top: 1px solid #000;
+            margin: 8px 0 10px 0;
+        }
+
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+            table-layout: fixed;
+        }
+
+        .meta-table td {
+            border: 0;
+            padding: 0 4px 1px 0;
+            vertical-align: top;
+            text-align: left;
+            background: transparent !important;
+            word-break: normal;
+        }
+
+        .meta-line {
+            white-space: nowrap;
+        }
+
+        .meta-line.right {
+            text-align: right;
+        }
+
+        .meta-inline-label {
+            font-weight: bold;
+        }
+
+        .table-wrap {
+            margin-left: 0;
+        }
+
+        .bottom-section {
+            width: 100%;
+            margin: 6px 0 10px 0;
+        }
+
+        .bottom-layout {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0;
+        }
+
+        .bottom-layout td {
+            border: 0;
+            padding: 0;
+            vertical-align: top;
+            background: transparent !important;
+            word-break: normal;
         }
 
         .money-box {
-            width: 50%;
-            font-size: 11px;
-        }
-
-        .money-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
             width: 100%;
-            border: 1px solid #000;
+            font-size: 11px;
+            padding-left: 40px;
         }
 
-        .money-list>li {
-            padding: 3px 6px;
+        .money-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0;
         }
 
-        .money-list>li+li {
+        .money-table td {
+            border: 0;
+            padding: 0 0 2px 0;
+            vertical-align: top;
+            background: transparent !important;
+        }
+
+        .money-divider-row td {
+            padding: 1px 0 2px 0;
+        }
+
+        .money-divider-line {
             border-top: 1px solid #000;
-        }
-
-        .money-list>li.money-divider {
-            border-top: 2px solid #000;
-        }
-
-        .money-item {
-            display: flex;
-            align-items: flex-start;
+            height: 0;
+            margin-left: 82px;
         }
 
         .money-label {
-            width: 80px;
+            width: 68px;
             font-weight: bold;
             text-align: left;
+            white-space: nowrap;
         }
 
         .money-value {
-            flex: 1 1 auto;
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
+            width: 150px;
+            font-weight: bold;
         }
 
         .money-flag-inline {
             font-weight: bold;
+            white-space: nowrap;
+            padding-left: 10px !important;
+            text-align: left;
+            width: 60px;
         }
 
         .btul-box {
-            width: 50%;
+            width: 100%;
             font-size: 11px;
+            padding-left: 26px;
         }
 
         .btul-title {
-            font-weight: bold;
+            font-weight: normal;
             text-align: left;
-            margin: 0 0 4px 0;
+            margin: 0;
+            line-height: 1.15;
+            width: 96px;
+            white-space: normal;
+            word-break: normal;
+            overflow-wrap: normal;
+        }
+
+        .btul-wrap {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .btul-layout {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0;
+        }
+
+        .btul-layout td {
+            border: 0;
+            padding: 0;
+            vertical-align: top;
+            background: transparent !important;
+            word-break: normal;
+        }
+
+        .btul-text-cell {
+            width: 108px;
+            padding-right: 12px;
+            padding-top: 4px;
         }
 
         .mini-table {
@@ -239,6 +341,14 @@
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
+
+        .rendemen-inline {
+            margin: 2px 0 10px 0;
+            text-align: right;
+            font-size: 11px;
+        }
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -288,7 +398,7 @@
                 return '';
             }
             try {
-                return \Carbon\Carbon::parse($raw)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::parse($raw)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return $raw;
             }
@@ -343,183 +453,265 @@
                 $balokRows = is_array($receipt['balok_timbang_ulang'] ?? null) ? $receipt['balok_timbang_ulang'] : [];
             @endphp
 
-            @if ($noPen !== '' || $noKb !== '')
-                <div style="margin: 2px 0 2px 0;">
-                    <strong>No Penerimaan ST</strong> : {{ $noPen !== '' ? $noPen : '-' }}
-                </div>
-            @endif
-
-            <div style="margin: 0 0 2px 0;">
-                @if ($noKb !== '')
-                    <strong>No Kayu Bulat</strong> : {{ $noKb }}
-                @endif
-            </div>
-
-            <div style="margin: 0 0 2px 0;">
-                {{-- <strong>Tgl Penerimaan ST</strong> :
-                {{ $tglPenerimaan !== '' ? $formatDateLong($tglPenerimaan) : ($dateLabel !== '' ? $dateLabel : '-') }} --}}
-                @if ($meja !== '')
-                    <strong>Meja</strong> : {{ $meja }}
-                @endif
-            </div>
-
-            <div style="margin: 0 0 2px 0;">
-                <strong>Supplier</strong> : {{ $supplier !== '' ? $supplier : '-' }}
-            </div>
-
-            <div style="margin: 0 0 6px 0;">
-                <strong>Jenis Kayu</strong> : {{ $jenisKayu !== '' ? $jenisKayu : '-' }}
-            </div>
-
-            <table class="report-table">
-                <colgroup>
-                    <col style="width: 72px;">
-                    <col style="width: 58px;">
-                    <col style="width: 220px;">
-                    <col style="width: 60px;">
-                    <col style="width: 60px;">
-                    <col style="width: 55px;">
-                </colgroup>
-                <thead>
-                    <tr class="headers-row">
-                        <th>Kategori</th>
-                        <th>Jumlah Truk</th>
-                        <th>Grade</th>
-                        <th>KB (Ton)</th>
-                        <th>ST (Ton)</th>
-                        <th>%</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="6"></td>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    @php $rowIndex = 0; @endphp
-
-                    @if ($inputRows !== [])
-                        @php $rowspan = count($inputRows); @endphp
-                        @foreach ($inputRows as $line)
-                            @php $rowIndex++; @endphp
-                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                                @if ($loop->first)
-                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                        Input
-                                    </td>
+            <div class="receipt-block">
+                <table class="meta-table">
+                    <colgroup>
+                        <col style="width: 33%">
+                        <col style="width: 34%">
+                        <col style="width: 33%">
+                    </colgroup>
+                    <tr>
+                        <td class="meta-line">
+                            @if ($noPen !== '')
+                                <span class="meta-inline-label">No Pen ST</span> : {{ $noPen }}
+                            @endif
+                        </td>
+                        <td class="meta-line">
+                            @if ($supplier !== '')
+                                <span class="meta-inline-label">Supplier</span> : {{ $supplier }}
+                            @endif
+                        </td>
+                        <td class="meta-line right">
+                            @if ($noKb !== '')
+                                <span class="meta-inline-label">No.KB</span> : {{ $noKb }}
+                                @if ($dateCreate !== '')
+                                    ({{ $formatDateLong($dateCreate) }})
                                 @endif
-                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                                <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
-                                <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
-                                <td class="data-cell center">{{ $dash }}</td>
-                                <td class="data-cell number">
-                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="meta-line">
+                            <span class="meta-inline-label">Tgl Penerimaan ST</span> :
+                            {{ $tglPenerimaan !== '' ? $formatDateLong($tglPenerimaan) : ($dateLabel !== '' ? $dateLabel : '-') }}
+                        </td>
+                        <td class="meta-line">
+                            @if ($jenisKayu !== '')
+                                <span class="meta-inline-label">Jenis Kayu</span> : {{ $jenisKayu }}
+                            @endif
+                        </td>
+                        <td class="meta-line right">
+                            @if ($meja !== '')
+                                <span class="meta-inline-label">Meja</span> : {{ $meja }}
+                            @endif
+                        </td>
+                    </tr>
+                </table>
 
-                    @if ($outputRows !== [])
-                        @php $rowspan = count($outputRows); @endphp
-                        @foreach ($outputRows as $line)
-                            @php $rowIndex++; @endphp
-                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                                @if ($loop->first)
-                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                        Output</td>
-                                @endif
-                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
-                                <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
-                                <td class="data-cell center">{{ $dash }}</td>
-                                <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                                <td class="data-cell number">
-                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-
-                    @if ($inputRows === [] && $outputRows === [])
-                        <tr class="data-row row-odd">
-                            <td colspan="6" class="data-cell center">Tidak ada data.</td>
-                        </tr>
-                    @else
-                        <tr class="totals-row">
-                            <td colspan="3" style="text-align: center;">Total</td>
-                            <td class="number">{{ $fmtTotal($kbTotal, 4) }}</td>
-                            <td class="number">{{ $fmtTotal($stTotal, 4) }}</td>
-                            <td class="number">{{ $fmtPercentTotal($rendemen, 1) }}</td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
-
-            @if ($inputRows !== [] || $outputRows !== [])
-                <div style="margin: 0 0 10px 0; text-align: right;">
-                    <strong>RENDEMEN : {{ $fmtPercentTotal($rendemen, 1) }}</strong>
-                </div>
-            @endif
-
-            @php
-                $hasMoney =
-                    abs($moneySt) > 0.0000001 ||
-                    abs($moneyKb) > 0.0000001 ||
-                    abs($moneyUpah) > 0.0000001 ||
-                    abs($moneyHasil) > 0.0000001;
-            @endphp
-
-            @if (($inputRows !== [] || $outputRows !== []) && ($hasMoney || $balokRows !== []))
-                <strong>ST :</strong> {{ $fmtMoney($moneySt) }}
-                <br>
-                <strong>KB :</strong> {{ $fmtMoney($moneyKb) }}
-                <br>
-                <strong>Upah :</strong> {{ $fmtMoney($moneyUpah) }}
-                <br>
-                <strong>Hasil :</strong> {{ $fmtMoney($moneyHasil) }}
-                <span> <strong>({{ $moneyFlag }})</strong></span>
-
-                <div class="btul-box" style="margin-top: 5px;">
-                    <div class="btul-title">Balok Timbang Ulang</div>
-                    <table class="mini-table" style="width: 245px;">
+                <div class="table-wrap">
+                    <table class="report-table">
+                        <colgroup>
+                            <col style="width: 72px;">
+                            <col style="width: 58px;">
+                            <col style="width: 220px;">
+                            <col style="width: 60px;">
+                            <col style="width: 60px;">
+                            <col style="width: 55px;">
+                        </colgroup>
                         <thead>
-                            <tr>
-                                <th style="width: 105px;"></th>
-                                <th style="width: 45px;">KBTon</th>
-                                <th style="width: 45px;">STTon</th>
-                                <th style="width: 35px;">%</th>
+                            <tr class="headers-row">
+                                <th>Kategori</th>
+                                <th>Jumlah Truk</th>
+                                <th>Grade</th>
+                                <th>KB (Ton)</th>
+                                <th>ST (Ton)</th>
+                                <th>%</th>
                             </tr>
                         </thead>
+                        <tfoot>
+                            <tr class="table-end-line">
+                                <td colspan="6"></td>
+                            </tr>
+                        </tfoot>
                         <tbody>
-                            @if ($balokRows === [])
-                                <tr>
-                                    <td class="label" colspan="4" style="text-align: center;">
-                                        {{ $dash }}</td>
+                            @php $rowIndex = 0; @endphp
+
+                            @if ($inputRows !== [])
+                                @php $rowspan = count($inputRows); @endphp
+                                @foreach ($inputRows as $line)
+                                    @php $rowIndex++; @endphp
+                                    <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                        @if ($loop->first)
+                                            <td class="data-cell" rowspan="{{ $rowspan }}"
+                                                style="font-weight: bold;">
+                                                Input
+                                            </td>
+                                        @endif
+                                        <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
+                                        <td class="data-cell left" style="font-weight: bold;">
+                                            {{ (string) ($line['grade'] ?? '') }}</td>
+                                        <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}
+                                        </td>
+                                        <td class="data-cell center">{{ $dash }}</td>
+                                        <td class="data-cell number">
+                                            {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+                            @if ($inputRows !== [] && $outputRows !== [])
+                                <tr class="section-separator">
+                                    <td colspan="6"></td>
+                                </tr>
+                            @endif
+
+                            @if ($outputRows !== [])
+                                @php $rowspan = count($outputRows); @endphp
+                                @foreach ($outputRows as $line)
+                                    @php $rowIndex++; @endphp
+                                    <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                        @if ($loop->first)
+                                            <td class="data-cell" rowspan="{{ $rowspan }}"
+                                                style="font-weight: bold;">
+                                                Output</td>
+                                        @endif
+                                        <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
+                                        <td class="data-cell right" style="font-weight: bold;">
+                                            {{ (string) ($line['grade'] ?? '') }}</td>
+                                        <td class="data-cell center">{{ $dash }}</td>
+                                        <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}
+                                        </td>
+                                        <td class="data-cell number">
+                                            {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+                            @if ($inputRows === [] && $outputRows === [])
+                                <tr class="data-row row-odd">
+                                    <td colspan="6" class="data-cell center">Tidak ada data.</td>
                                 </tr>
                             @else
-                                @foreach ($balokRows as $bline)
-                                    @php
-                                        $bLabel = trim((string) ($bline['label'] ?? ''));
-                                        $bKb = (float) ($bline['kb'] ?? 0.0);
-                                        $bSt = (float) ($bline['st'] ?? 0.0);
-                                        $bPct = (float) ($bline['percent'] ?? 0.0);
-                                        // Display Total rows, or NoMeja rows with complete data (both KB and ST)
-                                        $isTotal = strpos($bLabel, 'Total') !== false;
-                                        $hasCompleteData = abs($bKb) > 0.0000001 && abs($bSt) > 0.0000001;
-                                    @endphp
-                                    @if ($isTotal || $hasCompleteData)
-                                        <tr>
-                                            <td class="label">{{ $bLabel }}</td>
-                                            <td class="num">{{ $fmtDetail($bKb, 2) }}</td>
-                                            <td class="num">{{ $fmtDetail($bSt, 2) }}</td>
-                                            <td class="num">{{ $fmtPercentDetail($bPct, 1) }}</td>
-                                        </tr>
-                                    @endif
-                                @endforeach
+                                <tr class="totals-row">
+                                    <td colspan="3" style="text-align: center;">Total</td>
+                                    <td class="number">{{ $fmtTotal($kbTotal, 4) }}</td>
+                                    <td class="number">{{ $fmtTotal($stTotal, 4) }}</td>
+                                    <td class="number">{{ $fmtPercentTotal($rendemen, 1) }}</td>
+                                </tr>
                             @endif
                         </tbody>
                     </table>
                 </div>
-                </div>
+
+                @if ($inputRows !== [] || $outputRows !== [])
+                    <div class="rendemen-inline">
+                        <strong>RENDEMEN : {{ $fmtPercentTotal($rendemen, 1) }}</strong>
+                    </div>
+                @endif
+
+                @php
+                    $hasMoney =
+                        abs($moneySt) > 0.0000001 ||
+                        abs($moneyKb) > 0.0000001 ||
+                        abs($moneyUpah) > 0.0000001 ||
+                        abs($moneyHasil) > 0.0000001;
+                @endphp
+
+                @if (($inputRows !== [] || $outputRows !== []) && ($hasMoney || $balokRows !== []))
+                    <div class="bottom-section">
+                        <table class="bottom-layout">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <div class="money-box">
+                                        <table class="money-table">
+                                            <tr>
+                                                <td class="money-label">ST</td>
+                                                <td class="money-value">{{ $fmtMoney($moneySt) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="money-label">KB</td>
+                                                <td class="money-value">{{ $fmtMoney($moneyKb) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="money-label">Upah</td>
+                                                <td class="money-value">{{ $fmtMoney($moneyUpah) }}</td>
+                                            </tr>
+                                            <tr class="money-divider-row">
+                                                <td colspan="2">
+                                                    <div class="money-divider-line"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="money-label">Hasil</td>
+                                                <td class="money-value">{{ $fmtMoney($moneyHasil) }}</td>
+                                                <td class="money-flag-inline">
+                                                    ({{ $moneyHasil < 0 ? 'RUGI' : 'LABA' }})</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                                <td style="width: 50%;">
+                                    <div class="btul-box">
+                                        <div class="btul-wrap">
+                                            <table class="btul-layout">
+                                                <tr>
+                                                    <td class="btul-text-cell">
+                                                        <div class="btul-title">Balok Timbang<br>Ulang</div>
+                                                    </td>
+                                                    <td>
+                                                        <table class="mini-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="width: 105px;"></th>
+                                                                    <th style="width: 45px;">KBTon</th>
+                                                                    <th style="width: 45px;">STTon</th>
+                                                                    <th style="width: 35px;">%</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @if ($balokRows === [])
+                                                                    <tr>
+                                                                        <td class="label" colspan="4"
+                                                                            style="text-align: center;">
+                                                                            {{ $dash }}</td>
+                                                                    </tr>
+                                                                @else
+                                                                    @foreach ($balokRows as $bline)
+                                                                        @php
+                                                                            $bLabel = trim(
+                                                                                (string) ($bline['label'] ?? ''),
+                                                                            );
+                                                                            $bKb = (float) ($bline['kb'] ?? 0.0);
+                                                                            $bSt = (float) ($bline['st'] ?? 0.0);
+                                                                            $bPct = (float) ($bline['percent'] ?? 0.0);
+                                                                            $isTotal =
+                                                                                strpos($bLabel, 'Total') !== false;
+                                                                            $hasCompleteData =
+                                                                                abs($bKb) > 0.0000001 &&
+                                                                                abs($bSt) > 0.0000001;
+                                                                        @endphp
+                                                                        @if ($isTotal || $hasCompleteData)
+                                                                            <tr>
+                                                                                <td class="label">{{ $bLabel }}
+                                                                                </td>
+                                                                                <td class="num">
+                                                                                    {{ $fmtDetail($bKb, 2) }}</td>
+                                                                                <td class="num">
+                                                                                    {{ $fmtDetail($bSt, 2) }}</td>
+                                                                                <td class="num">
+                                                                                    {{ $fmtPercentDetail($bPct, 1) }}
+                                                                                </td>
+                                                                            </tr>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                @endif
+            </div>
+            @if (!$loop->last)
+                <div class="receipt-separator"></div>
             @endif
         @endforeach
     @empty
@@ -594,7 +786,8 @@
 
     @if ($grandInputRows !== [] || $grandOutputRows !== [])
         <div class="date-separator"></div>
-        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">Grand Total Seluruh
+        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">Grand Total
+            Seluruh
             Grade</div>
 
         <table class="report-table">

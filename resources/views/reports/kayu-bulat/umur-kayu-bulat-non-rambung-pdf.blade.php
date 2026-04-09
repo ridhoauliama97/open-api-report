@@ -95,6 +95,10 @@
             font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        td.duration-bold {
+            font-weight: bold;
+        }
+
         .row-odd td {
             background: #c9d1df;
         }
@@ -212,17 +216,20 @@
         $dateUsageColumn = $findColumnByCandidates($columns, ['DateUsage', 'Date Usage']);
 
         $displayColumns = array_values(
-            array_filter([
-                $noKayuBulatColumn,
-                $dateCreateColumn,
-                $supplierColumn,
-                $jenisColumn,
-                $tanggalRacipColumn,
-                $tanggalLamaRacipColumn,
-                'LAMA_TUNGGU_VIRTUAL',
-                $truckColumn,
-                $tonColumn,
-            ], static fn($column): bool => is_string($column) && $column !== '')
+            array_filter(
+                [
+                    $noKayuBulatColumn,
+                    $dateCreateColumn,
+                    $supplierColumn,
+                    $jenisColumn,
+                    $tanggalRacipColumn,
+                    $tanggalLamaRacipColumn,
+                    'LAMA_TUNGGU_VIRTUAL',
+                    $truckColumn,
+                    $tonColumn,
+                ],
+                static fn($column): bool => is_string($column) && $column !== '',
+            ),
         );
 
         $columnWidths = [];
@@ -267,7 +274,7 @@
             if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $textValue) === 1) {
                 try {
                     if (str_contains($normalizedColumn, 'racip')) {
-                        return \Carbon\Carbon::parse($textValue)->format('d/m/Y');
+                        return \Carbon\Carbon::parse($textValue)->format('d-M-y');
                     }
 
                     return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
@@ -277,6 +284,12 @@
             }
 
             return $textValue;
+        };
+
+        $hasDayText = static function (string $value): bool {
+            $normalized = strtolower(trim($value));
+
+            return $normalized !== '' && (str_contains($normalized, 'hari') || str_contains($normalized, 'hr'));
         };
 
         $parseDateValue = static function (mixed $value): ?\Carbon\Carbon {
@@ -381,6 +394,26 @@
             $groupedRows[$groupName][] = $row;
         }
 
+        $groupOrder = ['Masih Hidup', 'Sudah Mati'];
+        uksort($groupedRows, static function (string $left, string $right) use ($groupOrder): int {
+            $leftIndex = array_search($left, $groupOrder, true);
+            $rightIndex = array_search($right, $groupOrder, true);
+
+            if ($leftIndex !== false && $rightIndex !== false) {
+                return $leftIndex <=> $rightIndex;
+            }
+            if ($leftIndex !== false) {
+                return -1;
+            }
+            if ($rightIndex !== false) {
+                return 1;
+            }
+
+            return strcasecmp($left, $right);
+        });
+
+        $totalKeseluruhanTon = $sumTon($rowsData, $tonColumn);
+        $totalKeseluruhanTruck = $countTruck($rowsData, $truckColumn);
         $visualDisplayColumnsCount = count($displayColumns) + 2;
     @endphp
 
@@ -427,20 +460,24 @@
             <tbody>
                 @foreach ($groupRows as $row)
                     @php
-                        $dateCreateValue = $parseDateValue($dateCreateColumn !== null ? ($row[$dateCreateColumn] ?? null) : null);
+                        $dateCreateValue = $parseDateValue(
+                            $dateCreateColumn !== null ? $row[$dateCreateColumn] ?? null : null,
+                        );
                         $tanggalRacipValue = $parseDateValue(
-                            $tanggalRacipColumn !== null ? ($row[$tanggalRacipColumn] ?? null) : null,
+                            $tanggalRacipColumn !== null ? $row[$tanggalRacipColumn] ?? null : null,
                         );
                         $tanggalLamaRacipValue = $parseDateValue(
-                            $tanggalLamaRacipColumn !== null ? ($row[$tanggalLamaRacipColumn] ?? null) : null,
+                            $tanggalLamaRacipColumn !== null ? $row[$tanggalLamaRacipColumn] ?? null : null,
                         );
-                        $dateUsageValue = $parseDateValue($dateUsageColumn !== null ? ($row[$dateUsageColumn] ?? null) : null);
+                        $dateUsageValue = $parseDateValue(
+                            $dateUsageColumn !== null ? $row[$dateUsageColumn] ?? null : null,
+                        );
 
                         $lamaAwalHari = $diffDays($dateCreateValue, $tanggalRacipValue);
-                        $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hr' : '';
+                        $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hari' : '';
 
                         $lamaRacipHari = $diffDays($tanggalRacipValue, $tanggalLamaRacipValue);
-                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hr' : '';
+                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
 
                         if ($dateUsageValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $dateUsageValue);
@@ -453,7 +490,7 @@
                         } else {
                             $lamaTungguHari = null;
                         }
-                        $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hr' : '';
+                        $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
@@ -464,12 +501,30 @@
                             @endphp
                             @if ($column === $tanggalRacipColumn)
                                 <td class="data-cell center">{{ $formatCellValue($value, $column) }}</td>
-                                <td class="data-cell center">{{ $lamaAwalText }}</td>
+                                <td class="data-cell center {{ $hasDayText($lamaAwalText) ? 'duration-bold' : '' }}">
+                                    @if ($hasDayText($lamaAwalText))
+                                        <strong>{{ $lamaAwalText }}</strong>
+                                    @else
+                                        {{ $lamaAwalText }}
+                                    @endif
+                                </td>
                             @elseif ($column === $tanggalLamaRacipColumn)
                                 <td class="data-cell center">{{ $formatCellValue($value, $column) }}</td>
-                                <td class="data-cell center">{{ $lamaRacipText }}</td>
+                                <td class="data-cell center {{ $hasDayText($lamaRacipText) ? 'duration-bold' : '' }}">
+                                    @if ($hasDayText($lamaRacipText))
+                                        <strong>{{ $lamaRacipText }}</strong>
+                                    @else
+                                        {{ $lamaRacipText }}
+                                    @endif
+                                </td>
                             @elseif ($column === 'LAMA_TUNGGU_VIRTUAL')
-                                <td class="data-cell center">{{ $lamaTungguText }}</td>
+                                <td class="data-cell center {{ $hasDayText($lamaTungguText) ? 'duration-bold' : '' }}">
+                                    @if ($hasDayText($lamaTungguText))
+                                        <strong>{{ $lamaTungguText }}</strong>
+                                    @else
+                                        {{ $lamaTungguText }}
+                                    @endif
+                                </td>
                             @else
                                 <td class="data-cell {{ $isTonCell ? 'number' : 'center' }}">
                                     {{ $formatCellValue($value, $column) }}
@@ -495,22 +550,49 @@
                 </tr>
             </tbody>
         </table>
-        @php
-            $groupTon = number_format($sumTon($groupRows, $tonColumn), 4, '.', ',');
-            $groupTruck = $countTruck($groupRows, $truckColumn);
-        @endphp
         @if ($groupName === 'Masih Hidup')
+            @php
+                $sudahMasukMejaRows = [];
+                $belumMasukMejaRows = [];
+
+                foreach ($groupRows as $groupRow) {
+                    $tanggalRacipText = trim(
+                        (string) ($tanggalRacipColumn !== null ? $groupRow[$tanggalRacipColumn] ?? '' : ''),
+                    );
+
+                    if ($tanggalRacipText !== '') {
+                        $sudahMasukMejaRows[] = $groupRow;
+                    } else {
+                        $belumMasukMejaRows[] = $groupRow;
+                    }
+                }
+
+                $belumMasukMejaTon = $sumTon($belumMasukMejaRows, $tonColumn);
+                $sudahMasukMejaTon = $sumTon($sudahMasukMejaRows, $tonColumn);
+                $jumlahMasihHidupTon = $sumTon($groupRows, $tonColumn);
+                $jumlahMasihHidupTruck = $countTruck($groupRows, $truckColumn);
+            @endphp
             <table class="group-note">
                 <tr>
-                    <td class="left" style="width:33.33%">Jmlh Belum Masuk Meja : {{ $groupTon }} Ton</td>
-                    <td class="center" style="width:33.33%">Jmlh Sudah Masuk Meja : Ton</td>
-                    <td class="right" style="width:33.33%">Jmlh : {{ $groupTon }} Ton ({{ $groupTruck }} Truk)</td>
+                    <td class="left" style="width:33.33%">
+                        Jmlh Belum Masuk Meja : {{ number_format($belumMasukMejaTon, 4, '.', ',') }} Ton
+                    </td>
+                    <td class="center" style="width:33.33%">
+                        Jmlh Sudah Masuk Meja : {{ number_format($sudahMasukMejaTon, 4, '.', ',') }} Ton
+                    </td>
+                    <td class="right" style="width:33.33%">
+                        Jmlh : {{ number_format($jumlahMasihHidupTon, 4, '.', ',') }} Ton
+                        ({{ $jumlahMasihHidupTruck }} Truk)
+                    </td>
                 </tr>
             </table>
         @elseif ($groupName === 'Sudah Mati')
             <table class="group-note">
                 <tr>
-                    <td class="right">Jmlh : {{ $groupTon }} Ton ({{ $groupTruck }} Truk)</td>
+                    <td class="right">
+                        Jmlh : {{ number_format($totalKeseluruhanTon, 4, '.', ',') }} Ton
+                        ({{ $totalKeseluruhanTruck }} Truk)
+                    </td>
                 </tr>
             </table>
         @endif

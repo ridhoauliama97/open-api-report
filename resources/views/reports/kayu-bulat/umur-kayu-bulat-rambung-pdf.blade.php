@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -98,7 +98,8 @@
         .row-even td {
             background: #eef2f8;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -140,6 +141,7 @@
             text-align: left;
             font-weight: bold;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -429,12 +431,12 @@
                     <td colspan="{{ count($displayColumns) + 1 }}"></td>
                 </tr>
             </tfoot>
-<tfoot>
+            <tfoot>
                 <tr class="table-end-line">
                     <td></td>
                 </tr>
             </tfoot>
-<tbody>
+            <tbody>
                 @foreach ($groupRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>

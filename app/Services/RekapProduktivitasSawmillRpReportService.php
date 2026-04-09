@@ -76,7 +76,6 @@ class RekapProduktivitasSawmillRpReportService
         // Sub-report: attach "balok timbang ulang" rows per receipt (best-effort).
         $subIndex = $this->buildSubIndex($subRows);
 
-        // Decide receipt-level group by sub-report indicators, prefer single-group receipts.
         $receiptGroupMap = [];
         foreach ($subIndex as $receiptKey => $subLines) {
             $hasBansaw = false;
@@ -335,6 +334,7 @@ class RekapProduktivitasSawmillRpReportService
             }
             $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['kb'] += $kb;
             $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['st'] += $st;
+
         }
 
         foreach ($byDate as $dateKey => $dateGroup) {
@@ -434,6 +434,84 @@ class RekapProduktivitasSawmillRpReportService
             $st = (float) ($line['st'] ?? 0.0);
             $grandOutputRows[$idx]['percent'] = $grandStTotal > 0.0 ? (($st / $grandStTotal) * 100.0) : 0.0;
         }
+
+        // Match the company application behavior:
+        // SLP is presented as the remainder of Grand Total minus BANSAW.
+        $allInputByGrade = [];
+        foreach ($grandInputRows as $line) {
+            $allInputByGrade[(string) ($line['grade'] ?? 'Tanpa Grade')] = $line;
+        }
+        $allOutputByGrade = [];
+        foreach ($grandOutputRows as $line) {
+            $allOutputByGrade[(string) ($line['grade'] ?? 'Tanpa Grade')] = $line;
+        }
+        $bansawInputByGrade = [];
+        foreach (($grandGroupInputRows['bansaw'] ?? []) as $line) {
+            $bansawInputByGrade[(string) ($line['grade'] ?? 'Tanpa Grade')] = $line;
+        }
+        $bansawOutputByGrade = [];
+        foreach (($grandGroupOutputRows['bansaw'] ?? []) as $line) {
+            $bansawOutputByGrade[(string) ($line['grade'] ?? 'Tanpa Grade')] = $line;
+        }
+
+        $slpInputRowsFromDiff = [];
+        foreach ($allInputByGrade as $gradeKey => $line) {
+            $kb = (float) ($line['kb'] ?? 0.0) - (float) (($bansawInputByGrade[$gradeKey]['kb'] ?? 0.0));
+            if (abs($kb) < self::EPS) {
+                continue;
+            }
+            $slpInputRowsFromDiff[] = [
+                'kategori' => 'input',
+                'grade' => $gradeKey,
+                'jmlh_truk' => (string) ($line['jmlh_truk'] ?? '1'),
+                'kb' => $kb,
+                'st' => 0.0,
+                'percent' => 0.0,
+            ];
+        }
+
+        $slpOutputRowsFromDiff = [];
+        foreach ($allOutputByGrade as $gradeKey => $line) {
+            $st = (float) ($line['st'] ?? 0.0) - (float) (($bansawOutputByGrade[$gradeKey]['st'] ?? 0.0));
+            if (abs($st) < self::EPS) {
+                continue;
+            }
+            $slpOutputRowsFromDiff[] = [
+                'kategori' => 'output',
+                'grade' => $gradeKey,
+                'jmlh_truk' => (string) ($line['jmlh_truk'] ?? '0'),
+                'kb' => 0.0,
+                'st' => $st,
+                'percent' => 0.0,
+            ];
+        }
+
+        $slpKbFromDiff = max(0.0, $grandKbTotal - (float) ($grandGroupTotals['bansaw']['kb_total'] ?? 0.0));
+        $slpStFromDiff = max(0.0, $grandStTotal - (float) ($grandGroupTotals['bansaw']['st_total'] ?? 0.0));
+        $slpRendemenFromDiff = $slpKbFromDiff > 0.0 ? (($slpStFromDiff / $slpKbFromDiff) * 100.0) : 0.0;
+
+        foreach ($slpInputRowsFromDiff as $idx => $line) {
+            $kb = (float) ($line['kb'] ?? 0.0);
+            $slpInputRowsFromDiff[$idx]['percent'] = $slpKbFromDiff > 0.0 ? (($kb / $slpKbFromDiff) * 100.0) : 0.0;
+        }
+        foreach ($slpOutputRowsFromDiff as $idx => $line) {
+            $st = (float) ($line['st'] ?? 0.0);
+            $slpOutputRowsFromDiff[$idx]['percent'] = $slpStFromDiff > 0.0 ? (($st / $slpStFromDiff) * 100.0) : 0.0;
+        }
+
+        $grandGroupInputRows['slp'] = $slpInputRowsFromDiff;
+        $grandGroupOutputRows['slp'] = $slpOutputRowsFromDiff;
+        $grandGroupTotals['slp'] = [
+            'kb_total' => $slpKbFromDiff,
+            'st_total' => $slpStFromDiff,
+            'rendemen' => $slpRendemenFromDiff,
+        ];
+        $grandMoneyByGroup['slp'] = [
+            'st' => (float) ($grandMoney['st'] ?? 0.0) - (float) ($grandMoneyByGroup['bansaw']['st'] ?? 0.0),
+            'kb' => (float) ($grandMoney['kb'] ?? 0.0) - (float) ($grandMoneyByGroup['bansaw']['kb'] ?? 0.0),
+            'upah' => (float) ($grandMoney['upah'] ?? 0.0) - (float) ($grandMoneyByGroup['bansaw']['upah'] ?? 0.0),
+            'hasil' => (float) ($grandMoney['hasil'] ?? 0.0) - (float) ($grandMoneyByGroup['bansaw']['hasil'] ?? 0.0),
+        ];
 
         return [
             'rows_main' => $mainRows,
@@ -1373,5 +1451,50 @@ class RekapProduktivitasSawmillRpReportService
         }
 
         return $final;
+    }
+
+    /**
+     * @return array<string, array<string, array{kb: float, st: float}>>
+     */
+    private function buildSubGroupTotals(array $subRows): array
+    {
+        if ($subRows === []) {
+            return [];
+        }
+
+        $columns = array_keys($subRows[0] ?? []);
+        $noPenColumn = $this->resolveNoPenerimaanColumn($columns);
+        $noKbColumn = $this->resolveNoKbColumn($columns);
+        $supplierColumn = $this->resolveSupplierColumn($columns);
+        $noTrukColumn = $this->resolveNoTrukColumn($columns);
+        $kbCol = $this->resolveKbColumn($columns) ?? $this->findColumnByCandidates($columns, ['KBTon', 'KB']);
+        $stCol = $this->resolveStColumn($columns) ?? $this->findColumnByCandidates($columns, ['STTon', 'ST']);
+        $groupCol = $this->findColumnByCandidates($columns, ['Grup', 'Group', 'Kelompok']);
+
+        $out = [];
+        foreach ($subRows as $row) {
+            $receiptKey = $this->resolveReceiptKey($row, $noPenColumn, $noKbColumn, $supplierColumn, $noTrukColumn);
+            $rawGroup = $groupCol !== null ? trim((string) ($row[$groupCol] ?? '')) : '';
+            $groupName = strtolower($rawGroup);
+
+            if (!in_array($groupName, ['bansaw', 'slp'], true)) {
+                continue;
+            }
+
+            if (!isset($out[$receiptKey])) {
+                $out[$receiptKey] = [
+                    'bansaw' => ['kb' => 0.0, 'st' => 0.0],
+                    'slp' => ['kb' => 0.0, 'st' => 0.0],
+                ];
+            }
+
+            $kb = $kbCol !== null ? ($this->toFloat($row[$kbCol] ?? null) ?? 0.0) : 0.0;
+            $st = $stCol !== null ? ($this->toFloat($row[$stCol] ?? null) ?? 0.0) : 0.0;
+
+            $out[$receiptKey][$groupName]['kb'] += $kb;
+            $out[$receiptKey][$groupName]['st'] += $st;
+        }
+
+        return $out;
     }
 }
