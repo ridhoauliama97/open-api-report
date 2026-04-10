@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -160,7 +160,7 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan ST Rambung MC1 dan MC2 (Rangkuman)</h1>
+    <h1 class="report-title">Laporan ST Hidup Rambung MC1 dan MC2 (Rangkuman)</h1>
 
     <div class="sub-title">Total Masing-masing Jenis Stock</div>
     <table class="data-table">

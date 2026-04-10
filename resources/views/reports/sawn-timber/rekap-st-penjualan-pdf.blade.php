@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -129,7 +129,8 @@
         .row-even td {
             background: #eef2f8;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -225,7 +226,7 @@
                     <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ (string) ($r['NoST'] ?? '') }}</td>
                         <td class="center data-cell">
-                            {{ $fmtDate((string) ($r['TanggalSTRaw'] ?? $r['Tanggal (ST)'] ?? '')) }}
+                            {{ $fmtDate((string) ($r['TanggalSTRaw'] ?? ($r['Tanggal (ST)'] ?? ''))) }}
                         </td>
                         <td class="data-cell">{{ (string) ($r['Jenis Kayu'] ?? '') }}</td>
                         <td class="center data-cell">{{ $fmtDimInt($r['Tebal'] ?? 0) }}</td>
