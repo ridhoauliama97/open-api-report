@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 10mm 16mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -229,6 +229,7 @@
                             $value = $row[$column] ?? '';
                             $columnKey = $normalize((string) $column);
                             $isBeratColumn = $columnKey === 'berat';
+                            $isTglSemprotColumn = $columnKey === 'tglsemprot';
                             $isDateColumn = in_array($columnKey, ['datecreate', 'tglsemprot'], true);
                             $displayValue = (string) $value;
 
@@ -244,7 +245,8 @@
                                 $displayValue = $formatDateValue($value);
                             }
                         @endphp
-                        <td class="data-cell {{ $isBeratColumn ? 'number-right weight-value' : 'center' }}">
+                        <td
+                            class="data-cell {{ $isBeratColumn ? 'number-right weight-value' : 'center' }} {{ $isTglSemprotColumn ? 'weight-value' : '' }}">
                             {{ $displayValue }}
                         </td>
                     @endforeach
