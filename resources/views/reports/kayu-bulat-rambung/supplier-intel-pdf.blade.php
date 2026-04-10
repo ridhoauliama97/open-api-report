@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 10mm 16mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -47,8 +47,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -83,6 +82,12 @@
             text-align: center;
         }
 
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+        }
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -97,9 +102,13 @@
         .row-even td {
             background: #eef2f8;
         }
-@include('reports.partials.pdf-footer-table-style')
 
-        .totals-row td {
+        .empty-row td {
+            background: #c9d1df;
+            font-weight: bold;
+        }
+
+        @include('reports.partials.pdf-footer-table-style') .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;
@@ -147,6 +156,26 @@
         $hasRange = !empty($startDate) && !empty($endDate);
         $start = $hasRange ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') : '';
         $end = $hasRange ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') : '';
+        $formatDate = static function (mixed $value): string {
+            $raw = trim((string) $value);
+
+            if ($raw === '') {
+                return '';
+            }
+
+            try {
+                return \Illuminate\Support\Carbon::parse($raw)->format('d-M-y');
+            } catch (\Throwable $e) {
+                return $raw;
+            }
+        };
+        $formatFourDecimals = static function (mixed $value): string {
+            if ($value === null || $value === '') {
+                return '';
+            }
+
+            return number_format((float) $value, 4, '.', ',');
+        };
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
     @endphp
@@ -169,31 +198,40 @@
                 @endforeach
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ $visibleColumnCount + 1 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell center">{{ $loop->iteration }}</td>
                     @foreach ($columns as $column)
-                        <td class="data-cell">{{ (string) ($row[$column] ?? '') }}</td>
+                        @php
+                            $cellValue = $row[$column] ?? '';
+                            $cellStyle = '';
+                            $cellClass = 'data-cell';
+
+                            if ($column === 'DateIn') {
+                                $cellValue = $formatDate($cellValue);
+                                $cellStyle = 'text-align:center;';
+                            } elseif ($column === 'JlhTruk') {
+                                $cellStyle =
+                                    'text-align:center;font-family:\"Calibry\", \"Calibri\", \"DejaVu Sans\", sans-serif;';
+                            } elseif (in_array($column, ['TonKB', 'M3ST'], true)) {
+                                $cellValue = $formatFourDecimals($cellValue);
+                                $cellStyle = 'font-weight:bold;';
+                                $cellClass .= ' number';
+                            }
+                        @endphp
+                        <td class="{{ $cellClass }}"
+                            @if ($cellStyle !== '') style="{{ $cellStyle }}" @endif>{{ $cellValue }}
+                        </td>
                     @endforeach
                 </tr>
             @empty
-                <tr>
+                <tr class="empty-row">
                     <td colspan="{{ $visibleColumnCount + 1 }}" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
         @if (count($rowsData) > 0)
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ $visibleColumnCount + 1 }}"></td>
-                </tr>
-            </tfoot>
         @endif
     </table>
 

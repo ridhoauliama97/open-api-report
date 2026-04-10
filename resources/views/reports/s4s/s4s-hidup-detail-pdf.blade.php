@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -112,6 +112,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -174,12 +175,6 @@
                 <th style="width: 46px;">Lokasi</th>
             </tr>
         </thead>
-        {{-- IMPORTANT (mPDF): place tfoot before tbody so the footer-group is repeated on each page break. --}}
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
@@ -196,9 +191,9 @@
                     <td class="center">{{ $fmtFloat($row['Tebal'] ?? null, 0) }}</td>
                     <td class="center">{{ $fmtFloat($row['Lebar'] ?? null, 0) }}</td>
                     <td class="center">{{ $fmtFloat($row['Panjang'] ?? null, 0) }}</td>
-                    <td class="number">
+                    <td class="number" style="font-weight: bold;">
                         {{ $fmtInt(is_numeric($row['JmlhBatang'] ?? null) ? (int) $row['JmlhBatang'] : null) }}</td>
-                    <td class="number">{{ $fmtFloat($row['Kubik'] ?? null, 3) }}</td>
+                    <td class="number" style="font-weight: bold;"> {{ $fmtFloat($row['Kubik'] ?? null, 3) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
             @empty

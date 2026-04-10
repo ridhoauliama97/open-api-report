@@ -59,8 +59,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -518,11 +517,6 @@
                                 <th>%</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr class="table-end-line">
-                                <td colspan="6"></td>
-                            </tr>
-                        </tfoot>
                         <tbody>
                             @php $rowIndex = 0; @endphp
 

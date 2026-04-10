@@ -55,8 +55,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -134,7 +133,8 @@
         tfoot {
             display: table-footer-group;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -177,11 +177,6 @@
                         <th style="width: 74px;">Total</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ 2 + count($monthLabels) }}"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($yearRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

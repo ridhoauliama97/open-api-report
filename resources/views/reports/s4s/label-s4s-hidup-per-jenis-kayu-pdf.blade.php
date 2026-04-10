@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -226,21 +227,15 @@
             <table style="margin-bottom: 8px;">
                 <thead>
                     <tr>
-                        <th style="width: 30px;">No</th>
-                        <th style="width: 140px;">Nama Grade</th>
-                        <th style="width: 40px;">Tebal</th>
-                        <th style="width: 40px;">Lebar</th>
-                        <th style="width: 52px;">Panjang</th>
-                        <th style="width: 54px;">Jmlh Batang</th>
-                        <th style="width: 60px;">Kubik</th>
+                        <th style="width: 4%;">No</th>
+                        <th style="width: 21%;">NamaGrade</th>
+                        <th style="width: 15%;">Tebal</th>
+                        <th style="width: 15%;">Lebar</th>
+                        <th style="width: 15%;">Panjang</th>
+                        <th style="width: 15%;">Jmlh Batang</th>
+                        <th style="width: 15%;">Kubik</th>
                     </tr>
                 </thead>
-                {{-- IMPORTANT (mPDF): place tfoot before tbody so the footer-group is repeated on each page break. --}}
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="7"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @php $rowIndex = 0; @endphp
                     @foreach ($gradeRows as $gr)
@@ -256,14 +251,15 @@
                             <td class="center">{{ $fmtFloat($gr['Tebal'] ?? null, 0) }}</td>
                             <td class="center">{{ $fmtFloat($gr['Lebar'] ?? null, 0) }}</td>
                             <td class="center">{{ $fmtFloat($gr['Panjang'] ?? null, 0) }}</td>
-                            <td class="number">{{ $fmtInt(is_numeric($gr['Pcs'] ?? null) ? (int) $gr['Pcs'] : null) }}
+                            <td class="number" style="font-weight: bold;">
+                                {{ $fmtInt(is_numeric($gr['Pcs'] ?? null) ? (int) $gr['Pcs'] : null) }}
                             </td>
-                            <td class="number">{{ $fmtFloat($gr['Kubik'] ?? null, 4) }}</td>
+                            <td class="number" style="font-weight: bold;">{{ $fmtFloat($gr['Kubik'] ?? null, 4) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="totals-row">
-                        <td colspan="5" class="center">Jmlh Per-{{ $gradeKey }}</td>
+                        <td colspan="5" class="center">Jumlah {{ $gradeKey }}</td>
                         <td class="number">{{ $fmtInt($pcsSum) }}</td>
                         <td class="number">{{ $fmtFloat($kubikSum, 4) }}</td>
                     </tr>
@@ -296,18 +292,12 @@
         <table style="margin-bottom: 10px;">
             <thead>
                 <tr>
-                    <th style="width: 30px;">No</th>
+                    <th style="width: 4%;">No</th>
                     <th>Nama Grade</th>
-                    <th style="width: 100px;">Jmlh Batang</th>
-                    <th style="width: 70px;">Kubik</th>
+                    <th style="width: 15%;">Jmlh Batang</th>
+                    <th style="width: 15%;">Kubik</th>
                 </tr>
             </thead>
-            {{-- IMPORTANT (mPDF): place tfoot before tbody so the footer-group is repeated on each page break. --}}
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $sumRowIndex = 0; @endphp
                 @foreach ($sumGradeKeys as $gk)
@@ -320,8 +310,8 @@
                     <tr class="{{ $cls }}">
                         <td class="center">{{ $sumRowIndex }}</td>
                         <td>{{ $gk }}</td>
-                        <td class="number">{{ $fmtInt($pcs) }}</td>
-                        <td class="number">{{ $fmtFloat($kubik, 4) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtInt($pcs) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtFloat($kubik, 4) }}</td>
                     </tr>
                 @endforeach
 

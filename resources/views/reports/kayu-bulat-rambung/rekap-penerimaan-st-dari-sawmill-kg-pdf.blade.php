@@ -59,8 +59,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -135,6 +134,22 @@
             border: 1px solid #000;
         }
 
+        .section-separator td {
+            padding: 0 !important;
+            height: 0 !important;
+            line-height: 0 !important;
+            border-top: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            background: #fff !important;
+        }
+
+        .receipt-separator {
+            border-top: 1px solid #000;
+            margin: 8px 0 10px 0;
+        }
+
         .table-end-line td {
             border-top: 1px solid #000 !important;
             border-right: 0 !important;
@@ -145,7 +160,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -285,11 +301,6 @@
                         <th>%</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="6"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @php $rowIndex = 0; @endphp
 
@@ -304,14 +315,21 @@
                                     </td>
                                 @endif
                                 <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                                <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell left" style="font-weight: bold;">
+                                    {{ (string) ($line['grade'] ?? '') }}</td>
                                 <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
                                 <td class="data-cell center">{{ $dash }}</td>
-                                <td class="data-cell number">
+                                <td class="data-cell number" style="font-weight: bold;">
                                     {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                 </td>
                             </tr>
                         @endforeach
+                    @endif
+
+                    @if ($inputRows !== [] && $outputRows !== [])
+                        <tr class="section-separator">
+                            <td colspan="6"></td>
+                        </tr>
                     @endif
 
                     @if ($outputRows !== [])
@@ -324,10 +342,11 @@
                                         Output</td>
                                 @endif
                                 <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
-                                <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell right" style="font-weight: bold;">
+                                    {{ (string) ($line['grade'] ?? '') }}</td>
                                 <td class="data-cell center">{{ $dash }}</td>
                                 <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                                <td class="data-cell number">
+                                <td class="data-cell number" style="font-weight: bold;">
                                     {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                 </td>
                             </tr>
@@ -354,6 +373,10 @@
                     <strong>RENDEMEN : {{ $fmtPercentTotal($rendemen, 1) }}</strong>
                 </div>
             @endif
+
+            @if (!$loop->last)
+                <div class="receipt-separator"></div>
+            @endif
         @endforeach
     @empty
         <table class="report-table">
@@ -362,12 +385,7 @@
                     <th>Tidak ada data.</th>
                 </tr>
             </thead>
-            <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+            <tbody>
                 <tr class="data-row row-odd">
                     <td class="data-cell">Tidak ada data.</td>
                 </tr>
@@ -410,11 +428,6 @@
                     <th>%</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
 
@@ -429,14 +442,21 @@
                                 </td>
                             @endif
                             <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                            <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
+                            <td class="data-cell left" style="font-weight: bold;">{{ (string) ($line['grade'] ?? '') }}
+                            </td>
                             <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
                             <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">
+                            <td class="data-cell number" style="font-weight: bold;">
                                 {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                             </td>
                         </tr>
                     @endforeach
+                @endif
+
+                @if ($grandInputRows !== [] && $grandOutputRows !== [])
+                    <tr class="section-separator">
+                        <td colspan="6"></td>
+                    </tr>
                 @endif
 
                 @if ($grandOutputRows !== [])
@@ -449,10 +469,11 @@
                                     Output</td>
                             @endif
                             <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
-                            <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
+                            <td class="data-cell right" style="font-weight: bold;">
+                                {{ (string) ($line['grade'] ?? '') }}</td>
                             <td class="data-cell center">{{ $dash }}</td>
                             <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell number">
+                            <td class="data-cell number" style="font-weight: bold;">
                                 {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                             </td>
                         </tr>

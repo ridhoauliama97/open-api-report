@@ -72,8 +72,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -126,7 +125,8 @@
             font-size: 11px;
             border: 1px solid #000;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -172,6 +172,7 @@
         .summary-list li {
             margin: 0 0 2px;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -185,6 +186,19 @@
         $fmt = static fn(float $value): string => number_format($value, 0, '.', ',');
         $fmtTon = static fn(float $value): string => number_format($value, 4, '.', ',');
         $fmtRatio = static fn(float $value): string => number_format($value, 2, '.', ',') . '%';
+        $fmtDate = static function (mixed $value): string {
+            $raw = trim((string) $value);
+
+            if ($raw === '') {
+                return '';
+            }
+
+            try {
+                return \Illuminate\Support\Carbon::parse($raw)->format('d-M-y');
+            } catch (\Throwable $e) {
+                return $raw;
+            }
+        };
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
         $dataCellStyle = 'border-top:none;border-bottom:none;border-left:1px solid #000;border-right:1px solid #000;';
@@ -253,29 +267,25 @@
                 <table class="table table-striped report-table">
                     <thead>
                         <tr class="headers-row">
-                            <th style="width: 28px;">No</th>
-                            <th style="width: 70px;">No KB</th>
-                            <th style="width: 54px;">Tanggal</th>
-                            <th style="width: 54px;">Jenis</th>
-                            <th style="width: 88px;">Nama Grade</th>
-                            <th style="width: 80px;">Suket</th>
-                            <th style="width: 78px;">Supplier</th>
-                            <th style="width: 55px;">Bruto</th>
-                            <th style="width: 55px;">Tara</th>
-                            <th style="width: 55px;">Berat (Ton)</th>
+                            <th style="width: 4%;">No</th>
+                            <th style="width: 10%;">No KB</th>
+                            <th style="width: 10%;">Tanggal</th>
+                            <th style="width: 10%;">Jenis</th>
+                            <th style="width: 12%;">Nama Grade</th>
+                            <th style="width: 12%;">Suket</th>
+                            <th style="width: 10%;">Supplier</th>
+                            <th style="width: 10%;">Bruto</th>
+                            <th style="width: 10%;">Tara</th>
+                            <th style="width: 10%;">Berat (Ton)</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="10"></td>
-                        </tr>
-                    </tfoot>
+
                     <tbody>
                         @foreach ($truckRows as $row)
                             <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                                 <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $loop->iteration }}</td>
                                 <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NoKayuBulat'] ?? '' }}</td>
-                                <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $row['DateCreate'] ?? '' }}
+                                <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $fmtDate($row['DateCreate'] ?? '') }}
                                 </td>
                                 <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['JenisKayu'] ?? '' }}</td>
                                 <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NamaGrade'] ?? '' }}</td>
@@ -285,7 +295,7 @@
                                     {{ $fmt((float) ($row['Bruto'] ?? 0.0)) }}</td>
                                 <td class="number data-cell" style="{{ $dataCellStyle }}">
                                     {{ $fmt((float) ($row['Tara'] ?? 0.0)) }}</td>
-                                <td class="number data-cell" style="{{ $dataCellStyle }}">
+                                <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
                                     {{ $fmtTon((float) ($row['Berat'] ?? 0.0)) }}</td>
                             </tr>
                         @endforeach
@@ -323,11 +333,6 @@
                         <th style="width: 70px;">Rasio</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="4"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($subRows as $row)
                         @php $berat = (float) ($row['Berat'] ?? 0.0); @endphp
@@ -353,16 +358,6 @@
                 </tbody>
             </table>
         </div>
-
-        <h2 class="summary-title">Keterangan:</h2>
-        <ul class="summary-list">
-            <li>Total baris data : {{ (int) ($summary['total_rows'] ?? 0) }}</li>
-            <li>Total bruto : {{ $fmt((float) ($summary['total_bruto'] ?? 0.0)) }}</li>
-            <li>Total tara : {{ $fmt((float) ($summary['total_tara'] ?? 0.0)) }}</li>
-            <li>Total berat (Ton) : {{ $fmtTon((float) ($summary['total_berat'] ?? 0.0)) }}</li>
-            <li>Total group No Truk : {{ count($groupedRows) }}</li>
-            <li>Total kayu bulat unik : {{ (int) ($summary['total_distinct_logs'] ?? 0) }}</li>
-        </ul>
     </section>
 
     @include('reports.partials.pdf-footer-table')

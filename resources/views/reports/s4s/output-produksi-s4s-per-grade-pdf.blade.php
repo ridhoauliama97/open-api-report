@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -47,8 +47,7 @@
 
         table.data-table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             font-size: 10px;
             border: 1px solid #000;
             table-layout: fixed;
@@ -192,8 +191,8 @@
             $summaryRows = is_array($machine['summary_rows'] ?? null) ? $machine['summary_rows'] : [];
             $targetDefault = (float) ($machine['target_default'] ?? 0.0);
 
-            // Total columns count (for layout): Mesin + Tanggal + (each grade + total) + Total-Target
-            $colCount = 2; // Mesin + Tanggal
+            // Total columns count (for layout): Tanggal + (each grade + total) + Total-Target
+            $colCount = 1; // Tanggal
             foreach ($jnsColumns as $g) {
                 if (!is_array($g)) {
                     continue;
@@ -209,7 +208,6 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 86px;">Mesin</th>
                     <th rowspan="2" style="width: 70px;">Tanggal</th>
                     @foreach ($jnsColumns as $group)
                         @continue(!is_array($group))
@@ -235,11 +233,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ $colCount }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $r)
@@ -249,7 +242,6 @@
                         $cells = is_array($r['cells'] ?? null) ? $r['cells'] : [];
                     @endphp
                     <tr class="{{ $cls }}">
-                        <td class="center">{{ $rowIndex === 1 ? $namaMesin : '' }}</td>
                         <td class="center">{{ $fmtDate((string) ($r['date'] ?? '')) }}</td>
                         @foreach ($jnsColumns as $group)
                             @continue(!is_array($group))
@@ -277,7 +269,7 @@
                                 $tv = is_array($totalCell) ? (float) ($totalCell['value'] ?? 0.0) : 0.0;
                                 $tp = is_array($totalCell) ? (float) ($totalCell['percent'] ?? 100.0) : 100.0;
                             @endphp
-                            <td class="number">
+                            <td class="number" style="font-weight: bold;">
                                 <div class="cell-split">
                                     <span class="cell-left">{{ $fmtVal($tv) }} &nbsp;&nbsp;&nbsp;</span>
                                     <span class="cell-right">{{ $fmtPct($tp) }}</span>
@@ -285,7 +277,7 @@
                             </td>
                         @endforeach
                         @php $gt = (float) ($r['grand_total'] ?? 0.0); @endphp
-                        <td class="number">
+                        <td class="number" style="font-weight: bold;">
                             <div class="cell-split">
                                 <span class="cell-left">{{ $fmtVal($gt) }} &nbsp;&nbsp;&nbsp;</span>
                                 <span
@@ -315,7 +307,7 @@
                         </tr>
                     @endif
                     <tr class="{{ $cls }} strong">
-                        <td class="center" colspan="2">{{ $label }}</td>
+                        <td class="center">{{ $label }}</td>
                         @foreach ($jnsColumns as $group)
                             @continue(!is_array($group))
                             @php

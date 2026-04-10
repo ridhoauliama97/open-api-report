@@ -63,8 +63,7 @@
 
         .report-table {
             border-collapse: collapse;
-            border-spacing: 0;
-            border: 2px solid #000;
+            border: 1px solid #000;
         }
 
         thead {
@@ -148,7 +147,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -238,13 +238,7 @@
                         <th class="col-total" style="width: 72px;">Total</th>
                     </tr>
                 </thead>
-                
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="99"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+                <tbody>
                     @forelse ($supplierRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="center col-left">{{ $loop->iteration }}</td>

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -196,12 +197,6 @@
                     <th style="width: 44px;">ST</th>
                 </tr>
             </thead>
-            {{-- IMPORTANT (mPDF): place tfoot before tbody so the footer-group is repeated on each page break. --}}
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="14"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $row)
@@ -217,13 +212,13 @@
                         <td class="number">{{ $fmtBlank($row['Reproses'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['S4S'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['ST'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['OutputS4S'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['OutputS4S'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Jam'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
@@ -239,13 +234,16 @@
                         <td class="number">{{ $fmtBlank($totals['Reproses'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['S4S'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['ST'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['OutputS4S'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['TotalInput'] ?? null) }}
+                        </td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['OutputS4S'] ?? null) }}
+                        </td>
                         <td class="number">{{ $fmtBlank($totals['Jam'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank((int) round((float) ($totals['Org'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}
+                        </td>
                     </tr>
 
                     <tr class="totals-row">
@@ -256,8 +254,10 @@
                         <td class="number"></td>
                         <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['S4S'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['ST'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['OutputS4S'] ?? 0.0))) }}</td>
+                        <td class="number" style="font-weight: bold;">
+                            {{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}</td>
+                        <td class="number" style="font-weight: bold;">
+                            {{ $fmtBlank($jmlhPerHk((float) ($totals['OutputS4S'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['Jam'] ?? 0.0))) }}</td>
                         <td class="center"></td>
                         <td class="number"></td>
@@ -291,11 +291,6 @@
                     <th style="width: 54px;">Rend (%)</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="14"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($hkSummary as $item)
@@ -312,13 +307,13 @@
                         <td class="number">{{ $fmtBlank($t['Reproses'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($t['S4S'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($t['ST'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($t['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($t['OutputS4S'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($t['TotalInput'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($t['OutputS4S'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($t['Jam'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank((int) round((float) ($t['Org'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtRatioBlank($t['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($t['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($t['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($t['Rend'] ?? null) }}</td>
                     </tr>
                 @endforeach
 

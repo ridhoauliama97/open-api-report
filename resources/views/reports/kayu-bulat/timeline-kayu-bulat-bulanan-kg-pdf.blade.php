@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 10mm 16mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -91,7 +91,8 @@
         .row-even td {
             background: #eef2f8;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -105,8 +106,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -143,6 +143,7 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -402,11 +403,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($monthHeaders) + 3 }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($pivotRows as $row)
                     @php $rowNumber = $loop->iteration; @endphp
@@ -446,11 +442,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($columns) + 1 }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($rowsData as $row)
                     @php $rowNumber = $loop->iteration; @endphp

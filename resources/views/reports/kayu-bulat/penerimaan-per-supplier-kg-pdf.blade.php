@@ -66,8 +66,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -121,7 +120,8 @@
             font-size: 11px;
             border: 1px solid #000;
         }
-.headers-row th {
+
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -178,6 +178,7 @@
             margin: 0 0 2px;
             font-size: 10px;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -198,11 +199,14 @@
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
 
-        $fmtTon = static fn(float $value): string => number_format($value, 4, '.', ',');
-        $fmtTon2 = static fn(float $value): string => number_format($value, 2, '.', ',');
+        $fmtKg = static fn(float $value): string => number_format($value * 1000, 0, '.', ',');
         $fmtRatio = static fn(float $value): string => number_format($value, 0, '.', ',') . '%';
         $fmtRatio2 = static fn(float $value): string => number_format($value, 2, '.', ',') . '%';
         $dataCellStyle = 'border-top:none;border-bottom:none;border-left:1px solid #000;border-right:1px solid #000;';
+
+        usort($suppliers, static function (array $left, array $right): int {
+            return ((float) ($right['total_ton'] ?? 0.0)) <=> ((float) ($left['total_ton'] ?? 0.0));
+        });
     @endphp
 
     <h1 class="report-title">Laporan Penerimaan Kayu Bulat Per-Supplier - Timbang KG</h1>
@@ -219,27 +223,24 @@
                         @foreach ($groupNames as $groupName)
                             <th colspan="2">{{ $groupName }}</th>
                         @endforeach
-                        <th rowspan="2" style="width: 74px;">Total (Ton)</th>
+                        <th rowspan="2" style="width: 74px;">Total (Kg)</th>
                         <th rowspan="2" style="width: 62px;">Rasio</th>
                     </tr>
                     <tr class="headers-row">
                         @foreach ($groupNames as $groupName)
-                            <th style="width: 72px;">Ton</th>
+                            <th style="width: 72px;">Kg</th>
                             <th style="width: 48px;">%</th>
                         @endforeach
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ 5 + count($groupNames) * 2 }}"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($suppliers as $supplier)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $loop->iteration }}</td>
-                            <td class="data-cell" style="{{ $dataCellStyle }}">{{ (string) ($supplier['supplier'] ?? '') }}</td>
-                            <td class="center data-cell" style="{{ $dataCellStyle }}">{{ (int) ($supplier['trucks'] ?? 0) }}
+                            <td class="data-cell" style="{{ $dataCellStyle }}">
+                                {{ (string) ($supplier['supplier'] ?? '') }}</td>
+                            <td class="center data-cell" style="{{ $dataCellStyle }}">
+                                {{ (int) ($supplier['trucks'] ?? 0) }}
                             </td>
                             @foreach ($groupNames as $groupName)
                                 @php
@@ -248,13 +249,13 @@
                                         : ['ton' => 0.0, 'ratio' => 0.0];
                                 @endphp
                                 <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                    {{ $fmtTon((float) ($group['ton'] ?? 0.0)) }}</td>
+                                    {{ $fmtKg((float) ($group['ton'] ?? 0.0)) }}</td>
                                 <td class="number data-cell" style="{{ $dataCellStyle }}">
                                     {{ $fmtRatio((float) ($group['ratio'] ?? 0.0)) }}</td>
                             @endforeach
-                            <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                {{ $fmtTon((float) ($supplier['total_ton'] ?? 0.0)) }}</td>
-                            <td class="number data-cell" style="{{ $dataCellStyle }}">
+                            <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
+                                {{ $fmtKg((float) ($supplier['total_ton'] ?? 0.0)) }}</td>
+                            <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
                                 {{ $fmtRatio((float) ($supplier['ratio'] ?? 0.0)) }}</td>
                         </tr>
                     @empty
@@ -267,10 +268,10 @@
                         <tr class="totals-row">
                             <td colspan="3" style="text-align: center">Total</td>
                             @foreach ($groupNames as $groupName)
-                                <td class="number">{{ $fmtTon2((float) ($groupTotals[$groupName] ?? 0.0)) }}</td>
+                                <td class="number">{{ $fmtKg((float) ($groupTotals[$groupName] ?? 0.0)) }}</td>
                                 <td class="number"></td>
                             @endforeach
-                            <td class="number">{{ $fmtTon2((float) ($summary['total_ton'] ?? 0.0)) }}</td>
+                            <td class="number">{{ $fmtKg((float) ($summary['total_ton'] ?? 0.0)) }}</td>
                             <td class="number">100%</td>
                         </tr>
                     @endif
@@ -291,25 +292,25 @@
         <div class="notes">
             <p class="notes-line">{{ $start }} s/d {{ $end }} =
                 {{ (int) ($summary['working_days'] ?? 0) }} hari,
-                jumlah KB masuk per hari = {{ $fmtTon2((float) ($summary['daily_ton'] ?? 0.0)) }} ton, dalam 25 hari
-                estimasi masuk = {{ $fmtTon2((float) ($summary['estimated_25_days_ton'] ?? 0.0)) }} kg.</p>
+                jumlah KB masuk per hari = {{ $fmtKg((float) ($summary['daily_ton'] ?? 0.0)) }} kg, dalam 25 hari
+                estimasi masuk = {{ $fmtKg((float) ($summary['estimated_25_days_ton'] ?? 0.0)) }} kg.</p>
 
             <p class="notes-line"><strong>Asumsi:</strong></p>
             <ul class="notes-list">
                 <li>Kapasitas racip 1 meja per hari =
-                    {{ $fmtTon2((float) ($assumptions['racip_per_meja_per_day'] ?? 0.0)) }} ton ST per hari.
+                    {{ $fmtKg((float) ($assumptions['racip_per_meja_per_day'] ?? 0.0)) }} kg ST per hari.
                     Rendemen KB ke ST =
                     {{ number_format((float) ($assumptions['rendemen_kb_to_st'] ?? 0.0), 0, '.', ',') }}%.</li>
                 <li>Konsumsi KB per meja per hari =
-                    {{ $fmtTon2((float) ($assumptions['consumption_per_meja_per_day'] ?? 0.0)) }} ton KB per hari.
+                    {{ $fmtKg((float) ($assumptions['consumption_per_meja_per_day'] ?? 0.0)) }} kg KB per hari.
                     Meja yang tersedia = {{ (int) ($assumptions['available_meja'] ?? 0) }} meja.</li>
                 <li>Konsumsi KB per hari =
-                    {{ $fmtTon2((float) ($assumptions['consumption_per_day'] ?? 0.0)) }} ton KB per hari.</li>
+                    {{ $fmtKg((float) ($assumptions['consumption_per_day'] ?? 0.0)) }} kg KB per hari.</li>
             </ul>
 
             <p class="notes-line"><strong>Kalkulasi:</strong></p>
             <ul class="notes-list">
-                <li>Untuk mengkonsumsi {{ $fmtTon2((float) ($summary['estimated_25_days_ton'] ?? 0.0)) }} kg KB
+                <li>Untuk mengkonsumsi {{ $fmtKg((float) ($summary['estimated_25_days_ton'] ?? 0.0)) }} kg KB
                     diperlukan {{ number_format((float) ($calculations['needed_days'] ?? 0.0), 2, '.', ',') }} hari.
                 </li>
                 <li>Dalam horizon 25 hari dibutuhkan

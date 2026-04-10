@@ -47,8 +47,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             border: 1px solid #000;
         }
 
@@ -127,7 +126,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-.trend-up {
+
+        .trend-up {
             color: #0b8f3c;
             font-weight: bold;
         }
@@ -141,6 +141,7 @@
             color: #636466;
             font-weight: bold;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
@@ -212,11 +213,6 @@
                 <th>Persen (%)</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="7"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $supplierNo = 0; @endphp
             @forelse ($groups as $group)
