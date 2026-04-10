@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -113,6 +113,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -167,12 +168,6 @@
                 <th style="width: 54px;">Lokasi</th>
             </tr>
         </thead>
-        {{-- IMPORTANT (mPDF): place tfoot before tbody so the footer-group is repeated on each page break. --}}
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
@@ -190,8 +185,9 @@
                     <td class="center">{{ $fmtDim($row['Tebal'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Lebar'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
-                    <td class="center">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
-                    <td class="number">{{ $fmtM3($row['M3'] ?? null) }}</td>
+                    <td class="number" style="text-align: center; font-weight: bold;">
+                        {{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmtM3($row['M3'] ?? null) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
             @empty
@@ -202,7 +198,8 @@
 
             @if ($rows !== [] && is_array($totals))
                 <tr class="totals-row">
-                    <td colspan="9" class="center">Total </td>
+                    <td colspan="8" class="center">Total </td>
+                    <td class="number" style="text-align: center;"> {{ $fmtInt($totals['JmlhBatang'] ?? null) }}</td>
                     <td class="number">{{ $fmtM3($totals['M3'] ?? null) }}</td>
                     <td></td>
                 </tr>

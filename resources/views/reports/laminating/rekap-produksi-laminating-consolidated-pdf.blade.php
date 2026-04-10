@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,7 +117,12 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
+        }
+
+        .strong-number {
+            font-weight: bold;
         }
 
         .table-end-line td {
@@ -153,6 +158,47 @@
         $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
             ? ''
             : number_format($v, 1, '.', '');
+
+        $grandTotals = [
+            'BJ' => 0.0,
+            'CCAkhir' => 0.0,
+            'Moulding' => 0.0,
+            'Reproses' => 0.0,
+            'Sanding' => 0.0,
+            'TotalInput' => 0.0,
+            'OutputLaminating' => 0.0,
+            'Jam' => 0.0,
+            'Org' => 0.0,
+            'Rend' => 0.0,
+        ];
+        $grandM3Jam = 0.0;
+        $grandM3JamOrg = 0.0;
+        $machineCount = count($machines);
+        $summaryMachines = [];
+
+        foreach ($machines as $machine) {
+            $machineTotals = is_array($machine['totals'] ?? null) ? $machine['totals'] : [];
+            $summaryMachines[] = [
+                'nama_mesin' => (string) ($machine['nama_mesin'] ?? ''),
+                'bj' => (float) ($machineTotals['BJ'] ?? 0.0),
+                'cc_akhir' => (float) ($machineTotals['CCAkhir'] ?? 0.0),
+                'moulding' => (float) ($machineTotals['Moulding'] ?? 0.0),
+                'reproses' => (float) ($machineTotals['Reproses'] ?? 0.0),
+                'sanding' => (float) ($machineTotals['Sanding'] ?? 0.0),
+                'total_input' => (float) ($machineTotals['TotalInput'] ?? 0.0),
+                'output_laminating' => (float) ($machineTotals['OutputLaminating'] ?? 0.0),
+                'jam' => (int) round((float) ($machineTotals['Jam'] ?? 0.0)),
+                'org' => (int) round((float) ($machineTotals['Org'] ?? 0.0)),
+                'm3_jam' => (float) ($machineTotals['M3Jam'] ?? 0.0),
+                'm3_jam_org' => (float) ($machineTotals['M3JamOrg'] ?? 0.0),
+                'rend' => (float) ($machineTotals['Rend'] ?? 0.0),
+            ];
+            foreach (array_keys($grandTotals) as $key) {
+                $grandTotals[$key] += (float) ($machineTotals[$key] ?? 0.0);
+            }
+            $grandM3Jam += (float) ($machineTotals['M3Jam'] ?? 0.0);
+            $grandM3JamOrg += (float) ($machineTotals['M3JamOrg'] ?? 0.0);
+        }
     @endphp
 
     <h1 class="report-title">Laporan Rekap Produksi Laminating Consolidated</h1>
@@ -191,11 +237,6 @@
                     <th style="width: 52px;">Sanding</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="14"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $row)
@@ -211,13 +252,13 @@
                         <td class="number">{{ $fmtBlank($row['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Reproses'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Sanding'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['OutputLaminating'] ?? null) }}</td>
+                        <td class="number strong-number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
+                        <td class="number strong-number">{{ $fmtBlank($row['OutputLaminating'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank($row['Jam'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
+                        <td class="number strong-number">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
@@ -265,6 +306,63 @@
             </tbody>
         </table>
     @endforeach
+
+    @if ($machines !== [])
+        <div class="section-title" style="margin-top: 12px;">Rangkuman HK Per Mesin</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 160px;">Nama Mesin</th>
+                    <th style="width: 42px;">BJ</th>
+                    <th style="width: 56px;">CCAkhir</th>
+                    <th style="width: 56px;">Moulding</th>
+                    <th style="width: 56px;">Reproses</th>
+                    <th style="width: 56px;">Sanding</th>
+                    <th style="width: 70px;">Total Input</th>
+                    <th style="width: 78px;">Output Laminating</th>
+                    <th style="width: 40px;">Jam</th>
+                    <th style="width: 40px;">Org</th>
+                    <th style="width: 58px;">M3/Jam</th>
+                    <th style="width: 68px;">M3/jam/Org</th>
+                    <th style="width: 54px;">Rend (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($summaryMachines as $summaryMachine)
+                    <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td>{{ $summaryMachine['nama_mesin'] }}</td>
+                        <td class="number">{{ $fmtBlank($summaryMachine['bj']) }}</td>
+                        <td class="number">{{ $fmtBlank($summaryMachine['cc_akhir']) }}</td>
+                        <td class="number">{{ $fmtBlank($summaryMachine['moulding']) }}</td>
+                        <td class="number">{{ $fmtBlank($summaryMachine['reproses']) }}</td>
+                        <td class="number">{{ $fmtBlank($summaryMachine['sanding']) }}</td>
+                        <td class="number strong-number">{{ $fmtBlank($summaryMachine['total_input']) }}</td>
+                        <td class="number strong-number">{{ $fmtBlank($summaryMachine['output_laminating']) }}</td>
+                        <td class="center">{{ $fmtIntBlank($summaryMachine['jam']) }}</td>
+                        <td class="center">{{ $fmtIntBlank($summaryMachine['org']) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($summaryMachine['m3_jam']) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($summaryMachine['m3_jam_org']) }}</td>
+                        <td class="number strong-number">{{ $fmtPercentBlank($summaryMachine['rend']) }}</td>
+                    </tr>
+                @endforeach
+                <tr class="totals-row">
+                    <td class="center">Grand Total</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['BJ']) }}</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['CCAkhir']) }}</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['Moulding']) }}</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['Reproses']) }}</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['Sanding']) }}</td>
+                    <td class="number strong-number">{{ $fmtBlank($grandTotals['TotalInput']) }}</td>
+                    <td class="number strong-number">{{ $fmtBlank($grandTotals['OutputLaminating']) }}</td>
+                    <td class="center">{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</td>
+                    <td class="center">{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</td>
+                    <td class="number">{{ $fmtRatioBlank($machineCount > 0 ? ($grandM3Jam / $machineCount) : 0.0) }}</td>
+                    <td class="number">{{ $fmtRatioBlank($machineCount > 0 ? ($grandM3JamOrg / $machineCount) : 0.0) }}</td>
+                    <td class="number strong-number">{{ $fmtPercentBlank($grandTotals['TotalInput'] > 0 ? ($grandTotals['OutputLaminating'] / $grandTotals['TotalInput']) * 100.0 : 0.0) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
 
     @include('reports.partials.pdf-footer-table')
 </body>

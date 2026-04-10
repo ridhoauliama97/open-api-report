@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -176,21 +177,16 @@
         <table style="margin-bottom: 12px;">
             <thead>
                 <tr>
-                    <th style="width: 28px;">No</th>
-                    <th style="width: 90px;">Jenis Kayu</th>
-                    <th style="width: 120px;">Nama Grade</th>
-                    <th style="width: 90px;">In Moulding</th>
-                    <th style="width: 90px;">In Sanding</th>
-                    <th style="width: 90px;">In WIP</th>
-                    <th style="width: 90px;">In Reproses</th>
-                    <th style="width: 90px;">Output</th>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 20%;">Jenis Kayu</th>
+                    <th style="width: 20%;">Nama Grade</th>
+                    <th style="width: 11%;">In Moulding</th>
+                    <th style="width: 11%;">In Sanding</th>
+                    <th style="width: 11%;">In WIP</th>
+                    <th style="width: 11%;">In Reproses</th>
+                    <th style="width: 11%;">Output</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="8"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $i = 0; @endphp
                 @foreach ($rows as $row)
@@ -225,19 +221,14 @@
 
     @if ($groups !== [])
         <table style="margin-top: 6px;">
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="8"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 <tr class="totals-row">
                     <td colspan="3" class="center">Total </td>
-                    <td class="number" style="width: 90px;">{{ $fmt($grandInMoulding) }}</td>
-                    <td class="number" style="width: 90px;">{{ $fmt($grandInSanding) }}</td>
-                    <td class="number" style="width: 90px;">{{ $fmt($grandInWIP) }}</td>
-                    <td class="number" style="width: 90px;">{{ $fmt($grandInReproses) }}</td>
-                    <td class="number" style="width: 90px;">{{ $fmt($grandOutput) }}</td>
+                    <td class="number" style="width: 11%">{{ $fmt($grandInMoulding) }}</td>
+                    <td class="number" style="width: 11%">{{ $fmt($grandInSanding) }}</td>
+                    <td class="number" style="width: 11%">{{ $fmt($grandInWIP) }}</td>
+                    <td class="number" style="width: 11%">{{ $fmt($grandInReproses) }}</td>
+                    <td class="number" style="width: 11%">{{ $fmt($grandOutput) }}</td>
                 </tr>
             </tbody>
         </table>

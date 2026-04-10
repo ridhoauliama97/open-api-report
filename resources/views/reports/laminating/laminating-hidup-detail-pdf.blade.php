@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -111,6 +111,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -168,11 +169,6 @@
                 <th style="width: 54px;">Lokasi</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
@@ -189,8 +185,9 @@
                     <td class="center">{{ $fmtDim($row['Tebal'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Lebar'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
-                    <td class="center">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
-                    <td class="number">{{ $fmtKubik($row['Kubik'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold; text-align: center;">
+                        {{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmtKubik($row['Kubik'] ?? null) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
             @empty
@@ -201,8 +198,10 @@
 
             @if ($rows !== [] && is_array($totals))
                 <tr class="totals-row">
-                    <td colspan="9" class="center">Total </td>
-                    <td class="number">{{ $fmtKubik($totals['Kubik'] ?? null) }}</td>
+                    <td colspan="8" class="center">Total </td>
+                    <td class="number" style="text-align: center;">
+                        {{ $fmtInt($totals['JmlhBatang'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmtKubik($totals['Kubik'] ?? null) }}</td>
                     <td></td>
                 </tr>
             @endif

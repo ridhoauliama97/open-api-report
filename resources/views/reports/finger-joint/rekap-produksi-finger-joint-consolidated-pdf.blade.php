@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -201,28 +202,22 @@
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 70px;">Tanggal</th>
-                    <th rowspan="2" style="width: 36px;">Shift</th>
+                    <th rowspan="2" style="width: 9%;">Tanggal</th>
+                    <th rowspan="2" style="width: 9%;">Shift</th>
                     <th colspan="2">Input</th>
-                    <th rowspan="2" style="width: 62px;">Total Input</th>
-                    <th rowspan="2" style="width: 60px;">Output FJ</th>
-                    <th rowspan="2" style="width: 46px;">Jam</th>
-                    <th rowspan="2" style="width: 40px;">Org</th>
-                    <th rowspan="2" style="width: 54px;">M<sup>3</sup>/Jam</th>
-                    <th rowspan="2" style="width: 60px;">M<sup>3</sup>/jam/Org</th>
-                    <th rowspan="2" style="width: 54px;">Rend (%)</th>
+                    <th rowspan="2" style="width: 9%;">Total Input</th>
+                    <th rowspan="2" style="width: 9%;">Output FJ</th>
+                    <th rowspan="2" style="width: 9%;">Jam</th>
+                    <th rowspan="2" style="width: 9%;">Org</th>
+                    <th rowspan="2" style="width: 9%;">M<sup>3</sup>/Jam</th>
+                    <th rowspan="2" style="width: 9%;">M<sup>3</sup>/jam/Org</th>
+                    <th rowspan="2" style="width: 9%;">Rend (%)</th>
                 </tr>
                 <tr>
-                    <th style="width: 56px;">CCAkhir</th>
-                    <th style="width: 48px;">S4S</th>
+                    <th style="width: 9%;">CCAkhir</th>
+                    <th style="width: 9%;">S4S</th>
                 </tr>
             </thead>
-            {{-- IMPORTANT (mPDF): place tfoot before tbody so the footer-group is repeated on each page break. --}}
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="11"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $row)
@@ -235,13 +230,13 @@
                         <td class="center">{{ (int) ($row['Shift'] ?? 0) }}</td>
                         <td class="number">{{ $fmtBlank($row['CCAkhir'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['S4S'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['OutputFJ'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['OutputFJ'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank($row['Jam'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
@@ -256,13 +251,15 @@
                         <td colspan="2" class="center">{{ $hkText }}</td>
                         <td class="number">{{ $fmtBlank($totals['CCAkhir'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['S4S'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['OutputFJ'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['TotalInput'] ?? null) }}
+                        </td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['OutputFJ'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank($totals['Jam'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank((int) round((float) ($totals['Org'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}
+                        </td>
                     </tr>
 
                     <tr class="totals-row">
@@ -294,27 +291,26 @@
         @endphp
 
         <table style="margin-top: 8px;">
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="11"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 <tr class="totals-row">
-                    <td colspan="2" style="text-align: center;"><strong>Grand Total </strong></td>
-                    <td class="number" style="width: 60px;">{{ $fmtDashBlank($grandHkTotals['CCAkhir'] ?? null) }}</td>
-                    <td class="number">{{ $fmtDashBlank($grandHkTotals['S4S'] ?? null) }}</td>
-                    <td class="number">{{ $fmtDashBlank($grandHkTotals['TotalInput'] ?? null) }}
+                    <td colspan="2" class="center" style="width: 18%;">
+                        <strong>Grand Total </strong>
                     </td>
-                    <td class="number">{{ $fmtDashBlank($grandHkTotals['OutputFJ'] ?? null) }}
+                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['CCAkhir'] ?? null) }}</td>
+                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['S4S'] ?? null) }}</td>
+                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['TotalInput'] ?? null) }}
                     </td>
-                    <td class="number">{{ $fmtIntDashBlank($grandHkTotals['Jam'] ?? null) }}</td>
-                    <td class="number">{{ $fmtIntDashBlank($grandHkTotals['Org'] ?? null) }}</td>
-                    <td class="number">
+                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['OutputFJ'] ?? null) }}
+                    </td>
+                    <td class="number" style="width: 9%; text-align: center;">
+                        {{ $fmtIntDashBlank($grandHkTotals['Jam'] ?? null) }}</td>
+                    <td class="number" style="width: 9%; text-align: center;">
+                        {{ $fmtIntDashBlank($grandHkTotals['Org'] ?? null) }}</td>
+                    <td class="number" style="width: 9%;">
                         {{ $fmtRatioBlank($grandHkTotals['M3Jam'] ?? null) }}</td>
-                    <td class="number">
+                    <td class="number" style="width: 9%;">
                         {{ $fmtRatioBlank($grandHkTotals['M3JamOrg'] ?? null) }}</td>
-                    <td class="number">{{ $fmtPercentBlank($grandRend) }}</td>
+                    <td class="number" style="width: 9%;">{{ $fmtPercentBlank($grandRend) }}</td>
                 </tr>
             </tbody>
         </table>

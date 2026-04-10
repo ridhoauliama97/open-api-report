@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -194,11 +195,6 @@
                     <th style="width: 78px;">Out Reproses</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="12"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $i = 0; @endphp
                 @foreach ($rows as $row)
@@ -218,8 +214,8 @@
                         <td class="number">{{ $fmt($row['InCCAkhir'] ?? null) }}</td>
                         <td class="number">{{ $fmt($row['InWIP'] ?? null) }}</td>
                         <td class="number">{{ $fmt($row['InReproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmt($row['Output'] ?? null) }}</td>
-                        <td class="number">{{ $fmt($row['OutReproses'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmt($row['Output'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmt($row['OutReproses'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
