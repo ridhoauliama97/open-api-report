@@ -13,7 +13,21 @@ class OpenApiController extends Controller
      */
     public function index(): JsonResponse
     {
-        $spec = [
+        $spec = $this->buildOpenApiSpec();
+
+        $this->augmentReportPaths($spec);
+
+        return response()->json($spec);
+    }
+
+    /**
+     * Build the base OpenAPI specification.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildOpenApiSpec(): array
+    {
+        return [
             'openapi' => '3.0.3',
             'info' => [
                 'title' => 'Open API Report',
@@ -2025,1114 +2039,1120 @@ class OpenApiController extends Controller
                         'bearerFormat' => 'JWT',
                     ],
                 ],
-                'schemas' => [
-                    'AuthRegisterRequest' => [
-                        'type' => 'object',
-                        'required' => ['username', 'password'],
-                        'properties' => [
-                            'username' => ['type' => 'string', 'example' => 'john.doe'],
-                            'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
-                            'password_confirmation' => [
-                                'type' => 'string',
-                                'format' => 'password',
-                                'example' => 'secret123',
-                                'nullable' => true,
-                            ],
-                        ],
+                'schemas' => $this->buildOpenApiSchemas(),
+            ],
+        ];
+    }
+
+    /**
+     * Build OpenAPI component schemas.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildOpenApiSchemas(): array
+    {
+        return [
+            'AuthRegisterRequest' => [
+                'type' => 'object',
+                'required' => ['username', 'password'],
+                'properties' => [
+                    'username' => ['type' => 'string', 'example' => 'john.doe'],
+                    'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
+                    'password_confirmation' => [
+                        'type' => 'string',
+                        'format' => 'password',
+                        'example' => 'secret123',
+                        'nullable' => true,
                     ],
-                    'AuthLoginRequest' => [
-                        'type' => 'object',
-                        'required' => ['username', 'password'],
-                        'properties' => [
-                            'username' => ['type' => 'string', 'example' => 'john.doe'],
-                            'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
-                        ],
-                    ],
-                    'AuthTokenResponse' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'access_token' => ['type' => 'string', 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'],
-                            'token_type' => ['type' => 'string', 'example' => 'bearer'],
-                            'expires_in' => ['type' => 'integer', 'example' => 3600],
-                            'user' => ['$ref' => '#/components/schemas/User'],
-                        ],
-                    ],
-                    'AuthUserResponse' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'user' => ['$ref' => '#/components/schemas/User'],
-                        ],
-                    ],
-                    'MessageResponse' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Logout berhasil.'],
-                        ],
-                    ],
-                    'User' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'Username' => ['type' => 'string', 'example' => 'john.doe'],
-                            'Nama' => ['type' => 'string', 'nullable' => true, 'example' => 'John Doe'],
-                            'Email' => ['type' => 'string', 'format' => 'email', 'nullable' => true, 'example' => 'john@example.com'],
-                        ],
-                    ],
-                    'MutasiBarangJadiRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiBarangJadiRow' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'Jenis' => ['type' => 'string', 'example' => 'BJ JABON FJLB A/A'],
-                            'Awal' => ['type' => 'number', 'example' => 4.2935],
-                            'Masuk' => ['type' => 'number', 'example' => 438.0548],
-                            'AdjOutput' => ['type' => 'number', 'example' => 0],
-                            'BSOutput' => ['type' => 'number', 'example' => 159.5689],
-                            'AdjInput' => ['type' => 'number', 'example' => 0],
-                            'BSInput' => ['type' => 'number', 'example' => 159.57],
-                            'Keluar' => ['type' => 'number', 'example' => 9.2471],
-                            'Jual' => ['type' => 'number', 'example' => 401.6065],
-                            'MLDInput' => ['type' => 'number', 'example' => 0],
-                            'LMTInput' => ['type' => 'number', 'example' => 0.0857],
-                            'CCAInput' => ['type' => 'number', 'example' => 2.3059],
-                            'SANDInput' => ['type' => 'number', 'example' => 0],
-                            'Akhir' => ['type' => 'number', 'example' => 29.102],
-                        ],
-                    ],
-                    'MutasiBarangJadiPreviewResponse' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 14],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiBarangJadiRow'],
-                            ],
-                        ],
-                    ],
-                    'MutasiBarangJadiHealthResponse' => [
+                ],
+            ],
+            'AuthLoginRequest' => [
+                'type' => 'object',
+                'required' => ['username', 'password'],
+                'properties' => [
+                    'username' => ['type' => 'string', 'example' => 'john.doe'],
+                    'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
+                ],
+            ],
+            'AuthTokenResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'access_token' => ['type' => 'string', 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'],
+                    'token_type' => ['type' => 'string', 'example' => 'bearer'],
+                    'expires_in' => ['type' => 'integer', 'example' => 3600],
+                    'user' => ['$ref' => '#/components/schemas/User'],
+                ],
+            ],
+            'AuthUserResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'user' => ['$ref' => '#/components/schemas/User'],
+                ],
+            ],
+            'MessageResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Logout berhasil.'],
+                ],
+            ],
+            'User' => [
+                'type' => 'object',
+                'properties' => [
+                    'Username' => ['type' => 'string', 'example' => 'john.doe'],
+                    'Nama' => ['type' => 'string', 'nullable' => true, 'example' => 'John Doe'],
+                    'Email' => ['type' => 'string', 'format' => 'email', 'nullable' => true, 'example' => 'john@example.com'],
+                ],
+            ],
+            'MutasiBarangJadiRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiBarangJadiRow' => [
+                'type' => 'object',
+                'properties' => [
+                    'Jenis' => ['type' => 'string', 'example' => 'BJ JABON FJLB A/A'],
+                    'Awal' => ['type' => 'number', 'example' => 4.2935],
+                    'Masuk' => ['type' => 'number', 'example' => 438.0548],
+                    'AdjOutput' => ['type' => 'number', 'example' => 0],
+                    'BSOutput' => ['type' => 'number', 'example' => 159.5689],
+                    'AdjInput' => ['type' => 'number', 'example' => 0],
+                    'BSInput' => ['type' => 'number', 'example' => 159.57],
+                    'Keluar' => ['type' => 'number', 'example' => 9.2471],
+                    'Jual' => ['type' => 'number', 'example' => 401.6065],
+                    'MLDInput' => ['type' => 'number', 'example' => 0],
+                    'LMTInput' => ['type' => 'number', 'example' => 0.0857],
+                    'CCAInput' => ['type' => 'number', 'example' => 2.3059],
+                    'SANDInput' => ['type' => 'number', 'example' => 0],
+                    'Akhir' => ['type' => 'number', 'example' => 29.102],
+                ],
+            ],
+            'MutasiBarangJadiPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_BarangJadi valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 14],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 14],
                         ],
                     ],
-                    'MutasiFingerJointRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiBarangJadiRow'],
                     ],
-                    'MutasiFingerJointRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'FJ JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiFingerJointPreviewResponse' => [
+                ],
+            ],
+            'MutasiBarangJadiHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_BarangJadi valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 12],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiFingerJointRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiFingerJointRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiFingerJointHealthResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_FingerJoint valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 14],
                         ],
                     ],
-                    'MutasiMouldingRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiMouldingRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'MLD JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiMouldingPreviewResponse' => [
+                ],
+            ],
+            'MutasiFingerJointRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiFingerJointRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'FJ JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiFingerJointPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiMouldingRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiMouldingRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 12],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'MutasiMouldingHealthResponse' => [
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiFingerJointRow'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiFingerJointRow'],
+                    ],
+                ],
+            ],
+            'MutasiFingerJointHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_FingerJoint valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Moulding valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiLaminatingRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiLaminatingRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'LMT JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiLaminatingPreviewResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiLaminatingRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiLaminatingRow'],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'MutasiLaminatingHealthResponse' => [
+                ],
+            ],
+            'MutasiMouldingRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiMouldingRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'MLD JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiMouldingPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Laminating valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'MutasiSandingRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiMouldingRow'],
                     ],
-                    'MutasiSandingRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'SND JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiMouldingRow'],
                     ],
-                    'MutasiSandingPreviewResponse' => [
+                ],
+            ],
+            'MutasiMouldingHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Moulding valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiSandingRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiSandingRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiSandingHealthResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Sanding valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'MutasiS4SRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiS4SRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'S4S JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiS4SPreviewResponse' => [
+                ],
+            ],
+            'MutasiLaminatingRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiLaminatingRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'LMT JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiLaminatingPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiS4SRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiS4SRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'MutasiS4SHealthResponse' => [
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiLaminatingRow'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiLaminatingRow'],
+                    ],
+                ],
+            ],
+            'MutasiLaminatingHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Laminating valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_S4S valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiSTRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiSTRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'S4S JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiSTPreviewResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiSTRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiSTRow'],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'MutasiSTHealthResponse' => [
+                ],
+            ],
+            'MutasiSandingRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiSandingRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'SND JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiSandingPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_ST valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'MutasiKayuBulatRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiSandingRow'],
                     ],
-                    'MutasiKayuBulatRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'KB JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiSandingRow'],
                     ],
-                    'MutasiKayuBulatPreviewResponse' => [
+                ],
+            ],
+            'MutasiSandingHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_Sanding valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiKayuBulatHealthResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulat valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'MutasiKayuBulatV2Request' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiKayuBulatV2Row' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'KB JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiKayuBulatV2PreviewResponse' => [
+                ],
+            ],
+            'MutasiS4SRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiS4SRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'S4S JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiS4SPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatV2Row'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatV2Row'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'MutasiKayuBulatV2HealthResponse' => [
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiS4SRow'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiS4SRow'],
+                    ],
+                ],
+            ],
+            'MutasiS4SHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_S4S valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatV2B valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiKayuBulatKGV2Request' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiKayuBulatKGV2Row' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'KB JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
-                    ],
-                    'MutasiKayuBulatKGV2PreviewResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGV2Row'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGV2Row'],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'MutasiKayuBulatKGV2HealthResponse' => [
+                ],
+            ],
+            'MutasiSTRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiSTRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'S4S JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiSTPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatKGV2 valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'MutasiKayuBulatKGRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiSTRow'],
                     ],
-                    'MutasiKayuBulatKGRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Jenis' => 'KB JABON',
-                            'Awal' => 10.25,
-                            'Masuk' => 2.1,
-                            'Keluar' => 1.4,
-                            'Akhir' => 10.95,
-                        ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiSTRow'],
                     ],
-                    'MutasiKayuBulatKGPreviewResponse' => [
+                ],
+            ],
+            'MutasiSTHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_ST valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 12],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 24],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiKayuBulatKGHealthResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatKG valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 12],
-                                ],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'RangkumanLabelInputRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'RangkumanLabelInputRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Tanggal' => '2026-01-01',
-                            'Shift' => '1',
-                            'JumlahLabel' => 125,
-                        ],
-                    ],
-                    'RangkumanLabelInputPreviewResponse' => [
+                ],
+            ],
+            'MutasiKayuBulatRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiKayuBulatRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'KB JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiKayuBulatPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 31],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/RangkumanLabelInputRow'],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'RangkumanLabelInputHealthResponse' => [
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatRow'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatRow'],
+                    ],
+                ],
+            ],
+            'MutasiKayuBulatHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulat valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapRangkumanJlhLabelInput valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 31],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'MutasiHasilRacipRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal', 'TglAkhir'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                            'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
-                        ],
-                    ],
-                    'MutasiHasilRacipRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Tanggal' => '2026-01-01',
-                            'Shift' => '1',
-                            'JumlahMutasi' => 125,
-                        ],
-                    ],
-                    'MutasiHasilRacipPreviewResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 31],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/MutasiHasilRacipRow'],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
                         ],
                     ],
-                    'MutasiHasilRacipHealthResponse' => [
+                ],
+            ],
+            'MutasiKayuBulatV2Request' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiKayuBulatV2Row' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'KB JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiKayuBulatV2PreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapMutasiHasilRacip valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'start_date' => ['type' => 'string', 'format' => 'date'],
-                                    'end_date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAkhir' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 31],
-                                ],
-                            ],
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'LabelNyangkutRequest' => [
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatV2Row'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatV2Row'],
+                    ],
+                ],
+            ],
+            'MutasiKayuBulatV2HealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatV2B valid.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                        ],
+                    ],
+                    'health' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
+                        ],
+                    ],
+                ],
+            ],
+            'MutasiKayuBulatKGV2Request' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiKayuBulatKGV2Row' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'KB JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiKayuBulatKGV2PreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                        ],
+                    ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGV2Row'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGV2Row'],
+                    ],
+                ],
+            ],
+            'MutasiKayuBulatKGV2HealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatKGV2 valid.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                        ],
+                    ],
+                    'health' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
+                        ],
+                    ],
+                ],
+            ],
+            'MutasiKayuBulatKGRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiKayuBulatKGRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Jenis' => 'KB JABON',
+                    'Awal' => 10.25,
+                    'Masuk' => 2.1,
+                    'Keluar' => 1.4,
+                    'Akhir' => 10.95,
+                ],
+            ],
+            'MutasiKayuBulatKGPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 12],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 24],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                        ],
+                    ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGRow'],
+                    ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiKayuBulatKGRow'],
+                    ],
+                ],
+            ],
+            'MutasiKayuBulatKGHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SP_Mutasi_KayuBulatKG valid.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                        ],
+                    ],
+                    'health' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 12],
+                        ],
+                    ],
+                ],
+            ],
+            'RangkumanLabelInputRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'RangkumanLabelInputRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Tanggal' => '2026-01-01',
+                    'Shift' => '1',
+                    'JumlahLabel' => 125,
+                ],
+            ],
+            'RangkumanLabelInputPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 31],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                        ],
+                    ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/RangkumanLabelInputRow'],
+                    ],
+                ],
+            ],
+            'RangkumanLabelInputHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapRangkumanJlhLabelInput valid.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                        ],
+                    ],
+                    'health' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 31],
+                        ],
+                    ],
+                ],
+            ],
+            'MutasiHasilRacipRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal', 'TglAkhir'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                    'TglAkhir' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31'],
+                ],
+            ],
+            'MutasiHasilRacipRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Tanggal' => '2026-01-01',
+                    'Shift' => '1',
+                    'JumlahMutasi' => 125,
+                ],
+            ],
+            'MutasiHasilRacipPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 31],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                        ],
+                    ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/MutasiHasilRacipRow'],
+                    ],
+                ],
+            ],
+            'MutasiHasilRacipHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapMutasiHasilRacip valid.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'start_date' => ['type' => 'string', 'format' => 'date'],
+                            'end_date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'TglAkhir' => ['type' => 'string', 'format' => 'date'],
+                        ],
+                    ],
+                    'health' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 31],
+                        ],
+                    ],
+                ],
+            ],
+            'LabelNyangkutRequest' => [
+                'type' => 'object',
+                'properties' => [],
+            ],
+            'LabelNyangkutRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Tanggal' => '2026-01-01',
+                    'Shift' => '1',
+                    'JumlahLabelNyangkut' => 12,
+                ],
+            ],
+            'LabelNyangkutPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'total_rows' => ['type' => 'integer', 'example' => 31],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                        ],
+                    ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/LabelNyangkutRow'],
+                    ],
+                ],
+            ],
+            'LabelNyangkutHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapLabelNyangkut valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [],
                     ],
-                    'LabelNyangkutRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Tanggal' => '2026-01-01',
-                            'Shift' => '1',
-                            'JumlahLabelNyangkut' => 12,
-                        ],
-                    ],
-                    'LabelNyangkutPreviewResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'total_rows' => ['type' => 'integer', 'example' => 31],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/LabelNyangkutRow'],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 31],
                         ],
                     ],
-                    'LabelNyangkutHealthResponse' => [
+                ],
+            ],
+            'BahanTerpakaiRequest' => [
+                'type' => 'object',
+                'required' => ['TglAwal'],
+                'properties' => [
+                    'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
+                ],
+            ],
+            'BahanTerpakaiRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Group' => 'PROSES CCAKHIR',
+                    'NamaMesin' => 'DOUBLE END CUTTER',
+                    'Jenis' => 'LMT PULAI TASOBO',
+                    'Tebal' => 48,
+                    'Lebar' => 45,
+                    'Panjang' => 2430,
+                    'JmlhBatang' => 124,
+                    'KubikIN' => 0.6508,
+                ],
+            ],
+            'BahanTerpakaiSubRow' => [
+                'type' => 'object',
+                'additionalProperties' => true,
+                'example' => [
+                    'Group' => 'PROSES S4S',
+                    'NamaMesin' => 'MULTI RIPSAW',
+                    'Jenis' => 'ST RAMBUNG - STD',
+                    'Tebal' => 44,
+                    'Lebar' => 42,
+                    'Ton' => 1.0688,
+                ],
+            ],
+            'BahanTerpakaiPreviewResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapLabelNyangkut valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 31],
-                                ],
-                            ],
+                            'date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
+                            'total_rows' => ['type' => 'integer', 'example' => 31],
+                            'total_sub_rows' => ['type' => 'integer', 'example' => 5],
+                            'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'sub_column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
                         ],
                     ],
-                    'BahanTerpakaiRequest' => [
-                        'type' => 'object',
-                        'required' => ['TglAwal'],
-                        'properties' => [
-                            'TglAwal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01'],
-                        ],
+                    'data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/BahanTerpakaiRow'],
                     ],
-                    'BahanTerpakaiRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Group' => 'PROSES CCAKHIR',
-                            'NamaMesin' => 'DOUBLE END CUTTER',
-                            'Jenis' => 'LMT PULAI TASOBO',
-                            'Tebal' => 48,
-                            'Lebar' => 45,
-                            'Panjang' => 2430,
-                            'JmlhBatang' => 124,
-                            'KubikIN' => 0.6508,
-                        ],
+                    'sub_data' => [
+                        'type' => 'array',
+                        'items' => ['$ref' => '#/components/schemas/BahanTerpakaiSubRow'],
                     ],
-                    'BahanTerpakaiSubRow' => [
-                        'type' => 'object',
-                        'additionalProperties' => true,
-                        'example' => [
-                            'Group' => 'PROSES S4S',
-                            'NamaMesin' => 'MULTI RIPSAW',
-                            'Jenis' => 'ST RAMBUNG - STD',
-                            'Tebal' => 44,
-                            'Lebar' => 42,
-                            'Ton' => 1.0688,
-                        ],
-                    ],
-                    'BahanTerpakaiPreviewResponse' => [
+                ],
+            ],
+            'BahanTerpakaiHealthResponse' => [
+                'type' => 'object',
+                'properties' => [
+                    'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapBahanTerpakai valid.'],
+                    'meta' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Preview laporan berhasil diambil.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                    'total_rows' => ['type' => 'integer', 'example' => 31],
-                                    'total_sub_rows' => ['type' => 'integer', 'example' => 5],
-                                    'column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'sub_column_order' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                ],
-                            ],
-                            'data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/BahanTerpakaiRow'],
-                            ],
-                            'sub_data' => [
-                                'type' => 'array',
-                                'items' => ['$ref' => '#/components/schemas/BahanTerpakaiSubRow'],
-                            ],
+                            'date' => ['type' => 'string', 'format' => 'date'],
+                            'TglAwal' => ['type' => 'string', 'format' => 'date'],
                         ],
                     ],
-                    'BahanTerpakaiHealthResponse' => [
+                    'health' => [
                         'type' => 'object',
                         'properties' => [
-                            'message' => ['type' => 'string', 'example' => 'Struktur output SPWps_LapBahanTerpakai valid.'],
-                            'meta' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'date' => ['type' => 'string', 'format' => 'date'],
-                                    'TglAwal' => ['type' => 'string', 'format' => 'date'],
-                                ],
-                            ],
-                            'health' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'is_healthy' => ['type' => 'boolean', 'example' => true],
-                                    'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'row_count' => ['type' => 'integer', 'example' => 31],
-                                    'expected_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'detected_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'missing_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'extra_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
-                                    'sub_row_count' => ['type' => 'integer', 'example' => 5],
-                                ],
-                            ],
+                            'is_healthy' => ['type' => 'boolean', 'example' => true],
+                            'expected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'row_count' => ['type' => 'integer', 'example' => 31],
+                            'expected_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'detected_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'missing_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'extra_sub_columns' => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'sub_row_count' => ['type' => 'integer', 'example' => 5],
                         ],
                     ],
                 ],
             ],
         ];
-
-        $this->augmentReportPaths($spec);
-
-        return response()->json($spec);
     }
 
     /**

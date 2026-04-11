@@ -23,7 +23,7 @@ return new class extends Migration
                     SELECT 1
                     FROM sys.indexes
                     WHERE name = 'sessions_user_id_index'
-                      AND object_id = OBJECT_ID('sessions')
+                        AND object_id = OBJECT_ID('sessions')
                 )
                 DROP INDEX [sessions_user_id_index] ON [sessions]
             ");
@@ -56,7 +56,7 @@ return new class extends Migration
                     SELECT 1
                     FROM sys.indexes
                     WHERE name = 'sessions_user_id_index'
-                      AND object_id = OBJECT_ID('sessions')
+                        AND object_id = OBJECT_ID('sessions')
                 )
                 DROP INDEX [sessions_user_id_index] ON [sessions]
             ");
