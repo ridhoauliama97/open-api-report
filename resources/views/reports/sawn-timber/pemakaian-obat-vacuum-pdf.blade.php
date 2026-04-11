@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -88,6 +88,11 @@
 
         .row-even td {
             background: #eef2f8;
+        }
+
+        .empty-row td {
+            background: #c9d1df;
+            font-weight: bold;
         }
 
         .number {
@@ -255,12 +260,6 @@
                 @endforeach
             </tr>
         </thead>
-
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="19"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
 
@@ -276,8 +275,8 @@
                     @endforeach
                 </tr>
             @empty
-                <tr>
-                    <td colspan="{{ max(1, count($columns)) }}" class="center">Tidak ada data.</td>
+                <tr class="empty-row">
+                    <td colspan="{{ max(1, count($columns)) }}" class="center">Tidak Ada Data</td>
                 </tr>
             @endforelse
 
