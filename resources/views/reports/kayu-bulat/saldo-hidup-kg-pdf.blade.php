@@ -63,6 +63,39 @@
             font-weight: bold;
         }
 
+        .kb-block {
+            margin: 0 0 14px 0;
+            page-break-inside: avoid;
+        }
+
+        .kb-meta {
+            width: 100%;
+            margin-bottom: 6px;
+            table-layout: fixed;
+        }
+
+        .kb-meta td {
+            border: 0;
+            padding: 1px 4px;
+            vertical-align: top;
+            background: transparent !important;
+        }
+
+        .kb-meta .meta-label {
+            width: 92px;
+            white-space: nowrap;
+        }
+
+        .kb-meta .meta-sep {
+            width: 10px;
+            text-align: center;
+        }
+
+        .compact-table {
+            width: 88%;
+            margin-left: 4px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -233,22 +266,22 @@
 
         $groupedRows = [];
         foreach ($rows as $row) {
-            $truck = trim((string) ($row['NoTruk'] ?? ''));
-            $groupKey = $truck !== '' ? $truck : 'Tanpa No Truk';
+            $kb = trim((string) ($row['NoKayuBulat'] ?? ''));
+            $groupKey = $kb !== '' ? $kb : 'Tanpa No KB';
             $groupedRows[$groupKey][] = $row;
         }
 
         $groupSummaries = [];
-        foreach ($groupedRows as $truck => $truckRows) {
-            $groupSummaries[$truck] = [
+        foreach ($groupedRows as $kb => $kbRows) {
+            $groupSummaries[$kb] = [
                 'total_bruto' => array_sum(
-                    array_map(static fn(array $row): float => (float) ($row['Bruto'] ?? 0.0), $truckRows),
+                    array_map(static fn(array $row): float => (float) ($row['Bruto'] ?? 0.0), $kbRows),
                 ),
                 'total_tara' => array_sum(
-                    array_map(static fn(array $row): float => (float) ($row['Tara'] ?? 0.0), $truckRows),
+                    array_map(static fn(array $row): float => (float) ($row['Tara'] ?? 0.0), $kbRows),
                 ),
                 'total_berat' => array_sum(
-                    array_map(static fn(array $row): float => (float) ($row['Berat'] ?? 0.0), $truckRows),
+                    array_map(static fn(array $row): float => (float) ($row['Berat'] ?? 0.0), $kbRows),
                 ),
             ];
         }
@@ -260,53 +293,102 @@
     <p class="report-subtitle"></p>
 
     <div class="container-fluid">
-        @forelse ($groupedRows as $truck => $truckRows)
-            @php $truckSummary = $groupSummaries[$truck] ?? ['total_bruto' => 0.0, 'total_tara' => 0.0, 'total_berat' => 0.0]; @endphp
-            <div class="group-title">No Truk: {{ $truck }}</div>
-            <div class="table-responsive">
-                <table class="table table-striped report-table">
-                    <thead>
-                        <tr class="headers-row">
-                            <th style="width: 4%;">No</th>
-                            <th style="width: 10%;">No KB</th>
-                            <th style="width: 10%;">Tanggal</th>
-                            <th style="width: 10%;">Jenis</th>
-                            <th style="width: 12%;">Nama Grade</th>
-                            <th style="width: 12%;">Suket</th>
-                            <th style="width: 10%;">Supplier</th>
-                            <th style="width: 10%;">Bruto</th>
-                            <th style="width: 10%;">Tara</th>
-                            <th style="width: 10%;">Berat (Ton)</th>
-                        </tr>
-                    </thead>
+        @forelse ($groupedRows as $kb => $kbRows)
+            @php
+                $kbSummary = $groupSummaries[$kb] ?? ['total_bruto' => 0.0, 'total_tara' => 0.0, 'total_berat' => 0.0];
+                $firstRow = $kbRows[0] ?? [];
+                $supplierRowspans = [];
+                $rowCount = count($kbRows);
 
+                for ($index = 0; $index < $rowCount; $index++) {
+                    $supplierName = trim((string) ($kbRows[$index]['NmSupplier'] ?? ''));
+
+                    if ($index > 0 && $supplierName === trim((string) ($kbRows[$index - 1]['NmSupplier'] ?? ''))) {
+                        $supplierRowspans[$index] = 0;
+                        continue;
+                    }
+
+                    $span = 1;
+                    for ($nextIndex = $index + 1; $nextIndex < $rowCount; $nextIndex++) {
+                        $nextSupplierName = trim((string) ($kbRows[$nextIndex]['NmSupplier'] ?? ''));
+                        if ($nextSupplierName !== $supplierName) {
+                            break;
+                        }
+
+                        $span++;
+                    }
+
+                    $supplierRowspans[$index] = $span;
+                }
+            @endphp
+            <div class="kb-block">
+                <table class="kb-meta">
                     <tbody>
-                        @foreach ($truckRows as $row)
-                            <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                                <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $loop->iteration }}</td>
-                                <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NoKayuBulat'] ?? '' }}</td>
-                                <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $fmtDate($row['DateCreate'] ?? '') }}
-                                </td>
-                                <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['JenisKayu'] ?? '' }}</td>
-                                <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NamaGrade'] ?? '' }}</td>
-                                <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['Suket'] ?? '' }}</td>
-                                <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NmSupplier'] ?? '' }}</td>
-                                <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                    {{ $fmt((float) ($row['Bruto'] ?? 0.0)) }}</td>
-                                <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                    {{ $fmt((float) ($row['Tara'] ?? 0.0)) }}</td>
-                                <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
-                                    {{ $fmtTon((float) ($row['Berat'] ?? 0.0)) }}</td>
-                            </tr>
-                        @endforeach
-                        <tr class="totals-row">
-                            <td colspan="7" class="center">Total </td>
-                            <td class="number">{{ $fmt($truckSummary['total_bruto']) }}</td>
-                            <td class="number">{{ $fmt($truckSummary['total_tara']) }}</td>
-                            <td class="number">{{ $fmtTon($truckSummary['total_berat']) }}</td>
+                        <tr>
+                            <td class="meta-label">No.Kayu Bulat</td>
+                            <td class="meta-sep">:</td>
+                            <td>{{ $firstRow['NoKayuBulat'] ?? $kb }}</td>
+                            <td class="meta-label">No.Truk</td>
+                            <td class="meta-sep">:</td>
+                            <td>{{ $firstRow['NoTruk'] ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="meta-label">Tanggal</td>
+                            <td class="meta-sep">:</td>
+                            <td>{{ $fmtDate($firstRow['DateCreate'] ?? '') }}</td>
+                            <td class="meta-label">No.Suket</td>
+                            <td class="meta-sep">:</td>
+                            <td>{{ $firstRow['Suket'] ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="meta-label">Jenis Kayu</td>
+                            <td class="meta-sep">:</td>
+                            <td>{{ $firstRow['JenisKayu'] ?? '' }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="table-responsive">
+                    <table class="table table-striped report-table compact-table">
+                        <thead>
+                            <tr class="headers-row">
+                                <th style="width: 29%;">Supplier</th>
+                                <th style="width: 13%;">Bruto</th>
+                                <th style="width: 13%;">Tara</th>
+                                <th style="width: 29%;">Grade</th>
+                                <th style="width: 16%;">Berat (Ton)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($kbRows as $row)
+                                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                    @if (($supplierRowspans[$loop->index] ?? 0) > 0)
+                                        <td class="data-cell center" rowspan="{{ $supplierRowspans[$loop->index] }}"
+                                            style="{{ $dataCellStyle }} vertical-align: middle;">
+                                            {{ $row['NmSupplier'] ?? '' }}
+                                        </td>
+                                    @endif
+                                    <td class="number data-cell" style="{{ $dataCellStyle }}">
+                                        {{ $fmt((float) ($row['Bruto'] ?? 0.0)) }}</td>
+                                    <td class="number data-cell" style="{{ $dataCellStyle }}">
+                                        {{ $fmt((float) ($row['Tara'] ?? 0.0)) }}</td>
+                                    <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NamaGrade'] ?? '' }}
+                                    </td>
+                                    <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
+                                        {{ $fmtTon((float) ($row['Berat'] ?? 0.0)) }}</td>
+                                </tr>
+                            @endforeach
+                            <tr class="totals-row">
+                                <td colspan="4" class="number" style="text-align:right;">Jumlah:</td>
+                                <td class="number">{{ $fmtTon($kbSummary['total_berat']) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         @empty
             <div class="table-responsive">

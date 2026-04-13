@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -142,7 +142,7 @@
             right: -4px;
         }
 
-        
+
 
         tfoot {
             display: table-footer-group;
@@ -158,7 +158,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -196,12 +197,6 @@
                 <th style="width: 12%;">Ketahanan</th>
             </tr>
         </thead>
-        
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $i = 0; @endphp
             @forelse ($rows as $r)

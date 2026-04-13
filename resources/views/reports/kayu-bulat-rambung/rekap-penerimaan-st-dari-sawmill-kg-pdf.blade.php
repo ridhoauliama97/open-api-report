@@ -227,9 +227,6 @@
             $receipts = is_array($group['receipts'] ?? null) ? $group['receipts'] : [];
         @endphp
 
-        <div class="group-title">Tgl Penerimaan ST :
-            {{ $dateLabel }}</div>
-
         @foreach ($receipts as $receipt)
             @php
                 $meta = is_array($receipt['meta'] ?? null) ? $receipt['meta'] : [];
@@ -315,7 +312,7 @@
                                     </td>
                                 @endif
                                 <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                                <td class="data-cell left" style="font-weight: bold;">
+                                <td class="data-cell left">
                                     {{ (string) ($line['grade'] ?? '') }}</td>
                                 <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
                                 <td class="data-cell center">{{ $dash }}</td>

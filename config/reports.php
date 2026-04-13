@@ -354,6 +354,10 @@ return [
         'call_syntax' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_QUERY'),
         'parameter_count' => (int) env('REKAP_PEMBELIAN_KAYU_BULAT_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PEMBELIAN_KAYU_BULAT_REPORT_EXPECTED_COLUMNS',
+            'Tahun,Bulan,Ton'
+        )))),
     ],
     'target_masuk_bb' => [
         'database_connection' => env('TARGET_MASUK_BB_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -379,27 +379,30 @@
                         @foreach ($columns as $column)
                             @php
                                 $value = $row[$column] ?? null;
+                                $normalizedColumn = $normalizeColumnName($column);
                                 $numeric = $isNumericColumn($column, $group['rows']);
-                                $isRendemenColumn = $normalizeColumnName($column) === 'rendemen';
+                                $isRendemenColumn = $normalizedColumn === 'rendemen';
+                                $isBoldSummaryColumn = in_array($normalizedColumn, ['kubikin', 'kubikout', 'rendemen'], true);
                                 $isLabelOutColumn = in_array(
-                                    $normalizeColumnName($column),
+                                    $normalizedColumn,
                                     ['labelout', 'labeloutput'],
                                     true,
                                 );
                                 $cellWidth = $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth);
+                                $cellStyle = 'width: ' . $cellWidth . ';' . ($isBoldSummaryColumn ? ' font-weight: bold;' : '');
                             @endphp
                             @if ($isRendemenColumn)
-                                <td class="data-cell number" style="width: {{ $cellWidth }};">
+                                <td class="data-cell number" style="{{ $cellStyle }}">
                                     {{ is_numeric($value) ? number_format((float) $value, 1, '.', ',') . '%' : '' }}
                                 </td>
                             @elseif ($isLabelOutColumn)
-                                <td class="data-cell number" style="width: {{ $cellWidth }};">
+                                <td class="data-cell number" style="{{ $cellStyle }}">
                                     {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}</td>
                             @elseif ($numeric)
-                                <td class="data-cell number" style="width: {{ $cellWidth }};">
+                                <td class="data-cell number" style="{{ $cellStyle }}">
                                     {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}</td>
                             @else
-                                <td class="data-cell label" style="width: {{ $cellWidth }};">{{ (string) $value }}
+                                <td class="data-cell label" style="{{ $cellStyle }}">{{ (string) $value }}
                                 </td>
                             @endif
                         @endforeach

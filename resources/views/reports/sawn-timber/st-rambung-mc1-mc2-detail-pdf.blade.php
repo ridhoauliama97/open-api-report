@@ -33,14 +33,14 @@
         }
 
         .group-title {
-            margin: 10px 0 6px 0;
+            margin: 10px 0 2px 0;
             font-size: 12px;
             font-weight: bold;
-            text-align: center;
+            text-align: left;
         }
 
         .sub-title {
-            margin: 10px 0 6px 0;
+            margin: 0 0 6px 8px;
             font-size: 11px;
             font-weight: bold;
             text-align: left;
@@ -53,6 +53,7 @@
             font-size: 10px;
             border: 1px solid #000;
             table-layout: fixed;
+            margin: 0 0 4px 8px;
         }
 
         thead {
@@ -206,11 +207,6 @@
                         <th>Kubik (m<sup>3</sup>)</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="9"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($rows as $r)
                         @php $rowIndex = ($loop->index ?? 0) + 1; @endphp

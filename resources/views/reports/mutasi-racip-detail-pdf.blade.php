@@ -236,25 +236,6 @@
     <h1 class="report-title">Laporan Mutasi Racip Detail</h1>
     <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
     <table class="report-table">
-        <colgroup>
-            <col class="col-uniform">
-            <col class="col-jenis">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-            <col class="col-uniform">
-        </colgroup>
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="border-top: 1px solid #000;">No</th>
@@ -295,7 +276,7 @@
                     <td class="number data-cell" style="text-align: center;">
                         {{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}</td>
                     <td class="number data-cell">{{ $formatNumeric('Sawal', $toFloat($row['Sawal'] ?? null)) }}</td>
-                    <td class="number data-cell">
+                    <td class="number data-cell" style="font-weight: bold;">
                         {{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
                     <td class="number data-cell">{{ $formatNumeric('Masuk', $toFloat($row['Masuk'] ?? null)) }}</td>
                     <td class="number data-cell">{{ $formatNumeric('MskJlhBtg', $toFloat($row['MskJlhBtg'] ?? null)) }}

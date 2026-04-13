@@ -141,13 +141,10 @@
             clear: both;
         }
 
-        .strong {
-            background: #fff;
-        }
-
         .strong td {
             font-weight: bold;
             font-size: 11px;
+            background: transparent !important;
         }
 
         @include('reports.partials.pdf-footer-table-style')

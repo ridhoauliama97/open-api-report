@@ -416,9 +416,6 @@
             $receipts = is_array($group['receipts'] ?? null) ? $group['receipts'] : [];
         @endphp
 
-        <div class="group-title">Tgl Penerimaan ST :
-            {{ $dateLabel }}</div>
-
         @foreach ($receipts as $receipt)
             @php
                 $meta = is_array($receipt['meta'] ?? null) ? $receipt['meta'] : [];
@@ -629,8 +626,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="money-label">Hasil</td>
-                                                <td class="money-value">{{ $fmtMoney($moneyHasil) }}</td>
-                                                <td class="money-flag-inline">
+                                                <td class="money-value">{{ $fmtMoney($moneyHasil) }} </td>
+                                                <td class="money-flag-inline"> &nbsp;
                                                     ({{ $moneyHasil < 0 ? 'RUGI' : 'LABA' }})</td>
                                             </tr>
                                         </table>
@@ -642,7 +639,7 @@
                                             <table class="btul-layout">
                                                 <tr>
                                                     <td class="btul-text-cell">
-                                                        <div class="btul-title">Balok Timbang<br>Ulang</div>
+                                                        <div class="btul-title">Balok Timbang <br> Ulang</div>
                                                     </td>
                                                     <td>
                                                         <table class="mini-table">
@@ -680,11 +677,14 @@
                                                                             <tr>
                                                                                 <td class="label">{{ $bLabel }}
                                                                                 </td>
-                                                                                <td class="num">
+                                                                                <td class="num"
+                                                                                    style="font-weight: bold;">
                                                                                     {{ $fmtDetail($bKb, 2) }}</td>
-                                                                                <td class="num">
+                                                                                <td class="num"
+                                                                                    style="font-weight: bold;">
                                                                                     {{ $fmtDetail($bSt, 2) }}</td>
-                                                                                <td class="num">
+                                                                                <td class="num"
+                                                                                    style="font-weight: bold;">
                                                                                     {{ $fmtPercentDetail($bPct, 1) }}
                                                                                 </td>
                                                                             </tr>

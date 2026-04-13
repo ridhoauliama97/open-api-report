@@ -169,9 +169,9 @@
             <tr>
                 <th style="width: 34px;">No</th>
                 <th style="width: 150px;">Jenis</th>
-                <th style="width: 44px;">Tebal</th>
-                <th style="width: 44px;">Lebar</th>
-                <th style="width: 56px;">Panjang</th>
+                <th style="width: 44px;">Tebal (mm)</th>
+                <th style="width: 44px;">Lebar (mm)</th>
+                <th style="width: 56px;">Panjang (ft)</th>
                 @foreach ($ageLabels as $label)
                     <th>{{ $label }}</th>
                 @endforeach

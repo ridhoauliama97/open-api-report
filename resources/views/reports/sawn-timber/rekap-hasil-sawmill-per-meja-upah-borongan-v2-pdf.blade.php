@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 14mm 10mm 16mm 10mm;
+            margin: 16mm 10mm 16mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -371,7 +371,8 @@
                                             <td class="data-cell center">{{ $left['row']['Tebal'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $left['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $left['row']['UOM'] ?? '' }}</td>
-                                            <td class="data-cell center">
+                                            <td class="data-cell center"
+                                                style="font-weight: bold; font-family: 'Calibri', 'DejaVu Sans', sans-serif;">
                                                 {{ isset($left['row']) ? $formatNumber($left['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>
@@ -401,7 +402,8 @@
                                             <td class="data-cell center">{{ $right['row']['Tebal'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['UOM'] ?? '' }}</td>
-                                            <td class="data-cell number">
+                                            <td class="data-cell center"
+                                                style="font-weight: bold; font-family: 'Calibri', 'DejaVu Sans', sans-serif;">
                                                 {{ isset($right['row']) ? $formatNumber($right['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>

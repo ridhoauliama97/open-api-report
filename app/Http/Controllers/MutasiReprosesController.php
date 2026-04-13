@@ -53,6 +53,7 @@ class MutasiReprosesController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
         ]);
 

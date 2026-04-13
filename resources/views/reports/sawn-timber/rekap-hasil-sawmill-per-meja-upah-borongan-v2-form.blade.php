@@ -64,8 +64,7 @@
 
                 <div id="previewJsonWrapper" class="mt-4 d-none">
                     <h2 class="h6 mb-2">Preview Raw SP (JSON)</h2>
-                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0"
-                        style="max-height: 360px; overflow: auto;"></pre>
+                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0" style="max-height: 360px; overflow: auto;"></pre>
                 </div>
             </div>
         </div>

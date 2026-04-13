@@ -373,7 +373,7 @@
         );
     @endphp
 
-    <h1 class="report-title">Laporan Time Line KB - Bulanan (Rambung) </h1>
+    <h1 class="report-title">Laporan Timeline KB - Bulanan (Rambung) </h1>
     <p class="report-subtitle">
         Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}

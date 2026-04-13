@@ -64,6 +64,7 @@
 
         th {
             text-align: center;
+            font-weight: bold;
         }
 
         td.center {
@@ -95,47 +96,20 @@
             border: 1px solid #000;
         }
 
+        tbody td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
         .group-section-title {
             font-weight: bold;
-            margin: 10px 0 4px 0;
-        }
-
-        .group-summary-list {
-            list-style: none;
-            margin: 2px 0 10px 0;
-            padding: 0;
-        }
-
-        .group-summary-item {
-            /* Avoid CSS grid/flex to keep mPDF output stable. */
-            margin: 1px 0;
-            line-height: 1.2;
-        }
-
-        .group-summary-item .label {
-            display: inline-block;
             font-size: 11px;
-            font-weight: bold;
-            width: 110px;
-            white-space: nowrap;
+            margin: 12px 0 5px 0;
         }
 
-        .group-summary-item .sep {
-            display: inline-block;
-            width: 10px;
-            font-size: 11px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .group-summary-item .value {
-            display: inline-block;
-            width: 100px;
-            font-size: 11px;
-            font-weight: bold;
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        .group-table {
+            width: 260px;
+            margin-left: 12px;
         }
 
 
@@ -207,7 +181,7 @@
 
         <div class="group-section-title">{{ $gidx + 1 }}. {{ $groupName }}</div>
 
-        <table style="width: 220px; margin-left: 12px;">
+        <table class="group-table">
             <thead>
                 <tr class="headers-row">
                     <th style="width: 36px;">No</th>
@@ -228,16 +202,14 @@
                         <td class="center" colspan="3">Tidak ada data.</td>
                     </tr>
                 @endforelse
+                @if (count($items) > 0)
+                    <tr class="totals-row">
+                        <td colspan="2" class="center">Total Per-Group</td>
+                        <td class="number">{{ number_format($sumTon, 4, '.', ',') }}</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
-
-        <ul class="group-summary-list" style="width: 220px; margin-left: 12px;">
-            <li class="group-summary-item">
-                <span class="label">Jmlh Per-Group</span>
-                <span class="sep">:</span>
-                <span class="value">{{ number_format($sumTon, 4, '.', ',') }}</span>
-            </li>
-        </ul>
 
     @empty
         <div class="center">Tidak ada data.</div>

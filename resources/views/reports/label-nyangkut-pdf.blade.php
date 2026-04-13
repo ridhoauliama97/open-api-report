@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 12mm 20mm 12mm;
+            margin: 20mm 12mm 20mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -356,6 +356,10 @@
             return $sum;
         };
 
+        $resolveTotalUnit = static function (string $groupName): string {
+            return preg_match('/\bst\b/i', $groupName) === 1 ? 'Ton' : 'm<sup>3</sup>';
+        };
+
     @endphp
 
     <h1 class="report-title">Laporan Label Nyangkut</h1>
@@ -364,6 +368,7 @@
     @forelse ($tableGroups as $group)
         @php
             $groupRows = $group['rows'] ?? [];
+            $totalUnit = $resolveTotalUnit($group['name']);
         @endphp
         <div class="section-title">
             {{ $group['name'] }}
@@ -404,23 +409,23 @@
                                     ['labelout', 'labeloutput'],
                                     true,
                                 );
-                                @endphp
-                                @if ($isLabelOutColumn)
-                                    <td class="data-cell number">
-                                        {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
-                                    </td>
-                                @elseif ($totalColumn !== null && $column === $totalColumn)
-                                    <td class="data-cell number" style="font-weight: bold;">
-                                        {{ is_numeric($value) ? number_format((float) $value, 4, '.', ',') : '' }}
-                                    </td>
-                                @elseif ($jmlhBatangColumn !== null && $column === $jmlhBatangColumn)
-                                    <td class="data-cell number" style="font-weight: bold;">
-                                        {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
-                                    </td>
-                                @elseif ($numeric)
-                                    <td class="data-cell number">
-                                        {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
-                                    </td>
+                            @endphp
+                            @if ($isLabelOutColumn)
+                                <td class="data-cell number">
+                                    {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
+                                </td>
+                            @elseif ($totalColumn !== null && $column === $totalColumn)
+                                <td class="data-cell number" style="font-weight: bold;">
+                                    {!! is_numeric($value) ? number_format((float) $value, 4, '.', ',') . ' ' . $totalUnit : '' !!}
+                                </td>
+                            @elseif ($jmlhBatangColumn !== null && $column === $jmlhBatangColumn)
+                                <td class="data-cell number" style="font-weight: bold;">
+                                    {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
+                                </td>
+                            @elseif ($numeric)
+                                <td class="data-cell number">
+                                    {{ is_numeric($value) ? number_format((float) $value, 0, '.', ',') : '' }}
+                                </td>
                             @else
                                 <td class="data-cell label">{{ (string) $value }}</td>
                             @endif
@@ -446,7 +451,7 @@
                                 </td>
                             @elseif ($totalColumn !== null && $summaryColumn === $totalColumn)
                                 <td class="number" style="font-weight:bold;">
-                                    {{ number_format($groupTotalValue, 4, '.', ',') }}
+                                    {!! number_format($groupTotalValue, 4, '.', ',') . ' ' . $totalUnit !!}
                                 </td>
                             @else
                                 <td></td>

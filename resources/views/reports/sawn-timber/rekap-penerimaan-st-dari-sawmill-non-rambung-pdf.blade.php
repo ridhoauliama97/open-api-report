@@ -110,7 +110,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -252,19 +253,14 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 34px;">No</th>
+                    <th style="width: 4%;">No</th>
                     @foreach ($schema as $colSpec)
-                        <th>{{ (string) ($colSpec['label'] ?? ($colSpec['key'] ?? '')) }}</th>
+                        <th style="width: 8%;">{{ (string) ($colSpec['label'] ?? ($colSpec['key'] ?? '')) }}</th>
                     @endforeach
                 </tr>
             </thead>
-            
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ max(1, count($schema) + 1) }}"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+
+            <tbody>
                 @php $rowIndex = 0; @endphp
                 @forelse ($groupRows as $row)
                     @php
@@ -299,8 +295,9 @@
                         $labelSpan = $tonKbIndex !== null ? 1 + $tonKbIndex : 1;
                     @endphp
                     <tr>
-                        <td class="number" style="text-align: center;" colspan="{{ $labelSpan }}"><strong>Total
-                                :</strong></td>
+                        <td class="number" style="text-align: center;" colspan="{{ $labelSpan }}">
+                            <strong>Total :</strong>
+                        </td>
                         @foreach ($schema as $index => $colSpec)
                             @if ($tonKbIndex !== null && $index < $tonKbIndex)
                                 @continue
@@ -349,10 +346,10 @@
         @endphp
 
         <table>
-            
-        <tbody>
+            <tbody>
                 <tr>
-                    <td class="number" colspan="{{ $labelSpan }}"><strong>Grand Total :</strong></td>
+                    <td class="center" colspan="{{ $labelSpan }}" style="width: 52%;"><strong>Grand Total </strong>
+                    </td>
                     @foreach ($schema as $index => $colSpec)
                         @if ($tonKbIndex !== null && $index < $tonKbIndex)
                             @continue
@@ -372,7 +369,9 @@
                                 $v = $grandRend === null ? '' : $formatNumber((float) $grandRend, 1) . '%';
                             }
                         @endphp
-                        <td class="{{ $v !== '' ? 'number' : '' }}"><strong>{{ $v }}</strong></td>
+                        <td class="{{ $v !== '' ? 'number' : '' }}" style="width: 8%;">
+                            <strong>{{ $v }}</strong>
+                        </td>
                     @endforeach
                 </tr>
             </tbody>
@@ -402,13 +401,8 @@
                     @endforeach
                 </tr>
             </thead>
-            
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ 1 + count($historis['diameters']) }}"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+
+            <tbody>
                 @php $ri = 0; @endphp
                 @foreach ($historis['rows'] as $potong => $vals)
                     @php $ri++; @endphp
@@ -436,13 +430,8 @@
                     <th style="width: 80px;">Rend ST-KB</th>
                 </tr>
             </thead>
-            
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="8"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+
+            <tbody>
                 @php $si = 0; @endphp
                 @foreach ($summaries as $s)
                     @php
@@ -467,7 +456,7 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td class="number"><strong>Grand Total :</strong></td>
+                    <td class="center"><strong> Total :</strong></td>
                     <td class="number"><strong>{{ $formatNumber($grandKb, 4) }}</strong></td>
                     <td></td>
                     <td class="number"><strong>{{ $formatNumber($grandSt, 4) }}</strong></td>

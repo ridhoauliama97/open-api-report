@@ -74,9 +74,13 @@ class UmurKayuBulatRambungReportService
                 'Status' => $status,
                 'No.KB' => $item['NoKayuBulat'] ?? null,
                 'Tanggal' => $dateCreate?->toDateString() ?? ($item['DateCreate'] ?? null),
+                'No Suket' => $item['Suket'] ?? $item['NoSuket'] ?? null,
                 'Nama Supplier' => $item['NmSupplier'] ?? null,
                 'Jenis Kayu' => $item['Jenis'] ?? null,
                 'Truk' => $item['NoTruk'] ?? null,
+                'Bruto' => $item['Bruto'] ?? null,
+                'Tara' => $item['Tara'] ?? null,
+                'Grade' => $item['NamaGrade'] ?? null,
                 'Ton' => $this->toFloat($item['TonKBKG'] ?? null),
                 'Tanggal Racip' => $tanggalRacip?->toDateString() ?? ($item['TanggalRacip'] ?? null),
                 'Tanggal Lama Racip' => $dateUsage?->toDateString() ?? ($item['TanggalLamaRacip'] ?? null),
@@ -206,4 +210,3 @@ class UmurKayuBulatRambungReportService
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }
-

@@ -264,7 +264,7 @@
         ];
     @endphp
 
-    <h1 class="report-title">Laporan Mutasi Barang Jadi ( m<sup>3</sup> )</h1>
+    <h1 class="report-title">Laporan Mutasi Barang Jadi (m3)</h1>
     <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
 
     <div class="container-fluid">

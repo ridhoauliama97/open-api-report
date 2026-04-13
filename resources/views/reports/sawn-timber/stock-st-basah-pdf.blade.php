@@ -386,13 +386,13 @@
             $columnHeaderOverrides[$lokasiColumn] = 'Lokasi';
         }
         if ($tebalColumn !== null) {
-            $columnHeaderOverrides[$tebalColumn] = 'Tebal';
+            $columnHeaderOverrides[$tebalColumn] = 'Tebal (mm)';
         }
         if ($lebarColumn !== null) {
-            $columnHeaderOverrides[$lebarColumn] = 'Lebar';
+            $columnHeaderOverrides[$lebarColumn] = 'Lebar (mm)';
         }
         if ($panjangColumn !== null) {
-            $columnHeaderOverrides[$panjangColumn] = 'Panjang';
+            $columnHeaderOverrides[$panjangColumn] = 'Panjang (ft)';
         }
 
         $formatHeaderLabel = static function (string $column) use (
@@ -547,11 +547,7 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @foreach ($produkRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

@@ -48,7 +48,7 @@
         }
 
         .report-table {
-            width: 65%;
+            width: 75%;
             border-collapse: separate;
             border-spacing: 0;
             border: 1px solid #000;
@@ -323,19 +323,19 @@
             $columnHeaderOverrides[$dateColumn] = 'Tanggal';
         }
         if ($pcsColumn !== null) {
-            $columnHeaderOverrides[$pcsColumn] = 'Jmlh Batang';
+            $columnHeaderOverrides[$pcsColumn] = 'Jmlh Batang (Pcs)';
         }
         if ($lokasiColumn !== null) {
             $columnHeaderOverrides[$lokasiColumn] = 'Lokasi';
         }
         if ($tebalColumn !== null) {
-            $columnHeaderOverrides[$tebalColumn] = 'Tebal';
+            $columnHeaderOverrides[$tebalColumn] = 'Tebal (mm)';
         }
         if ($lebarColumn !== null) {
-            $columnHeaderOverrides[$lebarColumn] = 'Lebar';
+            $columnHeaderOverrides[$lebarColumn] = 'Lebar (mm)';
         }
         if ($panjangColumn !== null) {
-            $columnHeaderOverrides[$panjangColumn] = 'Panjang';
+            $columnHeaderOverrides[$panjangColumn] = 'Panjang (ft)';
         }
 
         $formatHeaderLabel = static function (string $column) use (
@@ -502,11 +502,6 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($tableColumns) + 1 }}"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($produkRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

@@ -190,7 +190,7 @@
 
     @endphp
 
-    <h1 class="title">Dashboard Sawn Timber</h1>
+    <h1 class="title">Laporan Dashboard Sawn Timber</h1>
     <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') }}</p>
     @if ($pdfTruncatedTypes)

@@ -351,11 +351,12 @@
                                 $tebalTotal = $sumForDates($tebalTotals, $allDates);
                             @endphp
                             <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                                <td class="center">Sub total</td>
+                                <td class="center" style="background: none;">Sub total</td>
                                 @foreach ($allDates as $dk)
-                                    <td class="number">{{ $fmtTotal((float) ($tebalTotals[$dk] ?? 0.0)) }}</td>
+                                    <td class="number" style="background: none;">
+                                        {{ $fmtTotal((float) ($tebalTotals[$dk] ?? 0.0)) }}</td>
                                 @endforeach
-                                <td class="number">{{ $fmtTotal($tebalTotal) }}</td>
+                                <td class="number" style="background: none;">{{ $fmtTotal($tebalTotal) }}</td>
                             </tr>
                         @endforeach
 
@@ -364,11 +365,12 @@
                             $groupTotal = $sumForDates($groupTotals, $allDates);
                         @endphp
                         <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            <td class="center" colspan="2">Total</td>
+                            <td class="center" colspan="2" style="background: none;">Total</td>
                             @foreach ($allDates as $dk)
-                                <td class="number">{{ $fmtTotal((float) ($groupTotals[$dk] ?? 0.0)) }}</td>
+                                <td class="number" style="background: none;">
+                                    {{ $fmtTotal((float) ($groupTotals[$dk] ?? 0.0)) }}</td>
                             @endforeach
-                            <td class="number">{{ $fmtTotal($groupTotal) }}</td>
+                            <td class="number" style="background: none;">{{ $fmtTotal($groupTotal) }}</td>
                         </tr>
                         @empty
                             <tr>
@@ -426,7 +428,7 @@
                         @endforeach
 
                         <tr class="totals-row">
-                            <td colspan="2" class="center" style="background: none; font-size: 11px;">Total</td>
+                            <td colspan="2" class="center" style="background: none; font-size: 11px;">Grand Total</td>
                             <td class="number" style="background: none; font-size: 11px;">
                                 {{ $fmtTotal($rangkumanGrandTotal) }}</td>
                             <td class="center" style="background: none; font-size: 11px;">100%</td>

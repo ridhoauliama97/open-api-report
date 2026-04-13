@@ -177,6 +177,7 @@
         $tableRows = is_array($reportData['table_rows'] ?? null) ? $reportData['table_rows'] : [];
         $yearlyTotals = is_array($reportData['yearly_totals'] ?? null) ? $reportData['yearly_totals'] : [];
         $monthLabels = is_array($reportData['chart_month_labels'] ?? null) ? $reportData['chart_month_labels'] : [];
+        $monthHeaderLabels = range(1, max(count($monthLabels), 12));
         $years = is_array($reportData['chart_years'] ?? null) ? $reportData['chart_years'] : [];
         $seriesByYear = is_array($reportData['chart_series_by_year'] ?? null)
             ? $reportData['chart_series_by_year']
@@ -228,14 +229,14 @@
         $yTicks = max((int) ($maxValue / $yStep), 1);
     @endphp
 
-    <h1 class="report-title">Rekap Pembelian Kayu Bulat</h1>
+    <h1 class="report-title">Laporan Rekap Pembelian Kayu Bulat (Ton)</h1>
     <p class="report-subtitle">Periode {{ $startYear }} s/d {{ $endYear }}</p>
 
     <table class="report-table" style="margin-top: 15px;">
         <thead>
             <tr class="headers-row">
                 <th style="font-weight: bold; font-size:11px">Tahun</th>
-                @foreach ($monthLabels as $month)
+                @foreach ($monthHeaderLabels as $month)
                     <th style="font-weight: bold; font-size:11px">{{ $month }}</th>
                 @endforeach
                 <th style="font-weight: bold; font-size:11px">Total</th>
@@ -249,7 +250,7 @@
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="label data-cell" style="text-align: center; font-weight: bold; font-size:11px;">
                         {{ $year }}</td>
-                    @foreach ($monthLabels as $index => $month)
+                    @foreach ($monthHeaderLabels as $index => $month)
                         <td class="number data-cell">{{ $fmt4($monthly[$index] ?? 0) }}</td>
                     @endforeach
                     <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($yearlyTotals[$year] ?? 0) }}</td>

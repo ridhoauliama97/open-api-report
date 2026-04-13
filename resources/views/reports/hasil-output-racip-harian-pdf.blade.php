@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 16mm 8mm 18mm 8mm;
+            margin: 18mm 10mm 18mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -164,6 +164,10 @@
             return $normalized === 'masuk' || str_contains($normalized, 'masuk');
         };
 
+        $normalizeColumnName = static function (string $column): string {
+            return strtolower(str_replace([' ', '_', '(', ')'], '', trim($column)));
+        };
+
         $masukColumns = [];
         $nonMasukColumns = [];
         foreach ($columns as $column) {
@@ -204,10 +208,18 @@
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell center">{{ $loop->iteration }}</td>
                     @foreach ($columns as $column)
+                        @php
+                            $normalizedColumn = $normalizeColumnName($column);
+                            $isBoldColumn = $isMasukColumn($column)
+                                || in_array($normalizedColumn, ['jlhbtg', 'jumlahbatang', 'jumlahbatangpcs'], true);
+                            $cellStyle = $isBoldColumn ? 'font-weight: bold;' : '';
+                        @endphp
                         @if (($numericColumns[$column] ?? false) === true)
-                            <td class="data-cell number">{{ $formatNumber($row[$column] ?? null, $column) }}</td>
+                            <td class="data-cell number" style="{{ $cellStyle }}">
+                                {{ $formatNumber($row[$column] ?? null, $column) }}
+                            </td>
                         @else
-                            <td class="data-cell">{{ (string) ($row[$column] ?? '') }}</td>
+                            <td class="data-cell" style="{{ $cellStyle }}">{{ (string) ($row[$column] ?? '') }}</td>
                         @endif
                     @endforeach
                 </tr>

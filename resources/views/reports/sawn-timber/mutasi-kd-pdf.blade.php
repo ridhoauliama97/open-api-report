@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -166,13 +166,13 @@
             $outDate = is_string($out) ? trim($out) : '';
 
             if ($inDate === '' || $outDate === '') {
-                return '';
+                return '0';
             }
 
             try {
                 return (string) \Carbon\Carbon::parse($outDate)->diffInDays(\Carbon\Carbon::parse($inDate), false);
             } catch (\Throwable $e) {
-                return '';
+                return '0';
             }
         };
     @endphp

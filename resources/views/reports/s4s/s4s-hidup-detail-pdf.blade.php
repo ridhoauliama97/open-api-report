@@ -167,11 +167,11 @@
                 <th style="width: 66px;">Tanggal</th>
                 <th style="width: 62px;">No SPK</th>
                 <th>Jenis</th>
-                <th style="width: 40px;">Tebal</th>
-                <th style="width: 40px;">Lebar</th>
-                <th style="width: 50px;">Panjang</th>
-                <th style="width: 66px;">Jmlh Batang</th>
-                <th style="width: 56px;">Kubik</th>
+                <th style="width: 40px;">Tebal (mm)</th>
+                <th style="width: 40px;">Lebar (mm)</th>
+                <th style="width: 50px;">Panjang (ft)</th>
+                <th style="width: 80px;">Jmlh Batang (Pcs)</th>
+                <th style="width: 56px;">Kubik (m3)</th>
                 <th style="width: 46px;">Lokasi</th>
             </tr>
         </thead>

@@ -229,7 +229,7 @@
                 @endforeach
 
                 <tr class="totals-row">
-                    <td colspan="3" class="center">Jumlah </td>
+                    <td colspan="3" class="center">Total </td>
                     <td class="number">{{ $fmtTotal($totals['ST'] ?? null) }}</td>
                     <td class="number">{{ $fmtTotal($totals['S4S'] ?? null) }}</td>
                     <td class="number">{{ $fmtTotal($totals['WIP'] ?? null) }}</td>

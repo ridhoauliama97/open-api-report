@@ -284,12 +284,12 @@
                     <thead>
                         <tr>
                             <th style="width: 4%;">No</th>
-                            <th style="width: 21%;">NamaGrade</th>
-                            <th style="width: 15%;">Tebal</th>
-                            <th style="width: 15%;">Lebar</th>
-                            <th style="width: 15%;">Panjang</th>
-                            <th style="width: 15%;">Jmlh Batang</th>
-                            <th style="width: 15%;">Kubik</th>
+                            <th style="width: 21%;">Nama Grade</th>
+                            <th style="width: 15%;">Tebal (mm)</th>
+                            <th style="width: 15%;">Lebar (mm)</th>
+                            <th style="width: 15%;">Panjang (ft)</th>
+                            <th style="width: 15%;">Jmlh Batang (Pcs)</th>
+                            <th style="width: 15%;">Kubik (m3)</th>
                         </tr>
                     </thead>
                     <tbody>

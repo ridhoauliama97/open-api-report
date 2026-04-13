@@ -143,19 +143,12 @@
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
         $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');
         $totalJmlhBatang = array_sum(
-            array_map(
-                static fn($row): int => (int) ((is_array($row) ? $row['JmlhBatang'] ?? 0 : 0)),
-                $rows,
-            ),
+            array_map(static fn($row): int => (int) (is_array($row) ? $row['JmlhBatang'] ?? 0 : 0), $rows),
         );
-        $totalM3 = ($totals['M3'] ?? null) !== null
-            ? (float) ($totals['M3'] ?? 0)
-            : array_sum(
-                array_map(
-                    static fn($row): float => (float) ((is_array($row) ? $row['M3'] ?? 0 : 0)),
-                    $rows,
-                ),
-            );
+        $totalM3 =
+            ($totals['M3'] ?? null) !== null
+                ? (float) ($totals['M3'] ?? 0)
+                : array_sum(array_map(static fn($row): float => (float) (is_array($row) ? $row['M3'] ?? 0 : 0), $rows));
     @endphp
 
     <h1 class="report-title">Laporan Moulding (Hidup) Detail</h1>
@@ -169,11 +162,11 @@
                 <th style="width: 76px;">Tanggal</th>
                 <th style="width: 74px;">No SPK</th>
                 <th>Jenis</th>
-                <th style="width: 44px;">Tebal</th>
-                <th style="width: 50px;">Lebar</th>
-                <th style="width: 56px;">Panjang</th>
-                <th style="width: 66px;">Jumlah Batang</th>
-                <th style="width: 56px;">M3</th>
+                <th style="width: 44px;">Tebal (mm)</th>
+                <th style="width: 50px;">Lebar (mm)</th>
+                <th style="width: 56px;">Panjang (ft)</th>
+                <th style="width: 80px;">Jmlh Batang (Pcs)</th>
+                <th style="width: 56px;">Kubik (m<sup>3</sup>)</th>
                 <th style="width: 54px;">Lokasi</th>
             </tr>
         </thead>

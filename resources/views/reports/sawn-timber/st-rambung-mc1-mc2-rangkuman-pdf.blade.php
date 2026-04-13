@@ -114,7 +114,6 @@
 
         .table-end-line td {
             border-top: 1px solid #000 !important;
-            border-right: 0 !important;
             border-bottom: 0 !important;
             border-left: 0 !important;
             padding: 0 !important;
@@ -179,9 +178,9 @@
                 <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td class="center data-cell">{{ $rowIndex }}</td>
                     <td class="data-cell">{{ (string) ($sr['tabel'] ?? '') }}</td>
-                    <td class="center data-cell">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
-                    <td class="number data-cell">{{ $fmt4($sr['ton'] ?? 0) }}</td>
-                    <td class="number data-cell">{{ $fmt4($sr['kubik'] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($sr['ton'] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($sr['kubik'] ?? 0) }}</td>
                 </tr>
             @empty
                 <tr>
@@ -208,9 +207,9 @@
                 <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td class="center data-cell">{{ $rowIndex }}</td>
                     <td class="data-cell">{{ (string) ($sr['jenis'] ?? '') }}</td>
-                    <td class="center data-cell">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
-                    <td class="number data-cell">{{ $fmt4($sr['ton'] ?? 0) }}</td>
-                    <td class="number data-cell">{{ $fmt4($sr['kubik'] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($sr['ton'] ?? 0) }}</td>
+                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($sr['kubik'] ?? 0) }}</td>
                 </tr>
             @empty
                 <tr>

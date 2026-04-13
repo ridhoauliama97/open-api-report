@@ -246,7 +246,8 @@
                             @foreach ($dateKeys as $dateKey)
                                 <td class="number">{{ $fmtBlankZero((float) ($row['by_date'][$dateKey] ?? 0.0)) }}</td>
                             @endforeach
-                            <td class="number col-total">{{ $fmtBlankZero((float) ($row['total'] ?? 0.0)) }}</td>
+                            <td class="number col-total" style="font-weight: bold;">
+                                {{ $fmtBlankZero((float) ($row['total'] ?? 0.0)) }}</td>
                         </tr>
                     @empty
                         <tr>

@@ -256,8 +256,28 @@
         <thead>
             <tr>
                 @foreach ($columns as $col)
-                    <th>{{ $col }}</th>
+                    @if ($col === 'Borax (kg)')
+                        <th colspan="2">Borax</th>
+                        @continue
+                    @endif
+
+                    @if ($col === 'Boric (kg)')
+                        <th colspan="2">Boric</th>
+                        @continue
+                    @endif
+
+                    @if ($col === 'Rasio Borax (kg/ton)' || $col === 'Rasio Boric (kg/ton)')
+                        @continue
+                    @endif
+
+                    <th rowspan="2">{{ $col }}</th>
                 @endforeach
+            </tr>
+            <tr>
+                <th>Borax (kg)</th>
+                <th>Rasio Borax (kg/ton)</th>
+                <th>Boric (kg)</th>
+                <th>Rasio Boric (kg/ton)</th>
             </tr>
         </thead>
         <tbody>

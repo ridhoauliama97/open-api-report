@@ -150,7 +150,7 @@
                 <th>No</th>
                 <th>No ST</th>
                 <th>Tebal (mm) </th>
-                <th>Lebar</th>
+                <th>Lebar (mm)</th>
                 <th>Jumlah Batang (Pcs)</th>
                 <th>Lokasi</th>
                 <th>Usia (Hari)</th>
@@ -158,11 +158,6 @@
                 <th>BB</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="9"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rows as $r)
                 @php $rowIndex = ($loop->index ?? 0) + 1; @endphp

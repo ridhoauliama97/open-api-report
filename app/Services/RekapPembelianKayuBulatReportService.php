@@ -8,6 +8,9 @@ use RuntimeException;
 
 class RekapPembelianKayuBulatReportService
 {
+    private const CONFIG_KEY = 'reports.rekap_pembelian_kayu_bulat';
+    private const DEFAULT_EXPECTED_COLUMNS = ['Tahun', 'Bulan', 'Ton'];
+
     /**
      * @return array<int, array<string, mixed>>
      */
@@ -187,6 +190,12 @@ class RekapPembelianKayuBulatReportService
         }
 
         $keys = array_keys($allKeys);
+        $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', self::DEFAULT_EXPECTED_COLUMNS);
+        $expectedColumns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : self::DEFAULT_EXPECTED_COLUMNS;
+
+        $expectedYearColumn = $this->findMatchingKey($keys, array_intersect($expectedColumns, ['Tahun', 'Year', 'Thn']));
+        $expectedMonthColumn = $this->findMatchingKey($keys, array_intersect($expectedColumns, ['Bulan', 'Month', 'Bln']));
+        $expectedAmountColumn = $this->findMatchingKey($keys, array_intersect($expectedColumns, ['Ton', 'TotalTon', 'Tonase']));
 
         return [
             'date' => $this->findMatchingKey($keys, [
@@ -197,12 +206,12 @@ class RekapPembelianKayuBulatReportService
                 'tanggal_transaksi',
                 'date',
             ]),
-            'year' => $this->findMatchingKey($keys, [
+            'year' => $expectedYearColumn ?? $this->findMatchingKey($keys, [
                 'tahun',
                 'year',
                 'thn',
             ]),
-            'month' => $this->findMatchingKey($keys, [
+            'month' => $expectedMonthColumn ?? $this->findMatchingKey($keys, [
                 'bulan',
                 'month',
                 'bln',
@@ -217,15 +226,19 @@ class RekapPembelianKayuBulatReportService
                 'produk',
                 'supplier',
             ]),
-            'amount' => $this->findMatchingKey($keys, [
+            'amount' => $expectedAmountColumn ?? $this->findMatchingKey($keys, [
+                'ton',
+                'totalton',
+                'tonase',
+                'volumeton',
+                'beratton',
+                'm3',
+                'volume',
                 'total',
                 'jumlah',
                 'nilai',
-                'volume',
                 'qty',
                 'kuantitas',
-                'm3',
-                'ton',
                 'pembelian',
                 'beli',
             ]),
@@ -395,11 +408,11 @@ class RekapPembelianKayuBulatReportService
      */
     private function runProcedureQuery(string $startDate, string $endDate): array
     {
-        $connectionName = config('reports.rekap_pembelian_kayu_bulat.database_connection');
-        $procedure = (string) config('reports.rekap_pembelian_kayu_bulat.stored_procedure');
-        $syntax = (string) config('reports.rekap_pembelian_kayu_bulat.call_syntax', 'exec');
-        $customQuery = config('reports.rekap_pembelian_kayu_bulat.query');
-        $parameterCount = (int) config('reports.rekap_pembelian_kayu_bulat.parameter_count', 2);
+        $connectionName = config(self::CONFIG_KEY . '.database_connection');
+        $procedure = (string) config(self::CONFIG_KEY . '.stored_procedure');
+        $syntax = (string) config(self::CONFIG_KEY . '.call_syntax', 'exec');
+        $customQuery = config(self::CONFIG_KEY . '.query');
+        $parameterCount = (int) config(self::CONFIG_KEY . '.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
         if ($procedure === '' && !is_string($customQuery)) {

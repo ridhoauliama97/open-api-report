@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 14mm 8mm 14mm 8mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -130,7 +130,10 @@
         }
 
         .report-table tbody tr.data-row td.data-cell {
-            border: 1px solid #000 !important;
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
         }
 
         .table-end-line td {
@@ -201,19 +204,19 @@
         <table class="report-table">
             <thead>
                 <tr class="headers-row">
-                    <th rowspan="2" style="width: 40px;">No</th>
-                    <th rowspan="2">Nama Supplier</th>
-                    <th rowspan="2" style="width: 70px;">Jumlah Truk</th>
+                    <th rowspan="2" style="width: 5%;">No</th>
+                    <th rowspan="2" style="width: 25%">Nama Supplier</th>
+                    <th rowspan="2" style="width: 8%;">Jumlah Truk</th>
                     @foreach ($groupNames as $groupName)
                         <th colspan="2">{{ $groupName }}</th>
                     @endforeach
-                    <th rowspan="2" style="width: 88px;">Total (Ton)</th>
-                    <th rowspan="2" style="width: 76px;">Rasio</th>
+                    <th rowspan="2" style="width: 10%;">Total (Ton)</th>
+                    <th rowspan="2" style="width: 10%;">Rasio</th>
                 </tr>
                 <tr class="headers-row">
                     @foreach ($groupNames as $groupName)
-                        <th style="width: 84px;">Ton</th>
-                        <th style="width: 62px;">%</th>
+                        <th style="width: 10%;">Ton</th>
+                        <th style="width: 10%;">%</th>
                     @endforeach
                 </tr>
             </thead>

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 15mm 10mm 15mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -130,27 +130,12 @@
 
         .kesimpulan-title {
             margin: 10px 0 4px 0;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
         }
 
-        .kesimpulan-wrap {
-            display: flex;
-            gap: 20px;
-            margin-top: 2px;
-        }
-
-        .kesimpulan-col {
-            width: 50%;
-        }
-
-        .kesimpulan-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
         .kesimpulan-item {
+            font-weight: bold;
             display: flex;
             align-items: baseline;
             gap: 6px;
@@ -172,6 +157,19 @@
             margin-left: auto;
             text-align: right;
             white-space: nowrap;
+        }
+
+        .kesimpulan-grid {
+            width: 100%;
+            margin-top: 10px;
+            border: 0;
+        }
+
+        .kesimpulan-grid td {
+            width: 50%;
+            border: 0;
+            padding: 0 18px 0 0;
+            vertical-align: top;
         }
 
         .table-end-line td {
@@ -321,37 +319,42 @@
         </tbody>
     </table>
 
-    <div class="kesimpulan-title" style="margin-top:30px;">Kesimpulan</div>
-    <div class="kesimpulan-wrap">
-        <div class="kesimpulan-col">
-            <ul class="kesimpulan-list">
-                <li class="kesimpulan-item">
-                    <span class="label">Jumlah HK</span>
-                    <span class="sep">:</span>
-                    <span class="value">{{ $jumlahHk }}</span>
-                </li>
-                <li class="kesimpulan-item">
-                    <span class="label">Ton/Hari</span>
-                    <span class="sep">:</span>
-                    <span class="value">{{ $fmtTotal($tonPerHari) }}</span>
-                </li>
-            </ul>
-        </div>
-        <div class="kesimpulan-col">
-            <ul class="kesimpulan-list">
-                <li class="kesimpulan-item">
-                    <span class="label">Jumlah HK Meja Sawmill</span>
-                    <span class="sep">:</span>
-                    <span class="value">{{ $jumlahHkMeja }}</span>
-                </li>
-                <li class="kesimpulan-item">
-                    <span class="label">Ton/Meja/Hari</span>
-                    <span class="sep">:</span>
-                    <span class="value">{{ $fmtTotal($tonPerMejaPerHari) }}</span>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <table class="kesimpulan-grid">
+        <tbody>
+            <tr>
+                <td>
+                    <div class="kesimpulan-item">
+                        <span class="label">Jumlah HK</span>
+                        <span class="sep">:</span>
+                        <span class="value">{{ $jumlahHk }}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="kesimpulan-item">
+                        <span class="label">Jumlah HK Meja Sawmill</span>
+                        <span class="sep">:</span>
+                        <span class="value">{{ $jumlahHkMeja }}</span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="kesimpulan-item">
+                        <span class="label">Ton/Hari</span>
+                        <span class="sep">:</span>
+                        <span class="value">{{ $fmtTotal($tonPerHari) }}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="kesimpulan-item">
+                        <span class="label">Ton/Meja/Hari</span>
+                        <span class="sep">:</span>
+                        <span class="value">{{ $fmtTotal($tonPerMejaPerHari) }}</span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
     @include('reports.partials.pdf-footer-table')
 </body>

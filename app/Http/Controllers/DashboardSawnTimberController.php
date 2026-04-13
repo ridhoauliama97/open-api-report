@@ -111,7 +111,7 @@ class DashboardSawnTimberController extends Controller
 
         $pdfChartData = $this->preparePdfChartData($chartData);
 
-        $pdf = $pdfGenerator->render('dashboard.sawn-timber-pdf', [
+        $pdf = $pdfGenerator->render('reports.sawn-timber.dashboard-sawn-timber-pdf', [
             'startDate' => $startDate,
             'endDate' => $endDate,
             'chartData' => $pdfChartData,
@@ -140,7 +140,6 @@ class DashboardSawnTimberController extends Controller
         $prepared = $chartData;
         $prepared['raw_row_count'] = count($chartData['raw_rows'] ?? []);
         unset($prepared['raw_rows']);
-        unset($prepared['series_by_type']);
         unset($prepared['column_mapping']);
 
         $dates = array_values(is_array($chartData['dates'] ?? null) ? $chartData['dates'] : []);
@@ -149,6 +148,7 @@ class DashboardSawnTimberController extends Controller
         $types = array_values(is_array($chartData['types'] ?? null) ? $chartData['types'] : []);
         $totalsByType = is_array($chartData['totals_by_type'] ?? null) ? $chartData['totals_by_type'] : [];
         $stockByType = is_array($chartData['stock_by_type'] ?? null) ? $chartData['stock_by_type'] : [];
+        $seriesByType = is_array($chartData['series_by_type'] ?? null) ? $chartData['series_by_type'] : [];
 
         $maxTypes = 25;
         if (count($types) > $maxTypes) {
@@ -172,6 +172,11 @@ class DashboardSawnTimberController extends Controller
                 static fn(string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
+            $prepared['series_by_type'] = array_filter(
+                $seriesByType,
+                static fn(string $type): bool => isset($selectedMap[$type]),
+                ARRAY_FILTER_USE_KEY
+            );
             $prepared['stock_by_type'] = array_filter(
                 $stockByType,
                 static fn(string $type): bool => isset($selectedMap[$type]),
@@ -182,6 +187,7 @@ class DashboardSawnTimberController extends Controller
         } else {
             $prepared['types'] = $types;
             $prepared['totals_by_type'] = $totalsByType;
+            $prepared['series_by_type'] = $seriesByType;
             $prepared['stock_by_type'] = $stockByType;
             $prepared['pdf_truncated_types'] = false;
             $prepared['pdf_original_type_count'] = count($types);
@@ -216,7 +222,47 @@ class DashboardSawnTimberController extends Controller
         $prepared['dates'] = $sampledDates;
         $prepared['daily_in_totals'] = $sampledIn;
         $prepared['daily_out_totals'] = $sampledOut;
+        $prepared['series_by_type'] = $this->sampleSeriesByType(
+            is_array($prepared['series_by_type'] ?? null) ? $prepared['series_by_type'] : [],
+            $chunkSize,
+        );
 
         return $prepared;
+    }
+
+    /**
+     * @param array<string, array{in?: array<int, float|int|string|null>, out?: array<int, float|int|string|null>}> $seriesByType
+     * @return array<string, array{in: array<int, float>, out: array<int, float>}>
+     */
+    private function sampleSeriesByType(array $seriesByType, int $chunkSize): array
+    {
+        $sampled = [];
+
+        foreach ($seriesByType as $type => $series) {
+            $sampled[$type] = [
+                'in' => $this->sumSeriesChunks($series['in'] ?? [], $chunkSize),
+                'out' => $this->sumSeriesChunks($series['out'] ?? [], $chunkSize),
+            ];
+        }
+
+        return $sampled;
+    }
+
+    /**
+     * @param array<int, float|int|string|null> $values
+     * @return array<int, float>
+     */
+    private function sumSeriesChunks(array $values, int $chunkSize): array
+    {
+        if ($chunkSize <= 1) {
+            return array_map(static fn($value): float => (float) ($value ?? 0), $values);
+        }
+
+        $chunks = [];
+        for ($offset = 0; $offset < count($values); $offset += $chunkSize) {
+            $chunks[] = array_sum(array_map('floatval', array_slice($values, $offset, $chunkSize)));
+        }
+
+        return $chunks;
     }
 }
