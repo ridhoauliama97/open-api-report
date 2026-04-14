@@ -211,6 +211,12 @@
                                 Laporan Mutasi Mixer
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.mixer.mixer-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Mixer Produksi
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
