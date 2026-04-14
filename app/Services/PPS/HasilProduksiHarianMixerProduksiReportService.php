@@ -311,13 +311,18 @@ class HasilProduksiHarianMixerProduksiReportService
         $inputs = $payload['inputs'];
         $outputs = $payload['outputs'];
         $downtimeRows = $payload['downtime_rows'];
+        $totalInputQty = $this->sumQty($inputs);
         $detailCount = max(count($inputs), count($outputs), count($downtimeRows), 1);
         $detailRows = [];
 
         for ($index = 0; $index < $detailCount; $index++) {
+            $inputQty = $inputs[$index]['qty'] ?? null;
             $detailRows[] = [
                 'input_nama_bahan' => $inputs[$index]['jenis'] ?? '',
-                'input_qty' => $inputs[$index]['qty'] ?? null,
+                'input_qty' => $inputQty,
+                'input_percentage' => $inputQty !== null && $totalInputQty > 0
+                    ? (((float) $inputQty) / $totalInputQty) * 100
+                    : null,
                 'output_nama_barang' => $outputs[$index]['jenis'] ?? '',
                 'output_nomor_label' => $outputs[$index]['reference'] ?? '',
                 'output_qty' => $outputs[$index]['qty'] ?? null,
@@ -342,7 +347,7 @@ class HasilProduksiHarianMixerProduksiReportService
             'detail_rows' => $detailRows,
             'blank_row_count' => max(20 - count($detailRows), 0),
             'totals' => [
-                'input_qty' => $this->sumQty($inputs),
+                'input_qty' => $totalInputQty,
                 'output_qty' => $this->sumQty($outputs),
             ],
             'approvals' => $payload['approvals'],

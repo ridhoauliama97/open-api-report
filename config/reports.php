@@ -1705,6 +1705,18 @@ return [
             'Tipe,Group,NoProduksi,NoLabel,Tanggal,NamaMesin,Shift,Jenis,Berat,CreateBy,CheckBy1,CheckBy2,ApproveBy,JmlhAnggota,Hadir,Stat'
         )))),
     ],
+    'pps_packing_produksi_harian' => [
+        'database_connection' => env('PPS_PACKING_PRODUKSI_HARIAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_PACKING_PRODUKSI_HARIAN_REPORT_PROCEDURE', 'SP_LapHasilProduksiHarianPacking'),
+        'call_syntax' => env('PPS_PACKING_PRODUKSI_HARIAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_PACKING_PRODUKSI_HARIAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_PACKING_PRODUKSI_HARIAN_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PPS_PACKING_PRODUKSI_HARIAN_REPORT_SINGLE_PARAMETER_NAME', 'NoPacking'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_PACKING_PRODUKSI_HARIAN_REPORT_EXPECTED_COLUMNS',
+            'Tipe,Group,NoProduksi,NoLabel,Tanggal,NamaMesin,Shift,Jenis,Total,Total2,CreateBy,CheckBy1,CheckBy2,ApproveBy'
+        )))),
+    ],
     'pps_rekap_produksi_mixer' => [
         'database_connection' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_REKAP_PRODUKSI_MIXER_REPORT_PROCEDURE', 'SP_LapRekapProduksiMixer'),

@@ -203,6 +203,21 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Inject</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.inject.packing.packing-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Packing Produksi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
                     <h2 class="h5 mb-3">Mixer</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">

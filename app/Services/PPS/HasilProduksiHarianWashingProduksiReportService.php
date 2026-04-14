@@ -78,6 +78,14 @@ class HasilProduksiHarianWashingProduksiReportService
             ];
 
             if ($type === 'input') {
+                $hasInputValue =
+                    trim($item['jenis']) !== '' ||
+                    $item['qty'] !== null;
+
+                if (! $hasInputValue) {
+                    continue;
+                }
+
                 $inputs[] = $item;
                 continue;
             }
@@ -92,19 +100,41 @@ class HasilProduksiHarianWashingProduksiReportService
             }
         }
 
+        $washingRows = [];
+
+        foreach ($outputs as $output) {
+            $washingRows[] = [
+                'nama_barang' => $output['jenis'] ?? '',
+                'nomor_label' => $output['no_label'] ?? '',
+                'qty' => $output['qty'] ?? null,
+                'hasil_cek_qc' => $output['hasil_cek_qc'] ?? '',
+                'reject_qty' => null,
+            ];
+        }
+
+        foreach ($rejects as $reject) {
+            $washingRows[] = [
+                'nama_barang' => $reject['jenis'] ?? '',
+                'nomor_label' => $reject['no_label'] ?? '',
+                'qty' => null,
+                'hasil_cek_qc' => $reject['hasil_cek_qc'] ?? '',
+                'reject_qty' => $reject['qty'] ?? null,
+            ];
+        }
+
         $downtimeRows = $this->fetchDowntimeRows($noProduksi);
-        $detailCount = max(count($inputs), count($outputs), count($rejects), count($downtimeRows), 1);
+        $detailCount = max(count($inputs), count($washingRows), count($downtimeRows), 1);
         $detailRows = [];
 
         for ($index = 0; $index < $detailCount; $index++) {
             $detailRows[] = [
                 'input_nama_bahan' => $inputs[$index]['jenis'] ?? '',
                 'input_qty' => $inputs[$index]['qty'] ?? null,
-                'output_nama_barang' => $outputs[$index]['jenis'] ?? '',
-                'output_nomor_label' => $outputs[$index]['no_label'] ?? '',
-                'output_qty' => $outputs[$index]['qty'] ?? null,
-                'output_hasil_cek_qc' => $outputs[$index]['hasil_cek_qc'] ?? '',
-                'reject_qty' => $rejects[$index]['qty'] ?? null,
+                'output_nama_barang' => $washingRows[$index]['nama_barang'] ?? '',
+                'output_nomor_label' => $washingRows[$index]['nomor_label'] ?? '',
+                'output_qty' => $washingRows[$index]['qty'] ?? null,
+                'output_hasil_cek_qc' => $washingRows[$index]['hasil_cek_qc'] ?? '',
+                'reject_qty' => $washingRows[$index]['reject_qty'] ?? null,
                 'downtime_jam_berhenti' => $downtimeRows[$index]['jam_berhenti'] ?? '',
                 'downtime_durasi' => $downtimeRows[$index]['durasi'] ?? '',
                 'downtime_keterangan' => $downtimeRows[$index]['keterangan'] ?? '',

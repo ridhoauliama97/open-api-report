@@ -19,7 +19,6 @@
             font-size: 10px;
             line-height: 1.2;
             color: #000;
-            padding-bottom: 40mm;
         }
 
         .report-title {
@@ -130,11 +129,11 @@
             background: #fff;
         }
 
-        .report-table .center {
+        .center {
             text-align: center;
         }
 
-        .report-table .number {
+        .number {
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
@@ -146,11 +145,28 @@
             border: 1px solid #000;
         }
 
+        .body-with-fixed-signature {
+            padding-bottom: 40mm;
+        }
+
+        .signature-page {
+            page-break-before: always;
+            min-height: 240mm;
+            position: relative;
+        }
+
         .signature-fixed {
             position: fixed;
             left: 0;
             right: 0;
             bottom: 8mm;
+        }
+
+        .signature-fixed-page-break {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         .signature-table th,
@@ -224,16 +240,23 @@
             '.',
             ',',
         );
+        $textOrBlank = static fn($value): string => trim((string) $value) !== '' ? e(trim((string) $value)) : '&nbsp;';
+        $totalInputQty = (float) ($totals['input_qty'] ?? 0);
+        $shouldMoveSignatureToNewPage = count($detailRows) > 25;
     @endphp
 
-    <h1 class="report-title">Laporan Harian Hasil Washing Produksi</h1>
+    @if (!$shouldMoveSignatureToNewPage)
+        <div class="body-with-fixed-signature">
+    @endif
+
+    <h1 class="report-title">Laporan Harian Hasil Packing Produksi</h1>
     <p class="report-subtitle"></p>
 
     <table class="summary-table">
         <tr>
-            <td class="summary-label">No Produksi</td>
+            <td class="summary-label">No Packing</td>
             <td class="summary-sep">:</td>
-            <td>{{ $meta['no_produksi'] ?? '' }}</td>
+            <td>{{ $meta['no_packing'] ?? '' }}</td>
         </tr>
         <tr>
             <td class="summary-label">Tanggal</td>
@@ -256,59 +279,64 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th colspan="2">Pemakaian Bahan Baku</th>
-                <th colspan="5">Hasil Washing</th>
+                <th colspan="3">Pemakaian Bahan</th>
+                <th colspan="4">Hasil Packing</th>
                 <th colspan="3">Downtime</th>
             </tr>
             <tr>
                 <th rowspan="2">Nama Bahan</th>
-                <th rowspan="2">Qty<br>(Kg)</th>
+                <th rowspan="2">Qty<br>()</th>
+                <th rowspan="2">%</th>
                 <th rowspan="2">Nama Barang</th>
                 <th colspan="3">Bagus</th>
-                <th rowspan="2">Reject<br>(Kg)</th>
                 <th rowspan="2">Jam<br>Berhenti</th>
                 <th rowspan="2">Durasi<br>(Menit)</th>
                 <th rowspan="2">Keterangan</th>
             </tr>
             <tr>
-                <th>Nomor<br>Label</th>
-                <th>Qty<br>(Kg)</th>
-                <th>Hasil<br>Cek QC</th>
+                <th>Jumlah<br>Label</th>
+                <th>Qty<br>(Pcs)</th>
+                <th>Berat<br>(Kg)</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($detailRows as $row)
+                @php
+                    $inputQty = $row['input_qty'] ?? null;
+                    $inputPercentage =
+                        $inputQty !== null && $totalInputQty > 0
+                            ? $formatNumber((((float) $inputQty) / $totalInputQty) * 100, 2) . '%'
+                            : '';
+                @endphp
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell">{{ $row['input_nama_bahan'] !== '' ? $row['input_nama_bahan'] : '' }}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['input_nama_barang'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}
+                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty'], 2) : '' }}
                     </td>
-                    <td class="data-cell">{{ $row['output_nama_barang'] !== '' ? $row['output_nama_barang'] : '' }}</td>
-                    <td class="data-cell">{{ $row['output_nomor_label'] !== '' ? $row['output_nomor_label'] : '' }}</td>
+                    <td class="data-cell number">{{ $inputPercentage }}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['output_nama_barang'] ?? '') !!}</td>
+                    <td class="data-cell number">{!! $textOrBlank($row['output_nomor_label'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}
-                    </td>
-                    <td class="data-cell center">
-                        {{ $row['output_hasil_cek_qc'] !== '' ? $row['output_hasil_cek_qc'] : '' }}
+                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty'], 2) : '' }}
                     </td>
                     <td class="data-cell number">
-                        {{ $row['reject_qty'] !== null ? $formatNumber($row['reject_qty']) : '' }}
+                        {{ $row['output_berat'] !== null ? $formatNumber($row['output_berat']) : '' }}
                     </td>
-                    <td class="data-cell center">{{ $row['downtime_jam_berhenti'] }}</td>
-                    <td class="data-cell center">{{ $row['downtime_durasi'] }}</td>
-                    <td class="data-cell">{{ $row['downtime_keterangan'] }}</td>
+                    <td class="data-cell">&nbsp;</td>
+                    <td class="data-cell">&nbsp;</td>
+                    <td class="data-cell">&nbsp;</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr class="total-row">
-                <td class="number">&nbsp;</td>
-                <td class="number">{{ $formatNumber($totals['input_qty'] ?? 0) }}</td>
+                <td>&nbsp;</td>
+                <td class="number">{{ $formatNumber($totals['input_qty'] ?? 0, 2) }}</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td class="number">{{ $formatNumber($totals['output_qty'] ?? 0) }}</td>
                 <td>&nbsp;</td>
-                <td class="number">{{ $formatNumber($totals['reject_qty'] ?? 0) }}</td>
+                <td class="number">{{ $formatNumber($totals['output_qty'] ?? 0, 2) }}</td>
+                <td class="number">{{ $formatNumber($totals['output_berat'] ?? 0) }}</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -316,86 +344,95 @@
         </tfoot>
     </table>
 
-    <div class="signature-fixed">
-        <table class="signature-table">
-            <thead>
-                <tr>
-                    <th style="width: 18%;">Di Buat Oleh,</th>
-                    <th colspan="2" style="width: 50%;">Di Periksa Oleh,</th>
-                    <th style="width: 18%;">Di Setujui Oleh</th>
-                    <th colspan="2" rowspan="2" style="width: 14%;">Jumlah Anggota</th>
-                </tr>
-                <tr>
-                    <th class="signature-role">Operator</th>
-                    <th class="signature-role" style="width: 25%;">Ka. Regu Cuci</th>
-                    <th class="signature-role" style="width: 25%;">Ka. Div, Cuci & Broker</th>
-                    <th class="signature-role">Ka. Dept, Produksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="signature-span-cell" rowspan="3">
-                        <table class="signature-inner">
-                            <tr>
-                                <td class="signature-inner-space">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td class="signature-inner-name">
-                                    {{ $approvals['operator'] !== '' ? $approvals['operator'] : '&nbsp;' }}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td class="signature-span-cell" rowspan="3">
-                        <table class="signature-inner">
-                            <tr>
-                                <td class="signature-inner-space">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td class="signature-inner-name">
-                                    {!! ($approvals['ka_regu_cuci'] ?? '') !== '' ? e($approvals['ka_regu_cuci']) : '&nbsp;' !!}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td class="signature-span-cell" rowspan="3">
-                        <table class="signature-inner">
-                            <tr>
-                                <td class="signature-inner-space">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td class="signature-inner-name">
-                                    {!! ($approvals['ka_div_cuci_broker'] ?? '') !== '' ? e($approvals['ka_div_cuci_broker']) : '&nbsp;' !!}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td class="signature-span-cell" rowspan="3">
-                        <table class="signature-inner">
-                            <tr>
-                                <td class="signature-inner-space">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td class="signature-inner-name">
-                                    {!! ($approvals['ka_dept_produksi'] ?? '') !== '' ? e($approvals['ka_dept_produksi']) : '&nbsp;' !!}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td class="signature-panel-label">Hadir</td>
-                    <td class="signature-panel-value">{{ (int) ($attendance['hadir'] ?? 0) }}</td>
-                </tr>
-                <tr>
-                    <td class="signature-panel-label">Absen</td>
-                    <td class="signature-panel-value">{{ (int) ($attendance['absen'] ?? 0) }}</td>
-                </tr>
-                <tr>
-                    <td class="signature-panel-label"><strong>Total</strong></td>
-                    <td class="signature-panel-value"><strong>{{ (int) ($attendance['total'] ?? 0) }}</strong></td>
-                </tr>
-            </tbody>
-        </table>
+    @if (!$shouldMoveSignatureToNewPage)
+        </div>
+        <div class="signature-fixed">
+        @else
+            <div class="signature-page">
+                <div class="signature-fixed-page-break">
+    @endif
+    <table class="signature-table">
+        <thead>
+            <tr>
+                <th>Di Buat Oleh,</th>
+                <th colspan="2">Di Periksa Oleh,</th>
+                <th>Di Setujui Oleh</th>
+                <th colspan="2" rowspan="2">Jumlah Anggota</th>
+            </tr>
+            <tr>
+                <th class="signature-role">Operator</th>
+                <th class="signature-role">Ka. Regu Packing</th>
+                <th class="signature-role">Ka. Div, Produksi Inject</th>
+                <th class="signature-role">Ka. Dept, Produksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="signature-span-cell" rowspan="3">
+                    <table class="signature-inner">
+                        <tr>
+                            <td class="signature-inner-space">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="signature-inner-name">
+                                {!! ($approvals['operator'] ?? '') !== '' ? e($approvals['operator']) : '&nbsp;' !!}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="signature-span-cell" rowspan="3">
+                    <table class="signature-inner">
+                        <tr>
+                            <td class="signature-inner-space">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="signature-inner-name">
+                                {!! ($approvals['ka_regu_packing'] ?? '') !== '' ? e($approvals['ka_regu_packing']) : '&nbsp;' !!}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="signature-span-cell" rowspan="3">
+                    <table class="signature-inner">
+                        <tr>
+                            <td class="signature-inner-space">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="signature-inner-name">
+                                {!! ($approvals['ka_div_packing'] ?? '') !== '' ? e($approvals['ka_div_packing']) : '&nbsp;' !!}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="signature-span-cell" rowspan="3">
+                    <table class="signature-inner">
+                        <tr>
+                            <td class="signature-inner-space">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="signature-inner-name">
+                                {!! ($approvals['ka_dept_produksi'] ?? '') !== '' ? e($approvals['ka_dept_produksi']) : '&nbsp;' !!}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="signature-panel-label">Hadir</td>
+                <td class="signature-panel-value">{{ (int) ($attendance['hadir'] ?? 0) }}</td>
+            </tr>
+            <tr>
+                <td class="signature-panel-label">Absen</td>
+                <td class="signature-panel-value">{{ (int) ($attendance['absen'] ?? 0) }}</td>
+            </tr>
+            <tr>
+                <td class="signature-panel-label"><strong>Total</strong></td>
+                <td class="signature-panel-value"><strong>{{ (int) ($attendance['total'] ?? 0) }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
     </div>
+    @if ($shouldMoveSignatureToNewPage)
+        </div>
+    @endif
 
     @include('reports.partials.pdf-footer-table', [
         'generatedByName' => $generatedByName,
