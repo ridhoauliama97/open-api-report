@@ -210,12 +210,14 @@
         $approvals = $report['approvals'] ?? [];
         $attendance = $report['attendance'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
-        $formatNumber = static fn($value, int $decimals = 2): string => number_format(
-            (float) $value,
-            $decimals,
-            '.',
-            ',',
-        );
+        $formatNumber = static function ($value, ?int $decimals = null): string {
+            return number_format(
+                (float) $value,
+                $decimals ?? 2,
+                '.',
+                ',',
+            );
+        };
         $textOrBlank = static fn($value): string => trim((string) $value) !== '' ? e(trim((string) $value)) : '&nbsp;';
     @endphp
 
