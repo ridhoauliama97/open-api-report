@@ -206,6 +206,12 @@
                     <h2 class="h5 mb-3">Inject</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.inject.inject-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Inject Produksi
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.inject.packing.packing-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Packing Produksi
@@ -221,6 +227,12 @@
                             <a href="{{ route('reports.pps.inject.pasang-kunci.pasang-kunci-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Pasang Kunci Produksi
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.inject.hot-stamping.hot-stamping-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Hot Stamping Produksi
                             </a>
                         </div>
                     </div>
