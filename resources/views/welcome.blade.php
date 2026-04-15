@@ -211,6 +211,18 @@
                                 Laporan Harian Hasil Packing Produksi
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.inject.spanner.spanner-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Spanner Produksi
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.inject.pasang-kunci.pasang-kunci-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Harian Hasil Pasang Kunci Produksi
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

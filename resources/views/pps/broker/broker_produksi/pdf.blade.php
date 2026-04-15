@@ -9,7 +9,7 @@
         }
 
         @page {
-            margin: 14mm 8mm 18mm 8mm;
+            margin: 18mm 8mm 18mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -255,19 +255,6 @@
     </table>
 
     <table class="report-table">
-        <colgroup>
-            <col style="width: 18%;">
-            <col style="width: 5%;">
-            <col style="width: 4%;">
-            <col style="width: 18%;">
-            <col style="width: 11%;">
-            <col style="width: 6%;">
-            <col style="width: 6%;">
-            <col style="width: 6%;">
-            <col style="width: 6%;">
-            <col style="width: 5%;">
-            <col style="width: 15%;">
-        </colgroup>
         <thead>
             <tr>
                 <th colspan="3">Pemakaian Bahan</th>
@@ -287,7 +274,7 @@
             </tr>
             <tr>
                 <th>Nomor<br>Label</th>
-                <th>Qty (Kg)</th>
+                <th>Qty<br>(Kg)</th>
                 <th>Hasil<br>Cek QC</th>
             </tr>
         </thead>
@@ -296,37 +283,27 @@
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell">{{ $row['input_nama_bahan'] !== '' ? $row['input_nama_bahan'] : '' }}</td>
                     <td class="data-cell number">
-                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}</td>
+                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}
+                    </td>
                     <td class="data-cell number">
-                        {{ $row['input_percent'] !== null ? $formatPercent($row['input_percent']) : '' }}</td>
+                        {{ $row['input_percent'] !== null ? $formatPercent($row['input_percent']) : '' }}
+                    </td>
                     <td class="data-cell">{{ $row['output_nama_barang'] !== '' ? $row['output_nama_barang'] : '' }}</td>
                     <td class="data-cell">{{ $row['output_nomor_label'] !== '' ? $row['output_nomor_label'] : '' }}</td>
                     <td class="data-cell number">
-                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}</td>
+                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}
+                    </td>
                     <td class="data-cell center">
-                        {{ $row['output_hasil_cek_qc'] !== '' ? $row['output_hasil_cek_qc'] : '' }}</td>
+                        {{ $row['output_hasil_cek_qc'] !== '' ? $row['output_hasil_cek_qc'] : '' }}
+                    </td>
                     <td class="data-cell number">
-                        {{ $row['reject_qty'] !== null ? $formatNumber($row['reject_qty']) : '' }}</td>
+                        {{ $row['reject_qty'] !== null ? $formatNumber($row['reject_qty']) : '' }}
+                    </td>
                     <td class="data-cell center">{{ $row['downtime_jam_berhenti'] }}</td>
                     <td class="data-cell center">{{ $row['downtime_durasi'] }}</td>
                     <td class="data-cell">{{ $row['downtime_keterangan'] }}</td>
                 </tr>
             @endforeach
-            @for ($i = 0; $i < $blankRowCount; $i++)
-                <tr class="filler-row {{ $i % 2 === 0 ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                </tr>
-            @endfor
         </tbody>
         <tfoot>
             <tr class="total-row">
@@ -347,25 +324,17 @@
 
     <div class="signature-fixed">
         <table class="signature-table">
-            <colgroup>
-                <col style="width: 17%;">
-                <col style="width: 16%;">
-                <col style="width: 23%;">
-                <col style="width: 22%;">
-                <col style="width: 14%;">
-                <col style="width: 8%;">
-            </colgroup>
             <thead>
                 <tr>
-                    <th>Di Buat Oleh,</th>
-                    <th colspan="2">Di Periksa Oleh,</th>
-                    <th>Di Setujui Oleh</th>
-                    <th colspan="2" rowspan="2">Jumlah Anggota</th>
+                    <th style="width: 18%;">Di Buat Oleh,</th>
+                    <th colspan="2" style="width: 50%;">Di Periksa Oleh,</th>
+                    <th style="width: 18%;">Di Setujui Oleh</th>
+                    <th colspan="2" rowspan="2" style="width: 14%;">Jumlah Anggota</th>
                 </tr>
                 <tr>
                     <th class="signature-role">Operator</th>
-                    <th class="signature-role">Ka. Regu Broker</th>
-                    <th class="signature-role">Ka. Div, Broker</th>
+                    <th class="signature-role" style="width: 25%;">Ka. Regu Broker</th>
+                    <th class="signature-role" style="width: 25%;">Ka. Div, Cuci & Broker</th>
                     <th class="signature-role">Ka. Dept, Produksi</th>
                 </tr>
             </thead>
@@ -378,7 +347,8 @@
                             </tr>
                             <tr>
                                 <td class="signature-inner-name">
-                                    {{ $approvals['operator'] !== '' ? $approvals['operator'] : '&nbsp;' }}</td>
+                                    {{ $approvals['operator'] !== '' ? $approvals['operator'] : '&nbsp;' }}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -388,7 +358,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_regu_broker'] ?? '') !== '' ? e($approvals['ka_regu_broker']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['ka_regu_broker'] ?? '') !== '' ? e($approvals['ka_regu_broker']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -398,7 +370,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_div_broker'] ?? '') !== '' ? e($approvals['ka_div_broker']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['ka_div_broker'] ?? '') !== '' ? e($approvals['ka_div_broker']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -408,7 +382,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_dept_produksi'] ?? '') !== '' ? e($approvals['ka_dept_produksi']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['ka_dept_produksi'] ?? '') !== '' ? e($approvals['ka_dept_produksi']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>

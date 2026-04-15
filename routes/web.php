@@ -172,6 +172,8 @@ use App\Http\Controllers\PPS\HasilProduksiHarianCrusherProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianGilinganProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianMixerProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianPackingProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianSpannerProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianPasangKunciProduksiController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
@@ -284,6 +286,20 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [HasilProduksiHarianPackingProduksiController::class, 'download'])->name('download');
         Route::post('/preview', [HasilProduksiHarianPackingProduksiController::class, 'preview'])->name('preview');
         Route::post('/health', [HasilProduksiHarianPackingProduksiController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('inject/spanner/spanner-produksi')->name('inject.spanner.spanner-produksi.')->group(function (): void {
+        Route::get('/', [HasilProduksiHarianSpannerProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiHarianSpannerProduksiController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilProduksiHarianSpannerProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiHarianSpannerProduksiController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('inject/pasang-kunci/pasang-kunci-produksi')->name('inject.pasang-kunci.pasang-kunci-produksi.')->group(function (): void {
+        Route::get('/', [HasilProduksiHarianPasangKunciProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [HasilProduksiHarianPasangKunciProduksiController::class, 'download'])->name('download');
+        Route::post('/preview', [HasilProduksiHarianPasangKunciProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [HasilProduksiHarianPasangKunciProduksiController::class, 'health'])->name('health');
     });
 
     Route::prefix('rekap-produksi/mixer')->name('rekap-produksi.mixer.')->group(function (): void {

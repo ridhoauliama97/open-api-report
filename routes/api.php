@@ -147,6 +147,7 @@ use App\Http\Controllers\PPS\HasilProduksiHarianWashingProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianBrokerProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianCrusherProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianGilinganProduksiController;
+use App\Http\Controllers\PPS\HasilProduksiHarianPasangKunciProduksiController;
 
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
@@ -372,6 +373,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/crusher/crusher-produksi', 'api.reports.pps.crusher.crusher-produksi', HasilProduksiHarianCrusherProduksiController::class],
         ['/reports/pps/gilingan/gilingan-produksi', 'api.reports.pps.gilingan.gilingan-produksi', HasilProduksiHarianGilinganProduksiController::class],
         ['/reports/pps/inject/hot-stamping/hot-stamping-produksi', 'api.reports.pps.inject.hot-stamping.hot-stamping-produksi', HasilProduksiHarianHotStampingProduksiController::class],
+        ['/reports/pps/inject/pasang-kunci/pasang-kunci-produksi', 'api.reports.pps.inject.pasang-kunci.pasang-kunci-produksi', HasilProduksiHarianPasangKunciProduksiController::class],
         ['/reports/pps/rekap-produksi/mixer', 'api.reports.pps.rekap-produksi.mixer', RekapProduksiMixerController::class],
         ['/reports/pps/rekap-produksi/gilingan', 'api.reports.pps.rekap-produksi.gilingan', RekapProduksiGilinganController::class],
         ['/reports/pps/rekap-produksi/crusher', 'api.reports.pps.rekap-produksi.crusher', RekapProduksiCrusherController::class],

@@ -9,7 +9,7 @@
         }
 
         @page {
-            margin: 14mm 8mm 18mm 8mm;
+            margin: 18mm 8mm 18mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -263,30 +263,21 @@
         </tr>
     </table>
     <table class="report-table">
-        <colgroup>
-            <col style="width: 22%;">
-            <col style="width: 8%;">
-            <col style="width: 24%;">
-            <col style="width: 14%;">
-            <col style="width: 8%;">
-            <col style="width: 8%;">
-            <col style="width: 6%;">
-            <col style="width: 10%;">
-        </colgroup>
         <thead>
             <tr>
                 <th colspan="2">Pemakaian Bahan</th>
                 <th colspan="4">Hasil Gilingan</th>
-                <th colspan="2">Downtime</th>
+                <th colspan="3">Downtime</th>
             </tr>
             <tr>
                 <th>Nama Bahan</th>
                 <th>Qty<br>(Kg)</th>
                 <th>Nama Barang</th>
                 <th>Nomor<br>Label</th>
-                <th>Qty (Kg)</th>
+                <th>Qty<br>(Kg)</th>
                 <th>Hasil<br>Cek QC</th>
                 <th>Jam<br>Berhenti</th>
+                <th>Durasi<br>(Menit)</th>
                 <th>Keterangan</th>
             </tr>
         </thead>
@@ -295,28 +286,19 @@
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell">{!! $textOrBlank($row['input_nama_bahan'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}</td>
+                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}
+                    </td>
                     <td class="data-cell">{!! $outputNameOrFallback($row) !!}</td>
                     <td class="data-cell">{!! $textOrBlank($row['output_nomor_label'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}</td>
+                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}
+                    </td>
                     <td class="data-cell center">{!! $textOrBlank($row['output_hasil_cek_qc'] ?? '') !!}</td>
                     <td class="data-cell center">{!! $textOrBlank($row['downtime_jam_berhenti'] ?? '') !!}</td>
+                    <td class="data-cell center">{!! $textOrBlank($row['downtime_durasi'] ?? '') !!}</td>
                     <td class="data-cell">{!! $textOrBlank($row['downtime_keterangan'] ?? '') !!}</td>
                 </tr>
             @endforeach
-            @for ($i = 0; $i < $blankRowCount; $i++)
-                <tr class="filler-row {{ $i % 2 === 0 ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                    <td class="data-cell">&nbsp;</td>
-                </tr>
-            @endfor
         </tbody>
         <tfoot>
             <tr class="total-row">
@@ -328,30 +310,23 @@
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
+                <td>&nbsp;</td>
             </tr>
         </tfoot>
     </table>
     <div class="signature-fixed">
         <table class="signature-table">
-            <colgroup>
-                <col style="width: 17%;">
-                <col style="width: 16%;">
-                <col style="width: 23%;">
-                <col style="width: 22%;">
-                <col style="width: 14%;">
-                <col style="width: 8%;">
-            </colgroup>
             <thead>
                 <tr>
-                    <th>Di Buat Oleh,</th>
-                    <th colspan="2">Di Periksa Oleh,</th>
-                    <th>Di Setujui Oleh</th>
-                    <th colspan="2" rowspan="2">Jumlah Anggota</th>
+                    <th style="width: 18%;">Di Buat Oleh,</th>
+                    <th colspan="2" style="width: 50%;">Di Periksa Oleh,</th>
+                    <th style="width: 18%;">Di Setujui Oleh</th>
+                    <th colspan="2" rowspan="2" style="width: 14%;">Jumlah Anggota</th>
                 </tr>
                 <tr>
                     <th class="signature-role">Operator</th>
-                    <th class="signature-role">Ka. Regu Gilingan</th>
-                    <th class="signature-role">Ka. Div, Gilingan</th>
+                    <th class="signature-role" style="width: 25%;">Ka. Regu Pencampur & Penggilingan Bahan</th>
+                    <th class="signature-role" style="width: 25%;">Ka. Div, Produksi Inject</th>
                     <th class="signature-role">Ka. Dept, Produksi</th>
                 </tr>
             </thead>
@@ -363,7 +338,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['operator'] ?? '') !== '' ? e($approvals['operator']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['operator'] ?? '') !== '' ? e($approvals['operator']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -373,7 +350,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_regu_gilingan'] ?? '') !== '' ? e($approvals['ka_regu_gilingan']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['ka_regu_gilingan'] ?? '') !== '' ? e($approvals['ka_regu_gilingan']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -383,7 +362,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_div_gilingan'] ?? '') !== '' ? e($approvals['ka_div_gilingan']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['ka_div_gilingan'] ?? '') !== '' ? e($approvals['ka_div_gilingan']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -393,7 +374,9 @@
                                 <td class="signature-inner-space">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="signature-inner-name">{!! ($approvals['ka_dept_produksi'] ?? '') !== '' ? e($approvals['ka_dept_produksi']) : '&nbsp;' !!}</td>
+                                <td class="signature-inner-name">
+                                    {!! ($approvals['ka_dept_produksi'] ?? '') !== '' ? e($approvals['ka_dept_produksi']) : '&nbsp;' !!}
+                                </td>
                             </tr>
                         </table>
                     </td>

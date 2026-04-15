@@ -75,10 +75,6 @@
             display: table-header-group;
         }
 
-        .report-table tfoot {
-            display: table-row-group;
-        }
-
         .report-table tr {
             page-break-inside: avoid;
             page-break-after: auto;
@@ -130,10 +126,6 @@
             background: #fff;
         }
 
-        .center {
-            text-align: center;
-        }
-
         .number {
             text-align: right;
             white-space: nowrap;
@@ -156,7 +148,7 @@
         .signature-table th,
         .signature-table td {
             border: 1px solid #000;
-            padding: 3px 4px;
+            padding: 4px;
             text-align: center;
             vertical-align: middle;
         }
@@ -225,22 +217,9 @@
             ',',
         );
         $textOrBlank = static fn($value): string => trim((string) $value) !== '' ? e(trim((string) $value)) : '&nbsp;';
-        $outputNameOrFallback = static function (array $row) use ($textOrBlank): string {
-            $value = trim((string) ($row['output_nama_barang'] ?? ''));
-            if ($value !== '') {
-                return e($value);
-            }
-
-            $hasOutputContext =
-                trim((string) ($row['output_nomor_label'] ?? '')) !== '' ||
-                ($row['output_qty'] ?? null) !== null ||
-                trim((string) ($row['output_hasil_cek_qc'] ?? '')) !== '';
-
-            return $hasOutputContext ? '-' : '&nbsp;';
-        };
     @endphp
 
-    <h1 class="report-title">Laporan Harian Hasil Crusher Produksi</h1>
+    <h1 class="report-title">Laporan Harian Hasil Spanner Produksi</h1>
     <p class="report-subtitle"></p>
 
     <table class="summary-table">
@@ -270,50 +249,55 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th colspan="2">Pemakaian Bahan</th>
-                <th colspan="4">Hasil Crusher</th>
+                <th colspan="3">Pemakaian Bahan</th>
+                <th colspan="4">Hasil Spanner</th>
                 <th colspan="3">Downtime</th>
             </tr>
             <tr>
-                <th>Nama Bahan</th>
-                <th>Qty<br>(Kg)</th>
-                <th>Nama Barang</th>
+                <th rowspan="2">Nama Bahan</th>
+                <th rowspan="2">Qty<br>()</th>
+                <th rowspan="2">%</th>
+                <th rowspan="2">Nama Barang</th>
+                <th colspan="3">Bagus</th>
+                <th rowspan="2">Jam<br>Berhenti</th>
+                <th rowspan="2">Durasi<br>(Menit)</th>
+                <th rowspan="2">Keterangan</th>
+            </tr>
+            <tr>
                 <th>Nomor<br>Label</th>
-                <th>Qty<br>(Kg)</th>
-                <th>Hasil<br>Cek QC</th>
-                <th>Jam<br>Berhenti</th>
-                <th>Durasi<br>(Menit)</th>
-                <th>Keterangan</th>
+                <th>Qty<br>()</th>
+                <th>Berat<br>(Kg)</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($detailRows as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell">{!! $textOrBlank($row['input_nama_bahan'] ?? '') !!}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['input_nama_barang'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty']) : '' }}
+                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty'], 0) : '' }}</td>
+                    <td class="data-cell number">
+                        {{ $row['input_percentage'] !== null ? $formatNumber($row['input_percentage']) . '%' : '' }}
                     </td>
-                    <td class="data-cell">{!! $outputNameOrFallback($row) !!}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['output_nama_barang'] ?? '') !!}</td>
                     <td class="data-cell">{!! $textOrBlank($row['output_nomor_label'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty']) : '' }}
-                    </td>
-                    <td class="data-cell center">
-                        {!! $textOrBlank($row['output_hasil_cek_qc'] ?? '') !!}
-                    </td>
-                    <td class="data-cell center">{!! $textOrBlank($row['downtime_jam_berhenti'] ?? '') !!}</td>
-                    <td class="data-cell center">{!! $textOrBlank($row['downtime_durasi_menit'] ?? '') !!}</td>
+                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty'], 0) : '' }}</td>
+                    <td class="data-cell number">
+                        {{ $row['output_berat'] !== null ? $formatNumber($row['output_berat'], 0) : '' }}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['downtime_jam_berhenti'] ?? '') !!}</td>
+                    <td class="data-cell">{!! $textOrBlank($row['downtime_durasi'] ?? '') !!}</td>
                     <td class="data-cell">{!! $textOrBlank($row['downtime_keterangan'] ?? '') !!}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr class="total-row">
-                <td class="number">&nbsp;</td>
-                <td class="number">{{ $formatNumber($totals['input_qty'] ?? 0) }}</td>
+                <td>&nbsp;</td>
+                <td class="number">{{ $formatNumber($totals['input_qty'] ?? 0, 0) }}</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td class="number">{{ $formatNumber($totals['output_qty'] ?? 0) }}</td>
+                <td>&nbsp;</td>
+                <td class="number">{{ $formatNumber($totals['output_qty'] ?? 0, 0) }}</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -326,15 +310,15 @@
         <table class="signature-table">
             <thead>
                 <tr>
-                    <th style="width: 18%;">Di Buat Oleh,</th>
-                    <th colspan="2" style="width: 50%;">Di Periksa Oleh,</th>
-                    <th style="width: 18%;">Di Setujui Oleh</th>
-                    <th colspan="2" rowspan="2" style="width: 14%;">Jumlah Anggota</th>
+                    <th>Di Buat Oleh,</th>
+                    <th colspan="2">Di Periksa Oleh,</th>
+                    <th>Di Setujui Oleh</th>
+                    <th colspan="2" rowspan="2">Jumlah Anggota</th>
                 </tr>
                 <tr>
                     <th class="signature-role">Operator</th>
-                    <th class="signature-role" style="width: 25%;">Ka. Regu Pencampuran & Penggilingan</th>
-                    <th class="signature-role" style="width: 25%;">Ka. Div, Cuci & Broker</th>
+                    <th class="signature-role">Ka. Regu Spanner</th>
+                    <th class="signature-role">Ka. Div, Produksi Hilir</th>
                     <th class="signature-role">Ka. Dept, Produksi</th>
                 </tr>
             </thead>
@@ -359,7 +343,7 @@
                             </tr>
                             <tr>
                                 <td class="signature-inner-name">
-                                    {!! ($approvals['ka_regu_crusher'] ?? '') !== '' ? e($approvals['ka_regu_crusher']) : '&nbsp;' !!}
+                                    {!! ($approvals['ka_regu_spanner'] ?? '') !== '' ? e($approvals['ka_regu_spanner']) : '&nbsp;' !!}
                                 </td>
                             </tr>
                         </table>
@@ -371,7 +355,7 @@
                             </tr>
                             <tr>
                                 <td class="signature-inner-name">
-                                    {!! ($approvals['ka_div_crusher'] ?? '') !== '' ? e($approvals['ka_div_crusher']) : '&nbsp;' !!}
+                                    {!! ($approvals['ka_div_spanner'] ?? '') !== '' ? e($approvals['ka_div_spanner']) : '&nbsp;' !!}
                                 </td>
                             </tr>
                         </table>
