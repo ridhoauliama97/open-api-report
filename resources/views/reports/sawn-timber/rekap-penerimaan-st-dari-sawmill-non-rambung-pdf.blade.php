@@ -222,8 +222,18 @@
 
         $cellClassBySpec = static function (array $spec): string {
             $type = strtolower((string) ($spec['type'] ?? 'text'));
+            $key = strtolower(trim((string) ($spec['key'] ?? '')));
+            $label = strtolower(trim((string) ($spec['label'] ?? '')));
 
-            return in_array($type, ['number', 'percent'], true) ? 'number' : '';
+            if (in_array($type, ['number', 'percent'], true)) {
+                return 'number';
+            }
+
+            if (in_array($key, ['potong', 'potongan'], true) || in_array($label, ['potong', 'potongan'], true)) {
+                return 'number';
+            }
+
+            return '';
         };
     @endphp
 
@@ -295,7 +305,7 @@
                         $labelSpan = $tonKbIndex !== null ? 1 + $tonKbIndex : 1;
                     @endphp
                     <tr>
-                        <td class="number" style="text-align: center;" colspan="{{ $labelSpan }}">
+                        <td class="center" colspan="{{ $labelSpan }}">
                             <strong>Total :</strong>
                         </td>
                         @foreach ($schema as $index => $colSpec)
@@ -407,7 +417,7 @@
                 @foreach ($historis['rows'] as $potong => $vals)
                     @php $ri++; @endphp
                     <tr class="{{ $ri % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $potong }}</td>
+                        <td class="center" style="font-weight: bold;">{{ $potong }}</td>
                         @foreach ($vals as $val)
                             <td class="number">{{ $val === null ? '' : (string) $val }}</td>
                         @endforeach

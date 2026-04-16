@@ -41,10 +41,10 @@
 
         table.data-table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             font-size: 10px;
-            border: 1;
+            border: 1px solid #000;
             table-layout: fixed;
         }
 
@@ -62,9 +62,7 @@
 
         table.data-table th,
         table.data-table td {
-            border: 1;
-            border-top: 0;
-            border-bottom: 0;
+            border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -78,6 +76,14 @@
             background: #fff;
             font-size: 10px;
             white-space: nowrap;
+        }
+
+        table.data-table tbody td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        table.data-table tbody tr:last-child td {
             border-bottom: 1px solid #000;
         }
 
@@ -89,11 +95,6 @@
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        table.data-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
         }
 
         .table-end-line td {
@@ -126,6 +127,7 @@
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
 
         $fmtDimInt = static function ($v): string {
             $n = (float) ($v ?? 0);
@@ -142,7 +144,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Label ST Hidup (Kering)</h1>
-    <p class="report-subtitle"> </p>
+    <p class="report-subtitle"> Per {{ $generatedDate }} </p>
 
     <table class="data-table">
         <thead>

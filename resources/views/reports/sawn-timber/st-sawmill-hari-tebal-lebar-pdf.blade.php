@@ -98,6 +98,14 @@
             font-weight: bold;
         }
 
+        tbody td.col-group-span {
+            border-bottom: 1px solid #000;
+        }
+
+        tbody td.col-tebal-span {
+            border-bottom: 1px solid #000;
+        }
+
         .row-odd td {
             background: #c9d1df;
         }
@@ -323,12 +331,12 @@
                                 @endphp
                                 <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                                     @if (!$printedGroup)
-                                        <td class="center col-group" rowspan="{{ $groupRowspan }}">{{ $groupName }}
+                                        <td class="center col-group col-group-span" rowspan="{{ $groupRowspan }}">{{ $groupName }}
                                         </td>
                                         @php $printedGroup = true; @endphp
                                     @endif
                                     @if (!$printedTebal)
-                                        <td class="center" rowspan="{{ $tebalRowspan }}">
+                                        <td class="center col-tebal-span" rowspan="{{ $tebalRowspan }}">
                                             {{ $fmtDim($tebal) }}
                                         </td>
                                         @php $printedTebal = true; @endphp

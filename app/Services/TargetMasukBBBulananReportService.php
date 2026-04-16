@@ -44,7 +44,7 @@ class TargetMasukBBBulananReportService
             if (!isset($groups[$group])) {
                 $groups[$group] = [
                     'jenis' => $group,
-                    'target_bulanan' => 0.0,
+                    'monthly_targets' => array_fill(0, count($monthColumns), 0.0),
                     'monthly_values' => array_fill(0, count($monthColumns), 0.0),
                     'raw_total' => 0.0,
                     'total' => 0,
@@ -55,13 +55,11 @@ class TargetMasukBBBulananReportService
             }
 
             $target = $this->toFloat($row['TgtPerHari'] ?? null);
-            if ($target > 0) {
-                $groups[$group]['target_bulanan'] = $target;
-            }
+            $monthIndex = $monthIndexByKey[$monthKey];
+            $groups[$group]['monthly_targets'][$monthIndex] = $target;
 
             $hasilRaw = $this->toFloat($row['hasil'] ?? null);
             $hasilRounded = (float) round($hasilRaw, 0, PHP_ROUND_HALF_UP);
-            $monthIndex = $monthIndexByKey[$monthKey];
             $groups[$group]['monthly_values'][$monthIndex] = $hasilRounded;
             $groups[$group]['raw_total'] += $hasilRaw;
 

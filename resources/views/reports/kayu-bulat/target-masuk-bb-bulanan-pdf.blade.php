@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 16mm 8mm 18mm 8mm;
+            margin: 18mm 8mm 18mm 8mm;
             /* footer: html_reportFooter; */
         }
 
@@ -41,7 +41,7 @@
 
         table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             margin-bottom: 6px;
             page-break-inside: auto;
@@ -72,7 +72,7 @@
 
         th {
             background: #f3f3f3;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         tbody tr:nth-child(odd) td {
@@ -84,9 +84,21 @@
         }
 
         .row-label {
-            text-align: left;
-            font-weight: 700;
-            padding-left: 3px;
+            text-align: center;
+            font-weight: bold;
+            padding-left: 0;
+        }
+
+        .metric-label {
+            font-weight: bold;
+        }
+
+        .under-target {
+            font-weight: bold;
+        }
+
+        .report-table tbody tr.data-row.jenis-separator td.data-cell {
+            border-top: 1px solid #000 !important;
         }
 
         .summary-table {
@@ -110,7 +122,7 @@
             margin: 0 0 6px 0;
             text-align: center;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .headers-row th {
@@ -254,12 +266,12 @@
         $yStep = 100;
         $maxChartValue = max($yStep, (int) ceil($maxChartValue / $yStep) * $yStep);
 
-        $svgWidth = 980;
-        $svgHeight = 330;
-        $padLeft = 36;
+        $svgWidth = 1000;
+        $svgHeight = 250;
+        $padLeft = 34;
         $padRight = 10;
         $padTop = 8;
-        $padBottom = 40;
+        $padBottom = 34;
         $plotWidth = $svgWidth - $padLeft - $padRight;
         $plotHeight = $svgHeight - $padTop - $padBottom;
         $countLabels = count($chartLabelsDisplay);
@@ -286,8 +298,8 @@
     <table class="report-table" style="margin-bottom: 20px">
         <thead>
             <tr class="headers-row">
-                <th>Nama Group</th>
-                <th>Target Bulan</th>
+                <th>Jenis</th>
+                <th>Target</th>
                 @foreach ($monthColumnsDisplay as $month)
                     <th>{{ $month['label'] }}</th>
                 @endforeach
@@ -296,18 +308,40 @@
         </thead>
         <tbody>
             @forelse ($tableRows as $row)
-                <tr class="data-row">
-                    <td class="row-label data-cell">{{ $row['jenis'] }}</td>
-                    <td class="data-cell">{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
-                    @foreach ($row['monthly_values'] as $value)
-                        <td class="data-cell">{{ number_format((float) $value, 0, '.', ',') }}</td>
+                @php
+                    $isFirstJenis = $loop->first;
+                    $targets = is_array($row['monthly_targets'] ?? null) ? $row['monthly_targets'] : [];
+                    $values = is_array($row['monthly_values'] ?? null) ? $row['monthly_values'] : [];
+                    $total = (float) ($row['total'] ?? 0);
+                @endphp
+                <tr class="data-row {{ $isFirstJenis ? '' : 'jenis-separator' }}">
+                    <td class="row-label data-cell" rowspan="2">{{ $row['jenis'] }}</td>
+                    <td class="data-cell metric-label">Target</td>
+                    @foreach ($monthColumnsDisplay as $index => $month)
+                        @php
+                            $target = (float) ($targets[$index] ?? 0);
+                        @endphp
+                        <td class="data-cell">{{ $target == 0.0 ? '' : number_format($target, 0, '.', ',') }}</td>
                     @endforeach
-                    <td class="data-cell" style="font-weight: bold">
-                        {{ number_format((float) $row['total'], 0, '.', ',') }}</td>
+                    <td class="data-cell">&nbsp;</td>
+                </tr>
+                <tr class="data-row">
+                    <td class="data-cell metric-label">Hasil</td>
+                    @foreach ($monthColumnsDisplay as $index => $month)
+                        @php
+                            $target = (float) ($targets[$index] ?? 0);
+                            $floatValue = (float) ($values[$index] ?? 0);
+                            $isUnderTarget = $target > 0 && $floatValue < $target;
+                        @endphp
+                        <td class="data-cell {{ $isUnderTarget ? 'under-target' : '' }}">
+                            {{ number_format($floatValue, 0, '.', ',') }}
+                        </td>
+                    @endforeach
+                    <td class="data-cell" style="font-weight: bold">{{ number_format($total, 0, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr class="data-row">
-                    <td class="data-cell" colspan="99">Tidak ada data.</td>
+                    <td class="data-cell" colspan="{{ count($monthColumnsDisplay) + 3 }}">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -316,7 +350,7 @@
     <table class="report-table summary-table" style="margin-bottom: 20px">
         <thead>
             <tr class="headers-row">
-                <th>Nama Group</th>
+                <th>Jenis</th>
                 <th>Avg</th>
                 <th>Min</th>
                 <th>Max</th>
@@ -342,7 +376,6 @@
             @endforelse
         </tbody>
     </table>
-
     <div class="chart-wrap">
         <p class="chart-title">Grafik Target Masuk Bahan Baku Bulanan</p>
         <svg width="{{ $svgWidth }}" height="{{ $svgHeight }}" xmlns="http://www.w3.org/2000/svg">

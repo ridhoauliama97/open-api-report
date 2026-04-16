@@ -20,6 +20,7 @@
         $groups = is_array($data['groups'] ?? null) ? $data['groups'] : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
 
         $fmtDim = static function (?float $v): string {
             if ($v === null) {
@@ -90,7 +91,7 @@
     @endphp
 
     <h1 class="report-title">Laporan ST Hidup per SPK, per Jenis, per Tebal, per Group Jenis Kayu</h1>
-    <p class="report-subtitle">&nbsp;</p>
+    <p class="report-subtitle"> Per {{ $generatedDate }} </p>
 
     @forelse ($groups as $jenisGroup)
         @php
@@ -154,11 +155,6 @@
                             <th style="width: 14.28%;">Total (Ton)</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="8"></td>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         @forelse ($rows as $idx => $row)
                             @php
@@ -184,11 +180,11 @@
                             </tr>
                         @endforelse
                         <tr class="totals-row">
-                            <td class="center" colspan="4">Sub Total {{ $noSpk }}</td>
-                            <td class="number">{{ $fmtTon($sumBasah) }}</td>
-                            <td class="number">{{ $fmtTon($sumKd) }}</td>
-                            <td class="number">{{ $fmtTon($sumKering) }}</td>
-                            <td class="number">{{ $fmtTon($sumTotal) }}</td>
+                            <td class="center" colspan="4" style="border-top: 0 !important;">Sub Total {{ $noSpk }}</td>
+                            <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumBasah) }}</td>
+                            <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumKd) }}</td>
+                            <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumKering) }}</td>
+                            <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumTotal) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -249,13 +245,6 @@
 
                 <div class="section-title" style="margin-top: 10px;">{{ $jenisName }}</div>
                 <table class="report-table" style="width: 100%;">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                    </colgroup>
                     <thead>
                         <tr class="headers-row">
                             <th style="width: 20%;">Grade</th>
@@ -265,11 +254,6 @@
                             <th style="width: 20%;">Total (Ton)</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="5"></td>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         @forelse ($products as $p)
                             @php

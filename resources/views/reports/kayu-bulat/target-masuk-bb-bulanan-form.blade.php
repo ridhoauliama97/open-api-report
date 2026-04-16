@@ -130,8 +130,14 @@
                             @forelse ($reportData['table_rows'] as $row)
                                 <tr>
                                     <td class="sticky-col">{{ $row['jenis'] }}</td>
-                                    <td>{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
-                                    @foreach ($row['monthly_values'] as $value)
+                                    <td>
+                                        @php
+                                            $targets = is_array($row['monthly_targets'] ?? null) ? $row['monthly_targets'] : [];
+                                            $firstTarget = collect($targets)->first(fn($value) => (float) $value > 0);
+                                        @endphp
+                                        {{ $firstTarget ? number_format((float) $firstTarget, 0, '.', ',') : '-' }}
+                                    </td>
+                                    @foreach ($row['monthly_values'] as $index => $value)
                                         <td>{{ number_format((float) $value, 0, '.', ',') }}</td>
                                     @endforeach
                                     <td>{{ number_format((float) $row['total'], 0, '.', ',') }}</td>
