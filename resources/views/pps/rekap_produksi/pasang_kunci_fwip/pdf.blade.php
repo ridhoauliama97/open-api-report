@@ -113,7 +113,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
         }
@@ -228,8 +228,10 @@
                         <td class="data-cell">{{ (string) ($row['ItemCode'] ?? '') }}</td>
                         <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
                         <td class="data-cell number">{{ $pcs === null ? '' : number_format($pcs, 0, '.', ',') }}</td>
-                        <td class="data-cell number">{{ $berat === null ? '' : number_format($berat, 2, '.', ',') }}</td>
-                        <td class="data-cell number" style="text-align: center">{{ (string) ($row['IdWarehouse'] ?? '') }}</td>
+                        <td class="data-cell number">{{ $berat === null ? '' : number_format($berat, 2, '.', ',') }}
+                        </td>
+                        <td class="data-cell number" style="text-align: center">
+                            {{ (string) ($row['IdWarehouse'] ?? '') }}</td>
                     </tr>
                 @empty
                     <tr>

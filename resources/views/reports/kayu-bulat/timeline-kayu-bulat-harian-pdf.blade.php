@@ -41,7 +41,7 @@
 
         table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             page-break-inside: auto;
             table-layout: fixed;
@@ -108,6 +108,7 @@
         .row-even td {
             background: #eef2f8;
         }
+
         .headers-row th {
             font-weight: bold;
             font-size: 11px;
@@ -126,6 +127,7 @@
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;
         }
+
         @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>

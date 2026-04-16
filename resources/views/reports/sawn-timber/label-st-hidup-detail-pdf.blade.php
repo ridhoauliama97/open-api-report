@@ -41,7 +41,7 @@
 
         table.data-table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
             table-layout: fixed;

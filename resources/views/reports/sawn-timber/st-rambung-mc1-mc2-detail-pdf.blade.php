@@ -32,6 +32,13 @@
             font-weight: bold;
         }
 
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
+        }
+
         .group-title {
             margin: 10px 0 2px 0;
             font-size: 12px;
@@ -48,7 +55,7 @@
 
         table.data-table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             font-size: 10px;
             border: 1px solid #000;
@@ -71,17 +78,12 @@
         table.data-table th,
         table.data-table td {
             border: 0;
-            border-left: 0.5px solid #000;
+            border-left: 1px solid #000;
             border-top: 0;
             border-bottom: 0;
             padding: 2px 3px;
             vertical-align: middle;
         }
-
-        /* table.data-table th:first-child,
-        table.data-table td:first-child {
-            border-left: 0;
-        } */
 
         table.data-table th {
             text-align: center;
@@ -150,6 +152,7 @@
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
 
         $fmtDimInt = static function ($v): string {
             $n = (float) ($v ?? 0);
@@ -174,6 +177,7 @@
     @endphp
 
     <h1 class="report-title">Laporan ST Hidup Rambung MC1 dan MC2 (Detail)</h1>
+    <p class="report-subtitle">Per {{ $generatedDate }}</p>
 
     @forelse ($groups as $group)
         @php

@@ -48,7 +48,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border-top: 1px solid #000;
             border-right: 1px solid #000;
@@ -210,8 +210,9 @@
                     @foreach ($columns as $column)
                         @php
                             $normalizedColumn = $normalizeColumnName($column);
-                            $isBoldColumn = $isMasukColumn($column)
-                                || in_array($normalizedColumn, ['jlhbtg', 'jumlahbatang', 'jumlahbatangpcs'], true);
+                            $isBoldColumn =
+                                $isMasukColumn($column) ||
+                                in_array($normalizedColumn, ['jlhbtg', 'jumlahbatang', 'jumlahbatangpcs'], true);
                             $cellStyle = $isBoldColumn ? 'font-weight: bold;' : '';
                         @endphp
                         @if (($numericColumns[$column] ?? false) === true)

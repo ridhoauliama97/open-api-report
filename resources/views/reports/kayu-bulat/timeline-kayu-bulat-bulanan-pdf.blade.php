@@ -41,7 +41,7 @@
 
         table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             page-break-inside: auto;
             table-layout: fixed;

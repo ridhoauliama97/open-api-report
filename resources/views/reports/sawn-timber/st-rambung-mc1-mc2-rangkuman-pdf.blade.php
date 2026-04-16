@@ -32,6 +32,13 @@
             font-weight: bold;
         }
 
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
+        }
+
         .sub-title {
             margin: 20px 0 6px 0;
             font-size: 11px;
@@ -47,7 +54,7 @@
 
         table.data-table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             font-size: 10px;
             border: 1px solid #000;
@@ -144,6 +151,7 @@
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
 
         $fmtInt = static function ($v): string {
             $n = (int) ($v ?? 0);
@@ -160,6 +168,7 @@
     @endphp
 
     <h1 class="report-title">Laporan ST Hidup Rambung MC1 dan MC2 (Rangkuman)</h1>
+    <p class="report-subtitle"> Per {{ $generatedDate }}</p>
 
     <div class="sub-title">Total Masing-masing Jenis Stock</div>
     <table class="data-table">
@@ -218,7 +227,7 @@
             @endforelse
             <tr class="totals-row">
                 <td colspan="2" class="center">Grand Total</td>
-                <td class="center">{{ $fmtInt($grand['pcs'] ?? 0) }}</td>
+                <td class="number">{{ $fmtInt($grand['pcs'] ?? 0) }}</td>
                 <td class="number">{{ $fmt4($grand['ton'] ?? 0) }}</td>
                 <td class="number">{{ $fmt4($grand['kubik'] ?? 0) }}</td>
             </tr>

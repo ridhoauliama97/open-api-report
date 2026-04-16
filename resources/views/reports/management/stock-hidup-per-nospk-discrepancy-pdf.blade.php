@@ -136,7 +136,7 @@
 
         .summary-table {
             width: 48%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
         }
 

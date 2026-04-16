@@ -54,7 +54,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
         }
@@ -132,7 +132,8 @@
             line-height: 0 !important;
             background: transparent !important;
         }
-@include('reports.partials.pdf-footer-table-style')
+
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -231,7 +232,7 @@
                 <td colspan="11"></td>
             </tr>
         </tfoot>
-<tbody>
+        <tbody>
             @forelse ($rowsData as $row)
                 @php
                     $rowPeriod1 = $toFloat($row['Period1'] ?? null) ?? 0.0;

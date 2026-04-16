@@ -74,7 +74,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
         }

@@ -143,7 +143,7 @@
 
         .summary-table {
             width: 62%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
         }
 

@@ -55,7 +55,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border-top: 0;
             border-right: 0;
@@ -382,14 +382,15 @@
                                 $normalizedColumn = $normalizeColumnName($column);
                                 $numeric = $isNumericColumn($column, $group['rows']);
                                 $isRendemenColumn = $normalizedColumn === 'rendemen';
-                                $isBoldSummaryColumn = in_array($normalizedColumn, ['kubikin', 'kubikout', 'rendemen'], true);
-                                $isLabelOutColumn = in_array(
+                                $isBoldSummaryColumn = in_array(
                                     $normalizedColumn,
-                                    ['labelout', 'labeloutput'],
+                                    ['kubikin', 'kubikout', 'rendemen'],
                                     true,
                                 );
+                                $isLabelOutColumn = in_array($normalizedColumn, ['labelout', 'labeloutput'], true);
                                 $cellWidth = $widthText($isNamaMesinColumn($column) ? $machineWidth : $uniformWidth);
-                                $cellStyle = 'width: ' . $cellWidth . ';' . ($isBoldSummaryColumn ? ' font-weight: bold;' : '');
+                                $cellStyle =
+                                    'width: ' . $cellWidth . ';' . ($isBoldSummaryColumn ? ' font-weight: bold;' : '');
                             @endphp
                             @if ($isRendemenColumn)
                                 <td class="data-cell number" style="{{ $cellStyle }}">

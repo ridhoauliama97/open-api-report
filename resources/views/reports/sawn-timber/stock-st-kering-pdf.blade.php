@@ -41,7 +41,7 @@
 
         table {
             width: 65%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
             margin: 2px 10px 0 10px;
@@ -49,7 +49,7 @@
 
         .report-table {
             width: 75%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
             margin: 2px 10px 0 10px;

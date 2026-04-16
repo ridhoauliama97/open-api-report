@@ -54,7 +54,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border-top: 0;
             border-right: 0;
@@ -112,9 +112,7 @@
             background: #fff;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
-
-        .headers-row th {
+        @include('reports.partials.pdf-footer-table-style') .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
@@ -335,8 +333,10 @@
                         <td class="data-cell number">{{ $formatNumber($row['Tebal'] ?? null, 0) }}</td>
                         <td class="data-cell number">{{ $formatNumber($row['Lebar'] ?? null, 0) }}</td>
                         <td class="data-cell number">{{ $formatNumber($row['Panjang'] ?? null, 0) }}</td>
-                        <td class="data-cell number" style="font-weight: bold;">{{ $formatNumber($row['JmlhBatang'] ?? null, 0) }}</td>
-                        <td class="data-cell number" style="font-weight: bold;">{{ $formatNumber($row['KubikIN'] ?? null, 4) }}</td>
+                        <td class="data-cell number" style="font-weight: bold;">
+                            {{ $formatNumber($row['JmlhBatang'] ?? null, 0) }}</td>
+                        <td class="data-cell number" style="font-weight: bold;">
+                            {{ $formatNumber($row['KubikIN'] ?? null, 4) }}</td>
                     </tr>
                 @empty
                     <tr class="data-row row-odd">

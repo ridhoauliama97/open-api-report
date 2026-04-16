@@ -118,7 +118,7 @@
 
         .summary-table {
             width: 38%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             margin-top: 6px;
         }

@@ -48,7 +48,7 @@
         }
 
         .report-table {
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             border-top: 0;
             border-right: 0;
