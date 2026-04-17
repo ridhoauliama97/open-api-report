@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -221,11 +221,6 @@
                 <th>Keterangan</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="9"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($products as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -260,11 +255,6 @@
                 <th style="width: 27%;">Koordinat</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="7"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($gpsPercentages as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -310,11 +300,6 @@
                 <th style="width: 12%;">Koordinat</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="10"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($lands as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

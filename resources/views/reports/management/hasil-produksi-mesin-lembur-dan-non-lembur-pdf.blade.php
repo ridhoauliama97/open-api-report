@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 10mm 6mm 12mm 6mm;
+            margin: 12mm 6mm 12mm 6mm;
             footer: html_reportFooter;
         }
 
@@ -37,11 +37,6 @@
             margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
         }
 
         .report-table {
@@ -166,19 +161,9 @@
     <div class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</div>
 
     <table class="report-table">
-        <colgroup>
-            <col style="width: 78px;">
-            <col style="width: 108px;">
-            <col style="width: 40px;">
-            <col style="width: 42px;">
-            <col style="width: 58px;">
-            <col style="width: 40px;">
-            <col style="width: 42px;">
-            <col style="width: 58px;">
-        </colgroup>
         <thead>
             <tr>
-                <th rowspan="2">Tanggal</th>
+                <th rowspan="2" style="width: 15%;">Tanggal</th>
                 <th rowspan="2">Nama Mesin</th>
                 <th colspan="3">Jam Kerja Normal</th>
                 <th colspan="3">Jam Kerja Lembur</th>
@@ -192,11 +177,6 @@
                 <th>mtr3</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="8"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @foreach ($groupedRows as $group)

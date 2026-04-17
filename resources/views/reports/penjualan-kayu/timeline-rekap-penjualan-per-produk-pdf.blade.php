@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 10mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -232,11 +232,6 @@
                     <th colspan="2">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 6 + count($monthColumns) }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $globalRowIndex = 0; @endphp
                 @foreach ($products as $productIndex => $product)
@@ -335,11 +330,6 @@
                     <th colspan="2">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 3 + count($monthColumns) }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($products as $index => $product)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -246,11 +246,6 @@
                 <th style="width: 74px;">Lebar</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="3"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($dimensions as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -275,11 +270,6 @@
                 <th style="width: 22%;">Rend</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="4"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @foreach ($rendemenRows as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -292,8 +282,9 @@
         </tbody>
     </table>
 
-    <div class="section-subtitle center">Rendemen
-        Global{{ $rendemenGlobal !== null ? ' : ' . $fmtPercent($rendemenGlobal) . '%' : '' }}</div>
+    <div class="section-subtitle" style="margin-left:245px;">
+        Rendemen Global{{ $rendemenGlobal !== null ? ' : ' . $fmtPercent($rendemenGlobal) . '%' : '' }}
+    </div>
 
     <div class="section-title">Label yang masih hidup : </div>
     @forelse ($aliveLabels as $category)
@@ -310,11 +301,6 @@
                     <th style="width: 13%;">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="7"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($category['rows'] as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -360,11 +346,6 @@
                     <th style="width: 13%;">Total</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="7"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($category['rows'] as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

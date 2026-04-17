@@ -14,7 +14,7 @@
 
         @page {
             sheet-size: A4-L;
-            margin: 8mm 6mm 12mm 6mm;
+            margin: 12mm 6mm 12mm 6mm;
             footer: html_reportFooter;
         }
 
@@ -204,11 +204,6 @@
                 @endforeach
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ 1 + count($columns) * 3 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @foreach ($rows as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

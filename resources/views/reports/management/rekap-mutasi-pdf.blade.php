@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -45,6 +45,12 @@
             font-weight: bold;
         }
 
+        .section-subtitle {
+            margin: 10px 0 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -56,6 +62,15 @@
             border: 1px solid #000;
             page-break-inside: auto;
             margin-bottom: 8px;
+        }
+
+        .report-table-section {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000;
+            page-break-inside: auto;
+            margin-bottom: 8px;
+            margin-left: 8px;
         }
 
         thead {
@@ -134,6 +149,7 @@
             width: 28%;
             margin-top: 4px;
             margin-bottom: 10px;
+            margin-left: 8px;
         }
 
         .small-summary td {
@@ -204,11 +220,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($columns) }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($rows as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -231,11 +242,14 @@
                     </tr>
                 @endforelse
                 <tr class="total-row">
-                    @foreach ($columns as $key => $label)
-                        @if ($key === 'No')
-                            <td class="center"></td>
-                        @elseif ($key === 'Jenis')
-                            <td class="center">Total :</td>
+                    @php
+                        $columnKeys = array_keys($columns);
+                    @endphp
+                    @foreach ($columnKeys as $index => $key)
+                        @if ($index === 0)
+                            <td class="center" colspan="2">Total :</td>
+                        @elseif ($index === 1)
+                            @continue
                         @else
                             <td class="number">{{ $formatValue($totals[$key] ?? null, $valueFormat) }}</td>
                         @endif
@@ -250,8 +264,8 @@
                 $inputRows = is_array($inputTable['rows'] ?? null) ? $inputTable['rows'] : [];
                 $inputTotals = is_array($inputTable['totals'] ?? null) ? $inputTable['totals'] : [];
             @endphp
-            <div class="section-title">{{ $inputTable['title'] ?? '-' }}</div>
-            <table class="report-table" style="width: 62%;">
+            <div class="section-subtitle">{{ $inputTable['title'] ?? '-' }}</div>
+            <table class="report-table-section" style="width: 62%;">
                 <thead>
                     <tr>
                         @foreach ($inputColumns as $key => $label)
@@ -262,11 +276,6 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="{{ count($inputColumns) }}"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($inputRows as $index => $row)
                         <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -288,11 +297,14 @@
                         </tr>
                     @endforelse
                     <tr class="total-row">
-                        @foreach ($inputColumns as $key => $label)
-                            @if ($key === 'No')
-                                <td class="center"></td>
-                            @elseif ($key === 'Jenis')
-                                <td class="center">Total :</td>
+                        @php
+                            $inputColumnKeys = array_keys($inputColumns);
+                        @endphp
+                        @foreach ($inputColumnKeys as $index => $key)
+                            @if ($index === 0)
+                                <td class="center" colspan="2">Total :</td>
+                            @elseif ($index === 1)
+                                @continue
                             @else
                                 <td class="number">{{ $formatValue($inputTotals[$key] ?? null, 'decimal4') }}</td>
                             @endif

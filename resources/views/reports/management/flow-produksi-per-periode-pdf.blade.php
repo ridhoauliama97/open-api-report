@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -173,6 +173,15 @@
         $rows = is_array($data['rows'] ?? null) ? $data['rows'] : [];
         $totals = is_array($data['totals'] ?? null) ? $data['totals'] : [];
         $summaryLines = is_array($data['summary_lines'] ?? null) ? $data['summary_lines'] : [];
+        $summaryLines = array_map(static function (array $line): array {
+            $line['text'] = str_replace(
+                'ST Masuk KD - ST Hasil Racip',
+                'ST Hasil Racip - ST Masuk KD',
+                (string) ($line['text'] ?? ''),
+            );
+
+            return $line;
+        }, $summaryLines);
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
 
@@ -194,22 +203,6 @@
     <div class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</div>
 
     <table class="report-table">
-        <colgroup>
-            <col style="width: 3%;">
-            <col style="width: 11%;">
-            <col style="width: 7%;">
-            <col style="width: 7%;">
-            <col style="width: 7%;">
-            <col style="width: 9%;">
-            <col style="width: 6.5%;">
-            <col style="width: 6.5%;">
-            <col style="width: 6.5%;">
-            <col style="width: 9%;">
-            <col style="width: 6.5%;">
-            <col style="width: 6.5%;">
-            <col style="width: 9%;">
-            <col style="width: 8%;">
-        </colgroup>
         <thead>
             <tr>
                 <th>No</th>
@@ -218,21 +211,16 @@
                 <th>KB diRacip (Ton)</th>
                 <th>ST Hasil Racip (Ton)</th>
                 <th>ST Siap Vacuum Stick</th>
-                <th>ST Masuk KD (Ton)</th>
+                <th>ST Hasil Racip - ST Masuk KD (Ton)</th>
                 <th>ST Keluar KD (Ton)</th>
                 <th>ST Pakai di S4S (Ton)</th>
-                <th>WIP Bersih S4S (m3)</th>
-                <th>WIP Pakai di FJ (m3)</th>
-                <th>WIP Hasil FJ (m3)</th>
-                <th>WIP Pakai di Moulding (m3)</th>
-                <th>WIP hasil Moulding (m3)</th>
+                <th>WIP Bersih S4S (m<sup>3</sup>)</th>
+                <th>WIP Pakai di FJ (m<sup>3</sup>)</th>
+                <th>WIP Hasil FJ (m<sup>3</sup>)</th>
+                <th>WIP Pakai di Moulding (m<sup>3</sup>)</th>
+                <th>WIP hasil Moulding (m<sup>3</sup>)</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="14"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @foreach ($rows as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

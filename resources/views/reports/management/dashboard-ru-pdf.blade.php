@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 8mm 6mm 12mm 6mm;
+            margin: 12mm 6mm 12mm 6mm;
             footer: html_reportFooter;
         }
 
@@ -41,7 +41,7 @@
 
         .section-title {
             margin: 10px 0 4px 0;
-            font-size: 9px;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -56,6 +56,7 @@
             border: 1px solid #000;
             table-layout: fixed;
             page-break-inside: auto;
+            font-size: 10px;
         }
 
         thead {

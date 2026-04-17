@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -175,11 +175,6 @@
                     <th style="width: 84px;">Kubik</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="8"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($category['rows'] ?? [] as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -221,11 +216,6 @@
                     <th style="width: 96px;">Total Kubik</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($summaryRows as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

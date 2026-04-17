@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 10mm 6mm 12mm 6mm;
+            margin: 12mm 6mm 12mm 6mm;
             footer: html_reportFooter;
         }
 
@@ -167,6 +167,23 @@
 
             return number_format((float) $value, 0, '.', ',');
         };
+
+        $resolveWeightUnit = static function (?string $categoryName): string {
+            return str_contains(strtoupper(trim((string) $categoryName)), 'ST') ? 'Ton' : 'm<sup>3</sup>';
+        };
+
+        $fmtWeightWithUnit = static function ($value, ?string $categoryName) use (
+            $fmtNumber,
+            $resolveWeightUnit,
+        ): string {
+            $formatted = $fmtNumber($value);
+
+            if ($formatted === '') {
+                return '';
+            }
+
+            return $formatted . ' ' . $resolveWeightUnit($categoryName);
+        };
     @endphp
 
     <h1 class="report-title">Laporan Label Perhari</h1>
@@ -200,11 +217,6 @@
                         <th style="width: 84px;">Berat</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="12"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($chunkRows as $index => $row)
                         <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -219,14 +231,14 @@
                             <td class="center">{{ ($row['Lebar'] ?? '') !== '' ? $row['Lebar'] : '-' }}</td>
                             <td class="center">{{ ($row['Panjang'] ?? '') !== '' ? $row['Panjang'] : '-' }}</td>
                             <td class="number">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
-                            <td class="number">{{ $fmtNumber($row['Berat'] ?? null) }}</td>
+                            <td class="number">{!! $fmtWeightWithUnit($row['Berat'] ?? null, $category['name'] ?? null) !!}</td>
                         </tr>
                     @endforeach
                     @if ($chunkIndex === count($chunks) - 1)
                         <tr class="total-row">
                             <td colspan="10" class="center">Total {{ $category['name'] ?? '-' }}</td>
                             <td class="number">{{ $fmtInt($category['total_pcs'] ?? null) }}</td>
-                            <td class="number">{{ $fmtNumber($category['total_berat'] ?? null) }}</td>
+                            <td class="number">{!! $fmtWeightWithUnit($category['total_berat'] ?? null, $category['name'] ?? null) !!}</td>
                         </tr>
                     @endif
                 </tbody>
@@ -244,22 +256,17 @@
                 <th style="width: 90px;">Total Berat</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="4"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @foreach ($summaryRows as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td>{{ $row['Kategori'] ?? '-' }}</td>
                     <td class="number">{{ $fmtInt($row['LabelCount'] ?? null) }}</td>
                     <td class="number">{{ $fmtInt($row['TotalPcs'] ?? null) }}</td>
-                    <td class="number">{{ $fmtNumber($row['TotalBerat'] ?? null) }}</td>
+                    <td class="number">{!! $fmtWeightWithUnit($row['TotalBerat'] ?? null, $row['Kategori'] ?? null) !!}</td>
                 </tr>
             @endforeach
             <tr class="total-row">
-                <td class="center">Total</td>
+                <td class="center">Grand Total</td>
                 <td class="number">{{ $fmtInt($grandTotals['label_count'] ?? null) }}</td>
                 <td class="number">{{ $fmtInt($grandTotals['pcs'] ?? null) }}</td>
                 <td class="number">{{ $fmtNumber($grandTotals['berat'] ?? null) }}</td>

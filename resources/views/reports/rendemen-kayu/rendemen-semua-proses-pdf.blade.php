@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -155,6 +156,26 @@
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @php
+        $preferredGroupOrder = ['S4S', 'FJ', 'MLD', 'LMT', 'CCAKHIR', 'SAND', 'PACK'];
+        $groupMap = [];
+        foreach ($groups as $group) {
+            $groupName = (string) ($group['name'] ?? 'LAINNYA');
+            $groupMap[$groupName] = $group;
+        }
+
+        $orderedGroups = [];
+        foreach ($preferredGroupOrder as $preferredName) {
+            if (isset($groupMap[$preferredName])) {
+                $orderedGroups[] = $groupMap[$preferredName];
+                unset($groupMap[$preferredName]);
+            }
+        }
+
+        foreach ($groupMap as $remainingGroup) {
+            $orderedGroups[] = $remainingGroup;
+        }
+
+        $groups = $orderedGroups;
         $groupNames = array_map(static fn($group): string => (string) ($group['name'] ?? 'LAINNYA'), $groups);
         $pivotRows = [];
         $dateKeys = [];
@@ -213,7 +234,8 @@
                             @php $value = $pivotRows[$date][$groupName] ?? null; @endphp
                             <td class="number">{{ $fmt($value['Input'] ?? null) }}</td>
                             <td class="number">{{ $fmt($value['Output'] ?? null) }}</td>
-                            <td class="number">{{ $fmtPercent($value['Rendemen'] ?? null) }}</td>
+                            <td class="number" style="font-weight: bold;">{{ $fmtPercent($value['Rendemen'] ?? null) }}
+                            </td>
                         @endforeach
                     </tr>
                 @endforeach
@@ -227,17 +249,12 @@
                     @endforeach
                 </tr>
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 2 + count($groupNames) * 3 }}"></td>
-                </tr>
-            </tfoot>
         </table>
     @endif
 
     @if ($groups !== [])
         <div style="margin-top: 10px;">
-            <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
+            <div class="group-title" style="margin-bottom: 6px;">Rangkuman</div>
             <ul style="margin: 0; padding-left: 18px;">
                 <li>Total Group :
                     <strong>{{ number_format((int) ($summary['total_groups'] ?? 0), 0, '.', ',') }}</strong>

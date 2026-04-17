@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 10mm 16mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -156,6 +156,9 @@
     @forelse ($reportSections as $section)
         @php
             $sectionRows = is_array($section['rows'] ?? null) ? $section['rows'] : [];
+            usort($sectionRows, static function (array $left, array $right): int {
+                return ((float) ($right['ton'] ?? 0)) <=> ((float) ($left['ton'] ?? 0));
+            });
         @endphp
         <div style="margin-bottom: 6px; font-weight: bold;">{{ $section['proses'] ?? '' }}</div>
 
@@ -168,18 +171,14 @@
                     <th>Ton</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($sectionRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                        <td class="center data-cell" style="width: 8%;">{{ $row['no'] ?? $loop->iteration }}</td>
+                        <td class="center data-cell" style="width: 8%;">{{ $loop->iteration }}</td>
                         <td class="data-cell" style="text-align: left; width: 44%;">{{ $row['jenis'] ?? '' }}</td>
                         <td class="center data-cell" style="width: 28%;">{{ $row['nama_grade'] ?? '' }}</td>
-                        <td class="number-right data-cell" style="width: 20%;">{{ $fmtTon($row['ton'] ?? 0) }}</td>
+                        <td class="number-right data-cell" style="width: 20%; font-weight: bold;">
+                            {{ $fmtTon($row['ton'] ?? 0) }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -190,7 +189,7 @@
         </table>
 
         <div
-            style="width: 97%; margin-left: 18px; margin-top: 4px; text-align: right; font-weight: bold; margin-bottom: 10px;">
+            style="width: 97%; margin-left: 18px; margin-top: 8px; text-align: right; font-weight: bold; margin-bottom: 2px;">
             Jumlah : {{ $fmtTon($section['subtotal_ton'] ?? 0) }}
         </div>
     @empty

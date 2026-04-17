@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -121,6 +121,7 @@
         .product-table {
             width: 100%;
             margin-bottom: 8px;
+            margin-left: 14px;
         }
 
         .summary-title {
@@ -171,6 +172,10 @@
         $products = is_array($data['products'] ?? null) ? $data['products'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
         $grandTotalM3 = (float) ($summary['grand_total_m3'] ?? 0.0);
+        $summaryProducts = $products;
+        usort($summaryProducts, static function (array $left, array $right): int {
+            return ((float) ($right['summary_ratio'] ?? 0)) <=> ((float) ($left['summary_ratio'] ?? 0));
+        });
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $fmtInt = static fn($value): string => $value === null ? '' : number_format((float) $value, 0, '.', ',');
@@ -182,26 +187,27 @@
     <div class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</div>
 
     @forelse ($products as $product)
+        @php
+            $productBuyers = is_array($product['buyers'] ?? null) ? $product['buyers'] : [];
+            usort($productBuyers, static function (array $left, array $right): int {
+                return ((float) ($right['total_m3'] ?? 0)) <=> ((float) ($left['total_m3'] ?? 0));
+            });
+        @endphp
         <div class="section-title">{{ $product['number'] ?? '' }}. Produk : {{ $product['name'] ?? '-' }}</div>
-        @foreach ($product['buyers'] ?? [] as $buyer)
+        @foreach ($productBuyers as $buyer)
             <div class="buyer-title">Buyer : {{ $buyer['name'] ?? '-' }}</div>
             <table class="report-table product-table">
                 <thead>
                     <tr>
-                        <th style="width: 40px;">No</th>
-                        <th style="width: 54px;">Tebal</th>
-                        <th style="width: 60px;">Lebar</th>
-                        <th style="width: 80px;">Panjang</th>
-                        <th style="width: 60px;">Pcs</th>
-                        <th style="width: 90px;">M3</th>
-                        <th style="width: 70px;">Rasio (%)</th>
+                        <th style="width: 5%;">No</th>
+                        <th>Tebal</th>
+                        <th>Lebar</th>
+                        <th>Panjang</th>
+                        <th>Pcs</th>
+                        <th style="width: 15%">M3</th>
+                        <th style="width: 15%;">Rasio (%)</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="7"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($buyer['rows'] ?? [] as $index => $row)
                         <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -239,20 +245,17 @@
         <table class="report-table summary-table">
             <thead>
                 <tr>
+                    <th style="width: 8%;">No</th>
                     <th>Produk</th>
                     <th>Jumlah Buyer</th>
                     <th>Total M3</th>
                     <th>Rasio (%)</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
             <tbody>
-                @foreach ($products as $index => $product)
+                @foreach ($summaryProducts as $index => $product)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                        <td class="center">{{ $index + 1 }}</td>
                         <td>{{ $product['name'] ?? '-' }}</td>
                         <td class="center">{{ count($product['buyers'] ?? []) }}</td>
                         <td class="number">{{ $fmtM3($product['total_m3'] ?? null) }}</td>
@@ -260,7 +263,7 @@
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td colspan="2" class="center">Grand Total</td>
+                    <td colspan="3" class="center">Grand Total</td>
                     <td class="number">{{ $fmtM3($grandTotalM3) }}</td>
                     <td class="number">{{ $fmtPct(100.0) }}</td>
                 </tr>

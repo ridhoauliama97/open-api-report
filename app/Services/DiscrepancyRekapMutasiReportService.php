@@ -46,7 +46,11 @@ class DiscrepancyRekapMutasiReportService
 
         $stockNonSpkRows = $this->transformTimelineRows($rawSections['stock_non_spk']);
         $stockBerSpkRow = $this->transformSingleRow($rawSections['stock_ber_spk'][0] ?? null);
-        [$stockTotalRows, $stockStatRows] = $this->buildStockTotalData($stockNonSpkRows, $stockBerSpkRow, $rawSections['stats_source']);
+        [$stockTotalRows, $stockStatRows] = $this->buildStockTotalData(
+            $stockNonSpkRows,
+            $stockBerSpkRow,
+            $rawSections['stats_source'],
+        );
 
         $sections = [
             [
@@ -169,8 +173,18 @@ class DiscrepancyRekapMutasiReportService
      */
     private function buildStockTotalData(array $stockNonSpkRows, ?array $stockBerSpkRow, array $statsSourceRows): array
     {
+        $statsTimelineRows = $this->transformTimelineRows($statsSourceRows);
+        $lastStatsRow = $statsTimelineRows === [] ? null : $statsTimelineRows[array_key_last($statsTimelineRows)];
+        $statsRows = $this->buildStatRows($statsSourceRows);
+
+        if ($lastStatsRow !== null) {
+            return [[
+                ['label' => 'Total', 'metrics' => $lastStatsRow['metrics'] ?? []],
+            ], $statsRows];
+        }
+
         if ($stockBerSpkRow === null) {
-            return [[], []];
+            return [[], $statsRows];
         }
 
         $combinedRows = [];
@@ -184,14 +198,11 @@ class DiscrepancyRekapMutasiReportService
         }
 
         if ($combinedRows === []) {
-            return [[], []];
+            return [[], $statsRows];
         }
 
-        $lastMetrics = $combinedRows[array_key_last($combinedRows)];
-        $statsRows = $this->buildStatRows($statsSourceRows);
-
         return [[
-            ['label' => 'Total', 'metrics' => $lastMetrics],
+            ['label' => 'Total', 'metrics' => $combinedRows[array_key_last($combinedRows)]],
         ], $statsRows];
     }
 

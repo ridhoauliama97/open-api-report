@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -165,17 +165,12 @@
                 <tr>
                     <th style="width: 36px;">No</th>
                     <th style="width: 110px;">No Bongkar Susun</th>
-                    <th>Jenis</th>
+                    <th style="width: 110px;">Jenis</th>
                     <th style="width: 84px;">In</th>
                     <th style="width: 84px;">Out</th>
-                    <th style="width: 110px;">Keterangan</th>
+                    <th>Keterangan</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($category['rows'] ?? [] as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -217,11 +212,6 @@
                     <th style="width: 96px;">Total Out</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($summaryRows as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

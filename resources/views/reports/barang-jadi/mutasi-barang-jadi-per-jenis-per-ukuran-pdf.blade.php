@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 10mm 20mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -81,7 +81,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #fff;
             color: #000;
         }
@@ -220,10 +220,10 @@
         <table class="report-table">
             <thead>
                 <tr class="headers-row">
-                    <th rowspan="2" style="width:32px;">No</th>
-                    <th rowspan="2" style="width:54px;">Tebal</th>
-                    <th rowspan="2" style="width:54px;">Lebar</th>
-                    <th rowspan="2" style="width:70px;">Panjang</th>
+                    <th rowspan="2" style="width: 3%;">No</th>
+                    <th rowspan="2" style="width:10%;">Tebal</th>
+                    <th rowspan="2" style="width:10%;">Lebar</th>
+                    <th rowspan="2" style="width:10%;">Panjang</th>
                     <th colspan="2">Awal</th>
                     <th colspan="2">Masuk</th>
                     <th colspan="2">Minus</th>
@@ -232,22 +232,17 @@
                 </tr>
                 <tr class="headers-row">
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">M3</th>
+                    <th style="width:72px;">m<sup>3</sup></th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">M3</th>
+                    <th style="width:72px;">m <sup>3</sup> </th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">M3</th>
+                    <th style="width:72px;">m<sup>3</sup></th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">M3</th>
+                    <th style="width:72px;">m<sup>3</sup></th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">M3</th>
+                    <th style="width:72px;">m<sup>3</sup></th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="14"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($groupRows as $row)
                     @php
@@ -305,18 +300,18 @@
 
     @if ($rowsData !== [])
         <div class="summary-block">
-            <div class="section-title">Grand Total</div>
+            <div class="section-title">Rangkuman</div>
             <ul class="summary-list">
                 <li>Awal: {{ $fmtPcs($grand['AwalPcs']) !== '' ? $fmtPcs($grand['AwalPcs']) : '-' }} Pcs /
-                    {{ $fmtM3($grand['AwalM3']) !== '' ? $fmtM3($grand['AwalM3']) : '-' }} M3</li>
+                    {{ $fmtM3($grand['AwalM3']) !== '' ? $fmtM3($grand['AwalM3']) : '-' }} m<sup>3</sup></li>
                 <li>Masuk: {{ $fmtPcs($grand['MasukPcs']) !== '' ? $fmtPcs($grand['MasukPcs']) : '-' }} Pcs /
-                    {{ $fmtM3($grand['MasukM3']) !== '' ? $fmtM3($grand['MasukM3']) : '-' }} M3</li>
+                    {{ $fmtM3($grand['MasukM3']) !== '' ? $fmtM3($grand['MasukM3']) : '-' }} m<sup>3</sup></li>
                 <li>Minus: {{ $fmtPcs($grand['MinusPcs']) !== '' ? $fmtPcs($grand['MinusPcs']) : '-' }} Pcs /
-                    {{ $fmtM3($grand['MinusM3']) !== '' ? $fmtM3($grand['MinusM3']) : '-' }} M3</li>
+                    {{ $fmtM3($grand['MinusM3']) !== '' ? $fmtM3($grand['MinusM3']) : '-' }} m<sup>3</sup></li>
                 <li>Jual: {{ $fmtPcs($grand['JualPcs']) !== '' ? $fmtPcs($grand['JualPcs']) : '-' }} Pcs /
-                    {{ $fmtM3($grand['JualM3']) !== '' ? $fmtM3($grand['JualM3']) : '-' }} M3</li>
+                    {{ $fmtM3($grand['JualM3']) !== '' ? $fmtM3($grand['JualM3']) : '-' }} m<sup>3</sup></li>
                 <li>Akhir: {{ $fmtPcs($grand['AkhirPcs']) !== '' ? $fmtPcs($grand['AkhirPcs']) : '-' }} Pcs /
-                    {{ $fmtM3($grand['AkhirM3']) !== '' ? $fmtM3($grand['AkhirM3']) : '-' }} M3</li>
+                    {{ $fmtM3($grand['AkhirM3']) !== '' ? $fmtM3($grand['AkhirM3']) : '-' }} m<sup>3</sup></li>
             </ul>
         </div>
     @endif

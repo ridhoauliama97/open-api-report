@@ -62,7 +62,7 @@ class FlowProduksiPerPeriodeReportService
                 ],
                 [
                     'label' => '',
-                    'text' => 'ST Masuk KD - ST Hasil Racip = ' . $this->formatSignedTon($totals['STKDIn'] - $totals['STRacipan']),
+                    'text' => 'ST Hasil Racip - ST Masuk KD = ' . $this->formatSignedTon($totals['STRacipan'] - $totals['STKDIn']),
                 ],
                 [
                     'label' => 'WIP',

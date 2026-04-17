@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 10mm 6mm 12mm 6mm;
+            margin: 12mm 6mm 12mm 6mm;
             footer: html_reportFooter;
         }
 
@@ -172,7 +172,7 @@
             'NamaBarangJadi' => 'Nama Barang Jadi',
             'NamaGrade' => 'Nama Grade',
             'JmlhBatang' => 'Pcs',
-            'Kubik' => 'M3',
+            'Kubik' => 'm3',
             'Ton' => 'Ton',
         ];
     @endphp
@@ -208,11 +208,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($section['columns'] ?? []) + 1 }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse (($section['rows'] ?? []) as $rowIndex => $row)
                     <tr class="{{ ($rowIndex + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
@@ -284,11 +279,6 @@
                     <th style="width: 50px;">Unit</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($summaryRows as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

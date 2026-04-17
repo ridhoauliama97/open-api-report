@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 24mm 10mm 20mm 10mm;
+            margin: 20mm 10mm 20mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -54,6 +54,13 @@
         }
 
         .report-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            border: 1px solid #000;
+            margin-left: 8px;
+        }
+
+        .report-table-summary {
             border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
@@ -171,31 +178,27 @@
         $fmtM3 = static fn($v): string => is_numeric($v) && abs((float) $v) >= 0.0000001
             ? number_format((float) $v, 4, '.', ',')
             : '';
+        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
     @endphp
 
     <h1 class="report-title">Laporan Saldo Barang Jadi Hidup Per-Jenis Per-Produk</h1>
-    <p class="report-subtitle"></p>
+    <p class="report-subtitle">Per {{ $generatedDate }}</p>
 
     @forelse ($groups as $jenisIndex => $jenisGroup)
         <div class="section-title">{{ $jenisGroup['name'] ?? 'LAINNYA' }}</div>
         @foreach ($jenisGroup['products'] ?? [] as $productGroup)
-            <div style="font-weight:bold; margin: 4px 0 2px 0;">Produk : {{ $productGroup['name'] ?? '-' }}</div>
+            <div style="font-weight:bold; margin: 4px 0 2px 8px;">Produk : {{ $productGroup['name'] ?? '-' }}</div>
             <table class="report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th style="width:32px;">No</th>
-                        <th style="width:56px;">Tebal</th>
-                        <th style="width:56px;">Lebar</th>
-                        <th style="width:72px;">Panjang</th>
-                        <th style="width:80px;">Pcs</th>
-                        <th style="width:84px;">M3</th>
+                        <th style="width:5%;">No</th>
+                        <th>Tebal</th>
+                        <th>Lebar</th>
+                        <th>Panjang</th>
+                        <th style="width:15%;">Pcs</th>
+                        <th style="width:15%;">M3</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="6"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach ($productGroup['rows'] ?? [] as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -208,23 +211,18 @@
                         </tr>
                     @endforeach
                     <tr class="totals-row">
-                        <td colspan="4" class="blank">Total {{ $productGroup['name'] ?? '-' }}</td>
+                        <td colspan="4" class="blank">Subtotal {{ $productGroup['name'] ?? '-' }}</td>
                         <td class="number">{{ $fmtPcs($productGroup['total_pcs'] ?? null) }}</td>
                         <td class="number">{{ $fmtM3($productGroup['total_m3'] ?? null) }}</td>
                     </tr>
                 </tbody>
             </table>
         @endforeach
-        <table class="report-table">
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="2"></td>
-                </tr>
-            </tfoot>
+        <table class="report-table-summary">
             <tbody>
                 <tr class="totals-row">
                     <td class="blank">Total (M3) Per-Jenis {{ $jenisGroup['name'] ?? 'LAINNYA' }}</td>
-                    <td class="number"> {{ $fmtM3($jenisGroup['total_m3'] ?? null) }}</td>
+                    <td class="number" style="width: 30%"> {{ $fmtM3($jenisGroup['total_m3'] ?? null) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -251,8 +249,9 @@
                 <li>Total Pcs:
                     <strong>{{ number_format((int) ($summary['total_pcs'] ?? 0), 0, '.', ',') }} Pcs </strong>
                 </li>
-                <li>Total M3:
-                    <strong>{{ number_format((float) ($summary['total_m3'] ?? 0), 4, '.', ',') }} M3 </strong>
+                <li>Total m<sup>3</sup> :
+                    <strong>{{ number_format((float) ($summary['total_m3'] ?? 0), 4, '.', ',') }} m<sup>3</sup>
+                    </strong>
                 </li>
             </ul>
         </div>

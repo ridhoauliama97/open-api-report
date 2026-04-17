@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -30,6 +30,13 @@
             margin: 0;
             font-size: 16px;
             font-weight: bold;
+        }
+
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
         }
 
         table {
@@ -104,6 +111,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -134,10 +142,12 @@
         $fmtInt = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((int) $v, 0, '.', ',');
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
         $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');
+
+        $generatedDate = \Carbon\Carbon::now()->format('d-M-y');
     @endphp
 
     <h1 class="report-title">Laporan Barang Jadi (Hidup) Detail</h1>
-    <p class="report-subtitle"></p>
+    <p class="report-subtitle">Per {{ $generatedDate }}</p>
 
     <table>
         <thead>
@@ -152,14 +162,9 @@
                 <th style="width: 58px;">Panjang</th>
                 <th style="width: 70px;">Jumlah Batang</th>
                 <th style="width: 54px;">Lokasi</th>
-                <th style="width: 56px;">M3</th>
+                <th style="width: 56px;">m<sup>3</sup></th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
@@ -178,7 +183,7 @@
                     <td class="center">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
                     <td class="center">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
-                    <td class="number">{{ $fmtM3($row['M3'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmtM3($row['M3'] ?? null) }}</td>
                 </tr>
             @empty
                 <tr>

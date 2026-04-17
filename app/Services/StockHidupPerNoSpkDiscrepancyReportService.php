@@ -8,6 +8,11 @@ use RuntimeException;
 class StockHidupPerNoSpkDiscrepancyReportService
 {
     /**
+     * @var array<int, string>
+     */
+    private const CATEGORY_ORDER = ['ST', 'S4S', 'FJ', 'MLD', 'LMT', 'CCAKHIR', 'SAND', 'BJADI'];
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function fetch(string $tanggalAkhir): array
@@ -115,7 +120,15 @@ class StockHidupPerNoSpkDiscrepancyReportService
             $grandTotal += $total;
         }
 
-        ksort($categories, SORT_NATURAL | SORT_FLAG_CASE);
+        uksort($categories, function (string $left, string $right): int {
+            $leftOrder = array_search(strtoupper($left), self::CATEGORY_ORDER, true);
+            $rightOrder = array_search(strtoupper($right), self::CATEGORY_ORDER, true);
+
+            $leftRank = $leftOrder === false ? PHP_INT_MAX : $leftOrder;
+            $rightRank = $rightOrder === false ? PHP_INT_MAX : $rightOrder;
+
+            return $leftRank <=> $rightRank ?: strnatcasecmp($left, $right);
+        });
 
         foreach ($categories as &$category) {
             uasort($category['spks'], static function (array $left, array $right): int {

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -215,11 +215,6 @@
                     <th style="width: 90px;">Total (m3)</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="10"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @forelse ($spks as $spk)
                     @php
@@ -250,7 +245,7 @@
                 @endforelse
 
                 <tr class="total-row">
-                    <td colspan="9" class="center">Total Per Kategori : {{ $displayCategory }}</td>
+                    <td colspan="9" class="center">Total Kategori {{ $displayCategory }} : </td>
                     <td class="number">{{ $fmtTotal($categoryTotal) }}</td>
                 </tr>
             </tbody>
@@ -266,7 +261,7 @@
     @endforelse
 
     @if ($categories !== [])
-        <div class="summary-title">Rangkuman Hasil :</div>
+        <div class="summary-title">Rangkuman :</div>
         <table class="summary-table">
             <tbody>
                 <tr>
@@ -289,7 +284,7 @@
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td>Grand Total (m3)</td>
+                    <td>Grand Total (m<sup>3</sup>)</td>
                     <td class="number">{{ $fmtTotal($summary['grand_total'] ?? null) }}</td>
                 </tr>
             </tbody>

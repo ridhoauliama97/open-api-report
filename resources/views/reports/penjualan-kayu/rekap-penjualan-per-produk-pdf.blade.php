@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 8mm 14mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -125,7 +125,6 @@
 
         .product-table {
             width: 100%;
-            margin-left: 18px;
             margin-bottom: 8px;
         }
 
@@ -190,21 +189,16 @@
         <table class="report-table product-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;">No</th>
-                    <th style="width: 54px;">Tebal</th>
-                    <th style="width: 60px;">Lebar</th>
-                    <th style="width: 80px;">Panjang</th>
-                    <th style="width: 60px;">Pcs</th>
-                    <th style="width: 90px;">M3</th>
-                    <th style="width: 70px;">Rasio (%)</th>
-                    <th style="width: 78px;"></th>
+                    <th>No</th>
+                    <th>Tebal</th>
+                    <th>Lebar</th>
+                    <th>Panjang</th>
+                    <th>Pcs</th>
+                    <th>m<sup>3</sup></th>
+                    <th>Rasio (%)</th>
+                    <th style="width: 10%;"></th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="8"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($product['rows'] as $index => $row)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

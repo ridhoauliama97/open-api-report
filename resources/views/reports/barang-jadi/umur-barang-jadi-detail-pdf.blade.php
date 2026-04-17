@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -111,6 +111,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -150,10 +151,12 @@
             sprintf('> %d', $umur4),
         ];
         $ageKeys = ['Period1', 'Period2', 'Period3', 'Period4', 'Period5'];
+
+        $generatedDate = \Carbon\Carbon::now()->format('d-M-y');
     @endphp
 
     <h1 class="report-title">Laporan Umur Barang Jadi Detail</h1>
-    <p class="report-subtitle"></p>
+    <p class="report-subtitle">Per {{ $generatedDate }}</p>
 
     <table>
         <thead>
@@ -164,16 +167,11 @@
                 <th style="width: 44px;">Lebar</th>
                 <th style="width: 56px;">Panjang</th>
                 @foreach ($ageLabels as $label)
-                    <th>{{ $label }}</th>
+                    <th style="width: 10%">{{ $label }}</th>
                 @endforeach
                 <th style="width: 72px;">Total</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)
@@ -190,7 +188,7 @@
                     @foreach ($ageKeys as $key)
                         <td class="number">{{ $fmt($row[$key] ?? null) }}</td>
                     @endforeach
-                    <td class="number">{{ $fmt($row['Total'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmt($row['Total'] ?? null) }}</td>
                 </tr>
             @empty
                 <tr>
