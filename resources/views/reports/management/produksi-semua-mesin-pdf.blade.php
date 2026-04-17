@@ -14,7 +14,7 @@
 
         @page {
             sheet-size: A4-L;
-            margin: 8mm 6mm 12mm 6mm;
+            margin: 12mm 6mm 12mm 6mm;
             footer: html_reportFooter;
         }
 

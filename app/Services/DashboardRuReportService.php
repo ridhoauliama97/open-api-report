@@ -119,7 +119,7 @@ class DashboardRuReportService
             'rows' => $normalizedRows,
             'summary_lines' => [
                 ['label' => 'Stock KB Non Pulai', 'value' => '(tronton)'],
-                ['label' => 'Total', 'value' => $this->formatSummaryDecimal($stockNonPulaiTronton)],
+                ['label' => 'Total', 'value' => $this->formatSummaryDecimalRoundedUp($stockNonPulaiTronton)],
             ],
             'summary' => [
                 'row_count' => count($normalizedRows),
@@ -279,5 +279,12 @@ class DashboardRuReportService
     private function formatSummaryDecimal(float $value): string
     {
         return number_format($value, 2, ',', '.');
+    }
+
+    private function formatSummaryDecimalRoundedUp(float $value): string
+    {
+        $roundedUp = ceil($value * 100) / 100;
+
+        return number_format($roundedUp, 2, ',', '.');
     }
 }

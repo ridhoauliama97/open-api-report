@@ -178,7 +178,7 @@
         $fmtM3 = static fn($v): string => is_numeric($v) && abs((float) $v) >= 0.0000001
             ? number_format((float) $v, 4, '.', ',')
             : '';
-        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
     @endphp
 
     <h1 class="report-title">Laporan Saldo Barang Jadi Hidup Per-Jenis Per-Produk</h1>

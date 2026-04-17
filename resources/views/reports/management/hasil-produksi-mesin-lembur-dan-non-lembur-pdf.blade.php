@@ -79,6 +79,14 @@
             border-bottom: 1px solid #000;
         }
 
+        .report-table thead tr:first-child th {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr:last-child th {
+            border-top: 1px solid #000;
+        }
+
         tbody td {
             border-top: 0;
             border-bottom: 0;
@@ -121,6 +129,10 @@
 
         .date-group-start td {
             border-top: 1px solid #000 !important;
+        }
+
+        .report-table tbody tr:first-child.date-group-start td {
+            border-top: 0 !important;
         }
 
         @include('reports.partials.pdf-footer-table-style')
