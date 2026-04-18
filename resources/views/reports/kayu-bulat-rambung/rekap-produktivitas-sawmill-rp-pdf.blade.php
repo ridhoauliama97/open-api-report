@@ -715,11 +715,6 @@
                     <th>Tidak ada data.</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="5"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 <tr class="data-row row-odd">
                     <td class="data-cell">Tidak ada data.</td>
@@ -803,11 +798,6 @@
                     <th>%</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
 
@@ -912,11 +902,6 @@
                     <th>%</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
 
@@ -1003,14 +988,6 @@
         </div>
 
         <table class="report-table">
-            <colgroup>
-                <col style="width: 72px;">
-                <col style="width: 58px;">
-                <col style="width: 220px;">
-                <col style="width: 60px;">
-                <col style="width: 60px;">
-                <col style="width: 55px;">
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>Kategori</th>
@@ -1021,11 +998,6 @@
                     <th>%</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
 

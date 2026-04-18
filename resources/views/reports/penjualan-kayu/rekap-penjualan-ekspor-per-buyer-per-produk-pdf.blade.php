@@ -172,8 +172,8 @@
         $buyers = is_array($data['buyers'] ?? null) ? $data['buyers'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
         $grandTotalM3 = (float) ($summary['grand_total_m3'] ?? 0.0);
-        $summaryBuyers = $buyers;
-        usort($summaryBuyers, static function (array $left, array $right): int {
+        $sortedBuyers = $buyers;
+        usort($sortedBuyers, static function (array $left, array $right): int {
             return ((float) ($right['summary_ratio'] ?? 0)) <=> ((float) ($left['summary_ratio'] ?? 0));
         });
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
@@ -186,14 +186,14 @@
     <h1 class="report-title">Laporan Rekap Penjualan Ekspor Per-Buyer dan Per-Produk</h1>
     <div class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</div>
 
-    @forelse ($buyers as $buyer)
+    @forelse ($sortedBuyers as $buyer)
         @php
             $buyerProducts = is_array($buyer['products'] ?? null) ? $buyer['products'] : [];
             usort($buyerProducts, static function (array $left, array $right): int {
                 return ((float) ($right['total_m3'] ?? 0)) <=> ((float) ($left['total_m3'] ?? 0));
             });
         @endphp
-        <div class="section-title">{{ $buyer['number'] ?? '' }}. Buyer : {{ $buyer['name'] ?? '-' }}</div>
+        <div class="section-title">{{ $loop->iteration }}. Buyer : {{ $buyer['name'] ?? '-' }}</div>
         @foreach ($buyerProducts as $product)
             <div class="product-title">Produk : {{ $product['name'] ?? '-' }}</div>
             <table class="report-table product-table">
@@ -253,7 +253,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($summaryBuyers as $index => $buyer)
+                @foreach ($sortedBuyers as $index => $buyer)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $index + 1 }}</td>
                         <td>{{ $buyer['name'] ?? '-' }}</td>

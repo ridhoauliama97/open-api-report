@@ -172,8 +172,8 @@
         $products = is_array($data['products'] ?? null) ? $data['products'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
         $grandTotalM3 = (float) ($summary['grand_total_m3'] ?? 0.0);
-        $summaryProducts = $products;
-        usort($summaryProducts, static function (array $left, array $right): int {
+        $sortedProducts = $products;
+        usort($sortedProducts, static function (array $left, array $right): int {
             return ((float) ($right['summary_ratio'] ?? 0)) <=> ((float) ($left['summary_ratio'] ?? 0));
         });
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
@@ -186,14 +186,14 @@
     <h1 class="report-title">Laporan Rekap Penjualan Ekspor Per-Produk dan Per-Buyer</h1>
     <div class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</div>
 
-    @forelse ($products as $product)
+    @forelse ($sortedProducts as $product)
         @php
             $productBuyers = is_array($product['buyers'] ?? null) ? $product['buyers'] : [];
             usort($productBuyers, static function (array $left, array $right): int {
                 return ((float) ($right['total_m3'] ?? 0)) <=> ((float) ($left['total_m3'] ?? 0));
             });
         @endphp
-        <div class="section-title">{{ $product['number'] ?? '' }}. Produk : {{ $product['name'] ?? '-' }}</div>
+        <div class="section-title">{{ $loop->iteration }}. Produk : {{ $product['name'] ?? '-' }}</div>
         @foreach ($productBuyers as $buyer)
             <div class="buyer-title">Buyer : {{ $buyer['name'] ?? '-' }}</div>
             <table class="report-table product-table">
@@ -253,7 +253,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($summaryProducts as $index => $product)
+                @foreach ($sortedProducts as $index => $product)
                     <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $index + 1 }}</td>
                         <td>{{ $product['name'] ?? '-' }}</td>

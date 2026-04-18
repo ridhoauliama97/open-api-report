@@ -153,6 +153,10 @@
             font-weight: bold;
         }
 
+        .summary-section {
+            page-break-before: always;
+        }
+
         .page-break {
             page-break-before: always;
         }
@@ -439,54 +443,104 @@
     @endforeach
 
     @if (count($conditionSummaries) > 0)
-        <p class="summary-title">Rangkuman/Meja</p>
+        @php
+            $summaryGrandTotal = [
+                'RB STD (Tbl 14/16/18/23)' => 0.0,
+                'RB STD' => 0.0,
+                'RB MC + Lain-Lain' => 0.0,
+                'Jumlah' => 0.0,
+                'SM' => 0.0,
+            ];
+        @endphp
 
-        @foreach ($conditionSummaries as $condition => $rowsByMeja)
-            @php
-                ksort($rowsByMeja, SORT_NUMERIC);
-                $grand = [
-                    'RB STD (Tbl 14/16/18/23)' => 0.0,
-                    'RB STD' => 0.0,
-                    'RB MC + Lain-Lain' => 0.0,
-                    'Jumlah' => 0.0,
-                    'SM' => 0.0,
-                ];
-            @endphp
+        <div class="summary-section">
+            <p class="summary-title">Rangkuman/Meja</p>
 
-            <p class="condition-title">{{ $condition }}</p>
-            <table class="report-table">
+            @foreach ($conditionSummaries as $condition => $rowsByMeja)
+                @php
+                    ksort($rowsByMeja, SORT_NUMERIC);
+                    $tableTotal = [
+                        'RB STD (Tbl 14/16/18/23)' => 0.0,
+                        'RB STD' => 0.0,
+                        'RB MC + Lain-Lain' => 0.0,
+                        'Jumlah' => 0.0,
+                        'SM' => 0.0,
+                    ];
+                @endphp
+
+                <p class="condition-title">{{ $condition }}</p>
+                <table class="report-table">
+                    <thead>
+                        <tr class="headers-row">
+                            <th style="width: 25%;">No.Meja</th>
+                            <th style="width: 15%;">RB STD (Tbl 14/16/18/23)</th>
+                            <th style="width: 15%;">RMBG STD</th>
+                            <th style="width: 15%;">RMBG MC + Lainnya</th>
+                            <th style="width: 15%;">Jumlah</th>
+                            <th style="width: 15%;">Berat Balok Tim</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($rowsByMeja as $summaryRow)
+                            @php
+                                $tableTotal['RB STD (Tbl 14/16/18/23)'] += $summaryRow['RB STD (Tbl 14/16/18/23)'];
+                                $tableTotal['RB STD'] += $summaryRow['RB STD'];
+                                $tableTotal['RB MC + Lain-Lain'] += $summaryRow['RB MC + Lain-Lain'];
+                                $tableTotal['Jumlah'] += $summaryRow['Jumlah'];
+                                $tableTotal['SM'] += $summaryRow['SM'];
+                            @endphp
+                            <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                <td class="data-cell">{{ $summaryRow['nama_meja'] }}</td>
+                                <td class="data-cell number">
+                                    {{ $formatNumber($summaryRow['RB STD (Tbl 14/16/18/23)']) }}
+                                </td>
+                                <td class="data-cell number">{{ $formatNumber($summaryRow['RB STD']) }}</td>
+                                <td class="data-cell number">{{ $formatNumber($summaryRow['RB MC + Lain-Lain']) }}</td>
+                                <td class="data-cell number">{{ $formatNumber($summaryRow['Jumlah']) }}</td>
+                                <td class="data-cell number">{{ $formatNumber($summaryRow['SM']) }}</td>
+                            </tr>
+                        @endforeach
+                        @php
+                            $summaryGrandTotal['RB STD (Tbl 14/16/18/23)'] += $tableTotal['RB STD (Tbl 14/16/18/23)'];
+                            $summaryGrandTotal['RB STD'] += $tableTotal['RB STD'];
+                            $summaryGrandTotal['RB MC + Lain-Lain'] += $tableTotal['RB MC + Lain-Lain'];
+                            $summaryGrandTotal['Jumlah'] += $tableTotal['Jumlah'];
+                            $summaryGrandTotal['SM'] += $tableTotal['SM'];
+                        @endphp
+                        <tr class="totals-row">
+                            <td>Total {{ $condition }}</td>
+                            <td class="number">{{ $formatNumber($tableTotal['RB STD (Tbl 14/16/18/23)']) }}</td>
+                            <td class="number">{{ $formatNumber($tableTotal['RB STD']) }}</td>
+                            <td class="number">{{ $formatNumber($tableTotal['RB MC + Lain-Lain']) }}</td>
+                            <td class="number">{{ $formatNumber($tableTotal['Jumlah']) }}</td>
+                            <td class="number">{{ $formatNumber($tableTotal['SM']) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endforeach
+
+            <table class="report-table" style="margin-top: 10px;">
                 <thead>
                     <tr class="headers-row">
-                        <th style="width: 24%;">No.Meja</th>
-                        <th style="width: 14%;">RB STD (Tbl 14/16/18/23)</th>
-                        <th style="width: 14%;">RMBG STD</th>
-                        <th style="width: 14%;">RMBG MC + Lainnya</th>
-                        <th style="width: 14%;">Jumlah</th>
-                        <th style="width: 12%;">Berat Balok Tim</th>
+                        <th rowspan="2" style="width: 25%;">Grand Total</th>
+                        <th style="width: 15%;">RB STD (Tbl 14/16/18/23)</th>
+                        <th style="width: 15%;">RMBG STD</th>
+                        <th style="width: 15%;">RMBG MC + Lainnya</th>
+                        <th style="width: 15%;">Jumlah</th>
+                        <th style="width: 15%;">Berat Balok Tim</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($rowsByMeja as $summaryRow)
-                        @php
-                            $grand['RB STD (Tbl 14/16/18/23)'] += $summaryRow['RB STD (Tbl 14/16/18/23)'];
-                            $grand['RB STD'] += $summaryRow['RB STD'];
-                            $grand['RB MC + Lain-Lain'] += $summaryRow['RB MC + Lain-Lain'];
-                            $grand['Jumlah'] += $summaryRow['Jumlah'];
-                            $grand['SM'] += $summaryRow['SM'];
-                        @endphp
-                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="data-cell">{{ $summaryRow['nama_meja'] }}</td>
-                            <td class="data-cell number">{{ $formatNumber($summaryRow['RB STD (Tbl 14/16/18/23)']) }}
-                            </td>
-                            <td class="data-cell number">{{ $formatNumber($summaryRow['RB STD']) }}</td>
-                            <td class="data-cell number">{{ $formatNumber($summaryRow['RB MC + Lain-Lain']) }}</td>
-                            <td class="data-cell number">{{ $formatNumber($summaryRow['Jumlah']) }}</td>
-                            <td class="data-cell number">{{ $formatNumber($summaryRow['SM']) }}</td>
-                        </tr>
-                    @endforeach
+                    <tr class="totals-row">
+                        <td class="number">{{ $formatNumber($summaryGrandTotal['RB STD (Tbl 14/16/18/23)']) }}</td>
+                        <td class="number">{{ $formatNumber($summaryGrandTotal['RB STD']) }}</td>
+                        <td class="number">{{ $formatNumber($summaryGrandTotal['RB MC + Lain-Lain']) }}</td>
+                        <td class="number">{{ $formatNumber($summaryGrandTotal['Jumlah']) }}</td>
+                        <td class="number">{{ $formatNumber($summaryGrandTotal['SM']) }}</td>
+                    </tr>
                 </tbody>
             </table>
-        @endforeach
+        </div>
     @endif
 
     @include('reports.partials.pdf-footer-table')
