@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 12mm 20mm 12mm;
+            margin: 18mm 12mm 18mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -262,11 +262,7 @@
                         <th style="width: 92px;">Wash Input<br>BB</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="11"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
@@ -298,13 +294,13 @@
                             <td class="number data-cell">{{ $fmt($awal, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsuOutput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($penerimaanBb, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($totalMasuk, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($brokerInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsuInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($mixerInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($washInput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($totalKeluar, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($akhir, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalKeluar, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($akhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -312,6 +308,11 @@
                         </tr>
                     @endforelse
                     @if (!empty($rowsData))
+                        @php
+                            // Grand total keluar mengikuti keseimbangan mutasi:
+                            // awal + total masuk - akhir.
+                            $grandTotalKeluar = $totals['Awal'] + $totals['TotalMasuk'] - $totals['Akhir'];
+                        @endphp
                         <tr class="totals-row">
                             <td colspan="2" style="text-align:center">Total</td>
                             <td class="number">{{ $fmt($totals['Awal'], true) }}</td>
@@ -322,7 +323,7 @@
                             <td class="number">{{ $fmt($totals['BSUInput'], true) }}</td>
                             <td class="number">{{ $fmt($totals['MixerInputBahanBaku'], true) }}</td>
                             <td class="number">{{ $fmt($totals['WashInput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['TotalKeluar'], true) }}</td>
+                            <td class="number">{{ $fmt($grandTotalKeluar, true) }}</td>
                             <td class="number">{{ $fmt($totals['Akhir'], true) }}</td>
                         </tr>
                     @endif

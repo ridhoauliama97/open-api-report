@@ -303,11 +303,6 @@
                     @endforeach
                 </tr>
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 1 + count($types) * 2 }}"></td>
-                </tr>
-            </tfoot>
         </table>
 
         <div style="font-weight: bold; margin: 6px 0 4px 0;">Total</div>

@@ -57,6 +57,7 @@ class MutasiGilinganController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_orientation' => 'landscape',
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Gilingan-PPS-%s-sd-%s.pdf', $startDate, $endDate);

@@ -9,7 +9,7 @@
         }
 
         @page {
-            margin: 20mm 12mm 20mm 12mm;
+            margin: 18mm 12mm 18mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -251,57 +251,47 @@
                     <tr class="headers-row">
                         <th rowspan="2" style="width: 30px;">No</th>
                         <th rowspan="2" style="width: 210px;">Nama Bonggolan</th>
-                        <th rowspan="2" style="width: 76px;">Berat<br>Awal</th>
-                        <th colspan="5">Masuk</th>
+                        <th rowspan="2" style="width: 76px;">Awal</th>
+                        <th colspan="4">Masuk</th>
                         <th rowspan="2" style="width: 76px;">Total<br>Masuk</th>
-                        <th colspan="5">Keluar</th>
+                        <th colspan="4">Keluar</th>
                         <th rowspan="2" style="width: 76px;">Total<br>Keluar</th>
-                        <th rowspan="2" style="width: 76px;">Berat<br>Akhir</th>
+                        <th rowspan="2" style="width: 76px;">Akhir</th>
                     </tr>
                     <tr class="headers-row">
-                        <th style="width: 72px;">Broker</th>
-                        <th style="width: 72px;">Inject</th>
-                        <th style="width: 72px;">Adjust</th>
-                        <th style="width: 72px;">BSU</th>
-                        <th style="width: 72px;">Not</th>
-                        <th style="width: 72px;">Adjust</th>
-                        <th style="width: 72px;">BSU</th>
-                        <th style="width: 72px;">Crusher</th>
-                        <th style="width: 72px;">Gilingan</th>
-                        <th style="width: 72px;">Not</th>
+                        <th style="width: 72px;">BSU<br>Output</th>
+                        <th style="width: 72px;">Broker<br>Output</th>
+                        <th style="width: 72px;">Inject<br>Output</th>
+                        <th style="width: 72px;">Masuk</th>
+                        <th style="width: 72px;">BSU<br>Input</th>
+                        <th style="width: 72px;">Crusher<br>Input</th>
+                        <th style="width: 72px;">Gilingan<br>Input</th>
+                        <th style="width: 72px;">Keluar</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="16"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
                             $beratAwal = $num($row, 'BeratAwal');
+                            $beratBsuMasuk = $num($row, 'BeratBSUMasuk');
                             $beratBrokMasuk = $num($row, 'BeratBROKMasuk');
                             $beratInjcMasuk = $num($row, 'BeratINJCMasuk');
-                            $beratAdjMasuk = $num($row, 'BeratADJMasuk');
-                            $beratBsuMasuk = $num($row, 'BeratBSUMasuk');
                             $masukNot = $num($row, 'MasukNot');
-                            $beratMasuk = $num($row, 'BeratMasuk');
-                            $beratAdjKeluar = $num($row, 'BeratADJKeluar');
+                            $beratMasuk = $beratBsuMasuk + $beratBrokMasuk + $beratInjcMasuk + $masukNot;
                             $beratBsuKeluar = $num($row, 'BeratBSUKeluar');
                             $beratCrusKeluar = $num($row, 'BeratCRUSKeluar');
                             $beratGilKeluar = $num($row, 'BeratGILKeluar');
                             $keluarNot = $num($row, 'KeluarNot');
-                            $beratKeluar = $num($row, 'BeratKeluar');
+                            $beratKeluar = $beratBsuKeluar + $beratCrusKeluar + $beratGilKeluar + $keluarNot;
                             $beratAkhir = $num($row, 'BeratAkhir');
 
                             $totals['BeratAwal'] += $beratAwal;
                             $totals['BeratBROKMasuk'] += $beratBrokMasuk;
                             $totals['BeratINJCMasuk'] += $beratInjcMasuk;
-                            $totals['BeratADJMasuk'] += $beratAdjMasuk;
                             $totals['BeratBSUMasuk'] += $beratBsuMasuk;
                             $totals['MasukNot'] += $masukNot;
                             $totals['BeratMasuk'] += $beratMasuk;
-                            $totals['BeratADJKeluar'] += $beratAdjKeluar;
                             $totals['BeratBSUKeluar'] += $beratBsuKeluar;
                             $totals['BeratCRUSKeluar'] += $beratCrusKeluar;
                             $totals['BeratGILKeluar'] += $beratGilKeluar;
@@ -313,19 +303,17 @@
                             <td class="center data-cell">{{ $loop->iteration }}</td>
                             <td class="label data-cell">{{ $row['NamaBonggolan'] ?? '' }}</td>
                             <td class="number data-cell">{{ $fmt($beratAwal, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($beratBsuMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratBrokMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratInjcMasuk, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratAdjMasuk, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratBsuMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($masukNot, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratMasuk, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratAdjKeluar, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratBsuKeluar, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratCrusKeluar, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratGilKeluar, true) }}</td>
                             <td class="number data-cell">{{ $fmt($keluarNot, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratKeluar, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratAkhir, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratKeluar, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratAkhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -336,13 +324,11 @@
                         <tr class="totals-row">
                             <td colspan="2" style="text-align:center">Total</td>
                             <td class="number">{{ $fmt($totals['BeratAwal'], true) }}</td>
+                            <td class="number">{{ $fmt($totals['BeratBSUMasuk'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratBROKMasuk'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratINJCMasuk'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BeratADJMasuk'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BeratBSUMasuk'], true) }}</td>
                             <td class="number">{{ $fmt($totals['MasukNot'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratMasuk'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BeratADJKeluar'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratBSUKeluar'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratCRUSKeluar'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratGILKeluar'], true) }}</td>
@@ -366,11 +352,7 @@
                         <th style="width: 120px;">Berat</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="2"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @forelse ($subRowsData as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

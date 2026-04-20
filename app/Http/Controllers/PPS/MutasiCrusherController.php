@@ -57,6 +57,7 @@ class MutasiCrusherController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_orientation' => 'landscape',
         ]);
 
         $filename = sprintf('Laporan-Mutasi-Crusher-PPS-%s-sd-%s.pdf', $startDate, $endDate);

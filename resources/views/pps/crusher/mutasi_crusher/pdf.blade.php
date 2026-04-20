@@ -9,7 +9,7 @@
         }
 
         @page {
-            margin: 20mm 12mm 20mm 12mm;
+            margin: 18mm 12mm 18mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -241,28 +241,24 @@
             <table class="report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th rowspan="2" style="width: 30px;">No</th>
+                        <th rowspan="2" style="width: 25px;">No</th>
                         <th rowspan="2" style="width: 220px;">Nama Crusher</th>
-                        <th rowspan="2" style="width: 85px;">Berat<br>Awal</th>
-                        <th colspan="3">Masuk</th>
+                        <th rowspan="2" style="width: 85px;">Awal</th>
+                        <th colspan="2">Masuk</th>
                         <th rowspan="2" style="width: 85px;">Total<br>Masuk</th>
-                        <th colspan="2">Keluar</th>
+                        <th colspan="3">Keluar</th>
                         <th rowspan="2" style="width: 85px;">Total<br>Keluar</th>
-                        <th rowspan="2" style="width: 85px;">Berat<br>Akhir</th>
+                        <th rowspan="2" style="width: 85px;">Akhir</th>
                     </tr>
                     <tr class="headers-row">
+                        <th style="width: 85px;">BSU<br>Output</th>
+                        <th style="width: 85px;">Prod<br>Output</th>
                         <th style="width: 85px;">BSU<br>Input</th>
                         <th style="width: 85px;">Broker<br>Input</th>
                         <th style="width: 85px;">Gilingan<br>Input</th>
-                        <th style="width: 85px;">Prod<br>Output</th>
-                        <th style="width: 85px;">BSU<br>Output</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="11"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
@@ -290,14 +286,14 @@
                             <td class="center data-cell">{{ $loop->iteration }}</td>
                             <td class="label data-cell">{{ $row['NamaCrusher'] ?? '' }}</td>
                             <td class="number data-cell">{{ $fmt($beratAwal, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($beratBsuOutput, true) }}</td>
+                            <td class="number data-cell">{{ $fmt($beratProdOutput, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratBsuInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratBrokInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($beratGilInput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratMasuk, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratProdOutput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratBsuOutput, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratKeluar, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratAkhir, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratKeluar, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratAkhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -308,12 +304,12 @@
                         <tr class="totals-row">
                             <td colspan="2" style="text-align:center">Total</td>
                             <td class="number">{{ $fmt($totals['BeratAwal'], true) }}</td>
+                            <td class="number">{{ $fmt($totals['BeratBSUOutput'], true) }}</td>
+                            <td class="number">{{ $fmt($totals['BeratProdOutput'], true) }}</td>
+                            <td class="number">{{ $fmt($totals['BeratMasuk'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratBSUInput'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratBROKInput'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratGILInput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BeratMasuk'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BeratProdOutput'], true) }}</td>
-                            <td class="number">{{ $fmt($totals['BeratBSUOutput'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratKeluar'], true) }}</td>
                             <td class="number">{{ $fmt($totals['BeratAkhir'], true) }}</td>
                         </tr>
@@ -325,33 +321,32 @@
 
     <div class="section-title">Input</div>
     <div class="container-fluid">
-        <div class="table-responsive" style="width: 420px;">
+        <div class="table-responsive" style="width: 45%;">
             <table class="report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th style="width: 300px;">Jenis</th>
-                        <th style="width: 120px;">Berat</th>
+                        <th style="width: 4%"></th>
+                        <th style="width: 280px;">Jenis</th>
+                        <th style="width: 90px;">Berat</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="2"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @forelse ($subRowsData as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                            <td class="center data-cell">{{ $loop->iteration }}</td>
                             <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
                             <td class="number data-cell">{{ $fmt($row['Berat'] ?? null, true) }}</td>
                         </tr>
                     @empty
                         <tr class="data-row row-even">
-                            <td class="data-cell" colspan="2" style="text-align: center;">Tidak ada data sub mutasi.
+                            <td class="data-cell" colspan="2" style="text-align: center;">
+                                Tidak ada data sub mutasi.
                             </td>
                         </tr>
                     @endforelse
                     <tr class="totals-row">
-                        <td style="text-align:center;">Total :</td>
+                        <td style="text-align:center;" colspan="2">Total </td>
                         <td class="number">{{ $fmt($subTotal, true) }}</td>
                     </tr>
                 </tbody>

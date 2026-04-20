@@ -9,7 +9,7 @@
         }
 
         @page {
-            margin: 20mm 12mm 20mm 12mm;
+            margin: 18mm 12mm 18mm 12mm;
             footer: html_reportFooter;
         }
 
@@ -243,16 +243,34 @@
             'InputMixer' => 0.0,
             'InputWashing' => 0.0,
             'InputReject' => 0.0,
+            'Total' => 0.0,
         ];
 
         foreach ($subRowsData as $row) {
-            $subInputTotals['InputBroker'] += $num($row, 'InputBroker');
-            $subInputTotals['InputBahanBaku'] += $num($row, 'InputBahanBaku');
-            $subInputTotals['InputCrusher'] += $num($row, 'InputCrusher');
-            $subInputTotals['InputGilingan'] += $num($row, 'InputGilingan');
-            $subInputTotals['InputMixer'] += $num($row, 'InputMixer');
-            $subInputTotals['InputWashing'] += $num($row, 'InputWashing');
-            $subInputTotals['InputReject'] += $num($row, 'InputReject');
+            $inputBahanBaku = $num($row, 'InputBahanBaku');
+            $inputBroker = $num($row, 'InputBroker');
+            $inputCrusher = $num($row, 'InputCrusher');
+            $inputGilingan = $num($row, 'InputGilingan');
+            $inputMixer = $num($row, 'InputMixer');
+            $inputWashing = $num($row, 'InputWashing');
+            $inputReject = $num($row, 'InputReject');
+            $inputTotal =
+                $inputBahanBaku +
+                $inputBroker +
+                $inputCrusher +
+                $inputGilingan +
+                $inputMixer +
+                $inputReject +
+                $inputWashing;
+
+            $subInputTotals['InputBroker'] += $inputBroker;
+            $subInputTotals['InputBahanBaku'] += $inputBahanBaku;
+            $subInputTotals['InputCrusher'] += $inputCrusher;
+            $subInputTotals['InputGilingan'] += $inputGilingan;
+            $subInputTotals['InputMixer'] += $inputMixer;
+            $subInputTotals['InputWashing'] += $inputWashing;
+            $subInputTotals['InputReject'] += $inputReject;
+            $subInputTotals['Total'] += $inputTotal;
         }
 
         $wasteTotal = 0.0;
@@ -271,12 +289,12 @@
                     <tr class="headers-row">
                         <th rowspan="2" style="width: 30px;">No</th>
                         <th rowspan="2" style="width: 220px;">Jenis</th>
-                        <th rowspan="2" style="width: 85px;">Berat<br>Awal</th>
+                        <th rowspan="2" style="width: 85px;">Awal</th>
                         <th colspan="2">Masuk</th>
                         <th rowspan="2" style="width: 85px;">Total<br>Masuk</th>
                         <th colspan="4">Keluar</th>
                         <th rowspan="2" style="width: 85px;">Total<br>Keluar</th>
-                        <th rowspan="2" style="width: 85px;">Berat<br>Akhir</th>
+                        <th rowspan="2" style="width: 85px;">Akhir</th>
                     </tr>
                     <tr class="headers-row">
                         <th style="width: 80px;">Output<br>BSU</th>
@@ -287,11 +305,7 @@
                         <th style="width: 80px;">Input<br>Mixer</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="12"></td>
-                    </tr>
-                </tfoot>
+
                 <tbody>
                     @forelse ($rowsData as $row)
                         @php
@@ -323,13 +337,13 @@
                             <td class="number data-cell">{{ $fmt($beratAwal, true) }}</td>
                             <td class="number data-cell">{{ $fmt($outputBsu, true) }}</td>
                             <td class="number data-cell">{{ $fmt($outputBroker, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratMasuk, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratMasuk, true) }}</td>
                             <td class="number data-cell">{{ $fmt($inputBsu, true) }}</td>
                             <td class="number data-cell">{{ $fmt($inputBroker, true) }}</td>
                             <td class="number data-cell">{{ $fmt($inputInject, true) }}</td>
                             <td class="number data-cell">{{ $fmt($inputMixer, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratKeluar, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($beratAkhir, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratKeluar, true) }}</td>
+                            <td class="number data-cell" style="font-weight: bold;">{{ $fmt($beratAkhir, true) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -357,49 +371,61 @@
     </div>
 
     @if (!empty($subRowsData))
-        <div class="section-title" style="margin-top: 20px;">Input</div>
+        <div class="section-title" style="margin-top: 10px;">Input</div>
         <div class="container-fluid">
-            <div class="table-responsive">
+            <div class="table-responsive" style="width: 90%;">
                 <table class="report-table">
                     <thead>
                         <tr class="headers-row">
-                            <th style="width: 240px;">Jenis</th>
-                            <th style="width: 85px;">Input<br>Broker</th>
-                            <th style="width: 95px;">Input Bahan<br>Baku</th>
-                            <th style="width: 85px;">Input<br>Crusher</th>
-                            <th style="width: 85px;">Input<br>Gilingan</th>
-                            <th style="width: 85px;">Input<br>Mixer</th>
-                            <th style="width: 85px;">Input<br>Washing</th>
-                            <th style="width: 85px;">Input<br>Reject</th>
+                            <th style="width: 3%;">No</th>
+                            <th style="width: 27%;">Jenis</th>
+                            <th style="width: 8%;">Input Bahan<br>Baku</th>
+                            <th style="width: 8%;">Input<br>Broker</th>
+                            <th style="width: 8%;">Input<br>Crusher</th>
+                            <th style="width: 8%;">Input<br>Gilingan</th>
+                            <th style="width: 8%;">Input<br>Mixer</th>
+                            <th style="width: 8%;">Input<br>Reject</th>
+                            <th style="width: 8%;">Input<br>Washing</th>
+                            <th style="width: 8%;">Total</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr class="table-end-line">
-                            <td colspan="8"></td>
-                        </tr>
-                    </tfoot>
+
                     <tbody>
                         @foreach ($subRowsData as $row)
+                            @php
+                                $inputRowTotal =
+                                    $num($row, 'InputBahanBaku') +
+                                    $num($row, 'InputBroker') +
+                                    $num($row, 'InputCrusher') +
+                                    $num($row, 'InputGilingan') +
+                                    $num($row, 'InputMixer') +
+                                    $num($row, 'InputReject') +
+                                    $num($row, 'InputWashing');
+                            @endphp
                             <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                <td class="center data-cell">{{ $loop->iteration }}</td>
                                 <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
-                                <td class="number data-cell">{{ $fmt($row['InputBroker'] ?? null, true) }}</td>
                                 <td class="number data-cell">{{ $fmt($row['InputBahanBaku'] ?? null, true) }}</td>
+                                <td class="number data-cell">{{ $fmt($row['InputBroker'] ?? null, true) }}</td>
                                 <td class="number data-cell">{{ $fmt($row['InputCrusher'] ?? null, true) }}</td>
                                 <td class="number data-cell">{{ $fmt($row['InputGilingan'] ?? null, true) }}</td>
                                 <td class="number data-cell">{{ $fmt($row['InputMixer'] ?? null, true) }}</td>
-                                <td class="number data-cell">{{ $fmt($row['InputWashing'] ?? null, true) }}</td>
                                 <td class="number data-cell">{{ $fmt($row['InputReject'] ?? null, true) }}</td>
+                                <td class="number data-cell">{{ $fmt($row['InputWashing'] ?? null, true) }}</td>
+                                <td class="number data-cell" style="font-weight: bold;">
+                                    {{ $fmt($inputRowTotal, true) }}</td>
                             </tr>
                         @endforeach
                         <tr class="totals-row">
-                            <td style="text-align:center;">Total</td>
-                            <td class="number">{{ $fmt($subInputTotals['InputBroker'], true) }}</td>
+                            <td style="text-align:center;" colspan="2">Total</td>
                             <td class="number">{{ $fmt($subInputTotals['InputBahanBaku'], true) }}</td>
+                            <td class="number">{{ $fmt($subInputTotals['InputBroker'], true) }}</td>
                             <td class="number">{{ $fmt($subInputTotals['InputCrusher'], true) }}</td>
                             <td class="number">{{ $fmt($subInputTotals['InputGilingan'], true) }}</td>
                             <td class="number">{{ $fmt($subInputTotals['InputMixer'], true) }}</td>
-                            <td class="number">{{ $fmt($subInputTotals['InputWashing'], true) }}</td>
                             <td class="number">{{ $fmt($subInputTotals['InputReject'], true) }}</td>
+                            <td class="number">{{ $fmt($subInputTotals['InputWashing'], true) }}</td>
+                            <td class="number">{{ $fmt($subInputTotals['Total'], true) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -409,33 +435,31 @@
 
     <div class="section-title">Waste</div>
     <div class="container-fluid">
-        <div class="table-responsive" style="width: 370px;">
+        <div class="table-responsive" style="width: 45%;">
             <table class="report-table">
                 <thead>
                     <tr class="headers-row">
+                        <th style="width: 5%">No</th>
                         <th style="width: 280px;">Jenis</th>
                         <th style="width: 90px;">Berat</th>
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="2"></td>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @forelse ($wasteRowsData as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                            <td class="center data-cell">{{ $loop->iteration }}</td>
                             <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
                             <td class="number data-cell">{{ $fmt($row['OutputWaste'] ?? null, true) }}</td>
                         </tr>
                     @empty
                         <tr class="data-row row-even">
-                            <td class="data-cell" colspan="2" style="text-align: center;">Tidak ada data waste.
+                            <td class="data-cell" colspan="3" style="text-align: center;">
+                                Tidak ada data waste.
                             </td>
                         </tr>
                     @endforelse
                     <tr class="totals-row">
-                        <td style="text-align:center;">Total</td>
+                        <td style="text-align:center;" colspan="2">Total</td>
                         <td class="number">{{ $fmt($wasteTotal, true) }}</td>
                     </tr>
                 </tbody>
