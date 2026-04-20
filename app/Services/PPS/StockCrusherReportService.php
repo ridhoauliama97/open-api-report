@@ -1,0 +1,135 @@
+<?php
+
+namespace App\Services\PPS;
+
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
+
+class StockCrusherReportService
+{
+    public function fetch(string $startDate, string $endDate, string $warehouseName): array
+    {
+        $rows = $this->runProcedureQuery($startDate, $endDate, $warehouseName);
+
+        return array_map(static fn($row): array => (array) $row, $rows);
+    }
+
+    public function healthCheck(string $startDate, string $endDate, string $warehouseName): array
+    {
+        $rows = $this->fetch($startDate, $endDate, $warehouseName);
+        $detectedColumns = array_keys($rows[0] ?? []);
+        $expectedColumns = config('reports.pps_stock_crusher.expected_columns', []);
+        $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
+
+        return [
+            'is_healthy' => empty(array_diff($expectedColumns, $detectedColumns)),
+            'expected_columns' => $expectedColumns,
+            'detected_columns' => $detectedColumns,
+            'missing_columns' => array_values(array_diff($expectedColumns, $detectedColumns)),
+            'extra_columns' => array_values(array_diff($detectedColumns, $expectedColumns)),
+            'row_count' => count($rows),
+        ];
+    }
+
+    private function resolveBindings(string $query, array $bindings): array
+    {
+        return str_contains($query, '?') ? $bindings : [];
+    }
+
+    private function runProcedureQuery(string $startDate, string $endDate, string $warehouseName): array
+    {
+        $configPath = 'reports.pps_stock_crusher';
+        $connectionName = config("{$configPath}.database_connection");
+        $procedure = (string) config("{$configPath}.stored_procedure");
+        $syntax = (string) config("{$configPath}.call_syntax", 'exec');
+        $customQuery = config("{$configPath}.query");
+        $parameterCount = max(0, (int) config("{$configPath}.parameter_count", 2));
+        $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
+
+        if ($procedure === '' && !is_string($customQuery)) {
+            throw new RuntimeException('Stored procedure laporan PPS Stock Crusher belum dikonfigurasi.');
+        }
+
+        $connection = DB::connection($connectionName ?: null);
+        $driver = $connection->getDriverName();
+        $bindings = $this->buildBindings($parameterCount, $singleParameterName, $startDate, $endDate, $warehouseName);
+
+        if ($driver !== 'sqlsrv' && $syntax !== 'query') {
+            throw new RuntimeException(
+                'Laporan PPS Stock Crusher dikonfigurasi untuk SQL Server. '
+                . 'Set PPS_STOCK_CRUSHER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+            );
+        }
+
+        if ($syntax === 'query') {
+            $query = is_string($customQuery) && trim($customQuery) !== ''
+                ? $customQuery
+                : throw new RuntimeException(
+                    'PPS_STOCK_CRUSHER_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan PPS_STOCK_CRUSHER_REPORT_CALL_SYNTAX=query.',
+                );
+
+            return $connection->select($query, $this->resolveBindings($query, $bindings));
+        }
+
+        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+            throw new RuntimeException('Nama stored procedure tidak valid.');
+        }
+
+        $sql = $this->buildProcedureSql($driver, $syntax, $procedure, $parameterCount, $singleParameterName);
+
+        return $connection->select($sql, $bindings);
+    }
+
+    private function buildBindings(
+        int $parameterCount,
+        string $singleParameterName,
+        string $startDate,
+        string $endDate,
+        string $warehouseName,
+    ): array {
+        return match ($parameterCount) {
+            0 => [],
+            1 => [strtolower($singleParameterName) === 'tglawal' ? $startDate : $endDate],
+            default => [$endDate, $warehouseName],
+        };
+    }
+
+    private function buildProcedureSql(
+        string $driver,
+        string $syntax,
+        string $procedure,
+        int $parameterCount,
+        string $singleParameterName,
+    ): string {
+        if ($syntax === 'call') {
+            $bindingCount = match ($parameterCount) {
+                0 => 0,
+                1 => 1,
+                default => 2,
+            };
+            $placeholders = $bindingCount > 0 ? implode(', ', array_fill(0, $bindingCount, '?')) : '';
+
+            return "CALL {$procedure}({$placeholders})";
+        }
+
+        if ($syntax === 'exec' || $driver === 'sqlsrv') {
+            $placeholders = match ($parameterCount) {
+                0 => '',
+                1 => sprintf(' @%s = ?', ltrim($singleParameterName, '@')),
+                default => ' @TglAkhir = ?, @WarehouseName = ?',
+            };
+
+            return "SET NOCOUNT ON; EXEC {$procedure}{$placeholders}";
+        }
+
+        $bindingCount = match ($parameterCount) {
+            0 => 0,
+            1 => 1,
+            default => 2,
+        };
+        $placeholders = $bindingCount > 0 ? implode(', ', array_fill(0, $bindingCount, '?')) : '';
+
+        return "CALL {$procedure}({$placeholders})";
+    }
+}

@@ -153,6 +153,13 @@ use App\Http\Controllers\PPS\HasilProduksiHarianPasangKunciProduksiController;
 
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
+use App\Http\Controllers\PPS\StockBonggolanV2Controller;
+use App\Http\Controllers\PPS\StockBrokerController;
+use App\Http\Controllers\PPS\StockCrusherController;
+use App\Http\Controllers\PPS\StockGilinganController;
+use App\Http\Controllers\PPS\StockMixerController;
+use App\Http\Controllers\PPS\StockRejectController;
+use App\Http\Controllers\PPS\StockWashingController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
 use App\Http\Controllers\PPS\MutasiBrokerController;
 use App\Http\Controllers\PPS\MutasiFurnitureWipController;
@@ -384,10 +391,17 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/bahan-baku/mutasi-bahan-baku', 'api.reports.pps.bahan-baku.mutasi-bahan-baku', MutasiBahanBakuController::class],
         ['/reports/pps/barang-jadi/mutasi-barang-jadi', 'api.reports.pps.barang-jadi.mutasi-barang-jadi', MutasiBarangJadiPpsController::class],
         ['/reports/pps/broker/mutasi-broker', 'api.reports.pps.broker.mutasi-broker', MutasiBrokerController::class],
+        ['/reports/pps/broker/stock-broker', 'api.reports.pps.broker.stock-broker', StockBrokerController::class],
         ['/reports/pps/bonggolan/mutasi-bonggolan', 'api.reports.pps.bonggolan.mutasi-bonggolan', MutasiBonggolanController::class],
+        ['/reports/pps/bonggolan/stock-bonggolan-v2', 'api.reports.pps.bonggolan.stock-bonggolan-v2', StockBonggolanV2Controller::class],
         ['/reports/pps/crusher/mutasi-crusher', 'api.reports.pps.crusher.mutasi-crusher', MutasiCrusherController::class],
+        ['/reports/pps/crusher/stock-crusher', 'api.reports.pps.crusher.stock-crusher', StockCrusherController::class],
         ['/reports/pps/gilingan/mutasi-gilingan', 'api.reports.pps.gilingan.mutasi-gilingan', MutasiGilinganController::class],
+        ['/reports/pps/gilingan/stock-gilingan', 'api.reports.pps.gilingan.stock-gilingan', StockGilinganController::class],
         ['/reports/pps/mixer/mutasi-mixer', 'api.reports.pps.mixer.mutasi-mixer', MutasiMixerController::class],
+        ['/reports/pps/mixer/stock-mixer', 'api.reports.pps.mixer.stock-mixer', StockMixerController::class],
+        ['/reports/pps/reject/stock-reject', 'api.reports.pps.reject.stock-reject', StockRejectController::class],
+        ['/reports/pps/washing/stock-washing', 'api.reports.pps.washing.stock-washing', StockWashingController::class],
         ['/reports/pps/furniture-wip/mutasi-furniture-wip', 'api.reports.pps.furniture-wip.mutasi-furniture-wip', MutasiFurnitureWipController::class],
         ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
         ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],

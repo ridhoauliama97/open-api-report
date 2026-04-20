@@ -1813,6 +1813,90 @@ return [
             ''
         )))),
     ],
+    'pps_stock_bonggolan_v2' => [
+        'database_connection' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_PROCEDURE', 'SP_LaporanStockLabelBonggolan'),
+        'call_syntax' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_BONGGOLAN_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_BONGGOLAN_V2_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
+    'pps_stock_broker' => [
+        'database_connection' => env('PPS_STOCK_BROKER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_BROKER_REPORT_PROCEDURE', 'SP_LaporanStockLabelBroker'),
+        'call_syntax' => env('PPS_STOCK_BROKER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_BROKER_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_BROKER_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_BROKER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_BROKER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,Jenis,NoBroker,JmlhSak,Berat,NamaWarehouse,IdLokasi,Blok'
+        )))),
+    ],
+    'pps_stock_crusher' => [
+        'database_connection' => env('PPS_STOCK_CRUSHER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_CRUSHER_REPORT_PROCEDURE', 'SP_LaporanStockLabelCrusher'),
+        'call_syntax' => env('PPS_STOCK_CRUSHER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_CRUSHER_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_CRUSHER_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_CRUSHER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_CRUSHER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoCrusher,NamaCrusher,Berat,NamaWarehouse,Blok,IdLokasi'
+        )))),
+    ],
+    'pps_stock_gilingan' => [
+        'database_connection' => env('PPS_STOCK_GILINGAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_GILINGAN_REPORT_PROCEDURE', 'SP_LaporanStockLabelGilingan'),
+        'call_syntax' => env('PPS_STOCK_GILINGAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_GILINGAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_GILINGAN_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_GILINGAN_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_GILINGAN_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoGilingan,NamaGilingan,Berat,NamaWarehouse,Blok,IdLokasi'
+        )))),
+    ],
+    'pps_stock_mixer' => [
+        'database_connection' => env('PPS_STOCK_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_MIXER_REPORT_PROCEDURE', 'SP_LaporanStockLabelMixer'),
+        'call_syntax' => env('PPS_STOCK_MIXER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_MIXER_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_MIXER_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_MIXER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_MIXER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,Jenis,NoMixer,JmlhSak,Berat,NamaWarehouse,IdLokasi,Blok'
+        )))),
+    ],
+    'pps_stock_reject' => [
+        'database_connection' => env('PPS_STOCK_REJECT_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_REJECT_REPORT_PROCEDURE', 'SP_LaporanStockLabelReject'),
+        'call_syntax' => env('PPS_STOCK_REJECT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_REJECT_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_REJECT_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_REJECT_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_REJECT_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoReject,NamaReject,Berat,NamaWarehouse,Blok,IdLokasi'
+        )))),
+    ],
+    'pps_stock_washing' => [
+        'database_connection' => env('PPS_STOCK_WASHING_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_WASHING_REPORT_PROCEDURE', 'SP_LaporanStockLabelWashing'),
+        'call_syntax' => env('PPS_STOCK_WASHING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_WASHING_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_WASHING_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_WASHING_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_WASHING_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,Jenis,NoWashing,JmlhSak,Berat,IdLokasi,Blok,NamaWarehouse'
+        )))),
+    ],
     'pps_mutasi_bahan_baku' => [
         'database_connection' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_PROCEDURE', 'SP_PPSLapMutasiBahanBaku'),

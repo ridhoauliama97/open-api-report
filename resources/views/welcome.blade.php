@@ -134,6 +134,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.broker.stock-broker.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Broker
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.broker.broker-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Broker Produksi
@@ -154,6 +160,12 @@
                                 Laporan Mutasi Bonggolan
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.bonggolan.stock-bonggolan-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Bonggolan
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,6 +179,12 @@
                             <a href="{{ route('reports.pps.crusher.mutasi-crusher.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Mutasi Crusher
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.crusher.stock-crusher.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Crusher
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
@@ -188,6 +206,12 @@
                             <a href="{{ route('reports.pps.gilingan.mutasi-gilingan.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Mutasi Gilingan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.gilingan.stock-gilingan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Gilingan
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
@@ -251,6 +275,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.mixer.stock-mixer.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Mixer
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.mixer.mixer-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Mixer Produksi
@@ -265,6 +295,12 @@
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Washing</h2>
                     <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.washing.stock-washing.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Washing
+                            </a>
+                        </div>
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.washing.washing-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
@@ -311,10 +347,10 @@
                     <h2 class="h5 mb-3">Reject</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.reject.stock-reject.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan Stock Reject
+                            </a>
                         </div>
                     </div>
                 </div>

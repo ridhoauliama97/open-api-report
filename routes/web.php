@@ -178,6 +178,13 @@ use App\Http\Controllers\PPS\HasilProduksiHarianHotStampingProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianInjectProduksiController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
+use App\Http\Controllers\PPS\StockBonggolanV2Controller;
+use App\Http\Controllers\PPS\StockBrokerController;
+use App\Http\Controllers\PPS\StockCrusherController;
+use App\Http\Controllers\PPS\StockGilinganController;
+use App\Http\Controllers\PPS\StockMixerController;
+use App\Http\Controllers\PPS\StockRejectController;
+use App\Http\Controllers\PPS\StockWashingController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
 use App\Http\Controllers\PPS\MutasiBrokerController;
 use App\Http\Controllers\PPS\MutasiFurnitureWipController;
@@ -367,11 +374,25 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [MutasiBrokerController::class, 'health'])->name('health');
     });
 
+    Route::prefix('broker/stock-broker')->name('broker.stock-broker.')->group(function (): void {
+        Route::get('/', [StockBrokerController::class, 'index'])->name('index');
+        Route::post('/download', [StockBrokerController::class, 'download'])->name('download');
+        Route::post('/preview', [StockBrokerController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockBrokerController::class, 'health'])->name('health');
+    });
+
     Route::prefix('bonggolan/mutasi-bonggolan')->name('bonggolan.mutasi-bonggolan.')->group(function (): void {
         Route::get('/', [MutasiBonggolanController::class, 'index'])->name('index');
         Route::post('/download', [MutasiBonggolanController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiBonggolanController::class, 'preview'])->name('preview');
         Route::post('/health', [MutasiBonggolanController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('bonggolan/stock-bonggolan-v2')->name('bonggolan.stock-bonggolan-v2.')->group(function (): void {
+        Route::get('/', [StockBonggolanV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockBonggolanV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockBonggolanV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockBonggolanV2Controller::class, 'health'])->name('health');
     });
 
     Route::prefix('crusher/mutasi-crusher')->name('crusher.mutasi-crusher.')->group(function (): void {
@@ -381,6 +402,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [MutasiCrusherController::class, 'health'])->name('health');
     });
 
+    Route::prefix('crusher/stock-crusher')->name('crusher.stock-crusher.')->group(function (): void {
+        Route::get('/', [StockCrusherController::class, 'index'])->name('index');
+        Route::post('/download', [StockCrusherController::class, 'download'])->name('download');
+        Route::post('/preview', [StockCrusherController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockCrusherController::class, 'health'])->name('health');
+    });
+
     Route::prefix('gilingan/mutasi-gilingan')->name('gilingan.mutasi-gilingan.')->group(function (): void {
         Route::get('/', [MutasiGilinganController::class, 'index'])->name('index');
         Route::post('/download', [MutasiGilinganController::class, 'download'])->name('download');
@@ -388,11 +416,39 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [MutasiGilinganController::class, 'health'])->name('health');
     });
 
+    Route::prefix('gilingan/stock-gilingan')->name('gilingan.stock-gilingan.')->group(function (): void {
+        Route::get('/', [StockGilinganController::class, 'index'])->name('index');
+        Route::post('/download', [StockGilinganController::class, 'download'])->name('download');
+        Route::post('/preview', [StockGilinganController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockGilinganController::class, 'health'])->name('health');
+    });
+
     Route::prefix('mixer/mutasi-mixer')->name('mixer.mutasi-mixer.')->group(function (): void {
         Route::get('/', [MutasiMixerController::class, 'index'])->name('index');
         Route::post('/download', [MutasiMixerController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiMixerController::class, 'preview'])->name('preview');
         Route::post('/health', [MutasiMixerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('mixer/stock-mixer')->name('mixer.stock-mixer.')->group(function (): void {
+        Route::get('/', [StockMixerController::class, 'index'])->name('index');
+        Route::post('/download', [StockMixerController::class, 'download'])->name('download');
+        Route::post('/preview', [StockMixerController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockMixerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('reject/stock-reject')->name('reject.stock-reject.')->group(function (): void {
+        Route::get('/', [StockRejectController::class, 'index'])->name('index');
+        Route::post('/download', [StockRejectController::class, 'download'])->name('download');
+        Route::post('/preview', [StockRejectController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockRejectController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('washing/stock-washing')->name('washing.stock-washing.')->group(function (): void {
+        Route::get('/', [StockWashingController::class, 'index'])->name('index');
+        Route::post('/download', [StockWashingController::class, 'download'])->name('download');
+        Route::post('/preview', [StockWashingController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockWashingController::class, 'health'])->name('health');
     });
 
     Route::prefix('furniture-wip/mutasi-furniture-wip')->name('furniture-wip.mutasi-furniture-wip.')->group(function (): void {
