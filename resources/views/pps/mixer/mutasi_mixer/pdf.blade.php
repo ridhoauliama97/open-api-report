@@ -242,12 +242,12 @@
                             $mixProdOutput = $num($row, 'MixProdOutput');
                             $mixInjectOutput = $num($row, 'MixInjectOutput');
                             $mixBsuOutput = $num($row, 'MixBSUOutput');
-                            $beratMasuk = $mixBsuOutput + $mixInjectOutput + $mixProdOutput;
+                            $beratMasuk = $num($row, 'BeratMasuk');
                             $injectInput = $num($row, 'InjectInput');
                             $brokInput = $num($row, 'BrokInput');
                             $mixerInput = $num($row, 'MixerInput');
                             $bsuInput = $num($row, 'BSUInput');
-                            $beratKeluar = $brokInput + $bsuInput + $injectInput + $mixerInput;
+                            $beratKeluar = $num($row, 'BeratKeluar');
                             $beratAkhir = $num($row, 'BeratAkhir');
                             $totals['BeratAwal'] += $beratAwal;
                             $totals['MixProdOutput'] += $mixProdOutput;

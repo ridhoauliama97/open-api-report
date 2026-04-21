@@ -22,6 +22,9 @@ class SemuaLabelController extends Controller
         SemuaLabelReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        @ini_set('memory_limit', (string) env('SEMUA_LABEL_PDF_MEMORY_LIMIT', '2048M'));
+        @set_time_limit(0);
+
         $reportDate = $request->reportDate();
         $startDate = $reportDate;
         $endDate = $reportDate;
@@ -39,22 +42,32 @@ class SemuaLabelController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('pps.semua_label.pdf', [
+        $payload = [
             'rows' => $rows,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-        ]);
+        ];
+
+        $dir = storage_path('app/pdf-temp');
+        if (! is_dir($dir)) {
+            @mkdir($dir, 0777, true);
+        }
+        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('semua-label-', true).'.pdf';
+
+        $pdfGenerator->renderToFile('pps.semua_label.pdf', $payload, $tmpPath);
 
         $filename = sprintf('Laporan-Semua-Label-%s.pdf', $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        return response()
+            ->file($tmpPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            ])
+            ->deleteFileAfterSend(true);
     }
 
     public function preview(

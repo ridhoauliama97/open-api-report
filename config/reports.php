@@ -339,7 +339,6 @@ return [
         'parameter_count' => (int) env('KAPASITAS_RACIP_KAYU_BULAT_HIDUP_RAMBUNG_REPORT_PARAMETER_COUNT', 0),
     ],
 
-
     // Kayu Bulat
     'saldo_kayu_bulat' => [
         'database_connection' => env('SALDO_KAYU_BULAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -1897,6 +1896,26 @@ return [
             'DateCreate,Jenis,NoWashing,JmlhSak,Berat,IdLokasi,Blok,NamaWarehouse'
         )))),
     ],
+    'pps_qc_harian_bahan_baku' => [
+        'database_connection' => env('PPS_QC_HARIAN_BAHAN_BAKU_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_QC_HARIAN_BAHAN_BAKU_REPORT_PROCEDURE', 'SP_LabelHasilQCBB'),
+        'call_syntax' => env('PPS_QC_HARIAN_BAHAN_BAKU_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_QC_HARIAN_BAHAN_BAKU_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_QC_HARIAN_BAHAN_BAKU_REPORT_EXPECTED_COLUMNS',
+            'NoBahanBaku,NoPallet,Jenis,AvgDensity'
+        )))),
+    ],
+    'pps_qc_harian_washing' => [
+        'database_connection' => env('PPS_QC_HARIAN_WASHING_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_QC_HARIAN_WASHING_REPORT_PROCEDURE', 'SP_LabelHasilQCWashing'),
+        'call_syntax' => env('PPS_QC_HARIAN_WASHING_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_QC_HARIAN_WASHING_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_QC_HARIAN_WASHING_REPORT_EXPECTED_COLUMNS',
+            'Mesin,Jenis,NoLabel,Moisture,Moisture2,Moisture3,Density,Density2,Density3'
+        )))),
+    ],
     'pps_mutasi_bahan_baku' => [
         'database_connection' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_PROCEDURE', 'SP_PPSLapMutasiBahanBaku'),
@@ -2196,7 +2215,6 @@ return [
         )))),
     ],
 
-
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [
         'issuers' => array_filter(array_map(
@@ -2225,7 +2243,7 @@ return [
             ))
         ))),
         'jwt_allowed_algs' => array_values(array_filter(array_map(
-            static fn(string $alg): string => strtoupper(trim($alg)),
+            static fn (string $alg): string => strtoupper(trim($alg)),
             explode(',', (string) env('REPORT_API_JWT_ALLOWED_ALGS', 'HS256,HS384,HS512'))
         ))),
         'clock_skew_seconds' => (int) env('REPORT_API_JWT_CLOCK_SKEW_SECONDS', 30),

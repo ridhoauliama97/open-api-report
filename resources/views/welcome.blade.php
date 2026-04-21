@@ -495,13 +495,19 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
-                    <h2 class="h5 mb-3">QC</h2>
+                    <h2 class="h5 mb-3">Laporan QC</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
-                            {{-- <a href="{{ route('reports.pps.semua-label.index') }}"
+                            <a href="{{ route('reports.pps.qc.qc-harian-bahan-baku.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Semua Label
-                            </a> --}}
+                                Laporan QC Harian Bahan Baku
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.qc.qc-harian-washing.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan QC Harian Washing
+                            </a>
                         </div>
                     </div>
                 </div>

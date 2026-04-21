@@ -134,12 +134,30 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $generatedByName = $generatedBy->name ?? 'sistem';
-        $columns = array_keys($rowsData[0] ?? []);
+        $columns = ['NoLabel', 'Jenis', 'NoPallet', 'JlhSak', 'NamaWarehouse', 'Qty'];
         $columnLabels = [
             'NoLabel' => 'No Label',
             'NoPallet' => 'Pallet',
             'JlhSak' => 'Sak',
             'NamaWarehouse' => 'Warehouse',
+        ];
+        $columnWidths = [
+            'NoLabel' => '12%',
+            'Jenis' => '45%',
+            'NoPallet' => '8%',
+            'JlhSak' => '7%',
+            'NamaWarehouse' => '13%',
+            'Qty' => '10%',
+        ];
+        $ketMappings = [
+            'BAKU' => 'BAHAN BAKU',
+            'BROK' => 'BROKER',
+            'BNGG' => 'BONGGOLAN',
+            'CRSH' => 'CRUSHER',
+            'MIXR' => 'MIXER',
+            'FWIP' => 'FURNITURE WIP',
+            'BJDI' => 'BARANG JADI',
+            'RJCT' => 'REJECT',
         ];
         $zeroDecimalColumns = ['NoPallet', 'JlhSak'];
         $qtyColumnIndex = array_search('Qty', $columns, true);
@@ -178,21 +196,23 @@
     @endphp
 
     <h1 class="report-title">Laporan Semua Label</h1>
-    <p class="report-subtitle">Tanggal cetak : {{ $generatedAt->copy()->format('d-M-y H:i') }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $generatedAt->copy()->format('d-M-y') }}</p>
 
     @forelse ($groupedRows as $group)
         @php
             $rowNumber = 1;
         @endphp
-        <p style="margin: 0 0 6px 0; font-size: 12px; font-weight: bold;">
-            {{ $group['ket'] !== '' ? $group['ket'] : '-' }}
+        <p style="margin: 10px 0 6px 0; font-size: 12px; font-weight: bold;">
+            {{ $ketMappings[$group['ket']] ?? ($group['ket'] !== '' ? $group['ket'] : '-') }}
         </p>
         <table class="report-table">
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 34px;">No</th>
+                    <th style="width: 5%;">No</th>
                     @foreach ($columns as $column)
-                        <th>{{ $columnLabels[$column] ?? $column }}</th>
+                        <th style="{!! isset($columnWidths[$column]) ? 'width: ' . $columnWidths[$column] . ';' : '' !!}">
+                            {{ $columnLabels[$column] ?? $column }}
+                        </th>
                     @endforeach
                 </tr>
             </thead>
@@ -220,9 +240,8 @@
                     @php
                         $totalLabelColspan = $qtyColumnIndex !== false ? $qtyColumnIndex + 1 : count($columns) + 1;
                     @endphp
-                    <td colspan="{{ $totalLabelColspan }}"
-                        style="text-align:right; font-weight:bold; padding-right:8px;">
-                        Total Qty
+                    <td colspan="{{ $totalLabelColspan }}" style="text-align:right; font-weight:bold; padding-right:8px;">
+                        Total
                     </td>
                     @if ($qtyColumnIndex !== false)
                         <td class="number" style="font-weight:bold;">
@@ -248,7 +267,8 @@
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">
             <div class="footer-left">Dicetak oleh {{ $generatedByName }} pada
-                {{ $generatedAt->copy()->format('d-M-y H:i') }}</div>
+                {{ $generatedAt->copy()->format('d-M-y H:i') }}
+            </div>
             <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
         </div>
     </htmlpagefooter>

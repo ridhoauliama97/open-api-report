@@ -185,6 +185,8 @@ use App\Http\Controllers\PPS\StockGilinganController;
 use App\Http\Controllers\PPS\StockMixerController;
 use App\Http\Controllers\PPS\StockRejectController;
 use App\Http\Controllers\PPS\StockWashingController;
+use App\Http\Controllers\PPS\QcHarianBahanBakuController;
+use App\Http\Controllers\PPS\QcHarianWashingController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
 use App\Http\Controllers\PPS\MutasiBrokerController;
 use App\Http\Controllers\PPS\MutasiFurnitureWipController;
@@ -449,6 +451,20 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [StockWashingController::class, 'download'])->name('download');
         Route::post('/preview', [StockWashingController::class, 'preview'])->name('preview');
         Route::post('/health', [StockWashingController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('qc/qc-harian-bahan-baku')->name('qc.qc-harian-bahan-baku.')->group(function (): void {
+        Route::get('/', [QcHarianBahanBakuController::class, 'index'])->name('index');
+        Route::post('/download', [QcHarianBahanBakuController::class, 'download'])->name('download');
+        Route::post('/preview', [QcHarianBahanBakuController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcHarianBahanBakuController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('qc/qc-harian-washing')->name('qc.qc-harian-washing.')->group(function (): void {
+        Route::get('/', [QcHarianWashingController::class, 'index'])->name('index');
+        Route::post('/download', [QcHarianWashingController::class, 'download'])->name('download');
+        Route::post('/preview', [QcHarianWashingController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcHarianWashingController::class, 'health'])->name('health');
     });
 
     Route::prefix('furniture-wip/mutasi-furniture-wip')->name('furniture-wip.mutasi-furniture-wip.')->group(function (): void {
