@@ -40,8 +40,8 @@
         }
 
         .section-title {
-            margin: 8px 0 4px 0;
-            font-size: 11px;
+            margin: 10px 0 4px 0;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -121,25 +121,11 @@
             display: table-row-group;
         }
 
-        .report-table .headers-row th {
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0;
             border-bottom: 0;
             border-left: 1px solid #000;
             border-right: 1px solid #000;
-        }
-
-        .table-end-line td {
-            padding: 0;
-            height: 0;
-            line-height: 0;
-            border: 0;
-            border-top: 1px solid #000;
-            background: transparent;
         }
     </style>
 </head>
@@ -151,7 +137,7 @@
         $generatedByName = $generatedBy->name ?? 'sistem';
     @endphp
     <h1 class="report-title">Laporan Produksi Harian</h1>
-    <p class="report-subtitle">Tanggal : {{ \Carbon\Carbon::parse($endDate)->format('d-M-y') }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ \Carbon\Carbon::parse($endDate)->format('d-M-y') }}</p>
     @php
         $sections = [
             'Output Produksi Harian (Crusher)' => ['Output'],
@@ -221,15 +207,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align: center;">Tidak ada data.</td>
+                        <td colspan="5"
+                            style="text-align: center; background: #c9d1df; font-weight: bold; font-size: 10px; font-style: italic;">
+                            Tidak ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="5"></td>
-                </tr>
-            </tfoot>
         </table>
     @endforeach
     <htmlpagefooter name="reportFooter">

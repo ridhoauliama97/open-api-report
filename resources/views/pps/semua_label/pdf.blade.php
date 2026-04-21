@@ -240,11 +240,12 @@
                     @php
                         $totalLabelColspan = $qtyColumnIndex !== false ? $qtyColumnIndex + 1 : count($columns) + 1;
                     @endphp
-                    <td colspan="{{ $totalLabelColspan }}" style="text-align:right; font-weight:bold; padding-right:8px;">
+                    <td colspan="{{ $totalLabelColspan }}"
+                        style="text-align:center; font-weight:bold; font-size: 11px;">
                         Total
                     </td>
                     @if ($qtyColumnIndex !== false)
-                        <td class="number" style="font-weight:bold;">
+                        <td class="number" style="font-weight:bold; font-size: 11px;">
                             {{ number_format($group['qty_total'], 2, '.', ',') }}
                         </td>
                         @for ($columnIndex = $qtyColumnIndex + 1; $columnIndex < count($columns); $columnIndex++)
