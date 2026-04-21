@@ -186,6 +186,8 @@ use App\Http\Controllers\PPS\StockMixerController;
 use App\Http\Controllers\PPS\StockRejectController;
 use App\Http\Controllers\PPS\StockWashingController;
 use App\Http\Controllers\PPS\QcHarianBahanBakuController;
+use App\Http\Controllers\PPS\QcHarianBrokerController;
+use App\Http\Controllers\PPS\QcHarianMixerController;
 use App\Http\Controllers\PPS\QcHarianWashingController;
 use App\Http\Controllers\PPS\MutasiCrusherController;
 use App\Http\Controllers\PPS\MutasiBrokerController;
@@ -460,11 +462,25 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [QcHarianBahanBakuController::class, 'health'])->name('health');
     });
 
+    Route::prefix('qc/qc-harian-broker')->name('qc.qc-harian-broker.')->group(function (): void {
+        Route::get('/', [QcHarianBrokerController::class, 'index'])->name('index');
+        Route::post('/download', [QcHarianBrokerController::class, 'download'])->name('download');
+        Route::post('/preview', [QcHarianBrokerController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcHarianBrokerController::class, 'health'])->name('health');
+    });
+
     Route::prefix('qc/qc-harian-washing')->name('qc.qc-harian-washing.')->group(function (): void {
         Route::get('/', [QcHarianWashingController::class, 'index'])->name('index');
         Route::post('/download', [QcHarianWashingController::class, 'download'])->name('download');
         Route::post('/preview', [QcHarianWashingController::class, 'preview'])->name('preview');
         Route::post('/health', [QcHarianWashingController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('qc/qc-harian-mixer')->name('qc.qc-harian-mixer.')->group(function (): void {
+        Route::get('/', [QcHarianMixerController::class, 'index'])->name('index');
+        Route::post('/download', [QcHarianMixerController::class, 'download'])->name('download');
+        Route::post('/preview', [QcHarianMixerController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcHarianMixerController::class, 'health'])->name('health');
     });
 
     Route::prefix('furniture-wip/mutasi-furniture-wip')->name('furniture-wip.mutasi-furniture-wip.')->group(function (): void {

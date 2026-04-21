@@ -504,9 +504,21 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.qc.qc-harian-broker.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporaan QC Harian Broker
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.qc.qc-harian-washing.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan QC Harian Washing
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.qc.qc-harian-mixer.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporaan QC Harian Mixer
                             </a>
                         </div>
                     </div>

@@ -1916,6 +1916,28 @@ return [
             'Mesin,Jenis,NoLabel,Moisture,Moisture2,Moisture3,Density,Density2,Density3'
         )))),
     ],
+    'pps_qc_harian_mixer' => [
+        'database_connection' => env('PPS_QC_HARIAN_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_QC_HARIAN_MIXER_REPORT_PROCEDURE', 'SP_LaporanHasilQCHarianMixer'),
+        'call_syntax' => env('PPS_QC_HARIAN_MIXER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_QC_HARIAN_MIXER_REPORT_QUERY'),
+        'single_parameter_name' => env('PPS_QC_HARIAN_MIXER_REPORT_SINGLE_PARAMETER_NAME', 'EndDate'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_QC_HARIAN_MIXER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoMixer,Jenis,Moisture,Moisture2,Moisture3,MFI,MeltTemp'
+        )))),
+    ],
+    'pps_qc_harian_broker' => [
+        'database_connection' => env('PPS_QC_HARIAN_BROKER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_QC_HARIAN_BROKER_REPORT_PROCEDURE', 'SP_LaporanHasilQCHarianBroker'),
+        'call_syntax' => env('PPS_QC_HARIAN_BROKER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_QC_HARIAN_BROKER_REPORT_QUERY'),
+        'single_parameter_name' => env('PPS_QC_HARIAN_BROKER_REPORT_SINGLE_PARAMETER_NAME', 'EndDate'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_QC_HARIAN_BROKER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NamaMesin,Shift,Jenis,NoBroker,Moisture,Moisture2,Moisture3,Density,Density2,Density3,MFI,VisualNote'
+        )))),
+    ],
     'pps_mutasi_bahan_baku' => [
         'database_connection' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_MUTASI_BAHAN_BAKU_REPORT_PROCEDURE', 'SP_PPSLapMutasiBahanBaku'),
