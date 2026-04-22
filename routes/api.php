@@ -3,6 +3,7 @@
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
+use App\Http\Controllers\Api\PdfJobController;
 use App\Http\Controllers\BalokSudahSemprotController;
 use App\Http\Controllers\DashboardBarangJadiController;
 use App\Http\Controllers\BarangJadiHidupDetailController;
@@ -205,6 +206,12 @@ Route::prefix('auth')->group(function (): void {
  * Group route laporan yang hanya bisa diakses user terautentikasi.
  */
 Route::middleware('report.jwt.claims')->group(function (): void {
+    Route::get('/reports/jobs/{jobId}/status', [PdfJobController::class, 'status'])->name('api.pdf-jobs.status');
+    Route::get('/reports/jobs/{jobId}/download', [PdfJobController::class, 'download'])->name('api.pdf-jobs.download');
+    Route::post('/reports/{reportPath}/pdf/async', [PdfJobController::class, 'dispatch'])
+        ->where('reportPath', '.*')
+        ->name('api.pdf-jobs.dispatch');
+
     /**
      * @param class-string $controller
      */

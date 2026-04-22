@@ -123,9 +123,15 @@ class AuditReportApiCommand extends Command
             if (!str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
+            if (str_starts_with($uri, 'api/reports/jobs/')) {
+                continue;
+            }
+            if (str_ends_with($uri, '/pdf/async')) {
+                continue;
+            }
 
             $path = '/' . $uri;
-            $base = preg_replace('#/(health|pdf)$#', '', $path) ?? $path;
+            $base = preg_replace('#/(health|pdf|preview|download)$#', '', $path) ?? $path;
             $seen[$base] ??= [
                 'preview' => false,
                 'health' => false,
@@ -136,8 +142,16 @@ class AuditReportApiCommand extends Command
                 $seen[$base]['health'] = true;
                 continue;
             }
+            if (str_ends_with($path, '/download')) {
+                $seen[$base]['pdf'] = true;
+                continue;
+            }
             if (str_ends_with($path, '/pdf')) {
                 $seen[$base]['pdf'] = true;
+                continue;
+            }
+            if (str_ends_with($path, '/preview')) {
+                $seen[$base]['preview'] = true;
                 continue;
             }
             $seen[$base]['preview'] = true;
@@ -165,4 +179,3 @@ class AuditReportApiCommand extends Command
         return $issues;
     }
 }
-

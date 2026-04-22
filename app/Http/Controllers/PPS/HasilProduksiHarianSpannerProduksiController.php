@@ -25,7 +25,7 @@ class HasilProduksiHarianSpannerProduksiController extends Controller
         PdfGenerator $pdfGenerator,
     ) {
         $noProduksi = $request->noProduksi();
-        $generatedBy = $this->resolveGeneratedBy($request);
+        $generatedBy = $this->resolveReportGeneratedBy($request);
 
         try {
             $report = $reportService->fetch($noProduksi);
@@ -101,24 +101,5 @@ class HasilProduksiHarianSpannerProduksiController extends Controller
             ],
             'health' => $result,
         ]);
-    }
-
-    private function resolveGeneratedBy(GenerateHasilProduksiHarianSpannerProduksiReportRequest $request): object
-    {
-        $webUser = $request->user() ?? auth('api')->user();
-        if ($webUser !== null) {
-            $name = (string) ($webUser->name ?? $webUser->Username ?? 'sistem');
-
-            return (object) ['name' => $name];
-        }
-
-        $claims = $request->attributes->get('report_token_claims');
-        if (is_array($claims)) {
-            $name = (string) ($claims['name'] ?? $claims['username'] ?? 'api');
-
-            return (object) ['name' => $name];
-        }
-
-        return (object) ['name' => 'sistem'];
     }
 }

@@ -123,4 +123,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'pdf_storage_disk' => env('PDF_STORAGE_DISK', 'local'),
+
+    'pdf_storage_path' => env('PDF_STORAGE_PATH', 'pdf_reports'),
+
+    'pdf_retention_hours' => (int) env('PDF_RETENTION_HOURS', 24),
+
 ];

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\PPS;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseReportRequest;
 
-class GenerateHasilProduksiHarianPackingProduksiReportRequest extends FormRequest
+class GenerateHasilProduksiHarianPackingProduksiReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {

@@ -211,12 +211,7 @@
         $attendance = $report['attendance'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
         $formatNumber = static function ($value, ?int $decimals = null): string {
-            return number_format(
-                (float) $value,
-                $decimals ?? 2,
-                '.',
-                ',',
-            );
+            return number_format((float) $value, $decimals ?? 2, '.', ',');
         };
         $textOrBlank = static fn($value): string => trim((string) $value) !== '' ? e(trim((string) $value)) : '&nbsp;';
     @endphp
@@ -319,7 +314,7 @@
                 </tr>
                 <tr>
                     <th class="signature-role">Operator</th>
-                    <th class="signature-role">Ka. Regu Spanner</th>
+                    <th class="signature-role">Ka. Regu Packing</th>
                     <th class="signature-role">Ka. Div, Produksi Hilir</th>
                     <th class="signature-role">Ka. Dept, Produksi</th>
                 </tr>

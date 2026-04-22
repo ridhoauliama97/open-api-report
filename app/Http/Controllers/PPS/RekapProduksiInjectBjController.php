@@ -25,7 +25,7 @@ class RekapProduksiInjectBjController extends Controller
         $reportDate = $request->reportDate();
         $startDate = $reportDate;
         $endDate = $reportDate;
-        $generatedBy = $this->resolveGeneratedBy($request);
+        $generatedBy = $this->resolveReportGeneratedBy($request);
 
         try {
             $rows = $reportService->fetch($startDate, $endDate);
@@ -117,28 +117,5 @@ class RekapProduksiInjectBjController extends Controller
             ],
             'health' => $result,
         ]);
-    }
-
-    /**
-     * @return object{name: string}
-     */
-    private function resolveGeneratedBy(GenerateRekapProduksiInjectBjReportRequest $request): object
-    {
-        $webUser = $request->user() ?? auth('api')->user();
-        if ($webUser !== null) {
-            /** @var object{name?: string, Username?: string} $webUser */
-            $name = (string) ($webUser->name ?? $webUser->Username ?? 'sistem');
-
-            return (object) ['name' => $name];
-        }
-
-        $claims = $request->attributes->get('report_token_claims');
-        if (is_array($claims)) {
-            $name = (string) ($claims['name'] ?? $claims['username'] ?? 'api');
-
-            return (object) ['name' => $name];
-        }
-
-        return (object) ['name' => 'sistem'];
     }
 }
