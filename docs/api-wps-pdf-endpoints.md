@@ -135,6 +135,16 @@ Contoh:
 - Laporan Penjualan Kayu Rekap Penjualan Per Produk: `http://192.168.10.100:5006/api/reports/penjualan-kayu/rekap-penjualan-per-produk/pdf`
 - Laporan Penjualan Kayu Timeline Rekap Penjualan Per Produk: `http://192.168.10.100:5006/api/reports/penjualan-kayu/timeline-rekap-penjualan-per-produk/pdf`
 
+## Proses Produksi
+
+- Laporan Produksi Per Nomor Produksi CCAkhir: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-per-nomor-produksi/pdf`
+- Laporan Produksi Per Nomor Produksi FJ: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-fj-per-nomor-produksi/pdf`
+- Laporan Produksi Per Nomor Produksi Laminating: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-laminating-per-nomor-produksi/pdf`
+- Laporan Produksi Per Nomor Produksi Moulding: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-moulding-per-nomor-produksi/pdf`
+- Laporan Produksi Per Nomor Produksi Packing: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-packing-per-nomor-produksi/pdf`
+- Laporan Produksi Per Nomor Produksi S4S: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-s4s-per-nomor-produksi/pdf`
+- Laporan Produksi Per Nomor Produksi Sanding: `http://192.168.10.100:5006/api/reports/proses-produksi/produksi-sanding-per-nomor-produksi/pdf`
+
 ## Rendemen Kayu
 
 - Laporan Rendemen Kayu Produksi Per SPK: `http://192.168.10.100:5006/api/reports/rendemen-kayu/produksi-per-spk/pdf`
