@@ -43,6 +43,7 @@ use App\Http\Controllers\MutasiMouldingController;
 use App\Http\Controllers\MutasiReprosesController;
 use App\Http\Controllers\MutasiSandingController;
 use App\Http\Controllers\MutasiHasilRacipController;
+use App\Http\Controllers\MutasiRacipDetailController;
 use App\Http\Controllers\MutasiSTController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
@@ -111,6 +112,7 @@ use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
 use App\Http\Controllers\ProduksiHuluHilirController;
 use App\Http\Controllers\StockSTKeringController;
+use App\Http\Controllers\StockRacipKayuLatController;
 use App\Http\Controllers\SupplierIntelController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
@@ -328,6 +330,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
      */
     $standaloneReportRouteDefinitions = [
         ['/reports/hasil-output-racip-harian', 'api.reports.hasil-output-racip-harian', HasilOutputRacipHarianController::class],
+        ['/reports/stock-racip-kayu-lat', 'api.reports.stock-racip-kayu-lat', StockRacipKayuLatController::class],
+        ['/reports/mutasi-racip-detail', 'api.reports.mutasi-racip-detail', MutasiRacipDetailController::class],
         ['/reports/rangkuman-label-input', 'api.reports.rangkuman-label-input', RangkumanJlhLabelInputController::class],
         ['/reports/mutasi-hasil-racip', 'api.reports.mutasi-hasil-racip', MutasiHasilRacipController::class],
         ['/reports/label-nyangkut', 'api.reports.label-nyangkut', LabelNyangkutController::class],

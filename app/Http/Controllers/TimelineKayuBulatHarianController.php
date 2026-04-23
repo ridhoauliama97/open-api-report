@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GenerateTimelineKayuBulatHarianReportRequest;
+use App\Http\Requests\GenerateDateRangeReportRequest;
 use App\Services\PdfGenerator;
 use App\Services\TimelineKayuBulatHarianReportService;
 use Illuminate\Contracts\View\View;
@@ -17,7 +17,7 @@ class TimelineKayuBulatHarianController extends Controller
     }
 
     public function download(
-        GenerateTimelineKayuBulatHarianReportRequest $request,
+        GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
@@ -25,7 +25,7 @@ class TimelineKayuBulatHarianController extends Controller
     }
 
     public function previewPdf(
-        GenerateTimelineKayuBulatHarianReportRequest $request,
+        GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
@@ -33,7 +33,7 @@ class TimelineKayuBulatHarianController extends Controller
     }
 
     private function buildPdfResponse(
-        GenerateTimelineKayuBulatHarianReportRequest $request,
+        GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianReportService $reportService,
         PdfGenerator $pdfGenerator,
         bool $inline,
@@ -53,7 +53,7 @@ class TimelineKayuBulatHarianController extends Controller
         [$startDate, $endDate] = $this->extractDates($request);
 
         try {
-            $rows = $reportService->fetch($startDate, $endDate);
+            $reportData = $reportService->buildReportData($startDate, $endDate);
         } catch (RuntimeException $exception) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
@@ -65,12 +65,15 @@ class TimelineKayuBulatHarianController extends Controller
         }
 
         $pdf = $pdfGenerator->render('reports.kayu-bulat.timeline-kayu-bulat-harian-pdf', [
-            'rows' => $rows,
+            'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_pack_table_data' => false,
+            'pdf_orientation' => 'landscape',
+            'pdf_column_count' => max(4, 3 + count($reportData['periods'] ?? [])),
         ]);
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Harian-JTG-PLI-%s-sd-%s.pdf', $startDate, $endDate);
@@ -83,13 +86,13 @@ class TimelineKayuBulatHarianController extends Controller
     }
 
     public function preview(
-        GenerateTimelineKayuBulatHarianReportRequest $request,
+        GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $this->extractDates($request);
 
         try {
-            $rows = $reportService->fetch($startDate, $endDate);
+            $reportData = $reportService->buildReportData($startDate, $endDate);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -101,15 +104,18 @@ class TimelineKayuBulatHarianController extends Controller
                 'end_date' => $endDate,
                 'TglAwal' => $startDate,
                 'TglAkhir' => $endDate,
-                'total_rows' => count($rows),
-                'column_order' => array_keys($rows[0] ?? []),
+                'total_rows' => count($reportData['rows'] ?? []),
+                'total_periods' => $reportData['summary']['total_periods'] ?? 0,
+                'column_order' => array_keys($reportData['rows'][0] ?? []),
             ],
-            'data' => $rows,
+            'summary' => $reportData['summary'] ?? [],
+            'data' => $reportData['rows'] ?? [],
+            'grouped_data' => $reportData['periods'] ?? [],
         ]);
     }
 
     public function health(
-        GenerateTimelineKayuBulatHarianReportRequest $request,
+        GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $this->extractDates($request);
@@ -137,7 +143,7 @@ class TimelineKayuBulatHarianController extends Controller
     /**
      * @return array{0: string, 1: string}
      */
-    private function extractDates(GenerateTimelineKayuBulatHarianReportRequest $request): array
+    private function extractDates(GenerateDateRangeReportRequest $request): array
     {
         return [$request->startDate(), $request->endDate()];
     }

@@ -111,6 +111,26 @@ class MutasiRacipDetailReportService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function healthCheck(string $startDate, string $endDate): array
+    {
+        $rows = $this->fetch($startDate, $endDate);
+        $detectedColumns = array_keys($rows[0] ?? []);
+        $expectedColumns = config('reports.mutasi_racip_detail.expected_columns', []);
+        $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
+
+        return [
+            'is_healthy' => empty(array_diff($expectedColumns, $detectedColumns)),
+            'expected_columns' => $expectedColumns,
+            'detected_columns' => $detectedColumns,
+            'missing_columns' => array_values(array_diff($expectedColumns, $detectedColumns)),
+            'extra_columns' => array_values(array_diff($detectedColumns, $expectedColumns)),
+            'row_count' => count($rows),
+        ];
+    }
+
     private function isNumericColumn(string $column, array $rows): bool
     {
         foreach ($rows as $row) {

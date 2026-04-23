@@ -118,4 +118,29 @@ class StockRacipKayuLatController extends Controller
             'data' => $reportData['rows'] ?? [],
         ]);
     }
+
+    public function health(
+        GenerateStockRacipKayuLatReportRequest $request,
+        StockRacipKayuLatReportService $reportService,
+    ): JsonResponse {
+        $defaultEndDate = now()->format('Y-m-d');
+        $endDate = $request->endDate($defaultEndDate);
+
+        try {
+            $result = $reportService->healthCheck($endDate);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => $result['is_healthy']
+                ? 'Struktur output sp_LapStockRacipKayuLat valid.'
+                : 'Struktur output sp_LapStockRacipKayuLat berubah.',
+            'meta' => [
+                'end_date' => $endDate,
+                'TglAkhir' => $endDate,
+            ],
+            'health' => $result,
+        ]);
+    }
 }

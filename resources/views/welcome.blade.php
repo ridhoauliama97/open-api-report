@@ -89,7 +89,10 @@
 
 
         <div id="pps-reports" class="mb-3">
-            <h2 class="h4 fw-bold mb-0">PPS</h2>
+            <h2 class="h4 fw-bold mb-0 d-flex align-items-center gap-2 flex-wrap">
+                <span>PPS</span>
+                <span id="pps-report-total" class="badge text-bg-primary">0 Total Laporan</span>
+            </h2>
         </div>
 
         <div class="col-12">
@@ -544,7 +547,10 @@
 
 
         <div id="wps-reports" class="mb-3">
-            <h2 class="h4 fw-bold mb-0">WPS</h2>
+            <h2 class="h4 fw-bold mb-0 d-flex align-items-center gap-2 flex-wrap">
+                <span>WPS</span>
+                <span id="wps-report-total" class="badge text-bg-success">0 Total Laporan</span>
+            </h2>
         </div>
 
         <div class="col-12">
@@ -1641,6 +1647,37 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const ppsSectionHeader = document.getElementById('pps-reports');
+            const wpsSectionHeader = document.getElementById('wps-reports');
+            const ppsTotalBadge = document.getElementById('pps-report-total');
+            const wpsTotalBadge = document.getElementById('wps-report-total');
+
+            const countReportLinksBetween = (startElement, endElement = null) => {
+                if (!startElement) {
+                    return 0;
+                }
+
+                let current = startElement.nextElementSibling;
+                let total = 0;
+
+                while (current && current !== endElement) {
+                    total += current.querySelectorAll('a.btn.btn-outline-primary.w-100.text-start').length;
+                    current = current.nextElementSibling;
+                }
+
+                return total;
+            };
+
+            if (ppsTotalBadge) {
+                const ppsCount = countReportLinksBetween(ppsSectionHeader, wpsSectionHeader);
+                ppsTotalBadge.textContent = `${ppsCount} Total Laporan`;
+            }
+
+            if (wpsTotalBadge) {
+                const wpsCount = countReportLinksBetween(wpsSectionHeader);
+                wpsTotalBadge.textContent = `${wpsCount} Total Laporan`;
+            }
+
             const reportCards = Array.from(document.querySelectorAll('main > .col-12 > .card'));
 
             reportCards.forEach((card, index) => {

@@ -77,7 +77,9 @@ Contoh:
 - Laporan Bahan Terpakai: `http://192.168.10.100:5006/api/reports/bahan-terpakai/pdf`
 - Laporan Hasil Output Racip Harian: `http://192.168.10.100:5006/api/reports/hasil-output-racip-harian/pdf`
 - Laporan Label Nyangkut: `http://192.168.10.100:5006/api/reports/label-nyangkut/pdf`
+- Laporan Mutasi Racip Detail: `http://192.168.10.100:5006/api/reports/mutasi-racip-detail/pdf`
 - Laporan Rangkuman Label Input: `http://192.168.10.100:5006/api/reports/rangkuman-label-input/pdf`
+- Laporan Stock Racip Kayu Lat: `http://192.168.10.100:5006/api/reports/stock-racip-kayu-lat/pdf`
 
 ## Laminating
 
@@ -210,4 +212,3 @@ Contoh:
 - Laporan Verifikasi Bahan Yang Dihasilkan: `http://192.168.10.100:5006/api/reports/verifikasi/bahan-yang-dihasilkan/pdf`
 - Laporan Verifikasi Kapasitas Racip Kayu Bulat Hidup: `http://192.168.10.100:5006/api/reports/verifikasi/kapasitas-racip-kayu-bulat-hidup/pdf`
 - Laporan Verifikasi Rangkuman Bongkar Susun: `http://192.168.10.100:5006/api/reports/verifikasi/rangkuman-bongkar-susun/pdf`
-

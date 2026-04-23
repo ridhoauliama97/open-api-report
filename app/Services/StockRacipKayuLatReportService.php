@@ -47,6 +47,26 @@ class StockRacipKayuLatReportService
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function healthCheck(string $endDate): array
+    {
+        $rows = $this->fetch($endDate);
+        $detectedColumns = array_keys($rows[0] ?? []);
+        $expectedColumns = config('reports.stock_racip_kayu_lat.expected_columns', []);
+        $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
+
+        return [
+            'is_healthy' => empty(array_diff($expectedColumns, $detectedColumns)),
+            'expected_columns' => $expectedColumns,
+            'detected_columns' => $detectedColumns,
+            'missing_columns' => array_values(array_diff($expectedColumns, $detectedColumns)),
+            'extra_columns' => array_values(array_diff($detectedColumns, $expectedColumns)),
+            'row_count' => count($rows),
+        ];
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $rows
      * @return array<int, array<string, mixed>>
      */
