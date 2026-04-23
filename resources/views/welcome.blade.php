@@ -548,6 +548,58 @@
         </div>
 
         <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Proses Produksi</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi CCAkhir
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-fj-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi FJ
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-laminating-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi Laminating
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-moulding-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi Moulding
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-packing-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi Packing
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-sanding-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi Sanding
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.proses-produksi.produksi-s4s-per-nomor-produksi.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Produksi Per Nomor Produksi S4S
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
             <div class="card border-0 shadow-sm mb-4 h-100">
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Cross Cut Akhir</h2>

@@ -9,5 +9,5 @@
 ## Contoh cURL
 
 ```bash
-curl -X POST "http://localhost:8000/api/reports/bahan-terpakai/health"
+curl -X POST "http://192.168.10.100:5006/api/reports/bahan-terpakai/health"
 ```

@@ -65,6 +65,13 @@ use App\Http\Controllers\RekapPenjualanEksporPerBuyerPerProdukController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
 use App\Http\Controllers\PenjualanLokalController;
 use App\Http\Controllers\KoordinatTanahController;
+use App\Http\Controllers\ProduksiFjPerNomorProduksiController;
+use App\Http\Controllers\ProduksiLaminatingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiMouldingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiPackingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiPerNomorProduksiController;
+use App\Http\Controllers\ProduksiSandingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiS4sPerNomorProduksiController;
 use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
@@ -1094,6 +1101,58 @@ Route::prefix('reports/mutasi')->name('reports.mutasi.')->group(function (): voi
         Route::get('/', [MutasiKayuBulatKGController::class, 'index'])->name('index');
         Route::post('/download', [MutasiKayuBulatKGController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiKayuBulatKGController::class, 'preview'])->name('preview');
+    });
+});
+
+Route::prefix('reports/proses-produksi')->name('reports.proses-produksi.')->group(function (): void {
+    Route::prefix('produksi-per-nomor-produksi')->name('produksi-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiPerNomorProduksiController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-fj-per-nomor-produksi')->name('produksi-fj-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiFjPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiFjPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiFjPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiFjPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiFjPerNomorProduksiController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-laminating-per-nomor-produksi')->name('produksi-laminating-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiLaminatingPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiLaminatingPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiLaminatingPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiLaminatingPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiLaminatingPerNomorProduksiController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-moulding-per-nomor-produksi')->name('produksi-moulding-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiMouldingPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiMouldingPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiMouldingPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiMouldingPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiMouldingPerNomorProduksiController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-packing-per-nomor-produksi')->name('produksi-packing-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiPackingPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiPackingPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiPackingPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiPackingPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiPackingPerNomorProduksiController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-s4s-per-nomor-produksi')->name('produksi-s4s-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiS4sPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiS4sPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiS4sPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiS4sPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiS4sPerNomorProduksiController::class, 'health'])->name('health');
+    });
+    Route::prefix('produksi-sanding-per-nomor-produksi')->name('produksi-sanding-per-nomor-produksi.')->group(function (): void {
+        Route::get('/', [ProduksiSandingPerNomorProduksiController::class, 'index'])->name('index');
+        Route::post('/download', [ProduksiSandingPerNomorProduksiController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [ProduksiSandingPerNomorProduksiController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [ProduksiSandingPerNomorProduksiController::class, 'preview'])->name('preview');
+        Route::post('/health', [ProduksiSandingPerNomorProduksiController::class, 'health'])->name('health');
     });
 });
 

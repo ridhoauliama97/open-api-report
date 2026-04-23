@@ -60,6 +60,13 @@ use App\Http\Controllers\RekapPenjualanEksporPerBuyerPerProdukController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
 use App\Http\Controllers\PenjualanLokalController;
 use App\Http\Controllers\KoordinatTanahController;
+use App\Http\Controllers\ProduksiFjPerNomorProduksiController;
+use App\Http\Controllers\ProduksiLaminatingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiMouldingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiPackingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiPerNomorProduksiController;
+use App\Http\Controllers\ProduksiSandingPerNomorProduksiController;
+use App\Http\Controllers\ProduksiS4sPerNomorProduksiController;
 use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\RendemenSemuaProsesController;
 use App\Http\Controllers\RekapProduktivitasSawmillRpController;
@@ -333,6 +340,13 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/management/produksi-semua-mesin', 'api.reports.management.produksi-semua-mesin', ProduksiSemuaMesinController::class],
         ['/reports/management/produksi-hulu-hilir', 'api.reports.management.produksi-hulu-hilir', ProduksiHuluHilirController::class],
         ['/reports/management/hasil-produksi-mesin-lembur-dan-non-lembur', 'api.reports.management.hasil-produksi-mesin-lembur-dan-non-lembur', HasilProduksiMesinLemburDanNonLemburController::class],
+        ['/reports/proses-produksi/produksi-per-nomor-produksi', 'api.reports.proses-produksi.produksi-per-nomor-produksi', ProduksiPerNomorProduksiController::class],
+        ['/reports/proses-produksi/produksi-fj-per-nomor-produksi', 'api.reports.proses-produksi.produksi-fj-per-nomor-produksi', ProduksiFjPerNomorProduksiController::class],
+        ['/reports/proses-produksi/produksi-laminating-per-nomor-produksi', 'api.reports.proses-produksi.produksi-laminating-per-nomor-produksi', ProduksiLaminatingPerNomorProduksiController::class],
+        ['/reports/proses-produksi/produksi-moulding-per-nomor-produksi', 'api.reports.proses-produksi.produksi-moulding-per-nomor-produksi', ProduksiMouldingPerNomorProduksiController::class],
+        ['/reports/proses-produksi/produksi-packing-per-nomor-produksi', 'api.reports.proses-produksi.produksi-packing-per-nomor-produksi', ProduksiPackingPerNomorProduksiController::class],
+        ['/reports/proses-produksi/produksi-s4s-per-nomor-produksi', 'api.reports.proses-produksi.produksi-s4s-per-nomor-produksi', ProduksiS4sPerNomorProduksiController::class],
+        ['/reports/proses-produksi/produksi-sanding-per-nomor-produksi', 'api.reports.proses-produksi.produksi-sanding-per-nomor-produksi', ProduksiSandingPerNomorProduksiController::class],
         ['/reports/management/label-perhari', 'api.reports.management.label-perhari', LabelPerhariController::class],
         ['/reports/management/rekap-stock-on-hand', 'api.reports.management.rekap-stock-on-hand', RekapStockOnHandController::class],
         ['/reports/verifikasi/rangkuman-bongkar-susun', 'api.reports.verifikasi.rangkuman-bongkar-susun', RangkumanBongkarSusunController::class],
