@@ -21,12 +21,12 @@
     </nav>
 
     <main class="container py-5">
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-2">Rekap Pembelian Kayu Bulat</h1>
+                <h1 class="h3 mb-3">Rekap Pembelian Kayu Bulat</h1>
                 <p class="text-secondary mb-4">
-                    Laporan dari <code>SPWps_LapRekapPembelianKayuBulat</code> dengan tampilan chart dan tabel total.
-                    Chart dibentuk per bulan untuk masing-masing tahun.
+                    Laporan ini mengambil data langsung dari <code>SPWps_LapRekapPembelianKayuBulat</code>
+                    tanpa parameter input dan otomatis menampilkan rekap <strong>11 tahun terakhir</strong>.
                 </p>
 
                 @if ($errors->any())
@@ -39,152 +39,75 @@
                     </div>
                 @endif
 
-                @if ($errorMessage)
-                    <div class="alert alert-danger">{{ $errorMessage }}</div>
-                @endif
-
-                <form method="GET" action="{{ route('reports.kayu-bulat.rekap-pembelian.index') }}" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="start_year" class="form-label">Tahun Awal</label>
-                        <input type="number" id="start_year" name="start_year" class="form-control" min="1900"
-                            max="2999" value="{{ $startYear }}">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="end_year" class="form-label">Tahun Akhir</label>
-                        <input type="number" id="end_year" name="end_year" class="form-control" min="1900"
-                            max="2999" value="{{ $endYear }}">
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary">Refresh Data</button>
-                        <a href="{{ route('reports.kayu-bulat.rekap-pembelian.download', ['start_year' => $startYear, 'end_year' => $endYear]) }}"
-                            class="btn btn-success">Generate PDF</a>
-                        <a href="{{ route('reports.kayu-bulat.rekap-pembelian.download', ['start_year' => $startYear, 'end_year' => $endYear, 'preview_pdf' => 1]) }}"
-                            target="_blank" class="btn btn-outline-primary">Preview PDF</a>
-                        <a href="{{ route('reports.kayu-bulat.rekap-pembelian.preview', ['start_year' => $startYear, 'end_year' => $endYear]) }}"
-                            class="btn btn-outline-secondary">Preview JSON</a>
+                <form method="POST" action="{{ route('reports.kayu-bulat.rekap-pembelian.download') }}" class="row g-3">
+                    @csrf
+                    <div class="col-12">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
+                            <button type="submit" class="btn btn-outline-primary" name="preview_pdf" value="1"
+                                formaction="{{ route('reports.kayu-bulat.rekap-pembelian.preview-pdf') }}"
+                                formtarget="_blank">Preview PDF</button>
+                            <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview JSON</button>
+                            <button type="button" id="healthBtn" class="btn btn-outline-dark">Check Health</button>
+                        </div>
                     </div>
                 </form>
-            </div>
-        </div>
 
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <h2 class="h5 mb-3">Ringkasan</h2>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="border rounded p-3 bg-white">
-                            <div class="text-secondary small">Rentang Tahun</div>
-                            <div class="h4 mb-0">{{ $startYear }} - {{ $endYear }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="border rounded p-3 bg-white">
-                            <div class="text-secondary small">Jumlah Baris Raw</div>
-                            <div class="h4 mb-0">{{ count($reportData['rows'] ?? []) }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="border rounded p-3 bg-white">
-                            <div class="text-secondary small">Total Pembelian</div>
-                            <div class="h4 mb-0">
-                                {{ number_format((float) ($reportData['grand_total'] ?? 0), 4, '.', ',') }} Ton
-                            </div>
-                        </div>
-                    </div>
+                <div id="previewJsonWrapper" class="mt-4 d-none">
+                    <h2 class="h6 mb-2">Preview JSON</h2>
+                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0"
+                        style="max-height: 360px; overflow: auto;"></pre>
+                </div>
+
+                <div id="healthWrapper" class="mt-4 d-none">
+                    <h2 class="h6 mb-2">Health Check</h2>
+                    <pre id="healthOutput" class="bg-white border rounded p-3 mb-0"
+                        style="max-height: 360px; overflow: auto;"></pre>
                 </div>
             </div>
         </div>
-
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <h2 class="h5 mb-3">Chart Pembelian Bulanan per Tahun</h2>
-                <div style="height: 420px;">
-                    <canvas id="monthlyByYearChart"></canvas>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const payload = @json($reportData);
-            const dailyCanvas = document.getElementById('monthlyByYearChart');
+            const previewButton = document.getElementById('previewJsonBtn');
+            const previewWrapper = document.getElementById('previewJsonWrapper');
+            const previewOutput = document.getElementById('previewJsonOutput');
+            const healthButton = document.getElementById('healthBtn');
+            const healthWrapper = document.getElementById('healthWrapper');
+            const healthOutput = document.getElementById('healthOutput');
 
-            if (!payload || !dailyCanvas) {
-                return;
+            async function postJson(url, outputElement, wrapperElement) {
+                wrapperElement.classList.remove('d-none');
+                outputElement.textContent = 'Loading...';
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({}),
+                    });
+
+                    const payload = await response.json();
+                    outputElement.textContent = JSON.stringify(payload, null, 2);
+                } catch (error) {
+                    outputElement.textContent = JSON.stringify({
+                        message: 'Gagal mengambil data.',
+                        error: String(error),
+                    }, null, 2);
+                }
             }
 
-            const formatNumber = (value) => Number(value || 0).toLocaleString('id-ID', {
-                minimumFractionDigits: 4,
-                maximumFractionDigits: 4
+            previewButton?.addEventListener('click', function() {
+                postJson('{{ route('reports.kayu-bulat.rekap-pembelian.preview') }}', previewOutput, previewWrapper);
             });
 
-            const palette = [
-                'rgba(13, 110, 253, 0.8)',
-                'rgba(25, 135, 84, 0.8)',
-                'rgba(220, 53, 69, 0.8)',
-                'rgba(253, 126, 20, 0.8)',
-                'rgba(111, 66, 193, 0.8)',
-                'rgba(32, 201, 151, 0.8)',
-                'rgba(214, 51, 132, 0.8)',
-                'rgba(108, 117, 125, 0.8)',
-                'rgba(255, 193, 7, 0.8)',
-                'rgba(0, 123, 255, 0.8)'
-            ];
-
-            const months = Array.isArray(payload.chart_month_labels) ? payload.chart_month_labels : [];
-            const years = Array.isArray(payload.chart_years) ? payload.chart_years : [];
-
-            if (months.length === 0 || years.length === 0) {
-                const parentA = dailyCanvas.parentElement;
-                if (parentA) {
-                    parentA.innerHTML =
-                        '<div class="alert alert-info mb-0">Data bulanan tidak tersedia untuk periode ini.</div>';
-                }
-                return;
-            }
-
-            const datasets = years.map((year, index) => ({
-                label: String(year),
-                data: (payload.chart_series_by_year && payload.chart_series_by_year[year]) ? payload
-                    .chart_series_by_year[year] : [],
-                backgroundColor: palette[index % palette.length],
-                borderColor: palette[index % palette.length],
-                borderWidth: 1,
-            }));
-
-            new Chart(dailyCanvas, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets,
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    scales: {
-                        x: {},
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: formatNumber
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => `${context.dataset.label}: ${formatNumber(context.raw)}`
-                            }
-                        }
-                    }
-                }
+            healthButton?.addEventListener('click', function() {
+                postJson('{{ route('reports.kayu-bulat.rekap-pembelian.health') }}', healthOutput, healthWrapper);
             });
         });
     </script>

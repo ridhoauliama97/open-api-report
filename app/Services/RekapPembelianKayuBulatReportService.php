@@ -2,444 +2,115 @@
 
 namespace App\Services;
 
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class RekapPembelianKayuBulatReportService
 {
-    private const CONFIG_KEY = 'reports.rekap_pembelian_kayu_bulat';
-    private const DEFAULT_EXPECTED_COLUMNS = ['Tahun', 'Bulan', 'Ton'];
-
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function fetch(string $startDate, string $endDate): array
+    public function fetch(): array
     {
-        $rows = $this->runProcedureQuery($startDate, $endDate);
+        return array_map(function (object $row): array {
+            $item = (array) $row;
+            $item['Tahun'] = (int) ($item['Tahun'] ?? 0);
+            $item['Bulan'] = (int) ($item['Bulan'] ?? 0);
+            $item['Ton'] = $this->toFloat($item['Ton'] ?? null) ?? 0.0;
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+            return $item;
+        }, $this->runProcedureQuery());
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function buildReportData(string $startDate, string $endDate): array
+    public function buildReportData(): array
     {
-        $rows = $this->fetch($startDate, $endDate);
-        $columns = $this->resolveColumns($rows);
-        $startYear = (int) date('Y', strtotime($startDate));
-        $endYear = (int) date('Y', strtotime($endDate));
-        if ($endYear < $startYear) {
-            [$startYear, $endYear] = [$endYear, $startYear];
-        }
-        $years = range($startYear, $endYear);
-        $monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $rows = $this->fetch();
+        $endYear = (int) now()->format('Y');
+        $startYear = $endYear - 10;
+        $monthLabels = [1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'];
+        $years = [];
+        $monthTotals = array_fill(1, 12, 0.0);
 
-        if ($rows === []) {
-            return [
-                'rows' => [],
-                'columns' => $columns,
-                'dates' => [],
-                'types' => [],
-                'series_by_type' => [],
-                'totals_by_type' => [],
-                'daily_totals' => [],
-                'grand_total' => 0.0,
-                'chart_years' => $years,
-                'chart_month_labels' => $monthLabels,
-                'chart_series_by_year' => [],
-                'yearly_totals' => [],
+        foreach (range($startYear, $endYear) as $year) {
+            $years[$year] = [
+                'tahun' => $year,
+                'months' => array_fill(1, 12, 0.0),
+                'total' => 0.0,
             ];
         }
 
-        if ($columns['amount'] === null) {
-            $detectedColumns = array_keys($rows[0] ?? []);
-            throw new RuntimeException(
-                'Kolom nilai pembelian tidak ditemukan pada hasil SPWps_LapRekapPembelianKayuBulat. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
-            );
-        }
-
-        if ($columns['date'] === null && ($columns['year'] === null || $columns['month'] === null)) {
-            $detectedColumns = array_keys($rows[0] ?? []);
-            throw new RuntimeException(
-                'Kolom tanggal atau pasangan Tahun+Bulan tidak ditemukan pada hasil SPWps_LapRekapPembelianKayuBulat. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
-            );
-        }
-
-        $aggregated = [];
-        $totalsByType = [];
-        $dailyTotals = [];
-        $monthlyByYear = [];
-        $yearlyTotals = [];
-        foreach ($years as $year) {
-            $monthlyByYear[$year] = array_fill(0, 12, 0.0);
-            $yearlyTotals[$year] = 0.0;
-        }
-        $filteredRows = [];
-
         foreach ($rows as $row) {
-            $amount = $this->toFloat($row[$columns['amount']] ?? 0);
-            $type = $this->resolveType($row[$columns['type']] ?? null);
-            $year = null;
-            $monthIndex = null;
-            $date = null;
-
-            if ($columns['date'] !== null) {
-                $date = $this->resolveDateValue($row[$columns['date']] ?? null);
-                if ($date !== null) {
-                    $year = (int) substr($date, 0, 4);
-                    $monthIndex = (int) substr($date, 5, 2) - 1;
-                }
-            }
-
-            if (($year === null || $monthIndex === null) && $columns['year'] !== null && $columns['month'] !== null) {
-                $yearValue = $row[$columns['year']] ?? null;
-                $monthValue = $row[$columns['month']] ?? null;
-                $year = $this->resolveYearValue($yearValue);
-                $monthIndex = $this->resolveMonthIndex($monthValue);
-                if ($year !== null && $monthIndex !== null) {
-                    $date = sprintf('%04d-%02d-01', $year, $monthIndex + 1);
-                }
-            }
-
-            if ($year === null || $monthIndex === null || $date === null) {
-                continue;
-            }
+            $year = (int) ($row['Tahun'] ?? 0);
+            $month = (int) ($row['Bulan'] ?? 0);
+            $ton = (float) ($row['Ton'] ?? 0.0);
 
             if ($year < $startYear || $year > $endYear) {
                 continue;
             }
 
-            if ($monthIndex < 0 || $monthIndex > 11) {
-                continue;
+            if ($month >= 1 && $month <= 12) {
+                $years[$year]['months'][$month] += $ton;
+                $monthTotals[$month] += $ton;
             }
 
-            $filteredRows[] = $row;
-
-            if (!isset($aggregated[$date])) {
-                $aggregated[$date] = [];
-            }
-            if (!isset($aggregated[$date][$type])) {
-                $aggregated[$date][$type] = 0.0;
-            }
-
-            $aggregated[$date][$type] += $amount;
-            $totalsByType[$type] = (float) ($totalsByType[$type] ?? 0.0) + $amount;
-            $dailyTotals[$date] = (float) ($dailyTotals[$date] ?? 0.0) + $amount;
-            $monthlyByYear[$year][$monthIndex] += $amount;
-            $yearlyTotals[$year] += $amount;
+            $years[$year]['total'] += $ton;
         }
 
-        $dates = array_keys($aggregated);
-        sort($dates);
-
-        $types = array_keys($totalsByType);
-        sort($types);
-
-        $seriesByType = [];
-        foreach ($types as $type) {
-            $seriesByType[$type] = [];
-            foreach ($dates as $date) {
-                $seriesByType[$type][] = (float) ($aggregated[$date][$type] ?? 0.0);
-            }
-        }
-
-        $tableRows = [];
-        foreach ($types as $type) {
-            $tableRows[] = [
-                'type' => $type,
-                'total' => (float) ($totalsByType[$type] ?? 0.0),
-            ];
-        }
-
-        usort($tableRows, static fn(array $a, array $b): int => $b['total'] <=> $a['total']);
-
-        $grandTotal = array_sum($totalsByType);
+        ksort($years);
+        $rows = array_values(array_filter(
+            $rows,
+            static fn(array $row): bool => (int) ($row['Tahun'] ?? 0) >= $startYear
+                && (int) ($row['Tahun'] ?? 0) <= $endYear,
+        ));
 
         return [
-            'rows' => $filteredRows,
-            'columns' => $columns,
-            'dates' => $dates,
-            'types' => $types,
-            'series_by_type' => $seriesByType,
-            'totals_by_type' => $totalsByType,
-            'daily_totals' => $dailyTotals,
-            'table_rows' => $tableRows,
-            'grand_total' => (float) $grandTotal,
-            'chart_years' => $years,
-            'chart_month_labels' => $monthLabels,
-            'chart_series_by_year' => $monthlyByYear,
-            'yearly_totals' => $yearlyTotals,
+            'rows' => $rows,
+            'year_rows' => array_values($years),
+            'month_labels' => $monthLabels,
+            'month_totals' => $monthTotals,
+            'summary' => [
+                'total_rows' => count($rows),
+                'total_years' => count($years),
+                'grand_total' => array_sum($monthTotals),
+                'start_year' => $startYear,
+                'end_year' => $endYear,
+            ],
         ];
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function healthCheck(string $startDate, string $endDate): array
+    public function healthCheck(): array
     {
-        $rows = $this->fetch($startDate, $endDate);
+        $rows = $this->fetch();
         $detectedColumns = array_keys($rows[0] ?? []);
-        $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', self::DEFAULT_EXPECTED_COLUMNS);
-        $expectedColumns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : self::DEFAULT_EXPECTED_COLUMNS;
-        $missingColumns = array_values(array_diff($expectedColumns, $detectedColumns));
-        $extraColumns = array_values(array_diff($detectedColumns, $expectedColumns));
-        $reportData = $this->buildReportData($startDate, $endDate);
+        $expectedColumns = config('reports.rekap_pembelian_kayu_bulat.expected_columns', []);
+        $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
 
         return [
-            'is_healthy' => $missingColumns === [],
+            'is_healthy' => empty(array_diff($expectedColumns, $detectedColumns)),
             'expected_columns' => $expectedColumns,
             'detected_columns' => $detectedColumns,
-            'missing_columns' => $missingColumns,
-            'extra_columns' => $extraColumns,
+            'missing_columns' => array_values(array_diff($expectedColumns, $detectedColumns)),
+            'extra_columns' => array_values(array_diff($detectedColumns, $expectedColumns)),
             'row_count' => count($rows),
-            'total_types' => count($reportData['types'] ?? []),
-            'total_days' => count($reportData['dates'] ?? []),
-            'grand_total' => $reportData['grand_total'] ?? 0,
         ];
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $rows
-     * @return array{date: ?string, year: ?string, month: ?string, type: ?string, amount: ?string}
-     */
-    private function resolveColumns(array $rows): array
-    {
-        $allKeys = [];
-        foreach ($rows as $row) {
-            foreach (array_keys($row) as $key) {
-                $allKeys[$key] = true;
-            }
-        }
-
-        $keys = array_keys($allKeys);
-        $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', self::DEFAULT_EXPECTED_COLUMNS);
-        $expectedColumns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : self::DEFAULT_EXPECTED_COLUMNS;
-
-        $expectedYearColumn = $this->findMatchingKey($keys, array_intersect($expectedColumns, ['Tahun', 'Year', 'Thn']));
-        $expectedMonthColumn = $this->findMatchingKey($keys, array_intersect($expectedColumns, ['Bulan', 'Month', 'Bln']));
-        $expectedAmountColumn = $this->findMatchingKey($keys, array_intersect($expectedColumns, ['Ton', 'TotalTon', 'Tonase']));
-
-        return [
-            'date' => $this->findMatchingKey($keys, [
-                'tanggal',
-                'tgl',
-                'tanggal_beli',
-                'tgl_beli',
-                'tanggal_transaksi',
-                'date',
-            ]),
-            'year' => $expectedYearColumn ?? $this->findMatchingKey($keys, [
-                'tahun',
-                'year',
-                'thn',
-            ]),
-            'month' => $expectedMonthColumn ?? $this->findMatchingKey($keys, [
-                'bulan',
-                'month',
-                'bln',
-            ]),
-            'type' => $this->findMatchingKey($keys, [
-                'jenis',
-                'jenis_kayu',
-                'nama_jenis',
-                'kategori',
-                'kelompok',
-                'item',
-                'produk',
-                'supplier',
-            ]),
-            'amount' => $expectedAmountColumn ?? $this->findMatchingKey($keys, [
-                'ton',
-                'totalton',
-                'tonase',
-                'volumeton',
-                'beratton',
-                'm3',
-                'volume',
-                'total',
-                'jumlah',
-                'nilai',
-                'qty',
-                'kuantitas',
-                'pembelian',
-                'beli',
-            ]),
-        ];
-    }
-
-    /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
-     */
-    private function findMatchingKey(array $keys, array $candidates): ?string
-    {
-        $normalizedCandidates = array_map([$this, 'normalizeKey'], $candidates);
-
-        foreach ($keys as $key) {
-            $normalizedKey = $this->normalizeKey($key);
-            if (in_array($normalizedKey, $normalizedCandidates, true)) {
-                return $key;
-            }
-        }
-
-        foreach ($keys as $key) {
-            $normalizedKey = $this->normalizeKey($key);
-            foreach ($normalizedCandidates as $candidate) {
-                if (str_contains($normalizedKey, $candidate)) {
-                    return $key;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private function normalizeKey(string $key): string
-    {
-        return strtolower((string) preg_replace('/[^a-zA-Z0-9]+/', '', $key));
-    }
-
-    private function resolveType(mixed $value): string
-    {
-        $type = trim((string) $value);
-
-        return $type === '' ? 'Tanpa Jenis' : $type;
-    }
-
-    private function resolveDateValue(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        if ($value instanceof \DateTimeInterface) {
-            return $value->format('Y-m-d');
-        }
-
-        $timestamp = strtotime((string) $value);
-        if ($timestamp === false) {
-            return null;
-        }
-
-        return date('Y-m-d', $timestamp);
-    }
-
-    private function resolveYearValue(mixed $value): ?int
-    {
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (is_string($value) && preg_match('/^\d{4}$/', trim($value)) === 1) {
-            return (int) trim($value);
-        }
-
-        return null;
-    }
-
-    private function resolveMonthIndex(mixed $value): ?int
-    {
-        if (is_int($value)) {
-            $month = $value;
-            return ($month >= 1 && $month <= 12) ? $month - 1 : null;
-        }
-
-        $text = strtolower(trim((string) $value));
-        if ($text === '') {
-            return null;
-        }
-
-        if (preg_match('/^\d{1,2}$/', $text) === 1) {
-            $month = (int) $text;
-            return ($month >= 1 && $month <= 12) ? $month - 1 : null;
-        }
-
-        $map = [
-            'jan' => 0,
-            'januari' => 0,
-            'feb' => 1,
-            'februari' => 1,
-            'mar' => 2,
-            'maret' => 2,
-            'apr' => 3,
-            'april' => 3,
-            'mei' => 4,
-            'may' => 4,
-            'jun' => 5,
-            'juni' => 5,
-            'jul' => 6,
-            'juli' => 6,
-            'agu' => 7,
-            'agt' => 7,
-            'agustus' => 7,
-            'aug' => 7,
-            'sep' => 8,
-            'sept' => 8,
-            'september' => 8,
-            'okt' => 9,
-            'oct' => 9,
-            'oktober' => 9,
-            'nov' => 10,
-            'november' => 10,
-            'des' => 11,
-            'dec' => 11,
-            'desember' => 11,
-        ];
-
-        return $map[$text] ?? null;
-    }
-
-    private function toFloat(mixed $value): float
-    {
-        if (is_int($value) || is_float($value)) {
-            return (float) $value;
-        }
-
-        if (!is_string($value)) {
-            return 0.0;
-        }
-
-        $trimmed = trim($value);
-        if ($trimmed === '') {
-            return 0.0;
-        }
-
-        if (preg_match('/^-?\d{1,3}(\.\d{3})*(,\d+)?$/', $trimmed) === 1) {
-            $trimmed = str_replace('.', '', $trimmed);
-            $trimmed = str_replace(',', '.', $trimmed);
-        } elseif (preg_match('/^-?\d{1,3}(,\d{3})*(\.\d+)?$/', $trimmed) === 1) {
-            $trimmed = str_replace(',', '', $trimmed);
-        } else {
-            $trimmed = str_replace(',', '.', $trimmed);
-        }
-
-        return (float) $trimmed;
-    }
-
-    /**
-     * @param array<int, mixed> $bindings
-     * @return array<int, mixed>
-     */
-    private function resolveBindings(string $query, array $bindings): array
-    {
-        return str_contains($query, '?') ? $bindings : [];
     }
 
     /**
      * @return array<int, object>
      */
-    private function runProcedureQuery(string $startDate, string $endDate): array
+    private function runProcedureQuery(): array
     {
-        $connectionName = config(self::CONFIG_KEY . '.database_connection');
-        $procedure = (string) config(self::CONFIG_KEY . '.stored_procedure');
-        $syntax = (string) config(self::CONFIG_KEY . '.call_syntax', 'exec');
-        $customQuery = config(self::CONFIG_KEY . '.query');
-        $parameterCount = (int) config(self::CONFIG_KEY . '.parameter_count', 2);
-        $parameterCount = max(0, min(2, $parameterCount));
+        $configKey = 'reports.rekap_pembelian_kayu_bulat';
+        $connectionName = config("{$configKey}.database_connection");
+        $procedure = (string) config("{$configKey}.stored_procedure");
+        $syntax = (string) config("{$configKey}.call_syntax", 'exec');
+        $customQuery = config("{$configKey}.query");
 
         if ($procedure === '' && !is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap pembelian kayu bulat belum dikonfigurasi.');
@@ -455,54 +126,44 @@ class RekapPembelianKayuBulatReportService
             );
         }
 
-        $allBindings = [$startDate, $endDate];
-        $bindings = array_slice($allBindings, 0, $parameterCount);
-
         if ($syntax === 'query') {
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
-                : throw new RuntimeException(
-                    'REKAP_PEMBELIAN_KAYU_BULAT_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_PEMBELIAN_KAYU_BULAT_REPORT_CALL_SYNTAX=query.',
-                );
+                : throw new RuntimeException('Query manual laporan rekap pembelian kayu bulat belum diisi.');
 
-            return $connection->select($query, $this->resolveBindings($query, $bindings));
+            return $connection->select($query);
         }
 
         if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
-        $placeholders = $parameterCount === 0
-            ? ''
-            : implode(', ', array_fill(0, $parameterCount, '?'));
-
         $sql = match ($syntax) {
-            'exec' => $parameterCount === 0
-            ? "SET NOCOUNT ON; EXEC {$procedure}"
-            : "SET NOCOUNT ON; EXEC {$procedure} {$placeholders}",
-            'call' => "CALL {$procedure}({$placeholders})",
-            default => $driver === 'sqlsrv'
-            ? ($parameterCount === 0
-                ? "SET NOCOUNT ON; EXEC {$procedure}"
-                : "SET NOCOUNT ON; EXEC {$procedure} {$placeholders}")
-            : "CALL {$procedure}({$placeholders})",
+            'exec' => "SET NOCOUNT ON; EXEC {$procedure}",
+            'call' => "CALL {$procedure}()",
+            default => $driver === 'sqlsrv' ? "SET NOCOUNT ON; EXEC {$procedure}" : "CALL {$procedure}()",
         };
 
-        try {
-            return $connection->select($sql, $bindings);
-        } catch (QueryException $exception) {
-            $errorMessage = strtolower((string) $exception->getMessage());
-            $isNoParameterProcedureError = str_contains($errorMessage, 'has no parameters')
-                || str_contains($errorMessage, 'too many arguments specified');
+        return $connection->select($sql);
+    }
 
-            if ($parameterCount > 0 && $isNoParameterProcedureError) {
-                $fallbackSql = "SET NOCOUNT ON; EXEC {$procedure}";
-
-                return $connection->select($fallbackSql);
-            }
-
-            throw $exception;
+    private function toFloat(mixed $value): ?float
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
         }
+
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $trimmed = trim($value);
+        if ($trimmed === '') {
+            return null;
+        }
+
+        $trimmed = str_replace(',', '.', $trimmed);
+
+        return is_numeric($trimmed) ? (float) $trimmed : null;
     }
 }

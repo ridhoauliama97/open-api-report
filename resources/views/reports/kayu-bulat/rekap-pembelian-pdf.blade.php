@@ -3,10 +3,6 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -39,52 +35,62 @@
             color: #636466;
         }
 
+        .container-fluid {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 6px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 8px;
-            page-break-inside: auto;
             table-layout: fixed;
         }
 
         .report-table {
             border-collapse: collapse;
-            border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
+            padding: 2px 4px;
             vertical-align: middle;
         }
 
         th {
             text-align: center;
-            font-weight: bold;
-            font-weight: 11px;
+            font-weight: 700;
+            background: #fff;
         }
 
-        td.label {
-            white-space: nowrap;
+        td.center {
+            text-align: center;
         }
 
         td.number {
             text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+            font-size: 11px;
+            border-top: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .totals-row td {
+            font-weight: bold;
+            font-size: 11px;
         }
 
         .row-odd td {
@@ -95,76 +101,24 @@
             background: #eef2f8;
         }
 
-        p.section-summary {
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 15px;
-            text-decoration: underline;
-        }
-
-        .chart-wrap {
-            border: 1px solid #000;
-            padding: 6px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .chart-title {
-            text-align: center;
-            font-weight: 700;
-            margin: 0 0 5px 0;
-        }
-
-        .summary-list {
-            margin: 4px 0 10px 0;
-            padding-left: 16px;
-        }
-
-        .summary-list li {
-            margin: 2px 0;
-            font-size: 10px;
-        }
-
-        .summary-label {
-            display: inline-block;
-            min-width: 170px;
-            font-weight: 700;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-            border-right: 1px solid #000;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-        }
-
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
-            border-left: 0 !important;
+            border-left: 1px solid #000 !important;
             border-right: 1px solid #000 !important;
         }
 
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        .report-table tbody tr.data-row td.data-cell:first-child,
+        .report-table tbody tr.data-row td.data-cell:last-child {
+            font-weight: bold;
+        }
+
+        .report-table tbody tr.data-row+tr.data-row td.data-cell {
+            border-top: 0 !important;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         @include('reports.partials.pdf-footer-table-style')
@@ -173,91 +127,57 @@
 
 <body>
     @php
-        $reportData = is_array($reportData ?? null) ? $reportData : [];
-        $tableRows = is_array($reportData['table_rows'] ?? null) ? $reportData['table_rows'] : [];
-        $yearlyTotals = is_array($reportData['yearly_totals'] ?? null) ? $reportData['yearly_totals'] : [];
-        $monthLabels = is_array($reportData['chart_month_labels'] ?? null) ? $reportData['chart_month_labels'] : [];
-        $monthHeaderLabels = range(1, max(count($monthLabels), 12));
-        $years = is_array($reportData['chart_years'] ?? null) ? $reportData['chart_years'] : [];
-        $seriesByYear = is_array($reportData['chart_series_by_year'] ?? null)
-            ? $reportData['chart_series_by_year']
-            : [];
-        $grandTotal = (float) ($reportData['grand_total'] ?? 0);
-        $rawCount = count($reportData['rows'] ?? []);
+        $data = is_array($reportData ?? null) ? $reportData : [];
+        $yearRows = is_array($data['year_rows'] ?? null) ? $data['year_rows'] : [];
+        $monthLabels = is_array($data['month_labels'] ?? null) ? $data['month_labels'] : [];
+        $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
+        $fmt = static fn(float $value): string => abs($value) < 0.0000001 ? '' : number_format($value, 4, '.', ',');
+
+        $startYear = (int) ($summary['start_year'] ?? 0);
+        $endYear = (int) ($summary['end_year'] ?? 0);
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
-
-        $fmt4 = static function ($value): string {
-            $num = (float) ($value ?? 0);
-            if (abs($num) < 0.0000001) {
-                return '';
-            }
-            return number_format($num, 4, '.', ',');
-        };
-
-        $fmtInt = static function ($value): string {
-            $num = (float) ($value ?? 0);
-            if (abs($num) < 0.0000001) {
-                return '';
-            }
-            return number_format($num, 0, '.', ',');
-        };
-
-        $svgWidth = 960;
-        $svgHeight = 260;
-        $padLeft = 52;
-        $padRight = 14;
-        $padTop = 14;
-        $padBottom = 34;
-        $plotWidth = $svgWidth - $padLeft - $padRight;
-        $plotHeight = $svgHeight - $padTop - $padBottom;
-        $palette = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#6f42c1', '#20c997', '#d63384', '#6c757d'];
-        $maxValue = 0.0;
-        foreach ($years as $year) {
-            $yearSeries = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
-            foreach ($yearSeries as $val) {
-                $num = (float) $val;
-                if ($num > $maxValue) {
-                    $maxValue = $num;
-                }
-            }
-        }
-        $yStep = 10000.0;
-        $maxValue = $maxValue > 0 ? ceil($maxValue / $yStep) * $yStep : $yStep;
-        $monthCount = max(count($monthLabels), 1);
-        $xStep = $monthCount > 1 ? $plotWidth / ($monthCount - 1) : 0;
-        $yTicks = max((int) ($maxValue / $yStep), 1);
     @endphp
 
     <h1 class="report-title">Laporan Rekap Pembelian Kayu Bulat (Ton)</h1>
-    <p class="report-subtitle">Periode {{ $startYear }} s/d {{ $endYear }}</p>
+    <p class="report-subtitle">
+        @if ($startYear > 0 && $endYear > 0)
+            Periode {{ $startYear }} s/d {{ $endYear }}
+        @endif
+    </p>
 
-    <table class="report-table" style="margin-top: 15px;">
-        <thead>
-            <tr class="headers-row">
-                <th style="font-weight: bold; font-size:11px">Tahun</th>
-                @foreach ($monthHeaderLabels as $month)
-                    <th style="font-weight: bold; font-size:11px">{{ $month }}</th>
-                @endforeach
-                <th style="font-weight: bold; font-size:11px">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($years as $year)
-                @php
-                    $monthly = is_array($seriesByYear[$year] ?? null) ? $seriesByYear[$year] : [];
-                @endphp
-                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="label data-cell" style="text-align: center; font-weight: bold; font-size:11px;">
-                        {{ $year }}</td>
-                    @foreach ($monthHeaderLabels as $index => $month)
-                        <td class="number data-cell">{{ $fmt4($monthly[$index] ?? 0) }}</td>
-                    @endforeach
-                    <td class="number data-cell" style="font-weight: bold;">{{ $fmt4($yearlyTotals[$year] ?? 0) }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-striped report-table">
+                <thead>
+                    <tr class="headers-row">
+                        <th style="width: 48px;">Tahun</th>
+                        @foreach ($monthLabels as $label)
+                            <th>{{ $label }}</th>
+                        @endforeach
+                        <th style="width: 74px;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($yearRows as $row)
+                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                            <td class="center data-cell" style="font-weight:bold; font-size: 11px;">
+                                {{ $row['tahun'] ?? '' }}</td>
+                            @foreach ($monthLabels as $month => $label)
+                                <td class="number data-cell">{{ $fmt((float) ($row['months'][$month] ?? 0.0)) }}</td>
+                            @endforeach
+                            <td class="number data-cell" style="font-weight: bold; font-size:11px;">
+                                {{ $fmt((float) ($row['total'] ?? 0.0)) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="{{ 2 + count($monthLabels) }}" class="center">Tidak ada data.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     @include('reports.partials.pdf-footer-table')
 </body>
