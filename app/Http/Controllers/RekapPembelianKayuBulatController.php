@@ -147,4 +147,38 @@ class RekapPembelianKayuBulatController extends Controller
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
     }
+
+    public function health(
+        ShowRekapPembelianKayuBulatRequest $request,
+        RekapPembelianKayuBulatReportService $reportService,
+    ): JsonResponse {
+        $currentYear = (int) now()->format('Y');
+        $defaultStartYear = $currentYear - 9;
+        $startYear = (int) $request->input('start_year', $defaultStartYear);
+        $endYear = (int) $request->input('end_year', $currentYear);
+        if ($endYear < $startYear) {
+            [$startYear, $endYear] = [$endYear, $startYear];
+        }
+        $startDate = sprintf('%d-01-01', $startYear);
+        $endDate = sprintf('%d-12-31', $endYear);
+
+        try {
+            $result = $reportService->healthCheck($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => $result['is_healthy']
+                ? 'Struktur output SPWps_LapRekapPembelianKayuBulat valid.'
+                : 'Struktur output SPWps_LapRekapPembelianKayuBulat berubah.',
+            'meta' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'start_year' => $startYear,
+                'end_year' => $endYear,
+            ],
+            'health' => $result,
+        ]);
+    }
 }

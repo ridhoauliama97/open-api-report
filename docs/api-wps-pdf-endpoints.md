@@ -57,6 +57,7 @@ Contoh:
 - Laporan Kayu Bulat Penerimaan Per Supplier KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-per-supplier-kg/pdf`
 - Laporan Kayu Bulat Perbandingan KB Masuk Periode 1 Dan 2: `http://192.168.10.100:5006/api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/pdf`
 - Laporan Kayu Bulat Perbandingan KB Masuk Periode 1 Dan 2 KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2-kg/pdf`
+- Laporan Kayu Bulat Rekap Pembelian: `http://192.168.10.100:5006/api/reports/kayu-bulat/rekap-pembelian/pdf`
 - Laporan Kayu Bulat Rekap Pembelian KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/rekap-pembelian-kg/pdf`
 - Laporan Kayu Bulat Rekap Penerimaan ST Dari Sawmill KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg/pdf`
 - Laporan Kayu Bulat Rekap Produktivitas Sawmill RP: `http://192.168.10.100:5006/api/reports/kayu-bulat/rekap-produktivitas-sawmill-rp/pdf`

@@ -177,6 +177,32 @@ class RekapPembelianKayuBulatReportService
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function healthCheck(string $startDate, string $endDate): array
+    {
+        $rows = $this->fetch($startDate, $endDate);
+        $detectedColumns = array_keys($rows[0] ?? []);
+        $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', self::DEFAULT_EXPECTED_COLUMNS);
+        $expectedColumns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : self::DEFAULT_EXPECTED_COLUMNS;
+        $missingColumns = array_values(array_diff($expectedColumns, $detectedColumns));
+        $extraColumns = array_values(array_diff($detectedColumns, $expectedColumns));
+        $reportData = $this->buildReportData($startDate, $endDate);
+
+        return [
+            'is_healthy' => $missingColumns === [],
+            'expected_columns' => $expectedColumns,
+            'detected_columns' => $detectedColumns,
+            'missing_columns' => $missingColumns,
+            'extra_columns' => $extraColumns,
+            'row_count' => count($rows),
+            'total_types' => count($reportData['types'] ?? []),
+            'total_days' => count($reportData['dates'] ?? []),
+            'grand_total' => $reportData['grand_total'] ?? 0,
+        ];
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $rows
      * @return array{date: ?string, year: ?string, month: ?string, type: ?string, amount: ?string}
      */

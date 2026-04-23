@@ -50,6 +50,7 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
+use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillNonRambungController;
 use App\Http\Controllers\RekapRendemenNonRambungController;
@@ -268,6 +269,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/penerimaan-per-supplier-kg', 'api.reports.kayu-bulat.penerimaan-per-supplier-kg', PenerimaanKayuBulatPerSupplierKgController::class],
         ['/reports/kayu-bulat/saldo-hidup-kg', 'api.reports.kayu-bulat.saldo-hidup-kg', SaldoHidupKayuBulatKgController::class],
         ['/reports/kayu-bulat/rekap-pembelian-kg', 'api.reports.kayu-bulat.rekap-pembelian-kg', RekapPembelianKayuBulatKgController::class],
+        ['/reports/kayu-bulat/rekap-pembelian', 'api.reports.kayu-bulat.rekap-pembelian', RekapPembelianKayuBulatController::class],
         ['/reports/kayu-bulat/rekap-penerimaan-st-dari-sawmill-kg', 'api.reports.kayu-bulat.rekap-penerimaan-st-dari-sawmill-kg', RekapPenerimaanSTDariSawmillKgController::class],
         ['/reports/kayu-bulat/rekap-produktivitas-sawmill-rp', 'api.reports.kayu-bulat.rekap-produktivitas-sawmill-rp', RekapProduktivitasSawmillRpController::class],
         ['/reports/kayu-bulat/stock-opname', 'api.reports.kayu-bulat.stock-opname', StockOpnameKayuBulatController::class],
