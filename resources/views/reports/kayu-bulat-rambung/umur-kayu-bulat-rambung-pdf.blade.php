@@ -159,7 +159,7 @@
             border-right: 1px solid #000 !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -231,11 +231,11 @@
                     $noKayuBulatColumn,
                     $dateCreateColumn,
                     $supplierColumn,
+                    $truckColumn,
                     $jenisColumn,
                     $tanggalRacipColumn,
                     $tanggalLamaRacipColumn,
                     'LAMA_TUNGGU_VIRTUAL',
-                    $truckColumn,
                     $tonColumn,
                 ],
                 static fn($column): bool => is_string($column) && $column !== '',
@@ -548,12 +548,56 @@
                     @php
                         $hasTruckColumn = $truckColumn !== null && in_array($truckColumn, $displayColumns, true);
                         $hasTonColumn = $tonColumn !== null && in_array($tonColumn, $displayColumns, true);
-                        $tailColumnsCount = ($hasTruckColumn ? 1 : 0) + ($hasTonColumn ? 1 : 0);
-                        $totalLabelColspan = max(1, 1 + $visualDisplayColumnsCount - $tailColumnsCount);
+                        $visualColumnSpan = static function (string $column) use (
+                            $tanggalRacipColumn,
+                            $tanggalLamaRacipColumn,
+                        ): int {
+                            return $column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn ? 2 : 1;
+                        };
+
+                        $truckVisualIndex = null;
+                        $tonVisualIndex = null;
+                        $currentVisualIndex = 2;
+
+                        foreach ($displayColumns as $displayColumn) {
+                            if ($displayColumn === $truckColumn && $truckVisualIndex === null) {
+                                $truckVisualIndex = $currentVisualIndex;
+                            }
+
+                            if ($displayColumn === $tonColumn && $tonVisualIndex === null) {
+                                $tonVisualIndex = $currentVisualIndex;
+                            }
+
+                            $currentVisualIndex += $visualColumnSpan($displayColumn);
+                        }
+
+                        $totalLabelColspan = 1;
+                        $middleColspan = 0;
+                        $trailingColspan = 0;
+
+                        if ($hasTruckColumn && $truckVisualIndex !== null) {
+                            $totalLabelColspan = max(1, $truckVisualIndex - 1);
+
+                            if ($hasTonColumn && $tonVisualIndex !== null) {
+                                $middleColspan = max(0, $tonVisualIndex - $truckVisualIndex - 1);
+                            } else {
+                                $trailingColspan = max(0, $visualDisplayColumnsCount - $truckVisualIndex);
+                            }
+                        } elseif ($hasTonColumn && $tonVisualIndex !== null) {
+                            $totalLabelColspan = max(1, $tonVisualIndex - 1);
+                        } else {
+                            $totalLabelColspan = max(1, $visualDisplayColumnsCount);
+                        }
                     @endphp
                     <td class="center" colspan="{{ $totalLabelColspan }}">Total :</td>
                     @if ($hasTruckColumn)
                         <td class="center">{{ $countTruck($groupRows, $truckColumn) }} Truk</td>
+                    @endif
+                    @if ($middleColspan > 0)
+                        <td colspan="{{ $middleColspan }}"></td>
+                    @endif
+                    @if ($trailingColspan > 0)
+                        <td colspan="{{ $trailingColspan }}"></td>
                     @endif
                     @if ($hasTonColumn)
                         <td class="number">{{ number_format($sumTon($groupRows, $tonColumn), 4, '.', ',') }}</td>
