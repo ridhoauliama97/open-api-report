@@ -142,12 +142,12 @@
         $generatedByName = $generatedBy->name ?? 'sistem';
     @endphp
 
-    <h1 class="report-title">Laporan Produksi Harian</h1>
+    <h1 class="report-title">Laporan Produksi Harian Hot Stamping - Furniture WIP</h1>
     <p class="report-subtitle">Per Tanggal : {{ \Carbon\Carbon::parse($endDate)->format('d-M-y') }}</p>
 
     @php
         $sections = [
-            'Output Produksi Harian (Hot Stamping - FWIP)' => ['Output'],
+            'Output' => ['Output'],
             'Input' => ['Input'],
             'Waste' => ['Waste'],
         ];

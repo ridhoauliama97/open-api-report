@@ -111,6 +111,28 @@ class TargetMasukBBReportService
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function healthCheck(string $startDate, string $endDate): array
+    {
+        $rows = $this->fetch($startDate, $endDate);
+        $detectedColumns = array_keys($rows[0] ?? []);
+        $expectedColumns = config('reports.target_masuk_bb.expected_columns', []);
+        $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
+        $missingColumns = array_values(array_diff($expectedColumns, $detectedColumns));
+        $extraColumns = array_values(array_diff($detectedColumns, $expectedColumns));
+
+        return [
+            'is_healthy' => empty($missingColumns),
+            'expected_columns' => $expectedColumns,
+            'detected_columns' => $detectedColumns,
+            'missing_columns' => $missingColumns,
+            'extra_columns' => $extraColumns,
+            'row_count' => count($rows),
+        ];
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $rows
      * @return array{group: ?string, jenis: ?string, target_harian: ?string, target_bulanan: ?string, total: ?string, hasil: ?string, date: ?string, keterangan: ?string}
      */

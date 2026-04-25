@@ -124,6 +124,32 @@ class TargetMasukBBController extends Controller
         ]);
     }
 
+    public function health(
+        ShowTargetMasukBBRequest $request,
+        TargetMasukBBReportService $reportService,
+    ): JsonResponse {
+        [$startDate, $endDate] = $this->extractDates($request);
+
+        try {
+            $result = $reportService->healthCheck($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => $result['is_healthy']
+                ? 'Struktur output SP_LapTargetMasukBB valid.'
+                : 'Struktur output SP_LapTargetMasukBB berubah.',
+            'meta' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'TglAwal' => $startDate,
+                'TglAkhir' => $endDate,
+            ],
+            'health' => $result,
+        ]);
+    }
+
     /**
      * @return array{0: string, 1: string}
      */

@@ -101,6 +101,12 @@
                     <h2 class="h5 mb-3">Bahan Baku</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.bahan-baku.stock-bahan-baku-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stok Bahan Baku
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.bahan-baku.mutasi-bahan-baku.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Mutasi Bahan Baku
@@ -119,6 +125,12 @@
                             <a href="{{ route('reports.pps.barang-jadi.mutasi-barang-jadi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Mutasi Barang Jadi
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.barang-jadi.stock-label-barang-jadi-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stok Label Barang Jadi
                             </a>
                         </div>
                     </div>

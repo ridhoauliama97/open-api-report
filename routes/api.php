@@ -118,6 +118,8 @@ use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineKayuBulatBulananKgController;
+use App\Http\Controllers\TargetMasukBBController;
+use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\UmurKayuBulatNonRambungController;
 use App\Http\Controllers\UmurKayuBulatRambungController;
 use App\Http\Controllers\UmurFingerJointDetailController;
@@ -164,6 +166,8 @@ use App\Http\Controllers\PPS\HasilProduksiHarianPasangKunciProduksiController;
 
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
+use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
+use App\Http\Controllers\PPS\StockLabelBarangJadiV2Controller;
 use App\Http\Controllers\PPS\StockBonggolanV2Controller;
 use App\Http\Controllers\PPS\StockBrokerController;
 use App\Http\Controllers\PPS\StockCrusherController;
@@ -285,6 +289,8 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/timeline-kayu-bulat-bulanan', 'api.reports.kayu-bulat.timeline-kayu-bulat-bulanan', TimelineKayuBulatBulananController::class],
         ['/reports/kayu-bulat/timeline-kayu-bulat-harian-kg', 'api.reports.kayu-bulat.timeline-kayu-bulat-harian-kg', TimelineKayuBulatHarianKgController::class],
         ['/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg', 'api.reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg', TimelineKayuBulatBulananKgController::class],
+        ['/reports/kayu-bulat/target-masuk-bb', 'api.reports.kayu-bulat.target-masuk-bb', TargetMasukBBController::class],
+        ['/reports/kayu-bulat/target-masuk-bb-bulanan', 'api.reports.kayu-bulat.target-masuk-bb-bulanan', TargetMasukBBBulananController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-non-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-non-rambung', UmurKayuBulatNonRambungController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-rambung', UmurKayuBulatRambungController::class],
         ['/reports/kayu-bulat/supplier-intel', 'api.reports.kayu-bulat.supplier-intel', SupplierIntelController::class],
@@ -420,7 +426,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/rekap-produksi/crusher', 'api.reports.pps.rekap-produksi.crusher', RekapProduksiCrusherController::class],
         ['/reports/pps/semua-label', 'api.reports.pps.semua-label', SemuaLabelController::class],
         ['/reports/pps/bahan-baku/mutasi-bahan-baku', 'api.reports.pps.bahan-baku.mutasi-bahan-baku', MutasiBahanBakuController::class],
+        ['/reports/pps/bahan-baku/stock-bahan-baku-v2', 'api.reports.pps.bahan-baku.stock-bahan-baku-v2', StockBahanBakuV2Controller::class],
         ['/reports/pps/barang-jadi/mutasi-barang-jadi', 'api.reports.pps.barang-jadi.mutasi-barang-jadi', MutasiBarangJadiPpsController::class],
+        ['/reports/pps/barang-jadi/stock-label-barang-jadi-v2', 'api.reports.pps.barang-jadi.stock-label-barang-jadi-v2', StockLabelBarangJadiV2Controller::class],
         ['/reports/pps/broker/mutasi-broker', 'api.reports.pps.broker.mutasi-broker', MutasiBrokerController::class],
         ['/reports/pps/broker/stock-broker', 'api.reports.pps.broker.stock-broker', StockBrokerController::class],
         ['/reports/pps/bonggolan/mutasi-bonggolan', 'api.reports.pps.bonggolan.mutasi-bonggolan', MutasiBonggolanController::class],

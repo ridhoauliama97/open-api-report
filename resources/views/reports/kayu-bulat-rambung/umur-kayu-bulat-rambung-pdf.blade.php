@@ -589,7 +589,7 @@
                             $totalLabelColspan = max(1, $visualDisplayColumnsCount);
                         }
                     @endphp
-                    <td class="center" colspan="{{ $totalLabelColspan }}">Total :</td>
+                    <td class="center" colspan="{{ $totalLabelColspan }}">Total</td>
                     @if ($hasTruckColumn)
                         <td class="center">{{ $countTruck($groupRows, $truckColumn) }} Truk</td>
                     @endif

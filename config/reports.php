@@ -448,6 +448,10 @@ return [
         'call_syntax' => env('TARGET_MASUK_BB_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('TARGET_MASUK_BB_REPORT_QUERY'),
         'parameter_count' => (int) env('TARGET_MASUK_BB_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TARGET_MASUK_BB_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
     ],
     'target_masuk_bb_bulanan' => [
         'database_connection' => env('TARGET_MASUK_BB_BULANAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -455,6 +459,10 @@ return [
         'call_syntax' => env('TARGET_MASUK_BB_BULANAN_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('TARGET_MASUK_BB_BULANAN_REPORT_QUERY'),
         'parameter_count' => (int) env('TARGET_MASUK_BB_BULANAN_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TARGET_MASUK_BB_BULANAN_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
     ],
     'stock_racip_kayu_lat' => [
         'database_connection' => env('STOCK_RACIP_KAYU_LAT_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
@@ -1906,6 +1914,30 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_STOCK_BONGGOLAN_V2_REPORT_EXPECTED_COLUMNS',
             ''
+        )))),
+    ],
+    'pps_stock_bahan_baku_v2' => [
+        'database_connection' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_PROCEDURE', 'SP_LapStokBahanBakuV2'),
+        'call_syntax' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_BAHAN_BAKU_V2_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoBahanBaku,NoPallet,JmlhSak,Jenis,Berat,NamaWarehouse'
+        )))),
+    ],
+    'pps_stock_label_barang_jadi_v2' => [
+        'database_connection' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_PROCEDURE', 'SP_LapStokBarangJadiV2'),
+        'call_syntax' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoBarangJadi,NoPallet,JmlhSak,Jenis,Berat,NamaWarehouse'
         )))),
     ],
     'pps_stock_broker' => [

@@ -174,7 +174,7 @@
             font-size: 11px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

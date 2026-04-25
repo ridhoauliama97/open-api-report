@@ -65,6 +65,8 @@ Contoh:
 - Laporan Kayu Bulat Saldo Hidup KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/saldo-hidup-kg/pdf`
 - Laporan Kayu Bulat Stock Opname: `http://192.168.10.100:5006/api/reports/kayu-bulat/stock-opname/pdf`
 - Laporan Kayu Bulat Supplier Intel: `http://192.168.10.100:5006/api/reports/kayu-bulat/supplier-intel/pdf`
+- Laporan Kayu Bulat Target Masuk BB: `http://192.168.10.100:5006/api/reports/kayu-bulat/target-masuk-bb/pdf`
+- Laporan Kayu Bulat Target Masuk BB Bulanan: `http://192.168.10.100:5006/api/reports/kayu-bulat/target-masuk-bb-bulanan/pdf`
 - Laporan Kayu Bulat Timeline Kayu Bulat Bulanan: `http://192.168.10.100:5006/api/reports/kayu-bulat/timeline-kayu-bulat-bulanan/pdf`
 - Laporan Kayu Bulat Timeline Kayu Bulat Bulanan KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg/pdf`
 - Laporan Kayu Bulat Timeline Kayu Bulat Harian: `http://192.168.10.100:5006/api/reports/kayu-bulat/timeline-kayu-bulat-harian/pdf`
