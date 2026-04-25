@@ -85,7 +85,7 @@
         }
 
         .section-title-grid {
-            margin: 2px 0 2px 0;
+            margin: 10px 0 2px 0;
         }
 
         .section-title-grid td {
@@ -174,7 +174,7 @@
             font-size: 11px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -224,7 +224,7 @@
         @endphp
 
         <div class="page-block {{ $isLastPage ? 'last-page' : '' }}">
-            <h1 class="report-title">Laporan Produksi Per Nomor Produksi</h1>
+            <h1 class="report-title">Laporan Produksi Per Nomor Produksi CC Akhir</h1>
 
             <table class="meta-grid">
                 <tr>
@@ -238,7 +238,7 @@
                             <tr>
                                 <td class="meta-label">Tanggal</td>
                                 <td class="meta-sep">:</td>
-                                <td>{{ isset($meta['tanggal']) && $meta['tanggal'] instanceof \Carbon\Carbon ? $meta['tanggal']->format('d/m/Y') : '' }}
+                                <td>{{ isset($meta['tanggal']) && $meta['tanggal'] instanceof \Carbon\Carbon ? $meta['tanggal']->format('d-M-y') : '' }}
                                 </td>
                             </tr>
                             <tr>
