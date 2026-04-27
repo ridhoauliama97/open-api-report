@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\PPS;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PPS\GenerateStockBonggolanV2ReportRequest;
+use App\Http\Requests\PPS\GenerateStockBrokerV2ReportRequest;
 use App\Services\PdfGenerator;
-use App\Services\PPS\StockBonggolanV2ReportService;
+use App\Services\PPS\StockBrokerV2ReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
-class StockBonggolanV2Controller extends Controller
+class StockBrokerV2Controller extends Controller
 {
     public function index(): View
     {
-        return view('pps.bonggolan.stock_bonggolan_v2.form');
+        return view('pps.broker.stock_broker_v2.form');
     }
 
     public function download(
-        GenerateStockBonggolanV2ReportRequest $request,
-        StockBonggolanV2ReportService $reportService,
+        GenerateStockBrokerV2ReportRequest $request,
+        StockBrokerV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
         [$startDate, $endDate] = $request->reportDates();
@@ -38,7 +38,7 @@ class StockBonggolanV2Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('pps.bonggolan.stock_bonggolan_v2.pdf', [
+        $pdf = $pdfGenerator->render('pps.broker.stock_broker_v2.pdf', [
             'rows' => $rows,
             'startDate' => $startDate,
             'endDate' => $endDate,
@@ -49,7 +49,7 @@ class StockBonggolanV2Controller extends Controller
             'pdf_orientation' => 'landscape',
         ]);
 
-        $filename = sprintf('Laporan-Stok-Bonggolan-V2-%s.pdf', $endDate);
+        $filename = sprintf('Laporan-Stok-Broker-V2-%s.pdf', $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response($pdf, 200, [
@@ -59,8 +59,8 @@ class StockBonggolanV2Controller extends Controller
     }
 
     public function preview(
-        GenerateStockBonggolanV2ReportRequest $request,
-        StockBonggolanV2ReportService $reportService,
+        GenerateStockBrokerV2ReportRequest $request,
+        StockBrokerV2ReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $request->reportDates();
         $warehouse = $request->warehouse();
@@ -88,8 +88,8 @@ class StockBonggolanV2Controller extends Controller
     }
 
     public function health(
-        GenerateStockBonggolanV2ReportRequest $request,
-        StockBonggolanV2ReportService $reportService,
+        GenerateStockBrokerV2ReportRequest $request,
+        StockBrokerV2ReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $request->reportDates();
         $warehouse = $request->warehouse();
@@ -102,8 +102,8 @@ class StockBonggolanV2Controller extends Controller
 
         return response()->json([
             'message' => $result['is_healthy']
-                ? 'Struktur output SP_LapStokBonggolanV2 valid.'
-                : 'Struktur output SP_LapStokBonggolanV2 berubah.',
+                ? 'Struktur output SP_LapStokBrokerV2 valid.'
+                : 'Struktur output SP_LapStokBrokerV2 berubah.',
             'meta' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,

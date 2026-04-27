@@ -5,7 +5,7 @@ namespace App\Http\Requests\PPS;
 use App\Http\Requests\BaseReportRequest;
 use Carbon\Carbon;
 
-class GenerateStockBonggolanV2ReportRequest extends BaseReportRequest
+class GenerateStockBrokerV2ReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
     {

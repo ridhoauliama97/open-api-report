@@ -1906,14 +1906,14 @@ return [
     ],
     'pps_stock_bonggolan_v2' => [
         'database_connection' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
-        'stored_procedure' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_PROCEDURE', 'SP_LaporanStockLabelBonggolan'),
+        'stored_procedure' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_PROCEDURE', 'SP_LapStokBonggolanV2'),
         'call_syntax' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_QUERY'),
         'parameter_count' => (int) env('PPS_STOCK_BONGGOLAN_V2_REPORT_PARAMETER_COUNT', 2),
         'single_parameter_name' => env('PPS_STOCK_BONGGOLAN_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_STOCK_BONGGOLAN_V2_REPORT_EXPECTED_COLUMNS',
-            ''
+            'DateCreate,NoBonggolan,NamaBonggolan,Berat,NamaWarehouse,Blok,IdLokasi'
         )))),
     ],
     'pps_stock_bahan_baku_v2' => [
@@ -1938,6 +1938,18 @@ return [
         'single_parameter_name' => env('PPS_STOCK_BROKER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_STOCK_BROKER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,Jenis,NoBroker,JmlhSak,Berat,NamaWarehouse,IdLokasi,Blok'
+        )))),
+    ],
+    'pps_stock_broker_v2' => [
+        'database_connection' => env('PPS_STOCK_BROKER_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_BROKER_V2_REPORT_PROCEDURE', 'SP_LapStokBrokerV2'),
+        'call_syntax' => env('PPS_STOCK_BROKER_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_BROKER_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_BROKER_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_BROKER_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_BROKER_V2_REPORT_EXPECTED_COLUMNS',
             'DateCreate,Jenis,NoBroker,JmlhSak,Berat,NamaWarehouse,IdLokasi,Blok'
         )))),
     ],

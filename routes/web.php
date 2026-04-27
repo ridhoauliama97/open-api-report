@@ -188,6 +188,7 @@ use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
 use App\Http\Controllers\PPS\StockBonggolanV2Controller;
 use App\Http\Controllers\PPS\StockBrokerController;
+use App\Http\Controllers\PPS\StockBrokerV2Controller;
 use App\Http\Controllers\PPS\StockCrusherController;
 use App\Http\Controllers\PPS\StockGilinganController;
 use App\Http\Controllers\PPS\StockMixerController;
@@ -398,6 +399,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [StockBrokerController::class, 'download'])->name('download');
         Route::post('/preview', [StockBrokerController::class, 'preview'])->name('preview');
         Route::post('/health', [StockBrokerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('broker/stock-broker-v2')->name('broker.stock-broker-v2.')->group(function (): void {
+        Route::get('/', [StockBrokerV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockBrokerV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockBrokerV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockBrokerV2Controller::class, 'health'])->name('health');
     });
 
     Route::prefix('bonggolan/mutasi-bonggolan')->name('bonggolan.mutasi-bonggolan.')->group(function (): void {

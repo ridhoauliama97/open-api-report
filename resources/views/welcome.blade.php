@@ -150,6 +150,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.broker.stock-broker-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Broker V2
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.broker.broker-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Broker Produksi
@@ -173,7 +179,7 @@
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.bonggolan.stock-bonggolan-v2.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Stock Bonggolan
+                                Laporan Stock Bonggolan V2
                             </a>
                         </div>
                     </div>

@@ -169,6 +169,7 @@ use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
 use App\Http\Controllers\PPS\StockBonggolanV2Controller;
 use App\Http\Controllers\PPS\StockBrokerController;
+use App\Http\Controllers\PPS\StockBrokerV2Controller;
 use App\Http\Controllers\PPS\StockCrusherController;
 use App\Http\Controllers\PPS\StockGilinganController;
 use App\Http\Controllers\PPS\StockMixerController;
@@ -429,6 +430,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/barang-jadi/mutasi-barang-jadi', 'api.reports.pps.barang-jadi.mutasi-barang-jadi', MutasiBarangJadiPpsController::class],
         ['/reports/pps/broker/mutasi-broker', 'api.reports.pps.broker.mutasi-broker', MutasiBrokerController::class],
         ['/reports/pps/broker/stock-broker', 'api.reports.pps.broker.stock-broker', StockBrokerController::class],
+        ['/reports/pps/broker/stock-broker-v2', 'api.reports.pps.broker.stock-broker-v2', StockBrokerV2Controller::class],
         ['/reports/pps/bonggolan/mutasi-bonggolan', 'api.reports.pps.bonggolan.mutasi-bonggolan', MutasiBonggolanController::class],
         ['/reports/pps/bonggolan/stock-bonggolan-v2', 'api.reports.pps.bonggolan.stock-bonggolan-v2', StockBonggolanV2Controller::class],
         ['/reports/pps/crusher/mutasi-crusher', 'api.reports.pps.crusher.mutasi-crusher', MutasiCrusherController::class],
