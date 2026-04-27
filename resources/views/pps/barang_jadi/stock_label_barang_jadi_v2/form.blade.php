@@ -23,7 +23,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Generate Laporan Stock Broker</title>
+    <title>Generate Laporan Stock Barang Jadi</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -37,9 +37,9 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Stock Broker (PPS)</h1>
+                <h1 class="h3 mb-3">Generate Laporan Stock Barang Jadi (PPS)</h1>
                 <p class="text-secondary mb-4">
-                    Sumber data: stored procedure <code>SP_LapStokBrokerV2</code>.
+                    Sumber data: stored procedure <code>SP_LapStokBarangJadiV2</code>.
                     Parameter mengikuti SP: <code>@TglAkhir</code> dan <code>@Warehouse</code>.
                 </p>
 
@@ -53,7 +53,8 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('reports.pps.broker.stock-broker-v2.download') }}" class="row g-3">
+                <form method="POST" action="{{ route('reports.pps.barang-jadi.stock-label-barang-jadi-v2.download') }}"
+                    class="row g-3">
                     @csrf
                     <div class="col-md-6">
                         <label for="TglAkhir" class="form-label">Tanggal</label>
@@ -110,7 +111,7 @@
 
                 try {
                     const response = await fetch(
-                        '{{ route('reports.pps.broker.stock-broker-v2.preview') }}', {
+                        '{{ route('reports.pps.barang-jadi.stock-label-barang-jadi-v2.preview') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

@@ -7,6 +7,27 @@ use Carbon\Carbon;
 
 class GenerateStockMixerV2ReportRequest extends BaseReportRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $date = (string) $this->input('end_date', $this->input('TglAkhir', ''));
+        $warehouse = trim((string) $this->input('warehouse', $this->input('Warehouse', '')));
+
+        if ($date === '') {
+            $date = Carbon::today()->format('Y-m-d');
+        }
+
+        if ($warehouse === '') {
+            $warehouse = 'ALL';
+        }
+
+        $this->merge([
+            'end_date' => $this->input('end_date', $date),
+            'TglAkhir' => $this->input('TglAkhir', $date),
+            'warehouse' => $this->input('warehouse', $warehouse),
+            'Warehouse' => $this->input('Warehouse', $warehouse),
+        ]);
+    }
+
     public function authorize(): bool
     {
         return true;

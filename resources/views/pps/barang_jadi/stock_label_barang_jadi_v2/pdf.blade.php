@@ -106,6 +106,8 @@
             border-top: #000 solid 1px;
         }
 
+
+
         @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
@@ -129,8 +131,9 @@
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
-        $labelFields = ['NamaBonggolan', 'Jenis', 'NoBonggolan'];
+        $labelFields = ['NamaBJ', 'NamaBarangJadi', 'NamaBarang', 'Jenis', 'NoBJ'];
         $measureDefinitions = [
+            'Pcs' => ['Pcs', 'PCS', 'JmlhPcs', 'Qty', 'Stock', 'Jumlah'],
             'Berat' => ['Berat', 'Weight'],
         ];
         $activeMeasures = [];
@@ -147,7 +150,7 @@
         }
 
         if ($activeMeasures === []) {
-            $activeMeasures = ['Berat' => 'Berat'];
+            $activeMeasures = ['Qty' => 'Qty'];
         }
 
         $warehouseLabels = [];
@@ -186,7 +189,7 @@
             foreach ($pivotRows as $label => $warehouseData) {
                 $currentValues = array_fill_keys(array_keys($activeMeasures), 0.0);
 
-                foreach ($warehouseData as $measureValues) {
+                foreach ($warehouseData as $warehouseName => $measureValues) {
                     foreach (array_keys($activeMeasures) as $measureName) {
                         $currentValues[$measureName] += $measureValues[$measureName] ?? 0.0;
                     }
@@ -216,7 +219,7 @@
         }
     @endphp
 
-    <h1 class="report-title">Laporan Stock Bonggolan</h1>
+    <h1 class="report-title">Laporan Stock Barang Jadi</h1>
     <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
     <table class="data-table">
@@ -224,7 +227,8 @@
             <tr>
                 <th style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
-                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                    <th style="width: 10%;">
+                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
                 @endforeach
                 <th style="width: 10%;">Total</th>
             </tr>
@@ -265,7 +269,8 @@
                     @endphp
                     <td class="number">{{ number_format($totalValue, 2, '.', ',') }}</td>
                 @endforeach
-                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}
+                </td>
             </tr>
         </tbody>
     </table>

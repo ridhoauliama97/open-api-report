@@ -106,10 +106,6 @@
             border-top: #000 solid 1px;
         }
 
-        .jenis-column {
-            width: 200px;
-        }
-
         @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
@@ -133,88 +129,89 @@
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
+        $labelFields = ['NamaGilingan', 'NoGilingan'];
+        $measureDefinitions = [
+            'Berat' => ['Berat', 'Weight'],
+        ];
+        $activeMeasures = [];
+
+        foreach ($rowsData as $row) {
+            foreach ($measureDefinitions as $measureName => $candidates) {
+                foreach ($candidates as $candidate) {
+                    if (array_key_exists($candidate, $row) && $toFloat($row[$candidate] ?? null) !== null) {
+                        $activeMeasures[$measureName] = $candidate;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($activeMeasures === []) {
+            $activeMeasures = ['Berat' => 'Berat'];
+        }
+
         $warehouseLabels = [];
         $pivotRows = [];
         $pivotTotals = [];
 
-        if ($isAllWarehouse) {
-            foreach ($rowsData as $row) {
-                $warehouseName = trim((string) ($row['NamaWarehouse'] ?? ''));
+        foreach ($rowsData as $row) {
+            $warehouseName = trim((string) ($row['NamaWarehouse'] ?? ($warehouse ?? '')));
 
-                if ($warehouseName === '') {
-                    continue;
-                }
-
-                $jenis = trim((string) ($row['NamaGilingan'] ?? ($row['NoGilingan'] ?? '')));
-                if ($jenis === '') {
-                    $jenis = '-';
-                }
-
-                $warehouseLabels[$warehouseName] = $warehouseName;
-
-                if (!isset($pivotRows[$jenis])) {
-                    $pivotRows[$jenis] = [];
-                }
-
-                if (!isset($pivotRows[$jenis][$warehouseName])) {
-                    $pivotRows[$jenis][$warehouseName] = [
-                        'Berat' => 0.0,
-                    ];
-                }
-
-                $pivotRows[$jenis][$warehouseName]['Berat'] += $toFloat($row['Berat'] ?? null) ?? 0.0;
+            if ($warehouseName === '') {
+                continue;
             }
 
-            ksort($warehouseLabels);
-            ksort($pivotRows);
-
-            foreach ($warehouseLabels as $warehouseName) {
-                $pivotTotals[$warehouseName] = [
-                    'Berat' => 0.0,
-                ];
-            }
-
-            foreach ($pivotRows as $jenis => $warehouseData) {
-                foreach ($warehouseLabels as $warehouseName) {
-                    $pivotRows[$jenis][$warehouseName] = $warehouseData[$warehouseName] ?? [
-                        'Berat' => 0.0,
-                    ];
-
-                    $pivotTotals[$warehouseName]['Berat'] += $pivotRows[$jenis][$warehouseName]['Berat'];
+            $label = '-';
+            foreach ($labelFields as $field) {
+                $value = trim((string) ($row[$field] ?? ''));
+                if ($value !== '') {
+                    $label = $value;
+                    break;
                 }
             }
-        } else {
+
+            $warehouseLabels[$warehouseName] = $warehouseName;
+            $pivotRows[$label] ??= [];
+            $pivotRows[$label][$warehouseName] ??= array_fill_keys(array_keys($activeMeasures), 0.0);
+
+            foreach ($activeMeasures as $measureName => $fieldName) {
+                $pivotRows[$label][$warehouseName][$measureName] += $toFloat($row[$fieldName] ?? null) ?? 0.0;
+            }
+        }
+
+        if (!$isAllWarehouse) {
             $selectedWarehouse = trim((string) ($warehouse ?? ''));
             $warehouseLabels = [$selectedWarehouse !== '' ? $selectedWarehouse : 'Gudang'];
 
-            foreach ($rowsData as $row) {
-                $jenis = trim((string) ($row['NamaGilingan'] ?? ($row['NoGilingan'] ?? '')));
+            foreach ($pivotRows as $label => $warehouseData) {
+                $currentValues = array_fill_keys(array_keys($activeMeasures), 0.0);
 
-                if ($jenis === '') {
-                    $jenis = '-';
+                foreach ($warehouseData as $measureValues) {
+                    foreach (array_keys($activeMeasures) as $measureName) {
+                        $currentValues[$measureName] += $measureValues[$measureName] ?? 0.0;
+                    }
                 }
 
-                $warehouseName = $warehouseLabels[0];
-
-                if (!isset($pivotRows[$jenis])) {
-                    $pivotRows[$jenis] = [
-                        $warehouseName => [
-                            'Berat' => 0.0,
-                        ],
-                    ];
-                }
-
-                $pivotRows[$jenis][$warehouseName]['Berat'] += $toFloat($row['Berat'] ?? null) ?? 0.0;
+                $pivotRows[$label] = [$warehouseLabels[0] => $currentValues];
             }
+        }
 
-            ksort($pivotRows);
+        ksort($warehouseLabels);
+        ksort($pivotRows);
 
-            $pivotTotals[$warehouseLabels[0]] = [
-                'Berat' => 0.0,
-            ];
+        foreach ($warehouseLabels as $warehouseName) {
+            $pivotTotals[$warehouseName] = array_fill_keys(array_keys($activeMeasures), 0.0);
+        }
 
-            foreach ($pivotRows as $jenis => $warehouseData) {
-                $pivotTotals[$warehouseLabels[0]]['Berat'] += $warehouseData[$warehouseLabels[0]]['Berat'];
+        foreach ($pivotRows as $label => $warehouseData) {
+            foreach ($warehouseLabels as $warehouseName) {
+                $pivotRows[$label][$warehouseName] =
+                    $warehouseData[$warehouseName] ?? array_fill_keys(array_keys($activeMeasures), 0.0);
+
+                foreach (array_keys($activeMeasures) as $measureName) {
+                    $pivotTotals[$warehouseName][$measureName] +=
+                        $pivotRows[$label][$warehouseName][$measureName] ?? 0.0;
+                }
             }
         }
     @endphp
@@ -225,28 +222,28 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th class="jenis-column"></th>
+                <th style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
-                    <th>{{ $warehouseName }}</th>
+                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
                 @endforeach
-                <th>Total</th>
+                <th style="width: 10%;">Total</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($pivotRows as $jenis => $warehouseData)
-                @php
-                    $rowBerat = 0.0;
-                @endphp
+            @forelse ($pivotRows as $label => $warehouseData)
+                @php $rowTotals = array_fill_keys(array_keys($activeMeasures), 0.0); @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td style="width: 30%;">{{ $jenis }}</td>
+                    <td>{{ $label }}</td>
                     @foreach ($warehouseLabels as $warehouseName)
-                        @php
-                            $berat = $warehouseData[$warehouseName]['Berat'] ?? 0.0;
-                            $rowBerat += $berat;
-                        @endphp
-                        <td class="number">{{ number_format($berat, 2, '.', ',') }}</td>
+                        @foreach (array_keys($activeMeasures) as $measureName)
+                            @php
+                                $value = $warehouseData[$warehouseName][$measureName] ?? 0.0;
+                                $rowTotals[$measureName] += $value;
+                            @endphp
+                            <td class="number">{{ number_format($value, 2, '.', ',') }}</td>
+                        @endforeach
                     @endforeach
-                    <td class="number" style="font-weight: bold;">{{ number_format($rowBerat, 2, '.', ',') }}</td>
+                    <td class="number" style="font-weight: bold;">{{ number_format($rowTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr class="row-odd">
@@ -258,17 +255,17 @@
             @endforelse
             <tr class="total-row">
                 <td class="center">Total</td>
-                @php
-                    $grandBerat = 0.0;
-                @endphp
+                @php $grandTotals = array_fill_keys(array_keys($activeMeasures), 0.0); @endphp
                 @foreach ($warehouseLabels as $warehouseName)
-                    @php
-                        $totalBerat = $pivotTotals[$warehouseName]['Berat'] ?? 0.0;
-                        $grandBerat += $totalBerat;
-                    @endphp
-                    <td class="number">{{ number_format($totalBerat, 2, '.', ',') }}</td>
+                    @foreach (array_keys($activeMeasures) as $measureName)
+                        @php
+                            $totalValue = $pivotTotals[$warehouseName][$measureName] ?? 0.0;
+                            $grandTotals[$measureName] += $totalValue;
+                        @endphp
+                        <td class="number">{{ number_format($totalValue, 2, '.', ',') }}</td>
+                    @endforeach
                 @endforeach
-                <td class="number">{{ number_format($grandBerat, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
             </tr>
         </tbody>
     </table>

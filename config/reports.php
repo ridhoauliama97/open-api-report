@@ -2149,6 +2149,18 @@ return [
             'Jenis,Berat'
         )))),
     ],
+    'pps_stock_label_barang_jadi_v2' => [
+        'database_connection' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_PROCEDURE', 'SP_LapStokBarangJadiV2'),
+        'call_syntax' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
     'pps_mutasi_broker' => [
         'database_connection' => env('PPS_MUTASI_BROKER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_MUTASI_BROKER_REPORT_PROCEDURE', 'SP_PPSLapMutasiBroker'),

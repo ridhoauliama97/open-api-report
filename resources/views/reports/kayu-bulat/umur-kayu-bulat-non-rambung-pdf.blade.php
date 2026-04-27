@@ -478,7 +478,9 @@
                         $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
 
                         $lamaRacipHari =
-                            $lamaTungguHari !== null && $lamaAwalHari !== null ? max(0, $lamaTungguHari - $lamaAwalHari) : null;
+                            $lamaTungguHari !== null && $lamaAwalHari !== null
+                                ? max(0, $lamaTungguHari - $lamaAwalHari)
+                                : null;
                         $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

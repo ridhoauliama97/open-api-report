@@ -128,6 +128,13 @@
                             </a>
                         </div>
 
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.barang-jadi.stock-label-barang-jadi-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Barang Jadi V2
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>

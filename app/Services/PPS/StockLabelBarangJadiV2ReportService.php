@@ -5,7 +5,7 @@ namespace App\Services\PPS;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class StockBonggolanV2ReportService
+class StockLabelBarangJadiV2ReportService
 {
     public function fetch(string $startDate, string $endDate, string $warehouse): array
     {
@@ -18,7 +18,7 @@ class StockBonggolanV2ReportService
     {
         $rows = $this->fetch($startDate, $endDate, $warehouse);
         $detectedColumns = array_keys($rows[0] ?? []);
-        $expectedColumns = config('reports.pps_stock_bonggolan_v2.expected_columns', []);
+        $expectedColumns = config('reports.pps_stock_label_barang_jadi_v2.expected_columns', []);
         $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
 
         return [
@@ -38,7 +38,7 @@ class StockBonggolanV2ReportService
 
     private function runProcedureQuery(string $startDate, string $endDate, string $warehouse): array
     {
-        $configPath = 'reports.pps_stock_bonggolan_v2';
+        $configPath = 'reports.pps_stock_label_barang_jadi_v2';
         $connectionName = config("{$configPath}.database_connection");
         $procedure = (string) config("{$configPath}.stored_procedure");
         $syntax = (string) config("{$configPath}.call_syntax", 'exec');
@@ -47,7 +47,7 @@ class StockBonggolanV2ReportService
         $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
 
         if ($procedure === '' && !is_string($customQuery)) {
-            throw new RuntimeException('Stored procedure laporan PPS Stock Bonggolan V2 belum dikonfigurasi.');
+            throw new RuntimeException('Stored procedure laporan PPS Stock Barang Jadi V2 belum dikonfigurasi.');
         }
 
         $connection = DB::connection($connectionName ?: null);
@@ -56,8 +56,8 @@ class StockBonggolanV2ReportService
 
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
-                'Laporan PPS Stock Bonggolan V2 dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                'Laporan PPS Stock Barang Jadi V2 dikonfigurasi untuk SQL Server. '
+                . 'Set PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -65,8 +65,8 @@ class StockBonggolanV2ReportService
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
                 : throw new RuntimeException(
-                    'PPS_STOCK_BONGGOLAN_V2_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX=query.',
+                    'PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_QUERY belum diisi. '
+                    . 'Isi query manual jika menggunakan PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
@@ -87,8 +87,7 @@ class StockBonggolanV2ReportService
         string $startDate,
         string $endDate,
         string $warehouse,
-    ): array
-    {
+    ): array {
         return match ($parameterCount) {
             0 => [],
             1 => [strtolower($singleParameterName) === 'tglawal' ? $startDate : $endDate],
@@ -102,8 +101,7 @@ class StockBonggolanV2ReportService
         string $procedure,
         int $parameterCount,
         string $singleParameterName,
-    ): string
-    {
+    ): string {
         if ($syntax === 'call') {
             $bindingCount = match ($parameterCount) {
                 0 => 0,

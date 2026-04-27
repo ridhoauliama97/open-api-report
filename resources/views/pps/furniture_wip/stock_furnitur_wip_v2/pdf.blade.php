@@ -129,8 +129,9 @@
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
-        $labelFields = ['NamaBonggolan', 'Jenis', 'NoBonggolan'];
+        $labelFields = ['Nama', 'Jenis', 'NamaBJ', 'NamaBarang', 'NoLabel'];
         $measureDefinitions = [
+            'Pcs' => ['Pcs', 'PCS', 'JmlhPcs', 'Qty', 'Stock', 'Jumlah'],
             'Berat' => ['Berat', 'Weight'],
         ];
         $activeMeasures = [];
@@ -147,7 +148,7 @@
         }
 
         if ($activeMeasures === []) {
-            $activeMeasures = ['Berat' => 'Berat'];
+            $activeMeasures = ['Qty' => 'Qty'];
         }
 
         $warehouseLabels = [];
@@ -216,7 +217,7 @@
         }
     @endphp
 
-    <h1 class="report-title">Laporan Stock Bonggolan</h1>
+    <h1 class="report-title">Laporan Stock Furniture WIP</h1>
     <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
     <table class="data-table">
@@ -224,7 +225,8 @@
             <tr>
                 <th style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
-                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                    <th style="width: 10%;">
+                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
                 @endforeach
                 <th style="width: 10%;">Total</th>
             </tr>
@@ -265,7 +267,8 @@
                     @endphp
                     <td class="number">{{ number_format($totalValue, 2, '.', ',') }}</td>
                 @endforeach
-                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}
+                </td>
             </tr>
         </tbody>
     </table>

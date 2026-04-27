@@ -5,7 +5,7 @@ namespace App\Http\Requests\PPS;
 use App\Http\Requests\BaseReportRequest;
 use Carbon\Carbon;
 
-class GenerateStockCrusherV2ReportRequest extends BaseReportRequest
+class GenerateStockFurnitureWipV2ReportRequest extends BaseReportRequest
 {
     protected function prepareForValidation(): void
     {

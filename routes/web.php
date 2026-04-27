@@ -188,6 +188,7 @@ use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
 use App\Http\Controllers\PPS\StockBonggolanController;
 use App\Http\Controllers\PPS\StockBonggolanV2Controller;
+use App\Http\Controllers\PPS\StockLabelBarangJadiV2Controller;
 use App\Http\Controllers\PPS\StockBrokerController;
 use App\Http\Controllers\PPS\StockBrokerV2Controller;
 use App\Http\Controllers\PPS\StockCrusherController;
@@ -391,6 +392,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [MutasiBarangJadiPpsController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiBarangJadiPpsController::class, 'preview'])->name('preview');
         Route::post('/health', [MutasiBarangJadiPpsController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('barang-jadi/stock-label-barang-jadi-v2')->name('barang-jadi.stock-label-barang-jadi-v2.')->group(function (): void {
+        Route::get('/', [StockLabelBarangJadiV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockLabelBarangJadiV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockLabelBarangJadiV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockLabelBarangJadiV2Controller::class, 'health'])->name('health');
     });
 
     Route::prefix('broker/mutasi-broker')->name('broker.mutasi-broker.')->group(function (): void {

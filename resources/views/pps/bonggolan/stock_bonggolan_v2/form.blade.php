@@ -23,7 +23,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Generate Laporan Stok Bonggolan</title>
+    <title>Generate Laporan Stock Bonggolan</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -37,7 +37,7 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Stok Bonggolan (PPS)</h1>
+                <h1 class="h3 mb-3">Generate Laporan Stock Bonggolan (PPS)</h1>
                 <p class="text-secondary mb-4">
                     Sumber data: stored procedure <code>SP_LapStokBonggolanV2</code>.
                     Parameter mengikuti SP: <code>@TglAkhir</code> dan <code>@Warehouse</code>.

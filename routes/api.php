@@ -169,6 +169,7 @@ use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
 use App\Http\Controllers\PPS\StockBonggolanController;
 use App\Http\Controllers\PPS\StockBonggolanV2Controller;
+use App\Http\Controllers\PPS\StockLabelBarangJadiV2Controller;
 use App\Http\Controllers\PPS\StockBrokerController;
 use App\Http\Controllers\PPS\StockBrokerV2Controller;
 use App\Http\Controllers\PPS\StockCrusherController;
@@ -434,6 +435,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/bahan-baku/mutasi-bahan-baku', 'api.reports.pps.bahan-baku.mutasi-bahan-baku', MutasiBahanBakuController::class],
         ['/reports/pps/bahan-baku/stock-bahan-baku-v2', 'api.reports.pps.bahan-baku.stock-bahan-baku-v2', StockBahanBakuV2Controller::class],
         ['/reports/pps/barang-jadi/mutasi-barang-jadi', 'api.reports.pps.barang-jadi.mutasi-barang-jadi', MutasiBarangJadiPpsController::class],
+        ['/reports/pps/barang-jadi/stock-label-barang-jadi-v2', 'api.reports.pps.barang-jadi.stock-label-barang-jadi-v2', StockLabelBarangJadiV2Controller::class],
         ['/reports/pps/broker/mutasi-broker', 'api.reports.pps.broker.mutasi-broker', MutasiBrokerController::class],
         ['/reports/pps/broker/stock-broker', 'api.reports.pps.broker.stock-broker', StockBrokerController::class],
         ['/reports/pps/broker/stock-broker-v2', 'api.reports.pps.broker.stock-broker-v2', StockBrokerV2Controller::class],
