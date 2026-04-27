@@ -221,11 +221,11 @@
                     $noKayuBulatColumn,
                     $dateCreateColumn,
                     $supplierColumn,
+                    $truckColumn,
                     $jenisColumn,
                     $tanggalRacipColumn,
                     $tanggalLamaRacipColumn,
                     'LAMA_TUNGGU_VIRTUAL',
-                    $truckColumn,
                     $tonColumn,
                 ],
                 static fn($column): bool => is_string($column) && $column !== '',
@@ -429,30 +429,16 @@
     @forelse ($groupedRows as $groupName => $groupRows)
         <div class="section-title">Status : {{ $groupName }}</div>
         <table class="report-table">
-            <colgroup>
-                <col style="width: 4%">
-                @foreach ($displayColumns as $column)
-                    @php
-                        $baseWidth = (float) ($finalColumnWidths[$column] ?? 0);
-                    @endphp
-                    @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
-                        <col style="width: {{ number_format($baseWidth * 0.72, 4, '.', ',') }}%">
-                        <col style="width: {{ number_format($baseWidth * 0.28, 4, '.', ',') }}%">
-                    @else
-                        <col style="width: {{ number_format($baseWidth, 4, '.', ',') }}%">
-                    @endif
-                @endforeach
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>No</th>
                     @foreach ($displayColumns as $column)
                         @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
-                            <th colspan="2">{{ $formatHeaderLabel($column) }}</th>
+                            <th colspan="2" style="width: 9.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @elseif ($column === 'LAMA_TUNGGU_VIRTUAL')
-                            <th>Lama Tunggu</th>
+                            <th style="width: 9.5%;">Lama Tunggu</th>
                         @else
-                            <th>{{ $formatHeaderLabel($column) }}</th>
+                            <th style="width: 9.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @endif
                     @endforeach
                 </tr>
@@ -476,10 +462,9 @@
                         $lamaAwalHari = $diffDays($dateCreateValue, $tanggalRacipValue);
                         $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hari' : '';
 
-                        $lamaRacipHari = $diffDays($tanggalRacipValue, $tanggalLamaRacipValue);
-                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
-
-                        if ($dateUsageValue !== null && $dateCreateValue !== null) {
+                        if ($groupName === 'Masih Hidup' && $dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, \Carbon\Carbon::today());
+                        } elseif ($dateUsageValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $dateUsageValue);
                         } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
@@ -491,6 +476,10 @@
                             $lamaTungguHari = null;
                         }
                         $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
+
+                        $lamaRacipHari =
+                            $lamaTungguHari !== null && $lamaAwalHari !== null ? max(0, $lamaTungguHari - $lamaAwalHari) : null;
+                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
@@ -537,12 +526,63 @@
                     @php
                         $hasTruckColumn = $truckColumn !== null && in_array($truckColumn, $displayColumns, true);
                         $hasTonColumn = $tonColumn !== null && in_array($tonColumn, $displayColumns, true);
-                        $tailColumnsCount = ($hasTruckColumn ? 1 : 0) + ($hasTonColumn ? 1 : 0);
-                        $totalLabelColspan = max(1, 1 + $visualDisplayColumnsCount - $tailColumnsCount);
+                        $visualColumnSpan = static function (string $column) use (
+                            $tanggalRacipColumn,
+                            $tanggalLamaRacipColumn,
+                        ): int {
+                            return $column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn ? 2 : 1;
+                        };
+
+                        $truckVisualIndex = null;
+                        $tonVisualIndex = null;
+                        $currentVisualIndex = 2;
+
+                        foreach ($displayColumns as $displayColumn) {
+                            if ($displayColumn === $truckColumn && $truckVisualIndex === null) {
+                                $truckVisualIndex = $currentVisualIndex;
+                            }
+
+                            if ($displayColumn === $tonColumn && $tonVisualIndex === null) {
+                                $tonVisualIndex = $currentVisualIndex;
+                            }
+
+                            $currentVisualIndex += $visualColumnSpan($displayColumn);
+                        }
+
+                        $totalLabelColspan = 1;
+                        $middleColspan = 0;
+                        $trailingColspan = 0;
+                        $summaryVisualIndices = array_values(
+                            array_filter(
+                                [$truckVisualIndex, $tonVisualIndex],
+                                static fn(?int $index): bool => $index !== null,
+                            ),
+                        );
+                        sort($summaryVisualIndices);
+
+                        if ($summaryVisualIndices !== []) {
+                            $firstSummaryVisualIndex = $summaryVisualIndices[0];
+                            $lastSummaryVisualIndex = $summaryVisualIndices[count($summaryVisualIndices) - 1];
+                            $totalLabelColspan = max(1, $firstSummaryVisualIndex - 1);
+
+                            if (count($summaryVisualIndices) > 1) {
+                                $middleColspan = max(0, $lastSummaryVisualIndex - $firstSummaryVisualIndex - 1);
+                            }
+
+                            $trailingColspan = max(0, $visualDisplayColumnsCount - $lastSummaryVisualIndex);
+                        } else {
+                            $totalLabelColspan = max(1, $visualDisplayColumnsCount);
+                        }
                     @endphp
                     <td class="center" colspan="{{ $totalLabelColspan }}">Total :</td>
                     @if ($hasTruckColumn)
                         <td class="center">{{ $countTruck($groupRows, $truckColumn) }} Truk</td>
+                    @endif
+                    @if ($middleColspan > 0)
+                        <td colspan="{{ $middleColspan }}"></td>
+                    @endif
+                    @if ($trailingColspan > 0)
+                        <td colspan="{{ $trailingColspan }}"></td>
                     @endif
                     @if ($hasTonColumn)
                         <td class="number">{{ number_format($sumTon($groupRows, $tonColumn), 4, '.', ',') }}</td>

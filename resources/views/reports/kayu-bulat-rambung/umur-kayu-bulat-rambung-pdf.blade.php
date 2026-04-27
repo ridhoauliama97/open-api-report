@@ -159,7 +159,7 @@
             border-right: 1px solid #000 !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include ('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -440,20 +440,6 @@
     @forelse ($groupedRows as $groupName => $groupRows)
         <div class="section-title">Status : {{ $groupName }}</div>
         <table class="report-table">
-            <colgroup>
-                <col style="width: 4%">
-                @foreach ($displayColumns as $column)
-                    @php
-                        $baseWidth = (float) ($finalColumnWidths[$column] ?? 0);
-                    @endphp
-                    @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
-                        <col style="width: {{ number_format($baseWidth * 0.72, 4, '.', ',') }}%">
-                        <col style="width: {{ number_format($baseWidth * 0.28, 4, '.', ',') }}%">
-                    @else
-                        <col style="width: {{ number_format($baseWidth, 4, '.', ',') }}%">
-                    @endif
-                @endforeach
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>No</th>
@@ -487,10 +473,9 @@
                         $lamaAwalHari = $diffDays($dateCreateValue, $tanggalRacipValue);
                         $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hari' : '';
 
-                        $lamaRacipHari = $diffDays($tanggalRacipValue, $tanggalLamaRacipValue);
-                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
-
-                        if ($dateUsageValue !== null && $dateCreateValue !== null) {
+                        if ($groupName === 'Masih Hidup' && $dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, \Carbon\Carbon::today());
+                        } elseif ($dateUsageValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $dateUsageValue);
                         } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
@@ -502,6 +487,12 @@
                             $lamaTungguHari = null;
                         }
                         $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
+
+                        $lamaRacipHari =
+                            $lamaTungguHari !== null && $lamaAwalHari !== null
+                                ? max(0, $lamaTungguHari - $lamaAwalHari)
+                                : null;
+                        $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td class="center data-cell">{{ $loop->iteration }}</td>
@@ -574,17 +565,24 @@
                         $totalLabelColspan = 1;
                         $middleColspan = 0;
                         $trailingColspan = 0;
+                        $summaryVisualIndices = array_values(
+                            array_filter(
+                                [$truckVisualIndex, $tonVisualIndex],
+                                static fn(?int $index): bool => $index !== null,
+                            ),
+                        );
+                        sort($summaryVisualIndices);
 
-                        if ($hasTruckColumn && $truckVisualIndex !== null) {
-                            $totalLabelColspan = max(1, $truckVisualIndex - 1);
+                        if ($summaryVisualIndices !== []) {
+                            $firstSummaryVisualIndex = $summaryVisualIndices[0];
+                            $lastSummaryVisualIndex = $summaryVisualIndices[count($summaryVisualIndices) - 1];
+                            $totalLabelColspan = max(1, $firstSummaryVisualIndex - 1);
 
-                            if ($hasTonColumn && $tonVisualIndex !== null) {
-                                $middleColspan = max(0, $tonVisualIndex - $truckVisualIndex - 1);
-                            } else {
-                                $trailingColspan = max(0, $visualDisplayColumnsCount - $truckVisualIndex);
+                            if (count($summaryVisualIndices) > 1) {
+                                $middleColspan = max(0, $lastSummaryVisualIndex - $firstSummaryVisualIndex - 1);
                             }
-                        } elseif ($hasTonColumn && $tonVisualIndex !== null) {
-                            $totalLabelColspan = max(1, $tonVisualIndex - 1);
+
+                            $trailingColspan = max(0, $visualDisplayColumnsCount - $lastSummaryVisualIndex);
                         } else {
                             $totalLabelColspan = max(1, $visualDisplayColumnsCount);
                         }
