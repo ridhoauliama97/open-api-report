@@ -133,7 +133,7 @@
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
-        $jenisLabels = [];
+        $warehouseLabels = [];
         $pivotRows = [];
         $pivotTotals = [];
 
@@ -145,101 +145,133 @@
                     continue;
                 }
 
-                $jenis = trim((string) ($row['NamaBonggolan'] ?? ($row['Jenis'] ?? '')));
+                $jenis = trim((string) ($row['Jenis'] ?? ($row['NoMixer'] ?? '')));
                 if ($jenis === '') {
                     $jenis = '-';
                 }
 
-                $jenisLabels[$warehouseName] = $warehouseName;
+                $warehouseLabels[$warehouseName] = $warehouseName;
 
                 if (!isset($pivotRows[$jenis])) {
                     $pivotRows[$jenis] = [];
                 }
 
                 if (!isset($pivotRows[$jenis][$warehouseName])) {
-                    $pivotRows[$jenis][$warehouseName] = 0.0;
+                    $pivotRows[$jenis][$warehouseName] = [
+                        'JmlhSak' => 0.0,
+                        'Berat' => 0.0,
+                    ];
                 }
 
-                $pivotRows[$jenis][$warehouseName] += $toFloat($row['Berat'] ?? null) ?? 0.0;
+                $pivotRows[$jenis][$warehouseName]['JmlhSak'] += $toFloat($row['JmlhSak'] ?? null) ?? 0.0;
+                $pivotRows[$jenis][$warehouseName]['Berat'] += $toFloat($row['Berat'] ?? null) ?? 0.0;
             }
 
-            ksort($jenisLabels);
+            ksort($warehouseLabels);
             ksort($pivotRows);
 
-            foreach ($jenisLabels as $warehouseName) {
-                $pivotTotals[$warehouseName] = 0.0;
+            foreach ($warehouseLabels as $warehouseName) {
+                $pivotTotals[$warehouseName] = [
+                    'JmlhSak' => 0.0,
+                    'Berat' => 0.0,
+                ];
             }
 
             foreach ($pivotRows as $jenis => $warehouseData) {
-                foreach ($jenisLabels as $warehouseName) {
-                    $pivotRows[$jenis][$warehouseName] = $warehouseData[$warehouseName] ?? 0.0;
-                    $pivotTotals[$warehouseName] += $pivotRows[$jenis][$warehouseName];
+                foreach ($warehouseLabels as $warehouseName) {
+                    $pivotRows[$jenis][$warehouseName] = $warehouseData[$warehouseName] ?? [
+                        'JmlhSak' => 0.0,
+                        'Berat' => 0.0,
+                    ];
+
+                    $pivotTotals[$warehouseName]['JmlhSak'] += $pivotRows[$jenis][$warehouseName]['JmlhSak'];
+                    $pivotTotals[$warehouseName]['Berat'] += $pivotRows[$jenis][$warehouseName]['Berat'];
                 }
             }
         } else {
             $selectedWarehouse = trim((string) ($warehouse ?? ''));
-            $jenisLabels = [$selectedWarehouse !== '' ? $selectedWarehouse : 'Gudang'];
+            $warehouseLabels = [$selectedWarehouse !== '' ? $selectedWarehouse : 'Gudang'];
 
             foreach ($rowsData as $row) {
-                $jenis = trim((string) ($row['NamaBonggolan'] ?? ($row['Jenis'] ?? '')));
-
+                $jenis = trim((string) ($row['Jenis'] ?? ($row['NoMixer'] ?? '')));
                 if ($jenis === '') {
                     $jenis = '-';
                 }
 
-                $warehouseName = $jenisLabels[0];
+                $warehouseName = $warehouseLabels[0];
 
                 if (!isset($pivotRows[$jenis])) {
                     $pivotRows[$jenis] = [
-                        $warehouseName => 0.0,
+                        $warehouseName => [
+                            'JmlhSak' => 0.0,
+                            'Berat' => 0.0,
+                        ],
                     ];
                 }
 
-                $pivotRows[$jenis][$warehouseName] += $toFloat($row['Berat'] ?? null) ?? 0.0;
+                $pivotRows[$jenis][$warehouseName]['JmlhSak'] += $toFloat($row['JmlhSak'] ?? null) ?? 0.0;
+                $pivotRows[$jenis][$warehouseName]['Berat'] += $toFloat($row['Berat'] ?? null) ?? 0.0;
             }
 
             ksort($pivotRows);
 
-            $pivotTotals[$jenisLabels[0]] = 0.0;
+            $pivotTotals[$warehouseLabels[0]] = [
+                'JmlhSak' => 0.0,
+                'Berat' => 0.0,
+            ];
 
             foreach ($pivotRows as $jenis => $warehouseData) {
-                $pivotTotals[$jenisLabels[0]] += $warehouseData[$jenisLabels[0]] ?? 0.0;
+                $pivotTotals[$warehouseLabels[0]]['JmlhSak'] += $warehouseData[$warehouseLabels[0]]['JmlhSak'];
+                $pivotTotals[$warehouseLabels[0]]['Berat'] += $warehouseData[$warehouseLabels[0]]['Berat'];
             }
         }
     @endphp
 
-    <h1 class="report-title">Laporan Stock Bonggolan</h1>
+    <h1 class="report-title">Laporan Stock Mixer</h1>
     <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
     <table class="data-table">
         <thead>
             <tr>
-                <th class="jenis-column"></th>
-                @foreach ($jenisLabels as $warehouseName)
-                    <th>{{ $warehouseName }}</th>
+                <th rowspan="2" class="jenis-column"></th>
+                @foreach ($warehouseLabels as $warehouseName)
+                    <th colspan="2">{{ $warehouseName }}</th>
                 @endforeach
-                <th>Total</th>
+                <th colspan="2">Total</th>
+            </tr>
+            <tr>
+                @foreach ($warehouseLabels as $warehouseName)
+                    <th>Jmlh Sak</th>
+                    <th>Berat</th>
+                @endforeach
+                <th>Jmlh Sak</th>
+                <th>Berat</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($pivotRows as $jenis => $warehouseData)
                 @php
-                    $rowTotal = 0.0;
+                    $rowJmlhSak = 0.0;
+                    $rowBerat = 0.0;
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td style="width: 30%;">{{ $jenis }}</td>
-                    @foreach ($jenisLabels as $warehouseName)
+                    @foreach ($warehouseLabels as $warehouseName)
                         @php
-                            $berat = $warehouseData[$warehouseName] ?? 0.0;
-                            $rowTotal += $berat;
+                            $jmlhSak = $warehouseData[$warehouseName]['JmlhSak'] ?? 0.0;
+                            $berat = $warehouseData[$warehouseName]['Berat'] ?? 0.0;
+                            $rowJmlhSak += $jmlhSak;
+                            $rowBerat += $berat;
                         @endphp
+                        <td class="number">{{ number_format($jmlhSak, 2, '.', ',') }}</td>
                         <td class="number">{{ number_format($berat, 2, '.', ',') }}</td>
                     @endforeach
-                    <td class="number" style="font-weight: bold;">{{ number_format($rowTotal, 2, '.', ',') }}</td>
+                    <td class="number" style="font-weight: bold;">{{ number_format($rowJmlhSak, 2, '.', ',') }}</td>
+                    <td class="number" style="font-weight: bold;">{{ number_format($rowBerat, 2, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr class="row-odd">
-                    <td colspan="{{ count($jenisLabels) + 2 }}" class="center"
+                    <td colspan="{{ count($warehouseLabels) * 2 + 3 }}" class="center"
                         style="font-weight: bold; font-size: 11px; font-style: italic;">
                         Tidak ada data.
                     </td>
@@ -248,16 +280,21 @@
             <tr class="total-row">
                 <td class="center">Total</td>
                 @php
-                    $grandTotal = 0.0;
+                    $grandJmlhSak = 0.0;
+                    $grandBerat = 0.0;
                 @endphp
-                @foreach ($jenisLabels as $warehouseName)
+                @foreach ($warehouseLabels as $warehouseName)
                     @php
-                        $totalBerat = $pivotTotals[$warehouseName] ?? 0.0;
-                        $grandTotal += $totalBerat;
+                        $totalJmlhSak = $pivotTotals[$warehouseName]['JmlhSak'] ?? 0.0;
+                        $totalBerat = $pivotTotals[$warehouseName]['Berat'] ?? 0.0;
+                        $grandJmlhSak += $totalJmlhSak;
+                        $grandBerat += $totalBerat;
                     @endphp
+                    <td class="number">{{ number_format($totalJmlhSak, 2, '.', ',') }}</td>
                     <td class="number">{{ number_format($totalBerat, 2, '.', ',') }}</td>
                 @endforeach
-                <td class="number">{{ number_format($grandTotal, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandJmlhSak, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandBerat, 2, '.', ',') }}</td>
             </tr>
         </tbody>
     </table>

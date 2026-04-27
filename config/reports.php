@@ -1916,6 +1916,18 @@ return [
             'DateCreate,NoBonggolan,NamaBonggolan,Berat,NamaWarehouse,Blok,IdLokasi'
         )))),
     ],
+    'pps_stock_bonggolan' => [
+        'database_connection' => env('PPS_STOCK_BONGGOLAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_BONGGOLAN_REPORT_PROCEDURE', 'SP_LaporanStockLabelBonggolan'),
+        'call_syntax' => env('PPS_STOCK_BONGGOLAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_BONGGOLAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_BONGGOLAN_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_BONGGOLAN_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_BONGGOLAN_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoBonggolan,NamaBonggolan,Berat,NamaWarehouse,Blok,IdLokasi'
+        )))),
+    ],
     'pps_stock_bahan_baku_v2' => [
         'database_connection' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_STOCK_BAHAN_BAKU_V2_REPORT_PROCEDURE', 'SP_LapStokBahanBakuV2'),
@@ -1965,6 +1977,18 @@ return [
             'DateCreate,NoCrusher,NamaCrusher,Berat,NamaWarehouse,Blok,IdLokasi'
         )))),
     ],
+    'pps_stock_crusher_v2' => [
+        'database_connection' => env('PPS_STOCK_CRUSHER_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_CRUSHER_V2_REPORT_PROCEDURE', 'SP_LapStokCrusherV2'),
+        'call_syntax' => env('PPS_STOCK_CRUSHER_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_CRUSHER_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_CRUSHER_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_CRUSHER_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_CRUSHER_V2_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoCrusher,NamaCrusher,Berat,NamaWarehouse,Blok,IdLokasi'
+        )))),
+    ],
     'pps_stock_gilingan' => [
         'database_connection' => env('PPS_STOCK_GILINGAN_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_STOCK_GILINGAN_REPORT_PROCEDURE', 'SP_LaporanStockLabelGilingan'),
@@ -1977,6 +2001,18 @@ return [
             'DateCreate,NoGilingan,NamaGilingan,Berat,NamaWarehouse,Blok,IdLokasi'
         )))),
     ],
+    'pps_stock_gilingan_v2' => [
+        'database_connection' => env('PPS_STOCK_GILINGAN_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_GILINGAN_V2_REPORT_PROCEDURE', 'SP_LapStokGilinganV2'),
+        'call_syntax' => env('PPS_STOCK_GILINGAN_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_GILINGAN_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_GILINGAN_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_GILINGAN_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_GILINGAN_V2_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoGilingan,NamaGilingan,Berat,NamaWarehouse,Blok,IdLokasi'
+        )))),
+    ],
     'pps_stock_mixer' => [
         'database_connection' => env('PPS_STOCK_MIXER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_STOCK_MIXER_REPORT_PROCEDURE', 'SP_LaporanStockLabelMixer'),
@@ -1986,6 +2022,18 @@ return [
         'single_parameter_name' => env('PPS_STOCK_MIXER_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_STOCK_MIXER_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,Jenis,NoMixer,JmlhSak,Berat,NamaWarehouse,IdLokasi,Blok'
+        )))),
+    ],
+    'pps_stock_mixer_v2' => [
+        'database_connection' => env('PPS_STOCK_MIXER_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_MIXER_V2_REPORT_PROCEDURE', 'SP_LapStokMixerV2'),
+        'call_syntax' => env('PPS_STOCK_MIXER_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_MIXER_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_MIXER_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_MIXER_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_MIXER_V2_REPORT_EXPECTED_COLUMNS',
             'DateCreate,Jenis,NoMixer,JmlhSak,Berat,NamaWarehouse,IdLokasi,Blok'
         )))),
     ],
@@ -2010,6 +2058,18 @@ return [
         'single_parameter_name' => env('PPS_STOCK_WASHING_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PPS_STOCK_WASHING_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,Jenis,NoWashing,JmlhSak,Berat,IdLokasi,Blok,NamaWarehouse'
+        )))),
+    ],
+    'pps_stock_washing_v2' => [
+        'database_connection' => env('PPS_STOCK_WASHING_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_WASHING_V2_REPORT_PROCEDURE', 'SP_LapStokWashingV2'),
+        'call_syntax' => env('PPS_STOCK_WASHING_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_WASHING_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_WASHING_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_WASHING_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_WASHING_V2_REPORT_EXPECTED_COLUMNS',
             'DateCreate,Jenis,NoWashing,JmlhSak,Berat,IdLokasi,Blok,NamaWarehouse'
         )))),
     ],
@@ -2197,7 +2257,6 @@ return [
             'Jenis,Berat'
         )))),
     ],
-
     // Sawn timber: Rekap ST Penjualan
     'rekap_st_penjualan' => [
         'database_connection' => env('REKAP_ST_PENJUALAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

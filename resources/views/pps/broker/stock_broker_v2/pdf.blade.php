@@ -234,7 +234,7 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th rowspan="2" class="jenis-column">JENIS</th>
+                <th rowspan="2" class="jenis-column"></th>
                 @foreach ($warehouseLabels as $warehouseName)
                     <th colspan="2">{{ $warehouseName }}</th>
                 @endforeach
@@ -256,7 +256,7 @@
                     $rowBerat = 0.0;
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td>{{ $jenis }}</td>
+                    <td style="width: 30%;">{{ $jenis }}</td>
                     @foreach ($warehouseLabels as $warehouseName)
                         @php
                             $jmlhSak = $warehouseData[$warehouseName]['JmlhSak'] ?? 0.0;
@@ -274,7 +274,8 @@
                 <tr class="row-odd">
                     <td colspan="{{ count($warehouseLabels) * 2 + 3 }}" class="center"
                         style="font-weight: bold; font-size: 11px; font-style: italic;">
-                        Tidak ada data.</td>
+                        Tidak ada data.
+                    </td>
                 </tr>
             @endforelse
             <tr class="total-row">

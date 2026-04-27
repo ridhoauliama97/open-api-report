@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\PPS;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PPS\GenerateStockBahanBakuV2ReportRequest;
+use App\Http\Requests\PPS\GenerateStockWashingV2ReportRequest;
 use App\Services\PdfGenerator;
-use App\Services\PPS\StockBahanBakuV2ReportService;
+use App\Services\PPS\StockWashingV2ReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
-class StockBahanBakuV2Controller extends Controller
+class StockWashingV2Controller extends Controller
 {
     public function index(): View
     {
-        return view('pps.bahan_baku.stock_bahan_baku_v2.form');
+        return view('pps.washing.stock_washing_v2.form');
     }
 
     public function download(
-        GenerateStockBahanBakuV2ReportRequest $request,
-        StockBahanBakuV2ReportService $reportService,
+        GenerateStockWashingV2ReportRequest $request,
+        StockWashingV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
         [$startDate, $endDate] = $request->reportDates();
@@ -38,7 +38,7 @@ class StockBahanBakuV2Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('pps.bahan_baku.stock_bahan_baku_v2.pdf', [
+        $pdf = $pdfGenerator->render('pps.washing.stock_washing_v2.pdf', [
             'rows' => $rows,
             'startDate' => $startDate,
             'endDate' => $endDate,
@@ -49,7 +49,7 @@ class StockBahanBakuV2Controller extends Controller
             'pdf_orientation' => 'landscape',
         ]);
 
-        $filename = sprintf('Laporan-Stock-Bahan-Baku-V2-%s.pdf', $endDate);
+        $filename = sprintf('Laporan-Stock-Washing-V2-%s.pdf', $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response($pdf, 200, [
@@ -59,8 +59,8 @@ class StockBahanBakuV2Controller extends Controller
     }
 
     public function preview(
-        GenerateStockBahanBakuV2ReportRequest $request,
-        StockBahanBakuV2ReportService $reportService,
+        GenerateStockWashingV2ReportRequest $request,
+        StockWashingV2ReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $request->reportDates();
         $warehouse = $request->warehouse();
@@ -88,8 +88,8 @@ class StockBahanBakuV2Controller extends Controller
     }
 
     public function health(
-        GenerateStockBahanBakuV2ReportRequest $request,
-        StockBahanBakuV2ReportService $reportService,
+        GenerateStockWashingV2ReportRequest $request,
+        StockWashingV2ReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $request->reportDates();
         $warehouse = $request->warehouse();
@@ -102,8 +102,8 @@ class StockBahanBakuV2Controller extends Controller
 
         return response()->json([
             'message' => $result['is_healthy']
-                ? 'Struktur output SP_LapStokBahanBakuV2 valid.'
-                : 'Struktur output SP_LapStokBahanBakuV2 berubah.',
+                ? 'Struktur output SP_LapStokWashingV2 valid.'
+                : 'Struktur output SP_LapStokWashingV2 berubah.',
             'meta' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,

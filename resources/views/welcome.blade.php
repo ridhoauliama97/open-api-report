@@ -103,7 +103,7 @@
                         <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.bahan-baku.stock-bahan-baku-v2.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
-                                Laporan Stok Bahan Baku
+                                Laporan Stok Bahan Baku V2
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
@@ -177,6 +177,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.bonggolan.stock-bonggolan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Bonggolan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.bonggolan.stock-bonggolan-v2.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Stock Bonggolan V2
@@ -204,6 +210,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.crusher.stock-crusher-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Crusher V2
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.crusher.crusher-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Crusher Produksi
@@ -228,6 +240,12 @@
                             <a href="{{ route('reports.pps.gilingan.stock-gilingan.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Stock Gilingan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.gilingan.stock-gilingan-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Gilingan V2
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
@@ -297,6 +315,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.mixer.stock-mixer-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Mixer V2
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.mixer.mixer-produksi.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Harian Hasil Mixer Produksi
@@ -315,6 +339,12 @@
                             <a href="{{ route('reports.pps.washing.stock-washing.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Stock Washing
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.washing.stock-washing-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Washing V2
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

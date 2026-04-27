@@ -3,31 +3,31 @@
 namespace App\Http\Controllers\PPS;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PPS\GenerateStockBahanBakuV2ReportRequest;
+use App\Http\Requests\PPS\GenerateStockBonggolanReportRequest;
 use App\Services\PdfGenerator;
-use App\Services\PPS\StockBahanBakuV2ReportService;
+use App\Services\PPS\StockBonggolanReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
-class StockBahanBakuV2Controller extends Controller
+class StockBonggolanController extends Controller
 {
     public function index(): View
     {
-        return view('pps.bahan_baku.stock_bahan_baku_v2.form');
+        return view('pps.bonggolan.stock_bonggolan.form');
     }
 
     public function download(
-        GenerateStockBahanBakuV2ReportRequest $request,
-        StockBahanBakuV2ReportService $reportService,
+        GenerateStockBonggolanReportRequest $request,
+        StockBonggolanReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
         [$startDate, $endDate] = $request->reportDates();
-        $warehouse = $request->warehouse();
+        $warehouseName = $request->warehouseName();
         $generatedBy = $this->resolveReportGeneratedBy($request);
 
         try {
-            $rows = $reportService->fetch($startDate, $endDate, $warehouse);
+            $rows = $reportService->fetch($startDate, $endDate, $warehouseName);
         } catch (RuntimeException $exception) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
@@ -38,18 +38,17 @@ class StockBahanBakuV2Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('pps.bahan_baku.stock_bahan_baku_v2.pdf', [
+        $pdf = $pdfGenerator->render('pps.bonggolan.stock_bonggolan.pdf', [
             'rows' => $rows,
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'warehouse' => $warehouse,
+            'warehouseName' => $warehouseName,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_orientation' => 'landscape',
         ]);
 
-        $filename = sprintf('Laporan-Stock-Bahan-Baku-V2-%s.pdf', $endDate);
+        $filename = sprintf('Laporan-Stock-Bonggolan-%s.pdf', $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response($pdf, 200, [
@@ -59,14 +58,14 @@ class StockBahanBakuV2Controller extends Controller
     }
 
     public function preview(
-        GenerateStockBahanBakuV2ReportRequest $request,
-        StockBahanBakuV2ReportService $reportService,
+        GenerateStockBonggolanReportRequest $request,
+        StockBonggolanReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $request->reportDates();
-        $warehouse = $request->warehouse();
+        $warehouseName = $request->warehouseName();
 
         try {
-            $rows = $reportService->fetch($startDate, $endDate, $warehouse);
+            $rows = $reportService->fetch($startDate, $endDate, $warehouseName);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -78,8 +77,8 @@ class StockBahanBakuV2Controller extends Controller
                 'end_date' => $endDate,
                 'TglAwal' => $startDate,
                 'TglAkhir' => $endDate,
-                'warehouse' => $warehouse,
-                'Warehouse' => $warehouse,
+                'warehouse_name' => $warehouseName,
+                'WarehouseName' => $warehouseName,
                 'total_rows' => count($rows),
                 'column_order' => array_keys($rows[0] ?? []),
             ],
@@ -88,29 +87,29 @@ class StockBahanBakuV2Controller extends Controller
     }
 
     public function health(
-        GenerateStockBahanBakuV2ReportRequest $request,
-        StockBahanBakuV2ReportService $reportService,
+        GenerateStockBonggolanReportRequest $request,
+        StockBonggolanReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $request->reportDates();
-        $warehouse = $request->warehouse();
+        $warehouseName = $request->warehouseName();
 
         try {
-            $result = $reportService->healthCheck($startDate, $endDate, $warehouse);
+            $result = $reportService->healthCheck($startDate, $endDate, $warehouseName);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
         return response()->json([
             'message' => $result['is_healthy']
-                ? 'Struktur output SP_LapStokBahanBakuV2 valid.'
-                : 'Struktur output SP_LapStokBahanBakuV2 berubah.',
+                ? 'Struktur output SP_LaporanStockLabelBonggolan valid.'
+                : 'Struktur output SP_LaporanStockLabelBonggolan berubah.',
             'meta' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'TglAwal' => $startDate,
                 'TglAkhir' => $endDate,
-                'warehouse' => $warehouse,
-                'Warehouse' => $warehouse,
+                'warehouse_name' => $warehouseName,
+                'WarehouseName' => $warehouseName,
             ],
             'health' => $result,
         ]);

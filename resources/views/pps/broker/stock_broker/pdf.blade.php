@@ -106,7 +106,7 @@
             border-top: #000 solid 1px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -187,7 +187,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Stock Broker</h1>
-    <p class="report-subtitle">Periode : {{ $reportDateText }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
     <h3>Gudang : {{ $warehouseName }}</h3>
     <table class="data-table">
@@ -222,7 +222,9 @@
             @empty
                 <tr class="row-odd">
                     <td colspan="{{ count($visibleColumns) + 1 }}" class="center"
-                        style="font-weight: bold; font-size: 11px; font-style: italic;">Tidak ada data.</td>
+                        style="font-weight: bold; font-size: 11px; font-style: italic;">
+                        Tidak ada data.
+                    </td>
                 </tr>
             @endforelse
             @if (!empty($numericColumns))

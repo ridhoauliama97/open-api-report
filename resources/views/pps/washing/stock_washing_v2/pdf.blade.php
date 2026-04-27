@@ -122,24 +122,6 @@
             ->locale('id')
             ->translatedFormat('d-M-y');
         $isAllWarehouse = strtoupper(trim((string) ($warehouse ?? ''))) === 'ALL';
-        $headerLabels = [
-            'DateCreate' => 'Tanggal',
-            'NoBahanBaku' => 'No Bahan Baku',
-            'NoPallet' => 'No Pallet',
-            'JmlhSak' => 'Jumlah Sak',
-            'Jenis' => 'Jenis',
-            'Berat' => 'Berat (Kg)',
-            'NamaWarehouse' => 'Nama Warehouse',
-        ];
-        $centerColumns = ['DateCreate', 'NoBahanBaku', 'NoPallet', 'NamaWarehouse'];
-        $preferredOrder = ['DateCreate', 'NoBahanBaku', 'NoPallet', 'Jenis', 'NamaWarehouse', 'JmlhSak', 'Berat'];
-        $columns = array_keys($rowsData[0] ?? []);
-        $visibleColumns =
-            $columns !== []
-                ? array_values(
-                    array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
-                )
-                : $preferredOrder;
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
                 return (float) $value;
@@ -151,40 +133,6 @@
 
             return is_numeric($normalized) ? (float) $normalized : null;
         };
-        $numericColumns = array_values(array_intersect(['JmlhSak', 'Berat'], $visibleColumns));
-        $firstNumericColumnIndex = null;
-        foreach ($visibleColumns as $index => $column) {
-            if (in_array($column, $numericColumns, true)) {
-                $firstNumericColumnIndex = $index;
-                break;
-            }
-        }
-        $totals = [];
-        foreach ($numericColumns as $column) {
-            $totals[$column] = 0.0;
-        }
-        $displayValue = static function (array $row, string $column) {
-            if ($column === 'DateCreate') {
-                $dateValue = $row[$column] ?? null;
-
-                if ($dateValue !== null && $dateValue !== '') {
-                    try {
-                        return \Carbon\Carbon::parse((string) $dateValue)->locale('id')->translatedFormat('d-M-y');
-                    } catch (\Throwable) {
-                        return (string) $dateValue;
-                    }
-                }
-
-                return '';
-            }
-
-            if ($column === 'NamaWarehouse') {
-                return trim((string) ($row[$column] ?? '')) ?: '-';
-            }
-
-            return $row[$column] ?? '';
-        };
-
         $warehouseLabels = [];
         $pivotRows = [];
         $pivotTotals = [];
@@ -197,12 +145,12 @@
                     continue;
                 }
 
-                $warehouseLabels[$warehouseName] = $warehouseName;
-                $jenis = trim((string) ($row['Jenis'] ?? ''));
-
+                $jenis = trim((string) ($row['Jenis'] ?? ($row['NoWashing'] ?? '')));
                 if ($jenis === '') {
                     $jenis = '-';
                 }
+
+                $warehouseLabels[$warehouseName] = $warehouseName;
 
                 if (!isset($pivotRows[$jenis])) {
                     $pivotRows[$jenis] = [];
@@ -245,8 +193,7 @@
             $warehouseLabels = [$selectedWarehouse !== '' ? $selectedWarehouse : 'Gudang'];
 
             foreach ($rowsData as $row) {
-                $jenis = trim((string) ($row['Jenis'] ?? ''));
-
+                $jenis = trim((string) ($row['Jenis'] ?? ($row['NoWashing'] ?? '')));
                 if ($jenis === '') {
                     $jenis = '-';
                 }
@@ -280,15 +227,14 @@
         }
     @endphp
 
-    <h1 class="report-title">Laporan Stok Bahan Baku</h1>
+    <h1 class="report-title">Laporan Stock Washing</h1>
     <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
-    {{-- <h3>Gudang : {{ $warehouse }}</h3> --}}
     @if ($isAllWarehouse)
         <table class="data-table">
             <thead>
                 <tr>
-                    <th rowspan="2" class="jenis-column">Jenis</th>
+                    <th rowspan="2" class="jenis-column"></th>
                     @foreach ($warehouseLabels as $warehouseName)
                         <th colspan="2">{{ $warehouseName }}</th>
                     @endforeach
@@ -328,7 +274,8 @@
                     <tr class="row-odd">
                         <td colspan="{{ count($warehouseLabels) * 2 + 3 }}" class="center"
                             style="font-weight: bold; font-size: 11px; font-style: italic;">
-                            Tidak ada data.</td>
+                            Tidak ada data.
+                        </td>
                     </tr>
                 @endforelse
                 @if (!empty($pivotRows))
@@ -398,7 +345,9 @@
                 @empty
                     <tr class="row-odd">
                         <td colspan="{{ count($warehouseLabels) * 2 + 3 }}" class="center"
-                            style="font-weight: bold; font-size: 11px; font-style: italic;">Tidak ada data.</td>
+                            style="font-weight: bold; font-size: 11px; font-style: italic;">
+                            Tidak ada data.
+                        </td>
                     </tr>
                 @endforelse
                 @if (!empty($pivotRows))

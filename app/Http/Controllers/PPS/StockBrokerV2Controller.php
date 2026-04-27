@@ -49,7 +49,7 @@ class StockBrokerV2Controller extends Controller
             'pdf_orientation' => 'landscape',
         ]);
 
-        $filename = sprintf('Laporan-Stok-Broker-V2-%s.pdf', $endDate);
+        $filename = sprintf('Laporan-Stock-Broker-V2-%s.pdf', $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response($pdf, 200, [

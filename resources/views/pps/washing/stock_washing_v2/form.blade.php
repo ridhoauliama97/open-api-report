@@ -1,22 +1,37 @@
 @php
     $warehouses = [
-        'SEMUA',
+        'ALL',
         'BAHAN BAKU',
+        'BARANG BS',
         'BARANG JADI',
         'BAZAR',
+        'BROKER',
+        'BS',
         'BS ENAMEL',
-        'CBD MEDAN',
+        'CACAT INJECT',
+        'CBD MDN',
+        'CRUSHER',
         'CWD JKT',
         'CWD PLB',
         'DISPLAY TOKO',
+        'GILINGAN',
         'GUDANG ONLINE',
+        'HOT STAMPING',
         'INJECT',
+        'INJECT RETUR',
+        'MIXER',
+        'PACKING',
+        'PACKING KURSI & MEJA',
+        'PACKING LEMARI',
+        'PART LEMARI',
+        'PASANG KUNCI',
         'QC',
         'RETUR',
+        'SPANNER',
         'SPAREPART',
+        'WASHING',
     ];
 @endphp
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -24,7 +39,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Generate Laporan Stock Bonggolan</title>
+    <title>Generate Laporan Stock Washing V2</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -38,10 +53,10 @@
     <main class="container py-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
-                <h1 class="h3 mb-3">Generate Laporan Stock Bonggolan (PPS)</h1>
+                <h1 class="h3 mb-3">Generate Laporan Stock Washing V2 (PPS)</h1>
                 <p class="text-secondary mb-4">
-                    Sumber data: stored procedure <code>SP_LaporanStockLabelBonggolan</code>.
-                    Parameter mengikuti SP: <code>@TglAkhir</code> dan <code>@WarehouseName</code>.
+                    Sumber data: stored procedure <code>SP_LapStokWashingV2</code>.
+                    Parameter mengikuti SP: <code>@TglAkhir</code> dan <code>@Warehouse</code>.
                 </p>
 
                 @if ($errors->any())
@@ -54,7 +69,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('reports.pps.bonggolan.stock-bonggolan.download') }}"
+                <form method="POST" action="{{ route('reports.pps.washing.stock-washing-v2.download') }}"
                     class="row g-3">
                     @csrf
                     <div class="col-md-6">
@@ -64,11 +79,11 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="WarehouseName" class="form-label">Nama Gudang</label>
-                        <select name="WarehouseName" id="WarehouseName" class="form-control" required>
+                        <label for="Warehouse" class="form-label">Gudang</label>
+                        <select name="Warehouse" id="Warehouse" class="form-control" required>
                             @foreach ($warehouses as $warehouse)
                                 <option value="{{ $warehouse }}"
-                                    {{ old('WarehouseName', old('warehouse_name')) === $warehouse ? 'selected' : '' }}>
+                                    {{ old('Warehouse', old('warehouse', 'ALL')) === $warehouse ? 'selected' : '' }}>
                                     {{ $warehouse }}
                                 </option>
                             @endforeach
@@ -100,9 +115,9 @@
             const previewWrapper = document.getElementById('previewJsonWrapper');
             const previewOutput = document.getElementById('previewJsonOutput');
             const endDateInput = document.getElementById('TglAkhir');
-            const warehouseNameInput = document.getElementById('WarehouseName');
+            const warehouseInput = document.getElementById('Warehouse');
 
-            if (!previewButton || !previewWrapper || !previewOutput || !endDateInput || !warehouseNameInput) {
+            if (!previewButton || !previewWrapper || !previewOutput || !endDateInput || !warehouseInput) {
                 return;
             }
 
@@ -112,7 +127,7 @@
 
                 try {
                     const response = await fetch(
-                        '{{ route('reports.pps.bonggolan.stock-bonggolan.preview') }}', {
+                        '{{ route('reports.pps.washing.stock-washing-v2.preview') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -121,7 +136,7 @@
                             },
                             body: JSON.stringify({
                                 TglAkhir: endDateInput.value,
-                                WarehouseName: warehouseNameInput.value,
+                                Warehouse: warehouseInput.value,
                             }),
                         });
 

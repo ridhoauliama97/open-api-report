@@ -186,14 +186,19 @@ use App\Http\Controllers\PPS\HasilProduksiHarianInjectProduksiController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
+use App\Http\Controllers\PPS\StockBonggolanController;
 use App\Http\Controllers\PPS\StockBonggolanV2Controller;
 use App\Http\Controllers\PPS\StockBrokerController;
 use App\Http\Controllers\PPS\StockBrokerV2Controller;
 use App\Http\Controllers\PPS\StockCrusherController;
+use App\Http\Controllers\PPS\StockCrusherV2Controller;
 use App\Http\Controllers\PPS\StockGilinganController;
+use App\Http\Controllers\PPS\StockGilinganV2Controller;
 use App\Http\Controllers\PPS\StockMixerController;
+use App\Http\Controllers\PPS\StockMixerV2Controller;
 use App\Http\Controllers\PPS\StockRejectController;
 use App\Http\Controllers\PPS\StockWashingController;
+use App\Http\Controllers\PPS\StockWashingV2Controller;
 use App\Http\Controllers\PPS\QcHarianBahanBakuController;
 use App\Http\Controllers\PPS\QcHarianBrokerController;
 use App\Http\Controllers\PPS\QcHarianMixerController;
@@ -415,6 +420,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [MutasiBonggolanController::class, 'health'])->name('health');
     });
 
+    Route::prefix('bonggolan/stock-bonggolan')->name('bonggolan.stock-bonggolan.')->group(function (): void {
+        Route::get('/', [StockBonggolanController::class, 'index'])->name('index');
+        Route::post('/download', [StockBonggolanController::class, 'download'])->name('download');
+        Route::post('/preview', [StockBonggolanController::class, 'preview'])->name('preview');
+        Route::post('/health', [StockBonggolanController::class, 'health'])->name('health');
+    });
+
     Route::prefix('bonggolan/stock-bonggolan-v2')->name('bonggolan.stock-bonggolan-v2.')->group(function (): void {
         Route::get('/', [StockBonggolanV2Controller::class, 'index'])->name('index');
         Route::post('/download', [StockBonggolanV2Controller::class, 'download'])->name('download');
@@ -436,6 +448,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [StockCrusherController::class, 'health'])->name('health');
     });
 
+    Route::prefix('crusher/stock-crusher-v2')->name('crusher.stock-crusher-v2.')->group(function (): void {
+        Route::get('/', [StockCrusherV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockCrusherV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockCrusherV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockCrusherV2Controller::class, 'health'])->name('health');
+    });
+
     Route::prefix('gilingan/mutasi-gilingan')->name('gilingan.mutasi-gilingan.')->group(function (): void {
         Route::get('/', [MutasiGilinganController::class, 'index'])->name('index');
         Route::post('/download', [MutasiGilinganController::class, 'download'])->name('download');
@@ -448,6 +467,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [StockGilinganController::class, 'download'])->name('download');
         Route::post('/preview', [StockGilinganController::class, 'preview'])->name('preview');
         Route::post('/health', [StockGilinganController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('gilingan/stock-gilingan-v2')->name('gilingan.stock-gilingan-v2.')->group(function (): void {
+        Route::get('/', [StockGilinganV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockGilinganV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockGilinganV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockGilinganV2Controller::class, 'health'])->name('health');
     });
 
     Route::prefix('mixer/mutasi-mixer')->name('mixer.mutasi-mixer.')->group(function (): void {
@@ -464,6 +490,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/health', [StockMixerController::class, 'health'])->name('health');
     });
 
+    Route::prefix('mixer/stock-mixer-v2')->name('mixer.stock-mixer-v2.')->group(function (): void {
+        Route::get('/', [StockMixerV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockMixerV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockMixerV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockMixerV2Controller::class, 'health'])->name('health');
+    });
+
     Route::prefix('reject/stock-reject')->name('reject.stock-reject.')->group(function (): void {
         Route::get('/', [StockRejectController::class, 'index'])->name('index');
         Route::post('/download', [StockRejectController::class, 'download'])->name('download');
@@ -476,6 +509,12 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [StockWashingController::class, 'download'])->name('download');
         Route::post('/preview', [StockWashingController::class, 'preview'])->name('preview');
         Route::post('/health', [StockWashingController::class, 'health'])->name('health');
+    });
+    Route::prefix('washing/stock-washing-v2')->name('washing.stock-washing-v2.')->group(function (): void {
+        Route::get('/', [StockWashingV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockWashingV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockWashingV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockWashingV2Controller::class, 'health'])->name('health');
     });
 
     Route::prefix('qc/qc-harian-bahan-baku')->name('qc.qc-harian-bahan-baku.')->group(function (): void {

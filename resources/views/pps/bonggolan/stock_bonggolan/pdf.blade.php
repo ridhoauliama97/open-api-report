@@ -82,11 +82,6 @@
             border-bottom: 0;
         }
 
-        table.data-table tfoot td {
-            border-top: 1px solid #000;
-            font-weight: bold;
-        }
-
         .center {
             text-align: center;
         }
@@ -105,51 +100,13 @@
             background: #eef2f8;
         }
 
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .footer-table td {
-            font-size: 8px;
-            font-style: italic;
-            padding: 0;
-            border: 0;
-            vertical-align: bottom;
-        }
-
-        .footer-print {
-            width: 65%;
-        }
-
-        .footer-spacer {
-            width: 10%;
-        }
-
-        .footer-page-cell {
-            width: 25%;
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .footer-page {
-            display: inline-block;
-            position: relative;
-            right: -4px;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
         .total-row td {
             font-weight: bold;
             font-size: 11px;
             border-top: #000 solid 1px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -157,7 +114,6 @@
     @php
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
-        $generatedByName = $generatedBy->name ?? 'sistem';
         $reportDateText = \Carbon\Carbon::parse($endDate ?? now()->toDateString())
             ->locale('id')
             ->translatedFormat('d-M-y');
@@ -230,7 +186,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Stock Bonggolan</h1>
-    <p class="report-subtitle">Periode : {{ $reportDateText }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
     <h3>Gudang : {{ $warehouseName }}</h3>
     <table class="data-table">
