@@ -108,7 +108,9 @@
             font-weight: bold;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .totals-row td {
+        @include('reports.partials.pdf-footer-table-style');
+
+        .totals-row td {
             font-weight: bold;
             font-size: 11px;
             border: 1px solid #000;

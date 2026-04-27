@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -131,7 +131,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -147,8 +147,12 @@
         $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
-        $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
-        $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
+        $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
+            ? ''
+            : number_format($v, 1, '.', '');
+        $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
+            ? ''
+            : number_format($v, 1, '.', '');
     @endphp
 
     <h1 class="report-title">Laporan Rekap Produksi CCAkhir Consolidated</h1>
@@ -187,11 +191,6 @@
                     <th style="width: 42px;">WIP</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="15"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $row)
@@ -210,7 +209,8 @@
                         <td class="number">{{ $fmtBlank($row['Wip'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['OutputCCAkhir'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank(isset($row['Jam']) ? (int) round((float) $row['Jam']) : null) }}</td>
+                        <td class="center">
+                            {{ $fmtIntBlank(isset($row['Jam']) ? (int) round((float) $row['Jam']) : null) }}</td>
                         <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
@@ -254,14 +254,28 @@
 
                     <tr class="totals-row">
                         <td colspan="2" class="center"><strong>Jmlh/HK</strong></td>
-                        <td class="number">{{ $fmtBlank($perColumnAverage((float) ($totals['BJ'] ?? 0.0), $countNonZero($rows, 'BJ'))) }}</td>
-                        <td class="number">{{ $fmtBlank($perColumnAverage((float) ($totals['FJ'] ?? 0.0), $countNonZero($rows, 'FJ'))) }}</td>
-                        <td class="number">{{ $fmtBlank($perColumnAverage((float) ($totals['Laminating'] ?? 0.0), $countNonZero($rows, 'Laminating'))) }}</td>
-                        <td class="number">{{ $fmtBlank($perColumnAverage((float) ($totals['Moulding'] ?? 0.0), $countNonZero($rows, 'Moulding'))) }}</td>
-                        <td class="number">{{ $fmtBlank($perColumnAverage((float) ($totals['Reproses'] ?? 0.0), $countNonZero($rows, 'Reproses'))) }}</td>
-                        <td class="number">{{ $fmtBlank($perColumnAverage((float) ($totals['Wip'] ?? 0.0), $countNonZero($rows, 'Wip'))) }}</td>
-                        <td class="number">{{ $fmtBlank($hk > 0 ? ((float) ($totals['TotalInput'] ?? 0.0) / $hk) : 0.0) }}</td>
-                        <td class="number">{{ $fmtBlank($hk > 0 ? ((float) ($totals['OutputCCAkhir'] ?? 0.0) / $hk) : 0.0) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($perColumnAverage((float) ($totals['BJ'] ?? 0.0), $countNonZero($rows, 'BJ'))) }}
+                        </td>
+                        <td class="number">
+                            {{ $fmtBlank($perColumnAverage((float) ($totals['FJ'] ?? 0.0), $countNonZero($rows, 'FJ'))) }}
+                        </td>
+                        <td class="number">
+                            {{ $fmtBlank($perColumnAverage((float) ($totals['Laminating'] ?? 0.0), $countNonZero($rows, 'Laminating'))) }}
+                        </td>
+                        <td class="number">
+                            {{ $fmtBlank($perColumnAverage((float) ($totals['Moulding'] ?? 0.0), $countNonZero($rows, 'Moulding'))) }}
+                        </td>
+                        <td class="number">
+                            {{ $fmtBlank($perColumnAverage((float) ($totals['Reproses'] ?? 0.0), $countNonZero($rows, 'Reproses'))) }}
+                        </td>
+                        <td class="number">
+                            {{ $fmtBlank($perColumnAverage((float) ($totals['Wip'] ?? 0.0), $countNonZero($rows, 'Wip'))) }}
+                        </td>
+                        <td class="number">
+                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalInput'] ?? 0.0) / $hk : 0.0) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($hk > 0 ? (float) ($totals['OutputCCAkhir'] ?? 0.0) / $hk : 0.0) }}</td>
                         <td class="number"></td>
                         <td class="center"></td>
                         <td class="number"></td>

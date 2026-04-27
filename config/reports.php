@@ -1928,18 +1928,7 @@ return [
             'DateCreate,NoBahanBaku,NoPallet,JmlhSak,Jenis,Berat,NamaWarehouse'
         )))),
     ],
-    'pps_stock_label_barang_jadi_v2' => [
-        'database_connection' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
-        'stored_procedure' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_PROCEDURE', 'SP_LapStokBarangJadiV2'),
-        'call_syntax' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_CALL_SYNTAX', 'exec'),
-        'query' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_QUERY'),
-        'parameter_count' => (int) env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_PARAMETER_COUNT', 2),
-        'single_parameter_name' => env('PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
-        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
-            'PPS_STOCK_LABEL_BARANG_JADI_V2_REPORT_EXPECTED_COLUMNS',
-            'DateCreate,NoBarangJadi,NoPallet,JmlhSak,Jenis,Berat,NamaWarehouse'
-        )))),
-    ],
+
     'pps_stock_broker' => [
         'database_connection' => env('PPS_STOCK_BROKER_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_STOCK_BROKER_REPORT_PROCEDURE', 'SP_LaporanStockLabelBroker'),
@@ -2381,7 +2370,7 @@ return [
             ))
         ))),
         'jwt_allowed_algs' => array_values(array_filter(array_map(
-            static fn (string $alg): string => strtoupper(trim($alg)),
+            static fn(string $alg): string => strtoupper(trim($alg)),
             explode(',', (string) env('REPORT_API_JWT_ALLOWED_ALGS', 'HS256,HS384,HS512'))
         ))),
         'clock_skew_seconds' => (int) env('REPORT_API_JWT_CLOCK_SKEW_SECONDS', 30),

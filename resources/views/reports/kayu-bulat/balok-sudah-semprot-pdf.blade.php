@@ -151,7 +151,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -214,9 +214,9 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th>No</th>
+                <th style="width: 4%;">No</th>
                 @foreach ($columns as $column)
-                    <th>{{ $resolveHeaderLabel((string) $column) }}</th>
+                    <th style="width: 9.5%;">{{ $resolveHeaderLabel((string) $column) }}</th>
                 @endforeach
             </tr>
         </thead>

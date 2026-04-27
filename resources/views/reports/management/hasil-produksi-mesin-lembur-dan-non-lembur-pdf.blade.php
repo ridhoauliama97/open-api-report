@@ -135,7 +135,7 @@
             border-top: 0 !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -208,10 +208,10 @@
                         <td>{{ $row['NamaMesin'] ?? '-' }}</td>
                         <td class="center">{{ $fmtInt($row['JmlhAnggota'] ?? null) }}</td>
                         <td class="center">{{ $fmtInt($row['JamKerja'] ?? null) }}</td>
-                        <td class="number">{{ $fmtNumber($row['Output'] ?? null) }}</td>
+                        <td class="number">{{ $fmtNumber($row['Output'] ?? null, 4, true) }}</td>
                         <td class="center">{{ $fmtInt($row['JmlhAnggotaLembur'] ?? null) }}</td>
                         <td class="center">{{ $fmtInt($row['JamKerjaLembur'] ?? null) }}</td>
-                        <td class="number">{{ $fmtNumber($row['OutputLembur'] ?? null) }}</td>
+                        <td class="number">{{ $fmtNumber($row['OutputLembur'] ?? null, 4, true) }}</td>
                     </tr>
                 @endforeach
             @endforeach
@@ -219,10 +219,10 @@
                 <td colspan="2" class="center">Grand Total</td>
                 <td></td>
                 <td></td>
-                <td class="number">{{ $fmtNumber($grandTotals['output'] ?? null) }}</td>
+                <td class="number">{{ $fmtNumber($grandTotals['output'] ?? null, 4, true) }}</td>
                 <td></td>
                 <td></td>
-                <td class="number">{{ $fmtNumber($grandTotals['output_lembur'] ?? null) }}</td>
+                <td class="number">{{ $fmtNumber($grandTotals['output_lembur'] ?? null, 4, true) }}</td>
             </tr>
         </tbody>
     </table>

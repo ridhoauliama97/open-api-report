@@ -161,7 +161,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -280,14 +280,6 @@
             </div>
 
             <table class="report-table">
-                <colgroup>
-                    <col style="width: 72px;">
-                    <col style="width: 58px;">
-                    <col style="width: 220px;">
-                    <col style="width: 60px;">
-                    <col style="width: 60px;">
-                    <col style="width: 55px;">
-                </colgroup>
                 <thead>
                     <tr class="headers-row">
                         <th>Kategori</th>
@@ -366,7 +358,7 @@
             </table>
 
             @if ($inputRows !== [] || $outputRows !== [])
-                <div style="margin: 0 0 10px 0; text-align: right;">
+                <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
                     <strong>RENDEMEN : {{ $fmtPercentTotal($rendemen, 1) }}</strong>
                 </div>
             @endif
@@ -403,18 +395,9 @@
 
     @if ($grandInputRows !== [] || $grandOutputRows !== [])
         <div class="date-separator"></div>
-        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">Grand Total Seluruh
-            Grade</div>
-
+        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
+            Grand Total Seluruh Grade</div>
         <table class="report-table">
-            <colgroup>
-                <col style="width: 72px;">
-                <col style="width: 58px;">
-                <col style="width: 220px;">
-                <col style="width: 60px;">
-                <col style="width: 60px;">
-                <col style="width: 55px;">
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>Kategori</th>
@@ -434,8 +417,7 @@
                         @php $rowIndex++; @endphp
                         <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Input
+                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;"> Input
                                 </td>
                             @endif
                             <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
@@ -462,8 +444,8 @@
                         @php $rowIndex++; @endphp
                         <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Output</td>
+                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;"> Output
+                                </td>
                             @endif
                             <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
                             <td class="data-cell right" style="font-weight: bold;">
@@ -486,7 +468,7 @@
             </tbody>
         </table>
 
-        <div style="margin: 0 0 10px 0; text-align: right;">
+        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
             <strong>RENDEMEN : {{ $fmtPercentTotal($grandRendemen, 1) }}</strong>
         </div>
     @endif

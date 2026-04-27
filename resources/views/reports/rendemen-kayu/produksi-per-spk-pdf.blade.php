@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 14mm 8mm 14mm 8mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -159,7 +159,7 @@
             height: 8px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

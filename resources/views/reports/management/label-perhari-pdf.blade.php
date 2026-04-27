@@ -134,7 +134,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -191,15 +191,12 @@
 
     @foreach ($categories as $category)
         @php
-            $chunks = array_chunk($category['rows'] ?? [], 300);
+            $chunkRowsList = array_chunk($category['rows'] ?? [], 300);
         @endphp
-        @foreach ($chunks as $chunkIndex => $chunkRows)
-            <div class="section-title">
-                {{ $category['no'] ?? '' }}. {{ $category['name'] ?? '-' }}
-                @if (count($chunks) > 1)
-                    (Bagian {{ $chunkIndex + 1 }}/{{ count($chunks) }})
-                @endif
-            </div>
+        <div class="section-title">
+            {{ $category['no'] ?? '' }}. {{ $category['name'] ?? '-' }}
+        </div>
+        @foreach ($chunkRowsList as $chunkIndex => $chunkRows)
             <table class="report-table">
                 <thead>
                     <tr>
@@ -219,14 +216,14 @@
                 </thead>
                 <tbody>
                     @foreach ($chunkRows as $index => $row)
-                        <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                        <tr class="{{ ($chunkIndex * 300 + $index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             <td class="center">{{ $chunkIndex * 300 + $index + 1 }}</td>
-                            <td>{{ ($row['NoLabel'] ?? '') !== '' ? $row['NoLabel'] : '-' }}</td>
+                            <td class="center">{{ ($row['NoLabel'] ?? '') !== '' ? $row['NoLabel'] : '-' }}</td>
                             <td class="center">{{ ($row['NoUrut'] ?? '') !== '' ? $row['NoUrut'] : '-' }}</td>
                             <td class="center">{{ $row['NoSPK'] ?: '-' }}</td>
                             <td class="center">{{ $row['NoSPKAsal'] ?: '-' }}</td>
-                            <td>{{ $row['Mesin'] ?: '-' }}</td>
-                            <td>{{ $row['Jenis'] ?? '-' }}</td>
+                            <td class="center">{{ $row['Mesin'] ?: '-' }}</td>
+                            <td class="center">{{ $row['Jenis'] ?? '-' }}</td>
                             <td class="center">{{ ($row['Tebal'] ?? '') !== '' ? $row['Tebal'] : '-' }}</td>
                             <td class="center">{{ ($row['Lebar'] ?? '') !== '' ? $row['Lebar'] : '-' }}</td>
                             <td class="center">{{ ($row['Panjang'] ?? '') !== '' ? $row['Panjang'] : '-' }}</td>
@@ -234,7 +231,7 @@
                             <td class="number">{!! $fmtWeightWithUnit($row['Berat'] ?? null, $category['name'] ?? null) !!}</td>
                         </tr>
                     @endforeach
-                    @if ($chunkIndex === count($chunks) - 1)
+                    @if ($chunkIndex === count($chunkRowsList) - 1)
                         <tr class="total-row">
                             <td colspan="10" class="center">Total {{ $category['name'] ?? '-' }}</td>
                             <td class="number">{{ $fmtInt($category['total_pcs'] ?? null) }}</td>
@@ -269,7 +266,7 @@
                 <td class="center">Grand Total</td>
                 <td class="number">{{ $fmtInt($grandTotals['label_count'] ?? null) }}</td>
                 <td class="number">{{ $fmtInt($grandTotals['pcs'] ?? null) }}</td>
-                <td class="number">{{ $fmtNumber($grandTotals['berat'] ?? null) }}</td>
+                <td class="number">{{ $fmtNumber($grandTotals['berat'] ?? null, 2, true) }}</td>
             </tr>
         </tbody>
     </table>

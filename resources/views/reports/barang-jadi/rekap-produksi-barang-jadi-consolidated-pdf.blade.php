@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -142,7 +142,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -181,9 +181,10 @@
                 $grandTotals[$key] += (float) ($machineTotals[$key] ?? 0.0);
             }
         }
-        $grandTotals['Rend'] = abs($grandTotals['TotalInput']) > $eps
-            ? ($grandTotals['TotalOutput'] / $grandTotals['TotalInput']) * 100.0
-            : 0.0;
+        $grandTotals['Rend'] =
+            abs($grandTotals['TotalInput']) > $eps
+                ? ($grandTotals['TotalOutput'] / $grandTotals['TotalInput']) * 100.0
+                : 0.0;
     @endphp
     <h1 class="report-title">Laporan Rekap Produksi Packing Consolidated</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>

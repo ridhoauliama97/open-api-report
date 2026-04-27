@@ -142,7 +142,7 @@
             font-weight: bold;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -405,7 +405,7 @@
         @if ($start && $end)
             Periode {{ $start }} s/d {{ $end }}
         @else
-            Per-{{ $generatedAtText }}
+            Per {{ $generatedAtText }}
         @endif
     </p>
 
@@ -426,16 +426,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($displayColumns) + 1 }}"></td>
-                </tr>
-            </tfoot>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($groupRows as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

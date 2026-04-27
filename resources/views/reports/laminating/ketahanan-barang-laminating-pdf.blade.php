@@ -114,7 +114,7 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

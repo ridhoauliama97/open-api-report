@@ -163,7 +163,7 @@
             text-align: center;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -226,34 +226,34 @@
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $row['No'] ?? $index + 1 }}</td>
                     <td>{{ $row['Group Kayu'] ?? '-' }}</td>
-                    <td class="number">{{ $fmt($row['KBTonBeli'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['KBRacip'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['STRacipan'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['STVacuumStick'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['STKDIn'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['STKDOut'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['STm3Input'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['WIPBersihOutput'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['WIPFJInput'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['WIPFJOutput'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['WIPMouldingInput'] ?? null) }}</td>
-                    <td class="number">{{ $fmt($row['WIPMouldingOutput'] ?? null) }}</td>
+                    <td class="number">{{ $fmt($row['KBTonBeli'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['KBRacip'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['STRacipan'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['STVacuumStick'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['STKDIn'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['STKDOut'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['STm3Input'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['WIPBersihOutput'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['WIPFJInput'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['WIPFJOutput'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['WIPMouldingInput'] ?? null, true) }}</td>
+                    <td class="number">{{ $fmt($row['WIPMouldingOutput'] ?? null, true) }}</td>
                 </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2">Grand Total</td>
-                <td class="number">{{ $fmt($totals['KBTonBeli'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['KBRacip'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['STRacipan'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['STVacuumStick'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['STKDIn'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['STKDOut'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['STm3Input'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['WIPBersihOutput'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['WIPFJInput'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['WIPFJOutput'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['WIPMouldingInput'] ?? null) }}</td>
-                <td class="number">{{ $fmt($totals['WIPMouldingOutput'] ?? null) }}</td>
+                <td class="number">{{ $fmt($totals['KBTonBeli'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['KBRacip'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['STRacipan'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['STVacuumStick'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['STKDIn'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['STKDOut'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['STm3Input'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['WIPBersihOutput'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['WIPFJInput'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['WIPFJOutput'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['WIPMouldingInput'] ?? null, true) }}</td>
+                <td class="number">{{ $fmt($totals['WIPMouldingOutput'] ?? null, true) }}</td>
             </tr>
         </tbody>
     </table>

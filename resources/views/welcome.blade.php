@@ -127,12 +127,7 @@
                                 Laporan Mutasi Barang Jadi
                             </a>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <a href="{{ route('reports.pps.barang-jadi.stock-label-barang-jadi-v2.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                Laporan Stok Label Barang Jadi
-                            </a>
-                        </div>
+
                     </div>
                 </div>
             </div>

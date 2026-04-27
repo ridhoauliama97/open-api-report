@@ -142,7 +142,7 @@
             font-weight: bold;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -193,15 +193,6 @@
     </p>
 
     <table class="report-table">
-        <colgroup>
-            <col style="width: 28px;">
-            <col style="width: 160px;">
-            <col style="width: 90px;">
-            <col style="width: 170px;">
-            <col style="width: 85px;">
-            <col style="width: 85px;">
-            <col style="width: 90px;">
-        </colgroup>
         <thead>
             <tr class="headers-row">
                 <th>No</th>
@@ -270,7 +261,7 @@
             @endforelse
 
             <tr class="totals-row">
-                <td colspan="4" class="center">Grand Total</td>
+                <td colspan="4" class="center">Total</td>
                 <td class="number">{{ $formatNumber($grandTon1) }}</td>
                 <td class="number">{{ $formatNumber($grandTon2) }}</td>
                 <td

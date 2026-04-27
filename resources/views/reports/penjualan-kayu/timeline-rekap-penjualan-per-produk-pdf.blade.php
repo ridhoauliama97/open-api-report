@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 14mm 8mm 14mm 8mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -151,7 +151,7 @@
             font-style: italic;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -209,17 +209,6 @@
 
     @if ($products !== [])
         <table class="report-table detail-table">
-            <colgroup>
-                <col style="width: {{ $detailProductWidth }}%;">
-                <col style="width: {{ $detailTebalWidth }}%;">
-                <col style="width: {{ $detailLebarWidth }}%;">
-                <col style="width: {{ $detailPanjangWidth }}%;">
-                @foreach ($monthColumns as $month)
-                    <col style="width: {{ $detailMonthWidth }}%;">
-                @endforeach
-                <col style="width: {{ $detailTotalWidth }}%;">
-                <col style="width: {{ $detailRatioWidth }}%;">
-            </colgroup>
             <thead>
                 <tr>
                     <th>Produk</th>
@@ -313,14 +302,6 @@
     @if ($products !== [])
         <h3>Rangkuman Hasil :</h3>
         <table class="report-table summary-table">
-            <colgroup>
-                <col style="width: {{ $summaryProductWidth }}%;">
-                @foreach ($monthColumns as $month)
-                    <col style="width: {{ $summaryMonthWidth }}%;">
-                @endforeach
-                <col style="width: {{ $summaryTotalWidth }}%;">
-                <col style="width: {{ $summaryRatioWidth }}%;">
-            </colgroup>
             <thead>
                 <tr>
                     <th>Produk</th>

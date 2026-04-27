@@ -156,7 +156,7 @@
             margin: 0 0 2px 0;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -199,7 +199,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Mutasi Barang Jadi Per-Jenis Per-Ukuran (M3)</h1>
-    <p class="report-subtitle">Dari {{ $start }} s/d {{ $end }}</p>
+    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     @forelse ($grouped as $jenis => $groupRows)
         @php

@@ -347,7 +347,7 @@
             font-size: 11px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -451,11 +451,6 @@
 
             <div class="receipt-block">
                 <table class="meta-table">
-                    <colgroup>
-                        <col style="width: 33%">
-                        <col style="width: 34%">
-                        <col style="width: 33%">
-                    </colgroup>
                     <tr>
                         <td class="meta-line">
                             @if ($noPen !== '')
@@ -496,14 +491,6 @@
 
                 <div class="table-wrap">
                     <table class="report-table">
-                        <colgroup>
-                            <col style="width: 72px;">
-                            <col style="width: 58px;">
-                            <col style="width: 220px;">
-                            <col style="width: 60px;">
-                            <col style="width: 60px;">
-                            <col style="width: 55px;">
-                        </colgroup>
                         <thead>
                             <tr class="headers-row">
                                 <th>Kategori</th>
@@ -775,19 +762,10 @@
 
     @if ($grandInputRows !== [] || $grandOutputRows !== [])
         <div class="date-separator"></div>
-        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">Grand Total
-            Seluruh
-            Grade</div>
+        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
+            Grand Total Seluruh Grade</div>
 
         <table class="report-table">
-            <colgroup>
-                <col style="width: 72px;">
-                <col style="width: 58px;">
-                <col style="width: 220px;">
-                <col style="width: 60px;">
-                <col style="width: 60px;">
-                <col style="width: 55px;">
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>Kategori</th>
@@ -851,7 +829,7 @@
             </tbody>
         </table>
 
-        <div style="margin: 0 0 10px 0; text-align: right;">
+        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
             <strong>RENDEMEN : {{ $fmtPercentTotal($grandRendemen, 1) }}</strong>
         </div>
 
@@ -955,7 +933,7 @@
             </tbody>
         </table>
 
-        <div style="margin: 0 0 10px 0; text-align: right;">
+        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
             <strong>RENDEMEN : {{ $fmtPercentTotal($bansawRendemen, 1) }}</strong>
         </div>
 
@@ -1051,7 +1029,7 @@
             </tbody>
         </table>
 
-        <div style="margin: 0 0 10px 0; text-align: right;">
+        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
             <strong>RENDEMEN : {{ $fmtPercentTotal($slpRendemen, 1) }}</strong>
         </div>
 

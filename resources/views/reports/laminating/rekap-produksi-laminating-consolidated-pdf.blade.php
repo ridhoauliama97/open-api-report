@@ -136,7 +136,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -356,9 +356,13 @@
                     <td class="number strong-number">{{ $fmtBlank($grandTotals['OutputLaminating']) }}</td>
                     <td class="center">{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</td>
                     <td class="center">{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</td>
-                    <td class="number">{{ $fmtRatioBlank($machineCount > 0 ? ($grandM3Jam / $machineCount) : 0.0) }}</td>
-                    <td class="number">{{ $fmtRatioBlank($machineCount > 0 ? ($grandM3JamOrg / $machineCount) : 0.0) }}</td>
-                    <td class="number strong-number">{{ $fmtPercentBlank($grandTotals['TotalInput'] > 0 ? ($grandTotals['OutputLaminating'] / $grandTotals['TotalInput']) * 100.0 : 0.0) }}</td>
+                    <td class="number">{{ $fmtRatioBlank($machineCount > 0 ? $grandM3Jam / $machineCount : 0.0) }}
+                    </td>
+                    <td class="number">
+                        {{ $fmtRatioBlank($machineCount > 0 ? $grandM3JamOrg / $machineCount : 0.0) }}</td>
+                    <td class="number strong-number">
+                        {{ $fmtPercentBlank($grandTotals['TotalInput'] > 0 ? ($grandTotals['OutputLaminating'] / $grandTotals['TotalInput']) * 100.0 : 0.0) }}
+                    </td>
                 </tr>
             </tbody>
         </table>
