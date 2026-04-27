@@ -118,7 +118,7 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-right: 1px solid #000;
             border-bottom: 0;
@@ -445,11 +445,11 @@
                     <th>No</th>
                     @foreach ($displayColumns as $column)
                         @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
-                            <th colspan="2">{{ $formatHeaderLabel($column) }}</th>
+                            <th colspan="2" style="width: 9.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @elseif ($column === 'LAMA_TUNGGU_VIRTUAL')
-                            <th>Lama Tunggu</th>
+                            <th style="width: 9.5%;">Lama Tunggu</th>
                         @else
-                            <th>{{ $formatHeaderLabel($column) }}</th>
+                            <th style="width: 9.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @endif
                     @endforeach
                 </tr>
