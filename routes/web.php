@@ -197,6 +197,7 @@ use App\Http\Controllers\PPS\StockGilinganV2Controller;
 use App\Http\Controllers\PPS\StockMixerController;
 use App\Http\Controllers\PPS\StockMixerV2Controller;
 use App\Http\Controllers\PPS\StockRejectController;
+use App\Http\Controllers\PPS\StockFurnitureWipV2Controller;
 use App\Http\Controllers\PPS\StockWashingController;
 use App\Http\Controllers\PPS\StockWashingV2Controller;
 use App\Http\Controllers\PPS\QcHarianBahanBakuController;
@@ -550,6 +551,12 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [MutasiFurnitureWipController::class, 'download'])->name('download');
         Route::post('/preview', [MutasiFurnitureWipController::class, 'preview'])->name('preview');
         Route::post('/health', [MutasiFurnitureWipController::class, 'health'])->name('health');
+    });
+    Route::prefix('furniture-wip/stock-furniture-wip-v2')->name('furniture-wip.stock-furniture-wip-v2.')->group(function (): void {
+        Route::get('/', [StockFurnitureWipV2Controller::class, 'index'])->name('index');
+        Route::post('/download', [StockFurnitureWipV2Controller::class, 'download'])->name('download');
+        Route::post('/preview', [StockFurnitureWipV2Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [StockFurnitureWipV2Controller::class, 'health'])->name('health');
     });
 });
 

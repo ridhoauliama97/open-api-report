@@ -368,6 +368,12 @@
                                 Laporan Mutasi Furniture WIP
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.furniture-wip.stock-furniture-wip-v2.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stock Furniture WIP V2
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

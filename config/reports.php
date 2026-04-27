@@ -2257,6 +2257,19 @@ return [
             'Jenis,Berat'
         )))),
     ],
+    'pps_stock_furniture_wip_v2' => [
+        'database_connection' => env('PPS_STOCK_FURNITURE_WIP_V2_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_STOCK_FURNITURE_WIP_V2_REPORT_PROCEDURE', 'SP_LapStokFurnitureWIPV2'),
+        'call_syntax' => env('PPS_STOCK_FURNITURE_WIP_V2_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_STOCK_FURNITURE_WIP_V2_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_STOCK_FURNITURE_WIP_V2_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_STOCK_FURNITURE_WIP_V2_REPORT_SINGLE_PARAMETER_NAME', 'TglAkhir'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_STOCK_FURNITURE_WIP_V2_REPORT_EXPECTED_COLUMNS',
+            ''
+        )))),
+    ],
+
     // Sawn timber: Rekap ST Penjualan
     'rekap_st_penjualan' => [
         'database_connection' => env('REKAP_ST_PENJUALAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),

@@ -178,6 +178,7 @@ use App\Http\Controllers\PPS\StockGilinganV2Controller;
 use App\Http\Controllers\PPS\StockMixerController;
 use App\Http\Controllers\PPS\StockMixerV2Controller;
 use App\Http\Controllers\PPS\StockRejectController;
+use App\Http\Controllers\PPS\StockFurnitureWipV2Controller;
 use App\Http\Controllers\PPS\StockWashingController;
 use App\Http\Controllers\PPS\StockWashingV2Controller;
 use App\Http\Controllers\PPS\QcHarianBahanBakuController;
@@ -456,6 +457,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/pps/qc/qc-harian-mixer', 'api.reports.pps.qc.qc-harian-mixer', QcHarianMixerController::class],
         ['/reports/pps/qc/qc-harian-washing', 'api.reports.pps.qc.qc-harian-washing', QcHarianWashingController::class],
         ['/reports/pps/furniture-wip/mutasi-furniture-wip', 'api.reports.pps.furniture-wip.mutasi-furniture-wip', MutasiFurnitureWipController::class],
+        ['/reports/pps/furniture-wip/stock-furniture-wip-v2', 'api.reports.pps.furniture-wip.stock-furniture-wip-v2', StockFurnitureWipV2Controller::class],
         ['/reports/dashboard-barang-jadi', 'api.reports.dashboard-barang-jadi', DashboardBarangJadiController::class],
         ['/reports/dashboard-cross-cut-akhir', 'api.reports.dashboard-cross-cut-akhir', DashboardCrossCutAkhirController::class],
         ['/reports/dashboard-finger-joint', 'api.reports.dashboard-finger-joint', DashboardFingerJointController::class],
