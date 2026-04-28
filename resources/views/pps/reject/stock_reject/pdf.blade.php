@@ -106,7 +106,7 @@
             border-top: #000 solid 1px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -192,7 +192,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Stock Reject</h1>
-    <p class="report-subtitle">Periode : {{ $reportDateText }}</p>
+    <p class="report-subtitle">Per Tanggal : {{ $reportDateText }}</p>
 
     <h3>Gudang : {{ $warehouseName }}</h3>
     <table class="data-table">

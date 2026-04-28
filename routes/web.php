@@ -184,6 +184,7 @@ use App\Http\Controllers\PPS\HasilProduksiHarianPasangKunciProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianHotStampingProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianInjectProduksiController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
+use App\Http\Controllers\PPS\MutasiRejectController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
 use App\Http\Controllers\PPS\StockBonggolanController;
@@ -511,6 +512,13 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
         Route::post('/download', [StockRejectController::class, 'download'])->name('download');
         Route::post('/preview', [StockRejectController::class, 'preview'])->name('preview');
         Route::post('/health', [StockRejectController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('reject/mutasi-reject')->name('reject.mutasi-reject.')->group(function (): void {
+        Route::get('/', [MutasiRejectController::class, 'index'])->name('index');
+        Route::post('/download', [MutasiRejectController::class, 'download'])->name('download');
+        Route::post('/preview', [MutasiRejectController::class, 'preview'])->name('preview');
+        Route::post('/health', [MutasiRejectController::class, 'health'])->name('health');
     });
 
     Route::prefix('washing/stock-washing')->name('washing.stock-washing.')->group(function (): void {

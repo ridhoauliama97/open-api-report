@@ -2127,6 +2127,18 @@ return [
             'Jenis,Awal,MasukProd,Keluar,Akhir,BSUOutput,BSUInput,BrokerInputBahanBaku,MixerInputBahanBaku,WashInput,Masuk'
         )))),
     ],
+    'pps_mutasi_reject' => [
+        'database_connection' => env('PPS_MUTASI_REJECT_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
+        'stored_procedure' => env('PPS_MUTASI_REJECT_REPORT_PROCEDURE', 'SP_PPSLapMutasiReject'),
+        'call_syntax' => env('PPS_MUTASI_REJECT_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PPS_MUTASI_REJECT_REPORT_QUERY'),
+        'parameter_count' => (int) env('PPS_MUTASI_REJECT_REPORT_PARAMETER_COUNT', 2),
+        'single_parameter_name' => env('PPS_MUTASI_REJECT_REPORT_SINGLE_PARAMETER_NAME', 'EndDate'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PPS_MUTASI_REJECT_REPORT_EXPECTED_COLUMNS',
+            'NamaReject,BeratAwal,BeratMasuk,BeratKeluar,BJSortOutput,InjctOutput,HStampOutput,PKncOutput,BrokerInput,GiliInput,BeratAkhir'
+        )))),
+    ],
     'pps_mutasi_barang_jadi' => [
         'database_connection' => env('PPS_MUTASI_BARANG_JADI_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),
         'stored_procedure' => env('PPS_MUTASI_BARANG_JADI_REPORT_PROCEDURE', 'SP_PPSLapMutasiBarangJadi'),

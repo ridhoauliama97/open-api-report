@@ -406,6 +406,12 @@
                     <h2 class="h5 mb-3">Reject</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.pps.reject.mutasi-reject.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Mutasi Reject
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.pps.reject.stock-reject.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Stock Reject
