@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -116,7 +116,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -175,12 +175,12 @@
                 <th style="width: 5%;">No</th>
                 <th style="width: 10%;">No ST</th>
                 <th style="width: 7%;">Tanggal</th>
-                <th style="width: 9%;">No SPK</th>
+                <th style="width: 12%;">No SPK</th>
                 <th style="width: 15%;">Jenis</th>
                 <th style="width: 6%;">Tebal (mm)</th>
                 <th style="width: 6%;">Lebar (mm)</th>
                 <th style="width: 8%;">Panjang (ft)</th>
-                <th style="width: 15%;">Jmlh Batang (pcs)</th>
+                <th style="width: 12%;">Jmlh Batang (pcs)</th>
                 <th style="width: 7%;">Lokasi</th>
                 <th style="width: 10%;">Total (Ton)</th>
             </tr>
@@ -191,9 +191,9 @@
                 @php $i++; @endphp
                 <tr class="{{ $i % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $i }}</td>
-                    <td>{{ $r['NoST'] ?? '' }}</td>
-                    <td>{{ $fmtDate($r['Date'] ?? '') }}</td>
-                    <td>{{ $r['NoSPK'] ?? '' }}</td>
+                    <td class="center">{{ $r['NoST'] ?? '' }}</td>
+                    <td class="center">{{ $fmtDate($r['Date'] ?? '') }}</td>
+                    <td class="center">{{ $r['NoSPK'] ?? '' }}</td>
                     <td>{{ $r['Jenis'] ?? '' }}</td>
                     <td class="number">{{ $fmtDim($r['Tebal'] ?? '') }}</td>
                     <td class="number">{{ $fmtDim($r['Lebar'] ?? '') }}</td>

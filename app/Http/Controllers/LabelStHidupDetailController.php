@@ -76,7 +76,8 @@ class LabelStHidupDetailController extends Controller
             'pdf_orientation' => 'portrait',
             // Large tables: keep mPDF in its simpler table rendering mode.
             'pdf_simple_tables' => false,
-            'pdf_column_count' => 11,
+            'pdf_pack_table_data' => false,
+            // 'pdf_column_count' => 11,
         ];
 
         $filename = 'Laporan-Label-ST-Hidup-Detail.pdf';
