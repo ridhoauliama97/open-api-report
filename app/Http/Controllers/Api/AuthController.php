@@ -12,12 +12,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
+use OpenApi\Attributes as OA;
 
 class AuthController extends Controller
 {
     /**
      * Register application services and container bindings.
      */
+    #[OA\Post(
+        path: '/api/auth/register',
+        summary: 'Registrasi user baru',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['username', 'password'],
+                properties: [
+                    new OA\Property(property: 'username', type: 'string'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password'),
+                    new OA\Property(property: 'password_confirmation', type: 'string', format: 'password'),
+                ]
+            )
+        ),
+        tags: ['Auth'],
+        responses: [
+            new OA\Response(response: 201, description: 'Registrasi berhasil'),
+            new OA\Response(response: 422, description: 'Validasi gagal'),
+        ]
+    )]
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -48,6 +69,26 @@ class AuthController extends Controller
     /**
      * Execute login logic.
      */
+    #[OA\Post(
+        path: '/api/auth/login',
+        summary: 'Login user',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['username', 'password'],
+                properties: [
+                    new OA\Property(property: 'username', type: 'string'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password'),
+                ]
+            )
+        ),
+        tags: ['Auth'],
+        responses: [
+            new OA\Response(response: 200, description: 'Login berhasil'),
+            new OA\Response(response: 401, description: 'Kredensial tidak valid'),
+            new OA\Response(response: 422, description: 'Validasi gagal'),
+        ]
+    )]
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
