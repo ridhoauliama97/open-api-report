@@ -1394,6 +1394,12 @@
                     <h2 class="h5 mb-3">Kayu Bulat (Rambung)</h2>
                     <div class="row g-2">
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.rekap-rendemen-rambung-per-supplier.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Rekap Rendemen Rambung Per Supplier
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.kayu-bulat.umur-kayu-bulat-rambung.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Umur Kayu Bulat (Rambung)

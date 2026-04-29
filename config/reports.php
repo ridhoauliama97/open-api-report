@@ -1639,6 +1639,18 @@ return [
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('BAHAN_TERPAKAI_SUB_REPORT_EXPECTED_COLUMNS', '')))),
     ],
 
+    // Laporan Kayu Bulat (Rambung) - Laporan Rekap Rendemen Per Supplier
+    'rekap_rendemen_rambung_per_supplier' => [
+        'database_connection' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_REPORT_PROCEDURE', 'SP_LapRekapRendemenRambungPerSupplier'),
+        'sub_stored_procedure' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_SUB_REPORT_PROCEDURE', 'SP_LapRekapRendemenRambungPerSupplierSUB'),
+        'call_syntax' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_REPORT_QUERY'),
+        'sub_query' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_SUB_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_REPORT_EXPECTED_COLUMNS', '')))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+
     // PPS
     'pps_rekap_produksi_inject' => [
         'database_connection' => env('PPS_REKAP_PRODUKSI_INJECT_REPORT_DB_CONNECTION', env('DB_CONNECTION_PPS', 'sqlsrv_pps')),

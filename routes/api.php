@@ -164,6 +164,7 @@ use App\Http\Controllers\PPS\HasilProduksiHarianHotStampingProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianInjectProduksiController;
 use App\Http\Controllers\PPS\HasilProduksiHarianPasangKunciProduksiController;
 
+use App\Http\Controllers\RekapRendemenRambungPerSupplierController;
 use App\Http\Controllers\PPS\MutasiBahanBakuController;
 use App\Http\Controllers\PPS\MutasiBonggolanController;
 use App\Http\Controllers\PPS\StockBahanBakuV2Controller;
@@ -300,6 +301,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/target-masuk-bb-bulanan', 'api.reports.kayu-bulat.target-masuk-bb-bulanan', TargetMasukBBBulananController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-non-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-non-rambung', UmurKayuBulatNonRambungController::class],
         ['/reports/kayu-bulat/umur-kayu-bulat-rambung', 'api.reports.kayu-bulat.umur-kayu-bulat-rambung', UmurKayuBulatRambungController::class],
+        ['/reports/kayu-bulat/rekap-rendemen-rambung-per-supplier', 'api.reports.kayu-bulat.rekap-rendemen-rambung-per-supplier', RekapRendemenRambungPerSupplierController::class],
         ['/reports/kayu-bulat/supplier-intel', 'api.reports.kayu-bulat.supplier-intel', SupplierIntelController::class],
     ];
 

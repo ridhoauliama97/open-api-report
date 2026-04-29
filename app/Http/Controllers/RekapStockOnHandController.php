@@ -65,7 +65,6 @@ class RekapStockOnHandController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
             'pdf_pack_table_data' => false,
-            'pdf_default_font' => 'dejavusans',
         ]);
 
         $filename = sprintf('Laporan-Rekap-Stock-On-Hand-%s-sd-%s.pdf', $startDate, $endDate);
