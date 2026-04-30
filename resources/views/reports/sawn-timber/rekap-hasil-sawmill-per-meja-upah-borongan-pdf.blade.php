@@ -451,6 +451,15 @@
     @if (count($conditionSummaries) > 0)
         <div class="page-break"></div>
         <p class="summary-title">Rangkuman/Meja</p>
+        @php
+            $overallTotal = [
+                'RB STD (Tbl 14/16/18/23)' => 0.0,
+                'RB STD' => 0.0,
+                'RB MC + Lain-Lain' => 0.0,
+                'Jumlah' => 0.0,
+                'SM' => 0.0,
+            ];
+        @endphp
 
         @foreach ($conditionSummaries as $condition => $rowsByMeja)
             @php
@@ -498,8 +507,40 @@
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr class="totals-row">
+                        <td class="data-cell center">Total</td>
+                        <td class="data-cell number">{{ $formatNumber($grand['RB STD (Tbl 14/16/18/23)']) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($grand['RB STD']) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($grand['RB MC + Lain-Lain']) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($grand['Jumlah']) }}</td>
+                        <td class="data-cell number">{{ $formatNumber($grand['SM']) }}</td>
+                    </tr>
+                </tfoot>
             </table>
+            @php
+                $overallTotal['RB STD (Tbl 14/16/18/23)'] += $grand['RB STD (Tbl 14/16/18/23)'];
+                $overallTotal['RB STD'] += $grand['RB STD'];
+                $overallTotal['RB MC + Lain-Lain'] += $grand['RB MC + Lain-Lain'];
+                $overallTotal['Jumlah'] += $grand['Jumlah'];
+                $overallTotal['SM'] += $grand['SM'];
+            @endphp
         @endforeach
+
+        <table class="report-table" style="margin-top: 10px;">
+            <tfoot>
+                <tr class="totals-row">
+                    <td class="data-cell center" style="width: 30%;">Grand Total</td>
+                    <td class="data-cell number" style="width: 15%;">
+                        {{ $formatNumber($overallTotal['RB STD (Tbl 14/16/18/23)']) }}</td>
+                    <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['RB STD']) }}</td>
+                    <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['RB MC + Lain-Lain']) }}
+                    </td>
+                    <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['Jumlah']) }}</td>
+                    <td class="data-cell number" style="width: 10%;">{{ $formatNumber($overallTotal['SM']) }}</td>
+                </tr>
+            </tfoot>
+        </table>
     @endif
 
     @include('reports.partials.pdf-footer-table')
