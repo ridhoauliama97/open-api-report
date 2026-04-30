@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -320,7 +320,8 @@
                 </tr>
             @empty
                 <tr class="empty-state-row">
-                    <td colspan="{{ $monthKeys !== [] ? 3 + count($monthKeys) : 3 }}" style="text-align: center; font-weight: bold;">
+                    <td colspan="{{ $monthKeys !== [] ? 3 + count($monthKeys) : 3 }}"
+                        style="text-align: center; font-weight: bold;">
                         Tidak ada data.</td>
                 </tr>
             @endforelse

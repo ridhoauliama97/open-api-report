@@ -862,14 +862,6 @@
         </div>
 
         <table class="report-table">
-            <colgroup>
-                <col style="width: 72px;">
-                <col style="width: 58px;">
-                <col style="width: 220px;">
-                <col style="width: 60px;">
-                <col style="width: 60px;">
-                <col style="width: 55px;">
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>Kategori</th>

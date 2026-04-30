@@ -178,8 +178,6 @@
             border-collapse: collapse;
             table-layout: fixed;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -410,7 +408,8 @@
                                         <tr class="data-row {{ $rowIndex % 2 === 0 ? 'row-odd' : 'row-even' }}">
                                             <td class="data-cell center">{{ $right['no'] ?? '' }}</td>
                                             <td class="data-cell" style="text-align: center">
-                                                {{ $right['row']['Jenis'] ?? '' }}</td>
+                                                {{ $right['row']['Jenis'] ?? '' }}
+                                            </td>
                                             <td class="data-cell center">{{ $right['row']['Tebal'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['UOM'] ?? '' }}</td>
@@ -450,6 +449,7 @@
     @endforeach
 
     @if (count($conditionSummaries) > 0)
+        <div class="page-break"></div>
         <p class="summary-title">Rangkuman/Meja</p>
 
         @foreach ($conditionSummaries as $condition => $rowsByMeja)

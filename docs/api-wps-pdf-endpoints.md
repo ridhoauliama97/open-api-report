@@ -74,6 +74,8 @@ Contoh:
 - Laporan Kayu Bulat Umur Kayu Bulat Non Rambung: `http://192.168.10.100:5006/api/reports/kayu-bulat/umur-kayu-bulat-non-rambung/pdf`
 - Laporan Kayu Bulat Umur Kayu Bulat Rambung: `http://192.168.10.100:5006/api/reports/kayu-bulat/umur-kayu-bulat-rambung/pdf`
 
+- Laporan Kayu Bulat Rekap Rendemen Rambung Per Supplier: `http://192.168.10.100:5006/api/reports/kayu-bulat/rekap-rendemen-rambung-per-supplier/pdf`
+
 ## Lainnya
 
 - Laporan Bahan Terpakai: `http://192.168.10.100:5006/api/reports/bahan-terpakai/pdf`
