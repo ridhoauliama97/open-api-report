@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 
 class OpenApiController extends Controller
@@ -34,9 +35,7 @@ class OpenApiController extends Controller
                 'version' => '1.0.0',
                 'description' => 'API autentikasi JWT dan laporan mutasi barang jadi/finger joint berbasis rentang tanggal.',
             ],
-            'servers' => [
-                ['url' => url('/')],
-            ],
+            'servers' => $this->resolveServers(),
             'paths' => [
                 '/api/auth/register' => [
                     'post' => [
@@ -2045,6 +2044,32 @@ class OpenApiController extends Controller
     }
 
     /**
+     * Build server candidates for API consumers.
+     *
+     * Prioritise the current request origin so Swagger / imported docs do not
+     * break when APP_URL differs from the host currently used by the user.
+     *
+     * @return array<int, array{url: string}>
+     */
+    private function resolveServers(): array
+    {
+        /** @var Request $request */
+        $request = request();
+
+        $candidates = [
+            rtrim($request->getSchemeAndHttpHost(), '/'),
+            rtrim((string) config('app.url'), '/'),
+        ];
+
+        $servers = [];
+        foreach (array_unique(array_filter($candidates)) as $candidate) {
+            $servers[] = ['url' => $candidate];
+        }
+
+        return $servers !== [] ? $servers : [['url' => url('/')]];
+    }
+
+    /**
      * Build OpenAPI component schemas.
      *
      * @return array<string, mixed>
@@ -3385,5 +3410,4 @@ class OpenApiController extends Controller
         }
     }
 }
-
 

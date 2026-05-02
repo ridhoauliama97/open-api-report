@@ -14,6 +14,7 @@ class OpenApiFeatureTest extends TestCase
         $this->get('/api/openapi.json')
             ->assertOk()
             ->assertJsonPath('openapi', '3.0.3')
+            ->assertJsonPath('servers.0.url', 'http://open-api-report.test')
             ->assertJsonPath('paths./api/auth/register.post.summary', 'Registrasi user baru')
             ->assertJsonPath('paths./api/auth/login.post.summary', 'Login user')
             ->assertJsonPath('paths./api/auth/logout.post.summary', 'Logout user (invalidate token)')

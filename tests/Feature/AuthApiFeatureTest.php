@@ -28,10 +28,10 @@ class AuthApiFeatureTest extends TestCase
                 'access_token',
                 'token_type',
                 'expires_in',
-                'user' => ['Username'],
+                'user' => ['username'],
             ])
             ->assertJsonPath('token_type', 'bearer')
-            ->assertJsonPath('user.Username', 'test-user');
+            ->assertJsonPath('user.username', 'test-user');
     }
 
     /**
@@ -140,6 +140,17 @@ class AuthApiFeatureTest extends TestCase
         ])
             ->assertStatus(401)
             ->assertJsonPath('message', 'Username atau password tidak valid.');
+    }
+
+    /**
+     * Execute test login validation still returns JSON on plain API requests logic.
+     */
+    public function test_login_validation_returns_json_for_api_requests_without_json_headers(): void
+    {
+        $this->post('/api/auth/login', [])
+            ->assertStatus(422)
+            ->assertHeader('content-type', 'application/json')
+            ->assertJsonValidationErrors(['username', 'password']);
     }
 
     /**
