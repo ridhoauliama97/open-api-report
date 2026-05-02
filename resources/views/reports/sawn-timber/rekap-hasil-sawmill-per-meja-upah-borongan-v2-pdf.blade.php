@@ -186,8 +186,6 @@
         .split-table-wrap .report-table {
             margin: 0;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 

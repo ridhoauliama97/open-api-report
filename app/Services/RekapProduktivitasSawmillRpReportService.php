@@ -171,6 +171,18 @@ class RekapProduktivitasSawmillRpReportService
                         'upah' => 0.0,
                         'hasil' => 0.0,
                     ],
+                    '_money_detail' => [
+                        'st' => 0.0,
+                        'kb' => 0.0,
+                        'upah' => 0.0,
+                        'hasil' => 0.0,
+                    ],
+                    '_money_summary' => [
+                        'st' => null,
+                        'kb' => null,
+                        'upah' => null,
+                        'hasil' => null,
+                    ],
                     'balok_timbang_ulang' => $subIndex[$receiptKey] ?? [],
                     'rows' => [
                         'input' => [],
@@ -245,23 +257,32 @@ class RekapProduktivitasSawmillRpReportService
                 $harga = $this->toFloat($row[$hargaColumn] ?? null) ?? 0.0;
                 if ($harga > 0.0) {
                     if ($kategori === 'input' && abs($kb) > self::EPS) {
-                        $byDate[$dateKey]['receipts'][$receiptKey]['money']['kb'] += ($kb * 1000.0) * $harga;
+                        $byDate[$dateKey]['receipts'][$receiptKey]['_money_detail']['kb'] += ($kb * 1000.0) * $harga;
                     } elseif ($kategori === 'output' && abs($st) > self::EPS) {
-                        $byDate[$dateKey]['receipts'][$receiptKey]['money']['st'] += ($st * 1000.0) * $harga;
+                        $byDate[$dateKey]['receipts'][$receiptKey]['_money_detail']['st'] += ($st * 1000.0) * $harga;
                     }
                 }
 
                 // Upah is based on produced ST (Kg), independent of grade price.
                 if ($upahPerKg > 0.0 && $kategori === 'output' && abs($st) > self::EPS) {
-                    $byDate[$dateKey]['receipts'][$receiptKey]['money']['upah'] += ($st * 1000.0) * $upahPerKg;
+                    $byDate[$dateKey]['receipts'][$receiptKey]['_money_detail']['upah'] += ($st * 1000.0) * $upahPerKg;
                 }
             }
 
-            // Money values (best-effort: keep the latest non-empty values per receipt).
+            $isMoneySummaryRow =
+                $rawGradeEmpty
+                && abs($kb) < self::EPS
+                && abs($st) < self::EPS
+                && abs($percent) < self::EPS;
+
+            // Money values: prefer explicit summary/footer rows when they exist, otherwise sum detail rows.
             $this->applyMoneyFromRow(
                 $byDate[$dateKey]['receipts'][$receiptKey]['money'],
+                $byDate[$dateKey]['receipts'][$receiptKey]['_money_detail'],
+                $byDate[$dateKey]['receipts'][$receiptKey]['_money_summary'],
                 $row,
                 $moneyColumns,
+                $isMoneySummaryRow,
             );
 
             if ($rawGradeEmpty && abs($kb) < self::EPS && abs($st) < self::EPS && abs($percent) < self::EPS) {
@@ -356,6 +377,11 @@ class RekapProduktivitasSawmillRpReportService
                     }
                 }
 
+                $receipt['money'] = $this->resolveReceiptMoney(
+                    is_array($receipt['_money_detail'] ?? null) ? $receipt['_money_detail'] : [],
+                    is_array($receipt['_money_summary'] ?? null) ? $receipt['_money_summary'] : [],
+                );
+
                 // Finalize money totals if the SP doesn't provide "hasil".
                 $money = is_array($receipt['money'] ?? null) ? $receipt['money'] : [];
                 $moneySt = (float) ($money['st'] ?? 0.0);
@@ -381,6 +407,7 @@ class RekapProduktivitasSawmillRpReportService
                 $grandMoneyByGroup[$receiptGroup]['upah'] += $receipt['money']['upah'];
                 $grandMoneyByGroup[$receiptGroup]['hasil'] += $receipt['money']['hasil'];
 
+                unset($receipt['_money_detail'], $receipt['_money_summary']);
                 $byDate[$dateKey]['receipts'][$receiptKey] = $receipt;
             }
 
@@ -1315,10 +1342,19 @@ class RekapProduktivitasSawmillRpReportService
 
     /**
      * @param array{st: float, kb: float, upah: float, hasil: float} $money
+     * @param array{st: float, kb: float, upah: float, hasil: float} $detailMoney
+     * @param array{st: ?float, kb: ?float, upah: ?float, hasil: ?float} $summaryMoney
      * @param array<string, mixed> $row
      * @param array{st: ?string, kb: ?string, upah: ?string, hasil: ?string} $columns
      */
-    private function applyMoneyFromRow(array &$money, array $row, array $columns): void
+    private function applyMoneyFromRow(
+        array &$money,
+        array &$detailMoney,
+        array &$summaryMoney,
+        array $row,
+        array $columns,
+        bool $isSummaryRow,
+    ): void
     {
         foreach (['st', 'kb', 'upah', 'hasil'] as $key) {
             $col = $columns[$key] ?? null;
@@ -1329,8 +1365,43 @@ class RekapProduktivitasSawmillRpReportService
             if ($val === null) {
                 continue;
             }
-            $money[$key] = $val;
+
+            if ($isSummaryRow) {
+                $summaryMoney[$key] = $val;
+                continue;
+            }
+
+            $detailMoney[$key] += $val;
         }
+
+        $money = $this->resolveReceiptMoney($detailMoney, $summaryMoney);
+    }
+
+    /**
+     * @param array{st: float, kb: float, upah: float, hasil: float} $detailMoney
+     * @param array{st: ?float, kb: ?float, upah: ?float, hasil: ?float} $summaryMoney
+     * @return array{st: float, kb: float, upah: float, hasil: float}
+     */
+    private function resolveReceiptMoney(array $detailMoney, array $summaryMoney): array
+    {
+        $resolved = [
+            'st' => 0.0,
+            'kb' => 0.0,
+            'upah' => 0.0,
+            'hasil' => 0.0,
+        ];
+
+        foreach (array_keys($resolved) as $key) {
+            $summaryValue = $summaryMoney[$key] ?? null;
+            if ($summaryValue !== null) {
+                $resolved[$key] = (float) $summaryValue;
+                continue;
+            }
+
+            $resolved[$key] = (float) ($detailMoney[$key] ?? 0.0);
+        }
+
+        return $resolved;
     }
 
     /**

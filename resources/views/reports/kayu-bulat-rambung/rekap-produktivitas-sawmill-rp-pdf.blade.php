@@ -341,6 +341,66 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        .group-summary-wrap {
+            width: 295px;
+            margin: 0 0 10px auto;
+        }
+
+        .summary-pair-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0 0 10px 0;
+        }
+
+        .summary-pair-table td {
+            border: 0;
+            padding: 0;
+            vertical-align: top;
+            background: transparent !important;
+        }
+
+        .summary-pair-left {
+            width: 50%;
+            padding-right: 14px !important;
+        }
+
+        .summary-pair-right {
+            width: 50%;
+        }
+
+        .group-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 10px;
+        }
+
+        .group-summary-table th,
+        .group-summary-table td {
+            border: 1px solid #000;
+            padding: 3px 5px;
+        }
+
+        .group-summary-table th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .group-summary-table td:first-child {
+            text-align: left;
+        }
+
+        .group-summary-table td.num {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .group-summary-total td {
+            font-weight: bold;
+        }
+
         .rendemen-inline {
             margin: 2px 0 10px 0;
             text-align: right;
@@ -348,6 +408,10 @@
         }
 
         @include('reports.partials.pdf-footer-table-style');
+
+        .summary-section {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -378,7 +442,7 @@
         ) . '%';
 
         // Currency-like totals (Rp): always show values.
-        $fmtMoney = static fn(float $value): string => number_format($value, 2, '.', ',');
+        $fmtMoney = static fn(float $value): string => number_format($value, 2, ',', '.');
 
         // N/A cell placeholder (user wants blank).
         $dash = '';
@@ -758,10 +822,32 @@
         $grandMoneySlp = is_array($grandSlp['money'] ?? null)
             ? $grandSlp['money']
             : ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0];
+
+        $grandSummaryRows = [
+            [
+                'group' => 'BANSAW',
+                'kb' => $bansawKbTotal,
+                'st' => $bansawStTotal,
+                'rendemen' => $bansawRendemen,
+            ],
+            [
+                'group' => 'SLP',
+                'kb' => $slpKbTotal,
+                'st' => $slpStTotal,
+                'rendemen' => $slpRendemen,
+            ],
+            [
+                'group' => 'Total',
+                'kb' => $grandKbTotal,
+                'st' => $grandStTotal,
+                'rendemen' => $grandRendemen,
+            ],
+        ];
     @endphp
 
     @if ($grandInputRows !== [] || $grandOutputRows !== [])
         <div class="date-separator"></div>
+        <div class="summary-section"></div>
         <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
             Grand Total Seluruh Grade</div>
 
@@ -833,27 +919,65 @@
             <strong>RENDEMEN : {{ $fmtPercentTotal($grandRendemen, 1) }}</strong>
         </div>
 
-        <ul>
-            <li>
-                <span class="money-label">ST</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['st'] ?? 0.0)) }}</span>
-            </li>
-            <li>
-                <span class="money-label">KB</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['kb'] ?? 0.0)) }}</span>
-            </li>
-            <li>
-                <span class="money-label">Upah</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['upah'] ?? 0.0)) }}</span>
-            </li>
-            <li class="money-divider"></li>
-            <li>
-                <span class="money-label">Hasil</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['hasil'] ?? 0.0)) }}</span>
-                <span
-                    class="money-flag-inline">{{ ((float) ($grandMoneyAll['hasil'] ?? 0.0)) < 0 ? '(RUGI)' : '(LABA)' }}</span>
-            </li>
-        </ul>
+        <table class="summary-pair-table">
+            <tr>
+                <td class="summary-pair-left">
+                    <div class="money-box" style="padding-left: 0; width: 100%;">
+                        <table class="money-table">
+                            <tr>
+                                <td class="money-label">ST</td>
+                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['st'] ?? 0.0)) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="money-label">KB</td>
+                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['kb'] ?? 0.0)) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="money-label">Upah</td>
+                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['upah'] ?? 0.0)) }}</td>
+                            </tr>
+                            <tr class="money-divider-row">
+                                <td colspan="2">
+                                    <div class="money-divider-line"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="money-label">Hasil</td>
+                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['hasil'] ?? 0.0)) }}</td>
+                                <td class="money-flag-inline">
+                                    ({{ ((float) ($grandMoneyAll['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td class="summary-pair-right">
+                    <div class="group-summary-wrap">
+                        <table class="group-summary-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 36%;">Group</th>
+                                    <th style="width: 22%;">KBTon</th>
+                                    <th style="width: 22%;">STTon</th>
+                                    <th style="width: 20%;">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($grandSummaryRows as $summaryRow)
+                                    <tr class="{{ $summaryRow['group'] === 'Total' ? 'group-summary-total' : '' }}">
+                                        <td>{{ $summaryRow['group'] }}</td>
+                                        <td class="num">{{ $fmtDetail((float) $summaryRow['kb'], 2) }}</td>
+                                        <td class="num">{{ $fmtDetail((float) $summaryRow['st'], 2) }}</td>
+                                        <td class="num">{{ $fmtPercentDetail((float) $summaryRow['rendemen'], 1) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
     @endif
 
     @if ($grandBansawInputRows !== [] || $grandBansawOutputRows !== [])
@@ -929,27 +1053,34 @@
             <strong>RENDEMEN : {{ $fmtPercentTotal($bansawRendemen, 1) }}</strong>
         </div>
 
-        <ul>
-            <li>
-                <span class="money-label">ST</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}</span>
-            </li>
-            <li>
-                <span class="money-label">KB</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['kb'] ?? 0.0)) }}</span>
-            </li>
-            <li>
-                <span class="money-label">Upah</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['upah'] ?? 0.0)) }}</span>
-            </li>
-            <li class="money-divider"></li>
-            <li>
-                <span class="money-label">Hasil</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) }}</span>
-                <span
-                    class="money-flag-inline">{{ ((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) < 0 ? '(RUGI)' : '(LABA)' }}</span>
-            </li>
-        </ul>
+        <div class="money-box" style="padding-left: 0; width: 288px;">
+            <table class="money-table">
+                <tr>
+                    <td class="money-label">ST</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}</td>
+                </tr>
+                <tr>
+                    <td class="money-label">KB</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['kb'] ?? 0.0)) }}</td>
+                </tr>
+                <tr>
+                    <td class="money-label">Upah</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['upah'] ?? 0.0)) }}</td>
+                </tr>
+                <tr class="money-divider-row">
+                    <td colspan="2">
+                        <div class="money-divider-line"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="money-label">Hasil</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) }}</td>
+                    <td class="money-flag-inline">
+                        ({{ ((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                    </td>
+                </tr>
+            </table>
+        </div>
     @endif
 
     @if ($grandSlpInputRows !== [] || $grandSlpOutputRows !== [])
@@ -1025,28 +1156,34 @@
             <strong>RENDEMEN : {{ $fmtPercentTotal($slpRendemen, 1) }}</strong>
         </div>
 
-
-        <ul>
-            <li>
-                <span class="money-label">ST</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}</span>
-            </li>
-            <li>
-                <span class="money-label">KB</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['kb'] ?? 0.0)) }}</span>
-            </li>
-            <li>
-                <span class="money-label">Upah</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['upah'] ?? 0.0)) }}</span>
-            </li>
-            <li class="money-divider"></li>
-            <li>
-                <span class="money-label">Hasil</span>
-                <span class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['hasil'] ?? 0.0)) }}</span>
-                <span
-                    class="money-flag-inline">{{ ((float) ($grandMoneySlp['hasil'] ?? 0.0)) < 0 ? '(RUGI)' : '(LABA)' }}</span>
-            </li>
-        </ul>
+        <div class="money-box" style="padding-left: 0; width: 288px;">
+            <table class="money-table">
+                <tr>
+                    <td class="money-label">ST</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}</td>
+                </tr>
+                <tr>
+                    <td class="money-label">KB</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['kb'] ?? 0.0)) }}</td>
+                </tr>
+                <tr>
+                    <td class="money-label">Upah</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['upah'] ?? 0.0)) }}</td>
+                </tr>
+                <tr class="money-divider-row">
+                    <td colspan="2">
+                        <div class="money-divider-line"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="money-label">Hasil</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['hasil'] ?? 0.0)) }}</td>
+                    <td class="money-flag-inline">
+                        ({{ ((float) ($grandMoneySlp['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                    </td>
+                </tr>
+            </table>
+        </div>
     @endif
 
     @include('reports.partials.pdf-footer-table')
