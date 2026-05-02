@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     @include('reports.partials.pdf-reference-style', [
-        'pageMargin' => '24mm 10mm 18mm 10mm',
+        'pageMargin' => '14mm 10mm 14mm 10mm',
         'subtitleMargin' => '2px 0 20px 0',
     ])
 </head>
@@ -34,8 +34,8 @@
                 <th>Supplier</th>
                 <th>Nomor<br>Truk</th>
                 <th>Jenis</th>
-                <th>Batang Balok Masuk</th>
-                <th>Batang Balok Terpakai</th>
+                <th>Batang Balok <br> Masuk</th>
+                <th>Batang Balok <br> Terpakai</th>
                 <th>Fisik Batang Balok<br>Di Lapangan</th>
             </tr>
         </thead>

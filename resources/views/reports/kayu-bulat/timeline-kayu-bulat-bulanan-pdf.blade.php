@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 10mm 20mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -158,8 +158,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -216,7 +214,16 @@
             return null;
         };
 
-        $formatMonthKey = static function ($value) use ($normalize, $endDate): ?string {
+        $formatMonthKey = static function ($value, $yearValue = null) use ($normalize, $endDate): ?string {
+            $resolvedYear = null;
+
+            if ($yearValue !== null && $yearValue !== '') {
+                $yearRaw = trim((string) $yearValue);
+                if (preg_match('/^\d{4}$/', $yearRaw) === 1) {
+                    $resolvedYear = $yearRaw;
+                }
+            }
+
             if ($value === null || $value === '') {
                 return null;
             }
@@ -224,7 +231,7 @@
             if (is_numeric($value)) {
                 $monthNum = (int) $value;
                 if ($monthNum >= 1 && $monthNum <= 12) {
-                    $year = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+                    $year = $resolvedYear ?? \Carbon\Carbon::parse((string) $endDate)->format('Y');
 
                     return sprintf('%s-%02d', $year, $monthNum);
                 }
@@ -234,7 +241,7 @@
             if (preg_match('/^\d{1,2}$/', $raw) === 1) {
                 $monthNum = (int) $raw;
                 if ($monthNum >= 1 && $monthNum <= 12) {
-                    $year = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+                    $year = $resolvedYear ?? \Carbon\Carbon::parse((string) $endDate)->format('Y');
 
                     return sprintf('%s-%02d', $year, $monthNum);
                 }
@@ -272,7 +279,7 @@
             ];
             $normalized = $normalize($raw);
             if (isset($monthAliases[$normalized])) {
-                $year = \Carbon\Carbon::parse((string) $endDate)->format('Y');
+                $year = $resolvedYear ?? \Carbon\Carbon::parse((string) $endDate)->format('Y');
 
                 return sprintf('%s-%02d', $year, $monthAliases[$normalized]);
             }
@@ -303,6 +310,7 @@
         $columns = array_keys($rowsData[0] ?? []);
         $supplierColumn = $findColumn($columns, ['NmSupplier', 'NamaSupplier', 'Supplier', 'Nama Supplier']);
         $dateColumn = $findColumn($columns, ['DateCreate', 'Tanggal', 'Tgl', 'Date', 'Bulan']);
+        $yearColumn = $findColumn($columns, ['Tahun', 'Year']);
 
         $valueColumn = $findColumn($columns, ['KBTon', 'Tonase', 'Ton', 'Berat', 'TotalTon', 'Total', 'Qty', 'Jumlah']);
         if ($valueColumn === null) {
@@ -351,7 +359,10 @@
             foreach ($rowsData as $row) {
                 $supplier = trim((string) ($row[$supplierColumn] ?? ''));
                 $supplier = $supplier !== '' ? $supplier : 'Tanpa Supplier';
-                $monthKey = $formatMonthKey($row[$dateColumn] ?? null);
+                $monthKey = $formatMonthKey(
+                    $row[$dateColumn] ?? null,
+                    $yearColumn !== null ? $row[$yearColumn] ?? null : null,
+                );
                 if ($monthKey === null) {
                     continue;
                 }
@@ -376,11 +387,48 @@
             }
         }
 
-        $displayYear = \Carbon\Carbon::parse((string) $endDate)->format('Y');
         $monthHeaders = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $monthHeaders[] = sprintf('%s-%02d', $displayYear, $month);
+        $headerYearGroups = [];
+
+        try {
+            $periodStartMonth = \Carbon\Carbon::parse((string) $startDate)->startOfMonth();
+            $periodEndMonth = \Carbon\Carbon::parse((string) $endDate)->startOfMonth();
+
+            if ($periodStartMonth->lessThanOrEqualTo($periodEndMonth)) {
+                $cursorMonth = $periodStartMonth->copy();
+
+                while ($cursorMonth->lessThanOrEqualTo($periodEndMonth)) {
+                    $monthKey = $cursorMonth->format('Y-m');
+                    $monthHeaders[] = $monthKey;
+
+                    $headerYear = $cursorMonth->format('Y');
+                    $headerYearGroups[$headerYear] = ($headerYearGroups[$headerYear] ?? 0) + 1;
+
+                    $cursorMonth->addMonth();
+                }
+            }
+        } catch (\Throwable $exception) {
+            $monthHeaders = array_keys($monthKeys);
+            sort($monthHeaders);
         }
+
+        if ($monthHeaders === [] && $monthKeys !== []) {
+            $monthHeaders = array_keys($monthKeys);
+            sort($monthHeaders);
+        }
+
+        if ($headerYearGroups === [] && $monthHeaders !== []) {
+            foreach ($monthHeaders as $monthKey) {
+                try {
+                    $headerYear = \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->format('Y');
+                } catch (\Throwable $exception) {
+                    $headerYear = substr($monthKey, 0, 4);
+                }
+
+                $headerYearGroups[$headerYear] = ($headerYearGroups[$headerYear] ?? 0) + 1;
+            }
+        }
+
         $pivotRows = array_values($pivotRows);
         usort(
             $pivotRows,
@@ -396,24 +444,19 @@
 
     @if ($canPivot && $monthHeaders !== [])
         <table class="report-table">
-            <colgroup>
-                <col class="number-column">
-                <col class="supplier-column">
-                @foreach ($monthHeaders as $monthKey)
-                    <col class="month-column">
-                @endforeach
-                <col class="total-column">
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th rowspan="2">No</th>
                     <th rowspan="2" style="text-align: center;">Nama Supplier</th>
-                    <th colspan="{{ count($monthHeaders) }}">{{ $displayYear }}</th>
+                    @foreach ($headerYearGroups as $year => $yearMonthCount)
+                        <th colspan="{{ $yearMonthCount }}">{{ $year }}</th>
+                    @endforeach
                     <th rowspan="2">Total</th>
                 </tr>
                 <tr class="headers-row">
                     @foreach ($monthHeaders as $monthKey)
-                        <th>{{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
+                        <th style="width: 10%">
+                            {{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
                         </th>
                     @endforeach
                 </tr>

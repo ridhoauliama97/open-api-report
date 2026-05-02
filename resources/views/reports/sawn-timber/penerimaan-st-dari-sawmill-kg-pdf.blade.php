@@ -180,7 +180,6 @@
             font-size: 10px;
             font-weight: bold;
         }
-
     </style>
 </head>
 
@@ -417,12 +416,8 @@
             }
 
             $cleanSupplier = trim(
-                (string) (
-                    $contextRow['NmSupplier3'] ??
-                    $contextRow['NmSupplier2'] ??
-                    $contextRow[$supplierColumnResolved] ??
-                    $supplierName
-                ),
+                (string) ($contextRow['NmSupplier3'] ??
+                    ($contextRow['NmSupplier2'] ?? ($contextRow[$supplierColumnResolved] ?? $supplierName))),
             );
             if ($cleanSupplier === '') {
                 $cleanSupplier = $supplierName;
@@ -448,8 +443,12 @@
                 $rawSection = $sectionColumn !== null ? strtoupper(trim((string) ($row[$sectionColumn] ?? ''))) : '';
                 if ($rawSection !== '') {
                     $resolvedSection = is_numeric($rawSection)
-                        ? ((int) $rawSection === 0 ? 'OUTPUT' : 'INPUT')
-                        : (str_contains($rawSection, 'OUT') ? 'OUTPUT' : 'INPUT');
+                        ? ((int) $rawSection === 0
+                            ? 'OUTPUT'
+                            : 'INPUT')
+                        : (str_contains($rawSection, 'OUT')
+                            ? 'OUTPUT'
+                            : 'INPUT');
                 } else {
                     $resolvedSection = $isOutputGrade($gradeName, $kbTonValue, $stTonValue) ? 'OUTPUT' : 'INPUT';
                 }
@@ -508,7 +507,8 @@
                 ];
             }
             usort($outputRows, function (array $a, array $b) use ($gradeSortRank): int {
-                return $gradeSortRank('OUTPUT', (string) $a['grade']) <=> $gradeSortRank('OUTPUT', (string) $b['grade']);
+                return $gradeSortRank('OUTPUT', (string) $a['grade']) <=>
+                    $gradeSortRank('OUTPUT', (string) $b['grade']);
             });
 
             $totalInputKb = array_reduce($inputRows, fn($carry, $item) => $carry + (float) $item['kb_ton'], 0.0);
@@ -533,24 +533,21 @@
         <div class="group-title">Supplier : {{ $cleanSupplier }}</div>
 
         <div class="meta-block">
-            <div class="meta-row"><span class="meta-label">No Pen ST</span>: {{ $displayNoPenSt !== '' ? $displayNoPenSt : '-' }}</div>
-            <div class="meta-row"><span class="meta-label">No KB</span>: {{ $displayNoKb !== '' ? $displayNoKb : '-' }}</div>
-            <div class="meta-row"><span class="meta-label">Tanggal Penerimaan</span>: {{ $displayTanggal !== '' ? $displayTanggal : '-' }}</div>
-            <div class="meta-row"><span class="meta-label">Truk</span>: {{ $displayTruk !== '' ? $displayTruk : '-' }}</div>
-            <div class="meta-row"><span class="meta-label">Meja</span>: {{ $displayMeja !== '' ? $displayMeja : '-' }}</div>
-            <div class="meta-row"><span class="meta-label">Jenis Kayu</span>: {{ $displayJenisKayu !== '' ? $displayJenisKayu : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">No Pen ST</span>:
+                {{ $displayNoPenSt !== '' ? $displayNoPenSt : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">No KB</span>: {{ $displayNoKb !== '' ? $displayNoKb : '-' }}
+            </div>
+            <div class="meta-row"><span class="meta-label">Tanggal Penerimaan</span>:
+                {{ $displayTanggal !== '' ? $displayTanggal : '-' }}</div>
+            <div class="meta-row"><span class="meta-label">Truk</span>: {{ $displayTruk !== '' ? $displayTruk : '-' }}
+            </div>
+            <div class="meta-row"><span class="meta-label">Meja</span>: {{ $displayMeja !== '' ? $displayMeja : '-' }}
+            </div>
+            <div class="meta-row"><span class="meta-label">Jenis Kayu</span>:
+                {{ $displayJenisKayu !== '' ? $displayJenisKayu : '-' }}</div>
         </div>
 
         <table class="report-table">
-            <colgroup>
-                <col style="width: 68px;">
-                <col style="width: auto;">
-                <col style="width: 72px;">
-                <col style="width: 84px;">
-                <col style="width: 84px;">
-                <col style="width: 88px;">
-                <col style="width: 92px;">
-            </colgroup>
             <thead>
                 <tr class="headers-row">
                     <th>Kategori</th>
@@ -562,11 +559,6 @@
                     <th>Persentase Output (%)</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="7"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
 
@@ -582,7 +574,8 @@
                             <td class="data-cell center">{{ $formatTruck($line['jmlh_truk'] ?? '') }}</td>
                             <td class="data-cell number">{{ $formatDetail((float) ($line['kb_ton'] ?? 0.0), 2) }}</td>
                             <td class="data-cell center"></td>
-                            <td class="data-cell number">{{ $formatPercent((float) ($line['input_percent'] ?? 0.0), 1) }}</td>
+                            <td class="data-cell number">
+                                {{ $formatPercent((float) ($line['input_percent'] ?? 0.0), 1) }}</td>
                             <td class="data-cell center"></td>
                         </tr>
                     @endforeach
@@ -601,7 +594,8 @@
                             <td class="data-cell center"></td>
                             <td class="data-cell number">{{ $formatDetail((float) ($line['st_ton'] ?? 0.0), 4) }}</td>
                             <td class="data-cell center"></td>
-                            <td class="data-cell number">{{ $formatPercent((float) ($line['output_percent'] ?? 0.0), 1) }}</td>
+                            <td class="data-cell number">
+                                {{ $formatPercent((float) ($line['output_percent'] ?? 0.0), 1) }}</td>
                         </tr>
                     @endforeach
                 @endif

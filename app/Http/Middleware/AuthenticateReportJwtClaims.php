@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -19,7 +20,7 @@ class AuthenticateReportJwtClaims
         $token = $request->bearerToken();
 
         if ($token === null || trim($token) === '') {
-            return $this->unauthenticated('Token tidak ditemukan. Kirim Authorization: Bearer <token>.');
+            return $this->unauthenticated($request, 'missing_token', 'Token tidak ditemukan. Kirim Authorization: Bearer <token>.');
         }
 
         $decoded = $this->decodeToken($token);
@@ -27,7 +28,7 @@ class AuthenticateReportJwtClaims
             // Backward compatible: allow Sanctum personal access tokens for first-party auth flows.
             $sanctum = $this->resolveSanctumUser($token);
             if ($sanctum === null) {
-                return $this->unauthenticated('Token tidak valid.');
+                return $this->unauthenticated($request, 'invalid_token', 'Token tidak valid.', $token);
             }
 
             [$user, $tokenClaims] = $sanctum;
@@ -39,24 +40,24 @@ class AuthenticateReportJwtClaims
         }
 
         if (!$this->isSignatureValid($decoded)) {
-            return $this->unauthenticated('Signature token tidak valid.');
+            return $this->unauthenticated($request, 'invalid_signature', 'Signature token tidak valid.', $token, $decoded);
         }
 
         if ($this->isTokenExpired($decoded)) {
-            return $this->unauthenticated('Token sudah kedaluwarsa.');
+            return $this->unauthenticated($request, 'expired_token', 'Token sudah kedaluwarsa.', $token, $decoded);
         }
 
         if (!$this->isTokenActive($decoded)) {
-            return $this->unauthenticated('Token belum aktif.');
+            return $this->unauthenticated($request, 'inactive_token', 'Token belum aktif.', $token, $decoded);
         }
 
         if (!$this->isIssuerAudienceCompatible($decoded)) {
-            return $this->unauthenticated('Token issuer/audience tidak diizinkan.');
+            return $this->unauthenticated($request, 'issuer_audience_rejected', 'Token issuer/audience tidak diizinkan.', $token, $decoded);
         }
 
         $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
         if ($requiredScope !== '' && !$this->hasRequiredScope($decoded, $requiredScope)) {
-            return $this->unauthenticated('Token tidak memiliki scope untuk generate report.');
+            return $this->unauthenticated($request, 'missing_scope', 'Token tidak memiliki scope untuk generate report.', $token, $decoded);
         }
 
         $claims = $decoded['payload'];
@@ -71,7 +72,7 @@ class AuthenticateReportJwtClaims
         $email = (string) ($claims[$emailClaim] ?? '');
 
         if ($subject === '' && $username === '') {
-            return $this->unauthenticated('Claim user tidak ditemukan pada token.');
+            return $this->unauthenticated($request, 'missing_user_claim', 'Claim user tidak ditemukan pada token.', $token, $decoded);
         }
 
         $user = new GenericUser([
@@ -398,8 +399,73 @@ class AuthenticateReportJwtClaims
         return $decoded;
     }
 
-    private function unauthenticated(string $message): JsonResponse
+    /**
+     * @param array{payload?: array<string, mixed>}|null $decoded
+     */
+    private function unauthenticated(
+        Request $request,
+        string $reason,
+        string $message,
+        ?string $token = null,
+        ?array $decoded = null,
+    ): JsonResponse
     {
-        return response()->json(['message' => $message], 401);
+        $claims = is_array($decoded['payload'] ?? null) ? $decoded['payload'] : [];
+
+        Log::warning('Report API authentication rejected.', [
+            'reason' => $reason,
+            'message' => $message,
+            'method' => $request->method(),
+            'path' => $request->path(),
+            'full_url' => $request->fullUrl(),
+            'ip' => $request->ip(),
+            'user_agent' => (string) $request->userAgent(),
+            'origin' => (string) $request->headers->get('Origin', ''),
+            'referer' => (string) $request->headers->get('Referer', ''),
+            'host' => (string) $request->getHost(),
+            'auth_scheme' => $this->extractAuthScheme($request),
+            'token_shape' => $this->describeTokenShape($token),
+            'token_iss' => (string) ($claims['iss'] ?? ''),
+            'token_aud' => $claims['aud'] ?? null,
+            'token_sub' => (string) ($claims['sub'] ?? ''),
+            'token_username' => (string) ($claims['username'] ?? ''),
+            'token_scope' => $claims[(string) config('reports.report_auth.scope_claim', 'scope')] ?? ($claims['scope'] ?? null),
+        ]);
+
+        return response()
+            ->json([
+                'message' => $message,
+                'reason' => $reason,
+            ], 401)
+            ->header('X-Report-Auth-Reason', $reason);
+    }
+
+    private function extractAuthScheme(Request $request): string
+    {
+        $authorization = (string) $request->headers->get('Authorization', '');
+        if ($authorization === '') {
+            return '';
+        }
+
+        $parts = preg_split('/\s+/', trim($authorization), 2) ?: [];
+
+        return strtolower((string) ($parts[0] ?? ''));
+    }
+
+    private function describeTokenShape(?string $token): string
+    {
+        if ($token === null || $token === '') {
+            return 'missing';
+        }
+
+        if (substr_count($token, '.') === 2) {
+            return 'jwt';
+        }
+
+        if (str_contains($token, '|')) {
+            return 'sanctum';
+        }
+
+        return 'opaque';
     }
 }

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 20mm 10mm 20mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -331,7 +331,8 @@
                                 @endphp
                                 <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                                     @if (!$printedGroup)
-                                        <td class="center col-group col-group-span" rowspan="{{ $groupRowspan }}">{{ $groupName }}
+                                        <td class="center col-group col-group-span" rowspan="{{ $groupRowspan }}">
+                                            {{ $groupName }}
                                         </td>
                                         @php $printedGroup = true; @endphp
                                     @endif

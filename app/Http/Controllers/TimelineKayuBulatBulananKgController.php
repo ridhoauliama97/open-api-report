@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateTimelineKayuBulatBulananKgReportRequest;
 use App\Services\PdfGenerator;
 use App\Services\TimelineKayuBulatBulananKgReportService;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -72,9 +73,8 @@ class TimelineKayuBulatBulananKgController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
             'pdf_pack_table_data' => false,
-            // Table pivot uses: No + Supplier + 12 months + Total = 15 columns.
-            // Force column count so PdfGenerator auto-selects landscape reliably.
-            'pdf_column_count' => 15,
+            // Table pivot uses: No + Supplier + selected months + Total.
+            'pdf_column_count' => $this->resolvePdfColumnCount($startDate, $endDate),
         ]);
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Bulanan-KG-%s-sd-%s.pdf', $startDate, $endDate);
@@ -144,5 +144,23 @@ class TimelineKayuBulatBulananKgController extends Controller
     private function extractDates(GenerateTimelineKayuBulatBulananKgReportRequest $request): array
     {
         return [$request->startDate(), $request->endDate()];
+    }
+
+    private function resolvePdfColumnCount(string $startDate, string $endDate): int
+    {
+        try {
+            $startMonth = Carbon::parse($startDate)->startOfMonth();
+            $endMonth = Carbon::parse($endDate)->startOfMonth();
+
+            if ($startMonth->greaterThan($endMonth)) {
+                return 15;
+            }
+
+            $monthSpan = $startMonth->diffInMonths($endMonth) + 1;
+
+            return max(4, $monthSpan + 3);
+        } catch (\Throwable $exception) {
+            return 15;
+        }
     }
 }

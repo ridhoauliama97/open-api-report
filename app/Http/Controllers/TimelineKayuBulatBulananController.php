@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateTimelineKayuBulatBulananReportRequest;
 use App\Services\PdfGenerator;
 use App\Services\TimelineKayuBulatBulananReportService;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -71,6 +72,7 @@ class TimelineKayuBulatBulananController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_column_count' => $this->resolvePdfColumnCount($startDate, $endDate),
         ]);
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Bulanan-JTG-PLI-%s-sd-%s.pdf', $startDate, $endDate);
@@ -141,5 +143,22 @@ class TimelineKayuBulatBulananController extends Controller
     {
         return [$request->startDate(), $request->endDate()];
     }
-}
 
+    private function resolvePdfColumnCount(string $startDate, string $endDate): int
+    {
+        try {
+            $startMonth = Carbon::parse($startDate)->startOfMonth();
+            $endMonth = Carbon::parse($endDate)->startOfMonth();
+
+            if ($startMonth->greaterThan($endMonth)) {
+                return 15;
+            }
+
+            $monthSpan = $startMonth->diffInMonths($endMonth) + 1;
+
+            return max(4, $monthSpan + 3);
+        } catch (\Throwable $exception) {
+            return 15;
+        }
+    }
+}
