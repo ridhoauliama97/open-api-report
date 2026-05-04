@@ -51,6 +51,8 @@ class LembarTallyHasilSawmillController extends Controller
                 'NoProduksi' => $noProduksi,
                 'total_rows' => count($rows),
                 'column_order' => array_keys($rows[0] ?? []),
+                'pdf_orientation' => 'portrait',
+                'pdf_simple_tables' => false,
             ],
             'data' => $rows,
         ]);
@@ -117,6 +119,8 @@ class LembarTallyHasilSawmillController extends Controller
             'noProduksi' => $noProduksi,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
         ]);
 
         $filename = sprintf('Laporan-Lembar-Tally-Hasil-Sawmill-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));

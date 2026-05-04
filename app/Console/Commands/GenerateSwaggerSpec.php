@@ -17,26 +17,26 @@ class GenerateSwaggerSpec extends Command
      * @var array<string, string>
      */
     private const TAG_MAP = [
-        '/api/auth'                                        => 'Auth',
-        '/api/reports/jobs'                                 => 'PDF Jobs (Async)',
-        '/api/reports/barang-jadi'                          => 'Barang Jadi',
-        '/api/reports/cross-cut-akhir'                      => 'Cross Cut Akhir',
-        '/api/reports/dashboard'                            => 'Dashboard',
-        '/api/reports/finger-joint'                         => 'Finger Joint',
-        '/api/reports/kayu-bulat'                           => 'Kayu Bulat',
-        '/api/reports/laminating'                           => 'Laminating',
-        '/api/reports/management'                           => 'Management',
-        '/api/reports/moulding'                             => 'Moulding',
-        '/api/reports/mutasi'                               => 'Mutasi',
-        '/api/reports/penjualan-kayu'                       => 'Penjualan Kayu',
-        '/api/reports/proses-produksi'                      => 'Proses Produksi',
-        '/api/reports/rendemen-kayu'                        => 'Rendemen Kayu',
-        '/api/reports/reproses'                             => 'Reproses',
-        '/api/reports/s4s'                                  => 'S4S',
-        '/api/reports/sanding'                              => 'Sanding',
-        '/api/reports/sawn-timber'                          => 'Sawn Timber',
-        '/api/reports/pps'                                  => 'PPS (Plastik)',
-        '/api/reports/verifikasi'                           => 'Verifikasi',
+        '/api/auth' => 'Auth',
+        '/api/reports/jobs' => 'PDF Jobs (Async)',
+        '/api/reports/barang-jadi' => 'Barang Jadi',
+        '/api/reports/cross-cut-akhir' => 'Cross Cut Akhir',
+        '/api/reports/dashboard' => 'Dashboard',
+        '/api/reports/finger-joint' => 'Finger Joint',
+        '/api/reports/kayu-bulat' => 'Kayu Bulat',
+        '/api/reports/laminating' => 'Laminating',
+        '/api/reports/management' => 'Management',
+        '/api/reports/moulding' => 'Moulding',
+        '/api/reports/mutasi' => 'Mutasi',
+        '/api/reports/penjualan-kayu' => 'Penjualan Kayu',
+        '/api/reports/proses-produksi' => 'Proses Produksi',
+        '/api/reports/rendemen-kayu' => 'Rendemen Kayu',
+        '/api/reports/reproses' => 'Reproses',
+        '/api/reports/s4s' => 'S4S',
+        '/api/reports/sanding' => 'Sanding',
+        '/api/reports/sawn-timber' => 'Sawn Timber',
+        '/api/reports/pps' => 'PPS (Plastik)',
+        '/api/reports/verifikasi' => 'Verifikasi',
     ];
 
     public function handle(Router $router): int
@@ -44,20 +44,20 @@ class GenerateSwaggerSpec extends Command
         $spec = [
             'openapi' => '3.0.3',
             'info' => [
-                'title'       => 'Open API Report',
-                'version'     => '1.0.0',
+                'title' => 'Open API Report',
+                'version' => '1.0.0',
                 'description' => 'API autentikasi JWT dan laporan PDF berbasis rentang tanggal. Semua endpoint laporan memerlukan Bearer token.',
-                'contact'     => [
-                    'name'  => 'API Support',
+                'contact' => [
+                    'name' => 'API Support',
                     'email' => 'support@example.com',
                 ],
             ],
             'servers' => [
                 ['url' => config('app.url', 'http://localhost'), 'description' => 'API Server'],
             ],
-            'tags'                => [],
-            'paths'               => [],
-            'components'          => $this->buildComponents(),
+            'tags' => [],
+            'paths' => [],
+            'components' => $this->buildComponents(),
         ];
 
         $usedTags = [];
@@ -72,13 +72,15 @@ class GenerateSwaggerSpec extends Command
             }
 
             // Skip internal/infrastructure routes
-            if (in_array($uri, [
-                '/api/openapi.json',
-                '/api/documentation',
-                '/api/docs/{jsonFile?}',
-                '/api/docs',
-                '/api/oauth2-callback',
-            ], true)) {
+            if (
+                in_array($uri, [
+                    '/api/openapi.json',
+                    '/api/documentation',
+                    '/api/docs/{jsonFile?}',
+                    '/api/docs',
+                    '/api/oauth2-callback',
+                ], true)
+            ) {
                 continue;
             }
 
@@ -89,9 +91,9 @@ class GenerateSwaggerSpec extends Command
                 $tag = $this->resolveTag($uri);
                 $usedTags[$tag] = true;
 
-                $summary   = $this->buildSummary($uri, $method);
+                $summary = $this->buildSummary($uri, $method);
                 $operation = [
-                    'tags'    => [$tag],
+                    'tags' => [$tag],
                     'summary' => $summary,
                     'operationId' => $method . '_' . str_replace(['/', '{', '}', '-'], ['_', '', '', '_'], $uri),
                     'responses' => $this->buildResponses($uri, $method),
@@ -114,10 +116,10 @@ class GenerateSwaggerSpec extends Command
                     $operation['parameters'] = [];
                     foreach ($matches[1] as $param) {
                         $operation['parameters'][] = [
-                            'name'     => $param,
-                            'in'       => 'path',
+                            'name' => $param,
+                            'in' => 'path',
                             'required' => true,
-                            'schema'   => ['type' => 'string'],
+                            'schema' => ['type' => 'string'],
                         ];
                     }
                 }
@@ -130,7 +132,7 @@ class GenerateSwaggerSpec extends Command
         foreach (self::TAG_MAP as $tag) {
             if (isset($usedTags[$tag])) {
                 $spec['tags'][] = [
-                    'name'        => $tag,
+                    'name' => $tag,
                     'description' => "Endpoint untuk {$tag}",
                 ];
             }
@@ -147,7 +149,7 @@ class GenerateSwaggerSpec extends Command
             }
             if (!$exists) {
                 $spec['tags'][] = [
-                    'name'        => $tag,
+                    'name' => $tag,
                     'description' => "Endpoint untuk {$tag}",
                 ];
             }
@@ -168,7 +170,7 @@ class GenerateSwaggerSpec extends Command
         );
 
         $pathCount = count($spec['paths']);
-        $tagCount  = count($spec['tags']);
+        $tagCount = count($spec['tags']);
 
         $this->info("✅ OpenAPI spec generated: {$outputPath}");
         $this->info("   {$pathCount} paths, {$tagCount} tags");
@@ -201,10 +203,10 @@ class GenerateSwaggerSpec extends Command
         // Auth endpoints
         $authSummaries = [
             '/api/auth/register' => 'Registrasi user baru',
-            '/api/auth/login'    => 'Login user',
-            '/api/auth/logout'   => 'Logout user (invalidate token)',
-            '/api/auth/refresh'  => 'Refresh access token',
-            '/api/auth/me'       => 'Data user yang sedang login',
+            '/api/auth/login' => 'Login user',
+            '/api/auth/logout' => 'Logout user (invalidate token)',
+            '/api/auth/refresh' => 'Refresh access token',
+            '/api/auth/me' => 'Data user yang sedang login',
         ];
 
         if (isset($authSummaries[$uri])) {
@@ -242,7 +244,7 @@ class GenerateSwaggerSpec extends Command
         $path = preg_replace('#/pdf/async$#', '', $path) ?? $path;
 
         $segments = explode('/', $path);
-        $name     = end($segments) ?: $path;
+        $name = end($segments) ?: $path;
 
         return ucwords(str_replace('-', ' ', $name));
     }
@@ -256,7 +258,7 @@ class GenerateSwaggerSpec extends Command
         if ($uri === '/api/auth/register') {
             return [
                 'required' => true,
-                'content'  => [
+                'content' => [
                     'application/json' => [
                         'schema' => ['$ref' => '#/components/schemas/AuthRegisterRequest'],
                     ],
@@ -267,7 +269,7 @@ class GenerateSwaggerSpec extends Command
         if ($uri === '/api/auth/login') {
             return [
                 'required' => true,
-                'content'  => [
+                'content' => [
                     'application/json' => [
                         'schema' => ['$ref' => '#/components/schemas/AuthLoginRequest'],
                     ],
@@ -278,7 +280,7 @@ class GenerateSwaggerSpec extends Command
         // Generic report request
         return [
             'required' => false,
-            'content'  => [
+            'content' => [
                 'application/json' => [
                     'schema' => ['$ref' => '#/components/schemas/ReportDateRangeRequest'],
                 ],
@@ -298,9 +300,9 @@ class GenerateSwaggerSpec extends Command
         if (in_array($uri, ['/api/auth/register', '/api/auth/login', '/api/auth/refresh'])) {
             $code = $uri === '/api/auth/register' ? '201' : '200';
             return [
-                $code  => [
+                $code => [
                     'description' => $uri === '/api/auth/register' ? 'Registrasi berhasil' : 'Berhasil',
-                    'content'     => [
+                    'content' => [
                         'application/json' => [
                             'schema' => ['$ref' => '#/components/schemas/AuthTokenResponse'],
                         ],
@@ -315,7 +317,7 @@ class GenerateSwaggerSpec extends Command
             return [
                 '200' => [
                     'description' => 'Data user',
-                    'content'     => [
+                    'content' => [
                         'application/json' => [
                             'schema' => ['$ref' => '#/components/schemas/AuthUserResponse'],
                         ],
@@ -329,7 +331,7 @@ class GenerateSwaggerSpec extends Command
             return [
                 '200' => [
                     'description' => 'Logout berhasil',
-                    'content'     => [
+                    'content' => [
                         'application/json' => [
                             'schema' => ['$ref' => '#/components/schemas/MessageResponse'],
                         ],
@@ -344,7 +346,7 @@ class GenerateSwaggerSpec extends Command
             return [
                 '200' => [
                     'description' => 'PDF berhasil dibuat',
-                    'content'     => [
+                    'content' => [
                         'application/pdf' => [
                             'schema' => ['type' => 'string', 'format' => 'binary'],
                         ],
@@ -359,7 +361,7 @@ class GenerateSwaggerSpec extends Command
         return [
             '200' => [
                 'description' => 'Berhasil',
-                'content'     => [
+                'content' => [
                     'application/json' => [
                         'schema' => ['type' => 'object'],
                     ],
@@ -378,66 +380,66 @@ class GenerateSwaggerSpec extends Command
         return [
             'securitySchemes' => [
                 'bearerAuth' => [
-                    'type'         => 'http',
-                    'scheme'       => 'bearer',
+                    'type' => 'http',
+                    'scheme' => 'bearer',
                     'bearerFormat' => 'JWT',
                 ],
             ],
             'schemas' => [
                 'AuthRegisterRequest' => [
-                    'type'       => 'object',
-                    'required'   => ['username', 'password'],
+                    'type' => 'object',
+                    'required' => ['username', 'password'],
                     'properties' => [
-                        'username'              => ['type' => 'string', 'example' => 'admin'],
-                        'password'              => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
+                        'username' => ['type' => 'string', 'example' => 'admin'],
+                        'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                         'password_confirmation' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                     ],
                 ],
                 'AuthLoginRequest' => [
-                    'type'       => 'object',
-                    'required'   => ['username', 'password'],
+                    'type' => 'object',
+                    'required' => ['username', 'password'],
                     'properties' => [
                         'username' => ['type' => 'string', 'example' => 'admin'],
                         'password' => ['type' => 'string', 'format' => 'password', 'example' => 'secret123'],
                     ],
                 ],
                 'AuthTokenResponse' => [
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => [
                         'access_token' => ['type' => 'string'],
-                        'token_type'   => ['type' => 'string', 'example' => 'bearer'],
-                        'expires_in'   => ['type' => 'integer', 'nullable' => true],
-                        'user'         => ['$ref' => '#/components/schemas/User'],
+                        'token_type' => ['type' => 'string', 'example' => 'bearer'],
+                        'expires_in' => ['type' => 'integer', 'nullable' => true],
+                        'user' => ['$ref' => '#/components/schemas/User'],
                     ],
                 ],
                 'AuthUserResponse' => [
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => [
                         'user' => ['$ref' => '#/components/schemas/User'],
                     ],
                 ],
                 'MessageResponse' => [
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => [
                         'message' => ['type' => 'string'],
                     ],
                 ],
                 'User' => [
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => [
-                        'id'       => ['type' => 'string'],
+                        'id' => ['type' => 'string'],
                         'username' => ['type' => 'string'],
-                        'name'     => ['type' => 'string'],
-                        'email'    => ['type' => 'string', 'nullable' => true],
-                        'source'   => ['type' => 'string', 'enum' => ['wps', 'pps']],
+                        'name' => ['type' => 'string'],
+                        'email' => ['type' => 'string', 'nullable' => true],
+                        'source' => ['type' => 'string', 'enum' => ['wps', 'pps']],
                     ],
                 ],
                 'ReportDateRangeRequest' => [
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => [
-                        'dari_tanggal'   => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01', 'description' => 'Tanggal awal'],
+                        'dari_tanggal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-01', 'description' => 'Tanggal awal'],
                         'sampai_tanggal' => ['type' => 'string', 'format' => 'date', 'example' => '2026-01-31', 'description' => 'Tanggal akhir'],
-                        'jenis_kayu'     => ['type' => 'string', 'description' => 'Filter jenis kayu (opsional)', 'nullable' => true],
+                        'jenis_kayu' => ['type' => 'string', 'description' => 'Filter jenis kayu (opsional)', 'nullable' => true],
                     ],
                 ],
             ],

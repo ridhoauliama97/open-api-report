@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 16mm 10mm 16mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -47,7 +47,7 @@
 
         .session-meta {
             margin: 0 0 3px 6px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
 
@@ -167,7 +167,7 @@
             border-collapse: collapse;
             border-spacing: 0;
             table-layout: fixed;
-            page-break-inside: avoid;
+            page-break-inside: auto;
         }
 
         .split-table-wrap td {

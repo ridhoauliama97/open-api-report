@@ -47,7 +47,7 @@
 
         .session-meta {
             margin: 0 0 3px 6px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
 
@@ -359,7 +359,7 @@
             <table class="split-table-wrap">
                 <tbody>
                     <tr>
-                        <td style="width: 49%;">
+                        <td style="width: 48.5%;">
                             <table class="report-table split-table">
                                 <thead>
                                     <tr class="headers-row">
@@ -389,8 +389,8 @@
                                 </tbody>
                             </table>
                         </td>
-                        <td style="width: 2%;"></td>
-                        <td style="width: 49%;">
+                        <td style="width: 3%;"></td>
+                        <td style="width: 48.5%;">
                             <table class="report-table split-table">
                                 <thead>
                                     <tr class="headers-row">
@@ -534,7 +534,8 @@
                     <td class="data-cell number" style="width: 15%;">
                         {{ $formatNumber($overallTotal['RB STD (Tbl 14/16/18/23)']) }}</td>
                     <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['RB STD']) }}</td>
-                    <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['RB MC + Lain-Lain']) }}
+                    <td class="data-cell number" style="width: 15%;">
+                        {{ $formatNumber($overallTotal['RB MC + Lain-Lain']) }}
                     </td>
                     <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['Jumlah']) }}</td>
                     <td class="data-cell number" style="width: 10%;">{{ $formatNumber($overallTotal['SM']) }}</td>

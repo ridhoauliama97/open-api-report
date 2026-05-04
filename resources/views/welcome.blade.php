@@ -22,6 +22,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
+                    <a class="nav-link" href="#ascends-reports">Ascends</a>
                     <a class="nav-link" href="#wps-reports">WPS</a>
                     <a class="nav-link" href="#pps-reports">PPS</a>
                 </div>
@@ -87,6 +88,28 @@
             </div>
         </div>
 
+
+        <div id="ascends-reports" class="mb-3">
+            <h2 class="h4 fw-bold mb-0 d-flex align-items-center gap-2 flex-wrap">
+                <span>Ascends</span>
+            </h2>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">RU HRM</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.ascends.ru.hrm.employee-list.list-karyawan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                List Karyawan RU
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="pps-reports" class="mb-3">
             <h2 class="h4 fw-bold mb-0 d-flex align-items-center gap-2 flex-wrap">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Ascends\Ru\Hrm\EmployeeListController;
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\BalokSudahSemprotController;
@@ -216,6 +217,14 @@ use App\Http\Controllers\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
+
+Route::prefix('reports/ascends/ru/hrm/employee-list/list-karyawan')
+    ->name('reports.ascends.ru.hrm.employee-list.list-karyawan.')
+    ->group(function (): void {
+        Route::get('/', [EmployeeListController::class, 'index'])->name('index');
+        Route::get('/download', [EmployeeListController::class, 'download'])->name('download');
+        Route::get('/preview', [EmployeeListController::class, 'preview'])->name('preview');
+    });
 
 // PPS Reports Routes
 Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {

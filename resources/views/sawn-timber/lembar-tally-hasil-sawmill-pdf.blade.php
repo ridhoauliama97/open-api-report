@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 18mm 10mm 18mm 10mm;
+            margin: 12mm 10mm 12mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -21,173 +21,240 @@
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.2;
+            line-height: 1.1;
             color: #000;
         }
 
         .report-title {
+            margin: 0 0 8px 0;
             text-align: center;
-            margin: 0;
             font-size: 14px;
             font-weight: bold;
         }
 
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 10px;
-            color: #636466;
-        }
-
-        .meta-table {
-            width: 100%;
+        table {
             border-collapse: collapse;
-            margin-bottom: 8px;
+            border-spacing: 0;
+            width: 100%;
         }
 
-        .meta-table td {
-            border: none;
-            padding: 1px 3px;
-            background: transparent;
-            font-size: 9px;
+        .meta-layout {
+            width: 100%;
+            margin: 0 0 6px 0;
+            table-layout: fixed;
+        }
+
+        .meta-layout td {
+            border: 0;
+            padding: 0;
+            vertical-align: top;
+        }
+
+        .meta-block {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .meta-block td {
+            border: 0;
+            padding: 0 0 1px 0;
+            font-size: 9.5px;
             vertical-align: top;
         }
 
         .meta-label {
-            width: 12%;
-            font-weight: 700;
+            width: 94px;
             white-space: nowrap;
         }
 
-        .meta-sep {
-            width: 1%;
+        .meta-separator {
+            width: 12px;
             text-align: center;
-            font-weight: 700;
         }
 
         .meta-value {
-            width: 20%;
-            white-space: pre-wrap;
+            word-break: break-word;
         }
 
-        table {
+        .split-layout {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 8px;
-            page-break-inside: auto;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tr {
+            table-layout: fixed;
+            margin: 0 0 4px 0;
             page-break-inside: avoid;
-            page-break-after: auto;
         }
 
-        th,
-        td {
+        .split-layout td {
+            border: 0;
+            vertical-align: top;
+            padding: 0;
+        }
+
+        .split-gap {
+            width: 1.5%;
+        }
+
+        .report-table {
+            width: 100%;
+            table-layout: fixed;
+            margin: 0 0 2px 0;
+            border-collapse: collapse;
+            border-spacing: 0;
             border: 1px solid #000;
-            padding: 3px 4px;
+            font-size: 8.6px;
+        }
+
+        .report-table th,
+        .report-table td {
+            border: 0;
+            border-left: 1px solid #000;
+            padding: 1px 2px;
             vertical-align: middle;
-        }
-
-        th {
             text-align: center;
-            font-weight: 700;
-            background: #eef2f8;
         }
 
-        .zebra-table tbody tr:nth-child(odd) td {
+        .report-table thead th {
+            font-weight: bold;
+            font-size: 9px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
+            padding-top: 2px;
+            padding-bottom: 2px;
         }
 
-        .zebra-table tbody tr:nth-child(even) td {
-            background: #eef2f8;
+        .report-table tbody tr.data-row td {
+            border-top: 0;
+            border-bottom: 0;
+            border-right: 0;
         }
 
-        .zebra-table tbody tr.total-row td {
-            background: #e5eaf1 !important;
-            font-weight: 700;
+        .row-odd td {
+            background: #d8deea;
         }
 
-        td.center {
-            text-align: center;
+        .row-even td {
+            background: #f3f6fb;
         }
 
-        td.number {
+        .report-table .number {
             text-align: right;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
+            white-space: nowrap;
         }
 
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+        .report-table .emphasis {
+            font-weight: bold;
         }
 
-        .footer-left,
-        .footer-right {
-            font-size: 8px;
+        .summary-layout {
+            width: 100%;
+            margin: 2px 0 3px 0;
+            table-layout: fixed;
+            page-break-inside: avoid;
+        }
+
+        .summary-layout td {
+            border: 0;
+            vertical-align: top;
+            padding: 0;
+        }
+
+        .summary-column-left {
+            padding-right: 10px;
+        }
+
+        .summary-column-right {
+            padding-left: 10px;
+        }
+
+        .summary-block {
+            width: 220px;
+            table-layout: fixed;
+            margin: 0;
+        }
+
+        .summary-block-left {
+            margin-left: 18px;
+        }
+
+        .summary-block-right {
+            margin-left: 18px;
+        }
+
+        .summary-block td {
+            border: 0;
+            padding: 0;
+            vertical-align: top;
+            font-size: 9.5px;
+        }
+
+        .summary-title {
             font-style: italic;
+            white-space: nowrap;
+            padding-bottom: 1px;
         }
 
-        .footer-right {
+        .summary-label {
+            width: 62px;
+            white-space: nowrap;
+        }
+
+        .summary-separator {
+            width: 12px;
+            text-align: center;
+        }
+
+        .summary-value {
             text-align: right;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            white-space: nowrap;
+            width: 96px;
         }
 
-        .summary-table {
-            width: 60%;
-            margin-top: 10px;
+        .summary-total-wrap {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .summary-total-wrap td {
+            border: 0;
+            padding: 0;
+        }
+
+        .summary-total-block {
+            width: 220px;
+            margin-left: 18px;
         }
 
         .signatures {
-            text-align: center;
             width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
+            margin-top: 25px;
             table-layout: fixed;
-            font-size: 9px;
+            page-break-inside: avoid;
         }
 
         .signatures td {
             width: 33.33%;
-            border: none;
+            border: 0;
+            padding: 0 12px 0 0;
             vertical-align: top;
-            padding: 0 8px 0 0;
-        }
-
-        .sign-title {
-            white-space: nowrap;
-        }
-
-        .sign-space td {
-            height: 60px;
-        }
-
-        .signatures td.sign-role {
-            padding-top: 2px;
+            text-align: left;
             font-size: 9px;
         }
 
-        .sign-role-line {
-            display: inline-block;
-            border: 1px solid #000;
-            min-width: 150px;
-            padding-top: 2px;
+        .signature-space td {
+            height: 70px;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
+        .signature-line {
+            display: block;
+            width: 140px;
+            border-top: 1px solid #000;
+            margin-bottom: 2px;
         }
 
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
+        .signature-role {
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -201,7 +268,7 @@
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $findColumn = static function (array $columns, array $candidates): ?string {
-            $normalize = static fn(string $name): string => strtolower(preg_replace('/[^a-z0-9]/','', $name) ?? '');
+            $normalize = static fn(string $name): string => strtolower(preg_replace('/[^a-z0-9]/', '', $name) ?? '');
             $candidateMap = [];
             foreach ($candidates as $candidate) {
                 $candidateMap[$normalize($candidate)] = true;
@@ -223,19 +290,21 @@
             if (!is_string($value)) {
                 return null;
             }
-            $normalized = trim(str_replace(' ','', $value));
+
+            $normalized = trim(str_replace(' ', '', $value));
             if ($normalized === '') {
                 return null;
             }
+
             if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
                 if (strrpos($normalized, ',') > strrpos($normalized, '.')) {
-                    $normalized = str_replace('.','', $normalized);
-                    $normalized = str_replace(',','.', $normalized);
+                    $normalized = str_replace('.', '', $normalized);
+                    $normalized = str_replace(',', '.', $normalized);
                 } else {
-                    $normalized = str_replace(',','', $normalized);
+                    $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',','.');
+                $normalized = str_replace(',', '.');
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -247,10 +316,18 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse((string) $value)->format('d/m/Y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
+        };
+
+        $formatNumber = static function ($value, int $precision = 4): string {
+            return number_format((float) $value, $precision, '.', '');
+        };
+
+        $formatSummaryNumber = static function ($value, int $precision = 4): string {
+            return rtrim(rtrim(number_format((float) $value, $precision, '.', ''), '0'), '.');
         };
 
         $truncate4 = static function (?float $value): float {
@@ -258,7 +335,6 @@
                 return 0.0;
             }
 
-            // Samakan perilaku Truncate(x*10000)/10000 dari formula lama.
             $scaled = $value * 10000;
             $truncated = $scaled >= 0 ? floor($scaled) : ceil($scaled);
 
@@ -266,32 +342,26 @@
         };
 
         $availableColumns = array_keys($headRow);
-        $noSTSawmillCol = $findColumn($availableColumns, ['NoSTSawmill','NoProduksi','NomorLembaran','NoLembaran']);
-        $tglSawmillCol = $findColumn($availableColumns, ['TglSawmill','Tanggal','Tgl','TglProduksi']);
-        $supplierCol = $findColumn($availableColumns, ['NmSupplier','Supplier','NamaSupplier']);
-        $noKayuBulatCol = $findColumn($availableColumns, ['NoKayuBulat','NoKB','NoKb']);
-        $suketCol = $findColumn($availableColumns, ['Suket','NoSuket','NoSuratKeterangan']);
-        $noMejaCol = $findColumn($availableColumns, ['NoMeja','Meja','No Meja']);
-        $noPlatCol = $findColumn($availableColumns, ['NoPlat','No Plat','Plat']);
-        $jenisCol = $findColumn($availableColumns, ['Jenis','JenisKayu','Jenis Kayu']);
-        $operatorCol = $findColumn($availableColumns, ['NamaOperator','Operator','Nama Operator']);
-        $statusCol = $findColumn($availableColumns, ['Status','StatusData']);
-        $beratTimCol = $findColumn($availableColumns, ['BeratTim','Berat(Tim)','Berat Tim','Berat']);
+        $noSTSawmillCol = $findColumn($availableColumns, ['NoSTSawmill', 'NoProduksi', 'NomorLembaran', 'NoLembaran']);
+        $tglSawmillCol = $findColumn($availableColumns, ['TglSawmill', 'Tanggal', 'Tgl', 'TglProduksi']);
+        $supplierCol = $findColumn($availableColumns, ['NmSupplier', 'Supplier', 'NamaSupplier']);
+        $noKayuBulatCol = $findColumn($availableColumns, ['NoKayuBulat', 'NoKB', 'NoKb']);
+        $suketCol = $findColumn($availableColumns, ['Suket', 'NoSuket', 'NoSuratKeterangan']);
+        $noMejaCol = $findColumn($availableColumns, ['NoMeja', 'Meja', 'No Meja']);
+        $noPlatCol = $findColumn($availableColumns, ['NoPlat', 'No Plat', 'Plat']);
+        $jenisCol = $findColumn($availableColumns, ['Jenis', 'JenisKayu', 'Jenis Kayu']);
+        $operatorCol = $findColumn($availableColumns, ['NamaOperator', 'Operator', 'Nama Operator']);
+        $statusCol = $findColumn($availableColumns, ['Status', 'StatusData']);
+        $beratTimCol = $findColumn($availableColumns, ['BeratTim', 'Berat(Tim)', 'Berat Tim', 'Berat']);
         $beratCol = $findColumn($availableColumns, ['Berat']);
         $tebalCol = $findColumn($availableColumns, ['Tebal']);
         $lebarCol = $findColumn($availableColumns, ['Lebar']);
         $panjangCol = $findColumn($availableColumns, ['Panjang']);
-        $jmlhBatangCol = $findColumn($availableColumns, ['JmlhBatang','JumlahBatang']);
-        $idUOMTblLebarCol = $findColumn($availableColumns, ['IdUOMTblLebar','IdUomTblLebar']);
-        $idUOMPanjangCol = $findColumn($availableColumns, ['IdUOMPanjang','IdUomPanjang']);
-        $ketCol = $findColumn($availableColumns, ['Ket','Keterangan']);
-
-        $tableColumns = array_values(
-            array_filter([$ketCol, $tebalCol, $lebarCol, $panjangCol, $beratCol, $jmlhBatangCol]),
-        );
-        if ($tableColumns === []) {
-            $tableColumns = $availableColumns;
-        }
+        $jmlhBatangCol = $findColumn($availableColumns, ['JmlhBatang', 'JumlahBatang']);
+        $idUOMTblLebarCol = $findColumn($availableColumns, ['IdUOMTblLebar', 'IdUomTblLebar']);
+        $idUOMPanjangCol = $findColumn($availableColumns, ['IdUOMPanjang', 'IdUomPanjang']);
+        $ketCol = $findColumn($availableColumns, ['Ket', 'Keterangan']);
+        $noCol = $findColumn($availableColumns, ['No', 'Nomor', 'Urut']);
 
         $computeBeratRow = static function (array $row) use (
             $toFloat,
@@ -307,7 +377,6 @@
             $beratValue = $beratCol !== null ? $toFloat($row[$beratCol] ?? null) : null;
             $idUOMTblLebarValue = $idUOMTblLebarCol !== null ? (int) ($row[$idUOMTblLebarCol] ?? 0) : 0;
             $idUOMPanjangValue = $idUOMPanjangCol !== null ? (int) ($row[$idUOMPanjangCol] ?? 0) : 0;
-
             $tebalValue = $tebalCol !== null ? $toFloat($row[$tebalCol] ?? null) : null;
             $lebarValue = $lebarCol !== null ? $toFloat($row[$lebarCol] ?? null) : null;
             $panjangValue = $panjangCol !== null ? $toFloat($row[$panjangCol] ?? null) : null;
@@ -317,6 +386,7 @@
                 if ($idUOMTblLebarValue === 3 && $idUOMPanjangValue === 4) {
                     return $truncate4(($tebalValue * $lebarValue * $panjangValue * $pcsValue) / 7200.8);
                 }
+
                 if ($idUOMTblLebarValue === 1 && $idUOMPanjangValue === 4) {
                     return $truncate4(
                         ($tebalValue * $lebarValue * $panjangValue * 304.8 * $pcsValue) / 1000000000 / 1.416,
@@ -327,223 +397,352 @@
             return $truncate4($beratValue);
         };
 
-        $totalBatang = 0.0;
+        $formatOperatorText = static function ($value): string {
+            $text = trim((string) $value);
+            if ($text === '') {
+                return '-';
+            }
+
+            return preg_replace('/\s*\(\s*/', ' (', $text) ?? $text;
+        };
+
+        $normalizeSummaryKey = static function (string $value): string {
+            $normalized = strtoupper(trim($value));
+            $normalized = str_replace(['.', '-', '_'], ' ', $normalized);
+            $normalized = preg_replace('/\s+/', ' ', $normalized) ?? $normalized;
+
+            return match ($normalized) {
+                'STD' => 'STD',
+                'MC 1', 'MC1' => 'MC 1',
+                'MC 2', 'MC2' => 'MC 2',
+                'MC' => 'MC',
+                'LOKAL STD', 'L STD', 'LSTD' => 'LOKAL STD',
+                'LOKAL MC', 'L MC', 'LMC' => 'LOKAL MC',
+                default => $normalized !== '' ? $normalized : '-',
+            };
+        };
+
+        $summaryOrder = ['STD', 'MC 1', 'MC 2', 'MC', 'LOKAL STD', 'LOKAL MC'];
         $summaryByKet = [];
+        foreach ($summaryOrder as $summaryKey) {
+            $summaryByKet[$summaryKey] = ['pcs' => 0.0, 'ton' => 0.0];
+        }
+
+        $preparedRows = [];
+        $totalBatang = 0.0;
         $totalTon = 0.0;
-        foreach ($rowsData as $row) {
+
+        foreach ($rowsData as $index => $row) {
             $pcs = $jmlhBatangCol !== null ? $toFloat($row[$jmlhBatangCol] ?? null) ?? 0.0 : 0.0;
             $ton = $computeBeratRow($row);
-            $ket = trim((string) ($ketCol !== null ? $row[$ketCol] ?? '' : ''));
-            $ket = $ket !== '' ? $ket : '-';
-
-            $totalBatang += $pcs;
-            $totalTon += $ton;
+            $ket = $normalizeSummaryKey((string) ($ketCol !== null ? $row[$ketCol] ?? '' : ''));
+            $rowNo =
+                $noCol !== null && isset($row[$noCol]) && trim((string) $row[$noCol]) !== ''
+                    ? (string) $row[$noCol]
+                    : (string) ($index + 1);
+            $tebalText =
+                $tebalCol !== null ? number_format((float) ($toFloat($row[$tebalCol] ?? null) ?? 0), 0, '.', '') : '';
+            $lebarText =
+                $lebarCol !== null ? number_format((float) ($toFloat($row[$lebarCol] ?? null) ?? 0), 0, '.', '') : '';
+            $panjangValue = $panjangCol !== null ? $toFloat($row[$panjangCol] ?? null) : null;
+            $panjangText = $panjangValue !== null ? number_format($panjangValue, 1, '.', '') : '';
+            $pcsText = number_format($pcs, 0, '.', '');
+            $beratText = $formatNumber($ton);
 
             if (!isset($summaryByKet[$ket])) {
                 $summaryByKet[$ket] = ['pcs' => 0.0, 'ton' => 0.0];
             }
+
             $summaryByKet[$ket]['pcs'] += $pcs;
             $summaryByKet[$ket]['ton'] += $ton;
+            $totalBatang += $pcs;
+            $totalTon += $ton;
+
+            $preparedRows[] = [
+                'no' => $rowNo,
+                'tebal' => $tebalText,
+                'lebar' => $lebarText,
+                'uom_size' => 'mm',
+                'panjang' => $panjangText,
+                'uom_length' => 'feet',
+                'pcs' => $pcsText,
+                'berat' => $beratText,
+                'ket' => $ket,
+            ];
         }
-        ksort($summaryByKet);
+
+        $leftRows = [];
+        $rightRows = [];
+        foreach ($preparedRows as $index => $row) {
+            if ($index % 2 === 0) {
+                $leftRows[] = $row;
+            } else {
+                $rightRows[] = $row;
+            }
+        }
+
+        $summaryColumns = [['STD', 'MC 1', 'MC 2'], ['MC', 'LOKAL STD', 'LOKAL MC']];
+        $hasSummaryValue = static fn(array $summary): bool => $summary['pcs'] > 0 || $summary['ton'] > 0;
     @endphp
 
-    <h1 class="report-title">Laporan Lembaran Perhitungan Upah Borongan Sawmill</h1>
-    <p class="report-subtitle">Nomor Lembaran : {{ $noProduksi }}</p>
+    <h1 class="report-title">Lembaran Perhitungan Upah Borongan Sawmill</h1>
 
-    <table class="meta-table">
+    <table class="meta-layout">
         <tbody>
             <tr>
-                <td class="meta-label">Nomor Lembaran</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">
-                    {{ (string) ($noSTSawmillCol !== null ? $headRow[$noSTSawmillCol] ?? $noProduksi : $noProduksi) }}
+                <td style="width: 50%; padding-right: 16px;">
+                    <table class="meta-block">
+                        <tbody>
+                            <tr>
+                                <td class="meta-label">Nomor Lembaran</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($noSTSawmillCol !== null ? $headRow[$noSTSawmillCol] ?? $noProduksi : $noProduksi) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">Tanggal</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ $formatDate($tglSawmillCol !== null ? $headRow[$tglSawmillCol] ?? null : null) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">Supplier</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($supplierCol !== null ? $headRow[$supplierCol] ?? '-' : '-') }}</td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">No.Kayu Bulat</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($noKayuBulatCol !== null ? $headRow[$noKayuBulatCol] ?? '-' : '-') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">No. Suket</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($suketCol !== null ? $headRow[$suketCol] ?? '-' : '-') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </td>
-                <td class="meta-label">No. Meja</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($noMejaCol !== null ? $headRow[$noMejaCol] ?? '-' : '-') }}</td>
-                <td class="meta-label">Status</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($statusCol !== null ? $headRow[$statusCol] ?? '-' : '-') }}</td>
-            </tr>
-            <tr>
-                <td class="meta-label">Tanggal</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">
-                    {{ $formatDate($tglSawmillCol !== null ? $headRow[$tglSawmillCol] ?? null : null) }}</td>
-                <td class="meta-label">No. Plat</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($noPlatCol !== null ? $headRow[$noPlatCol] ?? '-' : '-') }}</td>
-                <td class="meta-label">Berat (Tim)</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">
-                    {{ number_format((float) ($toFloat($beratTimCol !== null ? $headRow[$beratTimCol] ?? null : null) ?? 0), 2, '.', ',') }}
+                <td style="width: 50%; padding-left: 12px;">
+                    <table class="meta-block">
+                        <tbody>
+                            <tr>
+                                <td class="meta-label">No. Meja</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($noMejaCol !== null ? $headRow[$noMejaCol] ?? '-' : '-') }}</td>
+                                <td class="meta-label" style="padding-left: 18px;">Status</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($statusCol !== null ? $headRow[$statusCol] ?? '-' : '-') }}</td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">No.Plat</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($noPlatCol !== null ? $headRow[$noPlatCol] ?? '-' : '-') }}</td>
+                                <td class="meta-label" style="padding-left: 18px;">Berat (Tim)</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ number_format((float) ($toFloat($headRow[$beratTimCol] ?? null) ?? 0), 2, '.', ',') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">Jenis Kayu</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value">
+                                    {{ (string) ($jenisCol !== null ? $headRow[$jenisCol] ?? '-' : '-') }}</td>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">Operator</td>
+                                <td class="meta-separator">:</td>
+                                <td class="meta-value" colspan="4">
+                                    {{ $formatOperatorText($operatorCol !== null ? $headRow[$operatorCol] ?? '-' : '-') }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </td>
-            </tr>
-            <tr>
-                <td class="meta-label">Supplier</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($supplierCol !== null ? $headRow[$supplierCol] ?? '-' : '-') }}
-                </td>
-                <td class="meta-label">Jenis Kayu</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($jenisCol !== null ? $headRow[$jenisCol] ?? '-' : '-') }}</td>
-                <td class="meta-label"></td>
-                <td class="meta-sep"></td>
-                <td class="meta-value"></td>
-            </tr>
-            <tr>
-                <td class="meta-label">No.Kayu Bulat</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">
-                    {{ (string) ($noKayuBulatCol !== null ? $headRow[$noKayuBulatCol] ?? '-' : '-') }}</td>
-                <td class="meta-label">Operator</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($operatorCol !== null ? $headRow[$operatorCol] ?? '-' : '-') }}
-                </td>
-                <td class="meta-label"></td>
-                <td class="meta-sep"></td>
-                <td class="meta-value"></td>
-            </tr>
-            <tr>
-                <td class="meta-label">No. Suket</td>
-                <td class="meta-sep">:</td>
-                <td class="meta-value">{{ (string) ($suketCol !== null ? $headRow[$suketCol] ?? '-' : '-') }}</td>
-                <td class="meta-label"></td>
-                <td class="meta-sep"></td>
-                <td class="meta-value"></td>
-                <td class="meta-label"></td>
-                <td class="meta-sep"></td>
-                <td class="meta-value"></td>
             </tr>
         </tbody>
     </table>
 
-    <table class="zebra-table">
-        <thead>
-            <tr class="headers-row">
-                <th style="width: 34px;">No</th>
-                @foreach ($tableColumns as $column)
-                    @php
-                        $headerLabel = (string) $column;
-                        if ($column === $tebalCol) {
-                            $headerLabel = 'Tebal (mm)';
-                        } elseif ($column === $lebarCol) {
-                            $headerLabel = 'Lebar (mm)';
-                        } elseif ($column === $panjangCol) {
-                            $headerLabel = 'Panjang (ft)';
-                        } elseif ($column === $beratCol) {
-                            $headerLabel = 'Berat (Ton)';
-                        } elseif ($column === $ketCol) {
-                            $headerLabel = 'Keterangan';
-                        } elseif ($column === $jmlhBatangCol) {
-                            $headerLabel = 'Jumlah Batang (Pcs)';
-                        }
-                    @endphp
-                    <th>{{ $headerLabel }}</th>
-                @endforeach
-            </tr>
-        </thead>
+    <table class="split-layout">
         <tbody>
-            @forelse ($rowsData as $row)
-                <tr>
-                    <td class="center">{{ $loop->iteration }}</td>
-                    @foreach ($tableColumns as $column)
-                        @php $value = $row[$column] ?? null; @endphp
-                        @if ($column === $jmlhBatangCol)
-                            <td class="number" style="text-align: center">
-                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', ',') }}
-                            </td>
-                        @elseif ($column === $beratCol)
-                            <td class="number" style="text-align: center">
-                                {{ number_format($computeBeratRow($row), 4, '.', ',') }}
-                            </td>
-                        @elseif ($column === $panjangCol)
-                            <td class="number" style="text-align: center">
-                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', ',') }}
-                            </td>
-                        @elseif (in_array($column, [$tebalCol, $lebarCol], true))
-                            <td class="number" style="text-align: center">
-                                {{ number_format((float) ($toFloat($value) ?? 0), 0, '.', ',') }}
-                            </td>
-                        @else
-                            <td style="text-align: center">{{ (string) $value }}</td>
-                        @endif
-                    @endforeach
-                </tr>
-            @empty
-                <tr>
-                    <td class="center" colspan="{{ count($tableColumns) + 1 }}">Tidak ada data.</td>
-                </tr>
-            @endforelse
-            {{-- @if ($rowsData !== [] && $jmlhBatangCol !== null)
-                <tr class="total-row totals-row">
-                    <td class="number" colspan="{{ count($tableColumns) }}"
-                        style="text-align: center; font-weight: bold;">Total Jumlah Batang</td>
-                    <td class="number"><strong>{{ number_format($totalBatang, 0, '.', ',') }} Pcs</strong></td>
-                </tr>
-            @endif --}}
+            <tr>
+                <td style="width: 49%;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 7%;">No</th>
+                                <th style="width: 10%;">Tebal</th>
+                                <th style="width: 10%;">Lebar</th>
+                                <th style="width: 8%;">@</th>
+                                <th style="width: 10%;">Pjg</th>
+                                <th style="width: 10%;">@</th>
+                                <th style="width: 11%;">Pcs</th>
+                                <th style="width: 16%;">Berat</th>
+                                <th style="width: 18%;">Ket</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($leftRows as $row)
+                                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['tebal'] }}</td>
+                                    <td>{{ $row['lebar'] }}</td>
+                                    <td>{{ $row['uom_size'] }}</td>
+                                    <td class="number">{{ $row['panjang'] }}</td>
+                                    <td>{{ $row['uom_length'] }}</td>
+                                    <td class="number">{{ $row['pcs'] }}</td>
+                                    <td class="number emphasis">{{ $row['berat'] }}</td>
+                                    <td>{{ $row['ket'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </td>
+                <td class="split-gap"></td>
+                <td style="width: 49%;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 7%;">No</th>
+                                <th style="width: 10%;">Tebal</th>
+                                <th style="width: 10%;">Lebar</th>
+                                <th style="width: 8%;">@</th>
+                                <th style="width: 10%;">Pjg</th>
+                                <th style="width: 10%;">@</th>
+                                <th style="width: 11%;">Pcs</th>
+                                <th style="width: 16%;">Berat</th>
+                                <th style="width: 18%;">Ket</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($rightRows as $row)
+                                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $row['tebal'] }}</td>
+                                    <td>{{ $row['lebar'] }}</td>
+                                    <td>{{ $row['uom_size'] }}</td>
+                                    <td class="number">{{ $row['panjang'] }}</td>
+                                    <td>{{ $row['uom_length'] }}</td>
+                                    <td class="number">{{ $row['pcs'] }}</td>
+                                    <td class="number emphasis">{{ $row['berat'] }}</td>
+                                    <td>{{ $row['ket'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
         </tbody>
     </table>
 
-    <p style="margin-top: 20px; font-weight: bold; font-size: 10px">Keterangan :</p>
-    @if ($summaryByKet !== [])
-        <table class="summary-table zebra-table">
-            <thead>
-                <tr class="headers-row">
-                    <th>#</th>
-                    <th>Jumlah Batang (Pcs)</th>
-                    <th>Berat (Ton)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($summaryByKet as $ketName => $summary)
-                    <tr>
-                        <td style="text-align: center">{{ $ketName }}</td>
-                        <td class="number" style="text-align: center">{{ number_format($summary['pcs'], 0, '.', ',') }}
-                        </td>
-                        <td class="number" style="text-align: center">{{ number_format($summary['ton'], 4, '.', ',') }}
-                        </td>
-                    </tr>
+    <table class="summary-layout">
+        <tbody>
+            <tr>
+                @foreach ($summaryColumns as $columnIndex => $summaryKeys)
+                    <td style="width: 50%;"
+                        class="{{ $columnIndex === 0 ? 'summary-column-left' : 'summary-column-right' }}">
+                        @foreach ($summaryKeys as $summaryKey)
+                            @if ($hasSummaryValue($summaryByKet[$summaryKey] ?? ['pcs' => 0, 'ton' => 0]))
+                                <table
+                                    class="summary-block {{ $columnIndex === 0 ? 'summary-block-left' : 'summary-block-right' }}"
+                                    style="margin-bottom: 4px;">
+                                    <tbody>
+                                        <tr>
+                                            <td class="summary-title" colspan="3">//{{ $summaryKey }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="summary-label">JmlhPcs</td>
+                                            <td class="summary-separator">:</td>
+                                            <td class="summary-value">
+                                                {{ number_format($summaryByKet[$summaryKey]['pcs'] ?? 0, 0, '.', '') }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="summary-label">Jmlh Ton</td>
+                                            <td class="summary-separator">:</td>
+                                            <td class="summary-value">
+                                                {{ $formatSummaryNumber($summaryByKet[$summaryKey]['ton'] ?? 0) }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            @endif
+                        @endforeach
+                    </td>
                 @endforeach
-                <tr class="total-row totals-row">
-                    <td style="text-align: center; font-weight: bold;">Total</td>
-                    <td class="number" style="text-align: center; font-weight: bold;">
-                        {{ number_format($totalBatang, 0, '.', ',') }} Pcs</td>
-                    <td class="number" style="text-align: center; font-weight: bold;">
-                        {{ number_format($totalTon, 4, '.', ',') }} Ton</td>
-                </tr>
-            </tbody>
-        </table>
-    @endif
+            </tr>
+            <tr>
+                <td></td>
+                <td class="summary-column-right">
+                    <table class="summary-total-wrap">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table class="summary-block summary-total-block">
+                                        <tbody>
+                                            <tr>
+                                                <td class="summary-label">Jmlh Pcs</td>
+                                                <td class="summary-separator">:</td>
+                                                <td class="summary-value">
+                                                    {{ number_format($totalBatang, 0, '.', '') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="summary-label">Jmlh Ton</td>
+                                                <td class="summary-separator">:</td>
+                                                <td class="summary-value">{{ $formatSummaryNumber($totalTon) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
     <table class="signatures">
         <tbody>
             <tr>
-                <td class="sign-title">Dibuat Oleh:</td>
-                <td class="sign-title">Diperiksa Oleh:</td>
-                <td class="sign-title">Operator:</td>
+                <td>Dibuat Oleh :</td>
+                <td>Diperiksa Oleh :</td>
+                <td>Operator :</td>
             </tr>
-            <tr class="sign-space">
+            <tr class="signature-space">
                 <td></td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td class="sign-role"><span class="sign-role-line">Tally Sawmill</span></td>
-                <td class="sign-role"><span class="sign-role-line">Ka.Bag. Sawmill</span></td>
-                <td class="sign-role"><span class="sign-role-line">Tukang Sorong</span></td>
+                <td>
+                    <span class="signature-line"></span>
+                    <span class="signature-role">TallySawmill</span>
+                </td>
+                <td>
+                    <span class="signature-line"></span>
+                    <span class="signature-role">Ka.Bag. Sawmill</span>
+                </td>
+                <td>
+                    <span class="signature-line"></span>
+                    <span class="signature-role">Tukang Sorong</span>
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

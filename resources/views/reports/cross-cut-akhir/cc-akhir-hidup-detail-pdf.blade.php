@@ -39,7 +39,6 @@
             border-top: 1px solid #000;
             border-left: 1px solid #000;
             border-right: 1px solid #000;
-            border-bottom: 0;
             table-layout: fixed;
         }
 
@@ -104,11 +103,11 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
-            background: #fff;
+            border-bottom: 1px solid #000;
         }
 
         .table-end-line td {
-            border-top: 1px solid #000 !important;
+            border-top: 0 !important;
             border-right: 0 !important;
             border-bottom: 0 !important;
             border-left: 0 !important;
@@ -117,8 +116,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -130,7 +127,7 @@
 
         $fmtDate = static fn(?string $v): string => $v === null || trim($v) === ''
             ? ''
-            : \Carbon\Carbon::parse($v)->format('d-M-y');
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtInt = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((int) $v, 0, '.', ',');
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
         $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');

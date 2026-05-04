@@ -114,8 +114,6 @@
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -135,14 +133,14 @@
             if (is_string($v)) {
                 $t = trim($v);
                 if ($t === '' || $t === '-') {
-                    return '';
+                    return '-';
                 }
                 $t = str_replace(',', '', $t);
                 $v = is_numeric($t) ? (float) $t : 0.0;
             }
             $n = (float) $v;
             if (!is_finite($n) || abs($n) < $eps) {
-                return '';
+                return '-';
             }
             return number_format($n, 2, '.', '');
         };
@@ -162,11 +160,6 @@
                 <th style="width: 12%;">Ketahanan</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $i = 0; @endphp
             @forelse ($rows as $r)
@@ -174,10 +167,10 @@
                 <tr class="{{ $i % 2 === 1 ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $i }}</td>
                     <td>{{ (string) ($r['Jenis'] ?? '') }}</td>
-                    <td class="number">{{ $fmt2OrBlank($r['Stock'] ?? null) }}</td>
-                    <td class="number">{{ $fmt2OrBlank($r['Penjualan'] ?? null) }}</td>
-                    <td class="number">{{ $fmt2OrBlank($r['AvgPenjualan'] ?? null) }}</td>
-                    <td class="number">{{ $fmt2OrBlank($r['Ketahanan'] ?? null) }}</td>
+                    <td class="center">{{ $fmt2OrBlank($r['Stock'] ?? null) }}</td>
+                    <td class="center">{{ $fmt2OrBlank($r['Penjualan'] ?? null) }}</td>
+                    <td class="center">{{ $fmt2OrBlank($r['AvgPenjualan'] ?? null) }}</td>
+                    <td class="center">{{ $fmt2OrBlank($r['Ketahanan'] ?? null) }}</td>
                 </tr>
             @empty
                 <tr>

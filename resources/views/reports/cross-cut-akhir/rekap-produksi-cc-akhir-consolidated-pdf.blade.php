@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -130,8 +131,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -153,6 +152,34 @@
         $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
             ? ''
             : number_format($v, 1, '.', '');
+
+        $grandTotals = [
+            'BJ' => 0.0,
+            'FJ' => 0.0,
+            'Laminating' => 0.0,
+            'Moulding' => 0.0,
+            'Reproses' => 0.0,
+            'Wip' => 0.0,
+            'TotalInput' => 0.0,
+            'OutputCCAkhir' => 0.0,
+            'Jam' => 0.0,
+            'Org' => 0.0,
+            'M3Jam' => 0.0,
+            'M3JamOrg' => 0.0,
+        ];
+
+        foreach ($machines as $machine) {
+            $machineTotals = is_array($machine['totals'] ?? null) ? $machine['totals'] : [];
+
+            foreach (array_keys($grandTotals) as $key) {
+                $grandTotals[$key] += (float) ($machineTotals[$key] ?? 0.0);
+            }
+        }
+
+        $grandRend =
+            abs($grandTotals['TotalInput']) > $eps
+                ? ($grandTotals['OutputCCAkhir'] / $grandTotals['TotalInput']) * 100.0
+                : 0.0;
     @endphp
 
     <h1 class="report-title">Laporan Rekap Produksi CCAkhir Consolidated</h1>
@@ -185,7 +212,7 @@
                 <tr>
                     <th style="width: 42px;">BJ</th>
                     <th style="width: 42px;">FJ</th>
-                    <th style="width: 58px;">Lmnatng</th>
+                    <th style="width: 58px;">Laminating</th>
                     <th style="width: 56px;">Moulding</th>
                     <th style="width: 56px;">Reproses</th>
                     <th style="width: 42px;">WIP</th>
@@ -286,6 +313,31 @@
             </tbody>
         </table>
     @endforeach
+
+    @if ($machines !== [])
+        <table style="margin-top: 8px;">
+            <tbody>
+                <tr class="totals-row">
+                    <td colspan="2" class="center" style="width: 104px;">
+                        <strong>Grand Total</strong>
+                    </td>
+                    <td class="number" style="width: 42px;">{{ $fmtBlank($grandTotals['BJ']) }}</td>
+                    <td class="number" style="width: 42px;">{{ $fmtBlank($grandTotals['FJ']) }}</td>
+                    <td class="number" style="width: 58px;">{{ $fmtBlank($grandTotals['Laminating']) }}</td>
+                    <td class="number" style="width: 56px;">{{ $fmtBlank($grandTotals['Moulding']) }}</td>
+                    <td class="number" style="width: 56px;">{{ $fmtBlank($grandTotals['Reproses']) }}</td>
+                    <td class="number" style="width: 42px;">{{ $fmtBlank($grandTotals['Wip']) }}</td>
+                    <td class="number" style="width: 54px;">{{ $fmtBlank($grandTotals['TotalInput']) }}</td>
+                    <td class="number" style="width: 70px;">{{ $fmtBlank($grandTotals['OutputCCAkhir']) }}</td>
+                    <td class="center" style="width: 34px;">{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</td>
+                    <td class="center" style="width: 34px;">{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</td>
+                    <td class="number" style="width: 52px;">{{ $fmtRatioBlank($grandTotals['M3Jam']) }}</td>
+                    <td class="number" style="width: 58px;">{{ $fmtRatioBlank($grandTotals['M3JamOrg']) }}</td>
+                    <td class="number" style="width: 48px;">{{ $fmtPercentBlank($grandRend) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
 
     @include('reports.partials.pdf-footer-table')
 </body>

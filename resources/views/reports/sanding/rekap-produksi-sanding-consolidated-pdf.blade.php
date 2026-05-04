@@ -49,10 +49,7 @@
             width: 100%;
             border-collapse: collapse;
             page-break-inside: auto;
-            border-top: 1px solid #000;
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
+            border: 1px solid #000;
             table-layout: fixed;
         }
 
@@ -121,7 +118,7 @@
         }
 
         .table-end-line td {
-            border-top: 1px solid #000 !important;
+            border-top: 0 !important;
             border-right: 0 !important;
             border-bottom: 0 !important;
             border-left: 0 !important;
@@ -130,8 +127,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -191,11 +186,6 @@
                     <th style="width: 42px;">WIP</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="15"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $row)

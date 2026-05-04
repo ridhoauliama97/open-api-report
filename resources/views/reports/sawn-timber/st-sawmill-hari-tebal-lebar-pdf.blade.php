@@ -203,8 +203,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -285,9 +283,9 @@
             <table style="margin-bottom: 12px;">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 140px;">Group</th>
-                        <th rowspan="2" style="width: 44px;">Tebal</th>
-                        <th rowspan="2" style="width: 44px;">Lebar</th>
+                        <th rowspan="2" style="width: 100px;">Group</th>
+                        <th rowspan="2" style="width: 40px;">Tebal</th>
+                        <th rowspan="2" style="width: 40px;">Lebar</th>
                         <th colspan="{{ count($allDates) + 1 }}">Tanggal</th>
                     </tr>
                     <tr>
@@ -393,6 +391,7 @@
             <div class="center">Tidak ada data.</div>
         @endif
 
+        <div class="page-break"></div>
         @if ($isGroupBlocks !== [])
             @if ($rangkumanItems !== [])
                 <div class="section-title">Rangkuman Grand Total</div>

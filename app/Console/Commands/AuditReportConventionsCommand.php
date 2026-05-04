@@ -79,13 +79,17 @@ class AuditReportConventionsCommand extends Command
                 continue;
             }
 
-            if ($relativePath !== 'app/Http/Requests/BaseReportRequest.php'
-                && preg_match('/extends\s+FormRequest\b/', $contents) === 1) {
+            if (
+                $relativePath !== 'app/Http/Requests/BaseReportRequest.php'
+                && preg_match('/extends\s+FormRequest\b/', $contents) === 1
+            ) {
                 $issues[] = $relativePath . ' masih extend FormRequest langsung.';
             }
 
-            if ($relativePath !== 'app/Http/Requests/BaseReportRequest.php'
-                && preg_match('/function\s+failedValidation\s*\(/', $contents) === 1) {
+            if (
+                $relativePath !== 'app/Http/Requests/BaseReportRequest.php'
+                && preg_match('/function\s+failedValidation\s*\(/', $contents) === 1
+            ) {
                 $issues[] = $relativePath . ' mengoverride failedValidation().';
             }
         }
@@ -137,7 +141,7 @@ class AuditReportConventionsCommand extends Command
         /** @var Route $route */
         foreach ($router->getRoutes() as $route) {
             $uri = (string) $route->uri();
-            if (! str_starts_with($uri, 'api/reports/')) {
+            if (!str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
 
@@ -145,7 +149,7 @@ class AuditReportConventionsCommand extends Command
             $hasReportMiddleware = in_array('report.jwt.claims', $middleware, true)
                 || in_array(\App\Http\Middleware\AuthenticateReportJwtClaims::class, $middleware, true);
 
-            if (! $hasReportMiddleware) {
+            if (!$hasReportMiddleware) {
                 $issues[] = '/' . $uri . ' tidak memakai middleware report.jwt.claims.';
             }
         }
@@ -166,7 +170,7 @@ class AuditReportConventionsCommand extends Command
         /** @var Route $route */
         foreach ($router->getRoutes() as $route) {
             $uri = (string) $route->uri();
-            if (! str_starts_with($uri, 'api/reports/')) {
+            if (!str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
             if (str_starts_with($uri, 'api/reports/jobs/')) {
@@ -177,12 +181,12 @@ class AuditReportConventionsCommand extends Command
             }
 
             $action = $route->getActionName();
-            if (! is_string($action) || ! str_contains($action, '@')) {
+            if (!is_string($action) || !str_contains($action, '@')) {
                 continue;
             }
 
             [$controllerClass] = explode('@', $action, 2);
-            if (! is_string($controllerClass) || ! class_exists($controllerClass)) {
+            if (!is_string($controllerClass) || !class_exists($controllerClass)) {
                 continue;
             }
 
@@ -192,7 +196,7 @@ class AuditReportConventionsCommand extends Command
         foreach (array_keys($controllers) as $controllerClass) {
             $reflection = new \ReflectionClass($controllerClass);
             $fileName = $reflection->getFileName();
-            if (! is_string($fileName) || ! is_file($fileName)) {
+            if (!is_string($fileName) || !is_file($fileName)) {
                 $issues[] = $controllerClass . ' tidak memiliki file controller yang bisa diaudit.';
 
                 continue;
@@ -206,16 +210,16 @@ class AuditReportConventionsCommand extends Command
             }
 
             foreach (['preview', 'download', 'health'] as $requiredMethod) {
-                if (! $reflection->hasMethod($requiredMethod)) {
+                if (!$reflection->hasMethod($requiredMethod)) {
                     $issues[] = $reflection->getShortName() . " tidak memiliki method {$requiredMethod}().";
                 }
             }
 
-            if ($reflection->hasMethod('download') && ! str_contains($contents, 'PdfGenerator $pdfGenerator')) {
+            if ($reflection->hasMethod('download') && !str_contains($contents, 'PdfGenerator $pdfGenerator')) {
                 $issues[] = $reflection->getShortName() . ' download() tidak menginjeksi PdfGenerator.';
             }
 
-            if (str_contains($contents, 'function download(') && ! str_contains($contents, "'Content-Type' => 'application/pdf'")) {
+            if (str_contains($contents, 'function download(') && !str_contains($contents, "'Content-Type' => 'application/pdf'")) {
                 $issues[] = $reflection->getShortName() . " download() tidak menetapkan header application/pdf.";
             }
         }
@@ -230,7 +234,7 @@ class AuditReportConventionsCommand extends Command
      */
     private function phpFilesIn(string $root): array
     {
-        if (! is_dir($root)) {
+        if (!is_dir($root)) {
             return [];
         }
 
@@ -240,7 +244,7 @@ class AuditReportConventionsCommand extends Command
         );
 
         foreach ($iterator as $file) {
-            if (! $file->isFile() || $file->getExtension() !== 'php') {
+            if (!$file->isFile() || $file->getExtension() !== 'php') {
                 continue;
             }
 

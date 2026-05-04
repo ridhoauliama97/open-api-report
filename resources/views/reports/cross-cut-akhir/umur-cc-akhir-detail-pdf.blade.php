@@ -111,6 +111,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -124,8 +125,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -158,15 +157,15 @@
     <table>
         <thead>
             <tr>
-                <th style="width: 34px;">No</th>
-                <th style="width: 150px;">Jenis</th>
-                <th style="width: 44px;">Tebal</th>
-                <th style="width: 44px;">Lebar</th>
-                <th style="width: 56px;">Panjang</th>
+                <th style="width: 4%;">No</th>
+                <th style="width: 20%;">Jenis</th>
+                <th style="width: 8%;">Tebal</th>
+                <th style="width: 8%;">Lebar</th>
+                <th style="width: 8%;">Panjang</th>
                 @foreach ($ageLabels as $label)
-                    <th>{{ $label }}</th>
+                    <th style="width: 10%">{{ $label }}</th>
                 @endforeach
-                <th style="width: 72px;">Total</th>
+                <th style="width: 10%;">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -185,7 +184,7 @@
                     @foreach ($ageKeys as $key)
                         <td class="number">{{ $fmt($row[$key] ?? null) }}</td>
                     @endforeach
-                    <td class="number">{{ $fmt($row['Total'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmt($row['Total'] ?? null) }}</td>
                 </tr>
             @empty
                 <tr>

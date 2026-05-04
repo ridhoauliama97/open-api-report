@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
 use App\Http\Controllers\Api\PdfJobController;
+use App\Http\Controllers\Ascends\Ru\Hrm\EmployeeListController;
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\BalokSudahSemprotController;
@@ -359,6 +360,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
      * @var array<int, array{0: string, 1: string, 2: class-string}>
      */
     $standaloneReportRouteDefinitions = [
+        ['/reports/ascends/ru/hrm/employee-list/list-karyawan', 'api.reports.ascends.ru.hrm.employee-list.list-karyawan', EmployeeListController::class],
         ['/reports/hasil-output-racip-harian', 'api.reports.hasil-output-racip-harian', HasilOutputRacipHarianController::class],
         ['/reports/stock-racip-kayu-lat', 'api.reports.stock-racip-kayu-lat', StockRacipKayuLatController::class],
         ['/reports/mutasi-racip-detail', 'api.reports.mutasi-racip-detail', MutasiRacipDetailController::class],
