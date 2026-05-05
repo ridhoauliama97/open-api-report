@@ -26,7 +26,7 @@
         }
 
         .report-title {
-            margin: 0 0 8px 0;
+            margin: 0 0 20px 0;
             text-align: center;
             font-size: 14px;
             font-weight: bold;
@@ -211,35 +211,38 @@
             width: 96px;
         }
 
-        .summary-total-wrap {
-            width: 100%;
-            margin-top: 0;
-        }
-
-        .summary-total-wrap td {
-            border: 0;
-            padding: 0;
-        }
-
-        .summary-total-block {
-            width: 220px;
-            margin-left: 18px;
-        }
-
         .signatures {
             width: 100%;
-            margin-top: 25px;
+            margin: 25px auto 0;
             table-layout: fixed;
             page-break-inside: avoid;
         }
 
         .signatures td {
-            width: 33.33%;
+            width: 25%;
             border: 0;
-            padding: 0 12px 0 0;
+            padding: 0 14px;
             vertical-align: top;
-            text-align: left;
+            text-align: center;
             font-size: 9px;
+        }
+
+        .signature-total-cell {
+            text-align: left !important;
+        }
+
+        .signature-total-block {
+            width: 180px;
+            margin-left: auto;
+            margin-right: 0;
+            table-layout: fixed;
+        }
+
+        .signature-total-block td {
+            border: 0;
+            padding: 0;
+            font-size: 9.5px;
+            vertical-align: top;
         }
 
         .signature-space td {
@@ -250,7 +253,7 @@
             display: block;
             width: 140px;
             border-top: 1px solid #000;
-            margin-bottom: 2px;
+            margin: 0 auto 2px;
         }
 
         .signature-role {
@@ -316,7 +319,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->format('d/m/Y');
+                return \Carbon\Carbon::parse((string) $value)->copy()->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -328,6 +331,15 @@
 
         $formatSummaryNumber = static function ($value, int $precision = 4): string {
             return rtrim(rtrim(number_format((float) $value, $precision, '.', ''), '0'), '.');
+        };
+
+        $formatOptionalSummaryNumber = static function ($value, int $precision = 4): string {
+            $number = (float) $value;
+            if (abs($number) < 0.0000001) {
+                return '';
+            }
+
+            return rtrim(rtrim(number_format($number, $precision, '.', ''), '0'), '.');
         };
 
         $truncate4 = static function (?float $value): float {
@@ -471,18 +483,12 @@
             ];
         }
 
-        $leftRows = [];
-        $rightRows = [];
-        foreach ($preparedRows as $index => $row) {
-            if ($index % 2 === 0) {
-                $leftRows[] = $row;
-            } else {
-                $rightRows[] = $row;
-            }
-        }
+        $totalPreparedRows = count($preparedRows);
+        $leftRowCount = (int) ceil($totalPreparedRows / 2);
+        $leftRows = array_slice($preparedRows, 0, $leftRowCount);
+        $rightRows = array_slice($preparedRows, $leftRowCount);
 
         $summaryColumns = [['STD', 'MC 1', 'MC 2'], ['MC', 'LOKAL STD', 'LOKAL MC']];
-        $hasSummaryValue = static fn(array $summary): bool => $summary['pcs'] > 0 || $summary['ton'] > 0;
     @endphp
 
     <h1 class="report-title">Lembaran Perhitungan Upah Borongan Sawmill</h1>
@@ -595,7 +601,7 @@
                         <tbody>
                             @foreach ($leftRows as $row)
                                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $row['tebal'] }}</td>
                                     <td>{{ $row['lebar'] }}</td>
                                     <td>{{ $row['uom_size'] }}</td>
@@ -628,7 +634,7 @@
                         <tbody>
                             @foreach ($rightRows as $row)
                                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                                    <td>{{ $row['no'] }}</td>
+                                    <td>{{ $leftRowCount + $loop->iteration }}</td>
                                     <td>{{ $row['tebal'] }}</td>
                                     <td>{{ $row['lebar'] }}</td>
                                     <td>{{ $row['uom_size'] }}</td>
@@ -653,62 +659,32 @@
                     <td style="width: 50%;"
                         class="{{ $columnIndex === 0 ? 'summary-column-left' : 'summary-column-right' }}">
                         @foreach ($summaryKeys as $summaryKey)
-                            @if ($hasSummaryValue($summaryByKet[$summaryKey] ?? ['pcs' => 0, 'ton' => 0]))
-                                <table
-                                    class="summary-block {{ $columnIndex === 0 ? 'summary-block-left' : 'summary-block-right' }}"
-                                    style="margin-bottom: 4px;">
-                                    <tbody>
-                                        <tr>
-                                            <td class="summary-title" colspan="3">//{{ $summaryKey }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="summary-label">JmlhPcs</td>
-                                            <td class="summary-separator">:</td>
-                                            <td class="summary-value">
-                                                {{ number_format($summaryByKet[$summaryKey]['pcs'] ?? 0, 0, '.', '') }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="summary-label">Jmlh Ton</td>
-                                            <td class="summary-separator">:</td>
-                                            <td class="summary-value">
-                                                {{ $formatSummaryNumber($summaryByKet[$summaryKey]['ton'] ?? 0) }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            @endif
+                            <table
+                                class="summary-block {{ $columnIndex === 0 ? 'summary-block-left' : 'summary-block-right' }}"
+                                style="margin-bottom: 4px;">
+                                <tbody>
+                                    <tr>
+                                        <td class="summary-title" colspan="3">//{{ $summaryKey }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="summary-label">JmlhPcs</td>
+                                        <td class="summary-separator">:</td>
+                                        <td class="summary-value">
+                                            {{ ($summaryByKet[$summaryKey]['pcs'] ?? 0) > 0 ? number_format($summaryByKet[$summaryKey]['pcs'] ?? 0, 0, '.', '') : '' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="summary-label">Jmlh Ton</td>
+                                        <td class="summary-separator">:</td>
+                                        <td class="summary-value">
+                                            {{ $formatOptionalSummaryNumber($summaryByKet[$summaryKey]['ton'] ?? 0) }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         @endforeach
                     </td>
                 @endforeach
-            </tr>
-            <tr>
-                <td></td>
-                <td class="summary-column-right">
-                    <table class="summary-total-wrap">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <table class="summary-block summary-total-block">
-                                        <tbody>
-                                            <tr>
-                                                <td class="summary-label">Jmlh Pcs</td>
-                                                <td class="summary-separator">:</td>
-                                                <td class="summary-value">
-                                                    {{ number_format($totalBatang, 0, '.', '') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="summary-label">Jmlh Ton</td>
-                                                <td class="summary-separator">:</td>
-                                                <td class="summary-value">{{ $formatSummaryNumber($totalTon) }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
             </tr>
         </tbody>
     </table>
@@ -719,8 +695,25 @@
                 <td>Dibuat Oleh :</td>
                 <td>Diperiksa Oleh :</td>
                 <td>Operator :</td>
+                <td class="signature-total-cell">
+                    <table class="signature-total-block">
+                        <tbody>
+                            <tr>
+                                <td class="summary-label">Jmlh Pcs</td>
+                                <td class="summary-separator">:</td>
+                                <td class="summary-value">{{ number_format($totalBatang, 0, '.', '') }}</td>
+                            </tr>
+                            <tr>
+                                <td class="summary-label">Jmlh Ton</td>
+                                <td class="summary-separator">:</td>
+                                <td class="summary-value">{{ $formatSummaryNumber($totalTon) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
             </tr>
             <tr class="signature-space">
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -738,6 +731,7 @@
                     <span class="signature-line"></span>
                     <span class="signature-role">Tukang Sorong</span>
                 </td>
+                <td></td>
             </tr>
         </tbody>
     </table>

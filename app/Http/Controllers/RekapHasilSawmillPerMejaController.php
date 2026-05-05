@@ -64,6 +64,9 @@ class RekapHasilSawmillPerMejaController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
+        $dateCount = is_array($reportData['date_keys'] ?? null) ? count($reportData['date_keys']) : 0;
+        $pdfFormat = $dateCount <= 15 ? 'A4' : 'A3';
+
         $pdf = $pdfGenerator->render('reports.sawn-timber.rekap-hasil-sawmill-per-meja-pdf', [
             'reportData' => $reportData,
             'startDate' => $startDate,
@@ -71,10 +74,10 @@ class RekapHasilSawmillPerMejaController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
+            'pdf_format' => $pdfFormat,
             // `rowspan/colspan` + border styling works reliably when disabling simpleTables
             // and packTableData (mPDF can throw on table border fixups otherwise).
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-Rekap-Hasil-Sawmill-Per-Meja-%s-sd-%s.pdf', $startDate, $endDate);

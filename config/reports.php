@@ -1153,6 +1153,17 @@ return [
         'parameter_count' => (int) env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_PARAMETER_COUNT', 1),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('LEMBAR_TALLY_HASIL_SAWMILL_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'detail_lembar_tally_hasil_sawmill' => [
+        'database_connection' => env('DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_PROCEDURE', 'SPWps_DetailLembarTallyHasilSawmill'),
+        'call_syntax' => env('DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_QUERY'),
+        'parameter_count' => (int) env('DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_EXPECTED_COLUMNS',
+            'NoSTSawmill,NoMeja,TglSawmill,NoPlat,NmSupplier,Jenis,NoKayuBulat,Operator,NoUrut,Tebal,Lebar,IdUOMTblLebar,Panjang,IdUOMPanjang,JmlhBatang,Ton'
+        )))),
+    ],
     'umur_sawn_timber_detail_ton' => [
         'database_connection' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PROCEDURE', 'SPWps_LapUmurST'),
@@ -1649,6 +1660,58 @@ return [
         'sub_query' => env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_SUB_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_REPORT_EXPECTED_COLUMNS', '')))),
         'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env('REKAP_RENDEMEN_RAMBUNG_PER_SUPPLIER_SUB_REPORT_EXPECTED_COLUMNS', '')))),
+    ],
+
+    // Laporan Kayu Bulat (Rambung) - Laporan Penerimaan Kayu Bulat (KG)
+    'penerimaan_kayu_bulat_kg' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_KG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_KG_REPORT_PROCEDURE', 'SP_PenKBInTon_KG'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_KG_REPORT_CALL_SYNTAX', 'exec'),
+        'parameter_count' => (int) env('PENERIMAAN_KAYU_BULAT_KG_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PENERIMAAN_KAYU_BULAT_KG_REPORT_SINGLE_PARAMETER_NAME', 'NoKayuBulat'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_KAYU_BULAT_KG_REPORT_EXPECTED_COLUMNS',
+            'NoKayuBulat,NoUrut,NamaGrade,JmlhBatang,Berat,Bruto,Tara'
+        )))),
+    ],
+
+    // Laporan Kayu Bulat (Rambung) - Laporan Penerimaan Kayu Bulat (ExtKG)
+    'penerimaan_kayu_bulat_extkg' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_EXTKG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_EXTKG_REPORT_PROCEDURE', 'SP_PenKBOutTon_KG'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_EXTKG_REPORT_CALL_SYNTAX', 'exec'),
+        'parameter_count' => (int) env('PENERIMAAN_KAYU_BULAT_EXTKG_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PENERIMAAN_KAYU_BULAT_EXTKG_REPORT_SINGLE_PARAMETER_NAME', 'NoKayuBulat'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_KAYU_BULAT_EXTKG_REPORT_EXPECTED_COLUMNS',
+            'NoKayuBulat,NoUrut,NamaGrade,JmlhBatang,Berat,Bruto,Tara'
+        )))),
+    ],
+
+    // Laporan Kayu Bulat - Laporan Penerimaan Kayu Bulat (Int Ton)
+    'penerimaan_kayu_bulat_int_ton' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_INT_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_INT_TON_REPORT_PROCEDURE', 'SP_PenKBInTon'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_INT_TON_REPORT_CALL_SYNTAX', 'exec'),
+        'parameter_count' => (int) env('PENERIMAAN_KAYU_BULAT_INT_TON_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PENERIMAAN_KAYU_BULAT_INT_TON_REPORT_SINGLE_PARAMETER_NAME', 'NoKayuBulat'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_KAYU_BULAT_INT_TON_REPORT_EXPECTED_COLUMNS',
+            'NoLog,Tebal,Lebar,Panjang,Ton,Ket'
+        )))),
+    ],
+
+    // Laporan Kayu Bulat - Laporan Penerimaan Kayu Bulat (Ext Ton)
+    'penerimaan_kayu_bulat_ext_ton' => [
+        'database_connection' => env('PENERIMAAN_KAYU_BULAT_EXT_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_KAYU_BULAT_EXT_TON_REPORT_PROCEDURE', 'SP_PenKBOutTon'),
+        'call_syntax' => env('PENERIMAAN_KAYU_BULAT_EXT_TON_REPORT_CALL_SYNTAX', 'exec'),
+        'parameter_count' => (int) env('PENERIMAAN_KAYU_BULAT_EXT_TON_REPORT_PARAMETER_COUNT', 1),
+        'single_parameter_name' => env('PENERIMAAN_KAYU_BULAT_EXT_TON_REPORT_SINGLE_PARAMETER_NAME', 'NoKayuBulat'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_KAYU_BULAT_EXT_TON_REPORT_EXPECTED_COLUMNS',
+            'NoLog,Tebal,Lebar,Panjang,Ton,Ket'
+        )))),
     ],
 
     // PPS

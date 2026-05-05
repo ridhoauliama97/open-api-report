@@ -12,8 +12,7 @@
 
     @page {
         margin:
-            {{ $pageMargin }}
-        ;
+            {{ $pageMargin }};
         footer: html_reportFooter;
     }
 
@@ -21,25 +20,26 @@
         margin: 0;
         font-family: "Noto Serif", serif;
         font-size:
-            {{ $bodyFontSize }}
-        ;
+            {{ $bodyFontSize }};
         line-height: 1.2;
         color: #000;
+    }
+
+    .page-break {
+        page-break-before: always;
     }
 
     .report-title {
         margin: 0;
         text-align: center;
         font-size:
-            {{ $titleFontSize }}
-        ;
+            {{ $titleFontSize }};
         font-weight: bold;
     }
 
     .report-subtitle {
         margin:
-            {{ $subtitleMargin }}
-        ;
+            {{ $subtitleMargin }};
         text-align: center;
         font-size: 12px;
         color: #636466;
@@ -63,8 +63,7 @@
         width: 100%;
         border-collapse: collapse;
         margin-bottom:
-            {{ $tableMarginBottom }}
-        ;
+            {{ $tableMarginBottom }};
         page-break-inside: auto;
         table-layout: fixed;
     }

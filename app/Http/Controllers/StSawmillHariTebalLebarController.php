@@ -64,6 +64,9 @@ class StSawmillHariTebalLebarController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
+        $dateCount = is_array($reportData['date_keys'] ?? null) ? count($reportData['date_keys']) : 0;
+        $pdfFormat = $dateCount <= 15 ? 'A4' : 'A3';
+
         $pdf = $pdfGenerator->render('reports.sawn-timber.st-sawmill-hari-tebal-lebar-pdf', [
             'reportData' => $reportData,
             'startDate' => $startDate,
@@ -71,9 +74,9 @@ class StSawmillHariTebalLebarController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
+            'pdf_format' => $pdfFormat,
             // Ensure mPDF respects the "vertical lines only" table styling.
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
         ]);
 
         $filename = sprintf('Laporan-ST-Sawmill-Hari-Tebal-Lebar-%s-sd-%s.pdf', $startDate, $endDate);

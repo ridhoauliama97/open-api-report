@@ -284,7 +284,7 @@
             if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $textValue) === 1) {
                 try {
                     if (str_contains($normalizedColumn, 'racip')) {
-                        return \Carbon\Carbon::parse($textValue)->format('d-M-y');
+                        return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
                     }
 
                     return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
@@ -473,8 +473,12 @@
                         $lamaAwalHari = $diffDays($dateCreateValue, $tanggalRacipValue);
                         $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hari' : '';
 
-                        if ($groupName === 'Masih Hidup' && $dateCreateValue !== null) {
-                            $lamaTungguHari = $diffDays($dateCreateValue, \Carbon\Carbon::today());
+                        if (
+                            $groupName === 'Masih Hidup' &&
+                            $tanggalLamaRacipValue !== null &&
+                            $dateCreateValue !== null
+                        ) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
                         } elseif ($dateUsageValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $dateUsageValue);
                         } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
@@ -488,10 +492,18 @@
                         }
                         $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
 
-                        $lamaRacipHari =
-                            $lamaTungguHari !== null && $lamaAwalHari !== null
-                                ? max(0, $lamaTungguHari - $lamaAwalHari)
-                                : null;
+                        if (
+                            $groupName === 'Masih Hidup' &&
+                            $tanggalLamaRacipValue !== null &&
+                            $tanggalRacipValue !== null
+                        ) {
+                            $lamaRacipHari = $diffDays($tanggalRacipValue, $tanggalLamaRacipValue);
+                        } else {
+                            $lamaRacipHari =
+                                $lamaTungguHari !== null && $lamaAwalHari !== null
+                                    ? max(0, $lamaTungguHari - $lamaAwalHari)
+                                    : null;
+                        }
                         $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

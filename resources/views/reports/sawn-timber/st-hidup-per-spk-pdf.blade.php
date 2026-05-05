@@ -9,7 +9,7 @@
         rel="stylesheet">
     @include('reports.partials.pdf-reference-style', [
         'pageMargin' => '18mm 10mm 18mm 10mm',
-        'subtitleMargin' => '2px 0 14px 0',
+        'subtitleMargin' => '2px 0 20px 0',
         'tableMarginBottom' => '6px',
     ])
 </head>
@@ -90,8 +90,8 @@
         unset($gs);
     @endphp
 
-    <h1 class="report-title">Laporan ST Hidup per SPK, per Jenis, per Tebal, per Group Jenis Kayu</h1>
-    <p class="report-subtitle"> Per {{ $generatedDate }} </p>
+    <h1 class="report-title">Laporan ST Hidup Per SPK, Per Jenis, Per Tebal, Per Group Jenis Kayu</h1>
+    <p class="report-subtitle"> </p>
 
     @forelse ($groups as $jenisGroup)
         @php
@@ -180,7 +180,8 @@
                             </tr>
                         @endforelse
                         <tr class="totals-row">
-                            <td class="center" colspan="4" style="border-top: 0 !important;">Sub Total {{ $noSpk }}</td>
+                            <td class="center" colspan="4" style="border-top: 0 !important;">Sub Total
+                                {{ $noSpk }}</td>
                             <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumBasah) }}</td>
                             <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumKd) }}</td>
                             <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumKering) }}</td>
@@ -232,6 +233,7 @@
         @endforelse
 
         @if (!empty($grandSummary))
+            <div class="page-break"></div>
             <div class="section-rangkuman-title" style="text-align: center; margin: 20px 0 0 0;">Rangkuman Grand Total</div>
 
             @foreach (array_values($grandSummary) as $idx => $gs)

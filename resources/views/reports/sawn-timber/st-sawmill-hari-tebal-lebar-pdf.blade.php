@@ -275,6 +275,7 @@
             @php
                 $isGroupNo = (int) ($ig['is_group'] ?? 0);
                 $groups = is_array($ig['groups'] ?? null) ? $ig['groups'] : [];
+                $isGroupTotals = is_array($ig['totals_by_date'] ?? null) ? $ig['totals_by_date'] : [];
                 $rowIndex = 0;
             @endphp
 
@@ -384,6 +385,24 @@
                                 <td colspan="{{ 4 + count($allDates) }}" class="center">Tidak ada data.</td>
                             </tr>
                         @endforelse
+
+                        @if ($groups !== [])
+                            @php
+                                $rowIndex++;
+                                $isGroupGrandTotal = $sumForDates($isGroupTotals, $allDates);
+                            @endphp
+                            <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                <td class="center" colspan="3" style="background: none; font-size: 11px;">Grand Total</td>
+                                @foreach ($allDates as $dk)
+                                    <td class="number" style="background: none; font-size: 11px;">
+                                        {{ $fmtTotal((float) ($isGroupTotals[$dk] ?? 0.0)) }}
+                                    </td>
+                                @endforeach
+                                <td class="number" style="background: none; font-size: 11px;">
+                                    {{ $fmtTotal($isGroupGrandTotal) }}
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             @endforeach

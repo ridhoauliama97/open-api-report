@@ -9,7 +9,7 @@
         rel="stylesheet">
     @include('reports.partials.pdf-reference-style', [
         'pageMargin' => '18mm 10mm 18mm 10mm',
-        'subtitleMargin' => '2px 0 14px 0',
+        'subtitleMargin' => '2px 0 20px 0',
         'tableMarginBottom' => '6px',
     ])
 </head>
@@ -63,7 +63,7 @@
 
             <div style="margin: 6px 0 2px 12px; font-weight: bold;">Produk : {{ $productName }}</div>
 
-            <table class="report-table" style="width: 92%; margin-left: 12px;">
+            <table class="report-table" style="width: 100%; margin-left: 12px;">
                 <thead>
                     <tr class="headers-row">
                         <th style="width: 34px;">No</th>
@@ -76,12 +76,7 @@
                         <th>Total (Ton)</th>
                     </tr>
                 </thead>
-                <tfoot>
-            <tr class="table-end-line">
-                <td colspan="8"></td>
-            </tr>
-        </tfoot>
-        <tbody>
+                <tbody>
                     @forelse ($rows as $ridx => $row)
                         @php
                             $no++;
@@ -107,26 +102,34 @@
                         </tr>
                     @endforelse
                     <tr class="totals-row">
-                        <td class="center" colspan="4">Jumlah :</td>
-                        <td class="number">{{ number_format((float) ($totals['basah'] ?? 0), 4, '.', ',') }}</td>
-                        <td class="number">{{ number_format((float) ($totals['kd'] ?? 0), 4, '.', ',') }}</td>
-                        <td class="number">{{ number_format((float) ($totals['kering'] ?? 0), 4, '.', ',') }}</td>
-                        <td class="number">{{ number_format((float) ($totals['total'] ?? 0), 4, '.', ',') }}</td>
+                        <td class="center" colspan="4" style="width: 40%">Jumlah :</td>
+                        <td class="number" style="width: 15%">
+                            {{ number_format((float) ($totals['basah'] ?? 0), 4, '.', ',') }}</td>
+                        <td class="number" style="width: 15%">
+                            {{ number_format((float) ($totals['kd'] ?? 0), 4, '.', ',') }}</td>
+                        <td class="number" style="width: 15%">
+                            {{ number_format((float) ($totals['kering'] ?? 0), 4, '.', ',') }}</td>
+                        <td class="number" style="width: 15%">
+                            {{ number_format((float) ($totals['total'] ?? 0), 4, '.', ',') }}</td>
                     </tr>
                 </tbody>
             </table>
         @endforeach
 
-        <table class="report-table" style="width: 92%; margin-left: 12px; margin-top: 2px;">
+        <table class="report-table" style="width: 100%; margin-top: 2px;">
             <tbody>
                 <tr class="totals-row">
-                    <td class="center" colspan="4" style="text-align: left;">
-                        Jumlah (Ton) Per-Jenis {{ $groupName }} :
+                    <td class="center" colspan="4" style="text-align: center; width: 40%;">
+                        Total {{ $groupName }} :
                     </td>
-                    <td class="number">{{ number_format((float) ($groupTotals['basah'] ?? 0), 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($groupTotals['kd'] ?? 0), 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($groupTotals['kering'] ?? 0), 4, '.', ',') }}</td>
-                    <td class="number">{{ number_format((float) ($groupTotals['total'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number" style="width: 15%">
+                        {{ number_format((float) ($groupTotals['basah'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number" style="width: 15%">
+                        {{ number_format((float) ($groupTotals['kd'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number" style="width: 15%">
+                        {{ number_format((float) ($groupTotals['kering'] ?? 0), 4, '.', ',') }}</td>
+                    <td class="number" style="width: 15%">
+                        {{ number_format((float) ($groupTotals['total'] ?? 0), 4, '.', ',') }}</td>
                 </tr>
             </tbody>
         </table>

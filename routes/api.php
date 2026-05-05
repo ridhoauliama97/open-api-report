@@ -20,6 +20,7 @@ use App\Http\Controllers\DashboardS4SController;
 use App\Http\Controllers\DashboardS4SV2Controller;
 use App\Http\Controllers\DashboardSandingController;
 use App\Http\Controllers\DashboardSawnTimberController;
+use App\Http\Controllers\DetailLembarTallyHasilSawmillController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
 use App\Http\Controllers\FingerJointHidupDetailController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
@@ -70,6 +71,10 @@ use App\Http\Controllers\PemakaianObatVacuumController;
 use App\Http\Controllers\PembelianStPerSupplierTonController;
 use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
+use App\Http\Controllers\PenerimaanKayuBulatExtKgController;
+use App\Http\Controllers\PenerimaanKayuBulatExtTonController;
+use App\Http\Controllers\PenerimaanKayuBulatKgController;
+use App\Http\Controllers\PenerimaanKayuBulatIntTonController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
@@ -294,6 +299,10 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik', 'api.reports.kayu-bulat.penerimaan-bulanan-per-supplier-grafik', PenerimaanKayuBulatPerSupplierBulananGrafikController::class],
         ['/reports/kayu-bulat/penerimaan-per-supplier-group', 'api.reports.kayu-bulat.penerimaan-per-supplier-group', PenerimaanKayuBulatPerSupplierGroupController::class],
         ['/reports/kayu-bulat/penerimaan-per-supplier-kg', 'api.reports.kayu-bulat.penerimaan-per-supplier-kg', PenerimaanKayuBulatPerSupplierKgController::class],
+        ['/reports/kayu-bulat/penerimaan-kayu-bulat-int-ton', 'api.reports.kayu-bulat.penerimaan-kayu-bulat-int-ton', PenerimaanKayuBulatIntTonController::class],
+        ['/reports/kayu-bulat/penerimaan-kayu-bulat-ext-ton', 'api.reports.kayu-bulat.penerimaan-kayu-bulat-ext-ton', PenerimaanKayuBulatExtTonController::class],
+        ['/reports/kayu-bulat/penerimaan-kayu-bulat-kg', 'api.reports.kayu-bulat.penerimaan-kayu-bulat-kg', PenerimaanKayuBulatKgController::class],
+        ['/reports/kayu-bulat/penerimaan-kayu-bulat-extkg', 'api.reports.kayu-bulat.penerimaan-kayu-bulat-extkg', PenerimaanKayuBulatExtKgController::class],
         ['/reports/kayu-bulat/saldo-hidup-kg', 'api.reports.kayu-bulat.saldo-hidup-kg', SaldoHidupKayuBulatKgController::class],
         ['/reports/kayu-bulat/rekap-pembelian-kg', 'api.reports.kayu-bulat.rekap-pembelian-kg', RekapPembelianKayuBulatKgController::class],
         ['/reports/kayu-bulat/rekap-pembelian', 'api.reports.kayu-bulat.rekap-pembelian', RekapPembelianKayuBulatController::class],
@@ -341,6 +350,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung', 'api.reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung', RekapPenerimaanSTDariSawmillNonRambungController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
+        ['/reports/sawn-timber/detail-lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.detail-lembar-tally-hasil-sawmill', DetailLembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan', RekapHasilSawmillPerMejaUpahBoronganController::class],
         ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja', RekapHasilSawmillPerMejaController::class],
         ['/reports/sawn-timber/rekap-produktivitas-sawmill', 'api.reports.sawn-timber.rekap-produktivitas-sawmill', RekapProduktivitasSawmillSawnTimberController::class],

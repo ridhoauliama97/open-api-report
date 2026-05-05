@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardS4SController;
 use App\Http\Controllers\DashboardS4SV2Controller;
 use App\Http\Controllers\DashboardSandingController;
 use App\Http\Controllers\DashboardSawnTimberController;
+use App\Http\Controllers\DetailLembarTallyHasilSawmillController;
 use App\Http\Controllers\DiscrepancyRekapMutasiController;
 use App\Http\Controllers\FingerJointHidupDetailController;
 use App\Http\Controllers\FlowProduksiPerPeriodeController;
@@ -67,6 +68,10 @@ use App\Http\Controllers\PemakaianObatVacuumController;
 use App\Http\Controllers\PembelianStPerSupplierTonController;
 use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
+use App\Http\Controllers\PenerimaanKayuBulatExtKgController;
+use App\Http\Controllers\PenerimaanKayuBulatExtTonController;
+use App\Http\Controllers\PenerimaanKayuBulatKgController;
+use App\Http\Controllers\PenerimaanKayuBulatIntTonController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
@@ -849,6 +854,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview', [LembarTallyHasilSawmillController::class, 'preview'])->name('preview');
     });
 
+    /** Detail lembar tally hasil sawmill routes. */
+    Route::prefix('detail-lembar-tally-hasil-sawmill')->name('detail-lembar-tally-hasil-sawmill.')->group(function (): void {
+        Route::get('/', [DetailLembarTallyHasilSawmillController::class, 'index'])->name('index');
+        Route::post('/download', [DetailLembarTallyHasilSawmillController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [DetailLembarTallyHasilSawmillController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [DetailLembarTallyHasilSawmillController::class, 'preview'])->name('preview');
+        Route::post('/health', [DetailLembarTallyHasilSawmillController::class, 'health'])->name('health');
+    });
+
     /** Umur sawn timber detail ton routes. */
     Route::prefix('umur-sawn-timber-detail-ton')->name('umur-sawn-timber-detail-ton.')->group(function (): void {
         Route::get('/', [UmurSawnTimberDetailTonController::class, 'index'])->name('index');
@@ -1373,6 +1387,38 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
         Route::post('/download', [PenerimaanKayuBulatPerSupplierKgController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [PenerimaanKayuBulatPerSupplierKgController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [PenerimaanKayuBulatPerSupplierKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan kayu bulat Int Ton routes. */
+    Route::prefix('penerimaan-kayu-bulat-int-ton')->name('penerimaan-kayu-bulat-int-ton.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatIntTonController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatIntTonController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanKayuBulatIntTonController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanKayuBulatIntTonController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan kayu bulat Ext Ton routes. */
+    Route::prefix('penerimaan-kayu-bulat-ext-ton')->name('penerimaan-kayu-bulat-ext-ton.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatExtTonController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatExtTonController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanKayuBulatExtTonController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanKayuBulatExtTonController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan kayu bulat timbang KG routes. */
+    Route::prefix('penerimaan-kayu-bulat-kg')->name('penerimaan-kayu-bulat-kg.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatKgController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanKayuBulatKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanKayuBulatKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan kayu bulat ExtKG routes. */
+    Route::prefix('penerimaan-kayu-bulat-extkg')->name('penerimaan-kayu-bulat-extkg.')->group(function (): void {
+        Route::get('/', [PenerimaanKayuBulatExtKgController::class, 'index'])->name('index');
+        Route::post('/download', [PenerimaanKayuBulatExtKgController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanKayuBulatExtKgController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanKayuBulatExtKgController::class, 'preview'])->name('preview');
     });
 
     /** Saldo hidup kayu bulat timbang KG routes. */

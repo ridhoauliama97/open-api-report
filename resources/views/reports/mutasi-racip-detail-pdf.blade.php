@@ -100,7 +100,7 @@
             border-left: 0;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -159,6 +159,8 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

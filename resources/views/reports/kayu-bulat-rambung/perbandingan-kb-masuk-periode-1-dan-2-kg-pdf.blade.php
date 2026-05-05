@@ -141,8 +141,6 @@
             color: #636466;
             font-weight: bold;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

@@ -417,15 +417,19 @@
         }
 
         $pivotRows = array_values($pivotRows);
-        usort(
-            $pivotRows,
-            static fn(array $a, array $b): int => strcmp((string) $a['supplier'], (string) $b['supplier']),
-        );
+        usort($pivotRows, static function (array $a, array $b): int {
+            $totalCompare = ((float) ($b['total'] ?? 0)) <=> ((float) ($a['total'] ?? 0));
+            if ($totalCompare !== 0) {
+                return $totalCompare;
+            }
+
+            return strcmp((string) ($a['supplier'] ?? ''), (string) ($b['supplier'] ?? ''));
+        });
     @endphp
 
     <h1 class="report-title">Laporan Timeline KB - Bulanan (Rambung) </h1>
     <p class="report-subtitle">
-        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
+        Periode : {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
         {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
     </p>
 
@@ -442,7 +446,7 @@
                 </tr>
                 <tr class="headers-row">
                     @foreach ($monthHeaders as $monthKey)
-                        <th style="width: 10%;">
+                        <th style="width: 9%;">
                             {{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
                         </th>
                     @endforeach

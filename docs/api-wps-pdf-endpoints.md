@@ -77,12 +77,9 @@ Contoh:
 - Laporan Kayu Bulat Rekap Rendemen Rambung Per Supplier: `http://192.168.10.100:5006/api/reports/kayu-bulat/rekap-rendemen-rambung-per-supplier/pdf`
 
 ## Lainnya
-
-- Laporan Bahan Terpakai: `http://192.168.10.100:5006/api/reports/bahan-terpakai/pdf`
+- Laporan Verifikasi Kapasitas Racip Kayu Bulat Hidup: `http://192.168.10.100:5006/api/reports/verifikasi/kapasitas-racip-kayu-bulat-hidup/pdf`
 - Laporan Hasil Output Racip Harian: `http://192.168.10.100:5006/api/reports/hasil-output-racip-harian/pdf`
-- Laporan Label Nyangkut: `http://192.168.10.100:5006/api/reports/label-nyangkut/pdf`
 - Laporan Mutasi Racip Detail: `http://192.168.10.100:5006/api/reports/mutasi-racip-detail/pdf`
-- Laporan Rangkuman Label Input: `http://192.168.10.100:5006/api/reports/rangkuman-label-input/pdf`
 - Laporan Stock Racip Kayu Lat: `http://192.168.10.100:5006/api/reports/stock-racip-kayu-lat/pdf`
 
 ## Laminating
@@ -200,8 +197,10 @@ Contoh:
 - Laporan Sawn Timber Rekap Penerimaan ST Dari Sawmill Non Rambung: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung/pdf`
 - Laporan Sawn Timber Rekap Produktivitas Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-produktivitas-sawmill/pdf`
 - Laporan Sawn Timber Rekap ST Penjualan: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-st-penjualan/pdf`
+- Laporan Sawn Timber Saldo ST Hidup Per Jenis Per Tebal Per Group Jenis Kayu: `http://192.168.10.100:5006/api/reports/sawn-timber/saldo-st-hidup-per-produk/pdf`
 - Laporan Sawn Timber ST Basah Hidup Per Umur Kayu Ton: `http://192.168.10.100:5006/api/reports/sawn-timber/st-basah-hidup-per-umur-kayu-ton/pdf`
 - Laporan Sawn Timber ST Hidup Kering: `http://192.168.10.100:5006/api/reports/sawn-timber/st-hidup-kering/pdf`
+- Laporan Sawn Timber ST Hidup Per SPK Per Jenis Per Tebal Per Group Jenis Kayu: `http://192.168.10.100:5006/api/reports/sawn-timber/st-hidup-per-spk/pdf`
 - Laporan Sawn Timber ST Rambung MC1 MC2 Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/st-rambung-mc1-mc2-detail/pdf`
 - Laporan Sawn Timber ST Rambung MC1 MC2 Rangkuman: `http://192.168.10.100:5006/api/reports/sawn-timber/st-rambung-mc1-mc2-rangkuman/pdf`
 - Laporan Sawn Timber ST Sawmill Hari Tebal Lebar: `http://192.168.10.100:5006/api/reports/sawn-timber/st-sawmill-hari-tebal-lebar/pdf`
@@ -213,6 +212,9 @@ Contoh:
 
 ## Verifikasi
 
-- Laporan Verifikasi Bahan Yang Dihasilkan: `http://192.168.10.100:5006/api/reports/verifikasi/bahan-yang-dihasilkan/pdf`
-- Laporan Verifikasi Kapasitas Racip Kayu Bulat Hidup: `http://192.168.10.100:5006/api/reports/verifikasi/kapasitas-racip-kayu-bulat-hidup/pdf`
+- Laporan Rangkuman Label Input: `http://192.168.10.100:5006/api/reports/rangkuman-label-input/pdf`
+- Laporan Bahan Terpakai: `http://192.168.10.100:5006/api/reports/bahan-terpakai/pdf`
 - Laporan Verifikasi Rangkuman Bongkar Susun: `http://192.168.10.100:5006/api/reports/verifikasi/rangkuman-bongkar-susun/pdf`
+- Laporan Verifikasi Bahan Yang Dihasilkan: `http://192.168.10.100:5006/api/reports/verifikasi/bahan-yang-dihasilkan/pdf`
+- Laporan Label Nyangkut: `http://192.168.10.100:5006/api/reports/label-nyangkut/pdf`
+

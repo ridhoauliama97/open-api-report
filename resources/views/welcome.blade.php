@@ -1335,6 +1335,18 @@
                                 Laporan Penerimaan Kayu Bulat Per-Supplier Berdasarkan Group Kayu
                             </a>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.penerimaan-kayu-bulat-int-ton.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penerimaan Kayu Bulat - (Int Ton)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.penerimaan-kayu-bulat-ext-ton.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penerimaan Kayu Bulat - (Ext Ton)
+                            </a>
+                        </div>
                         {{-- <div class="col-12 col-md-6">
 
                         </div> --}}
@@ -1432,6 +1444,18 @@
                             <a href="{{ route('reports.kayu-bulat.supplier-intel.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Supplier Intel
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.penerimaan-kayu-bulat-kg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penerimaan Kayu Bulat - (Int KG)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.kayu-bulat.penerimaan-kayu-bulat-extkg.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penerimaan Kayu Bulat - (Ext KG)
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
@@ -1692,6 +1716,12 @@
                             <a href="{{ route('reports.sawn-timber.lembar-tally-hasil-sawmill.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Lembar Tally Hasil Sawmill
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.detail-lembar-tally-hasil-sawmill.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Tally Hasil Sawmill Detail
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
