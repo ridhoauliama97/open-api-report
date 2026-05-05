@@ -1725,6 +1725,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.rekap-pcs-telly-hasil-sawmill.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Rekap Jumlah (Pcs) Telly Hasil Sawmill
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.umur-sawn-timber-detail-ton.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Umur Sawn Timber Detail (Ton)

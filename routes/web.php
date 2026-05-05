@@ -145,6 +145,7 @@ use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
+use App\Http\Controllers\RekapPcsTellyHasilSawmillController;
 use App\Http\Controllers\RekapKamarKdController;
 use App\Http\Controllers\RekapMutasiController;
 use App\Http\Controllers\RekapMutasiCrossTabController;
@@ -861,6 +862,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [DetailLembarTallyHasilSawmillController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [DetailLembarTallyHasilSawmillController::class, 'preview'])->name('preview');
         Route::post('/health', [DetailLembarTallyHasilSawmillController::class, 'health'])->name('health');
+    });
+
+    /** Rekap pcs telly hasil sawmill routes. */
+    Route::prefix('rekap-pcs-telly-hasil-sawmill')->name('rekap-pcs-telly-hasil-sawmill.')->group(function (): void {
+        Route::get('/', [RekapPcsTellyHasilSawmillController::class, 'index'])->name('index');
+        Route::post('/download', [RekapPcsTellyHasilSawmillController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [RekapPcsTellyHasilSawmillController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [RekapPcsTellyHasilSawmillController::class, 'preview'])->name('preview');
+        Route::post('/health', [RekapPcsTellyHasilSawmillController::class, 'health'])->name('health');
     });
 
     /** Umur sawn timber detail ton routes. */

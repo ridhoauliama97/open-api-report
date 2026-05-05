@@ -1164,6 +1164,17 @@ return [
             'NoSTSawmill,NoMeja,TglSawmill,NoPlat,NmSupplier,Jenis,NoKayuBulat,Operator,NoUrut,Tebal,Lebar,IdUOMTblLebar,Panjang,IdUOMPanjang,JmlhBatang,Ton'
         )))),
     ],
+    'rekap_pcs_telly_hasil_sawmill' => [
+        'database_connection' => env('REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_PROCEDURE', 'SPWps_RekapPcsTellyHasilSawmill'),
+        'call_syntax' => env('REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_QUERY'),
+        'parameter_count' => (int) env('REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_EXPECTED_COLUMNS',
+            'NmSupplier,TglSawmill,NoKayuBulat,NoPlat,Suket,Jenis,NoSTSawmill,NoMeja,NamaGrade,Tebal,Lebar,JmlhBatang'
+        )))),
+    ],
     'umur_sawn_timber_detail_ton' => [
         'database_connection' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PROCEDURE', 'SPWps_LapUmurST'),

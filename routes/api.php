@@ -148,6 +148,7 @@ use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
+use App\Http\Controllers\RekapPcsTellyHasilSawmillController;
 use App\Http\Controllers\RekapKamarKdController;
 use App\Http\Controllers\RekapMutasiController;
 use App\Http\Controllers\RekapMutasiCrossTabController;
@@ -351,6 +352,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung', 'api.reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung', RekapPenerimaanSTDariSawmillNonRambungController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/detail-lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.detail-lembar-tally-hasil-sawmill', DetailLembarTallyHasilSawmillController::class],
+        ['/reports/sawn-timber/rekap-pcs-telly-hasil-sawmill', 'api.reports.sawn-timber.rekap-pcs-telly-hasil-sawmill', RekapPcsTellyHasilSawmillController::class],
         ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan', RekapHasilSawmillPerMejaUpahBoronganController::class],
         ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja', RekapHasilSawmillPerMejaController::class],
         ['/reports/sawn-timber/rekap-produktivitas-sawmill', 'api.reports.sawn-timber.rekap-produktivitas-sawmill', RekapProduktivitasSawmillSawnTimberController::class],
