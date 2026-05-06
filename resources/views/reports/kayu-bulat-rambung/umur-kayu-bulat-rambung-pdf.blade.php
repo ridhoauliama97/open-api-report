@@ -158,8 +158,6 @@
             border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
-
-        @include ('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -215,6 +213,19 @@
         $tanggalRacipColumn = $findColumnByCandidates($columns, ['TanggalRacip', 'Tanggal Racip']);
         $tanggalLamaRacipColumn = $findColumnByCandidates($columns, ['TanggalLamaRacip', 'Lama Racip', 'LamaRacip']);
         $dateUsageColumn = $findColumnByCandidates($columns, ['DateUsage', 'Date Usage']);
+        $modelColumn = $findColumnByCandidates($columns, [
+            'Model',
+            'ModelKendaraan',
+            'ModelTruk',
+            'ModelTruck',
+            'Tipe',
+            'TipeKendaraan',
+            'TipeTruk',
+            'JenisKendaraan',
+            'KategoriKendaraan',
+            'MTruk',
+            'MTruck',
+        ]);
 
         if ($tonColumn === null) {
             foreach ($columns as $column) {
@@ -490,8 +501,15 @@
                         } else {
                             $lamaTungguHari = null;
                         }
-                        $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
 
+                        if ($lamaTungguHari !== null && $modelColumn !== null) {
+                            $modelValue = trim(strtoupper((string) ($row[$modelColumn] ?? '')));
+                            if (in_array($modelValue, ['TRUCK', 'TRUK'], true)) {
+                                $lamaTungguHari += 2;
+                            }
+                        }
+
+                        $lamaTungguText = $lamaTungguHari !== null ? $lamaTungguHari . ' hari' : '';
                         if (
                             $groupName === 'Masih Hidup' &&
                             $tanggalLamaRacipValue !== null &&

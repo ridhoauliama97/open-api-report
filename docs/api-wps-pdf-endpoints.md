@@ -18,6 +18,7 @@ Contoh:
 - Laporan Barang Jadi Rekap Produksi Packing Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/barang-jadi/rekap-produksi-packing-per-jenis-per-grade/pdf`
 - Laporan Barang Jadi Saldo Barang Jadi Hidup Per Jenis Per Produk: `http://192.168.10.100:5006/api/reports/barang-jadi/saldo-barang-jadi-hidup-per-jenis-per-produk/pdf`
 - Laporan Barang Jadi Umur Barang Jadi Detail: `http://192.168.10.100:5006/api/reports/barang-jadi/umur-barang-jadi-detail/pdf`
+- Laporan Dashboard Barang Jadi: `http://192.168.10.100:5006/api/reports/dashboard-barang-jadi/pdf`
 
 ## Cross Cut Akhir
 
@@ -26,24 +27,17 @@ Contoh:
 - Laporan Cross Cut Akhir Rekap Produksi CC Akhir Consolidated: `http://192.168.10.100:5006/api/reports/cross-cut-akhir/rekap-produksi-cc-akhir-consolidated/pdf`
 - Laporan Cross Cut Akhir Rekap Produksi CC Akhir Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/cross-cut-akhir/rekap-produksi-cc-akhir-per-jenis-per-grade/pdf`
 - Laporan Cross Cut Akhir Umur CC Akhir Detail: `http://192.168.10.100:5006/api/reports/cross-cut-akhir/umur-cc-akhir-detail/pdf`
-
-## Dashboard
-
-- Laporan Dashboard Barang Jadi: `http://192.168.10.100:5006/api/reports/dashboard-barang-jadi/pdf`
 - Laporan Dashboard Cross Cut Akhir: `http://192.168.10.100:5006/api/reports/dashboard-cross-cut-akhir/pdf`
-- Laporan Dashboard Finger Joint: `http://192.168.10.100:5006/api/reports/dashboard-finger-joint/pdf`
-- Laporan Dashboard Laminating: `http://192.168.10.100:5006/api/reports/dashboard-laminating/pdf`
-- Laporan Dashboard Moulding: `http://192.168.10.100:5006/api/reports/dashboard-moulding/pdf`
-- Laporan Dashboard Reproses: `http://192.168.10.100:5006/api/reports/dashboard-reproses/pdf`
-- Laporan Dashboard S4S: `http://192.168.10.100:5006/api/reports/dashboard-s4s/pdf`
-- Laporan Dashboard S4S V2: `http://192.168.10.100:5006/api/reports/dashboard-s4s-v2/pdf`
-- Laporan Dashboard Sanding: `http://192.168.10.100:5006/api/reports/dashboard-sanding/pdf`
+
 
 ## Finger Joint
 
+- Laporan Finger Joint Finger Joint Hidup Detail: `http://192.168.10.100:5006/api/reports/finger-joint/finger-joint-hidup-detail/pdf`
 - Laporan Finger Joint Ketahanan Barang Finger Joint: `http://192.168.10.100:5006/api/reports/finger-joint/ketahanan-barang-finger-joint/pdf`
 - Laporan Finger Joint Rekap Produksi Finger Joint Consolidated: `http://192.168.10.100:5006/api/reports/finger-joint/rekap-produksi-finger-joint-consolidated/pdf`
-- Laporan Finger Joint Umur Finger Joint Detail: `http://192.168.10.100:5006/api/reports/finger-joint/umur-finger-joint-detail/pdf`
+- Laporan Finger Joint Rekap Produksi Finger Joint Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/finger-joint/rekap-produksi-finger-joint-per-jenis-per-grade/pdf`
+- Laporan Finger Joint Umur Finger Joint Detail: `http://192.168.10.100:5006/api/reports/finger-joint/umur-finger-joint-detail/pdf`\
+- Laporan Dashboard Finger Joint: `http://192.168.10.100:5006/api/reports/dashboard-finger-joint/pdf`
 
 ## Kayu Bulat
 
@@ -53,6 +47,10 @@ Contoh:
 - Laporan Kayu Bulat KB Khusus Bangkang: `http://192.168.10.100:5006/api/reports/kayu-bulat/kb-khusus-bangkang/pdf`
 - Laporan Kayu Bulat Penerimaan Bulanan Per Supplier: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-bulanan-per-supplier/pdf`
 - Laporan Kayu Bulat Penerimaan Bulanan Per Supplier Grafik: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-bulanan-per-supplier-grafik/pdf`
+- Laporan Kayu Bulat Penerimaan Kayu Bulat Ext KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-kayu-bulat-extkg/pdf`
+- Laporan Kayu Bulat Penerimaan Kayu Bulat Ext Ton: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-kayu-bulat-ext-ton/pdf`
+- Laporan Kayu Bulat Penerimaan Kayu Bulat Int Ton: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-kayu-bulat-int-ton/pdf`
+- Laporan Kayu Bulat Penerimaan Kayu Bulat KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-kayu-bulat-kg/pdf`
 - Laporan Kayu Bulat Penerimaan Per Supplier Group: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-per-supplier-group/pdf`
 - Laporan Kayu Bulat Penerimaan Per Supplier KG: `http://192.168.10.100:5006/api/reports/kayu-bulat/penerimaan-per-supplier-kg/pdf`
 - Laporan Kayu Bulat Perbandingan KB Masuk Periode 1 Dan 2: `http://192.168.10.100:5006/api/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2/pdf`
@@ -89,6 +87,7 @@ Contoh:
 - Laporan Laminating Rekap Produksi Laminating Consolidated: `http://192.168.10.100:5006/api/reports/laminating/rekap-produksi-laminating-consolidated/pdf`
 - Laporan Laminating Rekap Produksi Laminating Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/laminating/rekap-produksi-laminating-per-jenis-per-grade/pdf`
 - Laporan Laminating Umur Laminating Detail: `http://192.168.10.100:5006/api/reports/laminating/umur-laminating-detail/pdf`
+- Laporan Dashboard Laminating: `http://192.168.10.100:5006/api/reports/dashboard-laminating/pdf`
 
 ## Management
 
@@ -112,6 +111,7 @@ Contoh:
 - Laporan Moulding Rekap Produksi Moulding Consolidated: `http://192.168.10.100:5006/api/reports/moulding/rekap-produksi-moulding-consolidated/pdf`
 - Laporan Moulding Rekap Produksi Moulding Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/moulding/rekap-produksi-moulding-per-jenis-per-grade/pdf`
 - Laporan Moulding Umur Moulding Detail: `http://192.168.10.100:5006/api/reports/moulding/umur-moulding-detail/pdf`
+- Laporan Dashboard Moulding: `http://192.168.10.100:5006/api/reports/dashboard-moulding/pdf`
 
 ## Mutasi
 
@@ -161,15 +161,22 @@ Contoh:
 - Laporan Reproses Ketahanan Barang Reproses: `http://192.168.10.100:5006/api/reports/reproses/ketahanan-barang-reproses/pdf`
 - Laporan Reproses Reproses Hidup Detail: `http://192.168.10.100:5006/api/reports/reproses/reproses-hidup-detail/pdf`
 - Laporan Reproses Umur Reproses Detail: `http://192.168.10.100:5006/api/reports/reproses/umur-reproses-detail/pdf`
+- Laporan Dashboard Reproses: `http://192.168.10.100:5006/api/reports/dashboard-reproses/pdf`
 
 ## S4S
 
 - Laporan S4S Grade ABC Harian: `http://192.168.10.100:5006/api/reports/s4s/grade-abc-harian/pdf`
 - Laporan S4S Ketahanan Barang S4S: `http://192.168.10.100:5006/api/reports/s4s/ketahanan-barang-s4s/pdf`
+- Laporan S4S Label S4S Hidup Per Jenis Kayu: `http://192.168.10.100:5006/api/reports/s4s/label-s4s-hidup-per-jenis-kayu/pdf`
+- Laporan S4S Label S4S Hidup Per Produk Per Jenis Kayu: `http://192.168.10.100:5006/api/reports/s4s/label-s4s-hidup-per-produk-per-jenis-kayu/pdf`
 - Laporan S4S Output Produksi S4S Per Grade: `http://192.168.10.100:5006/api/reports/s4s/output-produksi-s4s-per-grade/pdf`
 - Laporan S4S Rekap Produksi Rambung Per Grade: `http://192.168.10.100:5006/api/reports/s4s/rekap-produksi-rambung-per-grade/pdf`
 - Laporan S4S Rekap Produksi S4S Consolidated: `http://192.168.10.100:5006/api/reports/s4s/rekap-produksi-s4s-consolidated/pdf`
+- Laporan S4S Rekap Produksi S4S Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/s4s/rekap-produksi-s4s-per-jenis-per-grade/pdf`
+- Laporan S4S S4S Hidup Detail: `http://192.168.10.100:5006/api/reports/s4s/s4s-hidup-detail/pdf`
 - Laporan S4S Umur S4S Detail: `http://192.168.10.100:5006/api/reports/s4s/umur-s4s-detail/pdf`
+- Laporan Dashboard S4S: `http://192.168.10.100:5006/api/reports/dashboard-s4s/pdf`
+- Laporan Dashboard S4S V2: `http://192.168.10.100:5006/api/reports/dashboard-s4s-v2/pdf`
 
 ## Sanding
 
@@ -178,9 +185,12 @@ Contoh:
 - Laporan Sanding Rekap Produksi Sanding Per Jenis Per Grade: `http://192.168.10.100:5006/api/reports/sanding/rekap-produksi-sanding-per-jenis-per-grade/pdf`
 - Laporan Sanding Sanding Hidup Detail: `http://192.168.10.100:5006/api/reports/sanding/sanding-hidup-detail/pdf`
 - Laporan Sanding Umur Sanding Detail: `http://192.168.10.100:5006/api/reports/sanding/umur-sanding-detail/pdf`
+- Laporan Dashboard Sanding: `http://192.168.10.100:5006/api/reports/dashboard-sanding/pdf`
 
 ## Sawn Timber
 
+- Laporan Sawn Timber Dashboard Sawn Timber: `http://192.168.10.100:5006/api/reports/sawn-timber/dashboard-sawn-timber/pdf`
+- Laporan Sawn Timber Detail Lembar Tally Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/detail-lembar-tally-hasil-sawmill/pdf`
 - Laporan Sawn Timber KD Keluar Masuk: `http://192.168.10.100:5006/api/reports/sawn-timber/kd-keluar-masuk/pdf`
 - Laporan Sawn Timber Ketahanan Barang ST: `http://192.168.10.100:5006/api/reports/sawn-timber/ketahanan-barang-st/pdf`
 - Laporan Sawn Timber Label ST Hidup Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf`
@@ -194,6 +204,7 @@ Contoh:
 - Laporan Sawn Timber Rekap Hasil Sawmill Per Meja Upah Borongan: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan/pdf`
 - Laporan Sawn Timber Rekap Hasil Sawmill Per Meja Upah Borongan V2: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan-v2/pdf`
 - Laporan Sawn Timber Rekap Kamar KD: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-kamar-kd/pdf`
+- Laporan Sawn Timber Rekap Jumlah (Pcs) Telly Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-pcs-telly-hasil-sawmill/pdf`
 - Laporan Sawn Timber Rekap Penerimaan ST Dari Sawmill Non Rambung: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung/pdf`
 - Laporan Sawn Timber Rekap Produktivitas Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-produktivitas-sawmill/pdf`
 - Laporan Sawn Timber Rekap ST Penjualan: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-st-penjualan/pdf`
@@ -217,4 +228,3 @@ Contoh:
 - Laporan Verifikasi Rangkuman Bongkar Susun: `http://192.168.10.100:5006/api/reports/verifikasi/rangkuman-bongkar-susun/pdf`
 - Laporan Verifikasi Bahan Yang Dihasilkan: `http://192.168.10.100:5006/api/reports/verifikasi/bahan-yang-dihasilkan/pdf`
 - Laporan Label Nyangkut: `http://192.168.10.100:5006/api/reports/label-nyangkut/pdf`
-

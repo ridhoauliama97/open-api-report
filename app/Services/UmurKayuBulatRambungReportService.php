@@ -70,6 +70,11 @@ class UmurKayuBulatRambungReportService
                 $lamaTunggu = $lamaTunggu >= 0 ? $lamaTunggu : null;
             }
 
+            $modelVal = trim(strtoupper((string) ($item['Model'] ?? $item['model'] ?? '')));
+            if ($lamaTunggu !== null && ($modelVal === 'TRUCK' || $modelVal === 'TRUK')) {
+                $lamaTunggu += 2;
+            }
+
             return [
                 'Status' => $status,
                 'No.KB' => $item['NoKayuBulat'] ?? null,
@@ -86,6 +91,7 @@ class UmurKayuBulatRambungReportService
                 'Tanggal Lama Racip' => $dateUsage?->toDateString() ?? ($item['TanggalLamaRacip'] ?? null),
                 'Lama Racip' => $lamaRacip,
                 'Lama Tunggu' => $lamaTunggu,
+                'Model' => $item['Model'] ?? $item['model'] ?? null,
             ];
         }, $rows);
     }

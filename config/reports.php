@@ -874,7 +874,7 @@ return [
         'parameter_count' => (int) env('UMUR_KAYU_BULAT_RAMBUNG_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'UMUR_KAYU_BULAT_RAMBUNG_REPORT_EXPECTED_COLUMNS',
-            'Status,No.KB,Tanggal,Nama Supplier,Jenis Kayu,Truk,Ton,Tanggal Racip,Lama Racip,Lama Tunggu'
+            'Status,No.KB,Tanggal,Nama Supplier,Jenis Kayu,Truk,Ton,Tanggal Racip,Lama Racip,Lama Tunggu,Model'
         )))),
     ],
     'supplier_intel' => [
@@ -2564,7 +2564,7 @@ return [
             ))
         ))),
         'jwt_allowed_algs' => array_values(array_filter(array_map(
-            static fn(string $alg): string => strtoupper(trim($alg)),
+            static fn (string $alg): string => strtoupper(trim($alg)),
             explode(',', (string) env('REPORT_API_JWT_ALLOWED_ALGS', 'HS256,HS384,HS512'))
         ))),
         'clock_skew_seconds' => (int) env('REPORT_API_JWT_CLOCK_SKEW_SECONDS', 30),

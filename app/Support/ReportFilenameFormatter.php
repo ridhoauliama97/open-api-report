@@ -15,7 +15,7 @@ final class ReportFilenameFormatter
         $subtitle = self::normalizePart($subtitleRaw);
 
         if ($subtitle === '') {
-            return $title . '.pdf';
+            return $title;
         }
 
         return sprintf('%s - %s.pdf', $title, $subtitle);
