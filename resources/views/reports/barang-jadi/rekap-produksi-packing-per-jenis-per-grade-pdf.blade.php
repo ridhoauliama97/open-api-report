@@ -185,11 +185,6 @@
                     <th style="width: 84px;">Out Reproses</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="9"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $i = 0; @endphp
                 @foreach ($rows as $row)

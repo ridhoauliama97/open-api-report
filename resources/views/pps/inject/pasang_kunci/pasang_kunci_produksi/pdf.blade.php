@@ -196,8 +196,6 @@
             padding-right: 6px;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -211,12 +209,7 @@
         $attendance = $report['attendance'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
         $formatNumber = static function ($value, ?int $decimals = null): string {
-            return number_format(
-                (float) $value,
-                $decimals ?? 2,
-                '.',
-                ',',
-            );
+            return number_format((float) $value, $decimals ?? 2, '.', ',');
         };
         $textOrBlank = static fn($value): string => trim((string) $value) !== '' ? e(trim((string) $value)) : '&nbsp;';
     @endphp
@@ -275,7 +268,8 @@
             @foreach ($detailRows as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell">{!! $textOrBlank($row['input_nama_barang'] ?? '') !!}</td>
-                    <td class="data-cell number">{{ $row['input_qty'] !== null ? $formatNumber($row['input_qty'], 0) : '' }}
+                    <td class="data-cell number">
+                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty'], 0) : '' }}
                     </td>
                     <td class="data-cell number">
                         {{ $row['input_percentage'] !== null ? $formatNumber($row['input_percentage']) . '%' : '' }}

@@ -168,8 +168,6 @@
         .col-uniform {
             width: 72px;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -298,11 +296,6 @@
                 @endforeach
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($mainColumns) + 1 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rowsData as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -365,11 +358,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($subColumns) + 1 }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @foreach ($subRowsData as $row)
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">

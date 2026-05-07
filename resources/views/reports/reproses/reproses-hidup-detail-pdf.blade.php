@@ -117,8 +117,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -155,11 +153,6 @@
                 <th style="width: 54px;">Lokasi</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)

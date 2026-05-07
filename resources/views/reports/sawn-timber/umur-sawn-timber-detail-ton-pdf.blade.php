@@ -132,8 +132,6 @@
             line-height: 0 !important;
             background: transparent !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -228,9 +226,6 @@
                     <td class="number">{{ number_format($totals['RowTotal'], 4, '.', ',') }}</td>
                 </tr>
             @endif
-            <tr class="table-end-line">
-                <td colspan="11"></td>
-            </tr>
         </tfoot>
         <tbody>
             @forelse ($rowsData as $row)

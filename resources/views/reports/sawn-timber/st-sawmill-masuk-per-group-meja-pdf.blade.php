@@ -130,8 +130,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -173,17 +171,6 @@
                 @endforelse
             </tr>
         </thead>
-        {{-- NOTE: mPDF recognizes repeating <tfoot> more reliably when it appears before <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ 4 + max(1, count($meja)) }}"></td>
-            </tr>
-        </tfoot>
-        <tbody>. --}}
-        <tfoot>
-            <tr class="tfoot-line">
-                <td colspan="{{ 4 + max(1, count($meja)) }}">&nbsp;</td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $rowIndex = 0; @endphp
 

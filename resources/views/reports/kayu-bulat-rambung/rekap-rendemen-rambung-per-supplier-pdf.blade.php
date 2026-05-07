@@ -147,9 +147,6 @@
         .col-pct {
             width: 60px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
-
     </style>
 </head>
 
@@ -160,6 +157,32 @@
 
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
+
+        // Sort Detail Transaksi by Rendemen descending
+        usort($rowsData, static function (array $a, array $b): int {
+            $kbA = (float) ($a['KBTon'] ?? 0);
+            $stA = (float) ($a['STTon'] ?? 0);
+            $rendemenA = $kbA > 0 ? ($stA / $kbA) * 100 : 0;
+
+            $kbB = (float) ($b['KBTon'] ?? 0);
+            $stB = (float) ($b['STTon'] ?? 0);
+            $rendemenB = $kbB > 0 ? ($stB / $kbB) * 100 : 0;
+
+            return $rendemenB <=> $rendemenA;
+        });
+
+        // Sort Rangkuman Per Supplier by Total Rendemen descending
+        usort($subRowsData, static function (array $a, array $b): int {
+            $totKbA = (float) ($a['SLPKBton'] ?? 0) + (float) ($a['BansawKBton'] ?? 0);
+            $totStA = (float) ($a['SLPstton'] ?? 0) + (float) ($a['Bansawstton'] ?? 0);
+            $rendemenA = $totKbA > 0 ? ($totStA / $totKbA) * 100 : 0;
+
+            $totKbB = (float) ($b['SLPKBton'] ?? 0) + (float) ($b['BansawKBton'] ?? 0);
+            $totStB = (float) ($b['SLPstton'] ?? 0) + (float) ($b['Bansawstton'] ?? 0);
+            $rendemenB = $totKbB > 0 ? ($totStB / $totKbB) * 100 : 0;
+
+            return $rendemenB <=> $rendemenA;
+        });
 
         $fmtID = function ($val, $precision = 2) {
             return is_numeric($val) && (float) $val != 0 ? number_format((float) $val, $precision, ',', '.') : '';
@@ -195,12 +218,13 @@
                 @endphp
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $loop->iteration }}</td>
-                    <td>{{ $row['NmSupplier'] ?? $row['Supplier'] ?? '-' }}</td>
+                    <td>{{ $row['NmSupplier'] ?? ($row['Supplier'] ?? '-') }}</td>
                     <td class="center">{{ $row['NoTruk'] ?? '-' }}</td>
                     <td class="center">{{ $row['Group'] ?? '-' }}</td>
                     <td class="number">{{ $fmtID($kb) }}</td>
                     <td class="number">{{ $fmtID($st) }}</td>
-                    <td class="number">{{ $kb > 0 ? number_format($rendemen, 2, '.', ',') . '%' : '-' }}</td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ $kb > 0 ? number_format($rendemen, 2, '.', ',') . '%' : '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

@@ -129,8 +129,6 @@
         .row-even td {
             background: #eef2f8;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -150,7 +148,7 @@
                 return '';
             }
             try {
-                return \Carbon\Carbon::parse($t)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::parse($t)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $e) {
                 return $t;
             }
@@ -187,18 +185,6 @@
         <div class="buyer-title">Pembeli&nbsp;&nbsp;: {{ $buyer }}</div>
 
         <table class="data-table">
-            <colgroup>
-                <col style="width: 10%;"> {{-- NoST --}}
-                <col style="width: 13%;"> {{-- Tanggal (ST) --}}
-                <col style="width: 30%;"> {{-- Jenis Kayu --}}
-                <col style="width: 5%;"> {{-- Tebal --}}
-                <col style="width: 5%;"> {{-- Lebar --}}
-                <col style="width: 8%;"> {{-- UOM Tbl Lebar --}}
-                <col style="width: 7%;"> {{-- Panjang --}}
-                <col style="width: 8%;"> {{-- UOM Panjang --}}
-                <col style="width: 7%;"> {{-- Jmlh Btg --}}
-                <col style="width: 7%;"> {{-- Ton --}}
-            </colgroup>
             <thead>
                 <tr>
                     <th>NoST</th>
@@ -213,13 +199,6 @@
                     <th>Ton</th>
                 </tr>
             </thead>
-            @if ($rows !== [])
-                <tfoot>
-                    <tr class="table-end-line">
-                        <td colspan="10"></td>
-                    </tr>
-                </tfoot>
-            @endif
             <tbody>
                 @forelse ($rows as $r)
                     @php $rowIndex = ($loop->index ?? 0) + 1; @endphp

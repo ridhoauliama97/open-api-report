@@ -141,8 +141,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -275,13 +273,6 @@
                 </tr>
             @endif
         </thead>
-        @if ($rows !== [])
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 3 + count($monthKeys) }}"></td>
-                </tr>
-            </tfoot>
-        @endif
         <tbody @if ($rows === []) style="background: #c9d1df;" @endif>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)

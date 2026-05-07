@@ -148,8 +148,6 @@
         .center {
             text-align: center;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -238,13 +236,7 @@
                 <th>Total</th>
             </tr>
         </thead>
-        @if ($rows !== [])
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ 3 + count($jenisColumns) }}"></td>
-                </tr>
-            </tfoot>
-        @endif
+
         <tbody @if ($rows === []) style="background: #c9d1df;" @endif>
             @php $rowIndex = 0; @endphp
             @forelse ($rows as $row)

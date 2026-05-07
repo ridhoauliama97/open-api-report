@@ -112,7 +112,7 @@
             background: #fff;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
@@ -254,9 +254,6 @@
                         </td>
                     </tr>
                 @endif
-                <tr class="table-end-line">
-                    <td colspan="6"></td>
-                </tr>
             </tfoot>
             <tbody>
                 @forelse ($groupRows as $row)
@@ -321,9 +318,6 @@
                         </td>
                     </tr>
                 @endif
-                <tr class="table-end-line">
-                    <td colspan="7"></td>
-                </tr>
             </tfoot>
             <tbody>
                 @forelse ($groupRows as $row)

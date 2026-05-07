@@ -204,8 +204,6 @@
             padding-right: 6px;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -219,12 +217,7 @@
         $attendance = $report['attendance'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
         $formatNumber = static function ($value, ?int $decimals = null): string {
-            return number_format(
-                (float) $value,
-                $decimals ?? 2,
-                '.',
-                ',',
-            );
+            return number_format((float) $value, $decimals ?? 2, '.', ',');
         };
         $formatPercent = static fn($value): string => number_format((float) $value, 1, '.', ',') . '%';
     @endphp

@@ -129,8 +129,6 @@
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 

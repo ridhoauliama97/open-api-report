@@ -15,7 +15,26 @@ class UmurKayuBulatRambungReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return $this->normalizeRows($rows);
+        $normalized = $this->normalizeRows($rows);
+
+        usort($normalized, static function (array $a, array $b): int {
+            $lamaTungguA = $a['Lama Tunggu'] ?? null;
+            $lamaTungguB = $b['Lama Tunggu'] ?? null;
+
+            if ($lamaTungguA === null && $lamaTungguB === null) {
+                return 0;
+            }
+            if ($lamaTungguA === null) {
+                return 1;
+            }
+            if ($lamaTungguB === null) {
+                return -1;
+            }
+
+            return $lamaTungguA <=> $lamaTungguB;
+        });
+
+        return $normalized;
     }
 
     /**

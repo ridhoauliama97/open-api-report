@@ -114,8 +114,6 @@
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -162,11 +160,6 @@
                 <th style="width: 12%;">Ketahanan</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @php $i = 0; @endphp
             @forelse ($rows as $r)

@@ -232,11 +232,6 @@
                     <th style="width: 58px;">Reproses</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="15"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 @php $rowIndex = 0; @endphp
                 @foreach ($rows as $row)

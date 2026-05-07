@@ -436,6 +436,60 @@
         $totalKeseluruhanTon = $sumTon($rowsData, $tonColumn);
         $totalKeseluruhanTruck = $countTruck($rowsData, $truckColumn);
 
+        // Sort tiap group berdasarkan Lama Tunggu ascending (logika sama dengan display)
+        $computeLamaTunggu = static function (array $row, string $groupName) use (
+            $parseDateValue,
+            $diffDays,
+            $dateCreateColumn,
+            $tanggalLamaRacipColumn,
+            $dateUsageColumn,
+            $tanggalRacipColumn,
+            $modelColumn,
+            $reportEndReference,
+        ): ?int {
+            $dateCreateValue = $parseDateValue($dateCreateColumn !== null ? $row[$dateCreateColumn] ?? null : null);
+            $tanggalLamaRacipValue = $parseDateValue($tanggalLamaRacipColumn !== null ? $row[$tanggalLamaRacipColumn] ?? null : null);
+            $dateUsageValue = $parseDateValue($dateUsageColumn !== null ? $row[$dateUsageColumn] ?? null : null);
+            $tanggalRacipValue = $parseDateValue($tanggalRacipColumn !== null ? $row[$tanggalRacipColumn] ?? null : null);
+
+            if ($groupName === 'Masih Hidup' && $tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
+                $hari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
+            } elseif ($dateUsageValue !== null && $dateCreateValue !== null) {
+                $hari = $diffDays($dateCreateValue, $dateUsageValue);
+            } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
+                $hari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
+            } elseif ($tanggalRacipValue !== null && $dateCreateValue !== null) {
+                $hari = $diffDays($dateCreateValue, $tanggalRacipValue);
+            } elseif ($dateCreateValue !== null) {
+                $hari = $diffDays($dateCreateValue, $reportEndReference);
+            } else {
+                $hari = null;
+            }
+
+            if ($hari !== null && $modelColumn !== null) {
+                $modelValue = trim(strtoupper((string) ($row[$modelColumn] ?? '')));
+                if (in_array($modelValue, ['TRUCK', 'TRUK'], true)) {
+                    $hari += 2;
+                }
+            }
+
+            return $hari;
+        };
+
+        foreach ($groupedRows as $gName => &$gRows) {
+            usort($gRows, static function (array $a, array $b) use ($computeLamaTunggu, $gName): int {
+                $hariA = $computeLamaTunggu($a, $gName);
+                $hariB = $computeLamaTunggu($b, $gName);
+
+                if ($hariA === null && $hariB === null) return 0;
+                if ($hariA === null) return 1;
+                if ($hariB === null) return -1;
+
+                return $hariA <=> $hariB;
+            });
+        }
+        unset($gRows);
+
         $visualDisplayColumnsCount = count($displayColumns) + 2;
     @endphp
 

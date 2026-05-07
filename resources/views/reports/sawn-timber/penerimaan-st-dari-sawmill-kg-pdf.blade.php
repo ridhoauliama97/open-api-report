@@ -251,7 +251,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -626,11 +626,6 @@
                     <th>Penerimaan ST Dari Sawmill - Timbang KG</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="1"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 <tr class="data-row row-odd">
                     <td class="data-cell center">Tidak ada data.</td>

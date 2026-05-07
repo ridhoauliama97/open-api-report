@@ -260,11 +260,6 @@
                 @endforeach
             </tr>
         </thead>
-        <tfoot>
-            <tr class="table-end-line">
-                <td colspan="{{ count($schema) + 1 }}"></td>
-            </tr>
-        </tfoot>
         <tbody>
             @forelse ($rows as $index => $row)
                 <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">

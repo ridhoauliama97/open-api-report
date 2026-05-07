@@ -97,7 +97,7 @@
             background: #eef2f8;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
@@ -479,11 +479,6 @@
                     @endforeach
                 </tr>
             </thead>
-            <tfoot>
-                <tr class="table-end-line">
-                    <td colspan="{{ count($columns) + 1 }}"></td>
-                </tr>
-            </tfoot>
             <tbody>
                 <tr>
                     <td colspan="{{ count($columns) + 1 }}" class="center">Tidak ada data.</td>
