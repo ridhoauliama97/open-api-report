@@ -272,7 +272,7 @@ class RekapProduktivitasSawmillRpReportService
             $isMoneySummaryRow =
                 $rawGradeEmpty
                 && (
-                    // Baris tanpa tonnage sama sekali: baris costing murni
+                        // Baris tanpa tonnage sama sekali: baris costing murni
                     (abs($kb) < self::EPS && abs($st) < self::EPS && abs($percent) < self::EPS)
                     // Baris "Jumlah/Total" dengan tonnage: SP mengembalikan baris ringkasan
                     // yang berisi KB/ST total sekaligus nilai Rp. Kita kenali dari adanya
@@ -281,8 +281,8 @@ class RekapProduktivitasSawmillRpReportService
                         !$shouldCalcMoneyFromHarga
                         && array_reduce(
                             array_filter(array_values($moneyColumns)),
-                            static fn (bool $carry, string $col): bool =>
-                                $carry || abs((float) ($row[$col] ?? 0.0)) > self::EPS,
+                            static fn(bool $carry, string $col): bool =>
+                            $carry || abs((float) ($row[$col] ?? 0.0)) > self::EPS,
                             false,
                         )
                     )
@@ -1367,8 +1367,7 @@ class RekapProduktivitasSawmillRpReportService
         array $row,
         array $columns,
         bool $isSummaryRow,
-    ): void
-    {
+    ): void {
         foreach (['st', 'kb', 'upah', 'hasil'] as $key) {
             $col = $columns[$key] ?? null;
             if (!is_string($col) || $col === '') {

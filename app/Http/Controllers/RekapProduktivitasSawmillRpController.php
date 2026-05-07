@@ -149,7 +149,7 @@ class RekapProduktivitasSawmillRpController extends Controller
             'pdf_pack_table_data' => false,
         ]);
 
-        $filename = sprintf('Laporan-Rekap-Produktivitas-Sawmill-%s-sd-%s.pdf', $startDate, $endDate);
+        $filename = sprintf('Laporan-Rekap-Penerimaan-ST-Dari-Sawmill-Costing-Rambung-%s-sd-%s.pdf', $startDate, $endDate);
         $dispositionType = $inline ? 'inline' : 'attachment';
 
         return response($pdf, 200, [

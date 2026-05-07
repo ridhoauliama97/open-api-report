@@ -27,7 +27,7 @@ class TimelineKayuBulatHarianReportService
             $rankingColumn = $this->findColumn(array_keys($item), ['Ranking', 'Rank', 'Urutan', 'NoUrut']);
 
             if ($dateColumn !== null) {
-                $item['Tanggal'] = (string) ($item[$dateColumn] ?? '');
+                $item['Tanggal'] = $this->normalizeDateValue($item[$dateColumn] ?? null);
             }
 
             if ($supplierColumn !== null) {
@@ -54,6 +54,15 @@ class TimelineKayuBulatHarianReportService
         $rows = $this->fetch($startDate, $endDate);
         $periodMap = [];
         $supplierTotals = [];
+
+        foreach ($this->buildDateRange($startDate, $endDate) as $dateKey) {
+            $periodMap[$dateKey] = [
+                'key' => $dateKey,
+                'label' => $dateKey,
+                'rows' => [],
+                'total_ton' => 0.0,
+            ];
+        }
 
         foreach ($rows as $row) {
             $date = (string) ($row['Tanggal'] ?? '');
@@ -187,6 +196,47 @@ class TimelineKayuBulatHarianReportService
     private function normalizeName(string $value): string
     {
         return preg_replace('/[^a-z0-9]/', '', strtolower($value)) ?? '';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function buildDateRange(string $startDate, string $endDate): array
+    {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->startOfDay();
+
+        if ($start->gt($end)) {
+            return [];
+        }
+
+        $dates = [];
+        $cursor = $start->copy();
+
+        while ($cursor->lte($end)) {
+            $dates[] = $cursor->toDateString();
+            $cursor->addDay();
+        }
+
+        return $dates;
+    }
+
+    private function normalizeDateValue(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        $raw = trim((string) $value);
+        if ($raw === '') {
+            return '';
+        }
+
+        try {
+            return Carbon::parse($raw)->toDateString();
+        } catch (\Throwable $exception) {
+            return $raw;
+        }
     }
 
     private function toFloat(mixed $value): ?float

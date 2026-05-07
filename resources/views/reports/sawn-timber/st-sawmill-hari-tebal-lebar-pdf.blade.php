@@ -250,7 +250,7 @@
 
         $dateLabel = static function (string $key): string {
             try {
-                return \Carbon\Carbon::parse($key)->format('d-M');
+                return \Carbon\Carbon::parse($key)->locale('id')->translatedFormat('d-M');
             } catch (\Throwable $exception) {
                 return $key;
             }
@@ -284,7 +284,7 @@
             <table style="margin-bottom: 12px;">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 100px;">Group</th>
+                        <th rowspan="2" style="width: 15%;">Group</th>
                         <th rowspan="2" style="width: 40px;">Tebal</th>
                         <th rowspan="2" style="width: 40px;">Lebar</th>
                         <th colspan="{{ count($allDates) + 1 }}">Tanggal</th>
@@ -392,7 +392,8 @@
                                 $isGroupGrandTotal = $sumForDates($isGroupTotals, $allDates);
                             @endphp
                             <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                                <td class="center" colspan="3" style="background: none; font-size: 11px;">Grand Total</td>
+                                <td class="center" colspan="3" style="background: none; font-size: 11px;">Grand Total
+                                </td>
                                 @foreach ($allDates as $dk)
                                     <td class="number" style="background: none; font-size: 11px;">
                                         {{ $fmtTotal((float) ($isGroupTotals[$dk] ?? 0.0)) }}

@@ -186,7 +186,7 @@
             }
 
             if ($value instanceof \DateTimeInterface) {
-                return \Carbon\Carbon::instance($value)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::instance($value)->locale('id')->translatedFormat('d-M-y');
             }
 
             $raw = trim((string) $value);
@@ -195,7 +195,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse($raw)->locale('id')->translatedFormat('d M Y');
+                return \Carbon\Carbon::parse($raw)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return $raw;
             }
