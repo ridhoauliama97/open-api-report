@@ -659,12 +659,12 @@
                                     <div class="money-box">
                                         <table class="money-table">
                                             <tr>
-                                                <td class="money-label">ST</td>
-                                                <td class="money-value">{{ $fmtMoney($moneySt) }}</td>
-                                            </tr>
-                                            <tr>
                                                 <td class="money-label">KB</td>
                                                 <td class="money-value">{{ $fmtMoney($moneyKb) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="money-label">ST</td>
+                                                <td class="money-value">{{ $fmtMoney($moneySt) }}</td>
                                             </tr>
                                             <tr>
                                                 <td class="money-label">Upah</td>
@@ -724,7 +724,15 @@
                                                                                 abs($bKb) > 0.0000001 &&
                                                                                 abs($bSt) > 0.0000001;
                                                                         @endphp
-                                                                        @if ($isTotal || $hasCompleteData)
+                                                                        @php
+                                                                            $mejaNum = null;
+                                                                            if (preg_match('/NoMeja\s+(\d+)/i', $bLabel, $mejaMatch)) {
+                                                                                $mejaNum = (int) $mejaMatch[1];
+                                                                            }
+                                                                            $isMejaRow = $mejaNum !== null;
+                                                                            $showBalokRow = $isTotal || ($hasCompleteData && (!$isMejaRow || $mejaNum <= 10));
+                                                                        @endphp
+                                                                        @if ($showBalokRow)
                                                                             <tr>
                                                                                 <td class="label">{{ $bLabel }}
                                                                                 </td>
@@ -925,12 +933,12 @@
                     <div class="money-box" style="padding-left: 0; width: 100%;">
                         <table class="money-table">
                             <tr>
-                                <td class="money-label">ST</td>
-                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['st'] ?? 0.0)) }}</td>
-                            </tr>
-                            <tr>
                                 <td class="money-label">KB</td>
                                 <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['kb'] ?? 0.0)) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="money-label">ST</td>
+                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['st'] ?? 0.0)) }}</td>
                             </tr>
                             <tr>
                                 <td class="money-label">Upah</td>
@@ -1056,12 +1064,12 @@
         <div class="money-box" style="padding-left: 0; width: 288px;">
             <table class="money-table">
                 <tr>
-                    <td class="money-label">ST</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}</td>
-                </tr>
-                <tr>
                     <td class="money-label">KB</td>
                     <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['kb'] ?? 0.0)) }}</td>
+                </tr>
+                <tr>
+                    <td class="money-label">ST</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}</td>
                 </tr>
                 <tr>
                     <td class="money-label">Upah</td>
@@ -1159,12 +1167,12 @@
         <div class="money-box" style="padding-left: 0; width: 288px;">
             <table class="money-table">
                 <tr>
-                    <td class="money-label">ST</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}</td>
-                </tr>
-                <tr>
                     <td class="money-label">KB</td>
                     <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['kb'] ?? 0.0)) }}</td>
+                </tr>
+                <tr>
+                    <td class="money-label">ST</td>
+                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}</td>
                 </tr>
                 <tr>
                     <td class="money-label">Upah</td>

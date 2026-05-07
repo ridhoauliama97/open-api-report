@@ -271,9 +271,22 @@ class RekapProduktivitasSawmillRpReportService
 
             $isMoneySummaryRow =
                 $rawGradeEmpty
-                && abs($kb) < self::EPS
-                && abs($st) < self::EPS
-                && abs($percent) < self::EPS;
+                && (
+                    // Baris tanpa tonnage sama sekali: baris costing murni
+                    (abs($kb) < self::EPS && abs($st) < self::EPS && abs($percent) < self::EPS)
+                    // Baris "Jumlah/Total" dengan tonnage: SP mengembalikan baris ringkasan
+                    // yang berisi KB/ST total sekaligus nilai Rp. Kita kenali dari adanya
+                    // nilai Rp yang non-zero pada salah satu kolom uang.
+                    || (
+                        !$shouldCalcMoneyFromHarga
+                        && array_reduce(
+                            array_filter(array_values($moneyColumns)),
+                            static fn (bool $carry, string $col): bool =>
+                                $carry || abs((float) ($row[$col] ?? 0.0)) > self::EPS,
+                            false,
+                        )
+                    )
+                );
 
             // Money values: prefer explicit summary/footer rows when they exist, otherwise sum detail rows.
             $this->applyMoneyFromRow(
