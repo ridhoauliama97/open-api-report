@@ -78,7 +78,7 @@ class PembelianStTimelineTonController extends Controller
             'endDate' => $endDate,
             'pdf_orientation' => $orientation,
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
             'pdf_column_count' => $pdfColumnCount,
         ]);
 

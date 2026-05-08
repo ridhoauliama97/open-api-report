@@ -55,7 +55,7 @@ class MouldingHidupDetailController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Moulding-Hidup-Detail.pdf';
@@ -113,7 +113,7 @@ class MouldingHidupDetailController extends Controller
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Moulding-Hidup-Detail.pdf';

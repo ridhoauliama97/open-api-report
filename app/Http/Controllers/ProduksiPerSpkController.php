@@ -118,7 +118,7 @@ class ProduksiPerSpkController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Produksi-Per-SPK-%s.pdf', preg_replace('/[^A-Za-z0-9._-]+/', '-', $noSpk));

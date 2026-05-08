@@ -74,7 +74,7 @@ class KetahananBarangDagangFingerJointController extends Controller
             'pdf_orientation' => 'portrait',
             // Keep consistent with other "vertical-only borders" reports.
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Ketahanan-Barang-Dagang-Finger-Joint.pdf';

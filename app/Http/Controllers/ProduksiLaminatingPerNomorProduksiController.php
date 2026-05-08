@@ -39,7 +39,7 @@ class ProduksiLaminatingPerNomorProduksiController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Produksi-Laminating-Per-Nomor-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));

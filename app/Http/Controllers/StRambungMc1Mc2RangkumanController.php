@@ -68,7 +68,7 @@ class StRambungMc1Mc2RangkumanController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-ST-Rambung-MC1-dan-MC2-Rangkuman.pdf';

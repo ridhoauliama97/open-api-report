@@ -71,7 +71,7 @@ class TimelineKayuBulatHarianController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
             'pdf_orientation' => 'landscape',
             'pdf_column_count' => max(4, 3 + count($reportData['periods'] ?? [])),
         ]);

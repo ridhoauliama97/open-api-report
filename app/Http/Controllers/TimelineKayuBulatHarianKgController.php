@@ -133,7 +133,7 @@ class TimelineKayuBulatHarianKgController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
             'pdf_orientation' => 'landscape',
             'pdf_column_count' => $pdfColumnCount,
         ]);

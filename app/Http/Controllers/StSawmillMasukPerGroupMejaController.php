@@ -59,7 +59,7 @@ class StSawmillMasukPerGroupMejaController extends Controller
             // This report uses complex rowspans and a multi-row header.
             'pdf_simple_tables' => false,
             // Avoid mPDF table border packing issues on large pivot tables.
-            'pdf_pack_table_data' => false,
+
             // Hint for orientation auto-selection in PdfGenerator.
             'pdf_column_count' => 4 + $mejaCount,
         ]);

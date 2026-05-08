@@ -52,7 +52,7 @@ class LabelS4SHidupPerJenisKayuController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Label-S4S-Hidup-Per-Jenis-Kayu.pdf';
@@ -101,7 +101,7 @@ class LabelS4SHidupPerJenisKayuController extends Controller
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Label-S4S-Hidup-Per-Jenis-Kayu.pdf';

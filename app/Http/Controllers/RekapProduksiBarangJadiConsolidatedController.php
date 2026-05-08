@@ -49,7 +49,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Packing-Consolidated-%s-sd-%s.pdf', $startDate, $endDate);
@@ -101,7 +101,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Packing-Consolidated-%s-sd-%s.pdf', $startDate, $endDate);

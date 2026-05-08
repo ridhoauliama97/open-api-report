@@ -73,7 +73,7 @@ class RekapProduksiS4sRambungPerGradeController extends Controller
             'endDate' => $endDate,
             'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Rekap-Produksi-Rambung-Per-Grade.pdf';

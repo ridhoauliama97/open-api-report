@@ -59,7 +59,7 @@ class LabelPerhariController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Label-Perhari-%s-sd-%s.pdf', $startDate, $endDate);

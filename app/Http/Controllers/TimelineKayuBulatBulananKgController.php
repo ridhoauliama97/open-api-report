@@ -72,7 +72,7 @@ class TimelineKayuBulatBulananKgController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
             // Table pivot uses: No + Supplier + selected months + Total.
             'pdf_column_count' => $this->resolvePdfColumnCount($startDate, $endDate),
         ]);

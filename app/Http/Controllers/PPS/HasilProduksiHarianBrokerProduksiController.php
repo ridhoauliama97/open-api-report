@@ -42,7 +42,7 @@ class HasilProduksiHarianBrokerProduksiController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Harian-Hasil-Broker-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));

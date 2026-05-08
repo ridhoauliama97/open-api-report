@@ -74,7 +74,7 @@ class RekapPembelianKayuBulatController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
             'pdf_column_count' => 14,
         ]);
 

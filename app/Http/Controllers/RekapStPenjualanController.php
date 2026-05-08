@@ -75,7 +75,7 @@ class RekapStPenjualanController extends Controller
             // Match Mutasi KD styling: keep vertical borders, remove horizontal row separators.
             // With mPDF, this needs simpleTables=false + packTableData=false to render correctly.
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Rekap-ST-Penjualan.pdf';

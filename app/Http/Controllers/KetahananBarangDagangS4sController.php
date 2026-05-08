@@ -74,7 +74,7 @@ class KetahananBarangDagangS4sController extends Controller
             'pdf_orientation' => 'portrait',
             // Keep consistent with other "vertical-only borders" reports.
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Ketahanan-Barang-Dagang-S4S.pdf';

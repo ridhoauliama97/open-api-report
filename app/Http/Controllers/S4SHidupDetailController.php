@@ -56,7 +56,7 @@ class S4SHidupDetailController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
             // Workaround for mPDF collapsed-border table bug (can crash when true).
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-S4S-Hidup-Detail.pdf';
@@ -115,7 +115,7 @@ class S4SHidupDetailController extends Controller
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-S4S-Hidup-Detail.pdf';

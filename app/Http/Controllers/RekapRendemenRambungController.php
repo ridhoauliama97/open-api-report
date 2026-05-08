@@ -130,7 +130,7 @@ class RekapRendemenRambungController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
-            'pdf_pack_table_data' => false,
+
             'pdf_simple_tables' => false,
         ]);
 

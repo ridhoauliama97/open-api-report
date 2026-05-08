@@ -128,7 +128,7 @@ class TimelineRekapPenjualanPerProdukController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf(

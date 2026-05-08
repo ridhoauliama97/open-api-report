@@ -59,7 +59,7 @@ class UmurBarangJadiDetailController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Umur-Barang-Jadi-Detail-%s-%s-%s-%s.pdf', $params['Umur1'], $params['Umur2'], $params['Umur3'], $params['Umur4']);
@@ -120,7 +120,7 @@ class UmurBarangJadiDetailController extends Controller
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Umur-Barang-Jadi-Detail-%s-%s-%s-%s.pdf', $params['Umur1'], $params['Umur2'], $params['Umur3'], $params['Umur4']);

@@ -73,7 +73,7 @@ class KetahananBarangDagangCrossCutAkhirController extends Controller
             'endDate' => $endDate,
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Ketahanan-Barang-Dagang-CCAkhir.pdf';

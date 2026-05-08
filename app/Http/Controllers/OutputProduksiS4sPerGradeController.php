@@ -73,7 +73,7 @@ class OutputProduksiS4sPerGradeController extends Controller
             'endDate' => $endDate,
             'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = 'Laporan-Output-Produksi-S4S-Per-Grade.pdf';

@@ -71,7 +71,7 @@ class UmurS4SDetailController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
             // Workaround for mPDF collapsed-border table bug (can crash when true).
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = $this->buildFilename($params);
@@ -140,7 +140,7 @@ class UmurS4SDetailController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
             // Workaround for mPDF collapsed-border table bug (can crash when true).
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = $this->buildFilename($params);

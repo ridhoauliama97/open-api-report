@@ -60,7 +60,7 @@ class HasilProduksiMesinLemburDanNonLemburController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Hasil-Produksi-Mesin-Lembur-Dan-Non-Lembur-%s-sd-%s.pdf', $startDate, $endDate);

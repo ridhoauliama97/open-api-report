@@ -146,7 +146,7 @@ class RekapProduktivitasSawmillRpController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-            'pdf_pack_table_data' => false,
+
         ]);
 
         $filename = sprintf('Laporan-Rekap-Penerimaan-ST-Dari-Sawmill-Costing-Rambung-%s-sd-%s.pdf', $startDate, $endDate);
