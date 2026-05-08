@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     @include('reports.partials.pdf-reference-style', [
-        'pageMargin' => '18mm 10mm 18mm 10mm',
+        'pageMargin' => '14mm 10mm 14mm 10mm',
         'subtitleMargin' => '2px 0 20px 0',
         'tableMarginBottom' => '6px',
     ])

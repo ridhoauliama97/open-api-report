@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 12mm 8mm 14mm 8mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -239,12 +239,36 @@
         <div class="section-title">Kapasitas Racip Sawmill :</div>
         <table class="metrics-table">
             <tbody>
-                <tr><td class="metrics-label">Jmlh HK</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</td></tr>
-                <tr><td class="metrics-label">Jmlh Meja Sawmill</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</td></tr>
-                <tr><td class="metrics-label">Jmlh Meja /Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</td></tr>
-                <tr><td class="metrics-label">Total Ton</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['total_ton'] ?? 0) }}</td></tr>
-                <tr><td class="metrics-label">Ton/Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</td></tr>
-                <tr><td class="metrics-label">Ton/Hari/Meja</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</td></tr>
+                <tr>
+                    <td class="metrics-label">Jmlh HK</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Jmlh Meja Sawmill</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Jmlh Meja /Hari</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Total Ton</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtTon4($capacity['total_ton'] ?? 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Ton/Hari</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Ton/Hari/Meja</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</td>
+                </tr>
             </tbody>
         </table>
         <div class="rule"></div>
@@ -294,12 +318,36 @@
         <div class="section-title">Kapasitas Racip Sawmill Rambung :</div>
         <table class="metrics-table">
             <tbody>
-                <tr><td class="metrics-label">Jmlh HK</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</td></tr>
-                <tr><td class="metrics-label">Jmlh Meja Sawmill</td><td class="metrics-sep">:</td><td>{{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</td></tr>
-                <tr><td class="metrics-label">Jmlh Meja /Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</td></tr>
-                <tr><td class="metrics-label">Total Ton</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['total_ton'] ?? 0) }}</td></tr>
-                <tr><td class="metrics-label">Ton/Hari</td><td class="metrics-sep">:</td><td>{{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</td></tr>
-                <tr><td class="metrics-label">Ton/Hari/Meja</td><td class="metrics-sep">:</td><td>{{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</td></tr>
+                <tr>
+                    <td class="metrics-label">Jmlh HK</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtInt($capacity['jmlh_hk'] ?? 0) }} hari</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Jmlh Meja Sawmill</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtInt($capacity['jmlh_meja'] ?? 0) }} meja</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Jmlh Meja /Hari</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtDay($capacity['meja_per_hari'] ?? 0) }} meja/hari</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Total Ton</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtTon4($capacity['total_ton'] ?? 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Ton/Hari</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtDay($capacity['ton_per_hari'] ?? 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="metrics-label">Ton/Hari/Meja</td>
+                    <td class="metrics-sep">:</td>
+                    <td>{{ $fmtTon4($capacity['ton_per_hari_meja'] ?? 0) }}</td>
+                </tr>
             </tbody>
         </table>
         <div class="rule"></div>
@@ -326,7 +374,8 @@
             <tr>
                 <td style="width: 128px;">Diperlukan Waktu</td>
                 <td style="width: 12px;">:</td>
-                <td><span class="strong">{{ $fmtDay($summary['required_days'] ?? 0) }} Hari Kerja (Sawmill)</span> Untuk
+                <td><span class="strong">{{ $fmtDay($summary['required_days'] ?? 0) }} Hari Kerja (Sawmill)</span>
+                    Untuk
                     Menyelesaikan Kayu Bulat (Non Rambung) dan (Rambung)</td>
             </tr>
         </tbody>
