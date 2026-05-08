@@ -140,6 +140,9 @@ use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\ProduksiS4sPerNomorProduksiController;
 use App\Http\Controllers\ProduksiSandingPerNomorProduksiController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
+use App\Http\Controllers\QcSawmillController;
+use App\Http\Controllers\QcSawmillDiscrepancyController;
+use App\Http\Controllers\QcSawmillSummaryController;
 use App\Http\Controllers\RangkumanBongkarSusunController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
@@ -186,6 +189,7 @@ use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
 use App\Http\Controllers\SandingHidupDetailController;
+use App\Http\Controllers\SpkSawmillController;
 use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\StHidupKeringController;
 use App\Http\Controllers\StHidupPerSpkController;
@@ -873,6 +877,33 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/health', [RekapPcsTellyHasilSawmillController::class, 'health'])->name('health');
     });
 
+    /** QC Sawmill routes. */
+    Route::prefix('qc-sawmill')->name('qc-sawmill.')->group(function (): void {
+        Route::get('/', [QcSawmillController::class, 'index'])->name('index');
+        Route::post('/download', [QcSawmillController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [QcSawmillController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [QcSawmillController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcSawmillController::class, 'health'])->name('health');
+    });
+
+    /** QC Sawmill discrepancy routes. */
+    Route::prefix('qc-sawmill-discrepancy')->name('qc-sawmill-discrepancy.')->group(function (): void {
+        Route::get('/', [QcSawmillDiscrepancyController::class, 'index'])->name('index');
+        Route::post('/download', [QcSawmillDiscrepancyController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [QcSawmillDiscrepancyController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [QcSawmillDiscrepancyController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcSawmillDiscrepancyController::class, 'health'])->name('health');
+    });
+
+    /** QC Sawmill summary routes. */
+    Route::prefix('qc-sawmill-summary')->name('qc-sawmill-summary.')->group(function (): void {
+        Route::get('/', [QcSawmillSummaryController::class, 'index'])->name('index');
+        Route::post('/download', [QcSawmillSummaryController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [QcSawmillSummaryController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [QcSawmillSummaryController::class, 'preview'])->name('preview');
+        Route::post('/health', [QcSawmillSummaryController::class, 'health'])->name('health');
+    });
+
     /** Umur sawn timber detail ton routes. */
     Route::prefix('umur-sawn-timber-detail-ton')->name('umur-sawn-timber-detail-ton.')->group(function (): void {
         Route::get('/', [UmurSawnTimberDetailTonController::class, 'index'])->name('index');
@@ -918,6 +949,16 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [StHidupKeringController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StHidupKeringController::class, 'preview'])->name('preview');
         Route::post('/health', [StHidupKeringController::class, 'health'])->name('health');
+    });
+});
+
+Route::prefix('reports/spk')->name('reports.spk.')->group(function (): void {
+    Route::prefix('spk-sawmill')->name('spk-sawmill.')->group(function (): void {
+        Route::get('/', [SpkSawmillController::class, 'index'])->name('index');
+        Route::post('/download', [SpkSawmillController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [SpkSawmillController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [SpkSawmillController::class, 'preview'])->name('preview');
+        Route::post('/health', [SpkSawmillController::class, 'health'])->name('health');
     });
 });
 

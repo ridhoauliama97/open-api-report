@@ -448,9 +448,13 @@
             $reportEndReference,
         ): ?int {
             $dateCreateValue = $parseDateValue($dateCreateColumn !== null ? $row[$dateCreateColumn] ?? null : null);
-            $tanggalLamaRacipValue = $parseDateValue($tanggalLamaRacipColumn !== null ? $row[$tanggalLamaRacipColumn] ?? null : null);
+            $tanggalLamaRacipValue = $parseDateValue(
+                $tanggalLamaRacipColumn !== null ? $row[$tanggalLamaRacipColumn] ?? null : null,
+            );
             $dateUsageValue = $parseDateValue($dateUsageColumn !== null ? $row[$dateUsageColumn] ?? null : null);
-            $tanggalRacipValue = $parseDateValue($tanggalRacipColumn !== null ? $row[$tanggalRacipColumn] ?? null : null);
+            $tanggalRacipValue = $parseDateValue(
+                $tanggalRacipColumn !== null ? $row[$tanggalRacipColumn] ?? null : null,
+            );
 
             if ($groupName === 'Masih Hidup' && $tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
                 $hari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
@@ -481,9 +485,15 @@
                 $hariA = $computeLamaTunggu($a, $gName);
                 $hariB = $computeLamaTunggu($b, $gName);
 
-                if ($hariA === null && $hariB === null) return 0;
-                if ($hariA === null) return 1;
-                if ($hariB === null) return -1;
+                if ($hariA === null && $hariB === null) {
+                    return 0;
+                }
+                if ($hariA === null) {
+                    return 1;
+                }
+                if ($hariB === null) {
+                    return -1;
+                }
 
                 return $hariA <=> $hariB;
             });
@@ -709,6 +719,15 @@
                 $jumlahMasihHidupTon = $sumTon($groupRows, $tonColumn);
                 $jumlahMasihHidupTruck = $countTruck($groupRows, $truckColumn);
             @endphp
+
+            <table class="group-note">
+                <tr>
+                    <td class="left">
+                        <small> (*) NB: Kendaraan model TRUK (Fuso/Tronton/Trintin)</small>
+                    </td>
+                </tr>
+            </table>
+
             <table class="group-note">
                 <tr>
                     <td class="left" style="width:23.33%">

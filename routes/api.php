@@ -143,6 +143,9 @@ use App\Http\Controllers\ProduksiPerSpkController;
 use App\Http\Controllers\ProduksiS4sPerNomorProduksiController;
 use App\Http\Controllers\ProduksiSandingPerNomorProduksiController;
 use App\Http\Controllers\ProduksiSemuaMesinController;
+use App\Http\Controllers\QcSawmillController;
+use App\Http\Controllers\QcSawmillDiscrepancyController;
+use App\Http\Controllers\QcSawmillSummaryController;
 use App\Http\Controllers\RangkumanBongkarSusunController;
 use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
@@ -189,6 +192,7 @@ use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
 use App\Http\Controllers\SandingHidupDetailController;
+use App\Http\Controllers\SpkSawmillController;
 use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\StHidupKeringController;
 use App\Http\Controllers\StHidupPerSpkController;
@@ -351,6 +355,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/detail-lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.detail-lembar-tally-hasil-sawmill', DetailLembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/rekap-pcs-telly-hasil-sawmill', 'api.reports.sawn-timber.rekap-pcs-telly-hasil-sawmill', RekapPcsTellyHasilSawmillController::class],
+        ['/reports/sawn-timber/qc-sawmill', 'api.reports.sawn-timber.qc-sawmill', QcSawmillController::class],
+        ['/reports/sawn-timber/qc-sawmill-discrepancy', 'api.reports.sawn-timber.qc-sawmill-discrepancy', QcSawmillDiscrepancyController::class],
+        ['/reports/sawn-timber/qc-sawmill-summary', 'api.reports.sawn-timber.qc-sawmill-summary', QcSawmillSummaryController::class],
         ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan', RekapHasilSawmillPerMejaUpahBoronganController::class],
         ['/reports/sawn-timber/rekap-hasil-sawmill-per-meja', 'api.reports.sawn-timber.rekap-hasil-sawmill-per-meja', RekapHasilSawmillPerMejaController::class],
         ['/reports/sawn-timber/rekap-produktivitas-sawmill', 'api.reports.sawn-timber.rekap-produktivitas-sawmill', RekapProduktivitasSawmillSawnTimberController::class],
@@ -362,6 +369,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/dashboard-sawn-timber', 'api.reports.sawn-timber.dashboard-sawn-timber', DashboardSawnTimberController::class],
         ['/reports/sawn-timber/saldo-st-hidup-per-produk', 'api.reports.sawn-timber.saldo-st-hidup-per-produk', SaldoStHidupPerProdukController::class],
         ['/reports/sawn-timber/st-hidup-per-spk', 'api.reports.sawn-timber.st-hidup-per-spk', StHidupPerSpkController::class],
+        ['/reports/spk/spk-sawmill', 'api.reports.spk.spk-sawmill', SpkSawmillController::class],
     ];
 
     /**

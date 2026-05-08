@@ -1731,6 +1731,24 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.qc-sawmill.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan QC Sawmill
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.qc-sawmill-discrepancy.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan QC Sawmill - Discrepancy
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.qc-sawmill-summary.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan QC Sawmill - Summary
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.umur-sawn-timber-detail-ton.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Umur Sawn Timber Detail (Ton)
@@ -1764,6 +1782,28 @@
                             <a href="{{ route('reports.sawn-timber.st-sawmill-hari-tebal-lebar.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan ST Sawmill / Hari / Tebal / Lebar
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.spk.spk-sawmill.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan SPK Sawmill
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">SPK</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.spk.spk-sawmill.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan SPK Sawmill
                             </a>
                         </div>
                     </div>

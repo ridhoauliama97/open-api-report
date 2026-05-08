@@ -307,7 +307,7 @@
                     $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.');
+                $normalized = str_replace(',', '.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -459,7 +459,7 @@
             $panjangValue = $panjangCol !== null ? $toFloat($row[$panjangCol] ?? null) : null;
             $panjangText = $panjangValue !== null ? number_format($panjangValue, 1, '.', '') : '';
             $pcsText = number_format($pcs, 0, '.', '');
-            $beratText = $formatNumber($ton);
+            $beratText = $formatNumber($ton, 4);
 
             if (!isset($summaryByKet[$ket])) {
                 $summaryByKet[$ket] = ['pcs' => 0.0, 'ton' => 0.0];
@@ -602,8 +602,8 @@
                             @foreach ($leftRows as $row)
                                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $row['tebal'] }}</td>
-                                    <td>{{ $row['lebar'] }}</td>
+                                    <td class="number">{{ $row['tebal'] }}</td>
+                                    <td class="number">{{ $row['lebar'] }}</td>
                                     <td>{{ $row['uom_size'] }}</td>
                                     <td class="number">{{ $row['panjang'] }}</td>
                                     <td>{{ $row['uom_length'] }}</td>
@@ -635,8 +635,8 @@
                             @foreach ($rightRows as $row)
                                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                                     <td>{{ $leftRowCount + $loop->iteration }}</td>
-                                    <td>{{ $row['tebal'] }}</td>
-                                    <td>{{ $row['lebar'] }}</td>
+                                    <td class="number">{{ $row['tebal'] }}</td>
+                                    <td class="number">{{ $row['lebar'] }}</td>
                                     <td>{{ $row['uom_size'] }}</td>
                                     <td class="number">{{ $row['panjang'] }}</td>
                                     <td>{{ $row['uom_length'] }}</td>
@@ -677,7 +677,7 @@
                                         <td class="summary-label">Jmlh Ton</td>
                                         <td class="summary-separator">:</td>
                                         <td class="summary-value">
-                                            {{ $formatOptionalSummaryNumber($summaryByKet[$summaryKey]['ton'] ?? 0) }}
+                                            {{ $formatOptionalSummaryNumber($summaryByKet[$summaryKey]['ton'] ?? 0, 4) }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -706,7 +706,7 @@
                             <tr>
                                 <td class="summary-label">Jmlh Ton</td>
                                 <td class="summary-separator">:</td>
-                                <td class="summary-value">{{ $formatSummaryNumber($totalTon) }}</td>
+                                <td class="summary-value">{{ $formatOptionalSummaryNumber($totalTon, 4) }}</td>
                             </tr>
                         </tbody>
                     </table>

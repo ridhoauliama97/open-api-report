@@ -1570,6 +1570,53 @@ return [
             'Group,Produk,NoSPK,Tebal,Lebar,UOM,BasahTon,KDTon,KeringTon,TotalTon'
         )))),
     ],
+    'qc_sawmill' => [
+        'database_connection' => env('QC_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('QC_SAWMILL_REPORT_PROCEDURE', 'SP_LapQCSawmill'),
+        'call_syntax' => env('QC_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('QC_SAWMILL_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'QC_SAWMILL_REPORT_EXPECTED_COLUMNS',
+            'NoQc,QcTgl,QcNoMeja,NamaMeja,CuttingTebal,CuttingLebar,ActualTebal,ActualLebar'
+        )))),
+    ],
+    'qc_sawmill_discrepancy' => [
+        'database_connection' => env('QC_SAWMILL_DISCREPANCY_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('QC_SAWMILL_DISCREPANCY_REPORT_PROCEDURE', 'SP_LapQCSawmillDescr'),
+        'call_syntax' => env('QC_SAWMILL_DISCREPANCY_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('QC_SAWMILL_DISCREPANCY_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'QC_SAWMILL_DISCREPANCY_REPORT_EXPECTED_COLUMNS',
+            'NoQc,QcTgl,QcNoMeja,NamaMeja,CuttingTebal,CuttingLebar,ActualTebal,ActualLebar'
+        )))),
+    ],
+    'qc_sawmill_summary' => [
+        'database_connection' => env('QC_SAWMILL_SUMMARY_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('QC_SAWMILL_SUMMARY_REPORT_PROCEDURE', 'SP_LapQCSawmillSummary'),
+        'call_syntax' => env('QC_SAWMILL_SUMMARY_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('QC_SAWMILL_SUMMARY_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'QC_SAWMILL_SUMMARY_REPORT_EXPECTED_COLUMNS',
+            'Meja,NamaMeja,Tgl,DevTebal,DevLebar,Data,Acc,SumDevTebal,SumDevLebar,Accurate'
+        )))),
+    ],
+    'spk_sawmill' => [
+        'database_connection' => env('SPK_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'header_stored_procedure' => env('SPK_SAWMILL_REPORT_HEADER_PROCEDURE', 'SP_LapHasilSPKSawmill_h'),
+        'detail_stored_procedure' => env('SPK_SAWMILL_REPORT_DETAIL_PROCEDURE', 'SP_LapHasilSPKSawmill_d'),
+        'call_syntax' => env('SPK_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'header_query' => env('SPK_SAWMILL_REPORT_HEADER_QUERY'),
+        'detail_query' => env('SPK_SAWMILL_REPORT_DETAIL_QUERY'),
+        'max_detail_rows_per_table' => (int) env('SPK_SAWMILL_REPORT_MAX_DETAIL_ROWS_PER_TABLE', 52),
+        'expected_header_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SPK_SAWMILL_REPORT_EXPECTED_HEADER_COLUMNS',
+            'NoSPK,Tanggal,IdProdukSPK,NamaProduk,NamaGroup,Tebal,Lebar,Ton'
+        )))),
+        'expected_detail_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SPK_SAWMILL_REPORT_EXPECTED_DETAIL_COLUMNS',
+            'NoSPK,IdProdukSPK,TglSawmill,Ton,SaldoTerakhir'
+        )))),
+    ],
     'st_sawmill_hari_tebal_lebar' => [
         'database_connection' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_PROCEDURE', 'SPWps_LapSTSawmillPerHariPerTebalPerLebar'),
