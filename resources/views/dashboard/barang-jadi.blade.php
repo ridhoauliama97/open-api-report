@@ -9,14 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <title>Dashboard Barang Jadi</title>
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold"
-                href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
+                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -70,8 +70,12 @@
         @php
             $columns = is_array($reportData['columns'] ?? null) ? $reportData['columns'] : [];
             $rows = is_array($reportData['rows'] ?? null) ? $reportData['rows'] : [];
-            $sAkhirByColumn = is_array($reportData['s_akhir_by_column'] ?? null) ? $reportData['s_akhir_by_column'] : [];
-            $percentByColumn = is_array($reportData['percent_by_column'] ?? null) ? $reportData['percent_by_column'] : [];
+            $sAkhirByColumn = is_array($reportData['s_akhir_by_column'] ?? null)
+                ? $reportData['s_akhir_by_column']
+                : [];
+            $percentByColumn = is_array($reportData['percent_by_column'] ?? null)
+                ? $reportData['percent_by_column']
+                : [];
             $ctrByColumn = is_array($reportData['ctr_by_column'] ?? null) ? $reportData['ctr_by_column'] : [];
             $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : ['s_akhir' => 0, 'ctr' => 0];
 
@@ -128,11 +132,12 @@
                         <tbody>
                             @forelse ($rows as $row)
                                 <tr>
-                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}
+                                    </td>
                                     @foreach ($columns as $column)
                                         @php
-                                            $inflow = (float) (($row['cells'][$column]['in'] ?? 0) ?: 0);
-                                            $outflow = (float) (($row['cells'][$column]['out'] ?? 0) ?: 0);
+                                            $inflow = (float) ($row['cells'][$column]['in'] ?? 0 ?: 0);
+                                            $outflow = (float) ($row['cells'][$column]['out'] ?? 0 ?: 0);
                                         @endphp
                                         <td class="text-end">{{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}</td>
                                         <td class="text-end">{{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}</td>
@@ -140,7 +145,8 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ 1 + count($columns) * 2 }}" class="text-center">Data tidak tersedia.</td>
+                                    <td colspan="{{ 1 + count($columns) * 2 }}" class="text-center">Data tidak
+                                        tersedia.</td>
                                 </tr>
                             @endforelse
                         </tbody>

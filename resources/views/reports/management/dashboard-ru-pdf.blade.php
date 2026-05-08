@@ -28,14 +28,14 @@
         .report-title {
             text-align: center;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 12px 0;
-            font-size: 10px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -117,6 +117,21 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        .text-blue {
+            color: #005bbb;
+            font-weight: bold;
+        }
+
+        .text-orange {
+            color: #e67e00;
+            font-weight: bold;
+        }
+
+        .text-red {
+            color: #c00000;
+            font-weight: bold;
+        }
+
         .summary-table {
             width: 38%;
             border-collapse: collapse;
@@ -149,10 +164,89 @@
         $summaryLines = is_array($data['summary_lines'] ?? null) ? $data['summary_lines'] : [];
         $periodLabel = (string) ($data['period_label'] ?? '');
         $displayDate = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d-M-y');
+        $parseCellNumber = static function (mixed $value): ?float {
+            $normalized = trim((string) ($value ?? ''));
+
+            if ($normalized === '') {
+                return null;
+            }
+
+            $normalized = str_replace(['>', '<', ' '], '', $normalized);
+            $lastComma = strrpos($normalized, ',');
+            $lastDot = strrpos($normalized, '.');
+
+            if ($lastComma !== false && $lastDot !== false) {
+                $decimalSeparator = $lastComma > $lastDot ? ',' : '.';
+                $thousandSeparator = $decimalSeparator === ',' ? '.' : ',';
+                $normalized = str_replace($thousandSeparator, '', $normalized);
+                $normalized = str_replace($decimalSeparator, '.', $normalized);
+            } elseif ($lastComma !== false) {
+                $parts = explode(',', $normalized);
+                $normalized = count($parts) === 2 && strlen(end($parts)) === 3
+                    ? str_replace(',', '', $normalized)
+                    : str_replace(',', '.', $normalized);
+            } elseif ($lastDot !== false) {
+                $parts = explode('.', $normalized);
+                $normalized = count($parts) === 2 && strlen(end($parts)) === 3
+                    ? str_replace('.', '', $normalized)
+                    : $normalized;
+            }
+
+            return is_numeric($normalized) ? (float) $normalized : null;
+        };
+        $cellToneClass = static function (array $column, mixed $value) use ($parseCellNumber): string {
+            $group = (string) ($column['group_source'] ?? '');
+            $label = (string) ($column['label'] ?? '');
+            $displayValue = (string) ($value ?? '');
+
+            if ($group === 'Kiln & Dryer') {
+                if (str_contains($displayValue, '>')) {
+                    return ' text-blue';
+                }
+
+                if (str_contains($displayValue, '<')) {
+                    return ' text-red';
+                }
+
+                return '';
+            }
+
+            if ($group !== 'Stock Kayu Bulat Hidup') {
+                return '';
+            }
+
+            $number = $parseCellNumber($displayValue);
+
+            if ($number === null) {
+                return '';
+            }
+
+            if (in_array($label, ['RB-UT', 'JB-UT', 'JTG-UT'], true)) {
+                if ($number >= 7) {
+                    return ' text-red';
+                }
+
+                if ($number >= 5) {
+                    return ' text-orange';
+                }
+            }
+
+            if ($label === 'PL-UT') {
+                if ($number >= 19) {
+                    return ' text-red';
+                }
+
+                if ($number >= 15) {
+                    return ' text-orange';
+                }
+            }
+
+            return '';
+        };
     @endphp
 
     <h1 class="report-title">Laporan Dashboard RU {{ $periodLabel }}</h1>
-    <div class="report-subtitle">Per tanggal {{ $displayDate }}</div>
+    <div class="report-subtitle"></div>
 
     <table class="report-table">
         <colgroup>
@@ -180,7 +274,10 @@
                     class="{{ !empty($row['is_footer']) ? 'total-row' : (($index + 1) % 2 === 1 ? 'row-odd' : 'row-even') }}">
                     <td class="center">{{ $row['label'] ?? '' }}</td>
                     @foreach ($subColumns as $column)
-                        <td class="number">{{ $row['cells'][$column['key']] ?? '' }}</td>
+                        @php
+                            $cellValue = $row['cells'][$column['key']] ?? '';
+                        @endphp
+                        <td class="number{{ $cellToneClass($column, $cellValue) }}">{{ $cellValue }}</td>
                     @endforeach
                 </tr>
             @empty

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 18mm 10mm 18mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -726,11 +726,20 @@
                                                                         @endphp
                                                                         @php
                                                                             $mejaNum = null;
-                                                                            if (preg_match('/NoMeja\s+(\d+)/i', $bLabel, $mejaMatch)) {
+                                                                            if (
+                                                                                preg_match(
+                                                                                    '/NoMeja\s+(\d+)/i',
+                                                                                    $bLabel,
+                                                                                    $mejaMatch,
+                                                                                )
+                                                                            ) {
                                                                                 $mejaNum = (int) $mejaMatch[1];
                                                                             }
                                                                             $isMejaRow = $mejaNum !== null;
-                                                                            $showBalokRow = $isTotal || ($hasCompleteData && (!$isMejaRow || $mejaNum <= 10));
+                                                                            $showBalokRow =
+                                                                                $isTotal ||
+                                                                                ($hasCompleteData &&
+                                                                                    (!$isMejaRow || $mejaNum <= 10));
                                                                         @endphp
                                                                         @if ($showBalokRow)
                                                                             <tr>

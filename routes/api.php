@@ -253,9 +253,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ->where('reportPath', '.*')
         ->name('api.pdf-jobs.dispatch');
 
-    /**
-     * @param  class-string  $controller
-     */
+    //   @param  class-string  $controller
     $registerReportRoutes = static function (string $path, string $namePrefix, string $controller): void {
         Route::post($path, [$controller, 'preview'])->name("{$namePrefix}.preview");
         Route::match(['get', 'post'], "{$path}/pdf", [$controller, 'download'])->name("{$namePrefix}.pdf");

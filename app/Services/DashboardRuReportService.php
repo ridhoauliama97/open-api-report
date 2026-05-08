@@ -8,11 +8,16 @@ use RuntimeException;
 
 class DashboardRuReportService
 {
+    private const OPTIONAL_COLUMNS = [
+        'Penerimaan Kayu Bulat' => ['JMR'],
+        'Stock Kayu Bulat Hidup' => ['JMR', 'JMR-UR', 'JMR-UT'],
+    ];
+
     private const GROUP_DEFINITIONS = [
         [
             'source' => 'Penerimaan Kayu Bulat',
             'label' => 'Penerimaan Kayu Bulat',
-            'subs' => ['JB', 'JTG', 'PL', 'RB'],
+            'subs' => ['JB', 'JMR', 'JTG', 'PL', 'RB'],
         ],
         [
             'source' => 'Saldo ST PBL Hidup',
@@ -22,7 +27,7 @@ class DashboardRuReportService
         [
             'source' => 'Stock Kayu Bulat Hidup',
             'label' => 'Stock Kayu Bulat Hidup',
-            'subs' => ['JB', 'JB-UR', 'JB-UT', 'JTG', 'JTG-UR', 'JTG-UT', 'PL', 'PL-UR', 'PL-UT', 'RB', 'RB-UR', 'RB-UT'],
+            'subs' => ['JB', 'JB-UR', 'JB-UT', 'JMR', 'JMR-UR', 'JMR-UT', 'JTG', 'JTG-UR', 'JTG-UT', 'PL', 'PL-UR', 'PL-UT', 'RB', 'RB-UR', 'RB-UT'],
         ],
         [
             'source' => 'Kiln & Dryer',
@@ -119,7 +124,7 @@ class DashboardRuReportService
             'rows' => $normalizedRows,
             'summary_lines' => [
                 ['label' => 'Stock KB Non Pulai', 'value' => '(tronton)'],
-                ['label' => 'Total', 'value' => $this->formatSummaryDecimalRoundedUp($stockNonPulaiTronton)],
+                ['label' => 'Total', 'value' => $this->formatSummaryDecimal($stockNonPulaiTronton)],
             ],
             'summary' => [
                 'row_count' => count($normalizedRows),
@@ -160,7 +165,8 @@ class DashboardRuReportService
         foreach (self::GROUP_DEFINITIONS as $group) {
             $expectedColumns[$group['source']] = $group['subs'];
             $detected = array_values(array_unique($detectedColumns[$group['source']] ?? []));
-            $missing = array_values(array_diff($group['subs'], $detected));
+            $required = array_values(array_diff($group['subs'], self::OPTIONAL_COLUMNS[$group['source']] ?? []));
+            $missing = array_values(array_diff($required, $detected));
 
             if ($missing !== []) {
                 $missingColumns[$group['source']] = $missing;
@@ -249,7 +255,11 @@ class DashboardRuReportService
     {
         $normalized = trim((string) ($value ?? ''));
 
-        return $normalized === '0' ? '' : $normalized;
+        if ($normalized === '0') {
+            return '';
+        }
+
+        return $this->formatDisplayValue($normalized);
     }
 
     /**
@@ -264,27 +274,86 @@ class DashboardRuReportService
 
     private function parseNumeric(mixed $value): float
     {
+        $parsed = $this->parseLocalizedNumber($value);
+
+        return $parsed['value'] ?? 0.0;
+    }
+
+    private function formatDisplayValue(string $value): string
+    {
+        $parsed = $this->parseLocalizedNumber($value);
+
+        if ($parsed === null) {
+            return $value;
+        }
+
+        $prefix = $parsed['prefix'];
+        $decimals = $parsed['decimals'];
+
+        return $prefix . number_format($parsed['value'], $decimals, '.', ',');
+    }
+
+    /**
+     * @return array{value: float, decimals: int, prefix: string}|null
+     */
+    private function parseLocalizedNumber(mixed $value): ?array
+    {
         $normalized = trim((string) ($value ?? ''));
 
         if ($normalized === '') {
-            return 0.0;
+            return null;
         }
 
-        $normalized = str_replace('.', '', $normalized);
-        $normalized = str_replace(',', '.', $normalized);
+        $prefix = '';
+        if (str_starts_with($normalized, '>') || str_starts_with($normalized, '<')) {
+            $prefix = $normalized[0];
+            $normalized = trim(substr($normalized, 1));
+        }
 
-        return is_numeric($normalized) ? (float) $normalized : 0.0;
+        $normalized = str_replace(' ', '', $normalized);
+
+        if (preg_match('/^[+-]?\d+(?:[.,]\d+)*$/', $normalized) !== 1) {
+            return null;
+        }
+
+        $lastComma = strrpos($normalized, ',');
+        $lastDot = strrpos($normalized, '.');
+        $decimalSeparator = null;
+
+        if ($lastComma !== false && $lastDot !== false) {
+            $decimalSeparator = $lastComma > $lastDot ? ',' : '.';
+        } elseif ($lastComma !== false || $lastDot !== false) {
+            $separator = $lastComma !== false ? ',' : '.';
+            $parts = explode($separator, $normalized);
+            $lastPart = end($parts);
+
+            if (count($parts) > 2) {
+                $allThousands = collect(array_slice($parts, 1))
+                    ->every(static fn(string $part): bool => strlen($part) === 3);
+                $decimalSeparator = $allThousands ? null : $separator;
+            } elseif (strlen($lastPart) !== 3) {
+                $decimalSeparator = $separator;
+            }
+        }
+
+        $decimals = 0;
+        if ($decimalSeparator !== null) {
+            $decimals = strlen(substr($normalized, strrpos($normalized, $decimalSeparator) + 1));
+            $thousandSeparator = $decimalSeparator === ',' ? '.' : ',';
+            $normalized = str_replace($thousandSeparator, '', $normalized);
+            $normalized = str_replace($decimalSeparator, '.', $normalized);
+        } else {
+            $normalized = str_replace([',', '.'], '', $normalized);
+        }
+
+        return is_numeric($normalized)
+            ? ['value' => (float) $normalized, 'decimals' => $decimals, 'prefix' => $prefix]
+            : null;
     }
 
     private function formatSummaryDecimal(float $value): string
     {
-        return number_format($value, 2, ',', '.');
+        return number_format($value, 2, '.', '');
     }
 
-    private function formatSummaryDecimalRoundedUp(float $value): string
-    {
-        $roundedUp = ceil($value * 100) / 100;
-
-        return number_format($roundedUp, 2, ',', '.');
-    }
 }
