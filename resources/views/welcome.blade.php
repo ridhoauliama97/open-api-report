@@ -1737,6 +1737,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.total-bagus-kulit-rambung.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Total Bagus/Kulit Rambung
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.qc-sawmill.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan QC Sawmill

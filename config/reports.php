@@ -1185,6 +1185,10 @@ return [
             'NoKayuBulat,NoST,NmSupplier,NoTruk,TglMasuk,TglMulai,UT,TglSelesai,UR,TglStick,U-Stick,BalokToStick,TglMasukKD,UT-KD,TglKeluar,LamaKD'
         )))),
     ],
+    'total_bagus_kulit_rambung' => [
+        'database_connection' => env('TOTAL_BAGUS_KULIT_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'grade_id' => (int) env('TOTAL_BAGUS_KULIT_RAMBUNG_REPORT_GRADE_ID', 9),
+    ],
     'umur_sawn_timber_detail_ton' => [
         'database_connection' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PROCEDURE', 'SPWps_LapUmurST'),

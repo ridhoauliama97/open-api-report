@@ -223,6 +223,7 @@ Contoh:
 - Laporan Sawn Timber QC Sawmill Discrepancy: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill-discrepancy/pdf`
 - Laporan Sawn Timber QC Sawmill Summary: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill-summary/pdf`
 - Laporan Sawn Timber Tracing ST: `http://192.168.10.100:5006/api/reports/sawn-timber/tracing-st/pdf`
+- Laporan Sawn Timber Total Bagus/Kulit Rambung: `http://192.168.10.100:5006/api/reports/sawn-timber/total-bagus-kulit-rambung/pdf`
 
 ## Verifikasi
 

@@ -213,6 +213,7 @@ use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
 use App\Http\Controllers\TracingStController;
+use App\Http\Controllers\TotalBagusKulitRambungController;
 use App\Http\Controllers\UmurBarangJadiDetailController;
 use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\UmurFingerJointDetailController;
@@ -887,6 +888,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
             ->name('preview-pdf');
         Route::post('/preview', [TracingStController::class, 'preview'])->name('preview');
         Route::post('/health', [TracingStController::class, 'health'])->name('health');
+    });
+
+    /** Total bagus/kulit rambung routes. */
+    Route::prefix('total-bagus-kulit-rambung')->name('total-bagus-kulit-rambung.')->group(function (): void {
+        Route::get('/', [TotalBagusKulitRambungController::class, 'index'])->name('index');
+        Route::post('/download', [TotalBagusKulitRambungController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TotalBagusKulitRambungController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TotalBagusKulitRambungController::class, 'preview'])->name('preview');
+        Route::post('/health', [TotalBagusKulitRambungController::class, 'health'])->name('health');
     });
 
     /** QC Sawmill routes. */
