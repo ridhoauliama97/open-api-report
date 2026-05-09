@@ -132,11 +132,17 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        .output-below-target {
+            color: #c00000;
+            font-weight: bold;
+            font-style: italic;
+        }
+
         .sub-header {
             font-size: 8px;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -174,6 +180,14 @@
             }
 
             return number_format($float, 1, '.', ',') . '%';
+        };
+
+        $isOutputBelowTarget = static function ($output, $target): bool {
+            return $output !== null
+                && $target !== null
+                && is_numeric($output)
+                && is_numeric($target)
+                && (float) $output < (float) $target;
         };
     @endphp
 
@@ -215,7 +229,9 @@
                                 : [];
                         @endphp
                         <td class="center">{{ $fmtNumber($cell['tebal'] ?? null, 0) }}</td>
-                        <td class="number">{{ $fmtNumber($cell['output'] ?? null, 2) }}</td>
+                        <td
+                            class="number {{ $isOutputBelowTarget($cell['output'] ?? null, $targetRow['cells'][$column['key']] ?? null) ? 'output-below-target' : '' }}">
+                            {{ $fmtNumber($cell['output'] ?? null, 2) }}</td>
                         <td class="number">{{ $fmtPercent($cell['rend'] ?? null) }}</td>
                     @endforeach
                 </tr>
