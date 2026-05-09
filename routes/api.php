@@ -215,6 +215,7 @@ use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
+use App\Http\Controllers\TracingStController;
 use App\Http\Controllers\UmurBarangJadiDetailController;
 use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\UmurFingerJointDetailController;
@@ -355,6 +356,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/detail-lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.detail-lembar-tally-hasil-sawmill', DetailLembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/rekap-pcs-telly-hasil-sawmill', 'api.reports.sawn-timber.rekap-pcs-telly-hasil-sawmill', RekapPcsTellyHasilSawmillController::class],
+        ['/reports/sawn-timber/tracing-st', 'api.reports.sawn-timber.tracing-st', TracingStController::class],
         ['/reports/sawn-timber/qc-sawmill', 'api.reports.sawn-timber.qc-sawmill', QcSawmillController::class],
         ['/reports/sawn-timber/qc-sawmill-discrepancy', 'api.reports.sawn-timber.qc-sawmill-discrepancy', QcSawmillDiscrepancyController::class],
         ['/reports/sawn-timber/qc-sawmill-summary', 'api.reports.sawn-timber.qc-sawmill-summary', QcSawmillSummaryController::class],

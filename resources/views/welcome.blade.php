@@ -1731,6 +1731,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.tracing-st.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Tracing ST
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.qc-sawmill.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan QC Sawmill

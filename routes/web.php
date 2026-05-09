@@ -212,6 +212,7 @@ use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
+use App\Http\Controllers\TracingStController;
 use App\Http\Controllers\UmurBarangJadiDetailController;
 use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\UmurFingerJointDetailController;
@@ -875,6 +876,17 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [RekapPcsTellyHasilSawmillController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapPcsTellyHasilSawmillController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapPcsTellyHasilSawmillController::class, 'health'])->name('health');
+    });
+
+    /** Tracing ST routes. */
+    Route::prefix('tracing-st')->name('tracing-st.')->group(function (): void {
+        Route::get('/', [TracingStController::class, 'index'])->name('index');
+        Route::post('/download', [TracingStController::class, 'download'])->name('download');
+        Route::post('/preview-pdf/{filename?}', [TracingStController::class, 'previewPdf'])
+            ->where('filename', '[^/]+')
+            ->name('preview-pdf');
+        Route::post('/preview', [TracingStController::class, 'preview'])->name('preview');
+        Route::post('/health', [TracingStController::class, 'health'])->name('health');
     });
 
     /** QC Sawmill routes. */

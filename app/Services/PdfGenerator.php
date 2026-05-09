@@ -27,7 +27,7 @@ class PdfGenerator
     private function resolveFormat(array $data): string
     {
         $requested = strtoupper(trim((string) ($data['pdf_format'] ?? 'A4')));
-        $allowed = ['A4', 'A3', 'A2', 'A1', 'A0', 'LETTER', 'LEGAL'];
+        $allowed = ['A6', 'A5', 'A4', 'A3', 'A2', 'A1', 'A0', 'LETTER', 'LEGAL'];
 
         return in_array($requested, $allowed, true) ? $requested : 'A4';
     }
@@ -91,6 +91,10 @@ class PdfGenerator
             'autoLangToFont' => false,
         ]);
 
+        if (isset($data['pdf_title']) && trim((string) $data['pdf_title']) !== '') {
+            $mpdf->SetTitle(trim((string) $data['pdf_title']));
+        }
+
         if (isset($data['pdf_shrink_tables_to_fit']) && is_numeric($data['pdf_shrink_tables_to_fit'])) {
             $mpdf->shrink_tables_to_fit = (float) $data['pdf_shrink_tables_to_fit'];
         }
@@ -145,6 +149,10 @@ class PdfGenerator
             'autoScriptToLang' => false,
             'autoLangToFont' => false,
         ]);
+
+        if (isset($data['pdf_title']) && trim((string) $data['pdf_title']) !== '') {
+            $mpdf->SetTitle(trim((string) $data['pdf_title']));
+        }
 
         if (isset($data['pdf_shrink_tables_to_fit']) && is_numeric($data['pdf_shrink_tables_to_fit'])) {
             $mpdf->shrink_tables_to_fit = (float) $data['pdf_shrink_tables_to_fit'];

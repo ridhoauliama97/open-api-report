@@ -219,6 +219,10 @@ Contoh:
 - Laporan Sawn Timber Stock ST Basah: `http://192.168.10.100:5006/api/reports/sawn-timber/stock-st-basah/pdf`
 - Laporan Sawn Timber Stock ST Kering: `http://192.168.10.100:5006/api/reports/sawn-timber/stock-st-kering/pdf`
 - Laporan Sawn Timber Umur Sawn Timber Detail Ton: `http://192.168.10.100:5006/api/reports/sawn-timber/umur-sawn-timber-detail-ton/pdf`
+- Laporan Sawn Timber QC Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill/pdf`
+- Laporan Sawn Timber QC Sawmill Discrepancy: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill-discrepancy/pdf`
+- Laporan Sawn Timber QC Sawmill Summary: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill-summary/pdf`
+- Laporan Sawn Timber Tracing ST: `http://192.168.10.100:5006/api/reports/sawn-timber/tracing-st/pdf`
 
 ## Verifikasi
 
@@ -227,3 +231,7 @@ Contoh:
 - Laporan Verifikasi Rangkuman Bongkar Susun: `http://192.168.10.100:5006/api/reports/verifikasi/rangkuman-bongkar-susun/pdf`
 - Laporan Verifikasi Bahan Yang Dihasilkan: `http://192.168.10.100:5006/api/reports/verifikasi/bahan-yang-dihasilkan/pdf`
 - Laporan Label Nyangkut: `http://192.168.10.100:5006/api/reports/label-nyangkut/pdf`
+
+## SPK
+
+- Laporan SPK Sawmill: `http://192.168.10.100:5006/api/reports/spk/spk-sawmill/pdf`

@@ -1175,6 +1175,16 @@ return [
             'NmSupplier,TglSawmill,NoKayuBulat,NoPlat,Suket,Jenis,NoSTSawmill,NoMeja,NamaGrade,Tebal,Lebar,JmlhBatang'
         )))),
     ],
+    'tracing_st' => [
+        'database_connection' => env('TRACING_ST_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('TRACING_ST_REPORT_PROCEDURE', 'SP_LapTracingST'),
+        'call_syntax' => env('TRACING_ST_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('TRACING_ST_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'TRACING_ST_REPORT_EXPECTED_COLUMNS',
+            'NoKayuBulat,NoST,NmSupplier,NoTruk,TglMasuk,TglMulai,UT,TglSelesai,UR,TglStick,U-Stick,BalokToStick,TglMasukKD,UT-KD,TglKeluar,LamaKD'
+        )))),
+    ],
     'umur_sawn_timber_detail_ton' => [
         'database_connection' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PROCEDURE', 'SPWps_LapUmurST'),
