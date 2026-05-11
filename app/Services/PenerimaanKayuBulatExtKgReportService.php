@@ -136,15 +136,12 @@ class PenerimaanKayuBulatExtKgReportService
         $firstRow = $rows[0] ?? [];
         $supplierAsal = trim((string) ($headerRow['SupplierAsalKayu'] ?? ''));
         $supplierUtama = trim((string) ($headerRow['SupplierUtama'] ?? ''));
-        $supplierUtamaCompact = preg_replace('/\s+/', '', $supplierUtama) ?? $supplierUtama;
         $jenisKayu = trim((string) ($headerRow['JenisKayu'] ?? ''));
         $singkatanJenis = trim((string) ($headerRow['SingkatanJenisKayu'] ?? ''));
         $kategoriPengukuran = trim((string) ($headerRow['KategoriPengukuran'] ?? ''));
         $noTruk = trim((string) ($headerRow['NoTruk'] ?? ''));
-
         $supplierDisplayParts = array_filter([
-            $supplierAsal,
-            $supplierUtamaCompact !== '' ? '(' . $supplierUtamaCompact . ')' : '',
+            $supplierUtama,
             trim(implode('', array_filter([
                 $singkatanJenis,
                 $kategoriPengukuran !== '' ? '-' . $kategoriPengukuran : '',
@@ -157,7 +154,7 @@ class PenerimaanKayuBulatExtKgReportService
         return [
             'no_kayu_bulat' => trim((string) ($headerRow['NoKayuBulat'] ?? $noKayuBulat)),
             'tanggal' => trim((string) ($headerRow['DateCreate'] ?? '')),
-            'supplier' => $supplierDisplay !== '' ? $supplierDisplay : ($supplierAsal !== '' ? $supplierAsal : $supplierUtama),
+            'supplier' => $supplierDisplay,
             'jenis_kayu' => $jenisKayu,
             'no_plat' => trim((string) ($headerRow['NoPlat'] ?? '')),
             'no_suket' => trim((string) ($headerRow['Suket'] ?? '')),
@@ -187,11 +184,13 @@ class PenerimaanKayuBulatExtKgReportService
 
             $groups[] = [
                 'grade_name' => (string) ($row['NamaGrade'] ?? ''),
-                'rows' => [[
-                    'no' => (int) ($row['NoUrut'] ?? 0),
-                    'pcs' => $pcs,
-                    'berat' => $berat,
-                ]],
+                'rows' => [
+                    [
+                        'no' => (int) ($row['NoUrut'] ?? 0),
+                        'pcs' => $pcs,
+                        'berat' => $berat,
+                    ]
+                ],
                 'totals' => [
                     'pcs' => $pcs,
                     'berat' => $berat,

@@ -11,11 +11,11 @@ class UmurKayuBulatRambungReportService
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function fetch(string $startDate, string $endDate): array
+    public function fetch(string $startDate, string $endDate, Carbon|string|null $printedAt = null): array
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        $normalized = $this->normalizeRows($rows);
+        $normalized = $this->normalizeRows($rows, $printedAt);
 
         usort($normalized, static function (array $a, array $b): int {
             $lamaTungguA = $a['Lama Tunggu'] ?? null;
@@ -63,9 +63,13 @@ class UmurKayuBulatRambungReportService
      * @param array<int, object> $rows
      * @return array<int, array<string, mixed>>
      */
-    private function normalizeRows(array $rows): array
+    private function normalizeRows(array $rows, Carbon|string|null $printedAt): array
     {
-        return array_map(function ($row): array {
+        $reportReferenceDate = $printedAt instanceof Carbon
+            ? $printedAt->copy()->startOfDay()
+            : ($this->parseDate($printedAt) ?? Carbon::today());
+
+        return array_map(function ($row) use ($reportReferenceDate): array {
             $item = (array) $row;
 
             $status = is_numeric($item['Status'] ?? null) ? (string) (int) $item['Status'] : (string) ($item['Status'] ?? '');
@@ -81,8 +85,8 @@ class UmurKayuBulatRambungReportService
 
             // Lama tunggu dihitung dalam hari:
             // - Status 1 (sudah mati): dari tanggal masuk ke DateUsage
-            // - Status 0 (masih hidup): dari tanggal masuk ke tanggal hari ini
-            $anchorDate = $status === '1' ? $dateUsage : Carbon::today();
+            // - Status 0 (masih hidup): dari tanggal masuk ke tanggal PDF dicetak
+            $anchorDate = $status === '1' ? $dateUsage : $reportReferenceDate;
             $lamaTunggu = null;
             if ($dateCreate && $anchorDate) {
                 $lamaTunggu = $dateCreate->diffInDays($anchorDate, false);

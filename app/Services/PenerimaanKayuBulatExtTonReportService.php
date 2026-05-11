@@ -77,10 +77,7 @@ class PenerimaanKayuBulatExtTonReportService
         return [
             'header' => $header,
             'rows' => $rows,
-            'summary' => [
-                'total_logs' => count($rows),
-                'total_ton' => array_sum(array_map(static fn(array $row): float => (float) ($row['Ton'] ?? 0), $rows)),
-            ],
+            'summary' => $this->buildSummary($rows),
         ];
     }
 
@@ -124,6 +121,33 @@ class PenerimaanKayuBulatExtTonReportService
     }
 
     /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<string, mixed>
+     */
+    private function buildSummary(array $rows): array
+    {
+        $totalTon = 0.0;
+        $totalsByKeterangan = [];
+
+        foreach ($rows as $row) {
+            $ton = (float) ($row['Ton'] ?? 0);
+            $keterangan = trim((string) ($row['Ket'] ?? ''));
+            $keterangan = $keterangan !== '' ? $keterangan : '-';
+
+            $totalTon += $ton;
+            $totalsByKeterangan[$keterangan] = ($totalsByKeterangan[$keterangan] ?? 0.0) + $ton;
+        }
+
+        ksort($totalsByKeterangan, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return [
+            'total_logs' => count($rows),
+            'total_ton' => $totalTon,
+            'totals_by_keterangan' => $totalsByKeterangan,
+        ];
+    }
+
+    /**
      * @param  array<string, mixed>  $headerRow
      * @return array<string, mixed>
      */
@@ -131,15 +155,13 @@ class PenerimaanKayuBulatExtTonReportService
     {
         $supplierAsal = trim((string) ($headerRow['SupplierAsalKayu'] ?? ''));
         $supplierUtama = trim((string) ($headerRow['SupplierUtama'] ?? ''));
-        $supplierUtamaCompact = preg_replace('/\s+/', '', $supplierUtama) ?? $supplierUtama;
         $jenisKayu = trim((string) ($headerRow['JenisKayu'] ?? ''));
         $singkatanJenis = trim((string) ($headerRow['SingkatanJenisKayu'] ?? ''));
         $kategoriPengukuran = trim((string) ($headerRow['KategoriPengukuran'] ?? ''));
         $noTruk = trim((string) ($headerRow['NoTruk'] ?? ''));
 
         $supplierDisplayParts = array_filter([
-            $supplierAsal !== '' ? $supplierAsal : $supplierUtama,
-            $supplierAsal !== '' && $supplierUtamaCompact !== '' ? '(' . $supplierUtamaCompact . ')' : '',
+            $supplierUtama,
             trim(implode('', array_filter([
                 $singkatanJenis,
                 $kategoriPengukuran !== '' ? '-' . $kategoriPengukuran : '',

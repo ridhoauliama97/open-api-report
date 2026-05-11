@@ -231,7 +231,7 @@
         $formatWeight = static fn(int|float $value): string => number_format((float) $value, 0, '.', ',');
     @endphp
 
-    <h1 class="report-title">Laporan Penerimaan Kayu Bulat - (Ext KG)</h1>
+    <h1 class="report-title">Laporan Penerimaan Kayu Bulat - (KG)</h1>
 
     <table class="meta-table">
         <tr>

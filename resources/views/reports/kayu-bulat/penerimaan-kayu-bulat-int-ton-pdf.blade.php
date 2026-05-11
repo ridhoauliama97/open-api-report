@@ -70,7 +70,10 @@
         .report-table th,
         .report-table td {
             border: 1px solid #000;
-            padding: 3px 5px;
+            padding: 2px 3px;
+            font-size: 10px;
+            line-height: 1.15;
+            white-space: nowrap;
         }
 
         .report-table th {
@@ -81,6 +84,15 @@
 
         .report-table td {
             vertical-align: middle;
+        }
+
+        .report-table tbody td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        .report-table tbody tr.last-data-row td {
+            border-bottom: 1px solid #000;
         }
 
         .report-table td.center {
@@ -111,6 +123,47 @@
             text-align: center;
         }
 
+        .report-table .separator-cell {
+            width: 4%;
+            min-width: 16px;
+            border: 0;
+            background: #fff !important;
+            padding: 0;
+        }
+
+        .summary-block {
+            width: 100%;
+            margin: 4px 0 10px 0;
+        }
+
+        .summary-table {
+            width: 45%;
+            border-collapse: collapse;
+            font-family: "Noto Serif", serif;
+            font-size: 10px;
+            margin-top: 10px;
+            margin-left: auto;
+        }
+
+        .summary-table td {
+            padding: 0 2px 2px 2px;
+            vertical-align: top;
+        }
+
+        .summary-label {
+            text-align: right;
+            white-space: nowrap;
+            width: 70%;
+        }
+
+        .summary-value {
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            text-align: right;
+            white-space: nowrap;
+            width: 30%;
+            font-weight: bold;
+        }
+
         .signature-table {
             margin-top: 14px;
             table-layout: fixed;
@@ -133,6 +186,11 @@
 
         .signature-placeholder-row td {
             padding-top: 50px;
+        }
+
+        .signature-bottom-label-row td {
+            padding-top: 6px;
+            padding-bottom: 18px;
         }
 
         .signature-placeholder-table {
@@ -182,11 +240,17 @@
             }
         };
 
-        $formatSize = static fn(int|float $value): string => number_format((float) $value, 0, '.', '');
+        $formatSize = static fn(int|float $value): string => number_format((float) $value, 2, '.', ',');
         $formatTon = static fn(int|float $value): string => number_format((float) $value, 4, '.', ',');
+        $totalsByKeterangan = is_array($summary['totals_by_keterangan'] ?? null)
+            ? $summary['totals_by_keterangan']
+            : [];
+        $jenisKayuSummary = trim((string) ($header['jenis_kayu'] ?? ''));
+        $leftRowsCount = (int) ceil(count($rows) / 2);
+        $rightStartNumber = $leftRowsCount + 1;
     @endphp
 
-    <h1 class="report-title">Laporan Penerimaan Kayu Bulat - (Int Ton)</h1>
+    <h1 class="report-title">Laporan Penerimaan Kayu Bulat</h1>
 
     <table class="meta-table">
         <tr>
@@ -221,34 +285,64 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th style="width: 8%;">No</th>
-                <th style="width: 12%;">No Log</th>
-                <th style="width: 13%;">Tebal</th>
-                <th style="width: 13%;">Lebar</th>
-                <th style="width: 13%;">Panjang</th>
-                <th style="width: 17%;">Ton</th>
-                <th style="width: 24%;">Ket</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 7.5%;">Tebal</th>
+                <th style="width: 7.5%;">Lebar</th>
+                <th style="width: 7.5%;">Panjang</th>
+                <th style="width: 9.5%;">Ton</th>
+                <th style="width: 11%;">Keterangan</th>
+                <th class="separator-cell"></th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 7.5%;">Tebal</th>
+                <th style="width: 7.5%;">Lebar</th>
+                <th style="width: 7.5%;">Panjang</th>
+                <th style="width: 9.5%;">Ton</th>
+                <th style="width: 11%;">Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($rows as $row)
-                <tr>
-                    <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">{{ (int) ($row['NoLog'] ?? 0) }}</td>
-                    <td class="number">{{ $formatSize((float) ($row['Tebal'] ?? 0)) }}</td>
-                    <td class="number">{{ $formatSize((float) ($row['Lebar'] ?? 0)) }}</td>
-                    <td class="number">{{ $formatSize((float) ($row['Panjang'] ?? 0)) }}</td>
-                    <td class="number">{{ $formatTon((float) ($row['Ton'] ?? 0)) }}</td>
-                    <td class="center">{{ (string) ($row['Ket'] ?? '') }}</td>
+            @for ($index = 0; $index < $leftRowsCount; $index++)
+                @php
+                    $leftRow = $rows[$index] ?? [];
+                    $rightRow = $rows[$leftRowsCount + $index] ?? null;
+                @endphp
+                <tr @class(['last-data-row' => $index === $leftRowsCount - 1])>
+                    <td class="center">{{ $index + 1 }}</td>
+                    <td class="number">{{ $formatSize((float) ($leftRow['Tebal'] ?? 0)) }}</td>
+                    <td class="number">{{ $formatSize((float) ($leftRow['Lebar'] ?? 0)) }}</td>
+                    <td class="number">{{ $formatSize((float) ($leftRow['Panjang'] ?? 0)) }}</td>
+                    <td class="number">{{ $formatTon((float) ($leftRow['Ton'] ?? 0)) }}</td>
+                    <td class="center">{{ (string) ($leftRow['Ket'] ?? '') }}</td>
+                    <td class="separator-cell"></td>
+                    @if (is_array($rightRow))
+                        <td class="center">{{ $rightStartNumber + $index }}</td>
+                        <td class="number">{{ $formatSize((float) ($rightRow['Tebal'] ?? 0)) }}</td>
+                        <td class="number">{{ $formatSize((float) ($rightRow['Lebar'] ?? 0)) }}</td>
+                        <td class="number">{{ $formatSize((float) ($rightRow['Panjang'] ?? 0)) }}</td>
+                        <td class="number">{{ $formatTon((float) ($rightRow['Ton'] ?? 0)) }}</td>
+                        <td class="center">{{ (string) ($rightRow['Ket'] ?? '') }}</td>
+                    @else
+                        <td colspan="6"></td>
+                    @endif
                 </tr>
-            @endforeach
-            <tr class="totals-row">
-                <td colspan="5" class="totals-label">Total</td>
-                <td class="number">{{ $formatTon((float) ($summary['total_ton'] ?? 0)) }}</td>
-                <td></td>
-            </tr>
+            @endfor
         </tbody>
     </table>
+
+    <div class="summary-block">
+        <table class="summary-table">
+            @foreach ($totalsByKeterangan as $keterangan => $ton)
+                <tr>
+                    <td class="summary-label">KB {{ trim($jenisKayuSummary . ' ' . (string) $keterangan) }} :</td>
+                    <td class="summary-value">{{ $formatTon((float) $ton) }}</td>
+                </tr>
+            @endforeach
+            <tr>
+                <td class="summary-label">Total :</td>
+                <td class="summary-value">{{ $formatTon((float) ($summary['total_ton'] ?? 0)) }}</td>
+            </tr>
+        </table>
+    </div>
 
     <table class="signature-table">
         <tr class="signature-label-row">

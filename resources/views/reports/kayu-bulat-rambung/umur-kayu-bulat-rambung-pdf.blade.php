@@ -189,7 +189,7 @@
             return null;
         };
 
-        $reportEndReference = isset($endDate) ? \Carbon\Carbon::parse($endDate) : $generatedAt->copy();
+        $printedReportReference = $generatedAt->copy()->startOfDay();
 
         $formatHeaderLabel = static function (string $column) use ($normalize): string {
             return match ($normalize($column)) {
@@ -445,7 +445,7 @@
             $dateUsageColumn,
             $tanggalRacipColumn,
             $modelColumn,
-            $reportEndReference,
+            $printedReportReference,
         ): ?int {
             $dateCreateValue = $parseDateValue($dateCreateColumn !== null ? $row[$dateCreateColumn] ?? null : null);
             $tanggalLamaRacipValue = $parseDateValue(
@@ -456,8 +456,8 @@
                 $tanggalRacipColumn !== null ? $row[$tanggalRacipColumn] ?? null : null,
             );
 
-            if ($groupName === 'Masih Hidup' && $tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
-                $hari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
+            if ($groupName === 'Masih Hidup' && $dateCreateValue !== null) {
+                $hari = $diffDays($dateCreateValue, $printedReportReference);
             } elseif ($dateUsageValue !== null && $dateCreateValue !== null) {
                 $hari = $diffDays($dateCreateValue, $dateUsageValue);
             } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
@@ -465,7 +465,7 @@
             } elseif ($tanggalRacipValue !== null && $dateCreateValue !== null) {
                 $hari = $diffDays($dateCreateValue, $tanggalRacipValue);
             } elseif ($dateCreateValue !== null) {
-                $hari = $diffDays($dateCreateValue, $reportEndReference);
+                $hari = $diffDays($dateCreateValue, $printedReportReference);
             } else {
                 $hari = null;
             }
@@ -548,12 +548,8 @@
                         $lamaAwalHari = $diffDays($dateCreateValue, $tanggalRacipValue);
                         $lamaAwalText = $lamaAwalHari !== null ? $lamaAwalHari . ' hari' : '';
 
-                        if (
-                            $groupName === 'Masih Hidup' &&
-                            $tanggalLamaRacipValue !== null &&
-                            $dateCreateValue !== null
-                        ) {
-                            $lamaTungguHari = $diffDays($dateCreateValue, $tanggalLamaRacipValue);
+                        if ($groupName === 'Masih Hidup' && $dateCreateValue !== null) {
+                            $lamaTungguHari = $diffDays($dateCreateValue, $printedReportReference);
                         } elseif ($dateUsageValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $dateUsageValue);
                         } elseif ($tanggalLamaRacipValue !== null && $dateCreateValue !== null) {
@@ -561,7 +557,7 @@
                         } elseif ($tanggalRacipValue !== null && $dateCreateValue !== null) {
                             $lamaTungguHari = $diffDays($dateCreateValue, $tanggalRacipValue);
                         } elseif ($dateCreateValue !== null) {
-                            $lamaTungguHari = $diffDays($dateCreateValue, $reportEndReference);
+                            $lamaTungguHari = $diffDays($dateCreateValue, $printedReportReference);
                         } else {
                             $lamaTungguHari = null;
                         }

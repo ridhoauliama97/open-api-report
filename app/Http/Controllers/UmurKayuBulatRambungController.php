@@ -42,9 +42,10 @@ class UmurKayuBulatRambungController extends Controller
         }
 
         [$startDate, $endDate] = $this->extractDates($request);
+        $generatedAt = now();
 
         try {
-            $rows = $reportService->fetch($startDate, $endDate);
+            $rows = $reportService->fetch($startDate, $endDate, $generatedAt);
         } catch (RuntimeException $exception) {
             if ($request->expectsJson()) {
                 return response()->json([
@@ -62,7 +63,7 @@ class UmurKayuBulatRambungController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
-            'generatedAt' => now(),
+            'generatedAt' => $generatedAt,
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
         ]);
@@ -83,9 +84,10 @@ class UmurKayuBulatRambungController extends Controller
         UmurKayuBulatRambungReportService $reportService,
     ): JsonResponse {
         [$startDate, $endDate] = $this->extractDates($request);
+        $generatedAt = now();
 
         try {
-            $rows = $reportService->fetch($startDate, $endDate);
+            $rows = $reportService->fetch($startDate, $endDate, $generatedAt);
         } catch (RuntimeException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
@@ -99,6 +101,7 @@ class UmurKayuBulatRambungController extends Controller
                 'end_date' => $endDate,
                 'TglAwal' => $startDate,
                 'TglAkhir' => $endDate,
+                'printed_at' => $generatedAt->toDateTimeString(),
                 'total_rows' => count($rows),
                 'column_order' => array_keys($rows[0] ?? []),
             ],
