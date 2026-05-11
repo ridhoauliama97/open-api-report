@@ -11,7 +11,7 @@
         $pageMargin = '14mm 10mm 14mm 10mm';
         $bodyFontSize = '10px';
         $titleFontSize = '16px';
-        $subtitleMargin = '2px 0 18px 0';
+        $subtitleMargin = '2px 0 20px 0';
         $tableMarginBottom = '8px';
     @endphp
     <style>
