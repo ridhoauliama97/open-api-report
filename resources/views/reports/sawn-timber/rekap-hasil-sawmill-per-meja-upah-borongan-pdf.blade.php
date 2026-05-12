@@ -158,7 +158,7 @@
         }
 
         .split-table-wrap {
-            width: 100%;
+            width: 98%;
             margin: 0 0 6px 6px;
             border-collapse: collapse;
             border-spacing: 0;
@@ -177,6 +177,16 @@
             margin: 0;
             border-collapse: collapse;
             table-layout: fixed;
+        }
+
+        .split-table th,
+        .split-table td {
+            font-size: 10px;
+            line-height: 1.15;
+        }
+
+        .split-table .headers-row th {
+            font-size: 10px;
         }
     </style>
 </head>
@@ -297,7 +307,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Rekap Hasil Sawmill Per-Meja (Upah Borongan)</h1>
-    <p class="report-subtitle">Periode {{ $startText }} Sampai {{ $endText }}</p>
+    <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
 
     @foreach ($mainGroups as $group)
         @php

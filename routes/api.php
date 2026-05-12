@@ -202,6 +202,7 @@ use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\StockRacipKayuLatController;
 use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockSTKeringController;
+use App\Http\Controllers\StokOpnameStDetailKdController;
 use App\Http\Controllers\StRambungMc1Mc2DetailController;
 use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\StSawmillHariTebalLebarController;
@@ -351,6 +352,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/ketahanan-barang-st', 'api.reports.sawn-timber.ketahanan-barang-st', KetahananBarangDagangStController::class],
         ['/reports/sawn-timber/st-rambung-mc1-mc2-detail', 'api.reports.sawn-timber.st-rambung-mc1-mc2-detail', StRambungMc1Mc2DetailController::class],
         ['/reports/sawn-timber/st-rambung-mc1-mc2-rangkuman', 'api.reports.sawn-timber.st-rambung-mc1-mc2-rangkuman', StRambungMc1Mc2RangkumanController::class],
+        ['/reports/sawn-timber/stok-opname-st-detail-kd', 'api.reports.sawn-timber.stok-opname-st-detail-kd', StokOpnameStDetailKdController::class],
         ['/reports/sawn-timber/st-hidup-kering', 'api.reports.sawn-timber.st-hidup-kering', StHidupKeringController::class],
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung', 'api.reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung', RekapPenerimaanSTDariSawmillNonRambungController::class],

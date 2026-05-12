@@ -135,6 +135,7 @@ class RekapHasilSawmillPerMejaUpahBoronganController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
+            'pdf_shrink_tables_to_fit' => 1,
         ]);
 
         $filename = sprintf('Laporan Rekap Hasil Sawmill Per Meja (Upah Borongan) - %s s-d %s.pdf', $startDate, $endDate);

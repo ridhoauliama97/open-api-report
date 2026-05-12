@@ -199,6 +199,7 @@ use App\Http\Controllers\StockOpnameKayuBulatController;
 use App\Http\Controllers\StockRacipKayuLatController;
 use App\Http\Controllers\StockSTBasahController;
 use App\Http\Controllers\StockSTKeringController;
+use App\Http\Controllers\StokOpnameStDetailKdController;
 use App\Http\Controllers\StRambungMc1Mc2DetailController;
 use App\Http\Controllers\StRambungMc1Mc2RangkumanController;
 use App\Http\Controllers\StSawmillHariTebalLebarController;
@@ -780,6 +781,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/preview-pdf', [StRambungMc1Mc2RangkumanController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [StRambungMc1Mc2RangkumanController::class, 'preview'])->name('preview');
         Route::post('/health', [StRambungMc1Mc2RangkumanController::class, 'health'])->name('health');
+    });
+
+    /** Stok opname ST detail pada KD routes. */
+    Route::prefix('stok-opname-st-detail-kd')->name('stok-opname-st-detail-kd.')->group(function (): void {
+        Route::get('/', [StokOpnameStDetailKdController::class, 'index'])->name('index');
+        Route::post('/download', [StokOpnameStDetailKdController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [StokOpnameStDetailKdController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [StokOpnameStDetailKdController::class, 'preview'])->name('preview');
+        Route::post('/health', [StokOpnameStDetailKdController::class, 'health'])->name('health');
     });
 
     /** Penerimaan ST dari sawmill KG routes. */

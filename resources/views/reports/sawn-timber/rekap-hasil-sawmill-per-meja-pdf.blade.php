@@ -224,7 +224,7 @@
         $fmtTotal = static fn(float $v): string => number_format($v, 4, '.', ',');
         $dateLabel = static function (string $key): string {
             try {
-                return \Carbon\Carbon::parse($key)->format('d-M');
+                return \Carbon\Carbon::parse($key)->locale('id')->translatedFormat('d-M');
             } catch (\Throwable $exception) {
                 return $key;
             }

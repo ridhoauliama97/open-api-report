@@ -2597,6 +2597,19 @@ return [
         )))),
     ],
 
+    // Sawn timber: Laporan Stok Opname ST Detail Pada KD
+    'stok_opname_st_detail_kd' => [
+        'database_connection' => env('STOK_OPNAME_ST_DETAIL_KD_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('STOK_OPNAME_ST_DETAIL_KD_REPORT_PROCEDURE', 'SP_LapStokOpnameSTDetail'),
+        'call_syntax' => env('STOK_OPNAME_ST_DETAIL_KD_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('STOK_OPNAME_ST_DETAIL_KD_REPORT_QUERY'),
+        'parameter_count' => (int) env('STOK_OPNAME_ST_DETAIL_KD_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'STOK_OPNAME_ST_DETAIL_KD_REPORT_EXPECTED_COLUMNS',
+            'NoST,DateCreate,Jenis,NoKayuBulat,Tebal,Lebar,Panjang,JmlhBatang,UOMLebar,UOMPanjang,Ton'
+        )))),
+    ],
+
     // Pengaturan otentikasi JWT untuk endpoint laporan
     'report_auth' => [
         'issuers' => array_filter(array_map(

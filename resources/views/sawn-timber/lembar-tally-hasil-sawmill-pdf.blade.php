@@ -185,7 +185,7 @@
             border: 0;
             padding: 0;
             vertical-align: top;
-            font-size: 9.5px;
+            font-size: 10px;
         }
 
         .summary-title {

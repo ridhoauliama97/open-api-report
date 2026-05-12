@@ -143,7 +143,7 @@
 
         .summary-title {
             margin: 0 0 5px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -162,7 +162,7 @@
         }
 
         .split-table-wrap {
-            width: 100%;
+            width: 98%;
             margin: 0 0 6px 6px;
             border-collapse: collapse;
             border-spacing: 0;
@@ -185,6 +185,16 @@
 
         .split-table-wrap .report-table {
             margin: 0;
+        }
+
+        .split-table th,
+        .split-table td {
+            font-size: 10px;
+            line-height: 1.15;
+        }
+
+        .split-table .headers-row th {
+            font-size: 10px;
         }
     </style>
 </head>
@@ -309,7 +319,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Rekap Hasil Sawmill Per-Meja (Semua Meja)</h1>
-    <p class="report-subtitle">Periode {{ $startText }} Sampai {{ $endText }}</p>
+    <p class="report-subtitle">Periode {{ $startText }} s/d {{ $endText }}</p>
 
     @foreach ($mainGroups as $group)
         @php
@@ -470,7 +480,7 @@
                 <table class="report-table">
                     <thead>
                         <tr class="headers-row">
-                            <th style="width: 25%;">No.Meja</th>
+                            <th style="width: 25%;">No Meja</th>
                             <th style="width: 15%;">RB STD (Tbl 14/16/18/23)</th>
                             <th style="width: 15%;">RMBG STD</th>
                             <th style="width: 15%;">RMBG MC + Lainnya</th>

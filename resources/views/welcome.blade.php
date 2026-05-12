@@ -15,7 +15,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container">
-            <a class="navbar-brand fw-semibold" href="#">{{ config('app.name', 'Laravel') }}</a>
+            <a class="navbar-brand fw-semibold" href="/">{{ config('app.name', 'Laravel') }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -1758,6 +1758,12 @@
                             <a href="{{ route('reports.sawn-timber.qc-sawmill-summary.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan QC Sawmill - Summary
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.stok-opname-st-detail-kd.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Stok Opname ST Detail Pada KD
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

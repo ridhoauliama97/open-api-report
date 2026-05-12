@@ -213,6 +213,7 @@ Contoh:
 - Laporan Sawn Timber ST Hidup Per SPK Per Jenis Per Tebal Per Group Jenis Kayu: `http://192.168.10.100:5006/api/reports/sawn-timber/st-hidup-per-spk/pdf`
 - Laporan Sawn Timber ST Rambung MC1 MC2 Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/st-rambung-mc1-mc2-detail/pdf`
 - Laporan Sawn Timber ST Rambung MC1 MC2 Rangkuman: `http://192.168.10.100:5006/api/reports/sawn-timber/st-rambung-mc1-mc2-rangkuman/pdf`
+- Laporan Sawn Timber Stok Opname ST Detail Pada KD: `http://192.168.10.100:5006/api/reports/sawn-timber/stok-opname-st-detail-kd/pdf`
 - Laporan Sawn Timber ST Sawmill Hari Tebal Lebar: `http://192.168.10.100:5006/api/reports/sawn-timber/st-sawmill-hari-tebal-lebar/pdf`
 - Laporan Sawn Timber ST Sawmill Masuk Per Group: `http://192.168.10.100:5006/api/reports/sawn-timber/st-sawmill-masuk-per-group/pdf`
 - Laporan Sawn Timber ST Sawmill Masuk Per Group Meja: `http://192.168.10.100:5006/api/reports/sawn-timber/st-sawmill-masuk-per-group-meja/pdf`
