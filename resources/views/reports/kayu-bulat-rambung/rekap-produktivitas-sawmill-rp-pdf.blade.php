@@ -199,7 +199,7 @@
 
         .bottom-section {
             width: 100%;
-            margin: 6px 0 10px 0;
+            margin: 6px 0 0 0;
         }
 
         .bottom-layout {
@@ -406,8 +406,6 @@
             text-align: right;
             font-size: 11px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
 
         .summary-section {
             page-break-before: always;
@@ -659,12 +657,12 @@
                                     <div class="money-box">
                                         <table class="money-table">
                                             <tr>
-                                                <td class="money-label">KB</td>
-                                                <td class="money-value">{{ $fmtMoney($moneyKb) }}</td>
-                                            </tr>
-                                            <tr>
                                                 <td class="money-label">ST</td>
                                                 <td class="money-value">{{ $fmtMoney($moneySt) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="money-label">KB</td>
+                                                <td class="money-value">{{ $fmtMoney($moneyKb) }}</td>
                                             </tr>
                                             <tr>
                                                 <td class="money-label">Upah</td>
@@ -840,368 +838,392 @@
             ? $grandSlp['money']
             : ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0];
 
+        $grandSummaryByGroup = is_array($data['grand_summary_by_group'] ?? null) ? $data['grand_summary_by_group'] : [];
+        $summaryBansawTotals = is_array($grandSummaryByGroup['bansaw'] ?? null)
+            ? $grandSummaryByGroup['bansaw']
+            : $bansawTotals;
+        $summarySlpTotals = is_array($grandSummaryByGroup['slp'] ?? null) ? $grandSummaryByGroup['slp'] : $slpTotals;
+        $summaryBansawKbTotal = (float) ($summaryBansawTotals['kb_total'] ?? 0.0);
+        $summaryBansawStTotal = (float) ($summaryBansawTotals['st_total'] ?? 0.0);
+        $summaryBansawRendemen =
+            $summaryBansawKbTotal > 0.0 ? ($summaryBansawStTotal / $summaryBansawKbTotal) * 100.0 : 0.0;
+        $summarySlpKbTotal = (float) ($summarySlpTotals['kb_total'] ?? 0.0);
+        $summarySlpStTotal = (float) ($summarySlpTotals['st_total'] ?? 0.0);
+        $summarySlpRendemen = $summarySlpKbTotal > 0.0 ? ($summarySlpStTotal / $summarySlpKbTotal) * 100.0 : 0.0;
+        $summaryKbTotal = $summaryBansawKbTotal + $summarySlpKbTotal;
+        $summaryStTotal = $summaryBansawStTotal + $summarySlpStTotal;
+        $summaryRendemen = $summaryKbTotal > 0.0 ? ($summaryStTotal / $summaryKbTotal) * 100.0 : 0.0;
+
         $grandSummaryRows = [
             [
                 'group' => 'BANSAW',
-                'kb' => $bansawKbTotal,
-                'st' => $bansawStTotal,
-                'rendemen' => $bansawRendemen,
+                'kb' => $summaryBansawKbTotal,
+                'st' => $summaryBansawStTotal,
+                'rendemen' => $summaryBansawRendemen,
             ],
             [
                 'group' => 'SLP',
-                'kb' => $slpKbTotal,
-                'st' => $slpStTotal,
-                'rendemen' => $slpRendemen,
+                'kb' => $summarySlpKbTotal,
+                'st' => $summarySlpStTotal,
+                'rendemen' => $summarySlpRendemen,
             ],
             [
                 'group' => 'Total',
-                'kb' => $grandKbTotal,
-                'st' => $grandStTotal,
-                'rendemen' => $grandRendemen,
+                'kb' => $summaryKbTotal,
+                'st' => $summaryStTotal,
+                'rendemen' => $summaryRendemen,
             ],
         ];
     @endphp
 
-    @if ($grandInputRows !== [] || $grandOutputRows !== [])
-        <div class="date-separator"></div>
-        <div class="summary-section"></div>
-        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
-            Grand Total Seluruh Grade</div>
+    <div class="summary-section">
+        @if ($grandInputRows !== [] || $grandOutputRows !== [])
+            <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
+                Grand Total Seluruh Grade</div>
 
-        <table class="report-table">
-            <thead>
-                <tr class="headers-row">
-                    <th>Kategori</th>
-                    <th>Jumlah Truk</th>
-                    <th>Grade</th>
-                    <th>KB (Ton)</th>
-                    <th>ST (Ton)</th>
-                    <th>%</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $rowIndex = 0; @endphp
+            <table class="report-table">
+                <thead>
+                    <tr class="headers-row">
+                        <th>Kategori</th>
+                        <th>Jumlah Truk</th>
+                        <th>Grade</th>
+                        <th>KB (Ton)</th>
+                        <th>ST (Ton)</th>
+                        <th>%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $rowIndex = 0; @endphp
 
-                @if ($grandInputRows !== [])
-                    @php $rowspan = count($grandInputRows); @endphp
-                    @foreach ($grandInputRows as $line)
-                        @php $rowIndex++; @endphp
-                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Input
-                                </td>
-                            @endif
-                            <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                            <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
-                            <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">
-                                {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
-
-                @if ($grandOutputRows !== [])
-                    @php $rowspan = count($grandOutputRows); @endphp
-                    @foreach ($grandOutputRows as $line)
-                        @php $rowIndex++; @endphp
-                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Output</td>
-                            @endif
-                            <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
-                            <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
-                            <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell number">
-                                {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
-
-                <tr class="totals-row">
-                    <td colspan="3" style="text-align: center;">Grand Total</td>
-                    <td class="number">{{ $fmtTotal($grandKbTotal, 4) }}</td>
-                    <td class="number">{{ $fmtTotal($grandStTotal, 4) }}</td>
-                    <td class="number">{{ $fmtPercentTotal($grandRendemen, 1) }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
-            <strong>RENDEMEN : {{ $fmtPercentTotal($grandRendemen, 1) }}</strong>
-        </div>
-
-        <table class="summary-pair-table">
-            <tr>
-                <td class="summary-pair-left">
-                    <div class="money-box" style="padding-left: 0; width: 100%;">
-                        <table class="money-table">
-                            <tr>
-                                <td class="money-label">KB</td>
-                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['kb'] ?? 0.0)) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="money-label">ST</td>
-                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['st'] ?? 0.0)) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="money-label">Upah</td>
-                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['upah'] ?? 0.0)) }}</td>
-                            </tr>
-                            <tr class="money-divider-row">
-                                <td colspan="2">
-                                    <div class="money-divider-line"></div>
+                    @if ($grandInputRows !== [])
+                        @php $rowspan = count($grandInputRows); @endphp
+                        @foreach ($grandInputRows as $line)
+                            @php $rowIndex++; @endphp
+                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                @if ($loop->first)
+                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
+                                        Input
+                                    </td>
+                                @endif
+                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
+                                <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
+                                <td class="data-cell center">{{ $dash }}</td>
+                                <td class="data-cell number">
+                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="money-label">Hasil</td>
-                                <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['hasil'] ?? 0.0)) }}</td>
-                                <td class="money-flag-inline">
-                                    ({{ ((float) ($grandMoneyAll['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                        @endforeach
+                    @endif
+
+                    @if ($grandOutputRows !== [])
+                        @php $rowspan = count($grandOutputRows); @endphp
+                        @foreach ($grandOutputRows as $line)
+                            @php $rowIndex++; @endphp
+                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                @if ($loop->first)
+                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
+                                        Output</td>
+                                @endif
+                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
+                                <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell center">{{ $dash }}</td>
+                                <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
+                                <td class="data-cell number">
+                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                 </td>
                             </tr>
-                        </table>
-                    </div>
-                </td>
-                <td class="summary-pair-right">
-                    <div class="group-summary-wrap">
-                        <table class="group-summary-table">
-                            <thead>
+                        @endforeach
+                    @endif
+
+                    <tr class="totals-row">
+                        <td colspan="3" style="text-align: center;">Grand Total</td>
+                        <td class="number">{{ $fmtTotal($grandKbTotal, 4) }}</td>
+                        <td class="number">{{ $fmtTotal($grandStTotal, 4) }}</td>
+                        <td class="number">{{ $fmtPercentTotal($grandRendemen, 1) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
+                <strong>RENDEMEN : {{ $fmtPercentTotal($grandRendemen, 1) }}</strong>
+            </div>
+
+            <table class="summary-pair-table">
+                <tr>
+                    <td class="summary-pair-left">
+                        <div class="money-box" style="padding-left: 0; width: 100%;">
+                            <table class="money-table">
                                 <tr>
-                                    <th style="width: 36%;">Group</th>
-                                    <th style="width: 22%;">KBTon</th>
-                                    <th style="width: 22%;">STTon</th>
-                                    <th style="width: 20%;">%</th>
+                                    <td class="money-label">ST</td>
+                                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['st'] ?? 0.0)) }}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($grandSummaryRows as $summaryRow)
-                                    <tr class="{{ $summaryRow['group'] === 'Total' ? 'group-summary-total' : '' }}">
-                                        <td>{{ $summaryRow['group'] }}</td>
-                                        <td class="num">{{ $fmtDetail((float) $summaryRow['kb'], 2) }}</td>
-                                        <td class="num">{{ $fmtDetail((float) $summaryRow['st'], 2) }}</td>
-                                        <td class="num">{{ $fmtPercentDetail((float) $summaryRow['rendemen'], 1) }}
-                                        </td>
+                                <tr>
+                                    <td class="money-label">KB</td>
+                                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['kb'] ?? 0.0)) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="money-label">Upah</td>
+                                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['upah'] ?? 0.0)) }}
+                                    </td>
+                                </tr>
+                                <tr class="money-divider-row">
+                                    <td colspan="2">
+                                        <div class="money-divider-line"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="money-label">Hasil</td>
+                                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyAll['hasil'] ?? 0.0)) }}
+                                    </td>
+                                    <td class="money-flag-inline">
+                                        ({{ ((float) ($grandMoneyAll['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                    <td class="summary-pair-right">
+                        <div class="group-summary-wrap">
+                            <table class="group-summary-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 36%;">Group</th>
+                                        <th style="width: 22%;">KBTon</th>
+                                        <th style="width: 22%;">STTon</th>
+                                        <th style="width: 20%;">%</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    @endif
-
-    @if ($grandBansawInputRows !== [] || $grandBansawOutputRows !== [])
-        <div class="date-separator"></div>
-        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">Grand Total BANSAW
-        </div>
-
-        <table class="report-table">
-            <thead>
-                <tr class="headers-row">
-                    <th>Kategori</th>
-                    <th>Jumlah Truk</th>
-                    <th>Grade</th>
-                    <th>KB (Ton)</th>
-                    <th>ST (Ton)</th>
-                    <th>%</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $rowIndex = 0; @endphp
-
-                @if ($grandBansawInputRows !== [])
-                    @php $rowspan = count($grandBansawInputRows); @endphp
-                    @foreach ($grandBansawInputRows as $line)
-                        @php $rowIndex++; @endphp
-                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Input
-                                </td>
-                            @endif
-                            <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                            <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
-                            <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">
-                                {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
-
-                @if ($grandBansawOutputRows !== [])
-                    @php $rowspan = count($grandBansawOutputRows); @endphp
-                    @foreach ($grandBansawOutputRows as $line)
-                        @php $rowIndex++; @endphp
-                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Output</td>
-                            @endif
-                            <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
-                            <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
-                            <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell number">
-                                {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
-
-                <tr class="totals-row">
-                    <td colspan="3" style="text-align: center;">Grand Total</td>
-                    <td class="number">{{ $fmtTotal($bansawKbTotal, 4) }}</td>
-                    <td class="number">{{ $fmtTotal($bansawStTotal, 4) }}</td>
-                    <td class="number">{{ $fmtPercentTotal($bansawRendemen, 1) }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
-            <strong>RENDEMEN : {{ $fmtPercentTotal($bansawRendemen, 1) }}</strong>
-        </div>
-
-        <div class="money-box" style="padding-left: 0; width: 288px;">
-            <table class="money-table">
-                <tr>
-                    <td class="money-label">KB</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['kb'] ?? 0.0)) }}</td>
-                </tr>
-                <tr>
-                    <td class="money-label">ST</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}</td>
-                </tr>
-                <tr>
-                    <td class="money-label">Upah</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['upah'] ?? 0.0)) }}</td>
-                </tr>
-                <tr class="money-divider-row">
-                    <td colspan="2">
-                        <div class="money-divider-line"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="money-label">Hasil</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) }}</td>
-                    <td class="money-flag-inline">
-                        ({{ ((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                                </thead>
+                                <tbody>
+                                    @foreach ($grandSummaryRows as $summaryRow)
+                                        <tr
+                                            class="{{ $summaryRow['group'] === 'Total' ? 'group-summary-total' : '' }}">
+                                            <td>{{ $summaryRow['group'] }}</td>
+                                            <td class="num">{{ $fmtDetail((float) $summaryRow['kb'], 2) }}</td>
+                                            <td class="num">{{ $fmtDetail((float) $summaryRow['st'], 2) }}</td>
+                                            <td class="num">
+                                                {{ $fmtPercentDetail((float) $summaryRow['rendemen'], 1) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </td>
                 </tr>
             </table>
-        </div>
-    @endif
+        @endif
 
-    @if ($grandSlpInputRows !== [] || $grandSlpOutputRows !== [])
-        <div class="date-separator"></div>
-        <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">Grand Total SLP
-        </div>
+        @if ($grandBansawInputRows !== [] || $grandBansawOutputRows !== [])
+            <div class="date-separator"></div>
+            <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
+                Grand Total BANSAW
+            </div>
 
-        <table class="report-table">
-            <thead>
-                <tr class="headers-row">
-                    <th>Kategori</th>
-                    <th>Jumlah Truk</th>
-                    <th>Grade</th>
-                    <th>KB (Ton)</th>
-                    <th>ST (Ton)</th>
-                    <th>%</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $rowIndex = 0; @endphp
+            <table class="report-table">
+                <thead>
+                    <tr class="headers-row">
+                        <th>Kategori</th>
+                        <th>Jumlah Truk</th>
+                        <th>Grade</th>
+                        <th>KB (Ton)</th>
+                        <th>ST (Ton)</th>
+                        <th>%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $rowIndex = 0; @endphp
 
-                @if ($grandSlpInputRows !== [])
-                    @php $rowspan = count($grandSlpInputRows); @endphp
-                    @foreach ($grandSlpInputRows as $line)
-                        @php $rowIndex++; @endphp
-                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Input
+                    @if ($grandBansawInputRows !== [])
+                        @php $rowspan = count($grandBansawInputRows); @endphp
+                        @foreach ($grandBansawInputRows as $line)
+                            @php $rowIndex++; @endphp
+                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                @if ($loop->first)
+                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
+                                        Input
+                                    </td>
+                                @endif
+                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
+                                <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
+                                <td class="data-cell center">{{ $dash }}</td>
+                                <td class="data-cell number">
+                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                 </td>
-                            @endif
-                            <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
-                            <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
-                            <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">
-                                {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
+                            </tr>
+                        @endforeach
+                    @endif
 
-                @if ($grandSlpOutputRows !== [])
-                    @php $rowspan = count($grandSlpOutputRows); @endphp
-                    @foreach ($grandSlpOutputRows as $line)
-                        @php $rowIndex++; @endphp
-                        <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                            @if ($loop->first)
-                                <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
-                                    Output</td>
-                            @endif
-                            <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
-                            <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
-                            <td class="data-cell center">{{ $dash }}</td>
-                            <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                            <td class="data-cell number">
-                                {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
+                    @if ($grandBansawOutputRows !== [])
+                        @php $rowspan = count($grandBansawOutputRows); @endphp
+                        @foreach ($grandBansawOutputRows as $line)
+                            @php $rowIndex++; @endphp
+                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                @if ($loop->first)
+                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
+                                        Output</td>
+                                @endif
+                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
+                                <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell center">{{ $dash }}</td>
+                                <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
+                                <td class="data-cell number">
+                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
 
-                <tr class="totals-row">
-                    <td colspan="3" style="text-align: center;">Grand Total</td>
-                    <td class="number">{{ $fmtTotal($slpKbTotal, 4) }}</td>
-                    <td class="number">{{ $fmtTotal($slpStTotal, 4) }}</td>
-                    <td class="number">{{ $fmtPercentTotal($slpRendemen, 1) }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div style="margin: 0 0 10px 0; text-align: right; font-size: 11px;">
-            <strong>RENDEMEN : {{ $fmtPercentTotal($slpRendemen, 1) }}</strong>
-        </div>
-
-        <div class="money-box" style="padding-left: 0; width: 288px;">
-            <table class="money-table">
-                <tr>
-                    <td class="money-label">KB</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['kb'] ?? 0.0)) }}</td>
-                </tr>
-                <tr>
-                    <td class="money-label">ST</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}</td>
-                </tr>
-                <tr>
-                    <td class="money-label">Upah</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['upah'] ?? 0.0)) }}</td>
-                </tr>
-                <tr class="money-divider-row">
-                    <td colspan="2">
-                        <div class="money-divider-line"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="money-label">Hasil</td>
-                    <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['hasil'] ?? 0.0)) }}</td>
-                    <td class="money-flag-inline">
-                        ({{ ((float) ($grandMoneySlp['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
-                    </td>
-                </tr>
+                    <tr class="totals-row">
+                        <td colspan="3" style="text-align: center;">Grand Total</td>
+                        <td class="number">{{ $fmtTotal($bansawKbTotal, 4) }}</td>
+                        <td class="number">{{ $fmtTotal($bansawStTotal, 4) }}</td>
+                        <td class="number">{{ $fmtPercentTotal($bansawRendemen, 1) }}</td>
+                    </tr>
+                </tbody>
             </table>
-        </div>
-    @endif
+
+            <div style="margin: 0; text-align: right; font-size: 11px;">
+                <strong>RENDEMEN : {{ $fmtPercentTotal($bansawRendemen, 1) }}</strong>
+            </div>
+
+            <div class="money-box" style="padding-left: 0; width: 288px;">
+                <table class="money-table">
+                    <tr>
+                        <td class="money-label">ST</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="money-label">KB</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['kb'] ?? 0.0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="money-label">Upah</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['upah'] ?? 0.0)) }}</td>
+                    </tr>
+                    <tr class="money-divider-row">
+                        <td colspan="2">
+                            <div class="money-divider-line"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="money-label">Hasil</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) }} </td>
+                        <td class="money-flag-inline">
+                            ({{ ((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endif
+
+        @if ($grandSlpInputRows !== [] || $grandSlpOutputRows !== [])
+            <div class="date-separator"></div>
+            <div class="group-title" style="margin-top: 25px; margin-bottom: 10px; text-align: center;">
+                Grand Total SLP
+            </div>
+
+            <table class="report-table">
+                <thead>
+                    <tr class="headers-row">
+                        <th>Kategori</th>
+                        <th>Jumlah Truk</th>
+                        <th>Grade</th>
+                        <th>KB (Ton)</th>
+                        <th>ST (Ton)</th>
+                        <th>%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $rowIndex = 0; @endphp
+
+                    @if ($grandSlpInputRows !== [])
+                        @php $rowspan = count($grandSlpInputRows); @endphp
+                        @foreach ($grandSlpInputRows as $line)
+                            @php $rowIndex++; @endphp
+                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                @if ($loop->first)
+                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
+                                        Input
+                                    </td>
+                                @endif
+                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
+                                <td class="data-cell left">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
+                                <td class="data-cell center">{{ $dash }}</td>
+                                <td class="data-cell number">
+                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+
+                    @if ($grandSlpOutputRows !== [])
+                        @php $rowspan = count($grandSlpOutputRows); @endphp
+                        @foreach ($grandSlpOutputRows as $line)
+                            @php $rowIndex++; @endphp
+                            <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                                @if ($loop->first)
+                                    <td class="data-cell" rowspan="{{ $rowspan }}" style="font-weight: bold;">
+                                        Output</td>
+                                @endif
+                                <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
+                                <td class="data-cell right">{{ (string) ($line['grade'] ?? '') }}</td>
+                                <td class="data-cell center">{{ $dash }}</td>
+                                <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
+                                <td class="data-cell number">
+                                    {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+
+                    <tr class="totals-row">
+                        <td colspan="3" style="text-align: center;">Grand Total</td>
+                        <td class="number">{{ $fmtTotal($slpKbTotal, 4) }}</td>
+                        <td class="number">{{ $fmtTotal($slpStTotal, 4) }}</td>
+                        <td class="number">{{ $fmtPercentTotal($slpRendemen, 1) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin: 0; text-align: right; font-size: 11px;">
+                <strong>RENDEMEN : {{ $fmtPercentTotal($slpRendemen, 1) }}</strong>
+            </div>
+
+            <div class="money-box" style="padding-left: 0; width: 288px;">
+                <table class="money-table">
+                    <tr>
+                        <td class="money-label">ST</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="money-label">KB</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['kb'] ?? 0.0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="money-label">Upah</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['upah'] ?? 0.0)) }}</td>
+                    </tr>
+                    <tr class="money-divider-row">
+                        <td colspan="2">
+                            <div class="money-divider-line"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="money-label">Hasil</td>
+                        <td class="money-value">{{ $fmtMoney((float) ($grandMoneySlp['hasil'] ?? 0.0)) }}</td>
+                        <td class="money-flag-inline">
+                            ({{ ((float) ($grandMoneySlp['hasil'] ?? 0.0)) < 0 ? 'RUGI' : 'LABA' }})
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endif
+    </div>
 
     @include('reports.partials.pdf-footer-table')
 </body>

@@ -144,6 +144,7 @@ class RekapProduktivitasSawmillRpController extends Controller
             'endDate' => $endDate,
             'upahRacip' => $upahRacip,
             'generatedBy' => $generatedBy,
+            'pdf_orientation' => 'portrait',
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
 
@@ -154,7 +155,7 @@ class RekapProduktivitasSawmillRpController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $dispositionType, $filename),
+            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
     }
 

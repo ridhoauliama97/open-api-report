@@ -37,6 +37,7 @@ class RekapProduktivitasSawmillRpReportService
     {
         $mainRows = $this->fetchMain($startDate, $endDate);
         $subRows = $this->fetchSub($startDate, $endDate);
+        $subGroupTotalsByReceipt = $this->buildSubGroupTotals($subRows);
 
         $rows = $mainRows;
         if (!$this->hasNonEmptyGrade($rows) && $this->hasNonEmptyGrade($subRows)) {
@@ -553,6 +554,14 @@ class RekapProduktivitasSawmillRpReportService
             'hasil' => (float) ($grandMoney['hasil'] ?? 0.0) - (float) ($grandMoneyByGroup['bansaw']['hasil'] ?? 0.0),
         ];
 
+        $grandSummaryByGroup = $this->aggregateSubGroupTotals($subGroupTotalsByReceipt);
+        if (abs($grandSummaryByGroup['bansaw']['kb_total']) < self::EPS && abs($grandSummaryByGroup['bansaw']['st_total']) < self::EPS) {
+            $grandSummaryByGroup['bansaw'] = $grandGroupTotals['bansaw'] ?? ['kb_total' => 0.0, 'st_total' => 0.0, 'rendemen' => 0.0];
+        }
+        if (abs($grandSummaryByGroup['slp']['kb_total']) < self::EPS && abs($grandSummaryByGroup['slp']['st_total']) < self::EPS) {
+            $grandSummaryByGroup['slp'] = $grandGroupTotals['slp'] ?? ['kb_total' => 0.0, 'st_total' => 0.0, 'rendemen' => 0.0];
+        }
+
         return [
             'rows_main' => $mainRows,
             'rows_sub' => $subRows,
@@ -605,6 +614,7 @@ class RekapProduktivitasSawmillRpReportService
                     'money' => $grandMoneyByGroup['slp'] ?? ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
                 ],
             ],
+            'grand_summary_by_group' => $grandSummaryByGroup,
             'summary' => [
                 'total_rows' => count($rows),
                 'total_dates' => count($dateGroups),
@@ -1579,5 +1589,32 @@ class RekapProduktivitasSawmillRpReportService
         }
 
         return $out;
+    }
+
+    /**
+     * @param array<string, array<string, array{kb: float, st: float}>> $groupTotalsByReceipt
+     * @return array{bansaw: array{kb_total: float, st_total: float, rendemen: float}, slp: array{kb_total: float, st_total: float, rendemen: float}}
+     */
+    private function aggregateSubGroupTotals(array $groupTotalsByReceipt): array
+    {
+        $totals = [
+            'bansaw' => ['kb_total' => 0.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+            'slp' => ['kb_total' => 0.0, 'st_total' => 0.0, 'rendemen' => 0.0],
+        ];
+
+        foreach ($groupTotalsByReceipt as $receiptTotals) {
+            foreach (['bansaw', 'slp'] as $groupName) {
+                $totals[$groupName]['kb_total'] += (float) ($receiptTotals[$groupName]['kb'] ?? 0.0);
+                $totals[$groupName]['st_total'] += (float) ($receiptTotals[$groupName]['st'] ?? 0.0);
+            }
+        }
+
+        foreach (['bansaw', 'slp'] as $groupName) {
+            $kb = $totals[$groupName]['kb_total'];
+            $st = $totals[$groupName]['st_total'];
+            $totals[$groupName]['rendemen'] = $kb > 0.0 ? (($st / $kb) * 100.0) : 0.0;
+        }
+
+        return $totals;
     }
 }

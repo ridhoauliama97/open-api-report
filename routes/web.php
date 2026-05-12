@@ -1425,6 +1425,7 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
     Route::prefix('rekap-produktivitas-sawmill-rp')->name('rekap-produktivitas-sawmill-rp.')->group(function (): void {
         Route::get('/', [RekapProduktivitasSawmillRpController::class, 'index'])->name('index');
         Route::post('/download', [RekapProduktivitasSawmillRpController::class, 'download'])->name('download');
+        Route::get('/preview-pdf', fn () => redirect()->route('reports.kayu-bulat.rekap-produktivitas-sawmill-rp.index'));
         Route::post('/preview-pdf', [RekapProduktivitasSawmillRpController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [RekapProduktivitasSawmillRpController::class, 'preview'])->name('preview');
     });
