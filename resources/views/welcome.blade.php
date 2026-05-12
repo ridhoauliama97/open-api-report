@@ -1677,6 +1677,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.penerimaan-st-hasil-sawmill.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penerimaan ST Hasil Sawmill
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Rekap Penerimaan ST Dari Sawmill (Non Rambung)

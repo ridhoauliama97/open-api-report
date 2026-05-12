@@ -70,11 +70,12 @@ use App\Http\Controllers\PembelianStTimelineTonController;
 use App\Http\Controllers\PenerimaanKayuBulatBulananPerSupplierController;
 use App\Http\Controllers\PenerimaanKayuBulatExtKgController;
 use App\Http\Controllers\PenerimaanKayuBulatExtTonController;
-use App\Http\Controllers\PenerimaanKayuBulatKgController;
 use App\Http\Controllers\PenerimaanKayuBulatIntTonController;
+use App\Http\Controllers\PenerimaanKayuBulatKgController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
+use App\Http\Controllers\PenerimaanStHasilSawmillController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PenjualanLokalController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
@@ -148,10 +149,10 @@ use App\Http\Controllers\RangkumanJlhLabelInputController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganController;
 use App\Http\Controllers\RekapHasilSawmillPerMejaUpahBoronganV2Controller;
-use App\Http\Controllers\RekapPcsTellyHasilSawmillController;
 use App\Http\Controllers\RekapKamarKdController;
 use App\Http\Controllers\RekapMutasiController;
 use App\Http\Controllers\RekapMutasiCrossTabController;
+use App\Http\Controllers\RekapPcsTellyHasilSawmillController;
 use App\Http\Controllers\RekapPembelianKayuBulatController;
 use App\Http\Controllers\RekapPembelianKayuBulatKgController;
 use App\Http\Controllers\RekapPenerimaanSTDariSawmillKgController;
@@ -213,8 +214,8 @@ use App\Http\Controllers\TimelineKayuBulatBulananKgController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
-use App\Http\Controllers\TracingStController;
 use App\Http\Controllers\TotalBagusKulitRambungController;
+use App\Http\Controllers\TracingStController;
 use App\Http\Controllers\UmurBarangJadiDetailController;
 use App\Http\Controllers\UmurCrossCutAkhirDetailController;
 use App\Http\Controllers\UmurFingerJointDetailController;
@@ -599,7 +600,6 @@ Route::prefix('reports/pps')->name('reports.pps.')->group(function (): void {
     });
 });
 
-
 // WPS Reports Routes
 /**
  * Dashboard route group.
@@ -798,6 +798,15 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/download', [PenerimaanStSawmillKgController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [PenerimaanStSawmillKgController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [PenerimaanStSawmillKgController::class, 'preview'])->name('preview');
+    });
+
+    /** Penerimaan ST hasil sawmill routes. */
+    Route::prefix('penerimaan-st-hasil-sawmill')->name('penerimaan-st-hasil-sawmill.')->group(function (): void {
+        Route::view('/', 'reports.sawn-timber.penerimaan-st-hasil-sawmill-form')->name('index');
+        Route::post('/download', [PenerimaanStHasilSawmillController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenerimaanStHasilSawmillController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [PenerimaanStHasilSawmillController::class, 'preview'])->name('preview');
+        Route::post('/health', [PenerimaanStHasilSawmillController::class, 'health'])->name('health');
     });
 
     /** Rekap penerimaan ST dari sawmill (Non Rambung) routes. */

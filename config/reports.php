@@ -1137,6 +1137,21 @@ return [
         'parameter_count' => (int) env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_EXPECTED_COLUMNS', '')))),
     ],
+    'penerimaan_st_hasil_sawmill' => [
+        'database_connection' => env('PENERIMAAN_ST_HASIL_SAWMILL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_ST_HASIL_SAWMILL_REPORT_PROCEDURE', 'SP_LapPenerimaanSTSawmill'),
+        'sub_stored_procedure' => env('PENERIMAAN_ST_HASIL_SAWMILL_SUB_REPORT_PROCEDURE', 'SP_LapPenerimaanSTSawmill_Sub'),
+        'call_syntax' => env('PENERIMAAN_ST_HASIL_SAWMILL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENERIMAAN_ST_HASIL_SAWMILL_REPORT_QUERY'),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_ST_HASIL_SAWMILL_REPORT_EXPECTED_COLUMNS',
+            'NamaGrade,Tebal,Lebar,IdTblLebar,Panjang,IdPanjang,JmlhBatang,IsLocal,Hasil,NoKayuBulat,NoPenerimaanST,TglLaporan,NmSupplier,NoTruk,Jenis,Suket,TglMasuk'
+        )))),
+        'expected_sub_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENERIMAAN_ST_HASIL_SAWMILL_SUB_REPORT_EXPECTED_COLUMNS',
+            'IdGradeKB,NamaGrade,Berat'
+        )))),
+    ],
     'rekap_penerimaan_st_dari_sawmill_non_rambung' => [
         'database_connection' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_PROCEDURE', 'SPWps_LapRekapPenSTDariSawmill'),
