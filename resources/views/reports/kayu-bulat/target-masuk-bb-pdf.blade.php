@@ -238,16 +238,15 @@
                 <th rowspan="2">Jenis</th>
                 <th rowspan="2">Target <br /> Hari</th>
                 <th rowspan="2">Target <br /> Bulan</th>
-                <th colspan="{{ count($dayColumns) + count($reportData['lb_columns'] ?? []) }}">
+                <th colspan="{{ count($dayColumns) }}">
                     {{ ucfirst($monthTitle) }}</th>
                 <th rowspan="2" style="font-weight: bold">Total</th>
             </tr>
             <tr class="headers-row">
                 @foreach ($dayColumns as $dayMeta)
-                    <th>{{ $dayMeta['label'] }}</th>
-                    @if ($dayMeta['is_lb_after'] ?? false)
-                        <th class="lb-head">LB</th>
-                    @endif
+                    <th class="{{ ($dayMeta['is_libur'] ?? false) ? 'lb-head' : '' }}">
+                        {{ ($dayMeta['is_libur'] ?? false) ? 'LB' : $dayMeta['label'] }}
+                    </th>
                 @endforeach
             </tr>
         </thead>
@@ -259,11 +258,6 @@
                     <td class="data-cell">{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                     @foreach ($row['daily_values'] as $index => $value)
                         <td class="data-cell">{{ number_format((float) $value, 0, '.', ',') }}</td>
-                        @if (($dayColumns[$index]['is_lb_after'] ?? false) === true)
-                            @php $lbLabel = $dayColumns[$index]['label']; @endphp
-                            <td class="data-cell">
-                                {{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, '.', ',') }}</td>
-                        @endif
                     @endforeach
                     <td class="data-cell" style="font-weight: bold">
                         {{ number_format((float) $row['total'], 0, '.', ',') }}</td>

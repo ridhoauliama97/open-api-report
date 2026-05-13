@@ -28,25 +28,24 @@ class TargetMasukBBReportService
         $dayColumns = $this->resolvePeriodDays($startDate, $endDate);
         $dayIndexByLabel = [];
         foreach ($dayColumns as $index => $dayMeta) {
-            $dayIndexByLabel[$dayMeta['label']] = $index;
+            $dayIndexByLabel[$dayMeta['key']] = $index;
         }
 
         $groupedRows = [];
         $chartLabels = array_map(static fn (array $day): string => $day['label'], $dayColumns);
         $summaryRows = [];
-        $lbColumns = [];
 
         foreach ($rows as $row) {
             $groupName = $this->resolveGroupName($row, $columns);
 
             $targetHarian = $this->toFloat($row[$columns['target_harian']] ?? null);
             $targetBulanan = $this->toFloat($row[$columns['target_bulanan']] ?? null);
-            $dateLabel = $this->resolveDateLabel($row[$columns['date']] ?? null);
+            $dateKey = $this->resolveDateKey($row[$columns['date']] ?? null);
             $hasilRaw = $this->toFloat($row[$columns['hasil']] ?? null);
             $hasilRounded = (float) round($hasilRaw, 0, PHP_ROUND_HALF_UP);
             $isLibur = $this->isLiburValue($row[$columns['keterangan']] ?? null);
 
-            if (!isset($groupedRows[$groupName])) {
+            if (! isset($groupedRows[$groupName])) {
                 $groupedRows[$groupName] = [
                     'jenis' => $groupName,
                     'target_harian' => $targetHarian,
@@ -65,14 +64,12 @@ class TargetMasukBBReportService
                 $groupedRows[$groupName]['target_bulanan'] = $targetBulanan;
             }
 
-            if ($dateLabel !== null && isset($dayIndexByLabel[$dateLabel])) {
-                $dayIndex = $dayIndexByLabel[$dateLabel];
+            if ($dateKey !== null && isset($dayIndexByLabel[$dateKey])) {
+                $dayIndex = $dayIndexByLabel[$dateKey];
                 $groupedRows[$groupName]['daily_values'][$dayIndex] = $hasilRounded;
 
                 if ($isLibur) {
-                    $dayColumns[$dayIndex]['is_lb_after'] = true;
-                    $groupedRows[$groupName]['lb_values'][$dateLabel] = 0.0;
-                    $lbColumns[$dateLabel] = true;
+                    $dayColumns[$dayIndex]['is_libur'] = true;
                 }
             }
 
@@ -100,7 +97,10 @@ class TargetMasukBBReportService
             'rows' => $rows,
             'columns' => $columns,
             'day_columns' => $dayColumns,
-            'lb_columns' => $lbColumns,
+            'lb_columns' => array_values(array_filter(
+                $dayColumns,
+                static fn (array $day): bool => (bool) ($day['is_libur'] ?? false),
+            )),
             'table_rows' => $tableRows,
             'summary_rows' => $summaryRows,
             'chart_labels' => $chartLabels,
@@ -133,7 +133,7 @@ class TargetMasukBBReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{group: ?string, jenis: ?string, target_harian: ?string, target_bulanan: ?string, total: ?string, hasil: ?string, date: ?string, keterangan: ?string}
      */
     private function resolveColumns(array $rows): array
@@ -160,7 +160,7 @@ class TargetMasukBBReportService
     }
 
     /**
-     * @return array<int, array{day: int, label: string, is_lb_after: bool}>
+     * @return array<int, array{date: string, key: string, day: int, label: string, is_libur: bool}>
      */
     private function resolvePeriodDays(string $startDate, string $endDate): array
     {
@@ -174,9 +174,11 @@ class TargetMasukBBReportService
         while ($current <= $end) {
             $dayNumber = (int) date('d', $current);
             $dayColumns[] = [
+                'date' => date('Y-m-d', $current),
+                'key' => date('Y-m-d', $current),
                 'day' => $dayNumber,
                 'label' => str_pad((string) $dayNumber, 2, '0', STR_PAD_LEFT),
-                'is_lb_after' => false,
+                'is_libur' => false,
             ];
             $current = strtotime('+1 day', $current);
             if ($current === false) {
@@ -188,8 +190,8 @@ class TargetMasukBBReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $candidates
      */
     private function findMatchingKey(array $keys, array $candidates): ?string
     {
@@ -225,7 +227,7 @@ class TargetMasukBBReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -254,8 +256,8 @@ class TargetMasukBBReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{group: ?string, jenis: ?string, target_harian: ?string, target_bulanan: ?string, total: ?string, hasil: ?string, date: ?string, keterangan: ?string} $columns
+     * @param  array<string, mixed>  $row
+     * @param  array{group: ?string, jenis: ?string, target_harian: ?string, target_bulanan: ?string, total: ?string, hasil: ?string, date: ?string, keterangan: ?string}  $columns
      */
     private function resolveGroupName(array $row, array $columns): string
     {
@@ -269,10 +271,10 @@ class TargetMasukBBReportService
         return $jenis === '' ? 'Tanpa Group' : $jenis;
     }
 
-    private function resolveDateLabel(mixed $value): ?string
+    private function resolveDateKey(mixed $value): ?string
     {
         if ($value instanceof \DateTimeInterface) {
-            return $value->format('d');
+            return $value->format('Y-m-d');
         }
 
         if ($value === null) {
@@ -284,18 +286,18 @@ class TargetMasukBBReportService
             return null;
         }
 
-        return date('d', $timestamp);
+        return date('Y-m-d', $timestamp);
     }
 
     private function isLiburValue(mixed $value): bool
     {
         $text = strtoupper(trim((string) $value));
 
-        return $text === 'LIBUR';
+        return str_contains($text, 'LIBUR');
     }
 
     /**
-     * @param array<int, mixed> $bindings
+     * @param  array<int, mixed>  $bindings
      * @return array<int, mixed>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -315,7 +317,7 @@ class TargetMasukBBReportService
         $parameterCount = (int) config('reports.target_masuk_bb.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan target masuk bahan baku belum dikonfigurasi.');
         }
 
@@ -325,7 +327,7 @@ class TargetMasukBBReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan target masuk bahan baku dikonfigurasi untuk SQL Server. '
-                . 'Set TARGET_MASUK_BB_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TARGET_MASUK_BB_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -337,13 +339,13 @@ class TargetMasukBBReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'TARGET_MASUK_BB_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan TARGET_MASUK_BB_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan TARGET_MASUK_BB_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

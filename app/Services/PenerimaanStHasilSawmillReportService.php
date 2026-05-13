@@ -129,7 +129,7 @@ class PenerimaanStHasilSawmillReportService
                 'Lebar' => $this->toFloat($item['Lebar'] ?? null) ?? 0.0,
                 'IdTblLebar' => trim((string) ($item['IdTblLebar'] ?? '')),
                 'Panjang' => $panjang,
-                'DisplayPanjang' => (int) ceil($panjang),
+                'DisplayPanjang' => $this->formatLengthLabel($panjang),
                 'IdPanjang' => trim((string) ($item['IdPanjang'] ?? '')),
                 'JmlhBatang' => $jmlhBatang,
                 'DisplayJmlhBatang' => (int) round($jmlhBatang / $quantityDivisor),
@@ -177,7 +177,7 @@ class PenerimaanStHasilSawmillReportService
 
     /**
      * @param  array<int, array<string, mixed>>  $rows
-     * @return array<int, array{key: string, label: string, raw_panjang: float, display_panjang: int}>
+     * @return array<int, array{key: string, label: string, raw_panjang: float, display_panjang: string}>
      */
     private function buildLengthColumns(array $rows): array
     {
@@ -187,9 +187,9 @@ class PenerimaanStHasilSawmillReportService
             $key = $this->lengthKey((float) $row['Panjang']);
             $columns[$key] = [
                 'key' => $key,
-                'label' => (string) (int) $row['DisplayPanjang'],
+                'label' => (string) $row['DisplayPanjang'],
                 'raw_panjang' => (float) $row['Panjang'],
-                'display_panjang' => (int) $row['DisplayPanjang'],
+                'display_panjang' => (string) $row['DisplayPanjang'],
             ];
         }
 
@@ -271,7 +271,7 @@ class PenerimaanStHasilSawmillReportService
 
     /**
      * @param  array<int, array<string, mixed>>  $detailRows
-     * @param  array<int, array{key: string, label: string, raw_panjang: float, display_panjang: int}>  $lengthColumns
+     * @param  array<int, array{key: string, label: string, raw_panjang: float, display_panjang: string}>  $lengthColumns
      * @return array<int, array<string, mixed>>
      */
     private function buildGradeGroups(array $detailRows, array $lengthColumns): array
@@ -389,7 +389,7 @@ class PenerimaanStHasilSawmillReportService
 
     /**
      * @param  array<int, array<string, mixed>>  $gradeGroups
-     * @param  array<int, array{key: string, label: string, raw_panjang: float, display_panjang: int}>  $lengthColumns
+     * @param  array<int, array{key: string, label: string, raw_panjang: float, display_panjang: string}>  $lengthColumns
      * @return array<string, mixed>
      */
     private function buildSummary(array $gradeGroups, array $lengthColumns): array
@@ -620,6 +620,11 @@ SQL;
     private function lengthKey(float $value): string
     {
         return rtrim(rtrim(number_format($value, 4, '.', ''), '0'), '.');
+    }
+
+    private function formatLengthLabel(float $value): string
+    {
+        return $this->lengthKey($value);
     }
 
     private function gradeSortWeight(string $gradeName): int

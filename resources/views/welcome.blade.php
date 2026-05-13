@@ -890,6 +890,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan.penjualan-barang-jadi-m3.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Penjualan Barang Jadi (M3)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.penjualan-kayu.koordinat-tanah.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Koordinat Tanah
@@ -1614,6 +1620,24 @@
                             <a href="{{ route('reports.sawn-timber.kd-keluar-masuk.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan KD (Keluar - Masuk)
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.kd-upah-per-customer.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan KD Upah Per-Cutomer
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.kd-upah-per-no-proc-kd-per-customer-detail.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan KD Upah Per-No.Proses KD Per-Cutomer Detail
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.sawn-timber.serah-terima-st-kamar-kd.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Laporan Serah Terima ST (Kamar KD)
                             </a>
                         </div>
                         <div class="col-12 col-md-6">

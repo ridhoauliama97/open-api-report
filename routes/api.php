@@ -32,6 +32,8 @@ use App\Http\Controllers\KapasitasRacipKayuBulatHidupController;
 use App\Http\Controllers\KayuBulatHidupController;
 use App\Http\Controllers\KbKhususBangkangController;
 use App\Http\Controllers\KdKeluarMasukController;
+use App\Http\Controllers\KdUpahPerCustomerController;
+use App\Http\Controllers\KdUpahPerNoProcKdPerCustomerDetailController;
 use App\Http\Controllers\KetahananBarangDagangCrossCutAkhirController;
 use App\Http\Controllers\KetahananBarangDagangFingerJointController;
 use App\Http\Controllers\KetahananBarangDagangLaminatingController;
@@ -80,6 +82,7 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanStHasilSawmillController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
+use App\Http\Controllers\PenjualanBarangJadiM3Controller;
 use App\Http\Controllers\PenjualanLokalController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
@@ -193,6 +196,7 @@ use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
 use App\Http\Controllers\SandingHidupDetailController;
+use App\Http\Controllers\SerahTerimaStKamarKdController;
 use App\Http\Controllers\SpkSawmillController;
 use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\StHidupKeringController;
@@ -344,6 +348,9 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/stock-st-kering', 'api.reports.sawn-timber.stock-st-kering', StockSTKeringController::class],
         ['/reports/sawn-timber/st-basah-hidup-per-umur-kayu-ton', 'api.reports.sawn-timber.st-basah-hidup-per-umur-kayu-ton', StBasahHidupPerUmurKayuTonController::class],
         ['/reports/sawn-timber/kd-keluar-masuk', 'api.reports.sawn-timber.kd-keluar-masuk', KdKeluarMasukController::class],
+        ['/reports/sawn-timber/kd-upah-per-customer', 'api.reports.sawn-timber.kd-upah-per-customer', KdUpahPerCustomerController::class],
+        ['/reports/sawn-timber/kd-upah-per-no-proc-kd-per-customer-detail', 'api.reports.sawn-timber.kd-upah-per-no-proc-kd-per-customer-detail', KdUpahPerNoProcKdPerCustomerDetailController::class],
+        ['/reports/sawn-timber/serah-terima-st-kamar-kd', 'api.reports.sawn-timber.serah-terima-st-kamar-kd', SerahTerimaStKamarKdController::class],
         ['/reports/sawn-timber/rekap-kamar-kd', 'api.reports.sawn-timber.rekap-kamar-kd', RekapKamarKdController::class],
         ['/reports/sawn-timber/mutasi-kd', 'api.reports.sawn-timber.mutasi-kd', MutasiKdController::class],
         ['/reports/sawn-timber/rekap-st-penjualan', 'api.reports.sawn-timber.rekap-st-penjualan', RekapStPenjualanController::class],
@@ -452,6 +459,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/rendemen-kayu/rekap-rendemen-rambung', 'api.reports.rendemen-kayu.rekap-rendemen-rambung', RekapRendemenRambungController::class],
         ['/reports/rendemen-kayu/rendemen-semua-proses', 'api.reports.rendemen-kayu.rendemen-semua-proses', RendemenSemuaProsesController::class],
         ['/reports/rendemen-kayu/produksi-per-spk', 'api.reports.rendemen-kayu.produksi-per-spk', ProduksiPerSpkController::class],
+        ['/reports/penjualan/penjualan-barang-jadi-m3', 'api.reports.penjualan.penjualan-barang-jadi-m3', PenjualanBarangJadiM3Controller::class],
         ['/reports/penjualan-kayu/penjualan-lokal', 'api.reports.penjualan-kayu.penjualan-lokal', PenjualanLokalController::class],
         ['/reports/penjualan-kayu/koordinat-tanah', 'api.reports.penjualan-kayu.koordinat-tanah', KoordinatTanahController::class],
         ['/reports/penjualan-kayu/rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-per-produk', RekapPenjualanPerProdukController::class],

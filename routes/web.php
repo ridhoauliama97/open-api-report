@@ -29,6 +29,8 @@ use App\Http\Controllers\KapasitasRacipKayuBulatHidupController;
 use App\Http\Controllers\KayuBulatHidupController;
 use App\Http\Controllers\KbKhususBangkangController;
 use App\Http\Controllers\KdKeluarMasukController;
+use App\Http\Controllers\KdUpahPerCustomerController;
+use App\Http\Controllers\KdUpahPerNoProcKdPerCustomerDetailController;
 use App\Http\Controllers\KetahananBarangDagangCrossCutAkhirController;
 use App\Http\Controllers\KetahananBarangDagangFingerJointController;
 use App\Http\Controllers\KetahananBarangDagangLaminatingController;
@@ -77,6 +79,7 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanStHasilSawmillController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
+use App\Http\Controllers\PenjualanBarangJadiM3Controller;
 use App\Http\Controllers\PenjualanLokalController;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2Controller;
 use App\Http\Controllers\PerbandinganKbMasukPeriode1Dan2KgController;
@@ -190,6 +193,7 @@ use App\Http\Controllers\SaldoHidupKayuBulatKgController;
 use App\Http\Controllers\SaldoKayuBulatController;
 use App\Http\Controllers\SaldoStHidupPerProdukController;
 use App\Http\Controllers\SandingHidupDetailController;
+use App\Http\Controllers\SerahTerimaStKamarKdController;
 use App\Http\Controllers\SpkSawmillController;
 use App\Http\Controllers\StBasahHidupPerUmurKayuTonController;
 use App\Http\Controllers\StHidupKeringController;
@@ -702,6 +706,30 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::post('/health', [KdKeluarMasukController::class, 'health'])->name('health');
     });
 
+    Route::prefix('kd-upah-per-customer')->name('kd-upah-per-customer.')->group(function (): void {
+        Route::view('/', 'reports.sawn-timber.kd-upah-per-customer-form')->name('index');
+        Route::post('/download', [KdUpahPerCustomerController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KdUpahPerCustomerController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [KdUpahPerCustomerController::class, 'preview'])->name('preview');
+        Route::post('/health', [KdUpahPerCustomerController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('kd-upah-per-no-proc-kd-per-customer-detail')->name('kd-upah-per-no-proc-kd-per-customer-detail.')->group(function (): void {
+        Route::view('/', 'reports.sawn-timber.kd-upah-per-no-proc-kd-per-customer-detail-form')->name('index');
+        Route::post('/download', [KdUpahPerNoProcKdPerCustomerDetailController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [KdUpahPerNoProcKdPerCustomerDetailController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [KdUpahPerNoProcKdPerCustomerDetailController::class, 'preview'])->name('preview');
+        Route::post('/health', [KdUpahPerNoProcKdPerCustomerDetailController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('serah-terima-st-kamar-kd')->name('serah-terima-st-kamar-kd.')->group(function (): void {
+        Route::view('/', 'reports.sawn-timber.serah-terima-st-kamar-kd-form')->name('index');
+        Route::post('/download', [SerahTerimaStKamarKdController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [SerahTerimaStKamarKdController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [SerahTerimaStKamarKdController::class, 'preview'])->name('preview');
+        Route::post('/health', [SerahTerimaStKamarKdController::class, 'health'])->name('health');
+    });
+
     /** Rekap kamar KD routes. */
     Route::prefix('rekap-kamar-kd')->name('rekap-kamar-kd.')->group(function (): void {
         Route::get('/', [RekapKamarKdController::class, 'index'])->name('index');
@@ -1084,6 +1112,16 @@ Route::prefix('reports/penjualan-kayu')->name('reports.penjualan-kayu.')->group(
         Route::post('/preview-pdf', [TimelineRekapPenjualanPerProdukController::class, 'previewPdf'])->name('preview-pdf');
         Route::post('/preview', [TimelineRekapPenjualanPerProdukController::class, 'preview'])->name('preview');
         Route::post('/health', [TimelineRekapPenjualanPerProdukController::class, 'health'])->name('health');
+    });
+});
+
+Route::prefix('reports/penjualan')->name('reports.penjualan.')->group(function (): void {
+    Route::prefix('penjualan-barang-jadi-m3')->name('penjualan-barang-jadi-m3.')->group(function (): void {
+        Route::view('/', 'reports.penjualan.penjualan-barang-jadi-m3-form')->name('index');
+        Route::post('/download', [PenjualanBarangJadiM3Controller::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [PenjualanBarangJadiM3Controller::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [PenjualanBarangJadiM3Controller::class, 'preview'])->name('preview');
+        Route::post('/health', [PenjualanBarangJadiM3Controller::class, 'health'])->name('health');
     });
 });
 

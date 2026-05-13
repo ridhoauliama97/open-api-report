@@ -654,6 +654,17 @@ return [
             'Product,Tebal,Lebar,Panjang,JmlhBatang,M3,BJM3'
         )))),
     ],
+    'penjualan_barang_jadi_m3' => [
+        'database_connection' => env('PENJUALAN_BARANG_JADI_M3_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENJUALAN_BARANG_JADI_M3_REPORT_PROCEDURE', 'SP_LapPenjualanBarangJadi'),
+        'call_syntax' => env('PENJUALAN_BARANG_JADI_M3_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENJUALAN_BARANG_JADI_M3_REPORT_QUERY'),
+        'parameter_count' => (int) env('PENJUALAN_BARANG_JADI_M3_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'PENJUALAN_BARANG_JADI_M3_REPORT_EXPECTED_COLUMNS',
+            'NoBJJual,TglJual,NoSPK,Buyer,NamaBarangJadi,Keterangan,Tebal,Lebar,Panjang,JmlhBatang,M3,Jenis'
+        )))),
+    ],
     'timeline_rekap_penjualan_per_produk' => [
         'database_connection' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_PROCEDURE', 'SP_LapJualPerProdukTimeLine'),
@@ -1091,6 +1102,39 @@ return [
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'KD_KELUAR_MASUK_REPORT_EXPECTED_COLUMNS',
             'NoKamarKD,TglMasuk,TglKeluar,JmlhHari,Group,AveTebal,Ton'
+        )))),
+    ],
+    'kd_upah_per_customer' => [
+        'database_connection' => env('KD_UPAH_PER_CUSTOMER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KD_UPAH_PER_CUSTOMER_REPORT_PROCEDURE', 'SP_LapKDUpahPerCutomer'),
+        'call_syntax' => env('KD_UPAH_PER_CUSTOMER_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KD_UPAH_PER_CUSTOMER_REPORT_QUERY'),
+        'parameter_count' => (int) env('KD_UPAH_PER_CUSTOMER_REPORT_PARAMETER_COUNT', 0),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KD_UPAH_PER_CUSTOMER_REPORT_EXPECTED_COLUMNS',
+            'NamaCustomer,NoProcKD,NoRuangKD,TglMasuk,TglKeluar,Jenis,m3'
+        )))),
+    ],
+    'kd_upah_per_no_proc_kd_per_customer_detail' => [
+        'database_connection' => env('KD_UPAH_PER_NO_PROC_KD_PER_CUSTOMER_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('KD_UPAH_PER_NO_PROC_KD_PER_CUSTOMER_DETAIL_REPORT_PROCEDURE', 'SP_LapKDUpahPerNoProcKDPerCustomerDetail'),
+        'call_syntax' => env('KD_UPAH_PER_NO_PROC_KD_PER_CUSTOMER_DETAIL_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('KD_UPAH_PER_NO_PROC_KD_PER_CUSTOMER_DETAIL_REPORT_QUERY'),
+        'parameter_count' => (int) env('KD_UPAH_PER_NO_PROC_KD_PER_CUSTOMER_DETAIL_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'KD_UPAH_PER_NO_PROC_KD_PER_CUSTOMER_DETAIL_REPORT_EXPECTED_COLUMNS',
+            'NamaCustomer,NoProcKD,NoRuangKD,TglMasuk,TglKeluar,NoST,Jenis,Tebal,Lebar,Panjang,JmlhBatang,M3'
+        )))),
+    ],
+    'serah_terima_st_kamar_kd' => [
+        'database_connection' => env('SERAH_TERIMA_ST_KAMAR_KD_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SERAH_TERIMA_ST_KAMAR_KD_REPORT_PROCEDURE', 'SP_LapSerahTerimaSTKDKeluar'),
+        'call_syntax' => env('SERAH_TERIMA_ST_KAMAR_KD_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SERAH_TERIMA_ST_KAMAR_KD_REPORT_QUERY'),
+        'parameter_count' => (int) env('SERAH_TERIMA_ST_KAMAR_KD_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SERAH_TERIMA_ST_KAMAR_KD_REPORT_EXPECTED_COLUMNS',
+            'NoProcKD,NoRuangKD,TglMasuk,TglKeluar,NoST,Tebal,Lebar,Panjang,JmlhBatang,Ton,Kubik'
         )))),
     ],
     'rekap_kamar_kd' => [

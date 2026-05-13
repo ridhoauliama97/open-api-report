@@ -239,7 +239,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('en')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable) {
                 return (string) $value;
             }
@@ -252,7 +252,7 @@
 
         $formatSize = static function ($value): string {
             $text = number_format((float) $value, 1, '.', '');
-            return str_ends_with($text, '.0') ? substr($text, 0, -2) : $text;
+            return str_ends_with($text, '') ? substr($text, 0, -2) : $text;
         };
 
         $formatBlankable = static function ($value, int $decimals): string {
@@ -382,12 +382,12 @@
                     <th style="width: 7%;" rowspan="2">Lebar</th>
                     <th style="width: 7%;" rowspan="2">@</th>
                     <th colspan="{{ count($columns) }}">Panjang</th>
-                    <th style="width: 7%;" rowspan="2">Jlh Pcs</th>
+                    <th style="width: 7%;" rowspan="2">Jumlah<br>Pcs</th>
                     <th style="width: 8%;" rowspan="2">Ton</th>
                 </tr>
                 <tr class="headers-row">
                     @foreach ($columns as $column)
-                        <th>{{ number_format((float) ($column['raw_panjang'] ?? 0), 1, '.', '') }}</th>
+                        <th>{{ $column['label'] ?? '' }}</th>
                     @endforeach
                 </tr>
             @else

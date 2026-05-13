@@ -129,6 +129,10 @@ Contoh:
 - Laporan Mutasi Sanding: `http://192.168.10.100:5006/api/reports/mutasi-sanding/pdf`
 - Laporan Mutasi ST: `http://192.168.10.100:5006/api/reports/mutasi-st/pdf`
 
+## Penjualan
+
+- Laporan Penjualan Barang Jadi (M3): `http://192.168.10.100:5006/api/reports/penjualan/penjualan-barang-jadi-m3/pdf`
+
 ## Penjualan Kayu
 
 - Laporan Penjualan Kayu Koordinat Tanah: `http://192.168.10.100:5006/api/reports/penjualan-kayu/koordinat-tanah/pdf`
@@ -191,6 +195,9 @@ Contoh:
 - Laporan Sawn Timber Dashboard Sawn Timber: `http://192.168.10.100:5006/api/reports/sawn-timber/dashboard-sawn-timber/pdf`
 - Laporan Sawn Timber Detail Lembar Tally Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/detail-lembar-tally-hasil-sawmill/pdf`
 - Laporan Sawn Timber KD Keluar Masuk: `http://192.168.10.100:5006/api/reports/sawn-timber/kd-keluar-masuk/pdf`
+- Laporan Sawn Timber KD Upah Per-Cutomer: `http://192.168.10.100:5006/api/reports/sawn-timber/kd-upah-per-customer/pdf`
+- Laporan Sawn Timber KD Upah Per-No.Proses KD Per-Cutomer Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/kd-upah-per-no-proc-kd-per-customer-detail/pdf`
+- Laporan Sawn Timber Serah Terima ST (Kamar KD): `http://192.168.10.100:5006/api/reports/sawn-timber/serah-terima-st-kamar-kd/pdf`
 - Laporan Sawn Timber Ketahanan Barang ST: `http://192.168.10.100:5006/api/reports/sawn-timber/ketahanan-barang-st/pdf`
 - Laporan Sawn Timber Label ST Hidup Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf`
 - Laporan Sawn Timber Lembar Tally Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/lembar-tally-hasil-sawmill/pdf`
@@ -199,11 +206,12 @@ Contoh:
 - Laporan Sawn Timber Pembelian ST Per Supplier Ton: `http://192.168.10.100:5006/api/reports/sawn-timber/pembelian-st-per-supplier-ton/pdf`
 - Laporan Sawn Timber Pembelian ST Timeline Ton: `http://192.168.10.100:5006/api/reports/sawn-timber/pembelian-st-timeline-ton/pdf`
 - Laporan Sawn Timber Penerimaan ST Dari Sawmill KG: `http://192.168.10.100:5006/api/reports/sawn-timber/penerimaan-st-dari-sawmill-kg/pdf`
+- Laporan Sawn Timber Penerimaan ST Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/penerimaan-st-hasil-sawmill/pdf`
 - Laporan Sawn Timber Rekap Hasil Sawmill Per Meja: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-hasil-sawmill-per-meja/pdf`
 - Laporan Sawn Timber Rekap Hasil Sawmill Per Meja Upah Borongan: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan/pdf`
 - Laporan Sawn Timber Rekap Hasil Sawmill Per Meja Upah Borongan V2: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-hasil-sawmill-per-meja-upah-borongan-v2/pdf`
 - Laporan Sawn Timber Rekap Kamar KD: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-kamar-kd/pdf`
-- Laporan Sawn Timber Rekap Jumlah (Pcs) Telly Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-pcs-telly-hasil-sawmill/pdf`
+- Laporan Sawn Timber Rekap Jumlah (Pcs) Telly Hasil Sawmill: `http://192.168.10.100:5006/api/rep orts/sawn-timber/rekap-pcs-telly-hasil-sawmill/pdf`
 - Laporan Sawn Timber Rekap Penerimaan ST Dari Sawmill Non Rambung: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung/pdf`
 - Laporan Sawn Timber Rekap Produktivitas Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-produktivitas-sawmill/pdf`
 - Laporan Sawn Timber Rekap ST Penjualan: `http://192.168.10.100:5006/api/reports/sawn-timber/rekap-st-penjualan/pdf`

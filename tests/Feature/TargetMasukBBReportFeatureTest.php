@@ -54,7 +54,10 @@ class TargetMasukBBReportFeatureTest extends TestCase
                     ['Jenis' => 'JABON', 'Tgt Hari' => 8, 'Tgt Bulan' => 200, '01' => 6, '02' => 0, 'Total' => 6],
                 ],
                 'columns' => ['jenis' => 'Jenis', 'target_harian' => 'Tgt Hari', 'target_bulanan' => 'Tgt Bulan', 'total' => 'Total'],
-                'day_columns' => [['key' => '01', 'day' => 1], ['key' => '02', 'day' => 2]],
+                'day_columns' => [
+                    ['date' => '2026-02-01', 'key' => '2026-02-01', 'day' => 1, 'label' => '01', 'is_libur' => false],
+                    ['date' => '2026-02-02', 'key' => '2026-02-02', 'day' => 2, 'label' => '02', 'is_libur' => false],
+                ],
                 'lb_columns' => ['LB'],
                 'table_rows' => [],
                 'summary_rows' => [],
@@ -86,7 +89,7 @@ class TargetMasukBBReportFeatureTest extends TestCase
             ->andReturn([
                 'rows' => [],
                 'columns' => ['jenis' => 'NamaGroup', 'target_harian' => 'TgtPerHari', 'target_bulanan' => 'TargetBulanan', 'total' => null, 'hasil' => 'hasil', 'date' => 'Date', 'keterangan' => 'Keterangan'],
-                'day_columns' => [['day' => 1, 'label' => '01', 'is_lb_after' => false]],
+                'day_columns' => [['date' => '2026-01-01', 'key' => '2026-01-01', 'day' => 1, 'label' => '01', 'is_libur' => false]],
                 'lb_columns' => [],
                 'table_rows' => [['jenis' => 'JABON', 'target_harian' => 8, 'target_bulanan' => 200, 'daily_values' => [0], 'lb_values' => [], 'total' => 0]],
                 'summary_rows' => [['jenis' => 'JABON', 'avg' => 0, 'min' => 0, 'max' => 0]],

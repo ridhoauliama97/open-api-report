@@ -290,14 +290,14 @@
                 <th style="width: 7.5%;">Lebar</th>
                 <th style="width: 7.5%;">Panjang</th>
                 <th style="width: 9.5%;">Ton</th>
-                <th style="width: 11%;">Keterangan</th>
+                {{-- <th style="width: 11%;">Keterangan</th> --}}
                 <th class="separator-cell"></th>
                 <th style="width: 5%;">No</th>
                 <th style="width: 7.5%;">Tebal</th>
                 <th style="width: 7.5%;">Lebar</th>
                 <th style="width: 7.5%;">Panjang</th>
                 <th style="width: 9.5%;">Ton</th>
-                <th style="width: 11%;">Keterangan</th>
+                {{-- <th style="width: 11%;">Keterangan</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -311,16 +311,17 @@
                     <td class="number">{{ $formatSize((float) ($leftRow['Tebal'] ?? 0)) }}</td>
                     <td class="number">{{ $formatSize((float) ($leftRow['Lebar'] ?? 0)) }}</td>
                     <td class="number">{{ $formatSize((float) ($leftRow['Panjang'] ?? 0)) }}</td>
-                    <td class="number">{{ $formatTon((float) ($leftRow['Ton'] ?? 0)) }}</td>
-                    <td class="center">{{ (string) ($leftRow['Ket'] ?? '') }}</td>
+                    <td class="number" style="font-weight:bold;">{{ $formatTon((float) ($leftRow['Ton'] ?? 0)) }}</td>
+                    {{-- <td class="center">{{ (string) ($leftRow['Ket'] ?? '') }}</td> --}}
                     <td class="separator-cell"></td>
                     @if (is_array($rightRow))
                         <td class="center">{{ $rightStartNumber + $index }}</td>
                         <td class="number">{{ $formatSize((float) ($rightRow['Tebal'] ?? 0)) }}</td>
                         <td class="number">{{ $formatSize((float) ($rightRow['Lebar'] ?? 0)) }}</td>
                         <td class="number">{{ $formatSize((float) ($rightRow['Panjang'] ?? 0)) }}</td>
-                        <td class="number">{{ $formatTon((float) ($rightRow['Ton'] ?? 0)) }}</td>
-                        <td class="center">{{ (string) ($rightRow['Ket'] ?? '') }}</td>
+                        <td class="number" style="font-weight:bold;">{{ $formatTon((float) ($rightRow['Ton'] ?? 0)) }}
+                        </td>
+                        {{-- <td class="center">{{ (string) ($rightRow['Ket'] ?? '') }}</td> --}}
                     @else
                         <td colspan="6"></td>
                     @endif
@@ -330,7 +331,7 @@
     </table>
 
     <div class="summary-block">
-        {{-- <table class="summary-table">
+        <table class="summary-table">
             @foreach ($totalsByKeterangan as $keterangan => $ton)
                 <tr>
                     <td class="summary-label">KB {{ trim($jenisKayuSummary . ' ' . (string) $keterangan) }} :</td>
@@ -341,7 +342,7 @@
                 <td class="summary-label">Total :</td>
                 <td class="summary-value">{{ $formatTon((float) ($summary['total_ton'] ?? 0)) }}</td>
             </tr>
-        </table> --}}
+        </table>
     </div>
 
     <table class="signature-table">
