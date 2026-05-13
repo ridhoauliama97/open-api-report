@@ -214,6 +214,7 @@ use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StSawmillMasukPerGroupMejaController;
 use App\Http\Controllers\SupplierIntelController;
+use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
@@ -460,6 +461,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/rendemen-kayu/rendemen-semua-proses', 'api.reports.rendemen-kayu.rendemen-semua-proses', RendemenSemuaProsesController::class],
         ['/reports/rendemen-kayu/produksi-per-spk', 'api.reports.rendemen-kayu.produksi-per-spk', ProduksiPerSpkController::class],
         ['/reports/penjualan/penjualan-barang-jadi-m3', 'api.reports.penjualan.penjualan-barang-jadi-m3', PenjualanBarangJadiM3Controller::class],
+        ['/reports/penjualan/surat-jalan', 'api.reports.penjualan.surat-jalan', SuratJalanController::class],
         ['/reports/penjualan-kayu/penjualan-lokal', 'api.reports.penjualan-kayu.penjualan-lokal', PenjualanLokalController::class],
         ['/reports/penjualan-kayu/koordinat-tanah', 'api.reports.penjualan-kayu.koordinat-tanah', KoordinatTanahController::class],
         ['/reports/penjualan-kayu/rekap-penjualan-per-produk', 'api.reports.penjualan-kayu.rekap-penjualan-per-produk', RekapPenjualanPerProdukController::class],

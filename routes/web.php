@@ -211,6 +211,7 @@ use App\Http\Controllers\StSawmillHariTebalLebarController;
 use App\Http\Controllers\StSawmillMasukPerGroupController;
 use App\Http\Controllers\StSawmillMasukPerGroupMejaController;
 use App\Http\Controllers\SupplierIntelController;
+use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
@@ -1122,6 +1123,14 @@ Route::prefix('reports/penjualan')->name('reports.penjualan.')->group(function (
         Route::post('/preview-pdf', [PenjualanBarangJadiM3Controller::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [PenjualanBarangJadiM3Controller::class, 'preview'])->name('preview');
         Route::post('/health', [PenjualanBarangJadiM3Controller::class, 'health'])->name('health');
+    });
+
+    Route::prefix('surat-jalan')->name('surat-jalan.')->group(function (): void {
+        Route::view('/', 'reports.penjualan.surat-jalan-form')->name('index');
+        Route::post('/download', [SuratJalanController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [SuratJalanController::class, 'download'])->name('preview-pdf');
+        Route::post('/preview', [SuratJalanController::class, 'preview'])->name('preview');
+        Route::post('/health', [SuratJalanController::class, 'health'])->name('health');
     });
 });
 

@@ -665,6 +665,17 @@ return [
             'NoBJJual,TglJual,NoSPK,Buyer,NamaBarangJadi,Keterangan,Tebal,Lebar,Panjang,JmlhBatang,M3,Jenis'
         )))),
     ],
+    'surat_jalan' => [
+        'database_connection' => env('SURAT_JALAN_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('SURAT_JALAN_REPORT_PROCEDURE', 'SP_CetakSuratjalan'),
+        'call_syntax' => env('SURAT_JALAN_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('SURAT_JALAN_REPORT_QUERY'),
+        'parameter_count' => (int) env('SURAT_JALAN_REPORT_PARAMETER_COUNT', 1),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'SURAT_JALAN_REPORT_EXPECTED_COLUMNS',
+            'DateCreate,NoST,Jenis,Tebal,Lebar,UOMTblLebar,Panjang,UOMPanjang,JmlhBatang,M3,Ton,IsPrinted,TglJual,NoSJ,NoPlat,Buyer,JenisKendaraan'
+        )))),
+    ],
     'timeline_rekap_penjualan_per_produk' => [
         'database_connection' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_PROCEDURE', 'SP_LapJualPerProdukTimeLine'),

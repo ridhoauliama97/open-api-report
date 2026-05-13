@@ -896,6 +896,12 @@
                             </a>
                         </div>
                         <div class="col-12 col-md-6">
+                            <a href="{{ route('reports.penjualan.surat-jalan.index') }}"
+                                class="btn btn-outline-primary w-100 text-start">
+                                Surat Jalan
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
                             <a href="{{ route('reports.penjualan-kayu.koordinat-tanah.index') }}"
                                 class="btn btn-outline-primary w-100 text-start">
                                 Laporan Koordinat Tanah
