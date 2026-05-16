@@ -8,18 +8,22 @@ use RuntimeException;
 class StHidupKeringReportService
 {
     /**
+     * @param  array<int, string>  $modes
      * @return array<string, mixed>
      */
-    public function buildReportData(int $hari, string $mode): array
+    public function buildReportData(int $hari, array $modes): array
     {
-        $rows = $this->fetch($hari, $mode);
+        $modes = $this->normalizeModes($modes);
+        $rows = $this->fetch($hari, $modes);
 
         return [
             'rows' => $rows,
             'summary' => [
                 'total_rows' => count($rows),
                 'hari' => $hari,
-                'mode' => $mode,
+                'include' => in_array('INCLUDE', $modes, true),
+                'exclude' => in_array('EXCLUDE', $modes, true),
+                'modes' => $modes,
             ],
         ];
     }
@@ -27,9 +31,10 @@ class StHidupKeringReportService
     /**
      * @return array<string, mixed>
      */
-    public function healthCheck(int $hari, string $mode): array
+    public function healthCheck(int $hari, array $modes): array
     {
-        $raw = $this->runProcedureQuery($hari, $mode);
+        $modes = $this->normalizeModes($modes);
+        $raw = $this->runProcedureQueries($hari, $modes);
         $first = (array) ($raw[0] ?? []);
         $detectedColumns = array_keys($first);
         $expectedColumns = config('reports.st_hidup_kering.expected_columns', []);
@@ -44,15 +49,18 @@ class StHidupKeringReportService
             'missing_columns' => $missingColumns,
             'extra_columns' => $extraColumns,
             'row_count' => count($raw),
+            'include' => in_array('INCLUDE', $modes, true),
+            'exclude' => in_array('EXCLUDE', $modes, true),
+            'modes' => $modes,
         ];
     }
 
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function fetch(int $hari, string $mode): array
+    private function fetch(int $hari, array $modes): array
     {
-        $raw = $this->runProcedureQuery($hari, $mode);
+        $raw = $this->runProcedureQueries($hari, $modes);
 
         $out = [];
         foreach ($raw as $row) {
@@ -78,6 +86,62 @@ class StHidupKeringReportService
         return array_values($out);
     }
 
+    /**
+     * @param  array<int, string>  $modes
+     * @return array<int, string>
+     */
+    private function normalizeModes(array $modes): array
+    {
+        $normalized = [];
+        foreach ($modes as $mode) {
+            $mode = strtoupper(trim((string) $mode));
+            if (in_array($mode, ['INCLUDE', 'EXCLUDE'], true)) {
+                $normalized[$mode] = true;
+            }
+        }
+
+        return array_keys($normalized);
+    }
+
+    /**
+     * @param  array<int, string>  $modes
+     * @return array<int, object>
+     */
+    private function runProcedureQueries(int $hari, array $modes): array
+    {
+        $rows = [];
+        $seen = [];
+
+        foreach ($this->normalizeModes($modes) as $mode) {
+            foreach ($this->runProcedureQuery($hari, $mode) as $row) {
+                $key = $this->rowIdentity($row);
+                if (isset($seen[$key])) {
+                    continue;
+                }
+
+                $seen[$key] = true;
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function rowIdentity(object $row): string
+    {
+        $data = (array) $row;
+        $parts = [
+            (string) ($data['NoST'] ?? ''),
+            (string) ($data['Tebal'] ?? ''),
+            (string) ($data['Lebar'] ?? ''),
+            (string) ($data['IdLokasi'] ?? ''),
+            (string) ($data['Jenis'] ?? ''),
+            (string) ($data['BB'] ?? ''),
+        ];
+
+        return md5(implode('|', $parts));
+    }
+
     private function toFloat(mixed $value): ?float
     {
         if ($value === null) {
@@ -86,7 +150,7 @@ class StHidupKeringReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -94,7 +158,7 @@ class StHidupKeringReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -118,11 +182,11 @@ class StHidupKeringReportService
         }
 
         $mode = strtoupper(trim($mode));
-        if (!in_array($mode, ['INCLUDE', 'EXCLUDE'], true)) {
+        if (! in_array($mode, ['INCLUDE', 'EXCLUDE'], true)) {
             $mode = 'INCLUDE';
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST Hidup Kering belum dikonfigurasi.');
         }
 
@@ -132,7 +196,7 @@ class StHidupKeringReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST Hidup Kering dikonfigurasi untuk SQL Server. '
-                . 'Set ST_HIDUP_KERING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_HIDUP_KERING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -144,7 +208,7 @@ class StHidupKeringReportService
             return $connection->select($query, str_contains($query, '?') ? [$hari, $mode] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -159,4 +223,3 @@ class StHidupKeringReportService
         return $connection->select($sql, [$hari, $mode]);
     }
 }
-

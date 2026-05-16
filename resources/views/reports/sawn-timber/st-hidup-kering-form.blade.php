@@ -37,19 +37,43 @@
                 <form method="POST" action="{{ route('reports.sawn-timber.st-hidup-kering.download') }}"
                     class="row g-3">
                     @csrf
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="hari" class="form-label">Hari (>=)</label>
                         <input type="number" id="hari" name="hari" class="form-control" min="0"
                             value="{{ old('hari', old('Hari', 90)) }}" required>
                     </div>
-                    <div class="col-md-6">
-                        <label for="mode" class="form-label">Mode</label>
-                        @php $oldMode = strtoupper((string) old('mode', old('Mode', 'INCLUDE'))); @endphp
-                        <select id="mode" name="mode" class="form-select" required>
-                            <option value="INCLUDE" {{ $oldMode === 'INCLUDE' ? 'selected' : '' }}>INCLUDE</option>
-                            <option value="EXCLUDE" {{ $oldMode === 'EXCLUDE' ? 'selected' : '' }}>EXCLUDE</option>
-                        </select>
-                        <div class="form-text">INCLUDE: semua data. EXCLUDE: data yang tidak ada di BongkarSusunOutputST.</div>
+                    <div class="col-md-4">
+                        @php
+                            $oldInclude = old('include', old('Include', null));
+                            $oldExclude = old('exclude', old('Exclude', null));
+                            $oldMode = strtoupper((string) old('mode', old('Mode', 'INCLUDE')));
+                            $includeChecked =
+                                $oldInclude === null && $oldExclude === null
+                                    ? $oldMode === 'INCLUDE'
+                                    : filter_var($oldInclude, FILTER_VALIDATE_BOOL);
+                            $excludeChecked =
+                                $oldInclude === null && $oldExclude === null
+                                    ? $oldMode === 'EXCLUDE'
+                                    : filter_var($oldExclude, FILTER_VALIDATE_BOOL);
+                        @endphp
+                        <label class="form-label d-block">Include</label>
+                        <input type="hidden" name="include" value="0">
+                        <div class="form-check">
+                            <input type="checkbox" id="include" name="include" value="1" class="form-check-input"
+                                {{ $includeChecked ? 'checked' : '' }}>
+                            <label class="form-check-label" for="include">Tampilkan data include</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label d-block">Exclude</label>
+                        <input type="hidden" name="exclude" value="0">
+                        <div class="form-check">
+                            <input type="checkbox" id="exclude" name="exclude" value="1" class="form-check-input"
+                                {{ $excludeChecked ? 'checked' : '' }}>
+                            <label class="form-check-label" for="exclude">Tampilkan data exclude</label>
+                        </div>
+                        <div class="form-text">Jika keduanya dicentang, data digabung dan No ST duplikat dihindari.
+                        </div>
                     </div>
 
                     <div class="col-12">
@@ -67,7 +91,8 @@
                 <script>
                     document.getElementById('previewJsonBtn')?.addEventListener('click', async () => {
                         const hari = document.getElementById('hari')?.value;
-                        const mode = document.getElementById('mode')?.value;
+                        const include = document.getElementById('include')?.checked ? 1 : 0;
+                        const exclude = document.getElementById('exclude')?.checked ? 1 : 0;
 
                         const response = await fetch(
                             '{{ route('reports.sawn-timber.st-hidup-kering.preview') }}', {
@@ -79,7 +104,8 @@
                                 },
                                 body: JSON.stringify({
                                     hari,
-                                    mode,
+                                    include,
+                                    exclude,
                                 }),
                             }
                         );

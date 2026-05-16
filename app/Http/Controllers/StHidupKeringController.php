@@ -51,10 +51,10 @@ class StHidupKeringController extends Controller
         }
 
         $hari = $request->hari();
-        $mode = $request->mode();
+        $modes = $request->selectedModes();
 
         try {
-            $reportData = $reportService->buildReportData($hari, $mode);
+            $reportData = $reportService->buildReportData($hari, $modes);
         } catch (RuntimeException $exception) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
@@ -68,14 +68,16 @@ class StHidupKeringController extends Controller
         $pdf = $pdfGenerator->render('reports.sawn-timber.st-hidup-kering-pdf', [
             'reportData' => $reportData,
             'hari' => $hari,
-            'mode' => $mode,
+            'include' => $request->include(),
+            'exclude' => $request->exclude(),
+            'modes' => $modes,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan-ST-Hidup-Kering-%s-%s.pdf', $hari, $mode);
+        $filename = sprintf('Laporan-ST-Hidup-Kering-%s-%s.pdf', $hari, implode('-', $modes) ?: 'NONE');
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -88,10 +90,10 @@ class StHidupKeringController extends Controller
         StHidupKeringReportService $reportService,
     ): JsonResponse {
         $hari = $request->hari();
-        $mode = $request->mode();
+        $modes = $request->selectedModes();
 
         try {
-            $reportData = $reportService->buildReportData($hari, $mode);
+            $reportData = $reportService->buildReportData($hari, $modes);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -102,7 +104,9 @@ class StHidupKeringController extends Controller
             'message' => 'Preview laporan berhasil diambil.',
             'meta' => [
                 'hari' => $hari,
-                'mode' => $mode,
+                'include' => $request->include(),
+                'exclude' => $request->exclude(),
+                'modes' => $modes,
                 'total_rows' => count($rows),
                 'column_order' => array_keys($rows[0] ?? []),
             ],
@@ -116,10 +120,10 @@ class StHidupKeringController extends Controller
         StHidupKeringReportService $reportService,
     ): JsonResponse {
         $hari = $request->hari();
-        $mode = $request->mode();
+        $modes = $request->selectedModes();
 
         try {
-            $result = $reportService->healthCheck($hari, $mode);
+            $result = $reportService->healthCheck($hari, $modes);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -130,10 +134,11 @@ class StHidupKeringController extends Controller
                 : 'Struktur output SP_LapSTHidupKering berubah.',
             'meta' => [
                 'hari' => $hari,
-                'mode' => $mode,
+                'include' => $request->include(),
+                'exclude' => $request->exclude(),
+                'modes' => $modes,
             ],
             'health' => $result,
         ]);
     }
 }
-

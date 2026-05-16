@@ -124,6 +124,16 @@
     @php
         $data = is_array($reportData ?? null) ? $reportData : [];
         $rows = is_array($data['rows'] ?? null) ? $data['rows'] : [];
+        $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
+        $hariValue = (int) ($summary['hari'] ?? ($hari ?? 90));
+        $includeValue = (bool) ($summary['include'] ?? ($include ?? false));
+        $excludeValue = (bool) ($summary['exclude'] ?? ($exclude ?? false));
+        $filterText = trim(
+            implode(', ', array_filter([$includeValue ? 'Include' : null, $excludeValue ? 'Exclude' : null])),
+        );
+        if ($filterText === '') {
+            $filterText = 'Tidak ada data dipilih';
+        }
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
