@@ -107,6 +107,14 @@
             background: #fff;
         }
 
+        .empty-row td {
+            border-bottom: 1px solid #000;
+            background: #c9d1df;
+            font-size: 11px;
+            font-weight: bold;
+            font-style: italic;
+        }
+
         .table-end-line td {
             border-top: 1px solid #000 !important;
             border-right: 0 !important;
@@ -174,7 +182,7 @@
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
             @empty
-                <tr>
+                <tr class="empty-row">
                     <td colspan="11" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse

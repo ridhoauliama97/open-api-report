@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateRekapProduksiS4SConsolidatedReportRequest;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiS4SConsolidatedReportService;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -50,7 +49,6 @@ class RekapProduksiS4SConsolidatedController extends Controller
         }
 
         $machines = $this->groupByMachine($rows);
-        $hk = $this->hkFromRange($startDate, $endDate);
         $grandTotals = $this->computeTotals($rows);
         $hkSummary = $this->buildHkSummary($machines);
 
@@ -58,7 +56,6 @@ class RekapProduksiS4SConsolidatedController extends Controller
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
-                'hk' => $hk,
                 'machines' => $machines,
                 'hk_summary' => $hkSummary,
                 'grand_totals' => $grandTotals,
@@ -122,7 +119,6 @@ class RekapProduksiS4SConsolidatedController extends Controller
         }
 
         $machines = $this->groupByMachine($rows);
-        $hk = $this->hkFromRange($startDate, $endDate);
         $grandTotals = $this->computeTotals($rows);
         $hkSummary = $this->buildHkSummary($machines);
 
@@ -130,7 +126,6 @@ class RekapProduksiS4SConsolidatedController extends Controller
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
-                'hk' => $hk,
                 'machines' => $machines,
                 'hk_summary' => $hkSummary,
                 'grand_totals' => $grandTotals,
@@ -219,6 +214,9 @@ class RekapProduksiS4SConsolidatedController extends Controller
         $totals = array_fill_keys($sumCols, 0.0);
         $orgSum = 0.0;
         $personHoursSum = 0.0;
+        $m3JamSum = 0.0;
+        $m3JamOrgSum = 0.0;
+        $rowCount = count($rows);
 
         foreach ($rows as $row) {
             foreach ($sumCols as $col) {
@@ -228,11 +226,13 @@ class RekapProduksiS4SConsolidatedController extends Controller
             $org = (float) ($row['Org'] ?? 0.0);
             $orgSum += $org;
             $personHoursSum += (float) ($row['_person_hours'] ?? 0.0);
+            $m3JamSum += (float) ($row['M3Jam'] ?? 0.0);
+            $m3JamOrgSum += (float) ($row['M3JamOrg'] ?? 0.0);
         }
 
         $eps = 0.0000001;
-        $m3Jam = abs($totals['Jam']) > $eps ? ($totals['OutputS4S'] / $totals['Jam']) : 0.0;
-        $m3JamOrg = abs($personHoursSum) > $eps ? ($totals['OutputS4S'] / $personHoursSum) : 0.0;
+        $m3Jam = $rowCount > 0 ? ($m3JamSum / $rowCount) : 0.0;
+        $m3JamOrg = $rowCount > 0 ? ($m3JamOrgSum / $rowCount) : 0.0;
         $rend = abs($totals['TotalInput']) > $eps ? (($totals['OutputS4S'] / $totals['TotalInput']) * 100.0) : 0.0;
 
         return array_merge($totals, [
@@ -242,22 +242,6 @@ class RekapProduksiS4SConsolidatedController extends Controller
             'M3JamOrg' => $m3JamOrg,
             'Rend' => $rend,
         ]);
-    }
-
-    private function hkFromRange(string $startDate, string $endDate): int
-    {
-        try {
-            $start = Carbon::parse($startDate);
-            $end = Carbon::parse($endDate);
-        } catch (\Throwable) {
-            return 0;
-        }
-
-        if ($end->lessThan($start)) {
-            return 0;
-        }
-
-        return $start->diffInDays($end) + 1;
     }
 
     /**

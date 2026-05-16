@@ -152,7 +152,7 @@
         ];
         $ageKeys = ['Period1', 'Period2', 'Period3', 'Period4', 'Period5'];
 
-        $generatedDate = \Carbon\Carbon::now()->format('d-M-y');
+        $generatedDate = \Carbon\Carbon::now()->locale('id')->translatedFormat('d-M-y');
     @endphp
 
     <h1 class="report-title">Laporan Umur Barang Jadi Detail</h1>

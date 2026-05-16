@@ -101,7 +101,7 @@
         }
 
         .chart-wrap {
-            margin-top: 8px;
+            margin-top: 35px;
         }
 
         .headers-row th {
@@ -140,6 +140,12 @@
             border-bottom: 0 !important;
             border-left: 0 !important;
             border-right: 1px solid #000 !important;
+        }
+
+        .report-table tbody tr.data-row td.under-target-cell {
+            color: #d00000 !important;
+            font-weight: bold;
+            font-style: italic;
         }
 
         .table-end-line td {
@@ -236,16 +242,16 @@
         <thead>
             <tr class="headers-row">
                 <th rowspan="2">Jenis</th>
-                <th rowspan="2">Target <br /> Hari</th>
-                <th rowspan="2">Target <br /> Bulan</th>
+                <th rowspan="2">Target <br> Hari</th>
+                <th rowspan="2">Target <br> Bulan</th>
                 <th colspan="{{ count($dayColumns) }}">
                     {{ ucfirst($monthTitle) }}</th>
                 <th rowspan="2" style="font-weight: bold">Total</th>
             </tr>
             <tr class="headers-row">
                 @foreach ($dayColumns as $dayMeta)
-                    <th class="{{ ($dayMeta['is_libur'] ?? false) ? 'lb-head' : '' }}">
-                        {{ ($dayMeta['is_libur'] ?? false) ? 'LB' : $dayMeta['label'] }}
+                    <th class="{{ $dayMeta['is_libur'] ?? false ? 'lb-head' : '' }}">
+                        {{ $dayMeta['is_libur'] ?? false ? 'LB' : $dayMeta['label'] }}
                     </th>
                 @endforeach
             </tr>
@@ -257,14 +263,17 @@
                     <td class="data-cell">{{ number_format((float) $row['target_harian'], 0, '.', ',') }}</td>
                     <td class="data-cell">{{ number_format((float) $row['target_bulanan'], 0, '.', ',') }}</td>
                     @foreach ($row['daily_values'] as $index => $value)
-                        <td class="data-cell">{{ number_format((float) $value, 0, '.', ',') }}</td>
+                        <td
+                            class="data-cell {{ $row['daily_under_target_flags'][$index] ?? false ? 'under-target-cell' : '' }}">
+                            {{ number_format((float) $value, 0, '.', ',') }}
+                        </td>
                     @endforeach
                     <td class="data-cell" style="font-weight: bold">
                         {{ number_format((float) $row['total'], 0, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr class="data-row">
-                    <td class="data-cell" colspan="99">Tidak ada data.</td>
+                    <td class="data-cell">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -289,7 +298,7 @@
                 </tr>
             @empty
                 <tr class="data-row">
-                    <td class="data-cell" colspan="4">-</td>
+                    <td class="data-cell" colspan="4">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

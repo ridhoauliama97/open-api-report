@@ -57,6 +57,12 @@
             text-align: left;
             font-weight: 600;
         }
+
+        .report-table .under-target-cell {
+            color: #d00000 !important;
+            font-weight: 700;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -149,7 +155,10 @@
                                     <td>{{ number_format($row['target_harian'], 0, '.', ',') }}</td>
                                     <td>{{ number_format($row['target_bulanan'], 0, '.', ',') }}</td>
                                     @foreach ($row['daily_values'] as $index => $value)
-                                        <td>{{ number_format($value, 0, '.', ',') }}</td>
+                                        <td
+                                            class="{{ $row['daily_under_target_flags'][$index] ?? false ? 'under-target-cell' : '' }}">
+                                            {{ number_format($value, 0, '.', ',') }}
+                                        </td>
                                         @if (($reportData['day_columns'][$index]['is_lb_after'] ?? false) === true)
                                             @php $lbLabel = $reportData['day_columns'][$index]['label']; @endphp
                                             <td>{{ number_format((float) ($row['lb_values'][$lbLabel] ?? 0), 0, '.', ',') }}

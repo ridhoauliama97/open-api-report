@@ -222,7 +222,7 @@
             <tbody>
                 <tr class="totals-row">
                     <td class="blank">Total (M3) Per-Jenis {{ $jenisGroup['name'] ?? 'LAINNYA' }}</td>
-                    <td class="number" style="width: 30%"> {{ $fmtM3($jenisGroup['total_m3'] ?? null) }}</td>
+                    <td class="number" style="width: 29.75%"> {{ $fmtM3($jenisGroup['total_m3'] ?? null) }}</td>
                 </tr>
             </tbody>
         </table>

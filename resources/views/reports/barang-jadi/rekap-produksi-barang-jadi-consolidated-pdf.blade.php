@@ -123,6 +123,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -153,7 +154,9 @@
         $start = \Carbon\Carbon::parse((string) ($data['start_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
         $eps = 0.0000001;
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDate = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
         $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
@@ -306,7 +309,7 @@
         </table>
     @endforeach
 
-    @if ($machines !== [])
+    {{-- @if ($machines !== [])
         <div class="summary-block">
             <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
             <ul style="margin: 0; padding-left: 18px;">
@@ -324,7 +327,7 @@
                 <li>Rend (%) : <strong>{{ $fmtPercentBlank($grandTotals['Rend']) }}</strong></li>
             </ul>
         </div>
-    @endif
+    @endif --}}
 
     @include('reports.partials.pdf-footer-table')
 </body>

@@ -166,24 +166,23 @@
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 70px;">Tanggal</th>
-                    <th rowspan="2" style="width: 34px;">Shift</th>
-                    <th colspan="6">Input</th>
-                    <th rowspan="2" style="width: 54px;">Total Input</th>
-                    <th rowspan="2" style="width: 70px;">Output Sanding</th>
-                    <th rowspan="2" style="width: 34px;">Jam</th>
-                    <th rowspan="2" style="width: 34px;">Org</th>
-                    <th rowspan="2" style="width: 52px;">M3/Jam</th>
-                    <th rowspan="2" style="width: 58px;">M3/jam/Org</th>
-                    <th rowspan="2" style="width: 48px;">Rend (%)</th>
+                    <th rowspan="2" style="width: 10%;">Tanggal</th>
+                    <th rowspan="2" style="width: 6%;">Shift</th>
+                    <th colspan="5">Input</th>
+                    <th rowspan="2" style="width: 8%;">Total Input</th>
+                    <th rowspan="2" style="width: 8%;">Output CCAkhir</th>
+                    <th rowspan="2" style="width: 7%;">Jam</th>
+                    <th rowspan="2" style="width: 7%;">Org</th>
+                    <th rowspan="2" style="width: 7%;">M3/Jam</th>
+                    <th rowspan="2" style="width: 10%;">M3/jam/Org</th>
+                    <th rowspan="2" style="width: 8%;">Rend (%)</th>
                 </tr>
                 <tr>
-                    <th style="width: 42px;">BJ</th>
-                    <th style="width: 56px;">CCAkhir</th>
-                    <th style="width: 42px;">FJ</th>
-                    <th style="width: 56px;">Moulding</th>
-                    <th style="width: 56px;">Reproses</th>
-                    <th style="width: 42px;">WIP</th>
+                    <th style="width: 7%;">BJ</th>
+                    <th style="width: 8%;">CC Akhir</th>
+                    <th style="width: 7%;">FJ</th>
+                    <th style="width: 8%;">Moulding</th>
+                    <th style="width: 8%;">Reproses</th>
                 </tr>
             </thead>
             <tbody>
@@ -201,7 +200,6 @@
                         <td class="number">{{ $fmtBlank($row['FJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Reproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['Wip'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['OutputSanding'] ?? null) }}</td>
                         <td class="center">
@@ -237,7 +235,6 @@
                         <td class="number">{{ $fmtBlank($totals['FJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['Reproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['Wip'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['TotalInput'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['OutputSanding'] ?? null) }}</td>
                         <td class="center">{{ $fmtIntBlank((int) round((float) ($totals['Jam'] ?? 0.0))) }}</td>
@@ -263,9 +260,6 @@
                         </td>
                         <td class="number">
                             {{ $fmtBlank($perColumnAverage((float) ($totals['Reproses'] ?? 0.0), $countNonZero($rows, 'Reproses'))) }}
-                        </td>
-                        <td class="number">
-                            {{ $fmtBlank($perColumnAverage((float) ($totals['Wip'] ?? 0.0), $countNonZero($rows, 'Wip'))) }}
                         </td>
                         <td class="number">
                             {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalInput'] ?? 0.0) / $hk : 0.0) }}</td>

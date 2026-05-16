@@ -27,6 +27,7 @@ class RekapProduksiS4SConsolidatedReportService
             $s4s = $this->toFloat($item['S4S'] ?? null);
             $st = $this->toFloat($item['ST'] ?? null);
             $wip = $this->toFloat($item['WIP'] ?? null);
+            $rawTotalInput = $this->toFloat($item['TotalInput'] ?? null);
             $outputS4S = $this->toFloat($item['OutputS4S'] ?? null);
             $jam = $this->toFloat($item['JamKerja'] ?? null);
             $org = (int) ($this->toFloat($item['JmlhAnggota'] ?? null) ?? 0.0);
@@ -34,11 +35,12 @@ class RekapProduksiS4SConsolidatedReportService
             // Match reference columns: treat WIP as "FJ" for S4S consolidated input breakdown.
             $fj = $wip;
 
-            $totalInput = (float) ($ccaAkhir ?? 0.0)
-                + (float) ($fj ?? 0.0)
-                + (float) ($reproses ?? 0.0)
-                + (float) ($s4s ?? 0.0)
-                + (float) ($st ?? 0.0);
+            $totalInput = $rawTotalInput
+                ?? ((float) ($ccaAkhir ?? 0.0)
+                    + (float) ($fj ?? 0.0)
+                    + (float) ($reproses ?? 0.0)
+                    + (float) ($s4s ?? 0.0)
+                    + (float) ($st ?? 0.0));
 
             $m3PerJam = ($jam !== null && abs($jam) > $eps && $outputS4S !== null)
                 ? $outputS4S / $jam
@@ -230,4 +232,3 @@ class RekapProduksiS4SConsolidatedReportService
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }
-

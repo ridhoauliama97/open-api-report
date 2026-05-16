@@ -53,6 +53,7 @@ class MutasiBarangJadiPerJenisPerUkuranController extends Controller
                 'TglAkhir' => $endDate,
                 'total_rows' => count($rows),
                 'column_order' => array_keys($rows[0] ?? []),
+                'orientation' => 'portrait',
             ],
             'data' => $rows,
         ]);
@@ -123,6 +124,7 @@ class MutasiBarangJadiPerJenisPerUkuranController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_orientation' => 'portrait',
 
         ]);
 

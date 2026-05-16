@@ -41,7 +41,7 @@
 
         .group-title {
             margin: 10px 0 4px 0;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -117,6 +117,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -216,20 +217,6 @@
             </tbody>
         </table>
     @endforeach
-
-    @if ($groups !== [])
-        <div style="margin-top: 10px;">
-            <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
-            <ul style="margin: 0; padding-left: 18px;">
-                <li>In Moulding : <strong>{{ $fmt($grandTotals['InMoulding']) }}</strong></li>
-                <li>In Sanding : <strong>{{ $fmt($grandTotals['InSanding']) }}</strong></li>
-                <li>In WIP : <strong>{{ $fmt($grandTotals['InWIP']) }}</strong></li>
-                <li>In Barang Jadi : <strong>{{ $fmt($grandTotals['InBarangJadi']) }}</strong></li>
-                <li>Output : <strong>{{ $fmt($grandTotals['Output']) }}</strong></li>
-                <li>Out Reproses : <strong>{{ $fmt($grandTotals['OutReproses']) }}</strong></li>
-            </ul>
-        </div>
-    @endif
 
     @include('reports.partials.pdf-footer-table')
 </body>

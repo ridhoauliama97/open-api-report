@@ -105,6 +105,14 @@
             background: #eef2f8;
         }
 
+        .empty-row td {
+            border-bottom: 1px solid #000;
+            background: #c9d1df;
+            font-size: 11px;
+            font-weight: bold;
+            font-style: italic;
+        }
+
         .center {
             text-align: center;
         }
@@ -173,7 +181,7 @@
                     <td class="number">{{ $fmt2OrBlank($r['Ketahanan'] ?? null) }}</td>
                 </tr>
             @empty
-                <tr>
+                <tr class="empty-row">
                     <td colspan="6" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse

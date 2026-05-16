@@ -47,13 +47,13 @@
 
     .section-title {
         margin: 10px 0 4px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: bold;
     }
 
     .section-rangkuman-title {
         margin: 10px 0 4px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: bold;
         text-transform: uppercase;
         text-decoration: underline;
@@ -72,6 +72,13 @@
         border-collapse: collapse;
         border-spacing: 0;
         border: 1px solid #000;
+    }
+
+    .report-table-total {
+        border-collapse: collapse;
+        border: none !important;
+        width: 100%;
+        border-spacing: 0;
     }
 
     .total-report-table {

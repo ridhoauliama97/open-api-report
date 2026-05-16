@@ -150,7 +150,9 @@
         $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
 
         $eps = 0.0000001;
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDate = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         // User request: if value is 0 / "-" / null, show blank.
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
@@ -170,7 +172,7 @@
             $namaMesin = (string) ($machine['nama_mesin'] ?? '');
             $rows = is_array($machine['rows'] ?? null) ? $machine['rows'] : [];
             $totals = is_array($machine['totals'] ?? null) ? $machine['totals'] : [];
-            $hk = (int) ($data['hk'] ?? ($machine['hk'] ?? 0));
+            $hk = (int) ($machine['hk'] ?? 0);
         @endphp
 
         <div class="section-title">Nama Mesin : {{ $namaMesin }}</div>
@@ -225,7 +227,23 @@
                 @if ($rows !== [] && $totals !== [])
                     @php
                         $hkText = $hk > 0 ? 'HK : ' . $hk : 'HK : -';
-                        $jmlhPerHk = static fn(float $v) => $hk > 0 ? $v / $hk : 0.0;
+                        $countNonZero = static function (array $sourceRows, string $key) use ($eps): int {
+                            $count = 0;
+                            foreach ($sourceRows as $sourceRow) {
+                                $sourceRow = is_array($sourceRow) ? $sourceRow : (array) $sourceRow;
+                                if (abs((float) ($sourceRow[$key] ?? 0.0)) > $eps) {
+                                    $count++;
+                                }
+                            }
+                            return $count;
+                        };
+                        $jmlhPerHk = static fn(float $v): float => $hk > 0 ? $v / $hk : 0.0;
+                        $jmlhPerActive = static fn(float $v, string $key): float => ($count = $countNonZero(
+                            $rows,
+                            $key,
+                        )) > 0
+                            ? $v / $count
+                            : 0.0;
                     @endphp
                     <tr class="totals-row">
                         <td colspan="2" class="center">{{ $hkText }}</td>
@@ -248,17 +266,16 @@
 
                     <tr class="totals-row">
                         <td colspan="2" class="center"><strong>Jmlh/HK</strong></td>
-                        {{-- Match reference: only show per-HK averages for main flow columns, leave others blank. --}}
                         <td class="number"></td>
+                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['FJ'] ?? 0.0))) }}</td>
                         <td class="number"></td>
-                        <td class="number"></td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['S4S'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['ST'] ?? 0.0))) }}</td>
+                        <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['S4S'] ?? 0.0), 'S4S')) }}</td>
+                        <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['ST'] ?? 0.0), 'ST')) }}</td>
                         <td class="number" style="font-weight: bold;">
                             {{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}</td>
                         <td class="number" style="font-weight: bold;">
-                            {{ $fmtBlank($jmlhPerHk((float) ($totals['OutputS4S'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['Jam'] ?? 0.0))) }}</td>
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputS4S'] ?? 0.0), 'OutputS4S')) }}</td>
+                        <td class="number"></td>
                         <td class="center"></td>
                         <td class="number"></td>
                         <td class="number"></td>

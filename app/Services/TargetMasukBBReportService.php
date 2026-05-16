@@ -51,6 +51,7 @@ class TargetMasukBBReportService
                     'target_harian' => $targetHarian,
                     'target_bulanan' => $targetBulanan,
                     'daily_values' => array_fill(0, count($dayColumns), 0.0),
+                    'daily_under_target_flags' => array_fill(0, count($dayColumns), false),
                     'lb_values' => [],
                     'raw_total' => 0.0,
                     'total' => 0,
@@ -83,6 +84,11 @@ class TargetMasukBBReportService
         foreach ($tableRows as $index => $row) {
             $totalRounded = (int) round($row['raw_total'], 0, PHP_ROUND_HALF_UP);
             $tableRows[$index]['total'] = $totalRounded;
+            $tableRows[$index]['daily_under_target_flags'] = $this->buildDailyUnderTargetFlags(
+                $row['daily_values'],
+                $dayColumns,
+                (float) $row['target_harian'],
+            );
             $summaryRows[] = [
                 'jenis' => $row['jenis'],
                 'avg' => $row['daily_values'] === [] ? 0.0 : round($totalRounded / count($row['daily_values']), 0, PHP_ROUND_HALF_UP),
@@ -253,6 +259,34 @@ class TargetMasukBBReportService
         $timestamp = strtotime($date);
 
         return $timestamp === false ? $date : date('d/m/Y', $timestamp);
+    }
+
+    /**
+     * @param  array<int, mixed>  $dailyValues
+     * @param  array<int, array<string, mixed>>  $dayColumns
+     * @return array<int, bool>
+     */
+    private function buildDailyUnderTargetFlags(array $dailyValues, array $dayColumns, float $targetHarian): array
+    {
+        $flags = [];
+        $cumulativeValue = 0.0;
+        $workingDayCount = 0;
+
+        foreach ($dailyValues as $index => $value) {
+            $cumulativeValue += (float) $value;
+            $isWorkingDay = ($dayColumns[$index]['is_libur'] ?? false) !== true;
+
+            if ($isWorkingDay) {
+                $workingDayCount++;
+            }
+
+            $cumulativeTarget = $targetHarian * $workingDayCount;
+            $flags[$index] = $targetHarian > 0
+                && $workingDayCount > 0
+                && $cumulativeValue < $cumulativeTarget;
+        }
+
+        return $flags;
     }
 
     /**
