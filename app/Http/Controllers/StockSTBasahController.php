@@ -7,7 +7,9 @@ use App\Services\PdfGenerator;
 use App\Services\StockSTBasahReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use RuntimeException;
+use Throwable;
 
 class StockSTBasahController extends Controller
 {
@@ -99,6 +101,20 @@ class StockSTBasahController extends Controller
         }
 
         $endDate = $request->endDate();
+        $filename = sprintf('Laporan-Stock-ST-Basah-%s.pdf', $endDate);
+        $dispositionType = $inline ? 'inline' : 'attachment';
+        $cacheKey = $this->pdfCacheKey($endDate, $generatedBy);
+
+        if (! $request->boolean('pdf_disable_cache')) {
+            $cachedPdf = $this->getCachedPdf($cacheKey);
+            if (is_string($cachedPdf) && $cachedPdf !== '') {
+                return response($cachedPdf, 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+                    'X-Report-Cache' => 'HIT',
+                ]);
+            }
+        }
 
         try {
             $rows = $reportService->fetch($endDate);
@@ -121,12 +137,61 @@ class StockSTBasahController extends Controller
             'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan-Stock-ST-Basah-%s.pdf', $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        if (! $request->boolean('pdf_disable_cache')) {
+            $this->putCachedPdf($cacheKey, $pdf);
+        }
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            'X-Report-Cache' => 'MISS',
         ]);
+    }
+
+    private function pdfCacheKey(string $endDate, object $generatedBy): string
+    {
+        $userKey = (string) ($generatedBy->username
+            ?? $generatedBy->Username
+            ?? $generatedBy->email
+            ?? $generatedBy->Email
+            ?? $generatedBy->name
+            ?? $generatedBy->Nama
+            ?? 'unknown');
+
+        return 'report-pdf:stock-st-basah:'.hash('sha256', $endDate.'|'.$userKey);
+    }
+
+    private function getCachedPdf(string $cacheKey): ?string
+    {
+        $cacheTtl = (int) config('app.pdf_render_cache_ttl_seconds', 0);
+        if ($cacheTtl <= 0) {
+            return null;
+        }
+
+        try {
+            $cacheStore = trim((string) config('app.pdf_render_cache_store', 'file'));
+            $store = $cacheStore !== '' ? Cache::store($cacheStore) : Cache::store();
+            $cachedPdf = $store->get($cacheKey);
+
+            return is_string($cachedPdf) ? $cachedPdf : null;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    private function putCachedPdf(string $cacheKey, string $pdf): void
+    {
+        $cacheTtl = (int) config('app.pdf_render_cache_ttl_seconds', 0);
+        if ($cacheTtl <= 0 || $pdf === '') {
+            return;
+        }
+
+        try {
+            $cacheStore = trim((string) config('app.pdf_render_cache_store', 'file'));
+            $store = $cacheStore !== '' ? Cache::store($cacheStore) : Cache::store();
+            $store->put($cacheKey, $pdf, now()->addSeconds($cacheTtl));
+        } catch (Throwable) {
+            return;
+        }
     }
 }

@@ -2,14 +2,32 @@
 
 namespace App\Services;
 
-use Mpdf\Mpdf;
+use DateTimeInterface;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Facades\Cache;
 use Mpdf\HTMLParserMode;
+use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
+use Throwable;
 
 class PdfGenerator
 {
     /**
-     * @param array<string, mixed> $data
+     * Data keys that change per request but should not make identical report
+     * parameters miss the PDF render cache.
+     *
+     * @var array<int, string>
+     */
+    private const CACHE_VOLATILE_KEYS = [
+        'generatedAt',
+        'generated_at',
+        'printedAt',
+        'printed_at',
+        'timestamp',
+    ];
+
+    /**
+     * @param  array<string, mixed>  $data
      */
     private function resolveOrientation(array $data): string
     {
@@ -22,7 +40,7 @@ class PdfGenerator
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private function resolveFormat(array $data): string
     {
@@ -33,7 +51,7 @@ class PdfGenerator
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private function columnCount(array $data): int
     {
@@ -43,13 +61,13 @@ class PdfGenerator
 
         $rows = $data['rows'] ?? ($data['reportData']['rows'] ?? []);
 
-        if (!is_array($rows) || empty($rows)) {
+        if (! is_array($rows) || empty($rows)) {
             return 0;
         }
 
         $firstRow = $rows[0] ?? null;
 
-        if (!is_array($firstRow)) {
+        if (! is_array($firstRow)) {
             $firstRow = (array) $firstRow;
         }
 
@@ -60,7 +78,7 @@ class PdfGenerator
         $excluded = ['created_at', 'updated_at'];
         $visibleColumns = array_filter(
             array_keys($firstRow),
-            static fn(string $key): bool => !in_array($key, $excluded, true)
+            static fn (string $key): bool => ! in_array($key, $excluded, true)
         );
 
         return count($visibleColumns);
@@ -70,6 +88,33 @@ class PdfGenerator
      * Execute render logic.
      */
     public function render(string $view, array $data = []): string
+    {
+        $cacheTtl = (int) config('app.pdf_render_cache_ttl_seconds', 0);
+
+        if ($cacheTtl <= 0 || filter_var($data['pdf_disable_cache'] ?? false, FILTER_VALIDATE_BOOL)) {
+            return $this->renderUncached($view, $data);
+        }
+
+        $cacheKey = $this->cacheKey($view, $data);
+        $cacheStore = trim((string) config('app.pdf_render_cache_store', 'file'));
+
+        try {
+            $store = $cacheStore !== '' ? Cache::store($cacheStore) : Cache::store();
+
+            return $store->remember(
+                $cacheKey,
+                now()->addSeconds($cacheTtl),
+                fn (): string => $this->renderUncached($view, $data)
+            );
+        } catch (Throwable) {
+            return $this->renderUncached($view, $data);
+        }
+    }
+
+    /**
+     * Execute render logic without cache.
+     */
+    private function renderUncached(string $view, array $data = []): string
     {
         $html = view($view, $data)->render();
         $html = $this->stripExternalFontLinks($html);
@@ -116,13 +161,78 @@ class PdfGenerator
         @ini_set('pcre.backtrack_limit', '10000000');
         @ini_set('pcre.recursion_limit', '1000000');
 
-        if (!empty($data['pdf_disable_chunking'])) {
+        if (! empty($data['pdf_disable_chunking'])) {
             $mpdf->WriteHTML($html);
         } else {
             $this->writeHtmlInChunks($mpdf, $html);
         }
 
         return $mpdf->Output('', Destination::STRING_RETURN);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function cacheKey(string $view, array $data): string
+    {
+        $payload = [
+            'view' => $view,
+            'data' => $this->normalizeCacheData($data),
+            'format' => $this->resolveFormat($data),
+            'orientation' => $this->resolveOrientation($data),
+            'app_locale' => app()->getLocale(),
+            'app_timezone' => config('app.timezone'),
+        ];
+
+        $encoded = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        return 'pdf-render:'.hash('sha256', is_string($encoded) ? $encoded : serialize($payload));
+    }
+
+    /**
+     * @param  mixed  $value
+     * @return mixed
+     */
+    private function normalizeCacheData($value)
+    {
+        if ($value instanceof DateTimeInterface) {
+            return $value->format(DateTimeInterface::ATOM);
+        }
+
+        if ($value instanceof Arrayable) {
+            return $this->normalizeCacheData($value->toArray());
+        }
+
+        if (is_object($value)) {
+            $className = $value::class;
+            $objectData = method_exists($value, 'getAttributes') ? $value->getAttributes() : get_object_vars($value);
+
+            return [
+                '__class' => $className,
+                'data' => $this->normalizeCacheData($objectData),
+            ];
+        }
+
+        if (! is_array($value)) {
+            return is_resource($value) ? null : $value;
+        }
+
+        $normalized = [];
+        foreach ($value as $key => $item) {
+            if (is_string($key) && in_array($key, self::CACHE_VOLATILE_KEYS, true)) {
+                continue;
+            }
+
+            $normalized[$key] = $this->normalizeCacheData($item);
+        }
+
+        if (array_is_list($normalized)) {
+            return array_map(fn ($item) => $this->normalizeCacheData($item), $normalized);
+        }
+
+        ksort($normalized);
+
+        return $normalized;
     }
 
     /**
@@ -173,7 +283,7 @@ class PdfGenerator
         @ini_set('pcre.backtrack_limit', '10000000');
         @ini_set('pcre.recursion_limit', '1000000');
 
-        if (!empty($data['pdf_disable_chunking'])) {
+        if (! empty($data['pdf_disable_chunking'])) {
             $mpdf->WriteHTML($html);
         } else {
             $this->writeHtmlInChunks($mpdf, $html);
@@ -181,7 +291,6 @@ class PdfGenerator
 
         $mpdf->Output($outputPath, Destination::FILE);
     }
-
 
     private function writeHtmlInChunks(Mpdf $mpdf, string $html): void
     {
@@ -232,10 +341,11 @@ class PdfGenerator
         $buffer = '';
 
         foreach ($lines as $line) {
-            $candidate = $buffer === '' ? $line : $buffer . PHP_EOL . $line;
+            $candidate = $buffer === '' ? $line : $buffer.PHP_EOL.$line;
 
             if (strlen($candidate) <= $maxLength) {
                 $buffer = $candidate;
+
                 continue;
             }
 
@@ -246,6 +356,7 @@ class PdfGenerator
 
             if (strlen($line) <= $maxLength) {
                 $buffer = $line;
+
                 continue;
             }
 
@@ -300,7 +411,7 @@ class PdfGenerator
             return [''];
         }
 
-        if (!function_exists('mb_strcut')) {
+        if (! function_exists('mb_strcut')) {
             return str_split($line, $maxLength);
         }
 

@@ -75,6 +75,38 @@ class DashboardSawnTimberController extends Controller
         ]);
     }
 
+    public function health(
+        ShowDashboardSawnTimberRequest $request,
+        DashboardSawnTimberReportService $reportService,
+    ): JsonResponse {
+        $defaultEndDate = now()->toDateString();
+        $defaultStartDate = now()->subDays(6)->toDateString();
+
+        $startDate = (string) $request->input('start_date', $request->input('TglAwal', $defaultStartDate));
+        $endDate = (string) $request->input('end_date', $request->input('TglAkhir', $defaultEndDate));
+
+        try {
+            $chartData = $reportService->buildChartData($startDate, $endDate);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => 'Struktur output SPWps_LapDashboardSawnTimber valid.',
+            'meta' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'TglAwal' => $startDate,
+                'TglAkhir' => $endDate,
+            ],
+            'health' => [
+                'is_healthy' => true,
+                'column_mapping' => $chartData['column_mapping'] ?? [],
+                'row_count' => count($chartData['raw_rows'] ?? []),
+            ],
+        ]);
+    }
+
     public function download(
         ShowDashboardSawnTimberRequest $request,
         DashboardSawnTimberReportService $reportService,
@@ -111,13 +143,14 @@ class DashboardSawnTimberController extends Controller
 
         $pdfChartData = $this->preparePdfChartData($chartData);
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.dashboard-sawn-timber-pdf', [
+        $pdf = $pdfGenerator->render('dashboard.sawn-timber-pdf', [
             'startDate' => $startDate,
             'endDate' => $endDate,
             'chartData' => $pdfChartData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_orientation' => 'landscape',
         ]);
 
         $filename = sprintf('Dashboard-Sawn-Timber-%s-sd-%s.pdf', $startDate, $endDate);
@@ -132,7 +165,7 @@ class DashboardSawnTimberController extends Controller
     /**
      * Reduce chart payload for PDF rendering so large date ranges do not exhaust memory.
      *
-     * @param array<string, mixed> $chartData
+     * @param  array<string, mixed>  $chartData
      * @return array<string, mixed>
      */
     private function preparePdfChartData(array $chartData): array
@@ -169,17 +202,17 @@ class DashboardSawnTimberController extends Controller
             $prepared['types'] = $selectedTypes;
             $prepared['totals_by_type'] = array_filter(
                 $totalsByType,
-                static fn(string $type): bool => isset($selectedMap[$type]),
+                static fn (string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
             $prepared['series_by_type'] = array_filter(
                 $seriesByType,
-                static fn(string $type): bool => isset($selectedMap[$type]),
+                static fn (string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
             $prepared['stock_by_type'] = array_filter(
                 $stockByType,
-                static fn(string $type): bool => isset($selectedMap[$type]),
+                static fn (string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
             $prepared['pdf_truncated_types'] = true;
@@ -231,7 +264,7 @@ class DashboardSawnTimberController extends Controller
     }
 
     /**
-     * @param array<string, array{in?: array<int, float|int|string|null>, out?: array<int, float|int|string|null>}> $seriesByType
+     * @param  array<string, array{in?: array<int, float|int|string|null>, out?: array<int, float|int|string|null>}>  $seriesByType
      * @return array<string, array{in: array<int, float>, out: array<int, float>}>
      */
     private function sampleSeriesByType(array $seriesByType, int $chunkSize): array
@@ -249,13 +282,13 @@ class DashboardSawnTimberController extends Controller
     }
 
     /**
-     * @param array<int, float|int|string|null> $values
+     * @param  array<int, float|int|string|null>  $values
      * @return array<int, float>
      */
     private function sumSeriesChunks(array $values, int $chunkSize): array
     {
         if ($chunkSize <= 1) {
-            return array_map(static fn($value): float => (float) ($value ?? 0), $values);
+            return array_map(static fn ($value): float => (float) ($value ?? 0), $values);
         }
 
         $chunks = [];

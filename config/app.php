@@ -129,4 +129,8 @@ return [
 
     'pdf_retention_hours' => (int) env('PDF_RETENTION_HOURS', 24),
 
+    'pdf_render_cache_store' => env('PDF_RENDER_CACHE_STORE', 'file'),
+
+    'pdf_render_cache_ttl_seconds' => (int) env('PDF_RENDER_CACHE_TTL_SECONDS', 300),
+
 ];

@@ -192,6 +192,7 @@ Contoh:
 
 ## Sawn Timber
 
+- Laporan Dashboard Sawn Timber: `http://192.168.10.100:5006/api/reports/dashboard-sawn-timber/pdf`
 - Laporan Sawn Timber Dashboard Sawn Timber: `http://192.168.10.100:5006/api/reports/sawn-timber/dashboard-sawn-timber/pdf`
 - Laporan Sawn Timber Detail Lembar Tally Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/detail-lembar-tally-hasil-sawmill/pdf`
 - Laporan Sawn Timber KD Keluar Masuk: `http://192.168.10.100:5006/api/reports/sawn-timber/kd-keluar-masuk/pdf`

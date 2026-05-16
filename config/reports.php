@@ -921,7 +921,7 @@ return [
         'ctr_divisor' => (float) env('DASHBOARD_SAWN_TIMBER_CTR_DIVISOR', '75'),
         'type_order' => array_filter(array_map('trim', explode(',', (string) env(
             'DASHBOARD_SAWN_TIMBER_TYPE_ORDER',
-            'JABON,JABON TG,KAYU LAT JABON,KAYU LAT RAMBUNG,PULAI,RAMBUNG - MC 1,RAMBUNG - MC 2,RAMBUNG - STD,SEMBARANG'
+            'JABON,JABON MERAH,JABON TG,KAYU LAT JABON,KAYU LAT PULAI,KAYU LAT RAMBUNG,PULAI,RAMBUNG - MC 1,RAMBUNG - MC 2,RAMBUNG - STD,SEMBARANG'
         )))),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('DASHBOARD_SAWN_TIMBER_REPORT_EXPECTED_COLUMNS', '')))),
     ],

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 14mm 10mm 14mm 10mm;
+            margin: 20mm 8mm 20mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -25,24 +25,31 @@
             color: #000;
         }
 
-        .title {
+        .report-title {
             text-align: center;
             margin: 0;
             font-size: 16px;
             font-weight: bold;
         }
 
-        .subtitle {
+        .report-subtitle {
             text-align: center;
             margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
 
+        .section-title {
+            margin: 20px 0 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 8px;
+            page-break-inside: auto;
         }
 
         .report-table {
@@ -54,17 +61,24 @@
             border-left: 1px solid #000;
         }
 
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
+            padding: 2px 3px;
             vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
         }
 
         td.label {
@@ -126,6 +140,18 @@
             border-left: 0;
         }
 
+        .report-table thead tr.headers-row:first-child th[rowspan] {
+            border-bottom: 1px solid #000;
+        }
+
+        .report-table thead tr.headers-row:first-child th[colspan] {
+            border-bottom: 0;
+        }
+
+        .report-table thead tr.headers-row:last-child th {
+            border-top: 1px solid #000;
+        }
+
         .totals-row td {
             font-weight: bold;
             font-size: 11px;
@@ -152,6 +178,10 @@
             line-height: 0 !important;
             background: transparent !important;
         }
+
+        .summary-table .totals-row td {
+            border: 1px solid #000;
+        }
     </style>
 </head>
 
@@ -162,107 +192,100 @@
         $types = is_array($chartData['types'] ?? null) ? $chartData['types'] : [];
         $totalsByType = is_array($chartData['totals_by_type'] ?? null) ? $chartData['totals_by_type'] : [];
         $stockByType = is_array($chartData['stock_by_type'] ?? null) ? $chartData['stock_by_type'] : [];
+        $stockPercentByType = is_array($chartData['stock_percent_by_type'] ?? null)
+            ? $chartData['stock_percent_by_type']
+            : [];
         $stockTotals = is_array($chartData['stock_totals'] ?? null)
             ? $chartData['stock_totals']
             : ['s_akhir' => 0, 'ctr' => 0];
-        $dailyIn = is_array($chartData['daily_in_totals'] ?? null) ? $chartData['daily_in_totals'] : [];
-        $dailyOut = is_array($chartData['daily_out_totals'] ?? null) ? $chartData['daily_out_totals'] : [];
-        $rawRowCount = (int) ($chartData['raw_row_count'] ?? 0);
+        $seriesByType = is_array($chartData['series_by_type'] ?? null) ? $chartData['series_by_type'] : [];
         $pdfTruncatedTypes = (bool) ($chartData['pdf_truncated_types'] ?? false);
         $pdfOriginalTypeCount = (int) ($chartData['pdf_original_type_count'] ?? count($types));
+        $startText = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $endText = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
         $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
-
-        $dailyNet = [];
-        $totalInAll = 0.0;
-        $totalOutAll = 0.0;
-        foreach ($dailyIn as $idx => $value) {
-            $inVal = (float) ($value ?? 0);
-            $outVal = (float) ($dailyOut[$idx] ?? 0);
-            $dailyNet[] = $inVal - $outVal;
-            $totalInAll += $inVal;
-            $totalOutAll += $outVal;
-        }
-        $netAll = $totalInAll - $totalOutAll;
+        $fmtPct = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',') . '%';
 
     @endphp
 
-    <h1 class="title">Laporan Dashboard Sawn Timber</h1>
-    <p class="subtitle">Dari {{ \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
-        {{ \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') }}</p>
+    <h1 class="report-title">Laporan Dashboard Sawn Timber</h1>
+    <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
     @if ($pdfTruncatedTypes)
-        <p style="margin: 0 0 10px 0; font-size: 9px; text-align: center;"> Menampilkan {{ count($types) }} dari
-            {{ $pdfOriginalTypeCount }} jenis ST teratas untuk menjaga render PDFtetap stabil.
+        <p style="margin: 0 0 10px 0; font-size: 9px; text-align: center;">Menampilkan {{ count($types) }} dari
+            {{ $pdfOriginalTypeCount }} jenis ST teratas untuk menjaga render PDF tetap stabil.
         </p>
     @endif
 
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th style="width: 7%;">No</th>
-                <th style="width: 33%;">Jenis</th>
-                <th style="width: 20%;">Total Masuk</th>
-                <th style="width: 20%;">Total Keluar</th>
-                <th style="width: 20%;">Net</th>
+                <th rowspan="2" style="width: 58px;">Tanggal</th>
+                @foreach ($types as $type)
+                    <th colspan="2">{{ $type }}</th>
+                @endforeach
             </tr>
-        </thead>
-        <tbody>
-            @foreach ($types as $idx => $type)
-                @php
-                    $inVal = (float) ($totalsByType[$type]['in'] ?? 0);
-                    $outVal = (float) ($totalsByType[$type]['out'] ?? 0);
-                @endphp
-                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell number" style="text-align: center">{{ $idx + 1 }}</td>
-                    <td class="data-cell label">{{ $type }}</td>
-                    <td class="data-cell number">{{ $fmt1($inVal) }}</td>
-                    <td class="data-cell number">{{ $fmt1($outVal) }}</td>
-                    <td class="data-cell number" style="font-weight: bold;">{{ $fmt1($inVal - $outVal) }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-        <tfoot>
-            <tr class="totals-row">
-                <td colspan="2" class="number" style="text-align: center;">Total</td>
-                <td class="number">{{ $fmt1($totalInAll) }}</td>
-                <td class="number">{{ $fmt1($totalOutAll) }}</td>
-                <td class="number">{{ $fmt1($netAll) }}</td>
-            </tr>
-        </tfoot>
-    </table>
-
-    <table class="report-table">
-        <thead>
             <tr class="headers-row">
-                <th style="width: 7%;">No</th>
-                <th style="width: 43%;">Jenis</th>
-                <th style="width: 25%;">S Akhir</th>
-                <th style="width: 25%;">#Ctr</th>
+                @foreach ($types as $type)
+                    <th>Masuk</th>
+                    <th>Keluar</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
-            @foreach ($types as $idx => $type)
-                @php $stockRow = $stockByType[$type] ?? []; @endphp
+            @forelse ($dates as $dateIndex => $date)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="data-cell number" style="text-align: center">{{ $idx + 1 }}</td>
-                    <td class="data-cell label">{{ $type }}</td>
-                    <td class="data-cell number" style="font-weight: bold;">{{ $fmt1($stockRow['s_akhir'] ?? 0) }}</td>
-                    <td class="data-cell number" style="font-weight: bold;">{{ $fmt2($stockRow['ctr'] ?? 0) }}</td>
+                    <td class="data-cell label" style="text-align: center;">
+                        {{ \Carbon\Carbon::parse((string) $date)->locale('id')->translatedFormat('d-M-y') }}
+                    </td>
+                    @foreach ($types as $type)
+                        @php
+                            $inflow = (float) ($seriesByType[$type]['in'][$dateIndex] ?? 0);
+                            $outflow = (float) ($seriesByType[$type]['out'][$dateIndex] ?? 0);
+                        @endphp
+                        <td class="data-cell number">{{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}</td>
+                        <td class="data-cell number">{{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}</td>
+                    @endforeach
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="{{ 1 + count($types) * 2 }}" style="text-align: center;">Data tidak tersedia.</td>
+                </tr>
+            @endforelse
         </tbody>
         <tfoot>
             <tr class="totals-row">
-                <td colspan="2" class="number" style="text-align: center;">Total</td>
-                <td class="number">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}</td>
-                <td class="number">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
+                <td class="label">S Akhir</td>
+                @foreach ($types as $type)
+                    @php $stockRow = $stockByType[$type] ?? []; @endphp
+                    <td class="number">{{ $fmt1($stockRow['s_akhir'] ?? 0) }}</td>
+                    <td class="number">{{ $fmtPct($stockPercentByType[$type] ?? 0) }}</td>
+                @endforeach
+            </tr>
+            <tr class="totals-row">
+                <td class="label"># Ctr</td>
+                @foreach ($types as $type)
+                    <td class="number" colspan="2" style="text-align: center;">
+                        {{ $fmt2($stockByType[$type]['ctr'] ?? 0) }}</td>
+                @endforeach
             </tr>
         </tfoot>
     </table>
 
+    <p class="section-title">Total</p>
+    <table class="summary-table" style="width: 230px;">
+        <tr class="totals-row">
+            <td class="label" style="width: 90px;">S Akhir</td>
+            <td class="number" style="width: 70px;">{{ $fmt1($stockTotals['s_akhir'] ?? 0) }}</td>
+        </tr>
+        <tr class="totals-row">
+            <td class="label"># Ctr</td>
+            <td class="number">{{ $fmt2($stockTotals['ctr'] ?? 0) }}</td>
+        </tr>
+    </table>
 
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">

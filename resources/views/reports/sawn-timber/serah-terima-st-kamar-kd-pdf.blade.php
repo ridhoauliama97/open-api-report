@@ -173,7 +173,7 @@
         }
 
         .signature-space {
-            height: 75px;
+            height: 60px;
         }
 
         @include('reports.partials.pdf-footer-table-style');
@@ -320,7 +320,7 @@
         </tfoot>
     </table>
 
-    <table class="handover-summary">
+    {{-- <table class="handover-summary">
         <tbody>
             <tr>
                 <td style="width: 25%; font-weight: bold;">
@@ -335,7 +335,7 @@
                     {{ $fmtDecimal($summary['total_kubik'] ?? 0) }}</td>
             </tr>
         </tbody>
-    </table>
+    </table> --}}
 
     <table class="signature-table">
         <tbody>

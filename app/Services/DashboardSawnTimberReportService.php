@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -33,11 +35,12 @@ class DashboardSawnTimberReportService
 
         if ($rows === []) {
             return [
-                'dates' => [],
-                'types' => [],
+                'dates' => array_keys($this->buildDateMapFromRange($startDate, $endDate)),
+                'types' => $orderedTypes,
                 'series_by_type' => [],
                 'totals_by_type' => [],
                 'stock_by_type' => [],
+                'stock_percent_by_type' => [],
                 'stock_totals' => ['s_akhir' => 0.0, 'ctr' => 0.0],
                 'column_mapping' => $columns,
                 'raw_rows' => [],
@@ -54,8 +57,8 @@ class DashboardSawnTimberReportService
 
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan di hasil SPWps_LapDashboardSawnTimber. '
-                . 'Butuh kolom tanggal, jenis, masuk, dan keluar. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
+                .'Butuh kolom tanggal, jenis, masuk, dan keluar. '
+                .'Kolom terdeteksi: '.implode(', ', $detectedColumns),
             );
         }
 
@@ -75,11 +78,11 @@ class DashboardSawnTimberReportService
             $inflow = $this->toFloat($row[$columns['in']] ?? 0);
             $outflow = $this->toFloat($row[$columns['out']] ?? 0);
 
-            if (!isset($aggregated[$date])) {
+            if (! isset($aggregated[$date])) {
                 $aggregated[$date] = [];
             }
 
-            if (!isset($aggregated[$date][$type])) {
+            if (! isset($aggregated[$date][$type])) {
                 $aggregated[$date][$type] = ['in' => 0.0, 'out' => 0.0];
             }
 
@@ -87,7 +90,12 @@ class DashboardSawnTimberReportService
             $aggregated[$date][$type]['out'] += $outflow;
         }
 
-        $dates = array_keys($aggregated);
+        $dateMap = $this->buildDateMapFromRange($startDate, $endDate);
+        foreach (array_keys($aggregated) as $date) {
+            $dateMap[$date] = true;
+        }
+
+        $dates = array_keys($dateMap);
         sort($dates);
 
         $types = [];
@@ -174,7 +182,7 @@ class DashboardSawnTimberReportService
 
         $finalTypes = $types;
         foreach ($orderedTypes as $orderedType) {
-            if (!in_array($orderedType, $finalTypes, true)) {
+            if (! in_array($orderedType, $finalTypes, true)) {
                 $finalTypes[] = $orderedType;
             }
         }
@@ -210,6 +218,13 @@ class DashboardSawnTimberReportService
             $stockTotalCtr += $ctr;
         }
 
+        $stockPercentByType = [];
+        foreach ($finalTypes as $type) {
+            $stockPercentByType[$type] = $stockTotalSakhir > 0
+                ? (($stockByType[$type]['s_akhir'] ?? 0.0) / $stockTotalSakhir) * 100
+                : 0.0;
+        }
+
         return [
             'dates' => $dates,
             'types' => $finalTypes,
@@ -218,6 +233,7 @@ class DashboardSawnTimberReportService
             'daily_in_totals' => $this->buildDailyTotals($finalTypes, $dates, $seriesByType, 'in'),
             'daily_out_totals' => $this->buildDailyTotals($finalTypes, $dates, $seriesByType, 'out'),
             'stock_by_type' => $stockByType,
+            'stock_percent_by_type' => $stockPercentByType,
             'stock_totals' => [
                 's_akhir' => $stockTotalSakhir,
                 'ctr' => $stockTotalCtr,
@@ -228,9 +244,9 @@ class DashboardSawnTimberReportService
     }
 
     /**
-     * @param array<int, string> $types
-     * @param array<int, string> $dates
-     * @param array<string, array{in: array<int, float>, out: array<int, float>}> $seriesByType
+     * @param  array<int, string>  $types
+     * @param  array<int, string>  $dates
+     * @param  array<string, array{in: array<int, float>, out: array<int, float>}>  $seriesByType
      * @return array<int, float>
      */
     private function buildDailyTotals(array $types, array $dates, array $seriesByType, string $direction): array
@@ -248,16 +264,39 @@ class DashboardSawnTimberReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @return array<string, bool>
+     */
+    private function buildDateMapFromRange(string $startDate, string $endDate): array
+    {
+        $dateMap = [];
+
+        try {
+            $period = CarbonPeriod::create(
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->startOfDay(),
+            );
+
+            foreach ($period as $date) {
+                $dateMap[$date->format('Y-m-d')] = true;
+            }
+        } catch (\Throwable) {
+            // Abaikan tanggal tidak valid; data SP tetap menjadi fallback.
+        }
+
+        return $dateMap;
+    }
+
+    /**
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{date: ?string, type: ?string, in: ?string, out: ?string}
      */
     private function resolveColumns(array $rows): array
@@ -314,8 +353,8 @@ class DashboardSawnTimberReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $candidates
      */
     private function findMatchingKey(array $keys, array $candidates): ?string
     {
@@ -369,7 +408,7 @@ class DashboardSawnTimberReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -391,7 +430,7 @@ class DashboardSawnTimberReportService
     }
 
     /**
-     * @param array<int, mixed> $bindings
+     * @param  array<int, mixed>  $bindings
      * @return array<int, mixed>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -411,7 +450,7 @@ class DashboardSawnTimberReportService
         $parameterCount = (int) config('reports.dashboard_sawn_timber.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan dashboard sawn timber belum dikonfigurasi.');
         }
 
@@ -421,7 +460,7 @@ class DashboardSawnTimberReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan dashboard sawn timber dikonfigurasi untuk SQL Server. '
-                . 'Set DASHBOARD_SAWN_TIMBER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DASHBOARD_SAWN_TIMBER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -433,13 +472,13 @@ class DashboardSawnTimberReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'DASHBOARD_SAWN_TIMBER_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan DASHBOARD_SAWN_TIMBER_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan DASHBOARD_SAWN_TIMBER_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

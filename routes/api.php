@@ -522,6 +522,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/dashboard-moulding', 'api.reports.dashboard-moulding', DashboardMouldingController::class],
         ['/reports/dashboard-reproses', 'api.reports.dashboard-reproses', DashboardReprosesController::class],
         ['/reports/dashboard-sanding', 'api.reports.dashboard-sanding', DashboardSandingController::class],
+        ['/reports/dashboard-sawn-timber', 'api.reports.dashboard-sawn-timber', DashboardSawnTimberController::class],
         ['/reports/dashboard-s4s', 'api.reports.dashboard-s4s', DashboardS4SController::class],
         ['/reports/dashboard-s4s-v2', 'api.reports.dashboard-s4s-v2', DashboardS4SV2Controller::class],
         ['/reports/pps/mixer/mixer-produksi', 'api.reports.pps.mixer.mixer-produksi', HasilProduksiHarianMixerProduksiController::class],
