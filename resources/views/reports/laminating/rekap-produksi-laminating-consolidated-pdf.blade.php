@@ -149,7 +149,9 @@
         $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
 
         $eps = 0.0000001;
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDate = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
         $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
@@ -265,9 +267,24 @@
                 @if ($rows !== [] && $totals !== [])
                     @php
                         $hkText = $hk > 0 ? 'HK : ' . $hk : 'HK : -';
-                        $denom = $hkWorking > 0 ? $hkWorking : $hk;
-                        $jmlhPerHk = static fn(float $v) => $denom > 0 ? $v / $denom : 0.0;
+                        $countNonZero = static function (array $sourceRows, string $key) use ($eps): int {
+                            $count = 0;
+                            foreach ($sourceRows as $sourceRow) {
+                                $sourceRow = is_array($sourceRow) ? $sourceRow : (array) $sourceRow;
+                                if (abs((float) ($sourceRow[$key] ?? 0.0)) > $eps) {
+                                    $count++;
+                                }
+                            }
+
+                            return $count;
+                        };
                         $jmlhPerCalendarHk = static fn(float $v) => $hk > 0 ? $v / $hk : 0.0;
+                        $jmlhPerActive = static fn(float $v, string $key): float => ($count = $countNonZero(
+                            $rows,
+                            $key,
+                        )) > 0
+                            ? $v / $count
+                            : 0.0;
                     @endphp
                     <tr class="totals-row">
                         <td colspan="2" class="center">{{ $hkText }}</td>
@@ -287,14 +304,19 @@
 
                     <tr class="totals-row">
                         <td colspan="2" class="center"><strong>Jmlh/HK</strong></td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['BJ'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['CCAkhir'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['Moulding'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['Reproses'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['Sanding'] ?? 0.0))) }}</td>
+                        <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['BJ'] ?? 0.0), 'BJ')) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['CCAkhir'] ?? 0.0), 'CCAkhir')) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Moulding'] ?? 0.0), 'Moulding')) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Reproses'] ?? 0.0), 'Reproses')) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Sanding'] ?? 0.0), 'Sanding')) }}</td>
                         <td class="number">{{ $fmtBlank($jmlhPerCalendarHk((float) ($totals['TotalInput'] ?? 0.0))) }}
                         </td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['OutputLaminating'] ?? 0.0))) }}
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputLaminating'] ?? 0.0), 'OutputLaminating')) }}
                         </td>
                         <td class="number"></td>
                         <td class="center"></td>

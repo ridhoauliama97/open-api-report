@@ -149,7 +149,9 @@
         $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
 
         $eps = 0.0000001;
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDate = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
         $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
@@ -402,7 +404,6 @@
             <thead>
                 <tr>
                     <th style="width: 160px;">Nama Mesin</th>
-                    <th style="width: 34px;">HK</th>
                     <th style="width: 36px;">BJ</th>
                     <th style="width: 64px;">CCAkhir</th>
                     <th style="width: 42px;">FJ</th>
@@ -425,7 +426,6 @@
                 @foreach ($summaryMachines as $summaryMachine)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td>{{ $summaryMachine['nama_mesin'] }}</td>
-                        <td class="center">{{ $fmtIntBlank($summaryMachine['hk']) }}</td>
                         <td class="number"></td>
                         <td class="number">{{ $fmtBlank($summaryMachine['cc_akhir']) }}</td>
                         <td class="number">{{ $fmtBlank($summaryMachine['fj']) }}</td>
@@ -446,7 +446,6 @@
                 @endforeach
                 <tr class="totals-row">
                     <td class="center">Grand Total</td>
-                    <td class="center">{{ $fmtIntBlank($grandHk) }}</td>
                     <td class="number">{{ $fmtBlank($grandTotals['BJ']) }}</td>
                     <td class="number">{{ $fmtBlank($grandTotals['CCAkhir']) }}</td>
                     <td class="number">{{ $fmtBlank($grandTotals['FJ']) }}</td>

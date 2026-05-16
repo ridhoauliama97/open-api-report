@@ -205,7 +205,7 @@
                     @endphp
                     <tr class="{{ $cls }}">
                         <td class="center">{{ $i }}</td>
-                        <td class="center">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
                         <td>{{ (string) ($row['NamaGrade'] ?? '') }}</td>
                         <td class="number">{{ $fmt($row['InS4S'] ?? null) }}</td>
                         <td class="number">{{ $fmt($row['InFJ'] ?? null) }}</td>

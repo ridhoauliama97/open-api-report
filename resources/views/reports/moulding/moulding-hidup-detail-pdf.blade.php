@@ -138,7 +138,7 @@
 
         $fmtDate = static fn(?string $v): string => $v === null || trim($v) === ''
             ? ''
-            : \Carbon\Carbon::parse($v)->format('d-M-y');
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtInt = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((int) $v, 0, '.', ',');
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
         $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');

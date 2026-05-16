@@ -41,7 +41,7 @@
 
         .group-title {
             margin: 10px 0 4px 0;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -194,7 +194,7 @@
                     @endphp
                     <tr class="{{ $cls }}">
                         <td class="center">{{ $i }}</td>
-                        <td class="center">{{ (string) ($row['Jenis'] ?? '') }}</td>
+                        <td>{{ (string) ($row['Jenis'] ?? '') }}</td>
                         <td>{{ (string) ($row['NamaGrade'] ?? '') }}</td>
                         <td class="number">{{ $fmt($row['InS4S'] ?? null) }}</td>
                         <td class="number">{{ $fmt($row['InCCAkhir'] ?? null) }}</td>

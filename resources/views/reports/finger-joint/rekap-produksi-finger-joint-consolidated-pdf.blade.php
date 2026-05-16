@@ -146,7 +146,9 @@
         $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
 
         $eps = 0.0000001;
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDate = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
         $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
@@ -205,8 +207,8 @@
                     <th rowspan="2" style="width: 9%;">Tanggal</th>
                     <th rowspan="2" style="width: 9%;">Shift</th>
                     <th colspan="2">Input</th>
-                    <th rowspan="2" style="width: 9%;">Total Input</th>
-                    <th rowspan="2" style="width: 9%;">Output FJ</th>
+                    <th rowspan="2" style="width: 9%;">Total <br> Input</th>
+                    <th rowspan="2" style="width: 9%;">Output <br> FJ</th>
                     <th rowspan="2" style="width: 9%;">Jam</th>
                     <th rowspan="2" style="width: 9%;">Org</th>
                     <th rowspan="2" style="width: 9%;">M<sup>3</sup>/Jam</th>
@@ -243,9 +245,24 @@
                 @if ($rows !== [] && $totals !== [])
                     @php
                         $hkText = $hk > 0 ? 'HK : ' . $hk : 'HK : -';
-                        // Reference report: Jmlh/HK uses working days (hari kerja), not full calendar days.
-                        $denom = $hkWorking > 0 ? $hkWorking : $hk;
-                        $jmlhPerHk = static fn(float $v) => $denom > 0 ? $v / $denom : 0.0;
+                        $countNonZero = static function (array $sourceRows, string $key) use ($eps): int {
+                            $count = 0;
+                            foreach ($sourceRows as $sourceRow) {
+                                $sourceRow = is_array($sourceRow) ? $sourceRow : (array) $sourceRow;
+                                if (abs((float) ($sourceRow[$key] ?? 0.0)) > $eps) {
+                                    $count++;
+                                }
+                            }
+
+                            return $count;
+                        };
+                        $jmlhPerHk = static fn(float $v): float => $hk > 0 ? $v / $hk : 0.0;
+                        $jmlhPerActive = static fn(float $v, string $key): float => ($count = $countNonZero(
+                            $rows,
+                            $key,
+                        )) > 0
+                            ? $v / $count
+                            : 0.0;
                     @endphp
                     <tr class="totals-row">
                         <td colspan="2" class="center">{{ $hkText }}</td>
@@ -263,12 +280,13 @@
                     </tr>
 
                     <tr class="totals-row">
-                        <td colspan="2" class="center"><strong>Jmlh/HK</strong></td>
-                        {{-- Reference: show per-HK averages for main flow columns, leave others blank. --}}
-                        <td class="number"></td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['S4S'] ?? 0.0))) }}</td>
+                        <td colspan="2" class="center">Jmlh/HK</td>
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['CCAkhir'] ?? 0.0), 'CCAkhir')) }}</td>
+                        <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['S4S'] ?? 0.0), 'S4S')) }}</td>
                         <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}</td>
-                        <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['OutputFJ'] ?? 0.0))) }}</td>
+                        <td class="number">
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputFJ'] ?? 0.0), 'OutputFJ')) }}</td>
                         <td class="number"></td>
                         <td class="center"></td>
                         <td class="number"></td>
@@ -290,12 +308,10 @@
                 : (string) (int) round($v);
         @endphp
 
-        <table style="margin-top: 8px;">
+        <table style="margin-top: 10px;">
             <tbody>
                 <tr class="totals-row">
-                    <td colspan="2" class="center" style="width: 18%;">
-                        <strong>Grand Total </strong>
-                    </td>
+                    <td class="center" style="width: 18%;"> Grand Total </td>
                     <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['CCAkhir'] ?? null) }}</td>
                     <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['S4S'] ?? null) }}</td>
                     <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['TotalInput'] ?? null) }}

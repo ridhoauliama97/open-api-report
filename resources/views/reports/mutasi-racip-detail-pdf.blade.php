@@ -218,7 +218,7 @@
             $normalized = strtolower(str_replace([' ', '_'], '', $column));
             $isBatangColumn = str_contains($normalized, 'jlhbtg') || str_contains($normalized, 'jmlhbatang');
             $isDimensionColumn = in_array($normalized, ['tebal', 'lebar', 'panjang'], true);
-            if (abs($value) < 0.0000001) {
+            if ($value == 0.0) {
                 return '';
             }
 
@@ -229,6 +229,10 @@
             if ($isDimensionColumn) {
                 $text = number_format($value, 4, '.', ',');
                 return rtrim(rtrim($text, '0'), '.');
+            }
+
+            if (round($value, 4) == 0.0) {
+                return '';
             }
 
             return number_format($value, 4, '.', ',');
@@ -252,17 +256,17 @@
             </tr>
             <tr class="headers-row">
                 <th style="border-top: 1px solid #000;">Saldo Awal</th>
-                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
                 <th style="border-top: 1px solid #000;">Masuk</th>
-                <th style="border-top: 1px solid #000;">Jlh Batang</th>
-                <th style="border-top: 1px solid #000;">Adj Outp</th>
-                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
+                <th style="border-top: 1px solid #000;">Adj Out</th>
+                <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
                 <th style="border-top: 1px solid #000;">Keluar</th>
-                <th style="border-top: 1px solid #000;">Jlh Batang</th>
-                <th style="border-top: 1px solid #000;">Adj Inp</th>
-                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
+                <th style="border-top: 1px solid #000;">Adj In</th>
+                <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
                 <th style="border-top: 1px solid #000;">Akhir</th>
-                <th style="border-top: 1px solid #000;">Jlh Batang</th>
+                <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
             </tr>
         </thead>
 

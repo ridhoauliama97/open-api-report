@@ -22,8 +22,12 @@ class MutasiRacipDetailReportService
      */
     public function buildReportData(string $startDate, string $endDate): array
     {
-        $rows = $this->fetch($startDate, $endDate);
-        $columns = array_keys($rows[0] ?? []);
+        $allRows = $this->fetch($startDate, $endDate);
+        $rows = array_values(array_filter(
+            $allRows,
+            fn (array $row): bool => $this->hasBalanceOrMovementValue($row),
+        ));
+        $columns = array_keys($allRows[0] ?? []);
 
         $expectedColumns = config('reports.mutasi_racip_detail.expected_columns', []);
         if ($columns === [] && is_array($expectedColumns)) {
@@ -69,14 +73,14 @@ class MutasiRacipDetailReportService
         $totals = [];
 
         foreach ($detailColumns as $column) {
-            $isNumeric = $this->isNumericColumn($column, $rows);
+            $isNumeric = $this->isNumericColumn($column, $allRows);
             $numericColumns[$column] = $isNumeric;
             if ($isNumeric && in_array($column, $totalColumns, true)) {
                 $totals[$column] = 0.0;
             }
         }
 
-        foreach ($rows as $row) {
+        foreach ($allRows as $row) {
             foreach ($totalColumns as $column) {
                 if (($numericColumns[$column] ?? false) !== true || !array_key_exists($column, $totals)) {
                     continue;
@@ -148,6 +152,37 @@ class MutasiRacipDetailReportService
             }
 
             return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function hasBalanceOrMovementValue(array $row): bool
+    {
+        $valueColumns = [
+            'Sawal',
+            'Sawal1',
+            'SawalJlhBtg',
+            'Masuk',
+            'MskJlhBtg',
+            'AdjusmentOutput',
+            'AdjOutJlhBtg',
+            'Keluar',
+            'KeluarJlhBtg',
+            'AdjusmentInput',
+            'AdjInJlhBtg',
+            'Akhir',
+            'AkhirJlhBtg',
+        ];
+
+        foreach ($valueColumns as $column) {
+            $value = $this->toFloat($row[$column] ?? null);
+            if ($this->isBatangColumn($column) ? $this->toInt($value) !== 0 : round($value, 4) != 0.0) {
+                return true;
+            }
         }
 
         return false;
