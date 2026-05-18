@@ -61,6 +61,7 @@
             /* Default: hanya garis vertikal antar kolom. */
             border: 0;
             border-left: 1px solid #000;
+            border-right: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -95,6 +96,10 @@
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .total-column {
+            font-weight: bold;
         }
 
         .center {
@@ -147,14 +152,14 @@
     <table>
         <thead>
             <tr>
-                <th style="width: 34px;">No</th>
-                <th style="width: 190px;">Group</th>
-                <th>&le; 2 Minggu</th>
-                <th>2 - 4 Minggu</th>
-                <th>4 - 6 Minggu</th>
-                <th>6 - 8 Minggu</th>
-                <th>&gt; 8 Minggu</th>
-                <th style="width: 78px;">Total</th>
+                <th style="width: 18px;">No</th>
+                <th style="width: 100px;">Group</th>
+                <th style="width: 70px;">&le; 2 Minggu</th>
+                <th style="width: 70px;">2 - 4 Minggu</th>
+                <th style="width: 70px;">4 - 6 Minggu</th>
+                <th style="width: 70px;">6 - 8 Minggu</th>
+                <th style="width: 70px;">&gt; 8 Minggu</th>
+                <th class="total-column" style="width: 70px;">Total</th>
             </tr>
         </thead>
 
@@ -168,7 +173,7 @@
                     <td>{{ (string) ($row['Group'] ?? '') }}</td>
                     @foreach ($periodCols as $col)
                         @php $val = (float) ($row[$col] ?? 0.0); @endphp
-                        <td class="number">{{ $fmt($val) }}</td>
+                        <td class="number {{ $col === 'Total' ? 'total-column' : '' }}">{{ $fmt($val) }}</td>
                     @endforeach
                 </tr>
             @empty
@@ -179,8 +184,7 @@
 
             @if ($rows !== [] && is_array($totals))
                 <tr class="totals-row">
-                    <td></td>
-                    <td class="center" style="font-weight: bold;">Total</td>
+                    <td class="center" colspan="2" style="font-weight: bold;">Total</td>
                     @foreach ($periodCols as $col)
                         @php $val = (float) ($totals[$col] ?? 0.0); @endphp
                         <td class="number" style="font-weight: bold;">{{ $fmtTotal($val) }}</td>

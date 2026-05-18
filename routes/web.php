@@ -686,6 +686,10 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::get('/', [StockSTKeringController::class, 'index'])->name('index');
         Route::post('/download', [StockSTKeringController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [StockSTKeringController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview-pdf-wait', [StockSTKeringController::class, 'previewPdfWait'])->name('preview-pdf-wait');
+        Route::post('/pdf/async', [StockSTKeringController::class, 'dispatchAsync'])->name('async');
+        Route::get('/jobs/{jobId}/status', [StockSTKeringController::class, 'asyncStatus'])->name('async-status');
+        Route::get('/jobs/{jobId}/download', [StockSTKeringController::class, 'asyncDownload'])->name('async-download');
         Route::post('/preview', [StockSTKeringController::class, 'preview'])->name('preview');
     });
 
@@ -781,6 +785,10 @@ Route::prefix('reports/sawn-timber')->name('reports.sawn-timber.')->group(functi
         Route::get('/', [LabelStHidupDetailController::class, 'index'])->name('index');
         Route::post('/download', [LabelStHidupDetailController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [LabelStHidupDetailController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview-pdf-wait', [LabelStHidupDetailController::class, 'previewPdfWait'])->name('preview-pdf-wait');
+        Route::post('/pdf/async', [LabelStHidupDetailController::class, 'dispatchAsync'])->name('async');
+        Route::get('/jobs/{jobId}/status', [LabelStHidupDetailController::class, 'asyncStatus'])->name('async-status');
+        Route::get('/jobs/{jobId}/download', [LabelStHidupDetailController::class, 'asyncDownload'])->name('async-download');
         Route::post('/preview', [LabelStHidupDetailController::class, 'preview'])->name('preview');
         Route::post('/health', [LabelStHidupDetailController::class, 'health'])->name('health');
     });

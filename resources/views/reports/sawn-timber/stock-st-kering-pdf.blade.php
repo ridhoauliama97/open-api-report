@@ -40,7 +40,7 @@
         }
 
         table {
-            width: 65%;
+            width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
@@ -147,10 +147,9 @@
             border-spacing: 0;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
-            border-top: 0;
             border-bottom: 1px solid #000;
         }
 
@@ -247,7 +246,7 @@
                     $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.');
+                $normalized = str_replace(',', '.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -579,7 +578,7 @@
         <table class="jenis-summary">
             <tbody>
                 <tr>
-                    <td class="left" style="font-weight: bold; width: 83%">
+                    <td style="font-weight: bold; width: 100%; text-align: center;">
                         Total {{ $jenisName }}
                     </td>
                     <td class="number">{{ number_format($jenisTotalPcs, 0, '.', ',') }}</td>

@@ -29,6 +29,25 @@ class LabelStHidupDetailReportService
     }
 
     /**
+     * @return array{hash: string, row_count: int, generated_at: string}
+     */
+    public function buildFingerprint(): array
+    {
+        $rows = $this->fetch();
+        $context = hash_init('sha256');
+
+        foreach ($rows as $row) {
+            hash_update($context, json_encode($row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '');
+        }
+
+        return [
+            'hash' => hash_final($context),
+            'row_count' => count($rows),
+            'generated_at' => now()->toIso8601String(),
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function healthCheck(): array
@@ -87,13 +106,13 @@ class LabelStHidupDetailReportService
     }
 
     /**
-     * @param array<string, mixed> $item
-     * @param array<int, string> $keys
+     * @param  array<string, mixed>  $item
+     * @param  array<int, string>  $keys
      */
     private function pickString(array $item, array $keys): string
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $item)) {
+            if (! array_key_exists($key, $item)) {
                 continue;
             }
 
@@ -109,13 +128,13 @@ class LabelStHidupDetailReportService
     }
 
     /**
-     * @param array<string, mixed> $item
-     * @param array<int, string> $keys
+     * @param  array<string, mixed>  $item
+     * @param  array<int, string>  $keys
      */
     private function pickFloat(array $item, array $keys): ?float
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $item)) {
+            if (! array_key_exists($key, $item)) {
                 continue;
             }
 
@@ -129,13 +148,13 @@ class LabelStHidupDetailReportService
     }
 
     /**
-     * @param array<string, mixed> $item
-     * @param array<int, string> $keys
+     * @param  array<string, mixed>  $item
+     * @param  array<int, string>  $keys
      */
     private function pickFloatOrRaw(array $item, array $keys): mixed
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $item)) {
+            if (! array_key_exists($key, $item)) {
                 continue;
             }
 
@@ -153,7 +172,7 @@ class LabelStHidupDetailReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -161,7 +180,7 @@ class LabelStHidupDetailReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -184,7 +203,7 @@ class LabelStHidupDetailReportService
             throw new RuntimeException('Jumlah parameter laporan Label ST (Hidup) Detail harus 0.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Label ST (Hidup) Detail belum dikonfigurasi.');
         }
 
@@ -194,7 +213,7 @@ class LabelStHidupDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Label ST (Hidup) Detail dikonfigurasi untuk SQL Server. '
-                . 'Set LABEL_ST_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set LABEL_ST_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -206,7 +225,7 @@ class LabelStHidupDetailReportService
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

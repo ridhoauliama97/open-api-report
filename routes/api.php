@@ -260,6 +260,23 @@ Route::prefix('auth')->group(function (): void {
  * Group route laporan yang hanya bisa diakses user terautentikasi.
  */
 Route::middleware('report.jwt.claims')->group(function (): void {
+    Route::post('/reports/sawn-timber/label-st-hidup-detail/pdf/async', [LabelStHidupDetailController::class, 'apiDispatchAsync'])
+        ->name('api.reports.sawn-timber.label-st-hidup-detail.async');
+    Route::match(['get', 'post'], '/reports/sawn-timber/label-st-hidup-detail/pdf/async-wait', [LabelStHidupDetailController::class, 'apiDownloadWait'])
+        ->name('api.reports.sawn-timber.label-st-hidup-detail.async-wait');
+    Route::get('/reports/sawn-timber/label-st-hidup-detail/jobs/{jobId}/status', [LabelStHidupDetailController::class, 'apiAsyncStatus'])
+        ->name('api.reports.sawn-timber.label-st-hidup-detail.async-status');
+    Route::get('/reports/sawn-timber/label-st-hidup-detail/jobs/{jobId}/download', [LabelStHidupDetailController::class, 'apiAsyncDownload'])
+        ->name('api.reports.sawn-timber.label-st-hidup-detail.async-download');
+    Route::post('/reports/sawn-timber/stock-st-kering/pdf/async', [StockSTKeringController::class, 'apiDispatchAsync'])
+        ->name('api.reports.sawn-timber.stock-st-kering.async');
+    Route::match(['get', 'post'], '/reports/sawn-timber/stock-st-kering/pdf/async-wait', [StockSTKeringController::class, 'apiDownloadWait'])
+        ->name('api.reports.sawn-timber.stock-st-kering.async-wait');
+    Route::get('/reports/sawn-timber/stock-st-kering/jobs/{jobId}/status', [StockSTKeringController::class, 'apiAsyncStatus'])
+        ->name('api.reports.sawn-timber.stock-st-kering.async-status');
+    Route::get('/reports/sawn-timber/stock-st-kering/jobs/{jobId}/download', [StockSTKeringController::class, 'apiAsyncDownload'])
+        ->name('api.reports.sawn-timber.stock-st-kering.async-download');
+
     Route::get('/reports/jobs/{jobId}/status', [PdfJobController::class, 'status'])->name('api.pdf-jobs.status');
     Route::get('/reports/jobs/{jobId}/download', [PdfJobController::class, 'download'])->name('api.pdf-jobs.download');
     Route::post('/reports/{reportPath}/pdf/async', [PdfJobController::class, 'dispatch'])

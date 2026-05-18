@@ -17,18 +17,18 @@ class StockSTKeringReportService
         if ($cacheTtl <= 0) {
             $rows = $this->runProcedureQuery($endDate);
 
-            return array_map(static fn($row): array => (array) $row, $rows);
+            return array_map(static fn ($row): array => (array) $row, $rows);
         }
 
         $cacheKey = sprintf(
             'report:stock_st_kering:%s:%s:%s',
             $endDate,
             (string) config('reports.stock_st_kering.call_syntax', 'exec'),
-            md5((string) config('reports.stock_st_kering.stored_procedure', 'SP_LapStockSTKering') . '|' . (string) config('reports.stock_st_kering.query', '')),
+            md5((string) config('reports.stock_st_kering.stored_procedure', 'SP_LapStockSTKering').'|'.(string) config('reports.stock_st_kering.query', '')),
         );
-        $rows = Cache::remember($cacheKey, now()->addSeconds($cacheTtl), fn(): array => $this->runProcedureQuery($endDate));
+        $rows = Cache::remember($cacheKey, now()->addSeconds($cacheTtl), fn (): array => $this->runProcedureQuery($endDate));
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -54,6 +54,26 @@ class StockSTKeringReportService
     }
 
     /**
+     * @return array{hash: string, row_count: int, end_date: string, generated_at: string}
+     */
+    public function buildFingerprint(string $endDate): array
+    {
+        $rows = $this->fetch($endDate);
+        $context = hash_init('sha256');
+
+        foreach ($rows as $row) {
+            hash_update($context, json_encode($row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '');
+        }
+
+        return [
+            'hash' => hash_final($context),
+            'row_count' => count($rows),
+            'end_date' => $endDate,
+            'generated_at' => now()->toIso8601String(),
+        ];
+    }
+
+    /**
      * @return array<int, object>
      */
     private function runProcedureQuery(string $endDate): array
@@ -63,7 +83,7 @@ class StockSTKeringReportService
         $syntax = (string) config('reports.stock_st_kering.call_syntax', 'exec');
         $customQuery = config('reports.stock_st_kering.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Stock ST kering belum dikonfigurasi.');
         }
 
@@ -74,7 +94,7 @@ class StockSTKeringReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan stock ST kering dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_ST_KERING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set STOCK_ST_KERING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -83,13 +103,13 @@ class StockSTKeringReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'STOCK_ST_KERING_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_ST_KERING_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan STOCK_ST_KERING_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -102,4 +122,3 @@ class StockSTKeringReportService
         return $connection->select($sql, $bindings);
     }
 }
-

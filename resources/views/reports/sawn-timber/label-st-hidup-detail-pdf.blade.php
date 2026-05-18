@@ -51,10 +51,6 @@
             display: table-header-group;
         }
 
-        tr {
-            page-break-inside: avoid;
-        }
-
         table.data-table th,
         table.data-table td {
             border: 0;
@@ -177,12 +173,12 @@
                 <th style="width: 7%;">Tanggal</th>
                 <th style="width: 12%;">No SPK</th>
                 <th style="width: 15%;">Jenis</th>
-                <th style="width: 6%;">Tebal (mm)</th>
-                <th style="width: 6%;">Lebar (mm)</th>
-                <th style="width: 8%;">Panjang (ft)</th>
-                <th style="width: 12%;">Jmlh Batang (pcs)</th>
+                <th style="width: 6%;">Tebal<br>(mm)</th>
+                <th style="width: 6%;">Lebar<br>(mm)</th>
+                <th style="width: 8%;">Panjang<br>(ft)</th>
+                <th style="width: 12%;">Jmlh Batang<br>(pcs)</th>
                 <th style="width: 7%;">Lokasi</th>
-                <th style="width: 10%;">Total (Ton)</th>
+                <th style="width: 10%;">Total<br>(Ton)</th>
             </tr>
         </thead>
         <tbody>

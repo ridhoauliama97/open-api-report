@@ -82,12 +82,13 @@ class MutasiRacipDetailReportService
 
         foreach ($allRows as $row) {
             foreach ($totalColumns as $column) {
-                if (($numericColumns[$column] ?? false) !== true || !array_key_exists($column, $totals)) {
+                if (($numericColumns[$column] ?? false) !== true || ! array_key_exists($column, $totals)) {
                     continue;
                 }
 
                 if ($this->isBatangColumn($column)) {
                     $totals[$column] += $this->toInt($row[$column] ?? null);
+
                     continue;
                 }
 
@@ -98,6 +99,7 @@ class MutasiRacipDetailReportService
         foreach ($totals as $column => $totalValue) {
             if ($this->isBatangColumn($column)) {
                 $totals[$column] = (int) round($totalValue);
+
                 continue;
             }
 
@@ -158,7 +160,7 @@ class MutasiRacipDetailReportService
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     private function hasBalanceOrMovementValue(array $row): bool
     {
@@ -194,7 +196,7 @@ class MutasiRacipDetailReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -203,12 +205,9 @@ class MutasiRacipDetailReportService
             return 0.0;
         }
 
-        if (preg_match('/^-?\d{1,3}(\.\d{3})*(,\d+)?$/', $trimmed) === 1) {
-            $trimmed = str_replace('.', '', $trimmed);
-            $trimmed = str_replace(',', '.', $trimmed);
-        } elseif (preg_match('/^-?\d{1,3}(,\d{3})*(\.\d+)?$/', $trimmed) === 1) {
+        if (str_contains($trimmed, '.') && str_contains($trimmed, ',')) {
             $trimmed = str_replace(',', '', $trimmed);
-        } else {
+        } elseif (str_contains($trimmed, ',') && ! str_contains($trimmed, '.')) {
             $trimmed = str_replace(',', '.', $trimmed);
         }
 
@@ -231,11 +230,11 @@ class MutasiRacipDetailReportService
     {
         $timestamp = strtotime($date);
 
-        return $timestamp === false ? $date : date('d/m/Y', $timestamp);
+        return $timestamp === false ? $date : date('Y-m-d', $timestamp);
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -253,7 +252,7 @@ class MutasiRacipDetailReportService
         $syntax = (string) config('reports.mutasi_racip_detail.call_syntax', 'exec');
         $customQuery = config('reports.mutasi_racip_detail.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan mutasi racip detail belum dikonfigurasi.');
         }
 
@@ -264,7 +263,7 @@ class MutasiRacipDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan mutasi racip detail dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_RACIP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_RACIP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -273,13 +272,13 @@ class MutasiRacipDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MUTASI_RACIP_DETAIL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MUTASI_RACIP_DETAIL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan MUTASI_RACIP_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

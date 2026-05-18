@@ -111,6 +111,15 @@
             background: #fff;
         }
 
+        table.data-table tbody tr.empty-row td {
+            background: #c9d1df;
+            border-bottom: 1px solid #000;
+            font-size: 11px;
+            font-weight: bold;
+            font-style: italic;
+            text-align: center;
+        }
+
         .table-end-line td {
             border-top: 1px solid #000 !important;
             border-right: 0 !important;
@@ -192,7 +201,7 @@
                     <th>Jenis Kayu</th>
                     <th>Tebal</th>
                     <th>Lebar</th>
-                    <th>UOMTblLebar</th>
+                    <th>UOM Tbl Lebar</th>
                     <th>Panjang</th>
                     <th>UOMPanjang</th>
                     <th>JmlhBtg</th>
@@ -217,8 +226,8 @@
                         <td class="number data-cell">{{ $fmtTon($r['Ton'] ?? 0) }}</td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="10" class="center">Tidak ada data.</td>
+                    <tr class="empty-row">
+                        <td colspan="10" class="center">Tidak ada data</td>
                     </tr>
                 @endforelse
                 @if ($rows !== [])
@@ -231,7 +240,27 @@
             </tbody>
         </table>
     @empty
-        <div class="center">Tidak ada data.</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>NoST</th>
+                    <th>Tanggal (ST)</th>
+                    <th>Jenis Kayu</th>
+                    <th>Tebal</th>
+                    <th>Lebar</th>
+                    <th>UOM Tbl Lebar</th>
+                    <th>Panjang</th>
+                    <th>UOMPanjang</th>
+                    <th>JmlhBtg</th>
+                    <th>Ton</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="empty-row">
+                    <td colspan="10" class="center">Tidak ada data</td>
+                </tr>
+            </tbody>
+        </table>
     @endforelse
 
     @include('reports.partials.pdf-footer-table')

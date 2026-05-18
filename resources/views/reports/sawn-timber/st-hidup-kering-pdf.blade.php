@@ -46,6 +46,7 @@
             font-size: 10px;
             border: 1px solid #000;
             table-layout: fixed;
+            margin-bottom: 8px;
         }
 
         thead {
@@ -74,7 +75,7 @@
             text-align: center;
             font-weight: bold;
             background: #fff;
-            font-size: 10px;
+            font-size: 11px;
             white-space: nowrap;
         }
 
@@ -85,6 +86,12 @@
 
         table.data-table tbody tr:last-child td {
             border-bottom: 1px solid #000;
+        }
+
+        .jenis-title {
+            margin: 8px 0 4px 0;
+            font-weight: bold;
+            font-size: 11px;
         }
 
         .center {
@@ -116,7 +123,7 @@
             background: #eef2f8;
         }
 
-        @include('reports.partials.pdf-footer-table-style')
+        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -124,6 +131,7 @@
     @php
         $data = is_array($reportData ?? null) ? $reportData : [];
         $rows = is_array($data['rows'] ?? null) ? $data['rows'] : [];
+        $jenisGroups = is_array($data['jenis_groups'] ?? null) ? $data['jenis_groups'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
         $hariValue = (int) ($summary['hari'] ?? ($hari ?? 90));
         $includeValue = (bool) ($summary['include'] ?? ($include ?? false));
@@ -151,46 +159,77 @@
             $n = (int) ($v ?? 0);
             return $n === 0 ? '' : (string) number_format($n, 0, '.', ',');
         };
+
+        if ($jenisGroups === [] && $rows !== []) {
+            $grouped = [];
+            foreach ($rows as $row) {
+                $jenis = trim((string) ($row['Jenis'] ?? ''));
+                $jenis = $jenis !== '' ? $jenis : 'Tanpa Jenis';
+                $key = strtoupper($jenis);
+                if (!isset($grouped[$key])) {
+                    $grouped[$key] = [
+                        'name' => $jenis,
+                        'rows' => [],
+                    ];
+                }
+                $grouped[$key]['rows'][] = $row;
+            }
+            $jenisGroups = array_values($grouped);
+        }
     @endphp
 
     <h1 class="report-title">Laporan Label ST Hidup (Kering)</h1>
     <p class="report-subtitle"> Per {{ $generatedDate }} </p>
 
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>No ST</th>
-                <th>Tebal (mm) </th>
-                <th>Lebar (mm)</th>
-                <th>Jumlah Batang (Pcs)</th>
-                <th>Lokasi</th>
-                <th>Usia (Hari)</th>
-                <th>Jenis</th>
-                <th>BB</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($rows as $r)
-                @php $rowIndex = ($loop->index ?? 0) + 1; @endphp
-                <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                    <td class="center data-cell">{{ $rowIndex }}</td>
-                    <td class="center data-cell">{{ (string) ($r['NoST'] ?? '') }}</td>
-                    <td class="center data-cell">{{ $fmtDimInt($r['Tebal'] ?? 0) }}</td>
-                    <td class="center data-cell">{{ $fmtDimInt($r['Lebar'] ?? 0) }}</td>
-                    <td class="center data-cell">{{ $fmtInt($r['JmlhBatang'] ?? 0) }}</td>
-                    <td class="center data-cell">{{ (string) ($r['IdLokasi'] ?? '') }}</td>
-                    <td class="center data-cell">{{ $fmtInt($r['UsiaHari'] ?? 0) }}</td>
-                    <td class="data-cell">{{ (string) ($r['Jenis'] ?? '') }}</td>
-                    <td class="center data-cell">{{ (string) ($r['BB'] ?? '') }}</td>
-                </tr>
-            @empty
+    @forelse ($jenisGroups as $group)
+        @php
+            $jenisName = trim((string) ($group['name'] ?? ''));
+            $jenisName = $jenisName !== '' ? $jenisName : 'Tanpa Jenis';
+            $groupRows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
+        @endphp
+
+        <div class="jenis-title">Jenis : {{ $jenisName }}</div>
+
+        <table class="data-table">
+            <thead>
                 <tr>
-                    <td colspan="9" class="center">Tidak ada data.</td>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 15%">No ST</th>
+                    <th style="width: 15%">Tebal (mm) </th>
+                    <th style="width: 15%">Lebar (mm)</th>
+                    <th style="width: 20%">Jumlah Batang (Pcs)</th>
+                    <th style="width: 20%">Lokasi</th>
+                    <th style="width: 15%">Usia (Hari)</th>
                 </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($groupRows as $r)
+                    @php $rowIndex = ($loop->index ?? 0) + 1; @endphp
+                    <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                        <td class="center data-cell">{{ $rowIndex }}</td>
+                        <td class="center data-cell">{{ (string) ($r['NoST'] ?? '') }}</td>
+                        <td class="center data-cell">{{ $fmtDimInt($r['Tebal'] ?? 0) }}</td>
+                        <td class="center data-cell">{{ $fmtDimInt($r['Lebar'] ?? 0) }}</td>
+                        <td class="center data-cell">{{ $fmtInt($r['JmlhBatang'] ?? 0) }}</td>
+                        <td class="center data-cell">{{ (string) ($r['IdLokasi'] ?? '') }}</td>
+                        <td class="center data-cell">{{ $fmtInt($r['UsiaHari'] ?? 0) }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="center">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    @empty
+        <table class="data-table">
+            <tbody>
+                <tr>
+                    <td colspan="7" class="center">Tidak ada data.</td>
+                </tr>
+            </tbody>
+        </table>
+    @endforelse
 
     @include('reports.partials.pdf-footer-table')
 </body>

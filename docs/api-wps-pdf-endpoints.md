@@ -201,6 +201,7 @@ Contoh:
 - Laporan Sawn Timber Serah Terima ST (Kamar KD): `http://192.168.10.100:5006/api/reports/sawn-timber/serah-terima-st-kamar-kd/pdf`
 - Laporan Sawn Timber Ketahanan Barang ST: `http://192.168.10.100:5006/api/reports/sawn-timber/ketahanan-barang-st/pdf`
 - Laporan Sawn Timber Label ST Hidup Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf`
+- Laporan Sawn Timber Label ST Hidup Detail (Desktop / 1 Tombol): `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf/async-wait`
 - Laporan Sawn Timber Lembar Tally Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/lembar-tally-hasil-sawmill/pdf`
 - Laporan Sawn Timber Mutasi KD: `http://192.168.10.100:5006/api/reports/sawn-timber/mutasi-kd/pdf`
 - Laporan Sawn Timber Pemakaian Obat Vacuum: `http://192.168.10.100:5006/api/reports/sawn-timber/pemakaian-obat-vacuum/pdf`

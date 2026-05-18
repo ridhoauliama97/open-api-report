@@ -225,7 +225,7 @@
         }
     @endphp
 
-    <h1 class="report-title">Laporan Pembelian ST Time Line (Ton)</h1>
+    <h1 class="report-title">Laporan Pembelian ST Timeline (Ton)</h1>
     <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
 
     <table class="data-table{{ $rows === [] ? ' empty-state' : '' }}">
@@ -312,8 +312,8 @@
             @empty
                 <tr class="empty-state-row">
                     <td colspan="{{ $monthKeys !== [] ? 3 + count($monthKeys) : 3 }}"
-                        style="text-align: center; font-weight: bold;">
-                        Tidak ada data.</td>
+                        style="text-align: center; font-weight: bold; font-style: italic; padding: 4px 0 4px 0;">
+                        Tidak ada data</td>
                 </tr>
             @endforelse
 

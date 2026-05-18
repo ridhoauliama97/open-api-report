@@ -121,8 +121,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -141,7 +139,7 @@
         $fmtInt = static fn(int $v): string => $v === 0 ? '' : (string) $v;
         $dateLabel = static function (string $key): string {
             try {
-                return \Carbon\Carbon::parse($key)->format('d-M-y');
+                return \Carbon\Carbon::parse($key)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $exception) {
                 return $key;
             }
@@ -174,10 +172,10 @@
                 <th style="width: 10%;">Tanggal</th>
                 <th style="width: 12%;">Jumlah Meja</th>
                 <th style="width: 10%">Jabon</th>
-                <th>Rambung Kayu Lat</th>
-                <th>Rambung MC 1</th>
-                <th>Rambung MC 2</th>
-                <th>Rambung STD</th>
+                <th>Rambung <br> Kayu Lat</th>
+                <th>Rambung <br> MC 1</th>
+                <th>Rambung <br> MC 2</th>
+                <th>Rambung <br> STD</th>
                 <th style="width: 12%;">Total</th>
             </tr>
         </thead>

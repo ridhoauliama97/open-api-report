@@ -11,3 +11,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('pdf:clean-expired')->hourly();
+Schedule::command('reports:refresh-shared-pdfs-if-changed')
+    ->everyFiveMinutes()
+    ->withoutOverlapping();

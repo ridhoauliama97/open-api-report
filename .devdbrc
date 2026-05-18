@@ -1,0 +1,6 @@
+[
+  {
+    "type": "sqlite",
+    "path": "d:\\Projects\\open-api-report\\database\\database.sqlite"
+  }
+]

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!User::query()->where('Username', 'test-user')->exists()) {
+        if (! User::query()->where('Username', 'test-user')->exists()) {
             User::factory()->create([
                 'Username' => 'test-user',
                 'Nama' => 'Test User',

@@ -6,11 +6,15 @@ use App\Models\PdfJobStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonBag;
 use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Storage;
+use ReflectionMethod;
+use ReflectionNamedType;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +24,9 @@ class GenerateReportPdfJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries = 3;
+    public int $tries = 1;
 
-    public int $timeout = 300;
+    public int $timeout = 3600;
 
     /**
      * @param  array<string, mixed>  $requestPayload
@@ -33,14 +37,13 @@ class GenerateReportPdfJob implements ShouldQueue
         private readonly string $controllerAction,
         private readonly array $requestPayload,
         private readonly ?string $requestedBy,
-    ) {
-    }
+    ) {}
 
     public function handle(Router $router): void
     {
         $jobStatus = PdfJobStatus::query()->find($this->jobId);
 
-        if (!$jobStatus instanceof PdfJobStatus) {
+        if (! $jobStatus instanceof PdfJobStatus) {
             throw new RuntimeException("Status job {$this->jobId} tidak ditemukan.");
         }
 
@@ -48,13 +51,13 @@ class GenerateReportPdfJob implements ShouldQueue
 
         try {
             [$controllerClass, $method] = $this->parseControllerAction($this->controllerAction);
-            $request = $this->buildSyntheticRequest();
+            $request = $this->buildSyntheticRequest($this->resolveRequestClass($controllerClass, $method));
             $controller = app($controllerClass);
 
             /** @var mixed $result */
             $result = app()->call([$controller, $method], ['request' => $request]);
 
-            if (!$result instanceof Response) {
+            if (! $result instanceof Response) {
                 throw new RuntimeException('Controller download() tidak mengembalikan response yang valid.');
             }
 
@@ -67,7 +70,7 @@ class GenerateReportPdfJob implements ShouldQueue
                 substr($this->jobId, 0, 8),
             );
 
-            $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/') . '/' . $filename;
+            $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/').'/'.$filename;
             Storage::disk((string) config('app.pdf_storage_disk', 'local'))->put($storagePath, $pdfContent);
 
             $jobStatus->update([
@@ -91,7 +94,7 @@ class GenerateReportPdfJob implements ShouldQueue
             ->where('job_id', $this->jobId)
             ->update([
                 'status' => PdfJobStatus::STATUS_FAILED,
-                'error_message' => 'Job gagal setelah retry: ' . $exception->getMessage(),
+                'error_message' => 'Job gagal setelah retry: '.$exception->getMessage(),
             ]);
     }
 
@@ -111,17 +114,24 @@ class GenerateReportPdfJob implements ShouldQueue
         return [$controllerClass, $parts[1]];
     }
 
-    private function buildSyntheticRequest(): Request
+    /**
+     * @param  class-string<Request>  $requestClass
+     */
+    private function buildSyntheticRequest(string $requestClass = Request::class): Request
     {
-        $request = Request::create(
-            '/api/reports/' . $this->reportType . '/pdf',
+        $baseRequest = Request::create(
+            '/api/reports/'.$this->reportType.'/pdf',
             'POST',
             $this->requestPayload,
         );
 
+        $request = is_subclass_of($requestClass, Request::class)
+            ? $requestClass::createFrom($baseRequest)
+            : $baseRequest;
+
         $request->headers->set('Accept', 'application/pdf');
         $request->headers->set('Content-Type', 'application/json');
-        $request->setJson(new \Illuminate\Http\JsonBag($this->requestPayload));
+        $request->setJson(new JsonBag($this->requestPayload));
         $request->attributes->set('report_token_claims', [
             'name' => $this->requestedBy ?? 'async-job',
             'username' => $this->requestedBy ?? 'async-job',
@@ -132,9 +142,43 @@ class GenerateReportPdfJob implements ShouldQueue
                 'Username' => $this->requestedBy ?? 'async-job',
             ];
         });
-        $request->setRouteResolver(static fn() => null);
+        $request->setRouteResolver(static fn () => null);
+
+        if ($request instanceof FormRequest) {
+            $request->setContainer(app());
+            $request->setRedirector(app('redirect'));
+            $request->validateResolved();
+        }
 
         return $request;
+    }
+
+    /**
+     * @param  class-string  $controllerClass
+     * @return class-string<Request>
+     */
+    private function resolveRequestClass(string $controllerClass, string $method): string
+    {
+        $reflection = new ReflectionMethod($controllerClass, $method);
+
+        foreach ($reflection->getParameters() as $parameter) {
+            if ($parameter->getName() !== 'request') {
+                continue;
+            }
+
+            $type = $parameter->getType();
+            if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
+                continue;
+            }
+
+            $className = $type->getName();
+            if (is_a($className, Request::class, true)) {
+                /** @var class-string<Request> $className */
+                return $className;
+            }
+        }
+
+        return Request::class;
     }
 
     private function extractPdfContent(Response $response): string
@@ -147,7 +191,7 @@ class GenerateReportPdfJob implements ShouldQueue
         if ($response instanceof BinaryFileResponse) {
             $file = $response->getFile();
             $path = $file?->getPathname();
-            if (!is_string($path) || !is_file($path)) {
+            if (! is_string($path) || ! is_file($path)) {
                 throw new RuntimeException('File PDF sementara tidak ditemukan.');
             }
 
@@ -156,11 +200,13 @@ class GenerateReportPdfJob implements ShouldQueue
                 throw new RuntimeException('Gagal membaca file PDF sementara.');
             }
 
+            @unlink($path);
+
             return $content;
         }
 
         $content = $response->getContent();
-        if (!is_string($content) || $content === '') {
+        if (! is_string($content) || $content === '') {
             throw new RuntimeException('Konten PDF kosong.');
         }
 

@@ -14,12 +14,15 @@ class StHidupKeringReportService
     public function buildReportData(int $hari, array $modes): array
     {
         $modes = $this->normalizeModes($modes);
-        $rows = $this->fetch($hari, $modes);
+        $rows = $this->sortRowsForDisplay($this->fetch($hari, $modes));
+        $jenisGroups = $this->buildJenisGroups($rows);
 
         return [
             'rows' => $rows,
+            'jenis_groups' => $jenisGroups,
             'summary' => [
                 'total_rows' => count($rows),
+                'total_jenis' => count($jenisGroups),
                 'hari' => $hari,
                 'include' => in_array('INCLUDE', $modes, true),
                 'exclude' => in_array('EXCLUDE', $modes, true),
@@ -84,6 +87,69 @@ class StHidupKeringReportService
         }
 
         return array_values($out);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function sortRowsForDisplay(array $rows): array
+    {
+        usort($rows, static function (array $a, array $b): int {
+            foreach (['Jenis', 'NoST', 'IdLokasi'] as $column) {
+                $cmp = strnatcasecmp((string) ($a[$column] ?? ''), (string) ($b[$column] ?? ''));
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+            }
+
+            $cmp = ((float) ($a['Tebal'] ?? 0.0)) <=> ((float) ($b['Tebal'] ?? 0.0));
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+
+            return ((float) ($a['Lebar'] ?? 0.0)) <=> ((float) ($b['Lebar'] ?? 0.0));
+        });
+
+        return array_values($rows);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array{name:string,rows:array<int,array<string,mixed>>,summary:array{total_rows:int,total_batang:int}}>
+     */
+    private function buildJenisGroups(array $rows): array
+    {
+        $groups = [];
+
+        foreach ($rows as $row) {
+            $jenis = $this->normalizeJenisName($row['Jenis'] ?? '');
+            $key = strtoupper($jenis);
+
+            if (! isset($groups[$key])) {
+                $groups[$key] = [
+                    'name' => $jenis,
+                    'rows' => [],
+                    'summary' => [
+                        'total_rows' => 0,
+                        'total_batang' => 0,
+                    ],
+                ];
+            }
+
+            $groups[$key]['rows'][] = $row;
+            $groups[$key]['summary']['total_rows']++;
+            $groups[$key]['summary']['total_batang'] += (int) ($row['JmlhBatang'] ?? 0);
+        }
+
+        return array_values($groups);
+    }
+
+    private function normalizeJenisName(mixed $value): string
+    {
+        $jenis = trim((string) $value);
+
+        return $jenis !== '' ? $jenis : 'Tanpa Jenis';
     }
 
     /**

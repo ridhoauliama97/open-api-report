@@ -136,7 +136,7 @@
             background: #eef2f8;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .section-title {
+        .section-title {
             margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
@@ -201,14 +201,14 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>No ST</th>
-                        <th>Tebal </th>
-                        <th>Lebar </th>
-                        <th>Panjang</th>
-                        <th>Jumlah Batang (pcs)</th>
-                        <th>Ton</th>
-                        <th>Kubik (m<sup>3</sup>)</th>
+                        <th style="width: 30px;">No</th>
+                        <th style="width: 70px">No ST</th>
+                        <th style="width: 50px">Tebal (mm)</th>
+                        <th style="width: 50px">Lebar (mm)</th>
+                        <th style="width: 50px">Panjang (ft)</th>
+                        <th style="width: 70px">Jumlah Batang (pcs)</th>
+                        <th style="width: 70px">Ton</th>
+                        <th style="width: 70px">Kubik</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -220,7 +220,7 @@
                             <td class="center data-cell">{{ $fmtDimInt($r['Tebal'] ?? 0) }}</td>
                             <td class="center data-cell">{{ $fmtDimInt($r['Lebar'] ?? 0) }}</td>
                             <td class="center data-cell">{{ $fmtDimInt($r['Panjang'] ?? 0) }}</td>
-                            <td class="center data-cell">{{ $fmtInt($r['Pcs'] ?? 0) }}</td>
+                            <td class="number data-cell">{{ $fmtInt($r['Pcs'] ?? 0) }}</td>
                             <td class="number data-cell">{{ $fmt4($r['Ton'] ?? 0) }}</td>
                             <td class="number data-cell">{{ $fmt4($r['Kubik'] ?? 0) }}</td>
                         </tr>
@@ -231,9 +231,9 @@
                     @endforelse
                     @if ($rows !== [])
                         <tr class="totals-row">
-                            <td colspan="5" class="number" style="text-align: center;">Total {{ $label }}
+                            <td colspan="5" class="center" style="text-align: center;">Total {{ $label }}
                             </td>
-                            <td class="center">{{ $fmtInt($totals['pcs'] ?? 0) }}</td>
+                            <td class="number">{{ $fmtInt($totals['pcs'] ?? 0) }}</td>
                             <td class="number">{{ $fmt4($totals['ton'] ?? 0) }}</td>
                             <td class="number">{{ $fmt4($totals['kubik'] ?? 0) }}</td>
                         </tr>
@@ -264,7 +264,7 @@
                         <th>Jenis Stock</th>
                         <th>Jumlah Batang (Pcs)</th>
                         <th>Ton</th>
-                        <th>Kubik (m<sup>3</sup>)</th>
+                        <th>Kubik</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -273,7 +273,7 @@
                         <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             <td class="center data-cell">{{ $rowIndex }}</td>
                             <td class="data-cell">{{ (string) ($sr['tabel'] ?? '') }}</td>
-                            <td class="center data-cell">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
+                            <td class="number data-cell">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
                             <td class="number data-cell">{{ $fmt4($sr['ton'] ?? 0) }}</td>
                             <td class="number data-cell">{{ $fmt4($sr['kubik'] ?? 0) }}</td>
                         </tr>
@@ -291,7 +291,7 @@
                         <th>Group Stock</th>
                         <th>Jumlah Batang (Pcs)</th>
                         <th>Ton</th>
-                        <th>Kubik (m<sup>3</sup>)</th>
+                        <th>Kubik</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -300,14 +300,14 @@
                         <tr class="data-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             <td class="center data-cell">{{ $rowIndex }}</td>
                             <td class="data-cell">{{ (string) ($sr['jenis'] ?? '') }}</td>
-                            <td class="center data-cell">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
+                            <td class="number data-cell">{{ $fmtInt($sr['pcs'] ?? 0) }}</td>
                             <td class="number data-cell">{{ $fmt4($sr['ton'] ?? 0) }}</td>
                             <td class="number data-cell">{{ $fmt4($sr['kubik'] ?? 0) }}</td>
                         </tr>
                     @endforeach
                     <tr class="totals-row">
-                        <td colspan="2" style="text-align: center">Grand Total</td>
-                        <td class="center">{{ $fmtInt($grand['pcs'] ?? 0) }}</td>
+                        <td colspan="2" class="center">Grand Total</td>
+                        <td class="number">{{ $fmtInt($grand['pcs'] ?? 0) }}</td>
                         <td class="number">{{ $fmt4($grand['ton'] ?? 0) }}</td>
                         <td class="number">{{ $fmt4($grand['kubik'] ?? 0) }}</td>
                     </tr>

@@ -1047,6 +1047,7 @@ return [
         'max_sort_rows' => (int) env('STOCK_ST_KERING_REPORT_MAX_SORT_ROWS', 3000),
         'preview_json_max_rows' => (int) env('STOCK_ST_KERING_PREVIEW_JSON_MAX_ROWS', 100),
         'preview_pdf_max_rows' => (int) env('STOCK_ST_KERING_PREVIEW_PDF_MAX_ROWS', 0),
+        'warm_end_date' => env('STOCK_ST_KERING_WARM_END_DATE'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env('STOCK_ST_KERING_REPORT_EXPECTED_COLUMNS', '')))),
     ],
     'stock_hidup_per_nospk' => [

@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
-
 class GenerateStockSTKeringReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
@@ -17,7 +15,8 @@ class GenerateStockSTKeringReportRequest extends BaseReportRequest
     public function rules(): array
     {
         return [
-            'end_date' => ['required', 'date'],
+            'end_date' => ['required_without:job_id', 'date'],
+            'job_id' => ['nullable', 'string'],
         ];
     }
 
@@ -30,11 +29,8 @@ class GenerateStockSTKeringReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('end_date') && $this->filled('TglAkhir')) {
+        if (! $this->filled('end_date') && $this->filled('TglAkhir')) {
             $this->merge(['end_date' => $this->input('TglAkhir')]);
         }
     }
 }
-
-
-

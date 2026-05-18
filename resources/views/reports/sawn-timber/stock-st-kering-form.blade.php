@@ -39,6 +39,7 @@
 
                 <form method="POST" action="{{ route('reports.sawn-timber.stock-st-kering.download') }}" class="row g-3">
                     @csrf
+                    <input type="hidden" name="job_id" id="completedPdfJobId">
                     <div class="col-md-4">
                         <label for="end_date" class="form-label">End Date</label>
                         <input type="date" id="end_date" name="end_date" class="form-control"
@@ -46,15 +47,26 @@
                     </div>
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" id="asyncPdfBtn" class="btn btn-primary">Generate PDF di
+                                Background</button>
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
                             <button type="submit" class="btn btn-outline-primary"
-                                formaction="{{ route('reports.sawn-timber.stock-st-kering.preview-pdf') }}"
+                                formaction="{{ route('reports.sawn-timber.stock-st-kering.preview-pdf-wait') }}"
                                 formtarget="_blank">Preview PDF</button>
                             <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Raw SP
                                 (JSON)</button>
                         </div>
                     </div>
                 </form>
+
+                <div id="asyncStatusBox" class="alert alert-info d-none mt-4 mb-0">
+                    <div id="asyncStatusText" class="fw-semibold">Menyiapkan job PDF...</div>
+                    <div class="small text-secondary mt-1">Halaman ini akan mengecek status otomatis. PDF bisa
+                        diunduh setelah proses selesai.</div>
+                    <div class="mt-3 d-none" id="asyncDownloadWrap">
+                        <a href="#" id="asyncDownloadLink" class="btn btn-success btn-sm">Download PDF</a>
+                    </div>
+                </div>
 
                 <div id="previewJsonWrapper" class="mt-4 d-none">
                     <h2 class="h6 mb-2">Preview Raw SP (JSON)</h2>
@@ -70,9 +82,108 @@
             const previewWrapper = document.getElementById('previewJsonWrapper');
             const previewOutput = document.getElementById('previewJsonOutput');
             const endDateInput = document.getElementById('end_date');
+            const asyncButton = document.getElementById('asyncPdfBtn');
+            const statusBox = document.getElementById('asyncStatusBox');
+            const statusText = document.getElementById('asyncStatusText');
+            const downloadWrap = document.getElementById('asyncDownloadWrap');
+            const downloadLink = document.getElementById('asyncDownloadLink');
+            const completedPdfJobId = document.getElementById('completedPdfJobId');
 
             if (!previewButton || !previewWrapper || !previewOutput || !endDateInput) {
                 return;
+            }
+
+            asyncButton?.addEventListener('click', async function() {
+                asyncButton.disabled = true;
+                statusBox?.classList.remove('d-none');
+                downloadWrap?.classList.add('d-none');
+                completedPdfJobId?.setAttribute('value', '');
+                if (statusText) {
+                    statusText.textContent = 'Mengirim job PDF ke background...';
+                }
+
+                try {
+                    const response = await fetch(
+                        '{{ route('reports.sawn-timber.stock-st-kering.async') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: JSON.stringify({
+                                end_date: endDateInput.value,
+                            }),
+                        });
+
+                    const payload = await response.json();
+                    if (!response.ok) {
+                        throw new Error(payload.message || 'Gagal membuat job PDF.');
+                    }
+
+                    if (payload.status === 'done') {
+                        markPdfDone(payload);
+                        return;
+                    }
+
+                    if (statusText) {
+                        statusText.textContent = `Job ${payload.job_id} dibuat. Status: ${payload.status}`;
+                    }
+
+                    pollPdfJob(payload.status_url);
+                } catch (error) {
+                    if (statusText) {
+                        statusText.textContent = error.message || 'Gagal membuat job PDF.';
+                    }
+                    asyncButton.disabled = false;
+                }
+            });
+
+            async function pollPdfJob(statusUrl) {
+                try {
+                    const response = await fetch(statusUrl, {
+                        headers: {
+                            'Accept': 'application/json',
+                        },
+                    });
+                    const payload = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(payload.message || 'Gagal membaca status job.');
+                    }
+
+                    if (payload.status === 'done') {
+                        markPdfDone(payload);
+                        return;
+                    }
+
+                    if (payload.status === 'failed') {
+                        throw new Error(payload.error || 'Job PDF gagal diproses.');
+                    }
+
+                    if (statusText) {
+                        statusText.textContent = `PDF sedang diproses. Status: ${payload.status}`;
+                    }
+
+                    window.setTimeout(() => pollPdfJob(statusUrl), 5000);
+                } catch (error) {
+                    if (statusText) {
+                        statusText.textContent = error.message || 'Gagal membaca status job.';
+                    }
+                    asyncButton.disabled = false;
+                }
+            }
+
+            function markPdfDone(payload) {
+                completedPdfJobId?.setAttribute('value', payload.job_id || '');
+                if (statusText) {
+                    statusText.textContent = 'PDF sudah selesai dibuat.';
+                }
+                if (downloadLink && payload.download_url) {
+                    downloadLink.href = payload.download_url;
+                    downloadWrap?.classList.remove('d-none');
+                }
+                asyncButton.disabled = false;
             }
 
             previewButton.addEventListener('click', async function() {
