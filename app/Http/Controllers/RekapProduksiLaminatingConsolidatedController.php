@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateRekapProduksiLaminatingConsolidatedReportRequest;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiLaminatingConsolidatedReportService;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -50,12 +49,14 @@ class RekapProduksiLaminatingConsolidatedController extends Controller
         }
 
         $machines = $this->groupByMachine($rows);
+        $grandTotals = $this->computeTotals($rows);
 
         $pdf = $pdfGenerator->render('reports.laminating.rekap-produksi-laminating-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
+                'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
@@ -115,12 +116,14 @@ class RekapProduksiLaminatingConsolidatedController extends Controller
         }
 
         $machines = $this->groupByMachine($rows);
+        $grandTotals = $this->computeTotals($rows);
 
         $pdf = $pdfGenerator->render('reports.laminating.rekap-produksi-laminating-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
+                'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
@@ -166,7 +169,7 @@ class RekapProduksiLaminatingConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int, hk_working:int}>
      */
     private function groupByMachine(array $rows): array
@@ -194,13 +197,13 @@ class RekapProduksiLaminatingConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array
@@ -237,7 +240,7 @@ class RekapProduksiLaminatingConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function hkWorkingFromRows(array $rows): int
     {

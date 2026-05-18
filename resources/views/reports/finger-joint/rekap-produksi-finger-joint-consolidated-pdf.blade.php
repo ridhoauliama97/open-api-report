@@ -50,8 +50,8 @@
             border-collapse: collapse;
             page-break-inside: auto;
             border-top: 1px solid #000;
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
+            border-left: 0;
+            border-right: 0;
             border-bottom: 0;
             table-layout: fixed;
         }
@@ -71,8 +71,8 @@
 
         th,
         td {
-            border: 0;
             border-left: 1px solid #000;
+            border-right: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -80,6 +80,16 @@
         th:first-child,
         td:first-child {
             border-left: 0;
+        }
+
+        thead tr:first-child th:first-child,
+        .bounded-row td:first-child {
+            border-left: 1px solid #000;
+        }
+
+        thead tr:first-child th:last-child,
+        .bounded-row td:last-child {
+            border-right: 1px solid #000;
         }
 
         th {
@@ -132,6 +142,16 @@
             background: #fff !important;
         }
 
+        .grand-total-row td {
+            font-weight: bold;
+            font-size: 12px;
+            border-top: 1px solid #000;
+            border-right: 0 !important;
+            border-bottom: 2px solid #000;
+            border-left: 0 !important;
+            background: #fff;
+        }
+
         @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
@@ -157,34 +177,6 @@
         $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
             ? ''
             : number_format($v, 1, '.', '');
-
-        // Grand Total: sum of the "HK" totals row from each machine table.
-        // For ratio columns (M3/Jam, M3/jam/Org), we keep the same convention as the per-machine totals row:
-        // sum of per-row ratios, so summing per-machine totals is consistent.
-        $grandHk = 0;
-        $grandHkTotals = [
-            'CCAkhir' => 0.0,
-            'S4S' => 0.0,
-            'TotalInput' => 0.0,
-            'OutputFJ' => 0.0,
-            'Jam' => 0.0,
-            'Org' => 0.0,
-            'M3Jam' => 0.0,
-            'M3JamOrg' => 0.0,
-        ];
-
-        foreach ($machines as $m) {
-            $grandHk += (int) ($m['hk'] ?? 0);
-            $tot = is_array($m['totals'] ?? null) ? $m['totals'] : [];
-            foreach (array_keys($grandHkTotals) as $k) {
-                $grandHkTotals[$k] += (float) ($tot[$k] ?? 0.0);
-            }
-        }
-
-        $grandRend =
-            abs($grandHkTotals['TotalInput']) > $eps
-                ? ($grandHkTotals['OutputFJ'] / $grandHkTotals['TotalInput']) * 100.0
-                : 0.0;
     @endphp
 
     <h1 class="report-title">Laporan Rekap Produksi Finger Joint Consolidated</h1>
@@ -204,20 +196,20 @@
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 9%;">Tanggal</th>
-                    <th rowspan="2" style="width: 9%;">Shift</th>
-                    <th colspan="2">Input</th>
-                    <th rowspan="2" style="width: 9%;">Total <br> Input</th>
-                    <th rowspan="2" style="width: 9%;">Output <br> FJ</th>
-                    <th rowspan="2" style="width: 9%;">Jam</th>
-                    <th rowspan="2" style="width: 9%;">Org</th>
-                    <th rowspan="2" style="width: 9%;">M<sup>3</sup>/Jam</th>
-                    <th rowspan="2" style="width: 9%;">M<sup>3</sup>/jam/Org</th>
-                    <th rowspan="2" style="width: 9%;">Rend (%)</th>
+                    <th rowspan="2" style="width: 49px;">Tanggal</th>
+                    <th rowspan="2" style="width: 49px;">Shift</th>
+                    <th colspan="3">Input</th>
+                    <th rowspan="2" style="width: 49px;">Output<br>FJ</th>
+                    <th rowspan="2" style="width: 49px;">Jam</th>
+                    <th rowspan="2" style="width: 49px;">Org</th>
+                    <th rowspan="2" style="width: 49px;">M3/Jam</th>
+                    <th rowspan="2" style="width: 49px;">M3/jam/<br>Org</th>
+                    <th rowspan="2" style="width: 49px;">Rend<br>(%)</th>
                 </tr>
                 <tr>
-                    <th style="width: 9%;">CCAkhir</th>
-                    <th style="width: 9%;">S4S</th>
+                    <th style="width: 49px;">CCAkhir</th>
+                    <th style="width: 49px;">S4S</th>
+                    <th style="width: 49px;">TOTAL</th>
                 </tr>
             </thead>
             <tbody>
@@ -227,15 +219,15 @@
                         $rowIndex++;
                         $row = is_array($row) ? $row : (array) $row;
                     @endphp
-                    <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                    <tr class="bounded-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $fmtDate((string) ($row['Tanggal'] ?? '')) }}</td>
                         <td class="center">{{ (int) ($row['Shift'] ?? 0) }}</td>
                         <td class="number">{{ $fmtBlank($row['CCAkhir'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['S4S'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['OutputFJ'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank($row['Jam'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank($row['Jam'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
@@ -264,22 +256,22 @@
                             ? $v / $count
                             : 0.0;
                     @endphp
-                    <tr class="totals-row">
+                    <tr class="bounded-row totals-row">
                         <td colspan="2" class="center">{{ $hkText }}</td>
                         <td class="number">{{ $fmtBlank($totals['CCAkhir'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['S4S'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['TotalInput'] ?? null) }}
                         </td>
                         <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['OutputFJ'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank($totals['Jam'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank((int) round((float) ($totals['Org'] ?? 0.0))) }}</td>
+                        <td class="number">{{ $fmtIntBlank($totals['Jam'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round((float) ($totals['Org'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3JamOrg'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}
                         </td>
                     </tr>
 
-                    <tr class="totals-row">
+                    <tr class="bounded-row totals-row">
                         <td colspan="2" class="center">Jmlh/HK</td>
                         <td class="number">
                             {{ $fmtBlank($jmlhPerActive((float) ($totals['CCAkhir'] ?? 0.0), 'CCAkhir')) }}</td>
@@ -288,49 +280,29 @@
                         <td class="number">
                             {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputFJ'] ?? 0.0), 'OutputFJ')) }}</td>
                         <td class="number"></td>
-                        <td class="center"></td>
+                        <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
                     </tr>
                 @endif
+                @if ($loop->last && $grandTotals !== [])
+                    <tr class="grand-total-row">
+                        <td colspan="2" class="center">Grand Total</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['CCAkhir'] ?? null) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['S4S'] ?? null) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['TotalInput'] ?? null) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['OutputFJ'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round((float) ($grandTotals['Jam'] ?? 0.0))) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round((float) ($grandTotals['Org'] ?? 0.0))) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($grandTotals['M3Jam'] ?? null) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($grandTotals['M3JamOrg'] ?? null) }}</td>
+                        <td class="number">{{ $fmtPercentBlank($grandTotals['Rend'] ?? null) }}</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
     @endforeach
-
-    @if ($machines !== [])
-        @php
-            $fmtDashBlank = static fn(?float $v): string => $v === null || abs($v) < $eps
-                ? ''
-                : number_format($v, 1, '.', '');
-            $fmtIntDashBlank = static fn(?float $v): string => $v === null || abs($v) < $eps
-                ? ''
-                : (string) (int) round($v);
-        @endphp
-
-        <table style="margin-top: 10px;">
-            <tbody>
-                <tr class="totals-row">
-                    <td class="center" style="width: 18%;"> Grand Total </td>
-                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['CCAkhir'] ?? null) }}</td>
-                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['S4S'] ?? null) }}</td>
-                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['TotalInput'] ?? null) }}
-                    </td>
-                    <td class="number" style="width: 9%;">{{ $fmtDashBlank($grandHkTotals['OutputFJ'] ?? null) }}
-                    </td>
-                    <td class="number" style="width: 9%; text-align: center;">
-                        {{ $fmtIntDashBlank($grandHkTotals['Jam'] ?? null) }}</td>
-                    <td class="number" style="width: 9%; text-align: center;">
-                        {{ $fmtIntDashBlank($grandHkTotals['Org'] ?? null) }}</td>
-                    <td class="number" style="width: 9%;">
-                        {{ $fmtRatioBlank($grandHkTotals['M3Jam'] ?? null) }}</td>
-                    <td class="number" style="width: 9%;">
-                        {{ $fmtRatioBlank($grandHkTotals['M3JamOrg'] ?? null) }}</td>
-                    <td class="number" style="width: 9%;">{{ $fmtPercentBlank($grandRend) }}</td>
-                </tr>
-            </tbody>
-        </table>
-    @endif
 
     @include('reports.partials.pdf-footer-table')
 </body>

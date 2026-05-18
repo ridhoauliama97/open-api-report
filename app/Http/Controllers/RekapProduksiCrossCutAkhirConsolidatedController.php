@@ -169,7 +169,7 @@ class RekapProduksiCrossCutAkhirConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int}>
      */
     private function groupByMachine(array $rows): array
@@ -194,13 +194,13 @@ class RekapProduksiCrossCutAkhirConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array

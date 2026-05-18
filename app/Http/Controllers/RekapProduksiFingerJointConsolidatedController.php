@@ -52,7 +52,6 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         $hk = $this->hkFromRange($startDate, $endDate);
         $machines = $this->groupByMachine($rows, $hk);
         $grandTotals = $this->computeTotals($rows);
-        $hkSummary = $this->buildHkSummary($machines);
 
         $pdf = $pdfGenerator->render('reports.finger-joint.rekap-produksi-finger-joint-consolidated-pdf', [
             'reportData' => [
@@ -60,7 +59,6 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
                 'end_date' => $endDate,
                 'hk' => $hk,
                 'machines' => $machines,
-                'hk_summary' => $hkSummary,
                 'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $generatedBy,
@@ -123,7 +121,6 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         $hk = $this->hkFromRange($startDate, $endDate);
         $machines = $this->groupByMachine($rows, $hk);
         $grandTotals = $this->computeTotals($rows);
-        $hkSummary = $this->buildHkSummary($machines);
 
         $pdf = $pdfGenerator->render('reports.finger-joint.rekap-produksi-finger-joint-consolidated-pdf', [
             'reportData' => [
@@ -131,7 +128,6 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
                 'end_date' => $endDate,
                 'hk' => $hk,
                 'machines' => $machines,
-                'hk_summary' => $hkSummary,
                 'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $request->user() ?? auth('api')->user(),
@@ -178,7 +174,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int}>
      */
     private function groupByMachine(array $rows, int $hkTotal): array
@@ -205,13 +201,13 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array
@@ -266,7 +262,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function hkFromRows(array $rows): int
     {
@@ -287,7 +283,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
      * Working days: count distinct Tanggal where there is actual activity (Jam / input / output > 0).
      * This matches the reference "Jmlh/HK" row, which is not divided by full calendar days.
      *
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function hkWorkingFromRows(array $rows): int
     {
@@ -310,30 +306,5 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         }
 
         return count($dates);
-    }
-
-    /**
-     * @param array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int}> $machines
-     * @return array<int, array<string, mixed>>
-     */
-    private function buildHkSummary(array $machines): array
-    {
-        $rows = [];
-
-        foreach ($machines as $machine) {
-            $totals = $machine['totals'] ?? [];
-            $hk = (int) ($machine['hk'] ?? 0);
-            $rows[] = [
-                'NamaMesin' => (string) ($machine['nama_mesin'] ?? ''),
-                'HK' => $hk,
-                'TotalInput' => (float) ($totals['TotalInput'] ?? 0.0),
-                'OutputFJ' => (float) ($totals['OutputFJ'] ?? 0.0),
-                'Rend' => (float) ($totals['Rend'] ?? 0.0),
-            ];
-        }
-
-        usort($rows, static fn(array $a, array $b): int => strcmp((string) $a['NamaMesin'], (string) $b['NamaMesin']));
-
-        return $rows;
     }
 }

@@ -50,14 +50,12 @@ class RekapProduksiS4SConsolidatedController extends Controller
 
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
-        $hkSummary = $this->buildHkSummary($machines);
 
         $pdf = $pdfGenerator->render('reports.s4s.rekap-produksi-s4s-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
-                'hk_summary' => $hkSummary,
                 'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $generatedBy,
@@ -120,14 +118,12 @@ class RekapProduksiS4SConsolidatedController extends Controller
 
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
-        $hkSummary = $this->buildHkSummary($machines);
 
         $pdf = $pdfGenerator->render('reports.s4s.rekap-produksi-s4s-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
-                'hk_summary' => $hkSummary,
                 'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $request->user() ?? auth('api')->user(),
@@ -174,7 +170,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int}>
      */
     private function groupByMachine(array $rows): array
@@ -199,13 +195,13 @@ class RekapProduksiS4SConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array
@@ -245,7 +241,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function hkFromRows(array $rows): int
     {
@@ -258,23 +254,5 @@ class RekapProduksiS4SConsolidatedController extends Controller
         }
 
         return count($dates);
-    }
-
-    /**
-     * @param array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int}> $machines
-     * @return array<int, array{nama_mesin:string, hk:int, totals:array<string, float>}>
-     */
-    private function buildHkSummary(array $machines): array
-    {
-        $rows = [];
-        foreach ($machines as $machine) {
-            $rows[] = [
-                'nama_mesin' => (string) ($machine['nama_mesin'] ?? ''),
-                'hk' => (int) ($machine['hk'] ?? 0),
-                'totals' => is_array($machine['totals'] ?? null) ? $machine['totals'] : [],
-            ];
-        }
-
-        return $rows;
     }
 }

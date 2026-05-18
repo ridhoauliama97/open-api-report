@@ -49,16 +49,19 @@ class RekapProduksiMouldingConsolidatedController extends Controller
         }
 
         $machines = $this->groupByMachine($rows);
+        $grandTotals = $this->computeTotals($rows);
 
         $pdf = $pdfGenerator->render('reports.moulding.rekap-produksi-moulding-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
+                'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_orientation' => 'landscape',
 
         ]);
 
@@ -114,16 +117,19 @@ class RekapProduksiMouldingConsolidatedController extends Controller
         }
 
         $machines = $this->groupByMachine($rows);
+        $grandTotals = $this->computeTotals($rows);
 
         $pdf = $pdfGenerator->render('reports.moulding.rekap-produksi-moulding-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
+                'grand_totals' => $grandTotals,
             ],
             'generatedBy' => $request->user() ?? auth('api')->user(),
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
+            'pdf_orientation' => 'landscape',
 
         ]);
 
@@ -165,7 +171,7 @@ class RekapProduksiMouldingConsolidatedController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{nama_mesin:string, rows:array<int, array<string, mixed>>, totals:array<string, float>, hk:int}>
      */
     private function groupByMachine(array $rows): array
@@ -190,13 +196,13 @@ class RekapProduksiMouldingConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array

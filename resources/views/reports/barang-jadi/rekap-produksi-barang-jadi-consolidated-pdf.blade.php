@@ -56,9 +56,9 @@
             border-collapse: collapse;
             page-break-inside: auto;
             border-top: 1px solid #000;
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
+            border-bottom: 1px solid #000;
+            border-left: none;
+            border-right: none;
             table-layout: fixed;
         }
 
@@ -79,6 +79,7 @@
         td {
             border: 0;
             border-left: 1px solid #000;
+            border-right: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -86,6 +87,16 @@
         th:first-child,
         td:first-child {
             border-left: 0;
+        }
+
+        thead tr:first-child th:first-child,
+        .bounded-row td:first-child {
+            border-left: 1px solid #000;
+        }
+
+        thead tr:first-child th:last-child,
+        .bounded-row td:last-child {
+            border-right: 1px solid #000;
         }
 
         th {
@@ -141,6 +152,16 @@
             height: 0 !important;
             line-height: 0 !important;
             background: #fff !important;
+        }
+
+        .grand-total-row td {
+            font-weight: bold;
+            font-size: 12px;
+            border-top: 1px solid #000;
+            border-right: 0 !important;
+            border-bottom: 2px solid #000;
+            border-left: 0 !important;
+            background: #fff;
         }
 
         @include('reports.partials.pdf-footer-table-style');
@@ -215,24 +236,24 @@
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 70px;">Tanggal</th>
-                    <th rowspan="2" style="width: 34px;">Shift</th>
-                    <th colspan="3">Input</th>
-                    <th rowspan="2" style="width: 54px;">Total Input</th>
-                    <th colspan="2">Output</th>
-                    <th rowspan="2" style="width: 54px;">Total Output</th>
-                    <th rowspan="2" style="width: 34px;">Jam</th>
-                    <th rowspan="2" style="width: 34px;">Org</th>
-                    <th rowspan="2" style="width: 52px;">M3/Jam</th>
-                    <th rowspan="2" style="width: 58px;">M3/jam/Org</th>
-                    <th rowspan="2" style="width: 48px;">Rend (%)</th>
+                    <th rowspan="2" style="width: 38.4px;">Tanggal</th>
+                    <th rowspan="2" style="width: 38.4px;">Shift</th>
+                    <th colspan="4">Input</th>
+                    <th colspan="3">Output</th>
+                    <th rowspan="2" style="width: 38.4px;">Jam</th>
+                    <th rowspan="2" style="width: 38.4px;">Org</th>
+                    <th rowspan="2" style="width: 38.4px;">M3/Jam</th>
+                    <th rowspan="2" style="width: 38.4px;">M3/jam/Org</th>
+                    <th rowspan="2" style="width: 38.4px;">Rend <br>(%)</th>
                 </tr>
                 <tr>
-                    <th style="width: 40px;">BJ</th>
-                    <th style="width: 56px;">Moulding</th>
-                    <th style="width: 48px;">Sanding</th>
-                    <th style="width: 58px;">Packing</th>
-                    <th style="width: 58px;">Reproses</th>
+                    <th style="width: 38.4px;">BJ</th>
+                    <th style="width: 38.4px;">Moulding</th>
+                    <th style="width: 38.4px;">Sanding</th>
+                    <th style="width: 38.4px;">TOTAL</th>
+                    <th style="width: 38.4px;">Packing</th>
+                    <th style="width: 38.4px;">Reproses</th>
+                    <th style="width: 38.4px;">TOTAL </th>
                 </tr>
             </thead>
             <tbody>
@@ -242,43 +263,46 @@
                         $rowIndex++;
                         $row = is_array($row) ? $row : (array) $row;
                     @endphp
-                    <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                    <tr class="bounded-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $fmtDate((string) ($row['Tanggal'] ?? '')) }}</td>
                         <td class="center">{{ (int) ($row['Shift'] ?? 0) }}</td>
                         <td class="number">{{ $fmtBlank($row['BJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Sanding'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['OutputPacking'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['OutputReproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['TotalOutput'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank($row['Jam'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['TotalOutput'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank($row['Jam'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
                     </tr>
                 @endforeach
                 @if ($rows !== [] && $totals !== [])
-                    <tr class="totals-row">
+                    <tr class="bounded-row totals-row">
                         <td colspan="2" class="center">{{ $hk > 0 ? 'HK : ' . $hk : 'HK : -' }}</td>
                         <td class="number">{{ $fmtBlank($totals['BJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['Sanding'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['TotalInput'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['TotalInput'] ?? null) }}
+                        </td>
                         <td class="number">{{ $fmtBlank($totals['OutputPacking'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['OutputReproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['TotalOutput'] ?? null) }}</td>
-                        <td class="center">
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['TotalOutput'] ?? null) }}
+                        </td>
+                        <td class="number">
                             {{ $fmtIntBlank(isset($totals['Jam']) ? (int) round((float) $totals['Jam']) : null) }}</td>
-                        <td class="center">
+                        <td class="number">
                             {{ $fmtIntBlank(isset($totals['Org']) ? (int) round((float) $totals['Org']) : null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}
+                        </td>
                     </tr>
-                    <tr class="totals-row">
-                        <td colspan="2" class="center"><strong>Jmlh/HK</strong></td>
+                    <tr class="bounded-row totals-row">
+                        <td colspan="2" class="center">Jmlh/HK</td>
                         <td class="number">
                             {{ $fmtBlank($perColumnAverage((float) ($totals['BJ'] ?? 0.0), $countNonZero($rows, 'BJ'))) }}
                         </td>
@@ -299,35 +323,32 @@
                         <td class="number">
                             {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalOutput'] ?? 0.0) / $hk : 0.0) }}</td>
                         <td class="number"></td>
-                        <td class="center"></td>
+                        <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
                     </tr>
                 @endif
+                @if ($loop->last && $machines !== [])
+                    <tr class="grand-total-row">
+                        <td colspan="2" class="center">Grand Total</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['BJ']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['Moulding']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['Sanding']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['TotalInput']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['OutputPacking']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['OutputReproses']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['TotalOutput']) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($grandTotals['M3Jam']) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($grandTotals['M3JamOrg']) }}</td>
+                        <td class="number">{{ $fmtPercentBlank($grandTotals['Rend']) }}</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
     @endforeach
-
-    {{-- @if ($machines !== [])
-        <div class="summary-block">
-            <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
-            <ul style="margin: 0; padding-left: 18px;">
-                <li>BJ : <strong>{{ $fmtBlank($grandTotals['BJ']) }}</strong></li>
-                <li>Moulding : <strong>{{ $fmtBlank($grandTotals['Moulding']) }}</strong></li>
-                <li>Sanding : <strong>{{ $fmtBlank($grandTotals['Sanding']) }}</strong></li>
-                <li>Total Input : <strong>{{ $fmtBlank($grandTotals['TotalInput']) }}</strong></li>
-                <li>Output Packing : <strong>{{ $fmtBlank($grandTotals['OutputPacking']) }}</strong></li>
-                <li>Output Reproses : <strong>{{ $fmtBlank($grandTotals['OutputReproses']) }}</strong></li>
-                <li>Total Output : <strong>{{ $fmtBlank($grandTotals['TotalOutput']) }}</strong></li>
-                <li>Jam : <strong>{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</strong></li>
-                <li>Org : <strong>{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</strong></li>
-                <li>M3/Jam : <strong>{{ $fmtRatioBlank($grandTotals['M3Jam']) }}</strong></li>
-                <li>M3/jam/Org : <strong>{{ $fmtRatioBlank($grandTotals['M3JamOrg']) }}</strong></li>
-                <li>Rend (%) : <strong>{{ $fmtPercentBlank($grandTotals['Rend']) }}</strong></li>
-            </ul>
-        </div>
-    @endif --}}
 
     @include('reports.partials.pdf-footer-table')
 </body>

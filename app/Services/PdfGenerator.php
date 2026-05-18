@@ -91,7 +91,7 @@ class PdfGenerator
     {
         $cacheTtl = (int) config('app.pdf_render_cache_ttl_seconds', 0);
 
-        if ($cacheTtl <= 0 || filter_var($data['pdf_disable_cache'] ?? false, FILTER_VALIDATE_BOOL)) {
+        if ($this->shouldBypassCache($cacheTtl, $data)) {
             return $this->renderUncached($view, $data);
         }
 
@@ -109,6 +109,18 @@ class PdfGenerator
         } catch (Throwable) {
             return $this->renderUncached($view, $data);
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function shouldBypassCache(int $cacheTtl, array $data): bool
+    {
+        if ($cacheTtl <= 0 || filter_var($data['pdf_disable_cache'] ?? false, FILTER_VALIDATE_BOOL)) {
+            return true;
+        }
+
+        return app()->environment('local') || (bool) config('app.debug');
     }
 
     /**
@@ -182,11 +194,30 @@ class PdfGenerator
             'orientation' => $this->resolveOrientation($data),
             'app_locale' => app()->getLocale(),
             'app_timezone' => config('app.timezone'),
+            'view_fingerprint' => $this->viewFingerprint($view),
         ];
 
         $encoded = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         return 'pdf-render:'.hash('sha256', is_string($encoded) ? $encoded : serialize($payload));
+    }
+
+    private function viewFingerprint(string $view): string
+    {
+        try {
+            $path = view()->getFinder()->find($view);
+        } catch (Throwable) {
+            return 'unresolved:'.$view;
+        }
+
+        if (! is_string($path) || ! is_file($path)) {
+            return 'missing:'.$view;
+        }
+
+        $mtime = filemtime($path);
+        $size = filesize($path);
+
+        return hash('sha256', $path.'|'.$mtime.'|'.$size);
     }
 
     /**

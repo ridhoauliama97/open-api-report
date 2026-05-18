@@ -49,7 +49,10 @@
             width: 100%;
             border-collapse: collapse;
             page-break-inside: auto;
-            border: 1px solid #000;
+            border-top: 1px solid #000;
+            border-left: 0;
+            border-right: 0;
+            border-bottom: 0;
             table-layout: fixed;
         }
 
@@ -68,8 +71,8 @@
 
         th,
         td {
-            border: 0;
             border-left: 1px solid #000;
+            border-right: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
@@ -77,6 +80,16 @@
         th:first-child,
         td:first-child {
             border-left: 0;
+        }
+
+        thead tr:first-child th:first-child,
+        .bounded-row td:first-child {
+            border-left: 1px solid #000;
+        }
+
+        thead tr:first-child th:last-child,
+        .bounded-row td:last-child {
+            border-right: 1px solid #000;
         }
 
         th {
@@ -114,6 +127,7 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             background: #fff;
         }
 
@@ -127,6 +141,16 @@
             line-height: 0 !important;
             background: #fff !important;
         }
+
+        .grand-total-row td {
+            font-weight: bold;
+            font-size: 12px;
+            border-top: 1px solid #000;
+            border-right: 0 !important;
+            border-bottom: 2px solid #000;
+            border-left: 0 !important;
+            background: #fff;
+        }
     </style>
 </head>
 
@@ -139,15 +163,56 @@
         $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
 
         $eps = 0.0000001;
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDate = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtBlank = static fn(?float $v): string => $v === null || abs($v) < $eps ? '' : number_format($v, 1, '.', '');
         $fmtIntBlank = static fn(?int $v): string => $v === null || $v <= 0 ? '' : (string) $v;
         $fmtRatioBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
             ? ''
             : number_format($v, 1, '.', '');
+        $fmtRatio2Blank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
+            ? ''
+            : number_format($v, 2, '.', '');
         $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
             ? ''
             : number_format($v, 1, '.', '');
+
+        $grandTotals = [
+            'BJ' => 0.0,
+            'CCAkhir' => 0.0,
+            'FJ' => 0.0,
+            'Moulding' => 0.0,
+            'Reproses' => 0.0,
+            'Wip' => 0.0,
+            'TotalInput' => 0.0,
+            'OutputSanding' => 0.0,
+            'Jam' => 0.0,
+            'Org' => 0.0,
+            'M3Jam' => 0.0,
+            'M3JamOrg' => 0.0,
+        ];
+
+        $providedGrandTotals = is_array($data['grand_totals'] ?? null) ? $data['grand_totals'] : [];
+        if ($providedGrandTotals !== []) {
+            foreach (array_keys($grandTotals) as $key) {
+                $grandTotals[$key] = (float) ($providedGrandTotals[$key] ?? 0.0);
+            }
+        } else {
+            foreach ($machines as $machineItem) {
+                $machineTotals = is_array($machineItem['totals'] ?? null) ? $machineItem['totals'] : [];
+
+                foreach (array_keys($grandTotals) as $key) {
+                    $grandTotals[$key] += (float) ($machineTotals[$key] ?? 0.0);
+                }
+            }
+        }
+
+        $grandRend = isset($providedGrandTotals['Rend'])
+            ? (float) $providedGrandTotals['Rend']
+            : (abs($grandTotals['TotalInput']) > $eps
+                ? ($grandTotals['OutputSanding'] / $grandTotals['TotalInput']) * 100.0
+                : 0.0);
     @endphp
 
     <h1 class="report-title">Laporan Rekap Produksi Sanding Consolidated</h1>
@@ -166,23 +231,23 @@
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 10%;">Tanggal</th>
-                    <th rowspan="2" style="width: 6%;">Shift</th>
-                    <th colspan="5">Input</th>
-                    <th rowspan="2" style="width: 8%;">Total Input</th>
-                    <th rowspan="2" style="width: 8%;">Output CCAkhir</th>
-                    <th rowspan="2" style="width: 7%;">Jam</th>
-                    <th rowspan="2" style="width: 7%;">Org</th>
-                    <th rowspan="2" style="width: 7%;">M3/Jam</th>
-                    <th rowspan="2" style="width: 10%;">M3/jam/Org</th>
-                    <th rowspan="2" style="width: 8%;">Rend (%)</th>
+                    <th rowspan="2" style="width: 38.4px">Tanggal</th>
+                    <th rowspan="2" style="width: 38.4px">Shift</th>
+                    <th colspan="6">Input</th>
+                    <th rowspan="2" style="width: 38.4px">Output Sanding</th>
+                    <th rowspan="2" style="width: 38.4px">Jam</th>
+                    <th rowspan="2" style="width: 38.4px">Org</th>
+                    <th rowspan="2" style="width: 38.4px">M3/Jam</th>
+                    <th rowspan="2" style="width: 38.4px">M3/jam/<br>Org</th>
+                    <th rowspan="2" style="width: 38.4px">Rend (%)</th>
                 </tr>
                 <tr>
-                    <th style="width: 7%;">BJ</th>
-                    <th style="width: 8%;">CC Akhir</th>
-                    <th style="width: 7%;">FJ</th>
-                    <th style="width: 8%;">Moulding</th>
-                    <th style="width: 8%;">Reproses</th>
+                    <th style="width: 38.4px">BJ</th>
+                    <th style="width: 38.4px">CC Akhir</th>
+                    <th style="width: 38.4px">FJ</th>
+                    <th style="width: 38.4px">Moulding</th>
+                    <th style="width: 38.4px">Reproses</th>
+                    <th style="width: 38.4px">TOTAL</th>
                 </tr>
             </thead>
             <tbody>
@@ -192,7 +257,7 @@
                         $rowIndex++;
                         $row = is_array($row) ? $row : (array) $row;
                     @endphp
-                    <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                    <tr class="bounded-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $fmtDate((string) ($row['Tanggal'] ?? '')) }}</td>
                         <td class="center">{{ (int) ($row['Shift'] ?? 0) }}</td>
                         <td class="number">{{ $fmtBlank($row['BJ'] ?? null) }}</td>
@@ -200,14 +265,15 @@
                         <td class="number">{{ $fmtBlank($row['FJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($row['Reproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($row['OutputSanding'] ?? null) }}</td>
-                        <td class="center">
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['TotalInput'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['OutputSanding'] ?? null) }}
+                        </td>
+                        <td class="number">
                             {{ $fmtIntBlank(isset($row['Jam']) ? (int) round((float) $row['Jam']) : null) }}</td>
-                        <td class="center">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
+                        <td class="number">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
@@ -228,24 +294,27 @@
                             return $count > 0 && abs($value) > $eps ? $value / $count : 0.0;
                         };
                     @endphp
-                    <tr class="totals-row">
+                    <tr class="bounded-row totals-row">
                         <td colspan="2" class="center">{{ $hkText }}</td>
                         <td class="number">{{ $fmtBlank($totals['BJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['CCAkhir'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['FJ'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['Moulding'] ?? null) }}</td>
                         <td class="number">{{ $fmtBlank($totals['Reproses'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['TotalInput'] ?? null) }}</td>
-                        <td class="number">{{ $fmtBlank($totals['OutputSanding'] ?? null) }}</td>
-                        <td class="center">{{ $fmtIntBlank((int) round((float) ($totals['Jam'] ?? 0.0))) }}</td>
-                        <td class="center">{{ $fmtIntBlank((int) round((float) ($totals['Org'] ?? 0.0))) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['TotalInput'] ?? null) }}
+                        </td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtBlank($totals['OutputSanding'] ?? null) }}
+                        </td>
+                        <td class="number">{{ $fmtIntBlank((int) round((float) ($totals['Jam'] ?? 0.0))) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round((float) ($totals['Org'] ?? 0.0))) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($totals['M3JamOrg'] ?? null) }}</td>
-                        <td class="number">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}</td>
+                        <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}
+                        </td>
                     </tr>
 
-                    <tr class="totals-row">
-                        <td colspan="2" class="center"><strong>Jmlh/HK</strong></td>
+                    <tr class="bounded-row totals-row">
+                        <td colspan="2" class="center">Jmlh/HK</td>
                         <td class="number">
                             {{ $fmtBlank($perColumnAverage((float) ($totals['BJ'] ?? 0.0), $countNonZero($rows, 'BJ'))) }}
                         </td>
@@ -267,10 +336,27 @@
                             {{ $fmtBlank($perColumnAverage((float) ($totals['OutputSanding'] ?? 0.0), $countNonZero($rows, 'OutputSanding'))) }}
                         </td>
                         <td class="number"></td>
-                        <td class="center"></td>
                         <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
+                        <td class="number"></td>
+                    </tr>
+                @endif
+                @if ($loop->last && $machines !== [])
+                    <tr class="grand-total-row">
+                        <td colspan="2" class="center">Grand Total</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['BJ']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['CCAkhir']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['FJ']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['Moulding']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['Reproses']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['TotalInput']) }}</td>
+                        <td class="number">{{ $fmtBlank($grandTotals['OutputSanding']) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round($grandTotals['Jam'])) }}</td>
+                        <td class="number">{{ $fmtIntBlank((int) round($grandTotals['Org'])) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($grandTotals['M3Jam']) }}</td>
+                        <td class="number">{{ $fmtRatioBlank($grandTotals['M3JamOrg']) }}</td>
+                        <td class="number">{{ $fmtPercentBlank($grandRend) }}</td>
                     </tr>
                 @endif
             </tbody>
