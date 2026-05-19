@@ -132,7 +132,7 @@ class PenerimaanKayuBulatPerSupplierKgController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
 
-            'pdf_column_count' => 5 + (count($reportData['group_names'] ?? []) * 2),
+            // 'pdf_column_count' => 5 + (count($reportData['group_names'] ?? []) * 2),
         ]);
 
         $filename = sprintf('Laporan-Penerimaan-Kayu-Bulat-Per-Supplier-Timbang-KG-%s-sd-%s.pdf', $startDate, $endDate);

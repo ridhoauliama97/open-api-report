@@ -201,7 +201,7 @@ Contoh:
 - Laporan Sawn Timber Serah Terima ST (Kamar KD): `http://192.168.10.100:5006/api/reports/sawn-timber/serah-terima-st-kamar-kd/pdf`
 - Laporan Sawn Timber Ketahanan Barang ST: `http://192.168.10.100:5006/api/reports/sawn-timber/ketahanan-barang-st/pdf`
 - Laporan Sawn Timber Label ST Hidup Detail: `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf`
-- Laporan Sawn Timber Label ST Hidup Detail (Desktop / 1 Tombol): `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf/async-wait`
+- Laporan Sawn Timber Label ST Hidup Detail : `http://192.168.10.100:5006/api/reports/sawn-timber/label-st-hidup-detail/pdf/async-wait`
 - Laporan Sawn Timber Lembar Tally Hasil Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/lembar-tally-hasil-sawmill/pdf`
 - Laporan Sawn Timber Mutasi KD: `http://192.168.10.100:5006/api/reports/sawn-timber/mutasi-kd/pdf`
 - Laporan Sawn Timber Pemakaian Obat Vacuum: `http://192.168.10.100:5006/api/reports/sawn-timber/pemakaian-obat-vacuum/pdf`
@@ -229,6 +229,7 @@ Contoh:
 - Laporan Sawn Timber ST Sawmill Masuk Per Group Meja: `http://192.168.10.100:5006/api/reports/sawn-timber/st-sawmill-masuk-per-group-meja/pdf`
 - Laporan Sawn Timber Stock ST Basah: `http://192.168.10.100:5006/api/reports/sawn-timber/stock-st-basah/pdf`
 - Laporan Sawn Timber Stock ST Kering: `http://192.168.10.100:5006/api/reports/sawn-timber/stock-st-kering/pdf`
+- Laporan Sawn Timber Stock ST Kering : `http://192.168.10.100:5006/api/reports/sawn-timber/stock-st-kering/pdf/async-wait?end_date=YYYY-MM-DD`
 - Laporan Sawn Timber Umur Sawn Timber Detail Ton: `http://192.168.10.100:5006/api/reports/sawn-timber/umur-sawn-timber-detail-ton/pdf`
 - Laporan Sawn Timber QC Sawmill: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill/pdf`
 - Laporan Sawn Timber QC Sawmill Discrepancy: `http://192.168.10.100:5006/api/reports/sawn-timber/qc-sawmill-discrepancy/pdf`

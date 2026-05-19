@@ -243,7 +243,7 @@
                     <th rowspan="2" style="width: 38.4px;">Jam</th>
                     <th rowspan="2" style="width: 38.4px;">Org</th>
                     <th rowspan="2" style="width: 38.4px;">M3/Jam</th>
-                    <th rowspan="2" style="width: 38.4px;">M3/jam/Org</th>
+                    <th rowspan="2" style="width: 38.4px;">M3/jam/<br>Org</th>
                     <th rowspan="2" style="width: 38.4px;">Rend <br>(%)</th>
                 </tr>
                 <tr>

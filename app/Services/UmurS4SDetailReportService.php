@@ -8,7 +8,7 @@ use RuntimeException;
 class UmurS4SDetailReportService
 {
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<int, array<string, mixed>>
      */
     public function fetch(array $parameters): array
@@ -54,12 +54,15 @@ class UmurS4SDetailReportService
             ];
         }, $rows);
 
+        $normalizedRows = $this->groupRowsByDisplayedProduct($normalizedRows, $eps);
+
         // Remove empty rows (all period values are 0) to match report expectation and avoid clutter.
         $normalizedRows = array_values(array_filter($normalizedRows, static function (array $row): bool {
             return ($row['_keep'] ?? false) === true;
         }));
         $normalizedRows = array_map(static function (array $row): array {
             unset($row['_keep']);
+
             return $row;
         }, $normalizedRows);
 
@@ -102,7 +105,51 @@ class UmurS4SDetailReportService
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function groupRowsByDisplayedProduct(array $rows, float $eps): array
+    {
+        $groupedRows = [];
+
+        foreach ($rows as $row) {
+            $key = implode('|', [
+                strtoupper(trim((string) ($row['Jenis'] ?? ''))),
+                $this->dimensionKey($row['Tebal'] ?? null),
+                $this->dimensionKey($row['Lebar'] ?? null),
+                $this->dimensionKey($row['Panjang'] ?? null),
+            ]);
+
+            if (!isset($groupedRows[$key])) {
+                $groupedRows[$key] = $row;
+
+                continue;
+            }
+
+            foreach (['Period1', 'Period2', 'Period3', 'Period4', 'Period5'] as $column) {
+                $groupedRows[$key][$column] = (float) ($groupedRows[$key][$column] ?? 0.0)
+                    + (float) ($row[$column] ?? 0.0);
+            }
+
+            $groupedRows[$key]['Total'] = $this->sumNormalizedPeriods($groupedRows[$key]);
+            $groupedRows[$key]['_keep'] = trim((string) ($groupedRows[$key]['Jenis'] ?? '')) !== ''
+                && abs((float) ($groupedRows[$key]['Total'] ?? 0.0)) > $eps;
+        }
+
+        return array_values($groupedRows);
+    }
+
+    private function dimensionKey(mixed $value): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+
+        return sprintf('%.8F', (float) $value);
+    }
+
+    /**
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<string, mixed>
      */
     public function healthCheck(array $parameters): array
@@ -176,8 +223,8 @@ class UmurS4SDetailReportService
             'exec' => $this->buildExecSql($procedure, $safeParameterCount),
             'call' => $this->buildCallSql($procedure, $safeParameterCount),
             default => $driver === 'sqlsrv'
-                ? $this->buildExecSql($procedure, $safeParameterCount)
-                : $this->buildCallSql($procedure, $safeParameterCount),
+            ? $this->buildExecSql($procedure, $safeParameterCount)
+            : $this->buildCallSql($procedure, $safeParameterCount),
         };
 
         return $connection->select($sql, $bindings);
@@ -237,14 +284,14 @@ class UmurS4SDetailReportService
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
-    private function sumPeriods(array $item): float
+    private function sumNormalizedPeriods(array $item): float
     {
-        return (float) ($this->toFloat($item['Period1'] ?? null) ?? 0.0)
-            + (float) ($this->toFloat($item['Period2'] ?? null) ?? 0.0)
-            + (float) ($this->toFloat($item['Period3'] ?? null) ?? 0.0)
-            + (float) ($this->toFloat($item['Period4'] ?? null) ?? 0.0)
-            + (float) ($this->toFloat($item['Period5'] ?? null) ?? 0.0);
+        return (float) ($item['Period1'] ?? 0.0)
+            + (float) ($item['Period2'] ?? 0.0)
+            + (float) ($item['Period3'] ?? 0.0)
+            + (float) ($item['Period4'] ?? 0.0)
+            + (float) ($item['Period5'] ?? 0.0);
     }
 }

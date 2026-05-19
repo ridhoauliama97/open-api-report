@@ -138,7 +138,7 @@
 
         $fmtDate = static fn(?string $v): string => $v === null || trim($v) === ''
             ? ''
-            : \Carbon\Carbon::parse($v)->format('d-M-y');
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtInt = static fn(mixed $v): string => $v === null || $v === '' || (int) $v === 0
             ? ''
             : number_format((int) $v, 0, '.', ',');
@@ -164,7 +164,7 @@
                 <th style="width: 44px;">Tebal (mm)</th>
                 <th style="width: 50px;">Lebar (mm)</th>
                 <th style="width: 56px;">Panjang (ft)</th>
-                <th style="width: 80px;">Jmlh Batang (Pcs)</th>
+                <th style="width: 80px;">Jmlh Batang</th>
                 <th style="width: 56px;">Kubik</th>
                 <th style="width: 54px;">Lokasi</th>
             </tr>
@@ -185,8 +185,7 @@
                     <td class="center">{{ $fmtDim($row['Tebal'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Lebar'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
-                    <td class="number" style="font-weight: bold; text-align: center;">
-                        {{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
+                    <td class="number">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
                     <td class="number" style="font-weight: bold;">{{ $fmtKubik($row['Kubik'] ?? null) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
@@ -198,9 +197,7 @@
 
             @if ($rows !== [] && is_array($totals))
                 <tr class="totals-row">
-                    <td colspan="8" class="center">Total </td>
-                    <td class="number" style="text-align: center;">
-                        {{ $fmtInt($totals['JmlhBatang'] ?? null) }}</td>
+                    <td colspan="9" class="center">Total </td>
                     <td class="number" style="font-weight: bold;">{{ $fmtKubik($totals['Kubik'] ?? null) }}</td>
                     <td></td>
                 </tr>

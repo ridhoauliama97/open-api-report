@@ -43,22 +43,22 @@
                     <div class="col-md-3">
                         <label for="Umur1" class="form-label">Umur1 (hari)</label>
                         <input type="number" id="Umur1" name="Umur1" class="form-control" min="0" step="1" required
-                            value="{{ old('Umur1', old('umur1', 5)) }}">
+                            value="{{ old('Umur1', old('umur1', 15)) }}">
                     </div>
                     <div class="col-md-3">
                         <label for="Umur2" class="form-label">Umur2 (hari)</label>
                         <input type="number" id="Umur2" name="Umur2" class="form-control" min="0" step="1" required
-                            value="{{ old('Umur2', old('umur2', 10)) }}">
+                            value="{{ old('Umur2', old('umur2', 30)) }}">
                     </div>
                     <div class="col-md-3">
                         <label for="Umur3" class="form-label">Umur3 (hari)</label>
                         <input type="number" id="Umur3" name="Umur3" class="form-control" min="0" step="1" required
-                            value="{{ old('Umur3', old('umur3', 15)) }}">
+                            value="{{ old('Umur3', old('umur3', 60)) }}">
                     </div>
                     <div class="col-md-3">
                         <label for="Umur4" class="form-label">Umur4 (hari)</label>
                         <input type="number" id="Umur4" name="Umur4" class="form-control" min="0" step="1" required
-                            value="{{ old('Umur4', old('umur4', 20)) }}">
+                            value="{{ old('Umur4', old('umur4', 90)) }}">
                     </div>
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">

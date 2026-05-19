@@ -8,7 +8,7 @@ use RuntimeException;
 class UmurMouldingDetailReportService
 {
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<int, array<string, mixed>>
      */
     public function fetch(array $parameters): array
@@ -23,7 +23,7 @@ class UmurMouldingDetailReportService
             $jenis = trim((string) ($item['Jenis'] ?? ''));
             $grade = trim((string) ($item['NamaGrade'] ?? ''));
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis . ($grade !== '' ? ' - ' . $grade : ''))
+                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
                 : $grade;
 
             $p1 = $this->toFloat($item['Period1'] ?? null) ?? 0.0;
@@ -43,37 +43,12 @@ class UmurMouldingDetailReportService
                 'Period3' => $p3,
                 'Period4' => $p4,
                 'Period5' => $p5,
-                'Total' => $this->toFloat($item['Total'] ?? null) ?? $total,
+                'Total' => $total,
                 '_keep' => $jenisDisplay !== '',
             ];
         }, $rows);
 
-        $grouped = [];
-        foreach ($normalizedRows as $row) {
-            $jenisKey = strtoupper(trim((string) ($row['Jenis'] ?? '')));
-            $tebalKey = $row['Tebal'] === null ? '' : (string) $row['Tebal'];
-            $lebarKey = $row['Lebar'] === null ? '' : (string) $row['Lebar'];
-            $panjangKey = $row['Panjang'] === null ? '' : (string) $row['Panjang'];
-            $key = implode('|', [$jenisKey, $tebalKey, $lebarKey, $panjangKey]);
-
-            if (!isset($grouped[$key])) {
-                $grouped[$key] = $row;
-                continue;
-            }
-
-            foreach (['Period1', 'Period2', 'Period3', 'Period4', 'Period5'] as $col) {
-                $grouped[$key][$col] = (float) ($grouped[$key][$col] ?? 0.0) + (float) ($row[$col] ?? 0.0);
-            }
-
-            $grouped[$key]['Total'] =
-                (float) ($grouped[$key]['Period1'] ?? 0.0)
-                + (float) ($grouped[$key]['Period2'] ?? 0.0)
-                + (float) ($grouped[$key]['Period3'] ?? 0.0)
-                + (float) ($grouped[$key]['Period4'] ?? 0.0)
-                + (float) ($grouped[$key]['Period5'] ?? 0.0);
-        }
-
-        $normalizedRows = array_values($grouped);
+        $normalizedRows = $this->groupRowsByDisplayedProduct($normalizedRows);
 
         $normalizedRows = array_values(array_filter($normalizedRows, static function (array $row) use ($eps): bool {
             $hasJenis = trim((string) ($row['Jenis'] ?? '')) !== '' && ($row['_keep'] ?? false) === true;
@@ -84,6 +59,7 @@ class UmurMouldingDetailReportService
 
         $normalizedRows = array_map(static function (array $row): array {
             unset($row['_keep']);
+
             return $row;
         }, $normalizedRows);
 
@@ -126,7 +102,7 @@ class UmurMouldingDetailReportService
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<string, mixed>
      */
     public function healthCheck(array $parameters): array
@@ -149,7 +125,7 @@ class UmurMouldingDetailReportService
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<int, object>
      */
     private function runProcedureQuery(array $parameters): array
@@ -160,7 +136,7 @@ class UmurMouldingDetailReportService
         $customQuery = config('reports.umur_moulding_detail.query');
         $parameterCount = (int) config('reports.umur_moulding_detail.parameter_count', 4);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan umur Moulding belum dikonfigurasi.');
         }
 
@@ -179,7 +155,7 @@ class UmurMouldingDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan umur Moulding dikonfigurasi untuk SQL Server. '
-                . 'Set UMUR_MOULDING_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set UMUR_MOULDING_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -188,13 +164,13 @@ class UmurMouldingDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'UMUR_MOULDING_DETAIL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan UMUR_MOULDING_DETAIL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan UMUR_MOULDING_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -231,13 +207,67 @@ class UmurMouldingDetailReportService
         return "CALL {$procedure}({$placeholders})";
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function groupRowsByDisplayedProduct(array $rows): array
+    {
+        $groupedRows = [];
+
+        foreach ($rows as $row) {
+            $key = implode('|', [
+                strtoupper(trim((string) ($row['Jenis'] ?? ''))),
+                $this->dimensionKey($row['Tebal'] ?? null),
+                $this->dimensionKey($row['Lebar'] ?? null),
+                $this->dimensionKey($row['Panjang'] ?? null),
+            ]);
+
+            if (! isset($groupedRows[$key])) {
+                $groupedRows[$key] = $row;
+
+                continue;
+            }
+
+            foreach (['Period1', 'Period2', 'Period3', 'Period4', 'Period5'] as $column) {
+                $groupedRows[$key][$column] = (float) ($groupedRows[$key][$column] ?? 0.0)
+                    + (float) ($row[$column] ?? 0.0);
+            }
+
+            $groupedRows[$key]['Total'] = $this->sumNormalizedPeriods($groupedRows[$key]);
+        }
+
+        return array_values($groupedRows);
+    }
+
+    private function dimensionKey(mixed $value): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+
+        return sprintf('%.8F', (float) $value);
+    }
+
+    /**
+     * @param  array<string, mixed>  $item
+     */
+    private function sumNormalizedPeriods(array $item): float
+    {
+        return (float) ($item['Period1'] ?? 0.0)
+            + (float) ($item['Period2'] ?? 0.0)
+            + (float) ($item['Period3'] ?? 0.0)
+            + (float) ($item['Period4'] ?? 0.0)
+            + (float) ($item['Period5'] ?? 0.0);
+    }
+
     private function toFloat(mixed $value): ?float
     {
         if (is_numeric($value)) {
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

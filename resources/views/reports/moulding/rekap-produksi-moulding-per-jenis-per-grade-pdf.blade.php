@@ -181,18 +181,18 @@
         <table style="margin-bottom: 12px;">
             <thead>
                 <tr>
-                    <th style="width: 28px;">No</th>
-                    <th style="width: 90px;">Jenis Kayu</th>
-                    <th style="width: 90px;">Nama Grade</th>
-                    <th style="width: 68px;">In S4S</th>
-                    <th style="width: 68px;">In FJ</th>
-                    <th style="width: 75px;">In Moulding</th>
-                    <th style="width: 78px;">In Laminating</th>
-                    <th style="width: 72px;">In CCAkhir</th>
-                    <th style="width: 60px;">In WIP</th>
-                    <th style="width: 72px;">In Reproses</th>
-                    <th style="width: 68px;">Output</th>
-                    <th style="width: 78px;">Out Reproses</th>
+                    <th style="width: 4%;">No</th>
+                    <th style="width: 10%;">Jenis Kayu</th>
+                    <th style="width: 10%;">Nama Grade</th>
+                    <th style="width: 8%;">In S4S</th>
+                    <th style="width: 8%;">In FJ</th>
+                    <th style="width: 8%;">In Moulding</th>
+                    <th style="width: 8%;">In Laminating</th>
+                    <th style="width: 8%;">In CCAkhir</th>
+                    <th style="width: 8%;">In WIP</th>
+                    <th style="width: 8%;">In Reproses</th>
+                    <th style="width: 8%;">Output</th>
+                    <th style="width: 8%;">Out Reproses</th>
                 </tr>
             </thead>
             <tbody>
@@ -236,20 +236,22 @@
     @endforeach
 
     @if ($groups !== [])
-        <div style="margin-top: 10px;">
-            <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
-            <ul style="margin: 0; padding-left: 18px;">
-                <li>In S4S : <strong>{{ $fmt($grandTotals['InS4S']) }}</strong></li>
-                <li>In FJ : <strong>{{ $fmt($grandTotals['InFJ']) }}</strong></li>
-                <li>In Moulding : <strong>{{ $fmt($grandTotals['InMoulding']) }}</strong></li>
-                <li>In Laminating : <strong>{{ $fmt($grandTotals['InLaminating']) }}</strong></li>
-                <li>In CCAkhir : <strong>{{ $fmt($grandTotals['InCCAkhir']) }}</strong></li>
-                <li>In WIP : <strong>{{ $fmt($grandTotals['InWIP']) }}</strong></li>
-                <li>In Reproses : <strong>{{ $fmt($grandTotals['InReproses']) }}</strong></li>
-                <li>Output : <strong>{{ $fmt($grandTotals['Output']) }}</strong></li>
-                <li>Out Reproses : <strong>{{ $fmt($grandTotals['OutReproses']) }}</strong></li>
-            </ul>
-        </div>
+        <table style="margin-top: 6px;">
+            <tbody>
+                <tr class="totals-row">
+                    <td style="width:23%" class="center">Grand Total</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InS4S']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InFJ']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InMoulding']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InLaminating']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InCCAkhir']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InWIP']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['InReproses']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['Output']) }}</td>
+                    <td class="number" style="width: 8%">{{ $fmt($grandTotals['OutReproses']) }}</td>
+                </tr>
+            </tbody>
+        </table>
     @endif
 
     @include('reports.partials.pdf-footer-table')

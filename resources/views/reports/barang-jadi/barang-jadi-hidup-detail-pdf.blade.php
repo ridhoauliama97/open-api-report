@@ -143,7 +143,7 @@
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
         $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');
 
-        $generatedDate = \Carbon\Carbon::now()->format('d-M-y');
+        $generatedDate = \Carbon\Carbon::now()->locale('id')->translatedFormat('d-M-y');
     @endphp
 
     <h1 class="report-title">Laporan Barang Jadi (Hidup) Detail</h1>

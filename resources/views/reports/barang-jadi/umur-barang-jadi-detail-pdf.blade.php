@@ -156,7 +156,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Umur Barang Jadi Detail</h1>
-    <p class="report-subtitle">Per {{ $generatedDate }}</p>
+    <p class="report-subtitle"></p>
 
     <table>
         <thead>

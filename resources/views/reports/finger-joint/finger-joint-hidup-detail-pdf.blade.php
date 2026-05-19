@@ -185,8 +185,7 @@
                     <td class="center">{{ $fmtDim($row['Tebal'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Lebar'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
-                    <td class="number" style="text-align: center; font-weight: bold;">
-                        {{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
+                    <td class="number">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
                     <td class="number" style="font-weight: bold;">{{ $fmtM3($row['M3'] ?? null) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
@@ -198,8 +197,7 @@
 
             @if ($rows !== [] && is_array($totals))
                 <tr class="totals-row">
-                    <td colspan="8" class="center">Total </td>
-                    <td class="number" style="text-align: center;"> {{ $fmtInt($totals['JmlhBatang'] ?? null) }}</td>
+                    <td colspan="9" class="center">Total </td>
                     <td class="number">{{ $fmtM3($totals['M3'] ?? null) }}</td>
                     <td></td>
                 </tr>

@@ -8,32 +8,144 @@ use RuntimeException;
 class UmurSawnTimberDetailTonReportService
 {
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<int, array<string, mixed>>
      */
     public function fetch(array $parameters): array
     {
         $rows = $this->runProcedureQuery($parameters);
+        $eps = 0.0000001;
 
-        return array_map(function ($row): array {
+        $normalizedRows = array_map(function ($row) use ($eps): array {
             $item = (array) $row;
 
+            $jenis = trim((string) ($item['Jenis'] ?? ''));
+            $grade = trim((string) ($item['NamaGrade'] ?? ''));
+            $jenisDisplay = $jenis !== ''
+                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
+                : $grade;
+
+            $p1 = $this->toFloat($item['Period1'] ?? null);
+            $p2 = $this->toFloat($item['Period2'] ?? null);
+            $p3 = $this->toFloat($item['Period3'] ?? null);
+            $p4 = $this->toFloat($item['Period4'] ?? null);
+            $p5 = $this->toFloat($item['Period5'] ?? null);
+            $total = (float) ($p1 ?? 0.0)
+                + (float) ($p2 ?? 0.0)
+                + (float) ($p3 ?? 0.0)
+                + (float) ($p4 ?? 0.0)
+                + (float) ($p5 ?? 0.0);
+
             return [
-                'Jenis' => $item['Jenis'] ?? null,
+                'Jenis' => $jenisDisplay !== '' ? $jenisDisplay : null,
                 'Tebal' => $this->toFloat($item['Tebal'] ?? null),
                 'Lebar' => $this->toFloat($item['Lebar'] ?? null),
                 'Panjang' => $this->toFloat($item['Panjang'] ?? null),
-                'Period1' => $this->toFloat($item['Period1'] ?? null),
-                'Period2' => $this->toFloat($item['Period2'] ?? null),
-                'Period3' => $this->toFloat($item['Period3'] ?? null),
-                'Period4' => $this->toFloat($item['Period4'] ?? null),
-                'Period5' => $this->toFloat($item['Period5'] ?? null),
+                'Period1' => $p1,
+                'Period2' => $p2,
+                'Period3' => $p3,
+                'Period4' => $p4,
+                'Period5' => $p5,
+                'Total' => $total,
+                '_keep' => abs($total) > $eps && $jenisDisplay !== '',
             ];
         }, $rows);
+
+        $normalizedRows = $this->groupRowsByDisplayedProduct($normalizedRows, $eps);
+
+        $normalizedRows = array_values(array_filter($normalizedRows, static function (array $row): bool {
+            return ($row['_keep'] ?? false) === true;
+        }));
+        $normalizedRows = array_map(static function (array $row): array {
+            unset($row['_keep']);
+
+            return $row;
+        }, $normalizedRows);
+
+        usort($normalizedRows, function (array $a, array $b): int {
+            $aJenis = strtoupper(trim((string) ($a['Jenis'] ?? '')));
+            $bJenis = strtoupper(trim((string) ($b['Jenis'] ?? '')));
+
+            if ($aJenis !== $bJenis) {
+                return strcmp($aJenis, $bJenis);
+            }
+
+            $cmpNullableFloat = static function (?float $x, ?float $y): int {
+                if ($x === null && $y === null) {
+                    return 0;
+                }
+                if ($x === null) {
+                    return 1;
+                }
+                if ($y === null) {
+                    return -1;
+                }
+
+                return $x <=> $y;
+            };
+
+            $cmp = $cmpNullableFloat($a['Tebal'] ?? null, $b['Tebal'] ?? null);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+
+            $cmp = $cmpNullableFloat($a['Lebar'] ?? null, $b['Lebar'] ?? null);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+
+            return $cmpNullableFloat($a['Panjang'] ?? null, $b['Panjang'] ?? null);
+        });
+
+        return $normalizedRows;
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function groupRowsByDisplayedProduct(array $rows, float $eps): array
+    {
+        $groupedRows = [];
+
+        foreach ($rows as $row) {
+            $key = implode('|', [
+                strtoupper(trim((string) ($row['Jenis'] ?? ''))),
+                $this->dimensionKey($row['Tebal'] ?? null),
+                $this->dimensionKey($row['Lebar'] ?? null),
+                $this->dimensionKey($row['Panjang'] ?? null),
+            ]);
+
+            if (! isset($groupedRows[$key])) {
+                $groupedRows[$key] = $row;
+
+                continue;
+            }
+
+            foreach (['Period1', 'Period2', 'Period3', 'Period4', 'Period5'] as $column) {
+                $groupedRows[$key][$column] = (float) ($groupedRows[$key][$column] ?? 0.0)
+                    + (float) ($row[$column] ?? 0.0);
+            }
+
+            $groupedRows[$key]['Total'] = $this->sumNormalizedPeriods($groupedRows[$key]);
+            $groupedRows[$key]['_keep'] = trim((string) ($groupedRows[$key]['Jenis'] ?? '')) !== ''
+                && abs((float) ($groupedRows[$key]['Total'] ?? 0.0)) > $eps;
+        }
+
+        return array_values($groupedRows);
+    }
+
+    private function dimensionKey(mixed $value): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+
+        return sprintf('%.8F', (float) $value);
+    }
+
+    /**
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<string, mixed>
      */
     public function healthCheck(array $parameters): array
@@ -56,7 +168,7 @@ class UmurSawnTimberDetailTonReportService
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $parameters
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $parameters
      * @return array<int, object>
      */
     private function runProcedureQuery(array $parameters): array
@@ -67,7 +179,7 @@ class UmurSawnTimberDetailTonReportService
         $customQuery = config('reports.umur_sawn_timber_detail_ton.query');
         $parameterCount = (int) config('reports.umur_sawn_timber_detail_ton.parameter_count', 4);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan umur sawn timber detail (ton) belum dikonfigurasi.');
         }
 
@@ -85,7 +197,7 @@ class UmurSawnTimberDetailTonReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan umur sawn timber detail (ton) dikonfigurasi untuk SQL Server. '
-                . 'Set UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -94,13 +206,13 @@ class UmurSawnTimberDetailTonReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -137,13 +249,25 @@ class UmurSawnTimberDetailTonReportService
         return "CALL {$procedure}({$placeholders})";
     }
 
+    /**
+     * @param  array<string, mixed>  $item
+     */
+    private function sumNormalizedPeriods(array $item): float
+    {
+        return (float) ($item['Period1'] ?? 0.0)
+            + (float) ($item['Period2'] ?? 0.0)
+            + (float) ($item['Period3'] ?? 0.0)
+            + (float) ($item['Period4'] ?? 0.0)
+            + (float) ($item['Period5'] ?? 0.0);
+    }
+
     private function toFloat(mixed $value): ?float
     {
         if (is_numeric($value)) {
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

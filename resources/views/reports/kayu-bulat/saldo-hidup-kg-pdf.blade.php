@@ -227,7 +227,7 @@
             }
 
             try {
-                return \Illuminate\Support\Carbon::parse($raw)->format('d-M-y');
+                return \Illuminate\Support\Carbon::parse($raw)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable $e) {
                 return $raw;
             }
@@ -383,7 +383,7 @@
                                 </tr>
                             @endforeach
                             <tr class="totals-row">
-                                <td colspan="4" class="number" style="text-align:right;">Jumlah:</td>
+                                <td colspan="4" class="center">Total</td>
                                 <td class="number">{{ $fmtTon($kbSummary['total_berat']) }}</td>
                             </tr>
                         </tbody>

@@ -1268,7 +1268,7 @@ return [
         'parameter_count' => (int) env('UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_PARAMETER_COUNT', 4),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'UMUR_SAWN_TIMBER_DETAIL_TON_REPORT_EXPECTED_COLUMNS',
-            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5'
+            'Jenis,Tebal,Lebar,Panjang,Period1,Period2,Period3,Period4,Period5,Total'
         )))),
     ],
     'umur_s4s_detail' => [

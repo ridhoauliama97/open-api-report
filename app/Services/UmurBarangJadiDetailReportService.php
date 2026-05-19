@@ -18,7 +18,7 @@ class UmurBarangJadiDetailReportService
             $jenis = trim((string) ($item['Jenis'] ?? ''));
             $barangJadi = trim((string) ($item['NamaBarangJadi'] ?? ''));
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis . ($barangJadi !== '' ? ' - ' . $barangJadi : ''))
+                ? trim($jenis.($barangJadi !== '' ? ' - '.$barangJadi : ''))
                 : $barangJadi;
 
             $p1 = $this->toFloat($item['Period1'] ?? null) ?? 0.0;
@@ -26,7 +26,7 @@ class UmurBarangJadiDetailReportService
             $p3 = $this->toFloat($item['Period3'] ?? null) ?? 0.0;
             $p4 = $this->toFloat($item['Period4'] ?? null) ?? 0.0;
             $p5 = $this->toFloat($item['Period5'] ?? null) ?? 0.0;
-            $total = $this->toFloat($item['Total'] ?? null) ?? ($p1 + $p2 + $p3 + $p4 + $p5);
+            $total = $p1 + $p2 + $p3 + $p4 + $p5;
 
             return [
                 'Jenis' => $jenisDisplay !== '' ? $jenisDisplay : null,
@@ -43,32 +43,9 @@ class UmurBarangJadiDetailReportService
             ];
         }, $rows);
 
-        $grouped = [];
-        foreach ($normalizedRows as $row) {
-            $key = implode('|', [
-                strtoupper(trim((string) ($row['Jenis'] ?? ''))),
-                $row['Tebal'] === null ? '' : (string) $row['Tebal'],
-                $row['Lebar'] === null ? '' : (string) $row['Lebar'],
-                $row['Panjang'] === null ? '' : (string) $row['Panjang'],
-            ]);
+        $normalizedRows = $this->groupRowsByDisplayedProduct($normalizedRows);
 
-            if (!isset($grouped[$key])) {
-                $grouped[$key] = $row;
-                continue;
-            }
-
-            foreach (['Period1', 'Period2', 'Period3', 'Period4', 'Period5'] as $col) {
-                $grouped[$key][$col] = (float) ($grouped[$key][$col] ?? 0.0) + (float) ($row[$col] ?? 0.0);
-            }
-            $grouped[$key]['Total'] =
-                (float) ($grouped[$key]['Period1'] ?? 0.0)
-                + (float) ($grouped[$key]['Period2'] ?? 0.0)
-                + (float) ($grouped[$key]['Period3'] ?? 0.0)
-                + (float) ($grouped[$key]['Period4'] ?? 0.0)
-                + (float) ($grouped[$key]['Period5'] ?? 0.0);
-        }
-
-        $normalizedRows = array_values(array_filter(array_values($grouped), static function (array $row) use ($eps): bool {
+        $normalizedRows = array_values(array_filter($normalizedRows, static function (array $row) use ($eps): bool {
             return trim((string) ($row['Jenis'] ?? '')) !== ''
                 && ($row['_keep'] ?? false) === true
                 && abs((float) ($row['Total'] ?? 0.0)) > $eps;
@@ -76,6 +53,7 @@ class UmurBarangJadiDetailReportService
 
         $normalizedRows = array_map(static function (array $row): array {
             unset($row['_keep']);
+
             return $row;
         }, $normalizedRows);
 
@@ -101,10 +79,65 @@ class UmurBarangJadiDetailReportService
                     return $cmp;
                 }
             }
+
             return 0;
         });
 
         return $normalizedRows;
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function groupRowsByDisplayedProduct(array $rows): array
+    {
+        $groupedRows = [];
+
+        foreach ($rows as $row) {
+            $key = implode('|', [
+                strtoupper(trim((string) ($row['Jenis'] ?? ''))),
+                $this->dimensionKey($row['Tebal'] ?? null),
+                $this->dimensionKey($row['Lebar'] ?? null),
+                $this->dimensionKey($row['Panjang'] ?? null),
+            ]);
+
+            if (! isset($groupedRows[$key])) {
+                $groupedRows[$key] = $row;
+
+                continue;
+            }
+
+            foreach (['Period1', 'Period2', 'Period3', 'Period4', 'Period5'] as $column) {
+                $groupedRows[$key][$column] = (float) ($groupedRows[$key][$column] ?? 0.0)
+                    + (float) ($row[$column] ?? 0.0);
+            }
+
+            $groupedRows[$key]['Total'] = $this->sumNormalizedPeriods($groupedRows[$key]);
+        }
+
+        return array_values($groupedRows);
+    }
+
+    private function dimensionKey(mixed $value): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+
+        return sprintf('%.8F', (float) $value);
+    }
+
+    /**
+     * @param  array<string, mixed>  $item
+     */
+    private function sumNormalizedPeriods(array $item): float
+    {
+        return (float) ($item['Period1'] ?? 0.0)
+            + (float) ($item['Period2'] ?? 0.0)
+            + (float) ($item['Period3'] ?? 0.0)
+            + (float) ($item['Period4'] ?? 0.0)
+            + (float) ($item['Period5'] ?? 0.0);
     }
 
     public function healthCheck(array $parameters): array
@@ -132,7 +165,7 @@ class UmurBarangJadiDetailReportService
         $customQuery = config('reports.umur_barang_jadi_detail.query');
         $parameterCount = (int) config('reports.umur_barang_jadi_detail.parameter_count', 4);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan umur Barang Jadi belum dikonfigurasi.');
         }
 
@@ -153,16 +186,16 @@ class UmurBarangJadiDetailReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $sql = match ($syntax) {
-            'exec' => $safeParameterCount > 0 ? "EXEC {$procedure} " . implode(', ', array_fill(0, $safeParameterCount, '?')) : "EXEC {$procedure}",
-            'call' => $safeParameterCount > 0 ? "CALL {$procedure}(" . implode(', ', array_fill(0, $safeParameterCount, '?')) . ")" : "CALL {$procedure}()",
+            'exec' => $safeParameterCount > 0 ? "EXEC {$procedure} ".implode(', ', array_fill(0, $safeParameterCount, '?')) : "EXEC {$procedure}",
+            'call' => $safeParameterCount > 0 ? "CALL {$procedure}(".implode(', ', array_fill(0, $safeParameterCount, '?')).')' : "CALL {$procedure}()",
             default => $driver === 'sqlsrv'
-                ? ($safeParameterCount > 0 ? "EXEC {$procedure} " . implode(', ', array_fill(0, $safeParameterCount, '?')) : "EXEC {$procedure}")
-                : ($safeParameterCount > 0 ? "CALL {$procedure}(" . implode(', ', array_fill(0, $safeParameterCount, '?')) . ")" : "CALL {$procedure}()"),
+                ? ($safeParameterCount > 0 ? "EXEC {$procedure} ".implode(', ', array_fill(0, $safeParameterCount, '?')) : "EXEC {$procedure}")
+                : ($safeParameterCount > 0 ? "CALL {$procedure}(".implode(', ', array_fill(0, $safeParameterCount, '?')).')' : "CALL {$procedure}()"),
         };
 
         return $connection->select($sql, $bindings);
@@ -173,10 +206,11 @@ class UmurBarangJadiDetailReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $normalized = trim(str_replace(',', '', $value));
+
         return $normalized !== '' && is_numeric($normalized) ? (float) $normalized : null;
     }
 }

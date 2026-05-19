@@ -167,7 +167,7 @@
                     <td class="center">{{ $fmtDim($row['Lebar'] ?? null) }}</td>
                     <td class="center">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
                     <td class="center">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
-                    <td class="number">{{ $fmtM3($row['M3'] ?? null) }}</td>
+                    <td class="number" style="font-weight: bold;">{{ $fmtM3($row['M3'] ?? null) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
             @empty

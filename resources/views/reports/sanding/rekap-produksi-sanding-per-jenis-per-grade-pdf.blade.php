@@ -217,7 +217,7 @@
         </table>
     @endforeach
 
-    @if ($groups !== [])
+    {{-- @if ($groups !== [])
         <div style="margin-top: 10px;">
             <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
             <ul style="margin: 0; padding-left: 18px;">
@@ -229,7 +229,7 @@
                 <li>Output : <strong>{{ $fmt($grandTotals['Output']) }}</strong></li>
             </ul>
         </div>
-    @endif
+    @endif --}}
 
     @include('reports.partials.pdf-footer-table')
 </body>

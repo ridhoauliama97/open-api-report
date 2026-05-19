@@ -152,7 +152,9 @@
         $start = \Carbon\Carbon::parse((string) ($startDate ?? ''))->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse((string) ($endDate ?? ''))->locale('id')->translatedFormat('d-M-y');
 
-        $fmtDateCell = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $fmtDateCell = static fn(string $v): string => $v === ''
+            ? ''
+            : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtPcs = static fn(float $v): string => abs($v) < 0.0000001 ? '' : number_format($v, 0, '.', ',');
         $fmtPct = static fn(float $v): string => abs($v) < 0.0000001 ? '' : number_format($v, 2, '.', '') . '%';
 

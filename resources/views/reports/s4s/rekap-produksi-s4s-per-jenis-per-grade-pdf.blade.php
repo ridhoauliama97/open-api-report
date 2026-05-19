@@ -131,8 +131,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -218,7 +216,7 @@
                     <tr class="{{ $cls }}">
                         <td class="center">{{ $i }}</td>
                         <td class="center">{{ (string) ($row['Jenis'] ?? '') }}</td>
-                        <td class="center">{{ (string) ($row['NamaGrade'] ?? '') }}</td>
+                        <td>{{ (string) ($row['NamaGrade'] ?? '') }}</td>
                         <td class="number">{{ $fmt($st) }}</td>
                         <td class="number">{{ $fmt($s4s) }}</td>
                         <td class="number">{{ $fmt($wip) }}</td>

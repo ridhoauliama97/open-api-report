@@ -184,11 +184,11 @@
         }
 
         $periodLabels = [
-            'Period1' => "<= {$umur1} hari",
-            'Period2' => $umur1 + 1 . " - {$umur2} hari",
-            'Period3' => $umur2 + 1 . " - {$umur3} hari",
-            'Period4' => $umur3 + 1 . " - {$umur4} hari",
-            'Period5' => "> {$umur4} hari",
+            'Period1' => "0 - {$umur1}",
+            'Period2' => $umur1 + 1 . " - {$umur2}",
+            'Period3' => $umur2 + 1 . " - {$umur3}",
+            'Period4' => $umur3 + 1 . " - {$umur4}",
+            'Period5' => "> {$umur4}",
         ];
     @endphp
 

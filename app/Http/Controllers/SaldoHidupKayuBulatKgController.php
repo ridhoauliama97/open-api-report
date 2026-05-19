@@ -109,8 +109,6 @@ class SaldoHidupKayuBulatKgController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
-
-            'pdf_column_count' => 11,
         ]);
 
         $filename = 'Laporan-Saldo-Hidup-Kayu-Bulat-Timbang-KG.pdf';
