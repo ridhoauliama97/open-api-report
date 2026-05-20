@@ -74,14 +74,9 @@
                         <thead class="table-light">
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                <th>Jenis Kelamin</th>
-                                <th>Usia</th>
-                                <th>Jabatan</th>
-                                <th>Lama Bekerja</th>
-                                <th>Keterangan</th>
-                                <th>Nama Tempat Ibadah</th>
-                                <th>Lemari</th>
+                                @foreach (($reportData['headers'] ?? []) as $header)
+                                    <th>{{ $header }}</th>
+                                @endforeach
                             </tr>
                         </thead>
                         <tbody>
@@ -89,19 +84,14 @@
                             @foreach (($reportData['grouped_rows'] ?? []) as $department => $departmentRows)
                                 @break($shownGroups >= 3)
                                 <tr class="table-secondary">
-                                    <td colspan="9" class="fw-bold text-center">{{ $department }}</td>
+                                    <td colspan="{{ count($reportData['headers'] ?? []) + 1 }}" class="fw-bold text-center">{{ $department }}</td>
                                 </tr>
                                 @foreach (array_slice($departmentRows, 0, 5) as $index => $row)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $row['name'] !== '' ? $row['name'] : '-' }}</td>
-                                        <td>{{ $row['gender'] !== '' ? $row['gender'] : '-' }}</td>
-                                        <td>{{ $row['age'] !== '' ? $row['age'] : '-' }}</td>
-                                        <td>{{ $row['job_title'] !== '' ? $row['job_title'] : '-' }}</td>
-                                        <td>{{ $row['working_period'] !== '' ? $row['working_period'] : '-' }}</td>
-                                        <td>{{ $row['remarks'] }}</td>
-                                        <td>{{ $row['place_of_worship'] }}</td>
-                                        <td>{{ $row['locker'] }}</td>
+                                        @foreach (($reportData['headers'] ?? []) as $header)
+                                            <td>{{ ($row[$header] ?? '') !== '' ? $row[$header] : '-' }}</td>
+                                        @endforeach
                                     </tr>
                                 @endforeach
                                 @php $shownGroups++; @endphp

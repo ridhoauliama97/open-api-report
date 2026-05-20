@@ -214,11 +214,11 @@
                 <th>ST Hasil Racip - ST Masuk KD (Ton)</th>
                 <th>ST Keluar KD (Ton)</th>
                 <th>ST Pakai di S4S (Ton)</th>
-                <th>WIP Bersih S4S (m<sup>3</sup>)</th>
-                <th>WIP Pakai di FJ (m<sup>3</sup>)</th>
-                <th>WIP Hasil FJ (m<sup>3</sup>)</th>
-                <th>WIP Pakai di Moulding (m<sup>3</sup>)</th>
-                <th>WIP hasil Moulding (m<sup>3</sup>)</th>
+                <th>WIP Bersih S4S (m3)</th>
+                <th>WIP Pakai di FJ (m3)</th>
+                <th>WIP Hasil FJ (m3)</th>
+                <th>WIP Pakai di Moulding (m3)</th>
+                <th>WIP hasil Moulding (m3)</th>
             </tr>
         </thead>
         <tbody>

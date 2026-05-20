@@ -232,15 +232,15 @@
                 </tr>
                 <tr class="headers-row">
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">m<sup>3</sup></th>
+                    <th style="width:72px;">m3</th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">m <sup>3</sup> </th>
+                    <th style="width:72px;">m3</th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">m<sup>3</sup></th>
+                    <th style="width:72px;">m3</th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">m<sup>3</sup></th>
+                    <th style="width:72px;">m3</th>
                     <th style="width:62px;">Pcs</th>
-                    <th style="width:72px;">m<sup>3</sup></th>
+                    <th style="width:72px;">m3</th>
                 </tr>
             </thead>
             <tbody>
@@ -303,19 +303,19 @@
             <div class="section-title">Rangkuman</div>
             <ul class="summary-list">
                 <li>Awal : <b>{{ $fmtPcs($grand['AwalPcs']) !== '' ? $fmtPcs($grand['AwalPcs']) : '-' }} </b> Pcs /
-                    <b>{{ $fmtM3($grand['AwalM3']) !== '' ? $fmtM3($grand['AwalM3']) : '-' }} m<sup>3</sup></b>
+                    <b>{{ $fmtM3($grand['AwalM3']) !== '' ? $fmtM3($grand['AwalM3']) : '-' }} m3</b>
                 </li>
                 <li>Masuk : <b>{{ $fmtPcs($grand['MasukPcs']) !== '' ? $fmtPcs($grand['MasukPcs']) : '-' }} </b> Pcs /
-                    <b>{{ $fmtM3($grand['MasukM3']) !== '' ? $fmtM3($grand['MasukM3']) : '-' }} m<sup>3</sup></b>
+                    <b>{{ $fmtM3($grand['MasukM3']) !== '' ? $fmtM3($grand['MasukM3']) : '-' }} m3</b>
                 </li>
                 <li>Minus : <b>{{ $fmtPcs($grand['MinusPcs']) !== '' ? $fmtPcs($grand['MinusPcs']) : '-' }} </b> Pcs /
-                    <b>{{ $fmtM3($grand['MinusM3']) !== '' ? $fmtM3($grand['MinusM3']) : '-' }} m<sup>3</sup></b>
+                    <b>{{ $fmtM3($grand['MinusM3']) !== '' ? $fmtM3($grand['MinusM3']) : '-' }} m3</b>
                 </li>
                 <li>Jual : <b>{{ $fmtPcs($grand['JualPcs']) !== '' ? $fmtPcs($grand['JualPcs']) : '-' }} </b> Pcs /
-                    <b>{{ $fmtM3($grand['JualM3']) !== '' ? $fmtM3($grand['JualM3']) : '-' }} m<sup>3</sup></b>
+                    <b>{{ $fmtM3($grand['JualM3']) !== '' ? $fmtM3($grand['JualM3']) : '-' }} m3</b>
                 </li>
                 <li>Akhir : <b>{{ $fmtPcs($grand['AkhirPcs']) !== '' ? $fmtPcs($grand['AkhirPcs']) : '-' }} </b> Pcs /
-                    <b>{{ $fmtM3($grand['AkhirM3']) !== '' ? $fmtM3($grand['AkhirM3']) : '-' }} m<sup>3</sup></b>
+                    <b>{{ $fmtM3($grand['AkhirM3']) !== '' ? $fmtM3($grand['AkhirM3']) : '-' }} m3</b>
                 </li>
             </ul>
         </div>

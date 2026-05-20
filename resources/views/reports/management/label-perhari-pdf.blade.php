@@ -169,7 +169,7 @@
         };
 
         $resolveWeightUnit = static function (?string $categoryName): string {
-            return str_contains(strtoupper(trim((string) $categoryName)), 'ST') ? 'Ton' : 'm<sup>3</sup>';
+            return str_contains(strtoupper(trim((string) $categoryName)), 'ST') ? 'Ton' : 'm3';
         };
 
         $fmtWeightWithUnit = static function ($value, ?string $categoryName) use (

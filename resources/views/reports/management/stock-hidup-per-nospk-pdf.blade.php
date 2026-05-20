@@ -284,7 +284,7 @@
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td>Grand Total (m<sup>3</sup>)</td>
+                    <td>Grand Total (m3)</td>
                     <td class="number">{{ $fmtTotal($summary['grand_total'] ?? null) }}</td>
                 </tr>
             </tbody>

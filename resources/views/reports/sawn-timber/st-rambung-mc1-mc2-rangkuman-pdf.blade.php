@@ -178,7 +178,7 @@
                 <th style="width: 55%">Jenis Stock</th>
                 <th style="width: 17%">Jumlah Batang (Pcs)</th>
                 <th style="width: 12%">Ton</th>
-                <th style="width: 12%">Kubik (m<sup>3</sup>)</th>
+                <th style="width: 12%">Kubik (m3)</th>
             </tr>
         </thead>
         <tbody>
@@ -207,7 +207,7 @@
                 <th style="width: 55%">Group Stock</th>
                 <th style="width: 17%">Jumlah Batang (Pcs)</th>
                 <th style="width: 12%">Ton</th>
-                <th style="width: 12%">Kubik (m<sup>3</sup>)</th>
+                <th style="width: 12%">Kubik (m3)</th>
             </tr>
         </thead>
         <tbody>

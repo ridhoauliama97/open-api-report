@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Ascends\Ru\Hrm;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
 use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use RuntimeException;
 
 class EmployeeListController extends Controller
@@ -22,13 +22,17 @@ class EmployeeListController extends Controller
     }
 
     public function download(
-        Request $request,
+        GenerateAscendsEmployeeListReportRequest $request,
         EmployeeListReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
         try {
-            $reportData = $reportService->buildReportData();
+            $reportData = $this->buildReportData($request, $reportService);
         } catch (RuntimeException $exception) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => $exception->getMessage()], 422);
+            }
+
             return back()
                 ->withErrors(['report' => $exception->getMessage()]);
         }
@@ -51,10 +55,12 @@ class EmployeeListController extends Controller
         ]);
     }
 
-    public function preview(EmployeeListReportService $reportService): JsonResponse
-    {
+    public function preview(
+        GenerateAscendsEmployeeListReportRequest $request,
+        EmployeeListReportService $reportService,
+    ): JsonResponse {
         try {
-            $reportData = $reportService->buildReportData();
+            $reportData = $this->buildReportData($request, $reportService);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -72,10 +78,12 @@ class EmployeeListController extends Controller
         ]);
     }
 
-    public function health(EmployeeListReportService $reportService): JsonResponse
-    {
+    public function health(
+        GenerateAscendsEmployeeListReportRequest $request,
+        EmployeeListReportService $reportService,
+    ): JsonResponse {
         try {
-            $reportData = $reportService->buildReportData();
+            $reportData = $this->buildReportData($request, $reportService);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -98,8 +106,30 @@ class EmployeeListController extends Controller
                 'header_count' => is_array($headers) ? count($headers) : 0,
                 'row_count' => is_array($rows) ? count($rows) : 0,
                 'department_count' => (int) ($summary['department_count'] ?? 0),
-                'has_gender_summary' => !empty($summary['gender_summary']),
+                'has_gender_summary' => ! empty($summary['gender_summary']),
             ],
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildReportData(
+        GenerateAscendsEmployeeListReportRequest $request,
+        EmployeeListReportService $reportService,
+    ): array {
+        $xmlPayload = $request->xmlPayload();
+        if ($xmlPayload !== null) {
+            return $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        }
+
+        if ($request->is('api/*')) {
+            throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+        }
+
+        return $reportService->buildReportData();
     }
 }

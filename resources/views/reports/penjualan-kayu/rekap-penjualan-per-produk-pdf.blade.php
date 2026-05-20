@@ -194,7 +194,7 @@
                     <th>Lebar</th>
                     <th>Panjang</th>
                     <th>Pcs</th>
-                    <th>m<sup>3</sup></th>
+                    <th>m3</th>
                     <th>Rasio (%)</th>
                     <th style="width: 10%;"></th>
                 </tr>

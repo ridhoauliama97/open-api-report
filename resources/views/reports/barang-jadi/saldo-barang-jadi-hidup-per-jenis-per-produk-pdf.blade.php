@@ -88,7 +88,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #fff;
             color: #000;
         }
@@ -249,8 +249,8 @@
                 <li>Total Pcs:
                     <strong>{{ number_format((int) ($summary['total_pcs'] ?? 0), 0, '.', ',') }} Pcs </strong>
                 </li>
-                <li>Total m<sup>3</sup> :
-                    <strong>{{ number_format((float) ($summary['total_m3'] ?? 0), 4, '.', ',') }} m<sup>3</sup>
+                <li>Total m3 :
+                    <strong>{{ number_format((float) ($summary['total_m3'] ?? 0), 4, '.', ',') }} m3
                     </strong>
                 </li>
             </ul>

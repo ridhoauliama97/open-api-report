@@ -357,7 +357,7 @@
         };
 
         $resolveTotalUnit = static function (string $groupName): string {
-            return preg_match('/\bst\b/i', $groupName) === 1 ? 'Ton' : 'm<sup>3</sup>';
+            return preg_match('/\bst\b/i', $groupName) === 1 ? 'Ton' : 'm3';
         };
 
     @endphp

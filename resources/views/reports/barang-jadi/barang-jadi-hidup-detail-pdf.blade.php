@@ -162,7 +162,7 @@
                 <th style="width: 58px;">Panjang</th>
                 <th style="width: 70px;">Jumlah Batang</th>
                 <th style="width: 54px;">Lokasi</th>
-                <th style="width: 56px;">m<sup>3</sup></th>
+                <th style="width: 56px;">m3</th>
             </tr>
         </thead>
         <tbody>

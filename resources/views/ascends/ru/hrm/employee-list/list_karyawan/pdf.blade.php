@@ -9,10 +9,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <style>
+        @page {
+            margin: 12mm 8mm 12mm 8mm;
+        }
+
         body {
             font-family: "Noto Serif", serif;
             font-size: 10px;
             color: #000000;
+        }
+
+        .report-header {
+            border-bottom: 2px solid #000000;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
         }
 
         .title {
@@ -20,37 +30,66 @@
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 2px;
+            text-transform: uppercase;
         }
 
         .period {
             text-align: center;
             font-size: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 6px;
             color: #636466;
+        }
+
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 9px;
+        }
+
+        .meta-table td {
+            border: 0;
+            padding: 1px 2px;
+        }
+
+        .meta-label {
+            width: 13%;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .meta-value {
+            width: 37%;
         }
 
         .detail-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: auto;
         }
 
         .detail-table th,
         .detail-table td {
             border: 1px solid #000000;
-            padding: 3px 4px;
+            padding: 3px 3px;
             vertical-align: middle;
+            word-wrap: break-word;
         }
 
         .detail-table th {
             text-align: center;
             font-weight: bold;
+            background: #d7deea;
+            font-size: 9px;
+            line-height: 1.15;
         }
 
         .group-row td {
             font-weight: bold;
-            text-align: center;
+            text-align: left;
             font-size: 11px;
-            padding: 5px 4px;
+            padding: 5px 6px;
+            background: #b9c4d6;
         }
 
         .center {
@@ -61,62 +100,93 @@
             white-space: nowrap;
         }
 
-        .row-odd td {
-            background: #c9d1df;
+        .text-muted {
+            color: #555555;
         }
 
-        .row-even td {
-            background: #eef2f8;
+        .row-odd td {
+            background: #f4f6fa;
+        }
+
+        .empty-value {
+            color: #666666;
+            font-style: italic;
         }
     </style>
 </head>
 
 <body>
     @php
+        $headers = $reportData['headers'] ?? [];
+        $columnCount = count($headers) + 1;
         $printedAt = \Carbon\Carbon::parse($reportData['printed_at'] ?? now())
             ->locale('id')
             ->translatedFormat('d-M-y');
+        $formatCell = static function (mixed $value): string {
+            $text = trim((string) $value);
+            if ($text === '') {
+                return '';
+            }
+
+            if (preg_match('/^\d{4}-\d{2}-\d{2}T/', $text) === 1) {
+                return \Carbon\Carbon::parse($text)->locale('id')->translatedFormat('d M Y');
+            }
+
+            return $text;
+        };
     @endphp
 
-    <div class="title">{{ $reportData['title'] }}</div>
-    <div class="period">Per : {{ $printedAt }}</div>
+    <div class="report-header">
+        <div class="title">{{ $reportData['title'] }}</div>
+        <div class="period">Per : {{ $printedAt }}</div>
+    </div>
+
+    <table class="meta-table">
+        <tr>
+            <td class="meta-label">Company</td>
+            <td class="meta-value">: {{ $reportData['company'] ?? 'RU' }}</td>
+            <td class="meta-label">Total Karyawan</td>
+            <td class="meta-value">: {{ number_format((int) ($reportData['total_rows'] ?? 0), 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Module</td>
+            <td class="meta-value">: {{ strtoupper($reportData['module'] ?? 'HRM') }}</td>
+            <td class="meta-label">Total Departemen</td>
+            <td class="meta-value">: {{ number_format((int) ($reportData['summary']['department_count'] ?? 0), 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Sumber XML</td>
+            <td class="meta-value text-muted" colspan="3">: {{ $reportData['source_file'] ?? '-' }}</td>
+        </tr>
+    </table>
 
     <table class="detail-table">
         <thead>
             <tr>
-                <th width="4%">No</th>
-                <th width="24%">Nama</th>
-                <th width="8%">Jenis<br>kelamin</th>
-                <th width="7%">Usia</th>
-                <th width="21%">Jabatan</th>
-                <th width="12%">Lama<br>Bekerja</th>
-                <th width="20%">Keterangan</th>
-                <th width="12%">Nama Tempat<br>Ibadah</th>
-                <th width="6%">Lemari</th>
+                <th>No</th>
+                @foreach ($headers as $header)
+                    <th>{{ $header }}</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
             @foreach ($reportData['grouped_rows'] ?? [] as $department => $departmentRows)
                 <tr class="group-row">
-                    <td colspan="9">{{ $department }}</td>
+                    <td colspan="{{ $columnCount }}">{{ $department }} ({{ count($departmentRows) }} karyawan)</td>
                 </tr>
                 @foreach ($departmentRows as $index => $row)
-                    <tr>
+                    <tr class="{{ $index % 2 === 0 ? '' : 'row-odd' }}">
                         <td class="center">{{ $index + 1 }}</td>
-                        <td>{{ $row['name'] !== '' ? $row['name'] : '-' }}</td>
-                        <td class="center">{{ $row['gender'] !== '' ? $row['gender'] : '-' }}</td>
-                        <td class="center nowrap">{{ $row['age'] !== '' ? $row['age'] : '-' }}</td>
-                        <td>{{ $row['job_title'] !== '' ? $row['job_title'] : '-' }}</td>
-                        <td class="center nowrap">{{ $row['working_period'] !== '' ? $row['working_period'] : '-' }}
-                        </td>
-                        <td>
-                            {{-- {{ $row['remarks'] }} --}}
-                        </td>
-                        <td>
-                            {{-- {{ $row['place_of_worship'] }} --}}
-
-                        </td>
-                        <td class="center">{{ $row['locker'] }}</td>
+                        @foreach ($headers as $header)
+                            @php $cellValue = $formatCell($row[$header] ?? ''); @endphp
+                            <td>
+                                @if ($cellValue !== '')
+                                    {{ $cellValue }}
+                                @else
+                                    <span class="empty-value">-</span>
+                                @endif
+                            </td>
+                        @endforeach
                     </tr>
                 @endforeach
             @endforeach
