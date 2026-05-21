@@ -46,7 +46,7 @@ class XmlDataSourceService
         $configKey = "xml_reports.{$company}.{$module}";
         $moduleConfig = config($configKey);
 
-        if (! is_array($moduleConfig)) {
+        if (!is_array($moduleConfig)) {
             throw new RuntimeException(
                 "Konfigurasi tidak ditemukan: config/xml_reports/{$company}/{$module}.php"
             );
@@ -54,7 +54,7 @@ class XmlDataSourceService
 
         // 2. Cari sub-report yang diminta
         $subReports = $moduleConfig['sub_reports'] ?? [];
-        if (! isset($subReports[$subReportKey]) || ! is_array($subReports[$subReportKey])) {
+        if (!isset($subReports[$subReportKey]) || !is_array($subReports[$subReportKey])) {
             $available = implode(', ', array_keys($subReports));
             throw new RuntimeException(
                 "Sub-report '{$subReportKey}' tidak ada di [{$company}/{$module}]. Tersedia: {$available}"
@@ -138,7 +138,7 @@ class XmlDataSourceService
     public function availableModules(string $company): array
     {
         $config = config("xml_reports.{$company}");
-        if (! is_array($config)) {
+        if (!is_array($config)) {
             return [];
         }
 
@@ -153,7 +153,7 @@ class XmlDataSourceService
     public function availableSubReports(string $company, string $module): array
     {
         $moduleConfig = config("xml_reports.{$company}.{$module}");
-        if (! is_array($moduleConfig)) {
+        if (!is_array($moduleConfig)) {
             return [];
         }
 
@@ -192,15 +192,15 @@ class XmlDataSourceService
     public function load(string $relativePath): array
     {
         $relativePath = $this->normalizePath($relativePath);
-        $fullPath = $this->baseFolder.'/'.$relativePath;
+        $fullPath = $this->baseFolder . '/' . $relativePath;
 
-        if (! $this->fileExists($fullPath)) {
+        if (!$this->fileExists($fullPath)) {
             throw new RuntimeException("File XML tidak ditemukan: {$relativePath}");
         }
 
         $contents = $this->readContents($fullPath);
 
-        if (! is_string($contents) || trim($contents) === '') {
+        if (!is_string($contents) || trim($contents) === '') {
             throw new RuntimeException("File XML kosong atau tidak dapat dibaca: {$relativePath}");
         }
 
@@ -217,10 +217,10 @@ class XmlDataSourceService
     {
         $data = $this->load($relativePath);
         $missing = array_values(
-            array_filter($requiredFields, static fn (string $f): bool => ! array_key_exists($f, $data))
+            array_filter($requiredFields, static fn(string $f): bool => !array_key_exists($f, $data))
         );
 
-        if (! empty($missing)) {
+        if (!empty($missing)) {
             throw new RuntimeException(sprintf(
                 'File XML "%s" tidak memiliki field: %s',
                 $relativePath,
@@ -251,7 +251,7 @@ class XmlDataSourceService
         $carbon = $this->resolveDate($date);
         $resolvedPath = $this->resolveDatePath($subFolder, $reportType, $carbon, $dateFormat);
 
-        return ! empty($requiredFields)
+        return !empty($requiredFields)
             ? $this->loadAndValidate($resolvedPath, $requiredFields)
             : $this->load($resolvedPath);
     }
@@ -297,10 +297,10 @@ class XmlDataSourceService
     public function loadLatest(string $subFolder, string $reportType): array
     {
         $allFiles = $this->list($subFolder);
-        $prefix = $reportType.'_';
+        $prefix = $reportType . '_';
         $matching = array_values(array_filter(
             $allFiles,
-            static fn (string $p): bool => str_contains(basename($p), $prefix)
+            static fn(string $p): bool => str_contains(basename($p), $prefix)
         ));
 
         if (empty($matching)) {
@@ -322,7 +322,7 @@ class XmlDataSourceService
     {
         $relativePath = $this->normalizePath($relativePath);
 
-        return $this->fileExists($this->baseFolder.'/'.$relativePath);
+        return $this->fileExists($this->baseFolder . '/' . $relativePath);
     }
 
     /**
@@ -330,16 +330,16 @@ class XmlDataSourceService
      */
     public function list(string $subFolder = ''): array
     {
-        $scanPath = $this->baseFolder.($subFolder !== '' ? '/'.trim($subFolder, '/') : '');
+        $scanPath = $this->baseFolder . ($subFolder !== '' ? '/' . trim($subFolder, '/') : '');
         $files = Storage::disk($this->disk)->files($scanPath);
 
         if ($files === []) {
             $fallbackRoot = $this->fallbackStoragePath(trim($scanPath, '/'));
             if (is_dir($fallbackRoot)) {
-                $fallbackFiles = glob($fallbackRoot.DIRECTORY_SEPARATOR.'*.xml') ?: [];
+                $fallbackFiles = glob($fallbackRoot . DIRECTORY_SEPARATOR . '*.xml') ?: [];
                 $files = array_map(function (string $file): string {
                     $normalized = str_replace('\\', '/', $file);
-                    $storageRoot = str_replace('\\', '/', storage_path('app')).'/';
+                    $storageRoot = str_replace('\\', '/', storage_path('app')) . '/';
 
                     return str_starts_with($normalized, $storageRoot)
                         ? substr($normalized, strlen($storageRoot))
@@ -349,8 +349,8 @@ class XmlDataSourceService
         }
 
         return array_values(array_map(
-            fn (string $file): string => ltrim(substr($file, strlen($this->baseFolder)), '/'),
-            array_filter($files, static fn (string $f): bool => str_ends_with(strtolower($f), '.xml'))
+            fn(string $file): string => ltrim(substr($file, strlen($this->baseFolder)), '/'),
+            array_filter($files, static fn(string $f): bool => str_ends_with(strtolower($f), '.xml'))
         ));
     }
 
@@ -360,7 +360,7 @@ class XmlDataSourceService
     public function meta(string $relativePath): array
     {
         $relativePath = $this->normalizePath($relativePath);
-        $fullPath = $this->baseFolder.'/'.$relativePath;
+        $fullPath = $this->baseFolder . '/' . $relativePath;
 
         if ($this->fileExistsOnDisk($fullPath)) {
             return [
@@ -387,7 +387,7 @@ class XmlDataSourceService
     {
         return (string) preg_replace_callback(
             '/_x([0-9A-Fa-f]{4})_/',
-            static fn (array $m): string => mb_chr((int) hexdec($m[1]), 'UTF-8') ?: '_',
+            static fn(array $m): string => mb_chr((int) hexdec($m[1]), 'UTF-8') ?: '_',
             $xmlFieldName
         );
     }
@@ -402,14 +402,14 @@ class XmlDataSourceService
     private function loadRecordsFromXml(string $relativePath, string $recordTag): array
     {
         $relativePath = $this->normalizePath($relativePath);
-        $fullPath = $this->baseFolder.'/'.$relativePath;
+        $fullPath = $this->baseFolder . '/' . $relativePath;
 
-        if (! $this->fileExists($fullPath)) {
+        if (!$this->fileExists($fullPath)) {
             throw new RuntimeException("File XML sumber tidak ditemukan: {$relativePath}");
         }
 
         $contents = $this->readContents($fullPath);
-        if (! is_string($contents) || trim($contents) === '') {
+        if (!is_string($contents) || trim($contents) === '') {
             throw new RuntimeException("File XML kosong: {$relativePath}");
         }
 
@@ -459,7 +459,7 @@ class XmlDataSourceService
         $configKey = "xml_reports.{$company}.{$module}";
         $moduleConfig = config($configKey);
 
-        if (! is_array($moduleConfig)) {
+        if (!is_array($moduleConfig)) {
             throw new RuntimeException(
                 "Konfigurasi tidak ditemukan: config/xml_reports/{$company}/{$module}.php"
             );
@@ -475,7 +475,7 @@ class XmlDataSourceService
     private function resolveSubReportConfig(array $moduleConfig, string $company, string $module, string $subReportKey): array
     {
         $subReports = $moduleConfig['sub_reports'] ?? [];
-        if (! isset($subReports[$subReportKey]) || ! is_array($subReports[$subReportKey])) {
+        if (!isset($subReports[$subReportKey]) || !is_array($subReports[$subReportKey])) {
             $available = implode(', ', array_keys($subReports));
             throw new RuntimeException(
                 "Sub-report '{$subReportKey}' tidak ada di [{$company}/{$module}]. Tersedia: {$available}"
@@ -542,7 +542,7 @@ class XmlDataSourceService
         }
 
         $fallbackPath = $this->fallbackStoragePath($fullPath);
-        if (! is_file($fallbackPath)) {
+        if (!is_file($fallbackPath)) {
             return null;
         }
 
@@ -553,7 +553,7 @@ class XmlDataSourceService
 
     private function fallbackStoragePath(string $fullPath): string
     {
-        return storage_path('app/'.ltrim(str_replace('\\', '/', $fullPath), '/'));
+        return storage_path('app/' . ltrim(str_replace('\\', '/', $fullPath), '/'));
     }
 
     // =========================================================================
@@ -580,7 +580,7 @@ class XmlDataSourceService
 
     private function resolveDatePath(string $subFolder, string $reportType, Carbon $date, string $dateFormat): string
     {
-        return trim($subFolder, '/').'/'.trim($reportType, '_').'_'.$date->format($dateFormat).'.xml';
+        return trim($subFolder, '/') . '/' . trim($reportType, '_') . '_' . $date->format($dateFormat) . '.xml';
     }
 
     /**
@@ -598,7 +598,7 @@ class XmlDataSourceService
         if ($element === false) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            $messages = array_map(static fn (\LibXMLError $e): string => trim($e->message), $errors);
+            $messages = array_map(static fn(\LibXMLError $e): string => trim($e->message), $errors);
             throw new RuntimeException(sprintf(
                 'XML tidak valid%s: %s',
                 $context !== '' ? " ({$context})" : '',
@@ -619,7 +619,7 @@ class XmlDataSourceService
         $result = [];
 
         foreach ($element->attributes() as $attrName => $attrValue) {
-            $result['@'.$attrName] = (string) $attrValue;
+            $result['@' . $attrName] = (string) $attrValue;
         }
 
         /** @var SimpleXMLElement $child */
@@ -630,7 +630,7 @@ class XmlDataSourceService
                 $childArray = (string) $child;
             }
 
-            if (! isset($result[$childName])) {
+            if (!isset($result[$childName])) {
                 $result[$childName] = $childArray;
             } elseif (is_array($result[$childName]) && isset($result[$childName][0])) {
                 $result[$childName][] = $childArray;

@@ -43,7 +43,7 @@ class EmployeeListController extends Controller
             'rows' => $reportData['rows'] ?? [],
             'generatedAt' => now(),
             'pdf_format' => 'A4',
-            'pdf_simple_tables' => true,
+            'pdf_simple_tables' => false,
             'pdf_column_count' => count($reportData['headers'] ?? []),
         ]);
 
@@ -106,7 +106,7 @@ class EmployeeListController extends Controller
                 'header_count' => is_array($headers) ? count($headers) : 0,
                 'row_count' => is_array($rows) ? count($rows) : 0,
                 'department_count' => (int) ($summary['department_count'] ?? 0),
-                'has_gender_summary' => ! empty($summary['gender_summary']),
+                'has_gender_summary' => !empty($summary['gender_summary']),
             ],
         ]);
     }

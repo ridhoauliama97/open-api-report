@@ -65,7 +65,7 @@ class HasilProduksiMesinLemburDanNonLemburReportService
                 continue;
             }
 
-            if (!isset($machineMap[$machineName])) {
+            if (! isset($machineMap[$machineName])) {
                 $machineMap[$machineName] = [
                     'name' => $machineName,
                     'rows' => [],
@@ -114,7 +114,7 @@ class HasilProduksiMesinLemburDanNonLemburReportService
         }
 
         foreach ($machineMap as $machineName => $machine) {
-            if (!in_array($machineName, self::MACHINE_ORDER, true)) {
+            if (! in_array($machineName, self::MACHINE_ORDER, true)) {
                 $orderedMachines[] = $machine;
             }
         }
@@ -192,7 +192,7 @@ class HasilProduksiMesinLemburDanNonLemburReportService
         foreach ($flatRows as $row) {
             $tanggal = (string) ($row['Tanggal'] ?? '');
 
-            if (!isset($groupedRows[$tanggal])) {
+            if (! isset($groupedRows[$tanggal])) {
                 $groupedRows[$tanggal] = [
                     'Tanggal' => $tanggal,
                     'Hari' => (string) ($row['Hari'] ?? ''),
@@ -251,14 +251,14 @@ class HasilProduksiMesinLemburDanNonLemburReportService
             'SPWps_LapLemburPerMesin'
         );
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)
             ->select("EXEC {$procedure} ?, ?", [$startDate, $endDate]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     public function formatTanggalDisplay(string $tanggal, string $hari): string
@@ -279,7 +279,7 @@ class HasilProduksiMesinLemburDanNonLemburReportService
 
         $hariLabel = $hariMap[$hari] ?? $hari;
 
-        return sprintf('%s, %s', $hariLabel, Carbon::parse($tanggal)->translatedFormat('d-M-y'));
+        return sprintf('%s, %s', $hariLabel, Carbon::parse($tanggal)->locale('id')->translatedFormat('d-M-y'));
     }
 
     private function nullableFloat(mixed $value): ?float
@@ -288,8 +288,8 @@ class HasilProduksiMesinLemburDanNonLemburReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array<int, string> $keys
+     * @param  array<string, mixed>  $row
+     * @param  array<int, string>  $keys
      */
     private function extractOptionalFloat(array $row, array $keys): ?float
     {

@@ -183,11 +183,11 @@
         };
 
         $isOutputBelowTarget = static function ($output, $target): bool {
-            return $output !== null
-                && $target !== null
-                && is_numeric($output)
-                && is_numeric($target)
-                && (float) $output < (float) $target;
+            return $output !== null &&
+                $target !== null &&
+                is_numeric($output) &&
+                is_numeric($target) &&
+                (float) $output < (float) $target;
         };
     @endphp
 

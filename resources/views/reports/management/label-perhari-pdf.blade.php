@@ -134,6 +134,12 @@
             background: #fff !important;
         }
 
+        .chunk-page-break {
+            page-break-before: always;
+            height: 0;
+            line-height: 0;
+        }
+
         @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
@@ -176,7 +182,7 @@
             $fmtNumber,
             $resolveWeightUnit,
         ): string {
-            $formatted = $fmtNumber($value);
+            $formatted = $fmtNumber($value, 4, true);
 
             if ($formatted === '') {
                 return '';
@@ -197,6 +203,9 @@
             {{ $category['no'] ?? '' }}. {{ $category['name'] ?? '-' }}
         </div>
         @foreach ($chunkRowsList as $chunkIndex => $chunkRows)
+            @if ($chunkIndex > 0)
+                <div class="chunk-page-break"></div>
+            @endif
             <table class="report-table">
                 <thead>
                     <tr>

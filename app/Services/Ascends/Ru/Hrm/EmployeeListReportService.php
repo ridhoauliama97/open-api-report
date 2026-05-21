@@ -8,7 +8,8 @@ class EmployeeListReportService
 {
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
