@@ -240,9 +240,6 @@
 
         if ($groupColumn !== null) {
             $groupedRows = collect($rowsData)
-                ->sortBy(static function (array $row) use ($groupColumn): string {
-                    return strtolower((string) ($row[$groupColumn] ?? 'Tanpa Group'));
-                })
                 ->groupBy(static function (array $row) use ($groupColumn): string {
                     $name = trim((string) ($row[$groupColumn] ?? ''));
 
@@ -285,7 +282,6 @@
             }
 
             $tableGroups = collect($tableGroups)
-                ->sortKeys()
                 ->map(
                     static fn(array $items, string $groupName): array => [
                         'name' => $groupName,
