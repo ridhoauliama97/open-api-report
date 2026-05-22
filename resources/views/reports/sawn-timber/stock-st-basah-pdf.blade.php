@@ -204,7 +204,7 @@
             text-align: center !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -304,7 +304,7 @@
                     $normalized = str_replace(',', '', $normalized);
                 }
             } elseif (str_contains($normalized, ',')) {
-                $normalized = str_replace(',', '.');
+                $normalized = str_replace(',', '.', $normalized);
             }
 
             return is_numeric($normalized) ? (float) $normalized : null;
@@ -615,20 +615,44 @@
                             @endif
                         </tr>
                     @endif
+                    @if ($isLastProdukInJenis)
+                        <tr class="subtotal-row totals-row">
+                            @if (is_int($pcsIndex) || is_int($tonIndex))
+                                @php
+                                    $firstSummaryIndex = collect([$pcsIndex, $tonIndex])
+                                        ->filter(static fn($index): bool => is_int($index))
+                                        ->min();
+                                    $firstSummaryIndex = is_int($firstSummaryIndex)
+                                        ? $firstSummaryIndex
+                                        : count($tableColumns);
+                                @endphp
+                                <td colspan="{{ $firstSummaryIndex + 1 }}" class="center" style="font-weight: bold">
+                                    Total {{ $jenisName }}
+                                </td>
+                                @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
+                                    @php $summaryColumn = $tableColumns[$idx]; @endphp
+                                    @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
+                                        <td class="number" style="font-weight: bold">
+                                            {{ number_format($jenisTotalPcs, 0, '.', ',') }}
+                                        </td>
+                                    @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
+                                        <td class="number" style="font-weight: bold">
+                                            {{ number_format($jenisTotalTon, 4, '.', ',') }}
+                                        </td>
+                                    @else
+                                        <td></td>
+                                    @endif
+                                @endfor
+                            @else
+                                <td colspan="{{ count($tableColumns) + 1 }}" class="center" style="font-weight: bold">
+                                    Total {{ $jenisName }}
+                                </td>
+                            @endif
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         @endforeach
-        <table class="jenis-summary">
-            <tbody>
-                <tr>
-                    <td class="left" style="font-weight: bold; width: 70%">
-                        Total {{ $jenisName }}
-                    </td>
-                    <td class="number">{{ number_format($jenisTotalPcs, 0, '.', ',') }}</td>
-                    <td class="number" style="text-align: left;">{{ number_format($jenisTotalTon, 4, '.', ',') }}</td>
-                </tr>
-            </tbody>
-        </table>
     @empty
         <table>
             <tbody>

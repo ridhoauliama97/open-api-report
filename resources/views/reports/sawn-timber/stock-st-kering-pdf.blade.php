@@ -490,6 +490,7 @@
                 $produkRows = $produkData['rows'] ?? [];
                 $subtotalPcs = (float) ($produkData['subtotal_pcs'] ?? 0.0);
                 $subtotalTon = (float) ($produkData['subtotal_ton'] ?? 0.0);
+                $isLastProdukInJenis = $loop->last;
             @endphp
             <p class="produk-title">{{ $produkName }}</p>
             <table class="report-table">
@@ -572,20 +573,45 @@
                             @endif
                         </tr>
                     @endif
+                    @if ($isLastProdukInJenis)
+                        <tr class="subtotal-row totals-row">
+                            @if (is_int($pcsIndex) || is_int($tonIndex))
+                                @php
+                                    $firstSummaryIndex = collect([$pcsIndex, $tonIndex])
+                                        ->filter(static fn($index): bool => is_int($index))
+                                        ->min();
+                                    $firstSummaryIndex = is_int($firstSummaryIndex)
+                                        ? $firstSummaryIndex
+                                        : count($tableColumns);
+                                @endphp
+                                <td colspan="{{ $firstSummaryIndex + 1 }}"
+                                    style="font-weight: bold; text-align: center;">
+                                    Total {{ $jenisName }}
+                                </td>
+                                @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
+                                    @php $summaryColumn = $tableColumns[$idx]; @endphp
+                                    @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
+                                        <td class="number" style="font-weight: bold">
+                                            {{ number_format($jenisTotalPcs, 0, '.', ',') }}
+                                        </td>
+                                    @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
+                                        <td class="number" style="font-weight: bold">
+                                            {{ number_format($jenisTotalTon, 4, '.', ',') }}
+                                        </td>
+                                    @else
+                                        <td></td>
+                                    @endif
+                                @endfor
+                            @else
+                                <td colspan="{{ count($tableColumns) + 1 }}" style="text-align: center">
+                                    Total {{ $jenisName }}
+                                </td>
+                            @endif
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         @endforeach
-        <table class="jenis-summary">
-            <tbody>
-                <tr>
-                    <td style="font-weight: bold; width: 100%; text-align: center;">
-                        Total {{ $jenisName }}
-                    </td>
-                    <td class="number">{{ number_format($jenisTotalPcs, 0, '.', ',') }}</td>
-                    <td class="number">{{ number_format($jenisTotalTon, 4, '.', ',') }}</td>
-                </tr>
-            </tbody>
-        </table>
     @empty
         <table>
             <tbody>

@@ -17,7 +17,7 @@ class RekapProduktivitasSawmillRpReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate, 'main');
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -27,7 +27,7 @@ class RekapProduktivitasSawmillRpReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate, 'sub');
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -40,7 +40,7 @@ class RekapProduktivitasSawmillRpReportService
         $subGroupTotalsByReceipt = $this->buildSubGroupTotals($subRows);
 
         $rows = $mainRows;
-        if (!$this->hasNonEmptyGrade($rows) && $this->hasNonEmptyGrade($subRows)) {
+        if (! $this->hasNonEmptyGrade($rows) && $this->hasNonEmptyGrade($subRows)) {
             $rows = $subRows;
         }
 
@@ -66,7 +66,9 @@ class RekapProduktivitasSawmillRpReportService
 
         $moneyColumns = $this->resolveMoneyColumns($columns);
         $hargaColumn = $this->resolveHargaColumn($columns);
-        $upahPerKg = $upahRacip ?? (float) config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 0.0);
+        $upahPerKg = $this->normalizeUpahRacipPerKg(
+            $upahRacip ?? (float) config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 0.0),
+        );
         $shouldCalcMoneyFromHarga =
             $moneyColumns['st'] === null
             && $moneyColumns['kb'] === null
@@ -90,9 +92,9 @@ class RekapProduktivitasSawmillRpReportService
                     $hasSlp = true;
                 }
             }
-            if ($hasBansaw && !$hasSlp) {
+            if ($hasBansaw && ! $hasSlp) {
                 $receiptGroupMap[$receiptKey] = 'bansaw';
-            } elseif ($hasSlp && !$hasBansaw) {
+            } elseif ($hasSlp && ! $hasBansaw) {
                 $receiptGroupMap[$receiptKey] = 'slp';
             } elseif ($hasBansaw && $hasSlp) {
                 $receiptGroupMap[$receiptKey] = 'mixed';
@@ -143,7 +145,7 @@ class RekapProduktivitasSawmillRpReportService
             $lastDateKey = $dateKey;
             $dateKey = $dateKey !== '' ? $dateKey : 'Tanpa Tanggal';
 
-            if (!isset($byDate[$dateKey])) {
+            if (! isset($byDate[$dateKey])) {
                 $byDate[$dateKey] = [
                     'date_key' => $dateKey,
                     'date_label' => $this->formatDateLabel($dateKey),
@@ -152,7 +154,7 @@ class RekapProduktivitasSawmillRpReportService
             }
 
             $receiptKey = $this->resolveReceiptKey($row, $noPenColumn, $noKbColumn, $supplierColumn, $noTrukColumn);
-            if (!isset($byDate[$dateKey]['receipts'][$receiptKey])) {
+            if (! isset($byDate[$dateKey]['receipts'][$receiptKey])) {
                 $byDate[$dateKey]['receipts'][$receiptKey] = [
                     'receipt_key' => $receiptKey,
                     'meta' => $this->buildReceiptMeta(
@@ -273,17 +275,16 @@ class RekapProduktivitasSawmillRpReportService
             $isMoneySummaryRow =
                 $rawGradeEmpty
                 && (
-                        // Baris tanpa tonnage sama sekali: baris costing murni
+                    // Baris tanpa tonnage sama sekali: baris costing murni
                     (abs($kb) < self::EPS && abs($st) < self::EPS && abs($percent) < self::EPS)
                     // Baris "Jumlah/Total" dengan tonnage: SP mengembalikan baris ringkasan
                     // yang berisi KB/ST total sekaligus nilai Rp. Kita kenali dari adanya
                     // nilai Rp yang non-zero pada salah satu kolom uang.
                     || (
-                        !$shouldCalcMoneyFromHarga
+                        ! $shouldCalcMoneyFromHarga
                         && array_reduce(
                             array_filter(array_values($moneyColumns)),
-                            static fn(bool $carry, string $col): bool =>
-                            $carry || abs((float) ($row[$col] ?? 0.0)) > self::EPS,
+                            static fn (bool $carry, string $col): bool => $carry || abs((float) ($row[$col] ?? 0.0)) > self::EPS,
                             false,
                         )
                     )
@@ -312,13 +313,13 @@ class RekapProduktivitasSawmillRpReportService
                 'percent' => $percent,
             ];
 
-            if (!isset($lineIndexByReceipt[$dateKey])) {
+            if (! isset($lineIndexByReceipt[$dateKey])) {
                 $lineIndexByReceipt[$dateKey] = [];
             }
-            if (!isset($lineIndexByReceipt[$dateKey][$receiptKey])) {
+            if (! isset($lineIndexByReceipt[$dateKey][$receiptKey])) {
                 $lineIndexByReceipt[$dateKey][$receiptKey] = ['input' => [], 'output' => []];
             }
-            if (!isset($lineIndexByReceipt[$dateKey][$receiptKey][$kategori])) {
+            if (! isset($lineIndexByReceipt[$dateKey][$receiptKey][$kategori])) {
                 $lineIndexByReceipt[$dateKey][$receiptKey][$kategori] = [];
             }
 
@@ -343,7 +344,7 @@ class RekapProduktivitasSawmillRpReportService
             $grandKb += $kb;
             $grandSt += $st;
 
-            if (!isset($grandByGrade[$kategori][$gradeKey])) {
+            if (! isset($grandByGrade[$kategori][$gradeKey])) {
                 $grandByGrade[$kategori][$gradeKey] = [
                     'kategori' => $kategori,
                     'grade' => $grade,
@@ -357,7 +358,7 @@ class RekapProduktivitasSawmillRpReportService
             $grandByGrade[$kategori][$gradeKey]['st'] += $st;
 
             $receiptGroup = $receiptGroupMap[$receiptKey] ?? 'unknown';
-            if (!isset($grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey])) {
+            if (! isset($grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey])) {
                 $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey] = [
                     'kategori' => $kategori,
                     'grade' => $grade,
@@ -413,7 +414,7 @@ class RekapProduktivitasSawmillRpReportService
                 $grandMoney['hasil'] += $receipt['money']['hasil'];
 
                 $receiptGroup = $receiptGroupMap[$receiptKey] ?? 'unknown';
-                if (!isset($grandMoneyByGroup[$receiptGroup])) {
+                if (! isset($grandMoneyByGroup[$receiptGroup])) {
                     $grandMoneyByGroup[$receiptGroup] = ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0];
                 }
                 $grandMoneyByGroup[$receiptGroup]['st'] += $receipt['money']['st'];
@@ -430,12 +431,12 @@ class RekapProduktivitasSawmillRpReportService
         }
 
         $dateGroups = array_values($byDate);
-        usort($dateGroups, static fn(array $a, array $b): int => strcmp((string) $a['date_key'], (string) $b['date_key']));
+        usort($dateGroups, static fn (array $a, array $b): int => strcmp((string) $a['date_key'], (string) $b['date_key']));
 
         $grandInputRows = array_values($grandByGrade['input'] ?? []);
         $grandOutputRows = array_values($grandByGrade['output'] ?? []);
-        $grandKbTotal = array_sum(array_map(static fn(array $l): float => (float) ($l['kb'] ?? 0.0), $grandInputRows));
-        $grandStTotal = array_sum(array_map(static fn(array $l): float => (float) ($l['st'] ?? 0.0), $grandOutputRows));
+        $grandKbTotal = array_sum(array_map(static fn (array $l): float => (float) ($l['kb'] ?? 0.0), $grandInputRows));
+        $grandStTotal = array_sum(array_map(static fn (array $l): float => (float) ($l['st'] ?? 0.0), $grandOutputRows));
         $grandRendemen = $grandKbTotal > 0.0 ? (($grandStTotal / $grandKbTotal) * 100.0) : 0.0;
 
         $grandGroupInputRows = [];
@@ -445,8 +446,8 @@ class RekapProduktivitasSawmillRpReportService
             $groupInputRows = array_values($grandByGradeByGroup[$groupName]['input'] ?? []);
             $groupOutputRows = array_values($grandByGradeByGroup[$groupName]['output'] ?? []);
 
-            $groupKb = array_sum(array_map(static fn(array $l): float => (float) ($l['kb'] ?? 0.0), $groupInputRows));
-            $groupSt = array_sum(array_map(static fn(array $l): float => (float) ($l['st'] ?? 0.0), $groupOutputRows));
+            $groupKb = array_sum(array_map(static fn (array $l): float => (float) ($l['kb'] ?? 0.0), $groupInputRows));
+            $groupSt = array_sum(array_map(static fn (array $l): float => (float) ($l['st'] ?? 0.0), $groupOutputRows));
             $groupRendemen = $groupKb > 0.0 ? (($groupSt / $groupKb) * 100.0) : 0.0;
 
             foreach ($groupInputRows as $idx => $line) {
@@ -618,7 +619,7 @@ class RekapProduktivitasSawmillRpReportService
             'summary' => [
                 'total_rows' => count($rows),
                 'total_dates' => count($dateGroups),
-                'total_receipts' => array_sum(array_map(static fn(array $g): int => count($g['receipts'] ?? []), $dateGroups)),
+                'total_receipts' => array_sum(array_map(static fn (array $g): int => count($g['receipts'] ?? []), $dateGroups)),
                 'grand_kb' => $grandKb,
                 'grand_st' => $grandSt,
                 'grand_rendemen' => $grandKb > 0.0 ? (($grandSt / $grandKb) * 100.0) : 0.0,
@@ -683,7 +684,7 @@ class RekapProduktivitasSawmillRpReportService
             2,
         );
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(
                 $procedureType === 'sub'
                 ? 'Stored procedure sub laporan rekap produktivitas sawmill belum dikonfigurasi.'
@@ -704,7 +705,7 @@ class RekapProduktivitasSawmillRpReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap produktivitas sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -716,7 +717,7 @@ class RekapProduktivitasSawmillRpReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -915,7 +916,7 @@ class RekapProduktivitasSawmillRpReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -1065,7 +1066,7 @@ class RekapProduktivitasSawmillRpReportService
             $normalized = strtolower(str_replace([' ', '_', '-'], '', $column));
             if (
                 str_contains($normalized, 'rupiah')
-                || (str_contains($normalized, 'rp') && !str_contains($normalized, 'trp'))
+                || (str_contains($normalized, 'rp') && ! str_contains($normalized, 'trp'))
                 || str_contains($normalized, 'nominal')
                 || str_contains($normalized, 'nilai')
                 || str_contains($normalized, 'amount')
@@ -1322,6 +1323,15 @@ class RekapProduktivitasSawmillRpReportService
         return null;
     }
 
+    private function normalizeUpahRacipPerKg(float $upahRacip): float
+    {
+        if ($upahRacip >= 1000.0) {
+            return $upahRacip / 1000.0;
+        }
+
+        return $upahRacip;
+    }
+
     /**
      * @return array{st: ?string, kb: ?string, upah: ?string, hasil: ?string}
      */
@@ -1337,8 +1347,8 @@ class RekapProduktivitasSawmillRpReportService
     }
 
     /**
-     * @param array<int, string> $columns
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $columns
+     * @param  array<int, string>  $candidates
      */
     private function findColumnByCandidates(array $columns, array $candidates): ?string
     {
@@ -1364,11 +1374,11 @@ class RekapProduktivitasSawmillRpReportService
     }
 
     /**
-     * @param array{st: float, kb: float, upah: float, hasil: float} $money
-     * @param array{st: float, kb: float, upah: float, hasil: float} $detailMoney
-     * @param array{st: ?float, kb: ?float, upah: ?float, hasil: ?float} $summaryMoney
-     * @param array<string, mixed> $row
-     * @param array{st: ?string, kb: ?string, upah: ?string, hasil: ?string} $columns
+     * @param  array{st: float, kb: float, upah: float, hasil: float}  $money
+     * @param  array{st: float, kb: float, upah: float, hasil: float}  $detailMoney
+     * @param  array{st: ?float, kb: ?float, upah: ?float, hasil: ?float}  $summaryMoney
+     * @param  array<string, mixed>  $row
+     * @param  array{st: ?string, kb: ?string, upah: ?string, hasil: ?string}  $columns
      */
     private function applyMoneyFromRow(
         array &$money,
@@ -1380,7 +1390,7 @@ class RekapProduktivitasSawmillRpReportService
     ): void {
         foreach (['st', 'kb', 'upah', 'hasil'] as $key) {
             $col = $columns[$key] ?? null;
-            if (!is_string($col) || $col === '') {
+            if (! is_string($col) || $col === '') {
                 continue;
             }
             $val = $this->toFloat($row[$col] ?? null);
@@ -1390,6 +1400,7 @@ class RekapProduktivitasSawmillRpReportService
 
             if ($isSummaryRow) {
                 $summaryMoney[$key] = $val;
+
                 continue;
             }
 
@@ -1400,8 +1411,8 @@ class RekapProduktivitasSawmillRpReportService
     }
 
     /**
-     * @param array{st: float, kb: float, upah: float, hasil: float} $detailMoney
-     * @param array{st: ?float, kb: ?float, upah: ?float, hasil: ?float} $summaryMoney
+     * @param  array{st: float, kb: float, upah: float, hasil: float}  $detailMoney
+     * @param  array{st: ?float, kb: ?float, upah: ?float, hasil: ?float}  $summaryMoney
      * @return array{st: float, kb: float, upah: float, hasil: float}
      */
     private function resolveReceiptMoney(array $detailMoney, array $summaryMoney): array
@@ -1417,6 +1428,7 @@ class RekapProduktivitasSawmillRpReportService
             $summaryValue = $summaryMoney[$key] ?? null;
             if ($summaryValue !== null) {
                 $resolved[$key] = (float) $summaryValue;
+
                 continue;
             }
 
@@ -1478,11 +1490,11 @@ class RekapProduktivitasSawmillRpReportService
             }
 
             // Merge kb/st from separate InOut rows into a single line per label.
-            if (!isset($out[$key])) {
+            if (! isset($out[$key])) {
                 $out[$key] = [];
                 $groupTotals[$key] = [];
             }
-            if (!isset($out[$key][$label])) {
+            if (! isset($out[$key][$label])) {
                 $out[$key][$label] = [
                     'label' => $label,
                     'kb' => 0.0,
@@ -1507,7 +1519,7 @@ class RekapProduktivitasSawmillRpReportService
 
             // Track group totals
             if ($grup !== '') {
-                if (!isset($groupTotals[$key][$grup])) {
+                if (! isset($groupTotals[$key][$grup])) {
                     $groupTotals[$key][$grup] = ['kb' => 0.0, 'st' => 0.0];
                 }
                 $groupTotals[$key][$grup]['kb'] += $kb;
@@ -1570,11 +1582,11 @@ class RekapProduktivitasSawmillRpReportService
             $rawGroup = $groupCol !== null ? trim((string) ($row[$groupCol] ?? '')) : '';
             $groupName = strtolower($rawGroup);
 
-            if (!in_array($groupName, ['bansaw', 'slp'], true)) {
+            if (! in_array($groupName, ['bansaw', 'slp'], true)) {
                 continue;
             }
 
-            if (!isset($out[$receiptKey])) {
+            if (! isset($out[$receiptKey])) {
                 $out[$receiptKey] = [
                     'bansaw' => ['kb' => 0.0, 'st' => 0.0],
                     'slp' => ['kb' => 0.0, 'st' => 0.0],
@@ -1592,7 +1604,7 @@ class RekapProduktivitasSawmillRpReportService
     }
 
     /**
-     * @param array<string, array<string, array{kb: float, st: float}>> $groupTotalsByReceipt
+     * @param  array<string, array<string, array{kb: float, st: float}>>  $groupTotalsByReceipt
      * @return array{bansaw: array{kb_total: float, st_total: float, rendemen: float}, slp: array{kb_total: float, st_total: float, rendemen: float}}
      */
     private function aggregateSubGroupTotals(array $groupTotalsByReceipt): array

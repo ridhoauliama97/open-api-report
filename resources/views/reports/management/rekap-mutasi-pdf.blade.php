@@ -193,6 +193,16 @@
 
             return number_format((float) $value, $decimals, '.', ',');
         };
+
+        $formatHeaderLabel = static function (string $key, string $label): string {
+            return match ($key) {
+                'AdjustmentPlus' => 'Adjust<br>(+)',
+                'AdjustmentMinus' => 'Adjust<br>(-)',
+                'BongkarSusunPlus' => 'B. Susun<br>(+)',
+                'BongkarSusunMinus' => 'B. Susun<br>(-)',
+                default => e($label),
+            };
+        };
     @endphp
 
     <h1 class="report-title">Laporan Rekap Mutasi</h1>
@@ -215,7 +225,7 @@
                     @foreach ($columns as $key => $label)
                         <th
                             @if ($key === 'No') style="width: 42px;" @elseif ($key === 'Jenis') style="width: 180px;" @endif>
-                            {{ $label }}
+                            {!! $formatHeaderLabel((string) $key, (string) $label) !!}
                         </th>
                     @endforeach
                 </tr>
@@ -271,7 +281,7 @@
                         @foreach ($inputColumns as $key => $label)
                             <th
                                 @if ($key === 'No') style="width: 42px;" @elseif ($key === 'Jenis') style="width: 190px;" @endif>
-                                {{ $label }}
+                                {!! $formatHeaderLabel((string) $key, (string) $label) !!}
                             </th>
                         @endforeach
                     </tr>

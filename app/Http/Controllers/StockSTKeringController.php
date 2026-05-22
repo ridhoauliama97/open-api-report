@@ -203,6 +203,8 @@ class StockSTKeringController extends Controller
         }
 
         $timeoutSeconds = min(max((int) $request->integer('wait_timeout', 600), 30), 1800);
+        @set_time_limit($timeoutSeconds + 30);
+
         $deadline = microtime(true) + $timeoutSeconds;
 
         do {
