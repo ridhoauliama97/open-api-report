@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class RekapProduktivitasSawmillRpReportServiceTest extends TestCase
 {
-    public function test_upah_racip_accepts_per_kg_and_per_ton_values(): void
+    public function test_upah_racip_is_calculated_from_st_ton(): void
     {
         $service = new class extends RekapProduktivitasSawmillRpReportService
         {
@@ -43,14 +43,11 @@ class RekapProduktivitasSawmillRpReportServiceTest extends TestCase
             }
         };
 
-        $perKg = $service->buildReportData('2026-05-22', '2026-05-22', 450.0);
+        $smallRate = $service->buildReportData('2026-05-22', '2026-05-22', 450.0);
         $perTon = $service->buildReportData('2026-05-22', '2026-05-22', 450000.0);
 
-        $this->assertSame(
-            $perKg['grand_totals']['money']['upah'],
-            $perTon['grand_totals']['money']['upah'],
-        );
+        $this->assertSame(1125.0, $smallRate['grand_totals']['money']['upah']);
         $this->assertSame(1125000.0, $perTon['grand_totals']['money']['upah']);
-        $this->assertSame(450.0, $perTon['summary']['upah_racip']);
+        $this->assertSame(450000.0, $perTon['summary']['upah_racip']);
     }
 }

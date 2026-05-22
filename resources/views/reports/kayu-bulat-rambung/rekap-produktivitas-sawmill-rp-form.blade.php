@@ -55,7 +55,7 @@
                     <div class="col-md-6">
                         <label for="UpahRacip" class="form-label">Upah Racip</label>
                         <input type="number" step="0.01" min="0" id="UpahRacip" name="UpahRacip"
-                            class="form-control" value="{{ old('UpahRacip', old('upah_racip', config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 450))) }}">
+                            class="form-control" value="{{ old('UpahRacip', old('upah_racip', config('reports.rekap_produktivitas_sawmill_rp.upah_per_ton', 450000))) }}">
                     </div>
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">

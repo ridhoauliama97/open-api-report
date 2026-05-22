@@ -546,8 +546,11 @@ return [
         'sub_query' => env('REKAP_PRODUKTIVITAS_SAWMILL_RP_SUB_REPORT_QUERY'),
         'parameter_count' => (int) env('REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_PARAMETER_COUNT', 2),
         'sub_parameter_count' => (int) env('REKAP_PRODUKTIVITAS_SAWMILL_RP_SUB_REPORT_PARAMETER_COUNT', 2),
-        // If the SP doesn't return Upah (Rp), approximate: Upah = ST(Kg) * upah_per_kg.
-        'upah_per_kg' => (float) env('REKAP_PRODUKTIVITAS_SAWMILL_RP_UPAH_PER_KG', '450'),
+        // If the SP doesn't return Upah (Rp), approximate: Upah = ST(Ton) * upah_per_ton.
+        'upah_per_ton' => (float) env(
+            'REKAP_PRODUKTIVITAS_SAWMILL_RP_UPAH_PER_TON',
+            env('REKAP_PRODUKTIVITAS_SAWMILL_RP_UPAH_PER_KG', '450000')
+        ),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKTIVITAS_SAWMILL_RP_REPORT_EXPECTED_COLUMNS',
             'Tanggal,NamaGrade,InOut,Rp'

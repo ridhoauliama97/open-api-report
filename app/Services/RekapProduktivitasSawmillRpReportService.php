@@ -66,9 +66,7 @@ class RekapProduktivitasSawmillRpReportService
 
         $moneyColumns = $this->resolveMoneyColumns($columns);
         $hargaColumn = $this->resolveHargaColumn($columns);
-        $upahPerKg = $this->normalizeUpahRacipPerKg(
-            $upahRacip ?? (float) config('reports.rekap_produktivitas_sawmill_rp.upah_per_kg', 0.0),
-        );
+        $upahRacipPerTon = $upahRacip ?? (float) config('reports.rekap_produktivitas_sawmill_rp.upah_per_ton', 0.0);
         $shouldCalcMoneyFromHarga =
             $moneyColumns['st'] === null
             && $moneyColumns['kb'] === null
@@ -266,9 +264,9 @@ class RekapProduktivitasSawmillRpReportService
                     }
                 }
 
-                // Upah is based on produced ST (Kg), independent of grade price.
-                if ($upahPerKg > 0.0 && $kategori === 'output' && abs($st) > self::EPS) {
-                    $byDate[$dateKey]['receipts'][$receiptKey]['_money_detail']['upah'] += ($st * 1000.0) * $upahPerKg;
+                // Upah Racip is passed as Rp per ST ton.
+                if ($upahRacipPerTon > 0.0 && $kategori === 'output' && abs($st) > self::EPS) {
+                    $byDate[$dateKey]['receipts'][$receiptKey]['_money_detail']['upah'] += $st * $upahRacipPerTon;
                 }
             }
 
@@ -623,7 +621,7 @@ class RekapProduktivitasSawmillRpReportService
                 'grand_kb' => $grandKb,
                 'grand_st' => $grandSt,
                 'grand_rendemen' => $grandKb > 0.0 ? (($grandSt / $grandKb) * 100.0) : 0.0,
-                'upah_racip' => $upahPerKg,
+                'upah_racip' => $upahRacipPerTon,
             ],
         ];
     }
@@ -1321,15 +1319,6 @@ class RekapProduktivitasSawmillRpReportService
         }
 
         return null;
-    }
-
-    private function normalizeUpahRacipPerKg(float $upahRacip): float
-    {
-        if ($upahRacip >= 1000.0) {
-            return $upahRacip / 1000.0;
-        }
-
-        return $upahRacip;
     }
 
     /**
