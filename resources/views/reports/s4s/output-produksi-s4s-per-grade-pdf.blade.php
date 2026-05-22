@@ -300,11 +300,11 @@
                         $r = is_array($sr['row'] ?? null) ? $sr['row'] : [];
                         $cells = is_array($r['cells'] ?? null) ? $r['cells'] : [];
                     @endphp
-                    @if ($srIndex > 0)
+                    {{-- @if ($srIndex > 0)
                         <tr class="table-end-line">
                             <td colspan="{{ $colCount }}"></td>
                         </tr>
-                    @endif
+                    @endif --}}
                     <tr class="{{ $cls }} strong">
                         <td class="center">{{ $label }}</td>
                         @foreach ($jnsColumns as $group)

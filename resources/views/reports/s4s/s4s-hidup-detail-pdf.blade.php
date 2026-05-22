@@ -126,8 +126,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -146,7 +144,7 @@
                 return '';
             }
             try {
-                return \Carbon\Carbon::parse($t)->format('d-M-y');
+                return \Carbon\Carbon::parse($t)->locale('id')->translatedFormat('d-M-y');
             } catch (\Throwable) {
                 return $t;
             }
