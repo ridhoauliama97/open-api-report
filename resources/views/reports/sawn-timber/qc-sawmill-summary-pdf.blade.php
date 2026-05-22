@@ -3,6 +3,10 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -131,13 +135,13 @@
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
-        $formatDate = static function ($value, string $format = 'd M'): string {
+        $formatDate = static function ($value, string $format = 'd-M'): string {
             if ($value === null || trim((string) $value) === '') {
                 return '-';
             }
 
             try {
-                return \Carbon\Carbon::parse($value)->locale('en')->translatedFormat($format);
+                return \Carbon\Carbon::parse($value)->locale('id')->translatedFormat($format);
             } catch (\Throwable) {
                 return (string) $value;
             }
@@ -168,7 +172,7 @@
             <tr class="headers-row">
                 <th class="meja-column" rowspan="2"></th>
                 @foreach ($dateKeys as $dateKey)
-                    <th class="date-column">{{ $formatDate($dateKey, 'd M') }}</th>
+                    <th class="date-column">{{ $formatDate($dateKey, 'd-M') }}</th>
                 @endforeach
                 <th class="total-column">Total</th>
             </tr>

@@ -127,6 +127,7 @@
                 @php
                     $noSpk = trim((string) ($spkGroup['no_spk'] ?? ''));
                     $rows = is_array($spkGroup['rows'] ?? null) ? $spkGroup['rows'] : [];
+                    $isLastSpkInProduct = $loop->last;
 
                     $sumBasah = 0.0;
                     $sumKd = 0.0;
@@ -187,31 +188,18 @@
                             <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumKering) }}</td>
                             <td class="number" style="border-top: 0 !important;">{{ $fmtTon($sumTotal) }}</td>
                         </tr>
+                        @if ($isLastSpkInProduct)
+                            <tr class="totals-row">
+                                <td class="center" colspan="4">Total Grade {{ $productName }}</td>
+                                <td class="number">{{ number_format((float) $productSumBasah, 4, '.', ',') }}</td>
+                                <td class="number">{{ number_format((float) $productSumKd, 4, '.', ',') }}</td>
+                                <td class="number">{{ number_format((float) $productSumKering, 4, '.', ',') }}</td>
+                                <td class="number">{{ number_format((float) $productSumTotal, 4, '.', ',') }}</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             @endforeach
-
-            <table
-                style="width: 100%; margin:0 12px 10px 8px; font-weight: bold; border: 0;border-collapse: collapse; border-spacing: 0;">
-                <tbody>
-                    <tr class="totals-row" style="border: 0; border-collapse: collapse; border-spacing: 0;">
-                        <td colspan="4"
-                            style="text-align: left; border: 0; border-collapse: collapse; border-spacing: 0;">
-                            Total Grade {{ $productName }}
-                        </td>
-                        <td class="number" style="width: 13%; border: 0; border-collapse: collapse; border-spacing: 0;">
-                            {{ number_format((float) $productSumBasah, 4, '.', ',') }}</td>
-                        <td class="number"
-                            style="width: 13.28%; border: 0; border-collapse: collapse; border-spacing: 0;">
-                            {{ number_format((float) $productSumKd, 4, '.', ',') }}</td>
-                        <td class="number" style="width: 14%; border: 0; border-collapse: collapse; border-spacing: 0;">
-                            {{ number_format((float) $productSumKering, 4, '.', ',') }}</td>
-                        <td class="number"
-                            style="width: 14.35%; border: 0; border-collapse: collapse; border-spacing: 0;">
-                            {{ number_format((float) $productSumTotal, 4, '.', ',') }}</td>
-                    </tr>
-                </tbody>
-            </table>
             {{-- <table class="total-report-table" style="width: 100%; margin: 0 12px 10px 12px;">
                 <tbody>
                     <tr>
