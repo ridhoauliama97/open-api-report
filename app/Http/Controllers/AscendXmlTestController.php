@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
+use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
@@ -22,6 +23,7 @@ class AscendXmlTestController extends Controller
         EmployeeListReportService $reportService,
         KaryawanPerMasaKerjaReportService $karyawanPerMasaKerjaReportService,
         DataKaryawanStatusKerjaReportService $dataKaryawanStatusKerjaReportService,
+        DaftarKaryawanBerdasarkanAbjadReportService $daftarKaryawanBerdasarkanAbjadReportService,
         PdfGenerator $pdfGenerator,
     ) {
         try {
@@ -35,6 +37,7 @@ class AscendXmlTestController extends Controller
             $selectedReportService = match ($selectedReport) {
                 'karyawan_per_masa_kerja' => $karyawanPerMasaKerjaReportService,
                 'data_karyawan_status_kerja' => $dataKaryawanStatusKerjaReportService,
+                'daftar_karyawan_berdasarkan_abjad' => $daftarKaryawanBerdasarkanAbjadReportService,
                 default => $reportService,
             };
 
@@ -61,7 +64,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $reportDefinition['filename'] . '"',
+            'Content-Disposition' => 'inline; filename="'.$reportDefinition['filename'].'"',
         ]);
     }
 
@@ -170,6 +173,41 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiDaftarKaryawanBerdasarkanAbjadPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarKaryawanBerdasarkanAbjadReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf', [
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Laporan Daftar Karyawan (RU) - Berdasarkan Abjad.pdf"',
+        ]);
+    }
+
     /**
      * @return array{view: string, filename: string, orientation: string}
      */
@@ -184,6 +222,11 @@ class AscendXmlTestController extends Controller
             'data_karyawan_status_kerja' => [
                 'view' => 'ascends.ru.hrm.data_karyawan_status_kerja.pdf',
                 'filename' => 'Laporan Data Karyawan (RU) - Status Kerja.pdf',
+                'orientation' => 'portrait',
+            ],
+            'daftar_karyawan_berdasarkan_abjad' => [
+                'view' => 'ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf',
+                'filename' => 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad.pdf',
                 'orientation' => 'portrait',
             ],
             default => [

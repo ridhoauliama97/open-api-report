@@ -255,6 +255,11 @@ Route::post(
     [AscendXmlTestController::class, 'apiDataKaryawanStatusKerjaPdf']
 )->name('api.internal.ascends.ru.hrm.data-karyawan-status-kerja.pdf');
 
+Route::post(
+    '/internal/ascends/ru/hrm/daftar-karyawan-berdasarkan-abjad/pdf',
+    [AscendXmlTestController::class, 'apiDaftarKaryawanBerdasarkanAbjadPdf']
+)->name('api.internal.ascends.ru.hrm.daftar-karyawan-berdasarkan-abjad.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

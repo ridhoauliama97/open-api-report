@@ -102,6 +102,25 @@ return [
         ],
 
         // -----------------------------------------------------------------
+        // Laporan Daftar Karyawan Berdasarkan Abjad
+        // -----------------------------------------------------------------
+        'daftar_karyawan_berdasarkan_abjad' => [
+            'label' => "Laporan Daftar Karyawan (RU)\nBerdasarkan Abjad",
+            'columns' => [
+                'Employee_x0020_Code' => 'No ID',
+                'Full_x0020_Name' => 'Nama',
+                'Job_x0020_Title' => 'Posisi',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'HK Kode',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
         // Biodata Karyawan
         // -----------------------------------------------------------------
         'employee_biodata' => [

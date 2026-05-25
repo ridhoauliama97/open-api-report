@@ -12,6 +12,7 @@ Endpoint ini dipakai oleh Ascend custom print untuk mengirim XML hasil query/rep
 - List Karyawan RU: `POST http://192.168.10.100:5006/api/internal/ascends/ru/hrm/list-karyawan/pdf`
 - Laporan Karyawan Per Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf`
 - Laporan Data Karyawan (RU) - Status Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/ru/hrm/data-karyawan-status-kerja/pdf`
+- Laporan Daftar Karyawan (RU) - Berdasarkan Abjad: `POST http://192.168.10.100:5006/api/internal/ascends/ru/hrm/daftar-karyawan-berdasarkan-abjad/pdf`
 
 Input yang didukung:
 
@@ -29,6 +30,7 @@ Filename mengikuti laporan yang dipanggil, contoh:
 - `List-Karyawan-RU.pdf`
 - `Laporan Karyawan Per Masa Kerja (RU).pdf`
 - `Laporan Data Karyawan (RU) - Status Kerja.pdf`
+- `Laporan Daftar Karyawan (RU) - Berdasarkan Abjad.pdf`
 
 Response gagal:
 

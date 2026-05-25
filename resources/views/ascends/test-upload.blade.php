@@ -47,6 +47,9 @@
                                     <option value="data_karyawan_status_kerja" @selected(old('report_type') === 'data_karyawan_status_kerja')>
                                         Laporan Data Karyawan (RU) - Status Kerja
                                     </option>
+                                    <option value="daftar_karyawan_berdasarkan_abjad" @selected(old('report_type') === 'daftar_karyawan_berdasarkan_abjad')>
+                                        Laporan Daftar Karyawan (RU) - Berdasarkan Abjad
+                                    </option>
                                 </select>
                                 @error('report_type')
                                     <div class="invalid-feedback">{{ $message }}</div>

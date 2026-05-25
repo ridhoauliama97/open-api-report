@@ -18,7 +18,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'xml' => ['nullable', 'string'],
             'xml_file' => ['nullable', 'file', 'max:20480'],
             'preview_pdf' => ['nullable', 'boolean'],
-            'report_type' => ['nullable', 'in:list_karyawan,karyawan_per_masa_kerja,data_karyawan_status_kerja'],
+            'report_type' => ['nullable', 'in:list_karyawan,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad'],
         ];
     }
 
