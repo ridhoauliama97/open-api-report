@@ -171,7 +171,9 @@
         $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') : null;
         $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') : null;
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
-        $reportEndReference = isset($endDate) ? \Carbon\Carbon::parse($endDate) : $generatedAt->copy();
+        $reportEndReference = isset($endDate)
+            ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y')
+            : $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
 
         $normalize = static function (string $value): string {
             return strtolower(str_replace([' ', '_', '.'], '', trim($value)));

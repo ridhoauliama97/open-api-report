@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OpenApiController;
 use App\Http\Controllers\Api\PdfJobController;
 use App\Http\Controllers\Ascends\Ru\Hrm\EmployeeListController;
+use App\Http\Controllers\AscendXmlTestController;
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\BalokSudahSemprotController;
@@ -238,6 +239,21 @@ use App\Http\Controllers\UmurSawnTimberDetailTonController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
+
+Route::post(
+    '/internal/ascends/ru/hrm/list-karyawan/pdf',
+    [AscendXmlTestController::class, 'apiPdf']
+)->name('api.internal.ascends.ru.hrm.list-karyawan.pdf');
+
+Route::post(
+    '/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf',
+    [AscendXmlTestController::class, 'apiKaryawanPerMasaKerjaPdf']
+)->name('api.internal.ascends.ru.hrm.karyawan-per-masa-kerja.pdf');
+
+Route::post(
+    '/internal/ascends/ru/hrm/data-karyawan-status-kerja/pdf',
+    [AscendXmlTestController::class, 'apiDataKaryawanStatusKerjaPdf']
+)->name('api.internal.ascends.ru.hrm.data-karyawan-status-kerja.pdf');
 
 /**
  * Group route autentikasi API publik.

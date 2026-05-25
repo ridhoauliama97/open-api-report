@@ -75,7 +75,7 @@
         td {
             border: 0;
             border-left: 1px solid #000;
-            padding: 2px 3px;
+            padding: 1px 2px;
             vertical-align: middle;
         }
 
@@ -205,20 +205,20 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th>No</th>
-                <th>Group Kayu</th>
-                <th>Pembelian KB (Ton)</th>
-                <th>KB diRacip (Ton)</th>
-                <th>ST Hasil Racip (Ton)</th>
-                <th>ST Siap Vacuum Stick</th>
-                <th>ST Hasil Racip - ST Masuk KD (Ton)</th>
-                <th>ST Keluar KD (Ton)</th>
-                <th>ST Pakai di S4S (Ton)</th>
-                <th>WIP Bersih S4S (m3)</th>
-                <th>WIP Pakai di FJ (m3)</th>
-                <th>WIP Hasil FJ (m3)</th>
-                <th>WIP Pakai di Moulding (m3)</th>
-                <th>WIP hasil Moulding (m3)</th>
+                <th style="width: 3%;">No</th>
+                <th style="width: 7.46%;">Group Kayu</th>
+                <th style="width: 7.46%;">Pembelian KB<br>(Ton)</th>
+                <th style="width: 7.46%;">KB diRacip<br>(Ton)</th>
+                <th style="width: 7.46%;">ST Hasil Racip<br>(Ton)</th>
+                <th style="width: 7.46%;">ST Siap Vacuum Stick<br>(Ton)</th>
+                <th style="width: 7.46%;">ST Hasil Racip - <br> ST Masuk KD<br>(Ton)</th>
+                <th style="width: 7.46%;">ST Keluar KD<br>(Ton)</th>
+                <th style="width: 7.46%;">ST Pakai di S4S<br>(Ton)</th>
+                <th style="width: 7.46%;">WIP Bersih S4S<br>(m3)</th>
+                <th style="width: 7.46%;">WIP Pakai di FJ<br>(m3)</th>
+                <th style="width: 7.46%;">WIP Hasil FJ<br>(m3)</th>
+                <th style="width: 7.46%;">WIP Pakai di Moulding<br>(m3)</th>
+                <th style="width: 7.46%;">WIP hasil Moulding<br>(m3)</th>
             </tr>
         </thead>
         <tbody>
@@ -241,7 +241,7 @@
                 </tr>
             @endforeach
             <tr class="total-row">
-                <td colspan="2">Grand Total</td>
+                <td colspan="2" class="center">Total</td>
                 <td class="number">{{ $fmt($totals['KBTonBeli'] ?? null, true) }}</td>
                 <td class="number">{{ $fmt($totals['KBRacip'] ?? null, true) }}</td>
                 <td class="number">{{ $fmt($totals['STRacipan'] ?? null, true) }}</td>

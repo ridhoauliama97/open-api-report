@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
 use App\Services\PdfGenerator;
+use Illuminate\Http\UploadedFile;
 use Mockery;
 use Tests\TestCase;
 
@@ -48,7 +49,7 @@ XML;
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.employee-list.list_karyawan.pdf', Mockery::on(
+            ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['source_file'] ?? null) === 'request field: xml'
                     && ($data['reportData']['total_rows'] ?? null) === 1
             ))
@@ -83,6 +84,148 @@ XML;
             ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
     }
 
+    public function test_ascend_test_upload_form_can_render_uploaded_xml_as_pdf(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
+    }
+
+    public function test_internal_ascend_api_can_render_uploaded_xml_as_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/ru/hrm/list-karyawan/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
+    }
+
+    public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request raw xml body')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this
+            ->call(
+                'POST',
+                '/api/internal/ascends/ru/hrm/list-karyawan/pdf',
+                [],
+                [],
+                [],
+                [
+                    'CONTENT_TYPE' => 'application/xml',
+                    'HTTP_ACCEPT' => 'application/pdf',
+                ],
+                $xml
+            )
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
+    }
+
+    public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
+    {
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service->shouldNotReceive('buildReportData');
+        $service->shouldNotReceive('buildReportDataFromXml');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+
+        $this->postJson('/api/internal/ascends/ru/hrm/list-karyawan/pdf', [])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
+    }
+
+    public function test_employee_list_xml_parser_accepts_lowercase_ascend_record_tag(): void
+    {
+        $reportData = app(EmployeeListReportService::class)
+            ->buildReportDataFromXml($this->employeeListXml('employees'), 'test xml');
+
+        $this->assertSame(1, $reportData['total_rows']);
+        $this->assertSame([
+            'Nama',
+            'Jenis Kelamin',
+            'Usia',
+            'Jabatan',
+            'Lama Bekerja',
+            'Keterangan',
+            'Nama Tempat Ibadah',
+            'Lemari',
+        ], $reportData['headers']);
+        $this->assertSame('Budi Santoso', $reportData['rows'][0]['Nama'] ?? null);
+        $this->assertSame('Wanita', $reportData['rows'][0]['Jenis Kelamin'] ?? null);
+        $this->assertSame('30 Thn', $reportData['rows'][0]['Usia'] ?? null);
+        $this->assertSame('1 Thn 2 Bln', $reportData['rows'][0]['Lama Bekerja'] ?? null);
+        $this->assertSame('HRM', array_key_first($reportData['grouped_rows'] ?? []));
+    }
+
     /**
      * @return array<string, string>
      */
@@ -108,46 +251,68 @@ XML;
             'title' => 'List Karyawan RU',
             'source_file' => 'request field: xml',
             'headers' => [
-                'Kode Karyawan',
-                'Nama Lengkap',
-                'Nama Panggilan',
-                'JK',
-                'Departemen',
+                'Nama',
+                'Jenis Kelamin',
+                'Usia',
                 'Jabatan',
-                'Tgl Masuk',
-                'Status Kerja',
-                'Status Aktif',
+                'Lama Bekerja',
+                'Keterangan',
+                'Nama Tempat Ibadah',
+                'Lemari',
             ],
             'rows' => [[
-                'Kode Karyawan' => 'RU001',
-                'Nama Lengkap' => 'Budi Santoso',
-                'Nama Panggilan' => 'Budi',
-                'JK' => 'Male',
-                'Departemen' => 'HRM',
+                'Nama' => 'Budi Santoso',
+                'Jenis Kelamin' => 'Wanita',
+                'Usia' => '30 Thn',
                 'Jabatan' => 'Staff',
-                'Tgl Masuk' => '2026-05-20T00:00:00+07:00',
-                'Status Kerja' => 'Permanent',
-                'Status Aktif' => 'Active',
+                'Lama Bekerja' => '1 Thn 2 Bln',
+                'Keterangan' => '',
+                'Nama Tempat Ibadah' => '',
+                'Lemari' => '',
+                'Departemen' => 'HRM',
             ]],
             'grouped_rows' => [
                 'HRM' => [[
-                    'Kode Karyawan' => 'RU001',
-                    'Nama Lengkap' => 'Budi Santoso',
-                    'Nama Panggilan' => 'Budi',
-                    'JK' => 'Male',
-                    'Departemen' => 'HRM',
+                    'Nama' => 'Budi Santoso',
+                    'Jenis Kelamin' => 'Wanita',
+                    'Usia' => '30 Thn',
                     'Jabatan' => 'Staff',
-                    'Tgl Masuk' => '2026-05-20T00:00:00+07:00',
-                    'Status Kerja' => 'Permanent',
-                    'Status Aktif' => 'Active',
+                    'Lama Bekerja' => '1 Thn 2 Bln',
+                    'Keterangan' => '',
+                    'Nama Tempat Ibadah' => '',
+                    'Lemari' => '',
+                    'Departemen' => 'HRM',
                 ]],
             ],
             'total_rows' => 1,
             'summary' => [
                 'department_count' => 1,
-                'gender_summary' => ['Male' => 1],
+                'gender_summary' => ['Wanita' => 1],
                 'top_departments' => ['HRM' => 1],
             ],
         ];
+    }
+
+    private function employeeListXml(string $recordTag = 'Employees'): string
+    {
+        return <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<NewDataSet>
+    <{$recordTag}>
+        <Employee_x0020_Code>RU001</Employee_x0020_Code>
+        <Full_x0020_Name>Budi Santoso</Full_x0020_Name>
+        <Nick_x0020_Name>Budi</Nick_x0020_Name>
+        <Sex>Female</Sex>
+        <Department_x0020_Name>HRM</Department_x0020_Name>
+        <Age>30</Age>
+        <Job_x0020_Title>Staff</Job_x0020_Title>
+        <Join_x0020_Date>2026-05-20T00:00:00+07:00</Join_x0020_Date>
+        <Working_x0020_Years>1</Working_x0020_Years>
+        <Working_x0020_Months>2</Working_x0020_Months>
+        <Job_x0020_Status>Permanent</Job_x0020_Status>
+        <Active>Active</Active>
+    </{$recordTag}>
+</NewDataSet>
+XML;
     }
 }

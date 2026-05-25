@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Ascends\Ru\Hrm\EmployeeListController;
+use App\Http\Controllers\AscendXmlTestController;
 use App\Http\Controllers\BahanTerpakaiController;
 use App\Http\Controllers\BahanYangDihasilkanController;
 use App\Http\Controllers\BalokSudahSemprotController;
@@ -236,6 +237,9 @@ use App\Http\Controllers\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
+
+Route::get('/ascend-test', [AscendXmlTestController::class, 'index'])->name('ascend-test.index');
+Route::post('/ascend-test/pdf', [AscendXmlTestController::class, 'pdf'])->name('ascend-test.pdf');
 
 Route::prefix('reports/ascends/ru/hrm/employee-list/list-karyawan')
     ->name('reports.ascends.ru.hrm.employee-list.list-karyawan.')

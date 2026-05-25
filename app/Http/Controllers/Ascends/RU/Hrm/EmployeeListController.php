@@ -37,7 +37,7 @@ class EmployeeListController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('ascends.ru.hrm.employee-list.list_karyawan.pdf', [
+        $pdf = $pdfGenerator->render('ascends.ru.hrm.list_karyawan.pdf', [
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
             'rows' => $reportData['rows'] ?? [],
@@ -106,7 +106,7 @@ class EmployeeListController extends Controller
                 'header_count' => is_array($headers) ? count($headers) : 0,
                 'row_count' => is_array($rows) ? count($rows) : 0,
                 'department_count' => (int) ($summary['department_count'] ?? 0),
-                'has_gender_summary' => !empty($summary['gender_summary']),
+                'has_gender_summary' => ! empty($summary['gender_summary']),
             ],
         ]);
     }
