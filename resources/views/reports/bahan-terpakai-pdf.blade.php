@@ -84,7 +84,7 @@
 
         th {
             text-align: center;
-            font-weight: 700;
+            font-weight: bold;
             background: #ffffff;
             color: #000;
         }
@@ -108,7 +108,7 @@
         }
 
         .total-row td {
-            font-weight: 700;
+            font-weight: bold;
             background: #fff;
         }
 

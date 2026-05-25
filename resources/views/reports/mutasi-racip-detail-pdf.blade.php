@@ -248,7 +248,7 @@
                 <th rowspan="2" style="border-top: 1px solid #000;">Jenis</th>
                 <th rowspan="2" style="border-top: 1px solid #000;">Tebal (mm)</th>
                 <th rowspan="2" style="border-top: 1px solid #000;">Lebar (mm)</th>
-                <th rowspan="2" style="border-top: 1px solid #000;">Panjang (ft)</th>
+                <th rowspan="2" style="border-top: 1px solid #000;">Panjang<br>(ft)</th>
                 <th colspan="2" style="border-top: 1px solid #000;">Saldo Awal</th>
                 <th colspan="4" style="border-top: 1px solid #000;">Masuk</th>
                 <th colspan="4" style="border-top: 1px solid #000;">Keluar</th>

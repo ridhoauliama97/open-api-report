@@ -274,7 +274,7 @@
             if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $textValue) === 1) {
                 try {
                     if (str_contains($normalizedColumn, 'racip')) {
-                        return \Carbon\Carbon::parse($textValue)->format('d-M-y');
+                        return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
                     }
 
                     return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');

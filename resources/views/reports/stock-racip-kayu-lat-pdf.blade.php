@@ -91,13 +91,13 @@
 
         th {
             background: #fff;
-            font-weight: 700;
+            font-weight: bold;
             border-bottom: 1px solid #000;
         }
 
         .row-label {
             text-align: left;
-            font-weight: 700;
+            font-weight: bold;
             padding-left: 3px;
         }
 

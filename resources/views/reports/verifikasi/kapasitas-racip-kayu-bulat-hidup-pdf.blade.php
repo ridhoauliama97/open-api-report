@@ -186,8 +186,6 @@
         .section-block {
             margin-bottom: 22px;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 

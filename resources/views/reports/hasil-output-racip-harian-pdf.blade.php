@@ -124,6 +124,14 @@
             background: #fff;
         }
 
+        .empty-state {
+            text-align: center;
+            background: #c9d1df;
+            font-weight: bold;
+            font-style: italic;
+            border-bottom: 1px solid #000;
+        }
+
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
@@ -224,7 +232,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ $visibleColumnCount + 1 }}" class="center">Tidak ada data.</td>
+                    <td colspan="{{ $visibleColumnCount + 1 }}" class="empty-state">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

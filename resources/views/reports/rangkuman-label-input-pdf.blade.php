@@ -113,7 +113,7 @@
             background: #eef2f8;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
@@ -239,12 +239,11 @@
         $tableGroups = [];
 
         if ($groupColumn !== null) {
-            $groupedRows = collect($rowsData)
-                ->groupBy(static function (array $row) use ($groupColumn): string {
-                    $name = trim((string) ($row[$groupColumn] ?? ''));
+            $groupedRows = collect($rowsData)->groupBy(static function (array $row) use ($groupColumn): string {
+                $name = trim((string) ($row[$groupColumn] ?? ''));
 
-                    return $name !== '' ? $name : 'Tanpa Group';
-                });
+                return $name !== '' ? $name : 'Tanpa Group';
+            });
 
             foreach ($groupedRows as $groupName => $items) {
                 $tableGroups[] = [
