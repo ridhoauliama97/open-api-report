@@ -58,10 +58,20 @@
         th {
             text-align: center;
             font-weight: bold;
+            font-size: 11px;
         }
 
         .data-row td {
+            border-top: 0;
+            border-bottom: 0;
+        }
+
+        .row-odd td {
             background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
         }
 
         .empty-row td {
@@ -80,8 +90,15 @@
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
+        .dim {
+            text-align: center;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
         .total-row td {
             font-weight: bold;
+            font-size: 11px;
         }
 
         @include('reports.partials.pdf-footer-table-style');
@@ -100,6 +117,15 @@
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
         $fmtInt = static fn($value): string => number_format((int) ($value ?? 0), 0, ',', '.');
+        $fmtDim = static function ($value): string {
+            if ($value === null || $value === '') {
+                return '';
+            }
+
+            $number = (float) $value;
+
+            return rtrim(rtrim(number_format($number, 2, ',', '.'), '0'), ',');
+        };
     @endphp
 
     <h1 class="report-title">Laporan Total Bagus/Kulit Rambung</h1>
@@ -108,29 +134,35 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th style="width: 8%;">No</th>
-                <th style="width: 28%;">Jenis</th>
-                <th style="width: 28%;">Kategori</th>
-                <th style="width: 18%;">Bagus</th>
-                <th style="width: 18%;">Kulit</th>
+                <th style="width: 6%;">No</th>
+                <th style="width: 22%;">Jenis</th>
+                <th style="width: 20%;">Kategori</th>
+                <th style="width: 10%;">Tebal</th>
+                <th style="width: 10%;">Lebar</th>
+                <th style="width: 10%;">Panjang</th>
+                <th style="width: 11%;">Bagus</th>
+                <th style="width: 11%;">Kulit</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($rows as $index => $row)
-                <tr class="data-row">
+                <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $index + 1 }}</td>
                     <td>{{ $row['Jenis'] ?? '' }}</td>
                     <td>{{ $row['Kategori'] ?? '' }}</td>
+                    <td class="dim">{{ $fmtDim($row['Tebal'] ?? null) }}</td>
+                    <td class="dim">{{ $fmtDim($row['Lebar'] ?? null) }}</td>
+                    <td class="dim">{{ $fmtDim($row['Panjang'] ?? null) }}</td>
                     <td class="number">{{ $fmtInt($row['Bagus'] ?? 0) }}</td>
                     <td class="number">{{ $fmtInt($row['Kulit'] ?? 0) }}</td>
                 </tr>
             @empty
                 <tr class="empty-row">
-                    <td class="center" colspan="5">Tidak ada data.</td>
+                    <td class="center" colspan="8">Tidak ada data.</td>
                 </tr>
             @endforelse
             <tr class="total-row">
-                <td class="center" colspan="3">Total</td>
+                <td class="center" colspan="6">Total</td>
                 <td class="number">{{ $fmtInt($summary['total_bagus'] ?? 0) }}</td>
                 <td class="number">{{ $fmtInt($summary['total_kulit'] ?? 0) }}</td>
             </tr>

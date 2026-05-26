@@ -50,6 +50,27 @@
                                     <option value="daftar_karyawan_berdasarkan_abjad" @selected(old('report_type') === 'daftar_karyawan_berdasarkan_abjad')>
                                         Laporan Daftar Karyawan (RU) - Berdasarkan Abjad
                                     </option>
+                                    <option value="daftar_karyawan" @selected(old('report_type') === 'daftar_karyawan')>
+                                        Laporan Daftar Karyawan (RU)
+                                    </option>
+                                    <option value="karyawan_aktif_per_departemen" @selected(old('report_type') === 'karyawan_aktif_per_departemen')>
+                                        Laporan Karyawan Aktif Per Departemen (RU)
+                                    </option>
+                                    <option value="karyawan_per_agama" @selected(old('report_type') === 'karyawan_per_agama')>
+                                        Laporan Karyawan Per Agama (RU)
+                                    </option>
+                                    <option value="karyawan_per_etnis" @selected(old('report_type') === 'karyawan_per_etnis')>
+                                        Laporan Karyawan Per Etnis (RU)
+                                    </option>
+                                    <option value="karyawan_per_level" @selected(old('report_type') === 'karyawan_per_level')>
+                                        Laporan Karyawan Per Level (RU)
+                                    </option>
+                                    <option value="karyawan_per_umur" @selected(old('report_type') === 'karyawan_per_umur')>
+                                        Laporan Karyawan Per Umur (RU)
+                                    </option>
+                                    <option value="karyawan_per_departemen_per_jabatan" @selected(old('report_type') === 'karyawan_per_departemen_per_jabatan')>
+                                        Laporan Karyawan Per Departemen Per Jabatan (RU)
+                                    </option>
                                 </select>
                                 @error('report_type')
                                     <div class="invalid-feedback">{{ $message }}</div>

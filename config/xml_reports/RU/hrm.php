@@ -121,6 +121,179 @@ return [
         ],
 
         // -----------------------------------------------------------------
+        // Laporan Daftar Karyawan
+        // -----------------------------------------------------------------
+        'daftar_karyawan' => [
+            'label' => 'Laporan Daftar Karyawan (RU)',
+            'columns' => [
+                'Full_x0020_Name' => 'Nama',
+                'Job_x0020_Title' => 'Jabatan',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Tp',
+                'Level_x0020_Name' => 'Level',
+                'Marital_x0020_Status' => 'Tgn',
+                'Employee_x0020_Remarks' => 'Perusahaan Sebelumnya',
+                'Last_x0020_Academic_x0020_Level' => 'LastEdu',
+                'Join_x0020_Date' => 'Tgl Masuk',
+                'Department_x0020_Name' => 'Department',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Karyawan Aktif Per Departemen
+        // -----------------------------------------------------------------
+        'karyawan_aktif_per_departemen' => [
+            'label' => 'Laporan Karyawan Aktif Per Departemen (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Status',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Level_x0020_Name' => 'Level',
+                'Last_x0020_Academic_x0020_Level' => 'Strata Pend',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Department_x0020_Name' => 'Departemen',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Karyawan Per Agama
+        // -----------------------------------------------------------------
+        'karyawan_per_agama' => [
+            'label' => 'Laporan Karyawan Per Agama (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Age' => 'Umur',
+                'THR' => 'THR',
+                'Religion' => 'Agama',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Karyawan Per Etnis
+        // -----------------------------------------------------------------
+        'karyawan_per_etnis' => [
+            'label' => 'Laporan Karyawan Per Etnis (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'NIK',
+                'Full_x0020_Name' => 'Nama',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Age' => 'Umur',
+                'Religion' => 'Agama',
+                'Race' => 'Etnis',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Karyawan Per Level
+        // -----------------------------------------------------------------
+        'karyawan_per_level' => [
+            'label' => 'Laporan Karyawan Per Level (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Status',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Level_x0020_Name' => 'Level',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Karyawan Per Umur
+        // -----------------------------------------------------------------
+        'karyawan_per_umur' => [
+            'label' => 'Laporan Karyawan Per Umur (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Status',
+                'Age' => 'Umur',
+                'Working_x0020_Years' => 'Masa Kerja Tahun',
+                'Working_x0020_Months' => 'Masa Kerja Bulan',
+                'Working_x0020_Days' => 'Masa Kerja Hari',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Level_x0020_Name' => 'Level',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Karyawan Per Departemen Per Jabatan
+        // -----------------------------------------------------------------
+        'karyawan_per_departemen_per_jabatan' => [
+            'label' => 'Laporan Karyawan Per Departemen Per Jabatan (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Tipe',
+                'Level_x0020_Name' => 'Level',
+                'Last_x0020_Academic_x0020_Level' => 'Pendidikan Terakhir',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Workgroup' => 'Kelompok Kerja',
+                'Department_x0020_Name' => 'Departemen',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
         // Biodata Karyawan
         // -----------------------------------------------------------------
         'employee_biodata' => [

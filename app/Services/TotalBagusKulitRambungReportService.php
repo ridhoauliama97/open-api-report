@@ -19,8 +19,8 @@ class TotalBagusKulitRambungReportService
             'rows' => $rows,
             'summary' => [
                 'total_rows' => count($rows),
-                'total_bagus' => array_sum(array_map(static fn(array $row): int => (int) ($row['Bagus'] ?? 0), $rows)),
-                'total_kulit' => array_sum(array_map(static fn(array $row): int => (int) ($row['Kulit'] ?? 0), $rows)),
+                'total_bagus' => array_sum(array_map(static fn (array $row): int => (int) ($row['Bagus'] ?? 0), $rows)),
+                'total_kulit' => array_sum(array_map(static fn (array $row): int => (int) ($row['Kulit'] ?? 0), $rows)),
             ],
         ];
     }
@@ -32,7 +32,7 @@ class TotalBagusKulitRambungReportService
     {
         $rows = $this->fetch($reportDate);
         $detectedColumns = array_keys($rows[0] ?? []);
-        $expectedColumns = ['Jenis', 'Kategori', 'Bagus', 'Kulit'];
+        $expectedColumns = ['Jenis', 'Kategori', 'Tebal', 'Lebar', 'Panjang', 'Bagus', 'Kulit'];
 
         return [
             'is_healthy' => empty(array_diff($expectedColumns, $detectedColumns)),
@@ -60,6 +60,9 @@ class TotalBagusKulitRambungReportService
 SELECT
     COALESCE(F.Jenis, '-') AS Jenis,
     COALESCE(B.NamaGrade, '-') AS Kategori,
+    D.Tebal,
+    D.Lebar,
+    D.Panjang,
     SUM(CASE WHEN D.IsBagusKulit = 1 THEN ISNULL(D.JmlhBatang, 0) ELSE 0 END) AS Bagus,
     SUM(CASE WHEN D.IsBagusKulit = 2 THEN ISNULL(D.JmlhBatang, 0) ELSE 0 END) AS Kulit
 FROM STSawmillKG_d A
@@ -70,14 +73,14 @@ LEFT JOIN KayuBulat_h E ON E.NoKayuBulat = C.NoKayuBulat
 LEFT JOIN MstJenisKayu F ON F.IdJenisKayu = E.IdJenisKayu
 WHERE A.IdGradeKB = ?
     AND CAST(C.TglSawmill AS date) = ?
-GROUP BY COALESCE(F.Jenis, '-'), COALESCE(B.NamaGrade, '-')
-ORDER BY Jenis, Kategori
+GROUP BY COALESCE(F.Jenis, '-'), COALESCE(B.NamaGrade, '-'), D.Tebal, D.Lebar, D.Panjang
+ORDER BY Jenis, Kategori, D.Tebal, D.Lebar, D.Panjang
 SQL;
 
         try {
             $rows = DB::connection($connectionName ?: null)->select($sql, [$gradeId, $reportDate]);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan total bagus/kulit rambung: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan total bagus/kulit rambung: '.$exception->getMessage(), 0, $exception);
         }
 
         return array_map(static function (object $row): array {
@@ -86,9 +89,21 @@ SQL;
             return [
                 'Jenis' => trim((string) ($item['Jenis'] ?? '-')) ?: '-',
                 'Kategori' => trim((string) ($item['Kategori'] ?? '-')) ?: '-',
+                'Tebal' => self::toFloat($item['Tebal'] ?? null),
+                'Lebar' => self::toFloat($item['Lebar'] ?? null),
+                'Panjang' => self::toFloat($item['Panjang'] ?? null),
                 'Bagus' => (int) ($item['Bagus'] ?? 0),
                 'Kulit' => (int) ($item['Kulit'] ?? 0),
             ];
         }, $rows);
+    }
+
+    private static function toFloat(mixed $value): ?float
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (float) $value;
     }
 }
