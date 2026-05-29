@@ -295,6 +295,11 @@ Route::post(
     [AscendXmlTestController::class, 'apiKaryawanPerDepartemenPerJabatanPdf']
 )->name('api.internal.ascends.ru.hrm.karyawan-per-departemen-per-jabatan.pdf');
 
+Route::post(
+    '/internal/ascends/ru/sales/sales-invoice/pdf',
+    [AscendXmlTestController::class, 'apiSalesInvoicePdf']
+)->name('api.internal.ascends.ru.sales.sales-invoice.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

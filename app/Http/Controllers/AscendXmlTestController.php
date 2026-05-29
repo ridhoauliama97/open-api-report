@@ -14,6 +14,7 @@ use App\Services\Ascends\Ru\Hrm\KaryawanPerEtnisReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerLevelReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerUmurReportService;
+use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
@@ -38,6 +39,7 @@ class AscendXmlTestController extends Controller
         KaryawanPerLevelReportService $karyawanPerLevelReportService,
         KaryawanPerUmurReportService $karyawanPerUmurReportService,
         KaryawanPerDepartemenPerJabatanReportService $karyawanPerDepartemenPerJabatanReportService,
+        SalesInvoiceReportService $salesInvoiceReportService,
         PdfGenerator $pdfGenerator,
     ) {
         try {
@@ -59,6 +61,7 @@ class AscendXmlTestController extends Controller
                 'karyawan_per_level' => $karyawanPerLevelReportService,
                 'karyawan_per_umur' => $karyawanPerUmurReportService,
                 'karyawan_per_departemen_per_jabatan' => $karyawanPerDepartemenPerJabatanReportService,
+                'sales_invoice' => $salesInvoiceReportService,
                 default => $reportService,
             };
 
@@ -85,7 +88,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$reportDefinition['filename'].'"',
+            'Content-Disposition' => 'inline; filename="' . $reportDefinition['filename'] . '"',
         ]);
     }
 
@@ -481,6 +484,42 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSalesInvoicePdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.ru.sales.sales_invoice.pdf', [
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Sales Invoice (RU).pdf"',
+        ]);
+    }
+
     /**
      * @return array{view: string, filename: string, orientation: string}
      */
@@ -537,6 +576,11 @@ class AscendXmlTestController extends Controller
                 'filename' => 'Laporan Karyawan Per Departemen Per Jabatan (RU).pdf',
                 'orientation' => 'portrait',
             ],
+            'sales_invoice' => [
+                'view' => 'ascends.ru.sales.sales_invoice.pdf',
+                'filename' => 'Sales Invoice (RU).pdf',
+                'orientation' => 'portrait',
+            ],
             default => [
                 'view' => 'ascends.ru.hrm.list_karyawan.pdf',
                 'filename' => 'List-Karyawan-RU.pdf',
@@ -544,4 +588,5 @@ class AscendXmlTestController extends Controller
             ],
         };
     }
+
 }

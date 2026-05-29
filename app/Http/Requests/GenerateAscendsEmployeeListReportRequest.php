@@ -18,7 +18,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'xml' => ['nullable', 'string'],
             'xml_file' => ['nullable', 'file', 'max:20480'],
             'preview_pdf' => ['nullable', 'boolean'],
-            'report_type' => ['nullable', 'in:list_karyawan,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan'],
+            'report_type' => ['nullable', 'in:list_karyawan,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,sales_invoice'],
         ];
     }
 
@@ -48,7 +48,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
     {
         $file = $this->file('xml_file');
         if ($file !== null && $file->isValid()) {
-            return 'request upload: '.$file->getClientOriginalName();
+            return 'request upload: ' . $file->getClientOriginalName();
         }
 
         if (is_string($this->input('xml')) && trim((string) $this->input('xml')) !== '') {

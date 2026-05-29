@@ -45,28 +45,8 @@ Filename mengikuti laporan yang dipanggil, contoh:
 - `Laporan Karyawan Per Level (RU).pdf`
 - `Laporan Karyawan Per Umur (RU).pdf`
 - `Laporan Karyawan Per Departemen Per Jabatan (RU).pdf`
+- `Sales Invoice (RU).pdf`
 
 Response gagal:
 
 - `422 application/json` jika XML kosong, tidak valid, atau tidak bisa diproses.
-
-## Pola Implementasi Laporan Baru
-
-Untuk setiap laporan baru Ascend RU berbasis XML, gunakan pola: screenshot layout lama + XML source + endpoint internal per laporan + Blade custom. Satu XML boleh dipakai banyak laporan; yang berbeda adalah mapping kolom, service shaping, Blade PDF, dan endpoint.
-
-Checklist:
-
-- [x] Fondasi XML upload/parse sudah tersedia.
-- [x] Endpoint internal pertama sudah tersedia: `POST /api/internal/ascends/ru/hrm/list-karyawan/pdf`.
-- [x] Blade PDF custom sudah memakai struktur tabel eksplisit yang mudah dicustom.
-- [x] Contoh endpoint laporan baru tersedia: `POST /api/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf`.
-- [ ] Terima input request laporan baru: judul, screenshot layout lama, dan file XML contoh.
-- [ ] Cek XML source: record tag, field yang tersedia, field kosong, dan field yang tidak ada.
-- [ ] Tentukan slug endpoint baru, contoh: `/api/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf`.
-- [ ] Tambahkan mapping sub-report di `config/xml_reports/RU/hrm.php`.
-- [ ] Buat service report baru untuk shaping data, sorting, grouping, format tanggal/angka/teks.
-- [ ] Buat Blade PDF baru sesuai screenshot lama, tapi tetap memakai desain tabel open-api-report.
-- [ ] Tambahkan controller/handler endpoint internal untuk laporan tersebut.
-- [ ] Tambahkan dokumentasi endpoint di file ini.
-- [ ] Tambahkan feature test: upload XML, raw XML, request kosong, dan struktur data utama.
-- [ ] Smoke test dengan XML asli dari Ascend.

@@ -9,6 +9,35 @@
 </head>
 
 <body class="bg-light">
+    @php
+        $reportModules = [
+            'hrm_analysis_reports' => [
+                'label' => 'HRM Analysis Reports',
+                'reports' => [
+                    'list_karyawan' => 'List Karyawan RU',
+                    'karyawan_per_masa_kerja' => 'Laporan Karyawan Per Masa Kerja (RU)',
+                    'data_karyawan_status_kerja' => 'Laporan Data Karyawan (RU) - Status Kerja',
+                    'daftar_karyawan_berdasarkan_abjad' => 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad',
+                    'daftar_karyawan' => 'Laporan Daftar Karyawan (RU)',
+                    'karyawan_aktif_per_departemen' => 'Laporan Karyawan Aktif Per Departemen (RU)',
+                    'karyawan_per_agama' => 'Laporan Karyawan Per Agama (RU)',
+                    'karyawan_per_etnis' => 'Laporan Karyawan Per Etnis (RU)',
+                    'karyawan_per_level' => 'Laporan Karyawan Per Level (RU)',
+                    'karyawan_per_umur' => 'Laporan Karyawan Per Umur (RU)',
+                    'karyawan_per_departemen_per_jabatan' => 'Laporan Karyawan Per Departemen Per Jabatan (RU)',
+                ],
+            ],
+            'sales' => [
+                'label' => 'Sales',
+                'reports' => [
+                    'sales_invoice' => 'Sales Invoice (RU)',
+                ],
+            ],
+        ];
+        $selectedModule = old('report_module', 'hrm_analysis_reports');
+        $selectedReportType = old('report_type', 'list_karyawan');
+    @endphp
+
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-7 col-xl-6">
@@ -35,42 +64,30 @@
                             @csrf
 
                             <div class="mb-4">
-                                <label for="report_type" class="form-label fw-semibold">Laporan</label>
+                                <label for="report_module" class="form-label fw-semibold">Nama Modules</label>
+                                <select class="form-select" id="report_module" name="report_module" required>
+                                    @foreach ($reportModules as $moduleKey => $module)
+                                        <option value="{{ $moduleKey }}" @selected($selectedModule === $moduleKey)>
+                                            {{ $module['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="report_type" class="form-label fw-semibold" id="report_type_label">
+                                    {{ $reportModules[$selectedModule]['label'] ?? 'Laporan' }}
+                                </label>
                                 <select class="form-select @error('report_type') is-invalid @enderror" id="report_type"
                                     name="report_type" required>
-                                    <option value="list_karyawan" @selected(old('report_type', 'list_karyawan') === 'list_karyawan')>
-                                        List Karyawan RU
-                                    </option>
-                                    <option value="karyawan_per_masa_kerja" @selected(old('report_type') === 'karyawan_per_masa_kerja')>
-                                        Laporan Karyawan Per Masa Kerja (RU)
-                                    </option>
-                                    <option value="data_karyawan_status_kerja" @selected(old('report_type') === 'data_karyawan_status_kerja')>
-                                        Laporan Data Karyawan (RU) - Status Kerja
-                                    </option>
-                                    <option value="daftar_karyawan_berdasarkan_abjad" @selected(old('report_type') === 'daftar_karyawan_berdasarkan_abjad')>
-                                        Laporan Daftar Karyawan (RU) - Berdasarkan Abjad
-                                    </option>
-                                    <option value="daftar_karyawan" @selected(old('report_type') === 'daftar_karyawan')>
-                                        Laporan Daftar Karyawan (RU)
-                                    </option>
-                                    <option value="karyawan_aktif_per_departemen" @selected(old('report_type') === 'karyawan_aktif_per_departemen')>
-                                        Laporan Karyawan Aktif Per Departemen (RU)
-                                    </option>
-                                    <option value="karyawan_per_agama" @selected(old('report_type') === 'karyawan_per_agama')>
-                                        Laporan Karyawan Per Agama (RU)
-                                    </option>
-                                    <option value="karyawan_per_etnis" @selected(old('report_type') === 'karyawan_per_etnis')>
-                                        Laporan Karyawan Per Etnis (RU)
-                                    </option>
-                                    <option value="karyawan_per_level" @selected(old('report_type') === 'karyawan_per_level')>
-                                        Laporan Karyawan Per Level (RU)
-                                    </option>
-                                    <option value="karyawan_per_umur" @selected(old('report_type') === 'karyawan_per_umur')>
-                                        Laporan Karyawan Per Umur (RU)
-                                    </option>
-                                    <option value="karyawan_per_departemen_per_jabatan" @selected(old('report_type') === 'karyawan_per_departemen_per_jabatan')>
-                                        Laporan Karyawan Per Departemen Per Jabatan (RU)
-                                    </option>
+                                    @foreach ($reportModules as $moduleKey => $module)
+                                        @foreach ($module['reports'] as $reportType => $reportLabel)
+                                            <option value="{{ $reportType }}" data-module="{{ $moduleKey }}"
+                                                @selected($selectedReportType === $reportType)>
+                                                {{ $reportLabel }}
+                                            </option>
+                                        @endforeach
+                                    @endforeach
                                 </select>
                                 @error('report_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -94,6 +111,33 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (() => {
+            const modules = @json($reportModules);
+            const moduleSelect = document.getElementById('report_module');
+            const reportSelect = document.getElementById('report_type');
+            const reportLabel = document.getElementById('report_type_label');
+            const allReportOptions = Array.from(reportSelect.options).map((option) => option.cloneNode(true));
+
+            const refreshReportOptions = () => {
+                const selectedModule = moduleSelect.value;
+                const currentReport = reportSelect.value;
+                const moduleReports = allReportOptions.filter((option) => option.dataset.module === selectedModule);
+
+                reportSelect.replaceChildren(...moduleReports.map((option) => option.cloneNode(true)));
+                reportLabel.textContent = modules[selectedModule]?.label || 'Laporan';
+
+                const hasCurrentReport = Array.from(reportSelect.options).some((option) => option.value === currentReport);
+                if (hasCurrentReport) {
+                    reportSelect.value = currentReport;
+                }
+            };
+
+            moduleSelect.addEventListener('change', refreshReportOptions);
+            refreshReportOptions();
+        })();
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,1 @@
+- Sales Invoice (RU): `POST http://192.168.10.100:5006/api/internal/ascends/ru/sales/sales-invoice/pdf`
