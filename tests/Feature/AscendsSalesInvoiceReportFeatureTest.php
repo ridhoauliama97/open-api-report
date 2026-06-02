@@ -32,7 +32,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.sales.sales_invoice.pdf', Mockery::on(
+            ->with('ascends.ru.sales.sales_invoice.panjang-pdf', Mockery::on(
                 static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
                 && ($data['reportData']['printed_by'] ?? null) === 'indah'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
@@ -66,7 +66,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.sales.sales_invoice.pdf', Mockery::on(
+            ->with('ascends.ru.sales.sales_invoice.panjang-pdf', Mockery::on(
                 static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Sales Invoice (RU)'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -77,7 +77,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
 
         $response = $this->post('/ascend-test/pdf', [
             'report_module' => 'sales',
-            'report_type' => 'sales_invoice',
+            'report_type' => 'sales_invoice_panjang',
             'xml_file' => UploadedFile::fake()->createWithContent('sales-invoice.xml', $xml),
         ])
             ->assertOk()
@@ -123,6 +123,39 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU)');
+    }
+
+    public function test_internal_ascend_api_can_render_normal_sales_invoice_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SalesInvoiceReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: sales-invoice.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.ru.sales.sales_invoice.normal-pdf', Mockery::on(
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SalesInvoiceReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/ru/sales/sales-invoice/normal/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('sales-invoice.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU) - Normal');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -173,7 +206,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
         $reportData = app(SalesInvoiceReportService::class)
             ->buildReportDataFromXml($this->salesInvoiceXml(), 'test xml');
 
-        $html = view('ascends.ru.sales.sales_invoice.pdf', [
+        $html = view('ascends.ru.sales.sales_invoice.panjang-pdf', [
             'reportData' => $reportData,
             'headers' => $reportData['headers'],
             'rows' => $reportData['rows'],
@@ -190,6 +223,9 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
         $this->assertStringContainsString('Dicetak oleh: indah', $html);
         $this->assertStringContainsString('INV.2605-164', $html);
         $this->assertStringContainsString('29-Mei-26', $html);
+        $this->assertStringContainsString('Penjualan Abu Sekam Sawmil Basah<br />', $html);
+        $this->assertStringContainsString('(L-300)<br />', $html);
+        $this->assertStringContainsString('By.Timbangan 15rb+ By.Admin 5 rb &amp; By.Kebersihan 5 rb.', $html);
         $this->assertStringContainsString('Lima Belas Juta Lima Puluh Lima Ribu Rupiah', $html);
     }
 
@@ -198,7 +234,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
         $this->get('/ascend-test')
             ->assertOk()
             ->assertSee('Sales')
-            ->assertSee('Sales Invoice (RU)');
+            ->assertSee('Sales Invoice (RU) - Panjang')
+            ->assertSee('Sales Invoice (RU) - Normal');
     }
 
     /**
@@ -243,7 +280,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
     <PaymentTerm>60</PaymentTerm>
     <AmountDiscount>0</AmountDiscount>
     <NetTotal>15055000.0000</NetTotal>
-    <Remarks />
+    <Remarks>Penjualan Abu Sekam Sawmil Basah (L-300) By.Timbangan 15 rb+ By.Admin 5 rb &amp; By.Kebersihan 5 rb</Remarks>
     <Createdby>indah</Createdby>
     <CustomerName>KEDAUNG</CustomerName>
     <AddressLine1>JL.AHMAD YANI NO. 11-13 KOMP. CINA BUKIT TINGGI</AddressLine1>

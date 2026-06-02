@@ -300,6 +300,31 @@ Route::post(
     [AscendXmlTestController::class, 'apiSalesInvoicePdf']
 )->name('api.internal.ascends.ru.sales.sales-invoice.pdf');
 
+Route::post(
+    '/internal/ascends/ru/sales/sales-invoice/panjang/pdf',
+    [AscendXmlTestController::class, 'apiSalesInvoicePanjangPdf']
+)->name('api.internal.ascends.ru.sales.sales-invoice.panjang.pdf');
+
+Route::post(
+    '/internal/ascends/ru/sales/sales-invoice/normal/pdf',
+    [AscendXmlTestController::class, 'apiSalesInvoiceNormalPdf']
+)->name('api.internal.ascends.ru.sales.sales-invoice.normal.pdf');
+
+Route::post(
+    '/internal/ascends/ru/sales/surat-jalan/pdf',
+    [AscendXmlTestController::class, 'apiSuratJalanPdf']
+)->name('api.internal.ascends.ru.sales.surat-jalan.pdf');
+
+Route::post(
+    '/internal/ascends/ru/sales/surat-jalan/panjang/pdf',
+    [AscendXmlTestController::class, 'apiSuratJalanPanjangPdf']
+)->name('api.internal.ascends.ru.sales.surat-jalan.panjang.pdf');
+
+Route::post(
+    '/internal/ascends/ru/sales/surat-jalan/normal/pdf',
+    [AscendXmlTestController::class, 'apiSuratJalanNormalPdf']
+)->name('api.internal.ascends.ru.sales.surat-jalan.normal.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

@@ -15,6 +15,7 @@ use App\Services\Ascends\Ru\Hrm\KaryawanPerLevelReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerUmurReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
+use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
@@ -40,6 +41,7 @@ class AscendXmlTestController extends Controller
         KaryawanPerUmurReportService $karyawanPerUmurReportService,
         KaryawanPerDepartemenPerJabatanReportService $karyawanPerDepartemenPerJabatanReportService,
         SalesInvoiceReportService $salesInvoiceReportService,
+        SuratJalanReportService $suratJalanReportService,
         PdfGenerator $pdfGenerator,
     ) {
         try {
@@ -62,6 +64,11 @@ class AscendXmlTestController extends Controller
                 'karyawan_per_umur' => $karyawanPerUmurReportService,
                 'karyawan_per_departemen_per_jabatan' => $karyawanPerDepartemenPerJabatanReportService,
                 'sales_invoice' => $salesInvoiceReportService,
+                'sales_invoice_panjang' => $salesInvoiceReportService,
+                'sales_invoice_normal' => $salesInvoiceReportService,
+                'surat_jalan' => $suratJalanReportService,
+                'surat_jalan_panjang' => $suratJalanReportService,
+                'surat_jalan_normal' => $suratJalanReportService,
                 default => $reportService,
             };
 
@@ -503,7 +510,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.ru.sales.sales_invoice.pdf', [
+        $pdf = $pdfGenerator->render('ascends.ru.sales.sales_invoice.panjang-pdf', [
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
             'rows' => $reportData['rows'] ?? [],
@@ -517,6 +524,152 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Sales Invoice (RU).pdf"',
+        ]);
+    }
+
+    public function apiSalesInvoicePanjangPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSalesInvoicePdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.ru.sales.sales_invoice.panjang-pdf',
+            'Sales Invoice (RU) - Panjang.pdf'
+        );
+    }
+
+    public function apiSalesInvoiceNormalPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSalesInvoicePdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.ru.sales.sales_invoice.normal-pdf',
+            'Sales Invoice (RU) - Normal.pdf'
+        );
+    }
+
+    public function apiSuratJalanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSuratJalanPdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.ru.sales.surat_jalan.panjang-pdf',
+            'Surat Jalan (RU) - Panjang.pdf'
+        );
+    }
+
+    public function apiSuratJalanPanjangPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSuratJalanPdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.ru.sales.surat_jalan.panjang-pdf',
+            'Surat Jalan (RU) - Panjang.pdf'
+        );
+    }
+
+    public function apiSuratJalanNormalPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSuratJalanPdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.ru.sales.surat_jalan.normal-pdf',
+            'Surat Jalan (RU) - Normal.pdf'
+        );
+    }
+
+    private function renderSuratJalanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+        string $view,
+        string $filename,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render($view, [
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+        ]);
+    }
+
+    private function renderSalesInvoicePdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+        string $view,
+        string $filename,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render($view, [
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
     }
 
@@ -577,8 +730,33 @@ class AscendXmlTestController extends Controller
                 'orientation' => 'portrait',
             ],
             'sales_invoice' => [
-                'view' => 'ascends.ru.sales.sales_invoice.pdf',
+                'view' => 'ascends.ru.sales.sales_invoice.panjang-pdf',
                 'filename' => 'Sales Invoice (RU).pdf',
+                'orientation' => 'portrait',
+            ],
+            'sales_invoice_panjang' => [
+                'view' => 'ascends.ru.sales.sales_invoice.panjang-pdf',
+                'filename' => 'Sales Invoice (RU) - Panjang.pdf',
+                'orientation' => 'portrait',
+            ],
+            'sales_invoice_normal' => [
+                'view' => 'ascends.ru.sales.sales_invoice.normal-pdf',
+                'filename' => 'Sales Invoice (RU) - Normal.pdf',
+                'orientation' => 'portrait',
+            ],
+            'surat_jalan' => [
+                'view' => 'ascends.ru.sales.surat_jalan.panjang-pdf',
+                'filename' => 'Surat Jalan (RU) - Panjang.pdf',
+                'orientation' => 'portrait',
+            ],
+            'surat_jalan_panjang' => [
+                'view' => 'ascends.ru.sales.surat_jalan.panjang-pdf',
+                'filename' => 'Surat Jalan (RU) - Panjang.pdf',
+                'orientation' => 'portrait',
+            ],
+            'surat_jalan_normal' => [
+                'view' => 'ascends.ru.sales.surat_jalan.normal-pdf',
+                'filename' => 'Surat Jalan (RU) - Normal.pdf',
                 'orientation' => 'portrait',
             ],
             default => [

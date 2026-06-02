@@ -28,9 +28,12 @@
                 ],
             ],
             'sales' => [
-                'label' => 'Sales',
+                'label' => 'Sales Analysis Reports',
                 'reports' => [
-                    'sales_invoice' => 'Sales Invoice (RU)',
+                    'sales_invoice_panjang' => 'Sales Invoice (RU) - Panjang',
+                    'sales_invoice_normal' => 'Sales Invoice (RU) - Normal',
+                    'surat_jalan_panjang' => 'Surat Jalan (RU) - Panjang',
+                    'surat_jalan_normal' => 'Surat Jalan (RU) - Normal',
                 ],
             ],
         ];

@@ -15,7 +15,7 @@
         }
 
         @page {
-            margin: 14mm 10mm 14mm 10mm;
+            margin: 10mm 10mm 10mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -156,7 +156,7 @@
 
         .data-table th {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             text-align: center;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
@@ -246,10 +246,10 @@
             font-size: 1px;
         }
 
-        .sig-tanggal {
+        /* .sig-tanggal {
             font-size: 11px;
             padding-top: 4px;
-        }
+        } */
 
         .summary-table {
             width: 100%;
@@ -375,6 +375,13 @@
             $kirimAddress = (string) ($invoice["shipping_address"] ?? "" ?: $tagihAddress);
             $terbilang = trim((string) ($invoice["net_total_words"] ?? ""));
             $itemCount = (int) ($invoice["item_count"] ?? count($items));
+            $remarksText = trim((string) ($invoice["remarks"] ?? ""));
+            if ($remarksText !== "") {
+                $remarksText = preg_replace("/\s+/", " ", $remarksText) ?? $remarksText;
+                $remarksText = preg_replace("/\s*(\(L-300\))\s*/", "\n$1\n", $remarksText) ?? $remarksText;
+                $remarksText = preg_replace("/(\d+)\s+rb\+/", "$1rb+", $remarksText) ?? $remarksText;
+                $remarksText = rtrim($remarksText, ". \t\n\r\0\x0B");
+            }
             if ($terbilang !== "" && stripos($terbilang, "rupiah") === false) {
                 $terbilang .= " Rupiah";
             }
@@ -543,7 +550,9 @@
                         <table class="keterangan-table">
                             <tr>
                                 <td class="keterangan-value">
-                                    “{{ (string) ($invoice["remarks"] ?? "") }}.”
+                                    @if ($remarksText !== "")
+                                        “{!! nl2br(e($remarksText)) !!}.”
+                                    @endif
                                 </td>
                             </tr>
                         </table>
@@ -585,8 +594,8 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="sig-tanggal" style="vertical-align: bottom; border-top: 1px solid #000;">
-                                    Tanggal :
+                                <td style="vertical-align: bottom; border-top: 1px solid #000; text-align: center;">
+                                    {{ $generatedByName }}
                                 </td>
                             </tr>
                         </table>
@@ -596,8 +605,7 @@
                         @if ($terbilang !== "")
                             <table class="terbilang-wrap">
                                 <tr>
-                                    <td class="terbilang-label-t">Terbilang :</td>
-                                    <td>
+                                    <td class="terbilang-label-t">Terbilang : <br>
                                         <p class="terbilang-value">“{{ $terbilang }}.”</p>
                                     </td>
                                 </tr>
