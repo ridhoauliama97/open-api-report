@@ -85,6 +85,76 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
     }
 
+    public function test_internal_ascend_api_can_render_uc_daftar_karyawan_berdasarkan_abjad_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml();
+
+        $service = Mockery::mock(DaftarKaryawanBerdasarkanAbjadReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData($this->reportTitle('UC')));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(DaftarKaryawanBerdasarkanAbjadReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/uc/hrm/daftar-karyawan-berdasarkan-abjad/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_uc_daftar_karyawan_berdasarkan_abjad_pdf(): void
+    {
+        $xml = $this->employeeListXml();
+        $title = $this->reportTitle('UC');
+
+        $service = Mockery::mock(DaftarKaryawanBerdasarkanAbjadReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData($title));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(DaftarKaryawanBerdasarkanAbjadReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'UC',
+            'report_module' => 'hrm_analysis_reports',
+            'report_type' => 'uc_daftar_karyawan_berdasarkan_abjad',
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
+    }
+
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
     {
         $xml = $this->employeeListXml();
@@ -185,15 +255,17 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function reportData(): array
+    private function reportData(?string $title = null): array
     {
+        $title ??= $this->reportTitle();
+
         return [
             'printed_at' => '20 Mei 2026 10:00',
-            'company' => 'RU',
+            'company' => str_contains($title, '(UC)') ? 'UC' : 'RU',
             'module' => 'hrm',
             'sub_report' => 'daftar_karyawan_berdasarkan_abjad',
-            'label' => $this->reportTitle(),
-            'title' => $this->reportTitle(),
+            'label' => $title,
+            'title' => $title,
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',
@@ -272,8 +344,8 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
 XML;
     }
 
-    private function reportTitle(): string
+    private function reportTitle(string $company = 'RU'): string
     {
-        return "Laporan Daftar Karyawan (RU)\nBerdasarkan Abjad";
+        return "Laporan Daftar Karyawan ({$company})\nBerdasarkan Abjad";
     }
 }

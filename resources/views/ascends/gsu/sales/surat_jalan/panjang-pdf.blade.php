@@ -15,7 +15,7 @@
         }
 
         @page {
-            margin: 10mm 10mm 10mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 

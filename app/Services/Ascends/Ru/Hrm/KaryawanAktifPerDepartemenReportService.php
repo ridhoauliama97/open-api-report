@@ -140,8 +140,10 @@ class KaryawanAktifPerDepartemenReportService
     private static function shouldIncludeRow(array $row): bool
     {
         $employeeCode = trim((string) ($row['Kode Karyawan'] ?? ''));
+        $department = trim((string) ($row['Departemen'] ?? ''));
 
         return strcasecmp(trim((string) ($row['Status Aktif'] ?? '')), 'Active') === 0
+            && $department !== ''
             && ! str_starts_with(strtoupper($employeeCode), 'SPECIAL');
     }
 
@@ -293,36 +295,17 @@ class KaryawanAktifPerDepartemenReportService
      */
     private static function formatGender(array $row): string
     {
-        $identityGender = self::genderFromIdentityNo((string) ($row['No Identitas'] ?? ''));
-        if ($identityGender !== '') {
-            return $identityGender;
-        }
-
-        return match (strtolower(trim((string) ($row['L/P'] ?? '')))) {
+        $sexGender = match (strtolower(trim((string) ($row['L/P'] ?? '')))) {
             'male', 'l', 'laki-laki', 'pria' => 'L',
             'female', 'p', 'perempuan', 'wanita' => 'P',
-            default => trim((string) ($row['L/P'] ?? '')),
+            default => '',
         };
-    }
 
-    private static function genderFromIdentityNo(string $identityNo): string
-    {
-        $digits = preg_replace('/\D/', '', $identityNo) ?? '';
-        if (strlen($digits) < 8) {
-            return '';
+        if ($sexGender !== '') {
+            return $sexGender;
         }
 
-        $birthDay = (int) substr($digits, 6, 2);
-
-        if ($birthDay >= 41 && $birthDay <= 71) {
-            return 'P';
-        }
-
-        if ($birthDay >= 1 && $birthDay <= 31) {
-            return 'L';
-        }
-
-        return '';
+        return trim((string) ($row['L/P'] ?? ''));
     }
 
     private static function formatEducation(string $education): string

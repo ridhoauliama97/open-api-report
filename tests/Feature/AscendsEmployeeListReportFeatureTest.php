@@ -358,6 +358,7 @@ XML;
         $this->assertSame('30 Thn', $reportData['rows'][0]['Usia'] ?? null);
         $this->assertSame('1 Thn 2 Bln', $reportData['rows'][0]['Lama Bekerja'] ?? null);
         $this->assertSame('HRM', array_key_first($reportData['grouped_rows'] ?? []));
+        $this->assertArrayNotHasKey('Tanpa Departemen', $reportData['grouped_rows'] ?? []);
     }
 
     public function test_ascend_test_upload_form_lists_uc_hrm_list_karyawan_report(): void
@@ -450,6 +451,20 @@ XML;
         <Sex>Female</Sex>
         <Department_x0020_Name>HRM</Department_x0020_Name>
         <Age>30</Age>
+        <Job_x0020_Title>Staff</Job_x0020_Title>
+        <Join_x0020_Date>2026-05-20T00:00:00+07:00</Join_x0020_Date>
+        <Working_x0020_Years>1</Working_x0020_Years>
+        <Working_x0020_Months>2</Working_x0020_Months>
+        <Job_x0020_Status>Permanent</Job_x0020_Status>
+        <Active>Active</Active>
+    </{$recordTag}>
+    <{$recordTag}>
+        <Employee_x0020_Code>RU002</Employee_x0020_Code>
+        <Full_x0020_Name>Departemen Kosong</Full_x0020_Name>
+        <Nick_x0020_Name>Kosong</Nick_x0020_Name>
+        <Sex>Male</Sex>
+        <Department_x0020_Name></Department_x0020_Name>
+        <Age>25</Age>
         <Job_x0020_Title>Staff</Job_x0020_Title>
         <Join_x0020_Date>2026-05-20T00:00:00+07:00</Join_x0020_Date>
         <Working_x0020_Years>1</Working_x0020_Years>

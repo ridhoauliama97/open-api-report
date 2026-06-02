@@ -84,6 +84,75 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU)');
     }
 
+    public function test_internal_ascend_api_can_render_uc_daftar_karyawan_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml();
+
+        $service = Mockery::mock(DaftarKaryawanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData('Laporan Daftar Karyawan (UC)'));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.daftar_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(DaftarKaryawanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/uc/hrm/daftar-karyawan/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC)');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_uc_daftar_karyawan_pdf(): void
+    {
+        $xml = $this->employeeListXml();
+
+        $service = Mockery::mock(DaftarKaryawanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData('Laporan Daftar Karyawan (UC)'));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.daftar_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan (UC)'
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(DaftarKaryawanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'UC',
+            'report_module' => 'hrm_analysis_reports',
+            'report_type' => 'uc_daftar_karyawan',
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC)');
+    }
+
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
     {
         $xml = $this->employeeListXml();
@@ -160,8 +229,8 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
         $this->assertSame('Department : Sawmill', $reportData['grouped_rows'][1]['label']);
         $this->assertSame(4, $reportData['grouped_rows'][1]['summary']['subtotal']);
 
-        $this->assertSame(0, $reportData['grouped_rows'][0]['summary']['gender']['L']['count']);
-        $this->assertSame(1, $reportData['grouped_rows'][0]['summary']['gender']['P']['count']);
+        $this->assertSame(1, $reportData['grouped_rows'][0]['summary']['gender']['L']['count']);
+        $this->assertSame(0, $reportData['grouped_rows'][0]['summary']['gender']['P']['count']);
 
         $sawmillSummary = $reportData['grouped_rows'][1]['summary'];
         $this->assertSame(3, $sawmillSummary['gender']['L']['count']);
@@ -213,15 +282,15 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function reportData(): array
+    private function reportData(string $title = 'Laporan Daftar Karyawan (RU)'): array
     {
         return [
             'printed_at' => '20 Mei 2026 10:00',
-            'company' => 'RU',
+            'company' => str_contains($title, '(UC)') ? 'UC' : 'RU',
             'module' => 'hrm',
             'sub_report' => 'daftar_karyawan',
-            'label' => 'Laporan Daftar Karyawan (RU)',
-            'title' => 'Laporan Daftar Karyawan (RU)',
+            'label' => $title,
+            'title' => $title,
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',

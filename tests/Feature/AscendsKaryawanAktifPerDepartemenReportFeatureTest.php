@@ -84,6 +84,75 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (RU)');
     }
 
+    public function test_internal_ascend_api_can_render_uc_karyawan_aktif_per_departemen_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml();
+
+        $service = Mockery::mock(KaryawanAktifPerDepartemenReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData('Laporan Karyawan Aktif Per Departemen (UC)'));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(KaryawanAktifPerDepartemenReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/uc/hrm/karyawan-aktif-per-departemen/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (UC)');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_uc_karyawan_aktif_per_departemen_pdf(): void
+    {
+        $xml = $this->employeeListXml();
+
+        $service = Mockery::mock(KaryawanAktifPerDepartemenReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list.xml')
+            ->andReturn($this->reportData('Laporan Karyawan Aktif Per Departemen (UC)'));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen (UC)'
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(KaryawanAktifPerDepartemenReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'UC',
+            'report_module' => 'hrm_analysis_reports',
+            'report_type' => 'uc_karyawan_aktif_per_departemen',
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (UC)');
+    }
+
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
     {
         $xml = $this->employeeListXml();
@@ -173,6 +242,21 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
         $this->assertSame(1, $reportData['grand_summary']['status']['BR']['count']);
         $this->assertSame(1, $reportData['grand_summary']['status']['KK']['count']);
         $this->assertSame(2, $reportData['grand_summary']['status']['ST']['count']);
+        $this->assertStringNotContainsString(
+            'Tanpa Departemen',
+            implode('|', array_column($reportData['grouped_rows'], 'label'))
+        );
+    }
+
+    public function test_karyawan_aktif_per_departemen_prefers_xml_sex_over_identity_number_gender(): void
+    {
+        $reportData = app(KaryawanAktifPerDepartemenReportService::class)
+            ->buildReportDataFromXml($this->employeeListXmlWithConflictingGender(), 'test xml');
+
+        $this->assertSame('Jonatan Pardamean Lase', $reportData['rows'][0]['Nama']);
+        $this->assertSame('L', $reportData['rows'][0]['L/P']);
+        $this->assertSame(1, $reportData['grand_summary']['gender']['L']['count']);
+        $this->assertSame(0, $reportData['grand_summary']['gender']['P']['count']);
     }
 
     public function test_karyawan_aktif_per_departemen_pdf_renders_expected_headers_groups_and_summary(): void
@@ -209,15 +293,15 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function reportData(): array
+    private function reportData(string $title = 'Laporan Karyawan Aktif Per Departemen (RU)'): array
     {
         return [
             'printed_at' => '20 Mei 2026 10:00',
-            'company' => 'RU',
+            'company' => str_contains($title, '(UC)') ? 'UC' : 'RU',
             'module' => 'hrm',
             'sub_report' => 'karyawan_aktif_per_departemen',
-            'label' => 'Laporan Karyawan Aktif Per Departemen (RU)',
-            'title' => 'Laporan Karyawan Aktif Per Departemen (RU)',
+            'label' => $title,
+            'title' => $title,
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',
@@ -334,6 +418,40 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
         <Department_x0020_Name>Stock</Department_x0020_Name>
         <Active>Terminated</Active>
     </{$recordTag}>
+    <{$recordTag}>
+        <Employee_x0020_Code>132300</Employee_x0020_Code>
+        <Full_x0020_Name>Departemen Kosong</Full_x0020_Name>
+        <Daily_x0020_Worker_x0020_Type_x0020_Code>KK</Daily_x0020_Worker_x0020_Type_x0020_Code>
+        <Sex>Male</Sex>
+        <Job_x0020_Title>Kru Tanpa Departemen</Job_x0020_Title>
+        <Level_x0020_Name>1</Level_x0020_Name>
+        <Last_x0020_Academic_x0020_Level>SMA</Last_x0020_Academic_x0020_Level>
+        <Join_x0020_Date>2024-01-01T00:00:00+07:00</Join_x0020_Date>
+        <Department_x0020_Name></Department_x0020_Name>
+        <Active>Active</Active>
+    </{$recordTag}>
+</NewDataSet>
+XML;
+    }
+
+    private function employeeListXmlWithConflictingGender(): string
+    {
+        return <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<NewDataSet>
+    <employees>
+        <Employee_x0020_Code>110426</Employee_x0020_Code>
+        <Full_x0020_Name>Jonatan Pardamean Lase</Full_x0020_Name>
+        <Daily_x0020_Worker_x0020_Type_x0020_Code>KK</Daily_x0020_Worker_x0020_Type_x0020_Code>
+        <Sex>Male</Sex>
+        <IdentityNo>1207234608060003</IdentityNo>
+        <Job_x0020_Title>Kru GA</Job_x0020_Title>
+        <Level_x0020_Name>1</Level_x0020_Name>
+        <Last_x0020_Academic_x0020_Level>SMA</Last_x0020_Academic_x0020_Level>
+        <Join_x0020_Date>2025-09-09T00:00:00+07:00</Join_x0020_Date>
+        <Department_x0020_Name>HRGA</Department_x0020_Name>
+        <Active>Active</Active>
+    </employees>
 </NewDataSet>
 XML;
     }

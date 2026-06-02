@@ -28,6 +28,7 @@
                             'karyawan_per_level' => 'Laporan Karyawan Per Level (RU)',
                             'karyawan_per_umur' => 'Laporan Karyawan Per Umur (RU)',
                             'karyawan_per_departemen_per_jabatan' => 'Laporan Karyawan Per Departemen Per Jabatan (RU)',
+                            'perbandingan_jumlah_karyawan_tahunan_per_bulan' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (RU)',
                         ],
                     ],
                     'sales' => [
@@ -48,6 +49,7 @@
                         'label' => 'HRM Analysis Reports',
                         'reports' => [
                             'gsu_list_karyawan' => 'List Karyawan (GSU)',
+                            'perbandingan_jumlah_karyawan_tahunan_per_bulan' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (GSU)',
                         ],
                     ],
                     'sales' => [
@@ -68,6 +70,12 @@
                         'label' => 'HRM Analysis Reports',
                         'reports' => [
                             'uc_list_karyawan' => 'List Karyawan (UC)',
+                            'uc_karyawan_aktif_per_departemen' => 'Laporan Karyawan Aktif Per Departemen (UC)',
+                            'uc_daftar_karyawan' => 'Laporan Daftar Karyawan (UC)',
+                            'uc_daftar_karyawan_berdasarkan_abjad' => 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad',
+                            'uc_data_karyawan_status_kerja' => 'Laporan Data Karyawan (UC) - Status Kerja',
+                            'uc_karyawan_masuk_per_departemen_per_tanggal_masuk' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)',
+                            'perbandingan_jumlah_karyawan_tahunan_per_bulan' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)',
                         ],
                     ],
                 ],

@@ -251,6 +251,58 @@ Route::post(
 )->name('api.internal.ascends.uc.hrm.list-karyawan.pdf');
 
 Route::post(
+    '/internal/ascends/uc/hrm/karyawan-aktif-per-departemen/pdf',
+    [AscendXmlTestController::class, 'apiUcKaryawanAktifPerDepartemenPdf']
+)->name('api.internal.ascends.uc.hrm.karyawan-aktif-per-departemen.pdf');
+
+Route::post(
+    '/internal/ascends/uc/hrm/daftar-karyawan/pdf',
+    [AscendXmlTestController::class, 'apiUcDaftarKaryawanPdf']
+)->name('api.internal.ascends.uc.hrm.daftar-karyawan.pdf');
+
+Route::post(
+    '/internal/ascends/uc/hrm/daftar-karyawan-berdasarkan-abjad/pdf',
+    [AscendXmlTestController::class, 'apiUcDaftarKaryawanBerdasarkanAbjadPdf']
+)->name('api.internal.ascends.uc.hrm.daftar-karyawan-berdasarkan-abjad.pdf');
+
+Route::post(
+    '/internal/ascends/uc/hrm/data-karyawan-status-kerja/pdf',
+    [AscendXmlTestController::class, 'apiUcDataKaryawanStatusKerjaPdf']
+)->name('api.internal.ascends.uc.hrm.data-karyawan-status-kerja.pdf');
+
+Route::post(
+    '/internal/ascends/uc/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf',
+    [AscendXmlTestController::class, 'apiUcKaryawanMasukPerDepartemenPerTanggalMasukPdf']
+)->name('api.internal.ascends.uc.hrm.karyawan-masuk-per-departemen-per-tanggal-masuk.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKaryawanMasukPerDepartemenPerTanggalMasukPdf']
+)->name('api.internal.ascends.shared.hrm.karyawan-masuk-per-departemen-per-tanggal-masuk.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/{report}/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmReportPdf']
+)
+    ->whereIn('report', [
+        'list-karyawan',
+        'daftar-karyawan',
+        'daftar-karyawan-berdasarkan-abjad',
+        'data-karyawan-status-kerja',
+        'karyawan-aktif-per-departemen',
+        'karyawan-masuk-per-departemen-per-tanggal-masuk',
+        'karyawan-per-agama',
+        'karyawan-per-departemen-per-jabatan',
+        'karyawan-per-etnis',
+        'karyawan-per-level',
+        'karyawan-per-masa-kerja',
+        'karyawan-per-umur',
+        'perbandingan-jumlah-karyawan-tahunan-per-bulan',
+        'usia-generasi-tahun-kelahiran-masa-kerja',
+    ])
+    ->name('api.internal.ascends.shared.hrm.report.pdf');
+
+Route::post(
     '/internal/ascends/gsu/hrm/list-karyawan/pdf',
     [AscendXmlTestController::class, 'apiGsuListKaryawanPdf']
 )->name('api.internal.ascends.gsu.hrm.list-karyawan.pdf');

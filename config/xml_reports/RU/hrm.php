@@ -294,6 +294,57 @@ return [
         ],
 
         // -----------------------------------------------------------------
+        // Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk
+        // -----------------------------------------------------------------
+        'karyawan_masuk_per_departemen_per_tanggal_masuk' => [
+            'label' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (RU)',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Sex' => 'L/P',
+                'IdentityNo' => 'No Identitas',
+                'Job_x0020_Title' => 'Jabatan',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Status',
+                'Level_x0020_Name' => 'Level',
+                'Last_x0020_Academic_x0020_Level' => 'Pendidikan Terakhir',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Department_x0020_Name' => 'Departemen',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja
+        // -----------------------------------------------------------------
+        'usia_generasi_tahun_kelahiran_masa_kerja' => [
+            'label' => 'Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Job_x0020_Title' => 'Jabatan',
+                'Department_x0020_Name' => 'Departemen',
+                'Age' => 'Usia',
+                'Birth_x0020_Date' => 'Tanggal Lahir',
+                'Birth_x0020_Date_x0020__x0028_Year_x0029_' => 'Tahun Lahir',
+                'Working_x0020_Years' => 'Masa Kerja Tahun',
+                'Working_x0020_Months' => 'Masa Kerja Bulan',
+                'Working_x0020_Days' => 'Masa Kerja Hari',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
         // Biodata Karyawan
         // -----------------------------------------------------------------
         'employee_biodata' => [
@@ -390,6 +441,29 @@ return [
                 'Termination_x0020_Date' => 'Tgl Keluar',
                 'Job_x0020_Status' => 'Status Kerja',
                 'Active' => 'Status Aktif',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan
+        // -----------------------------------------------------------------
+        'perbandingan_jumlah_karyawan_tahunan_per_bulan' => [
+            'label' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+                'Join_x0020_Date_x0020__x0028_Year_x0029_' => 'Tahun Masuk',
+                'Join_x0020_Date_x0020__x0028_Month_x0029_' => 'Bulan Masuk',
+                'Termination_x0020_Date' => 'Tanggal Keluar',
+                'Termination_x0020_Date_x0020__x0028_Year_x0029_' => 'Tahun Keluar',
+                'Termination_x0020_Date_x0020__x0028_Month_x0029_' => 'Bulan Keluar',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
             ],
             'filter' => null,
         ],

@@ -44,11 +44,14 @@ class EmployeeListReportService
     {
         $rawRows = $reportData['rows'] ?? [];
         $printedBy = self::resolvePrintedBy($rawRows);
-        $rows = $rawRows;
         $rows = array_map(
             static fn (array $row): array => self::shapeEmployeeListRow($row),
-            $rows
+            $rawRows
         );
+        $rows = array_values(array_filter(
+            $rows,
+            static fn (array $row): bool => trim((string) ($row['Departemen'] ?? '')) !== ''
+        ));
         $headers = [
             'Nama',
             'Jenis Kelamin',
@@ -76,12 +79,11 @@ class EmployeeListReportService
 
         foreach ($rows as $row) {
             $department = trim((string) ($row['Departemen'] ?? ''));
-            $departmentKey = $department !== '' ? $department : 'Tanpa Departemen';
             $gender = trim((string) ($row['Jenis Kelamin'] ?? ''));
             $genderKey = $gender !== '' ? $gender : '-';
 
-            $groupedRows[$departmentKey][] = $row;
-            $departmentSummary[$departmentKey] = ($departmentSummary[$departmentKey] ?? 0) + 1;
+            $groupedRows[$department][] = $row;
+            $departmentSummary[$department] = ($departmentSummary[$department] ?? 0) + 1;
             $genderSummary[$genderKey] = ($genderSummary[$genderKey] ?? 0) + 1;
         }
 
