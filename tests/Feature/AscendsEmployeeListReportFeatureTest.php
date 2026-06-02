@@ -190,6 +190,140 @@ XML;
         $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
     }
 
+    public function test_internal_ascend_api_can_render_uc_list_karyawan_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list-uc.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/uc/hrm/list-karyawan/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list-uc.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan UC');
+    }
+
+    public function test_internal_ascend_api_can_render_gsu_list_karyawan_pdf_without_jwt(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/gsu/hrm/list-karyawan/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan GSU');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_gsu_list_karyawan_pdf(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'GSU',
+            'report_module' => 'hrm_analysis_reports',
+            'report_type' => 'gsu_list_karyawan',
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan GSU');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_uc_list_karyawan_pdf(): void
+    {
+        $xml = $this->employeeListXml('employees');
+
+        $service = Mockery::mock(EmployeeListReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: employee-list-uc.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(EmployeeListReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'UC',
+            'report_module' => 'hrm_analysis_reports',
+            'report_type' => 'uc_list_karyawan',
+            'xml_file' => UploadedFile::fake()->createWithContent('employee-list-uc.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'List Karyawan UC');
+    }
+
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
     {
         $service = Mockery::mock(EmployeeListReportService::class);
@@ -224,6 +358,17 @@ XML;
         $this->assertSame('30 Thn', $reportData['rows'][0]['Usia'] ?? null);
         $this->assertSame('1 Thn 2 Bln', $reportData['rows'][0]['Lama Bekerja'] ?? null);
         $this->assertSame('HRM', array_key_first($reportData['grouped_rows'] ?? []));
+    }
+
+    public function test_ascend_test_upload_form_lists_uc_hrm_list_karyawan_report(): void
+    {
+        $this->get('/ascend-test')
+            ->assertOk()
+            ->assertSee('GSU')
+            ->assertSee('List Karyawan (GSU)')
+            ->assertSee('UC')
+            ->assertSee('HRM Analysis Reports')
+            ->assertSee('List Karyawan (UC)');
     }
 
     /**

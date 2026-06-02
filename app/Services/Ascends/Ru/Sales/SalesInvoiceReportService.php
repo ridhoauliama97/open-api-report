@@ -120,19 +120,26 @@ class SalesInvoiceReportService
      */
     private static function headerFromRow(array $row): array
     {
+        $dropShip = self::dropShipAddress($row);
+
         return [
             'invoice_id' => (string) ($row['Invoice ID'] ?? ''),
             'invoice_number' => (string) ($row['No SI'] ?? ''),
             'invoice_date' => self::formatDate((string) ($row['Tgl Faktur'] ?? '')),
-            'delivery_date' => self::formatDate((string) ($row['Tgl Kirim'] ?? '')),
+            'delivery_date' => self::formatDate((string) ($row['Tgl Kirim POS'] ?? $row['Tgl Kirim'] ?? '')),
+            'due_date' => self::formatDate((string) ($row['Tgl Kirim'] ?? '')),
             'customer_name' => (string) ($row['Customer'] ?? ''),
             'billing_address' => self::addressText($row, ['Alamat Tagih 1', 'Alamat Tagih 2', 'Kota Tagih']),
-            'shipping_address' => self::addressText($row, ['Alamat Kirim 1', 'Alamat Kirim 2', 'Kota Kirim']),
+            'shipping_name' => $dropShip['name'] !== '' ? $dropShip['name'] : (string) ($row['Nama Kirim'] ?? ''),
+            'shipping_address' => $dropShip['address'] !== ''
+                ? $dropShip['address']
+                : self::addressText($row, ['Alamat Kirim 1', 'Alamat Kirim 2', 'Kota Kirim']),
             'customer_address' => self::addressText($row, ['Alamat Customer 1', 'Alamat Customer 2', 'Kota']),
             'do_number' => (string) ($row['No DO'] ?? ''),
             'payment_term' => (string) ($row['Jatuh Tempo'] ?? ''),
             'salesman' => (string) ($row['Salesman'] ?? ''),
             'vehicle_no' => (string) ($row['No Kendaraan'] ?? ''),
+            'shipper' => (string) ($row['Pengirim'] ?? ''),
             'remarks' => self::normalizeText((string) ($row['Keterangan'] ?? '')),
             'created_by' => (string) ($row['Dibuat Oleh'] ?? ''),
             'net_total' => self::decimalValue((string) ($row['Total'] ?? '')),
@@ -195,6 +202,29 @@ class SalesInvoiceReportService
         }
 
         return implode("\n", $parts);
+    }
+
+    /**
+     * @param  array<string, string>  $row
+     * @return array{name: string, address: string}
+     */
+    private static function dropShipAddress(array $row): array
+    {
+        $value = trim((string) ($row['Alamat Drop Ship'] ?? ''));
+        if ($value === '') {
+            return ['name' => '', 'address' => ''];
+        }
+
+        $lines = preg_split('/\R+/', $value) ?: [];
+        $lines = array_values(array_filter(array_map(
+            static fn(string $line): string => trim($line),
+            $lines
+        ), static fn(string $line): bool => $line !== ''));
+
+        return [
+            'name' => (string) ($lines[0] ?? ''),
+            'address' => implode("\n", array_slice($lines, 1)),
+        ];
     }
 
     private static function normalizeText(string $value): string

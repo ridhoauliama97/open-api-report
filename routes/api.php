@@ -246,6 +246,16 @@ Route::post(
 )->name('api.internal.ascends.ru.hrm.list-karyawan.pdf');
 
 Route::post(
+    '/internal/ascends/uc/hrm/list-karyawan/pdf',
+    [AscendXmlTestController::class, 'apiUcListKaryawanPdf']
+)->name('api.internal.ascends.uc.hrm.list-karyawan.pdf');
+
+Route::post(
+    '/internal/ascends/gsu/hrm/list-karyawan/pdf',
+    [AscendXmlTestController::class, 'apiGsuListKaryawanPdf']
+)->name('api.internal.ascends.gsu.hrm.list-karyawan.pdf');
+
+Route::post(
     '/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf',
     [AscendXmlTestController::class, 'apiKaryawanPerMasaKerjaPdf']
 )->name('api.internal.ascends.ru.hrm.karyawan-per-masa-kerja.pdf');
@@ -311,6 +321,21 @@ Route::post(
 )->name('api.internal.ascends.ru.sales.sales-invoice.normal.pdf');
 
 Route::post(
+    '/internal/ascends/gsu/sales/sales-invoice/pdf',
+    [AscendXmlTestController::class, 'apiGsuSalesInvoicePdf']
+)->name('api.internal.ascends.gsu.sales.sales-invoice.pdf');
+
+Route::post(
+    '/internal/ascends/gsu/sales/sales-invoice/panjang/pdf',
+    [AscendXmlTestController::class, 'apiGsuSalesInvoicePanjangPdf']
+)->name('api.internal.ascends.gsu.sales.sales-invoice.panjang.pdf');
+
+Route::post(
+    '/internal/ascends/gsu/sales/sales-invoice/normal/pdf',
+    [AscendXmlTestController::class, 'apiGsuSalesInvoiceNormalPdf']
+)->name('api.internal.ascends.gsu.sales.sales-invoice.normal.pdf');
+
+Route::post(
     '/internal/ascends/ru/sales/surat-jalan/pdf',
     [AscendXmlTestController::class, 'apiSuratJalanPdf']
 )->name('api.internal.ascends.ru.sales.surat-jalan.pdf');
@@ -324,6 +349,21 @@ Route::post(
     '/internal/ascends/ru/sales/surat-jalan/normal/pdf',
     [AscendXmlTestController::class, 'apiSuratJalanNormalPdf']
 )->name('api.internal.ascends.ru.sales.surat-jalan.normal.pdf');
+
+Route::post(
+    '/internal/ascends/gsu/sales/surat-jalan/pdf',
+    [AscendXmlTestController::class, 'apiGsuSuratJalanPdf']
+)->name('api.internal.ascends.gsu.sales.surat-jalan.pdf');
+
+Route::post(
+    '/internal/ascends/gsu/sales/surat-jalan/panjang/pdf',
+    [AscendXmlTestController::class, 'apiGsuSuratJalanPanjangPdf']
+)->name('api.internal.ascends.gsu.sales.surat-jalan.panjang.pdf');
+
+Route::post(
+    '/internal/ascends/gsu/sales/surat-jalan/normal/pdf',
+    [AscendXmlTestController::class, 'apiGsuSuratJalanNormalPdf']
+)->name('api.internal.ascends.gsu.sales.surat-jalan.normal.pdf');
 
 /**
  * Group route autentikasi API publik.

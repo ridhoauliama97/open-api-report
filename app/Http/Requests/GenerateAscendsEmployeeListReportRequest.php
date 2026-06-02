@@ -18,7 +18,8 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'xml' => ['nullable', 'string'],
             'xml_file' => ['nullable', 'file', 'max:20480'],
             'preview_pdf' => ['nullable', 'boolean'],
-            'report_type' => ['nullable', 'in:list_karyawan,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal'],
+            'company' => ['nullable', 'in:RU,GSU,UC,ru,gsu,uc'],
+            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
         ];
     }
 

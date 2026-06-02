@@ -34,8 +34,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.ru.sales.sales_invoice.panjang-pdf', Mockery::on(
                 static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                && ($data['reportData']['printed_by'] ?? null) === 'indah'
-                && ($data['pdf_orientation'] ?? null) === 'portrait'
+                    && ($data['reportData']['printed_by'] ?? null) === 'indah'
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -68,7 +68,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.ru.sales.sales_invoice.panjang-pdf', Mockery::on(
                 static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Sales Invoice (RU)'
-                && ($data['pdf_orientation'] ?? null) === 'portrait'
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -83,7 +83,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU) - Panjang');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -142,7 +142,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.ru.sales.sales_invoice.normal-pdf', Mockery::on(
                 static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                && ($data['pdf_orientation'] ?? null) === 'portrait'
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -156,6 +156,108 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU) - Normal');
+    }
+
+    public function test_internal_ascend_api_can_render_gsu_panjang_sales_invoice_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SalesInvoiceReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: sales-invoice-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.sales.sales_invoice.panjang-pdf', Mockery::on(
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SalesInvoiceReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/gsu/sales/sales-invoice/panjang/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('sales-invoice-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Sales Invoices (GSU) - Panjang');
+    }
+
+    public function test_internal_ascend_api_can_render_gsu_normal_sales_invoice_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SalesInvoiceReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: sales-invoice-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.sales.sales_invoice.normal-pdf', Mockery::on(
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SalesInvoiceReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/gsu/sales/sales-invoice/normal/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('sales-invoice-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Sales Invoices (GSU) - Normal');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_gsu_sales_invoice_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SalesInvoiceReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: sales-invoice-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.sales.sales_invoice.panjang-pdf', Mockery::on(
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SalesInvoiceReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'GSU',
+            'report_module' => 'sales',
+            'report_type' => 'gsu_sales_invoice_panjang',
+            'xml_file' => UploadedFile::fake()->createWithContent('sales-invoice-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Sales Invoices (GSU) - Panjang');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -192,7 +294,15 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
         $invoice = $reportData['invoices'][0];
         $this->assertSame('SI/07/18/0126', $invoice['invoice_number']);
         $this->assertSame('29-Mei-26', $invoice['invoice_date']);
+        $this->assertSame('28-Mei-26', $invoice['delivery_date']);
+        $this->assertSame('29-Mei-26', $invoice['due_date']);
         $this->assertSame('DO/07/18/0126', $invoice['do_number']);
+        $this->assertSame('JTR', $invoice['shipper']);
+        $this->assertSame('Jumroh', $invoice['shipping_name']);
+        $this->assertSame(
+            'Jalan Pamarayan Tambak, RT.014/RW.003, KpKedaung, Desa Blokang, Bandung,BANDUNG, KAB. SERANG, BANTEN',
+            $invoice['shipping_address']
+        );
         $this->assertSame(3, $invoice['item_count']);
         $this->assertSame(15.0, $invoice['total_quantity']);
         $this->assertSame(15055000.0, $invoice['subtotal']);
@@ -233,9 +343,15 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
     {
         $this->get('/ascend-test')
             ->assertOk()
+            ->assertSee('Perusahaan')
+            ->assertSee('RU')
+            ->assertSee('GSU')
+            ->assertSee('UC')
             ->assertSee('Sales')
             ->assertSee('Sales Invoice (RU) - Panjang')
-            ->assertSee('Sales Invoice (RU) - Normal');
+            ->assertSee('Sales Invoice (RU) - Normal')
+            ->assertSee('Sales Invoices (GSU) - Panjang')
+            ->assertSee('Sales Invoices (GSU) - Normal');
     }
 
     /**
@@ -287,10 +403,14 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
     <City>PADANG</City>
     <BillingAddressLine1>JL.AHMAD YANI NO. 11-13 KOMP. CINA BUKIT TINGGI</BillingAddressLine1>
     <BillingCity>PADANG</BillingCity>
+    <DropShipAddress>Jumroh
+Jalan Pamarayan Tambak, RT.014/RW.003, KpKedaung, Desa Blokang, Bandung,BANDUNG, KAB. SERANG, BANTEN</DropShipAddress>
     <DONo>DO/07/18/0126</DONo>
     <InvoiceDueDate>2026-05-29T00:00:00.0000000+07:00</InvoiceDueDate>
+    <POSDeliveryDateTime>2026-05-28T14:46:57.5+07:00</POSDeliveryDateTime>
     <SalesPersonName>SIMSON</SalesPersonName>
     <VehicleNo>INV.2605-164</VehicleNo>
+    <ShipperName>JTR</ShipperName>
     <ItemCode>2.1.5.1.05.01</ItemCode>
     <ItemName>KOBOKAN 12CM W/MH (18 LSN)</ItemName>
     <Price>1476000.0000</Price>

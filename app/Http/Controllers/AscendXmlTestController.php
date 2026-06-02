@@ -53,6 +53,8 @@ class AscendXmlTestController extends Controller
             $selectedReport = (string) $request->input('report_type', 'list_karyawan');
             $reportDefinition = $this->testReportDefinition($selectedReport);
             $selectedReportService = match ($selectedReport) {
+                'gsu_list_karyawan' => $reportService,
+                'uc_list_karyawan' => $reportService,
                 'karyawan_per_masa_kerja' => $karyawanPerMasaKerjaReportService,
                 'data_karyawan_status_kerja' => $dataKaryawanStatusKerjaReportService,
                 'daftar_karyawan_berdasarkan_abjad' => $daftarKaryawanBerdasarkanAbjadReportService,
@@ -66,9 +68,13 @@ class AscendXmlTestController extends Controller
                 'sales_invoice' => $salesInvoiceReportService,
                 'sales_invoice_panjang' => $salesInvoiceReportService,
                 'sales_invoice_normal' => $salesInvoiceReportService,
+                'gsu_sales_invoice_panjang' => $salesInvoiceReportService,
+                'gsu_sales_invoice_normal' => $salesInvoiceReportService,
                 'surat_jalan' => $suratJalanReportService,
                 'surat_jalan_panjang' => $suratJalanReportService,
                 'surat_jalan_normal' => $suratJalanReportService,
+                'gsu_surat_jalan_panjang' => $suratJalanReportService,
+                'gsu_surat_jalan_normal' => $suratJalanReportService,
                 default => $reportService,
             };
 
@@ -76,6 +82,7 @@ class AscendXmlTestController extends Controller
                 $xmlPayload,
                 $request->xmlSourceLabel() ?? 'request upload: xml_file'
             );
+
         } catch (RuntimeException $exception) {
             return back()
                 ->withInput()
@@ -131,6 +138,76 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="List-Karyawan-RU.pdf"',
+        ]);
+    }
+
+    public function apiUcListKaryawanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        EmployeeListReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.uc.hrm.list_karyawan.pdf', [
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="List-Karyawan-UC.pdf"',
+        ]);
+    }
+
+    public function apiGsuListKaryawanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        EmployeeListReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.gsu.hrm.list_karyawan.pdf', [
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="List-Karyawan-GSU.pdf"',
         ]);
     }
 
@@ -496,35 +573,13 @@ class AscendXmlTestController extends Controller
         SalesInvoiceReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
-        try {
-            $xmlPayload = $request->xmlPayload();
-            if ($xmlPayload === null) {
-                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
-            }
-
-            $reportData = $reportService->buildReportDataFromXml(
-                $xmlPayload,
-                $request->xmlSourceLabel() ?? 'request xml payload'
-            );
-        } catch (RuntimeException $exception) {
-            return response()->json(['message' => $exception->getMessage()], 422);
-        }
-
-        $pdf = $pdfGenerator->render('ascends.ru.sales.sales_invoice.panjang-pdf', [
-            'reportData' => $reportData,
-            'headers' => $reportData['headers'] ?? [],
-            'rows' => $reportData['rows'] ?? [],
-            'generatedAt' => now(),
-            'pdf_format' => 'A4',
-            'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
-            'pdf_column_count' => count($reportData['headers'] ?? []),
-        ]);
-
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Sales Invoice (RU).pdf"',
-        ]);
+        return $this->renderSalesInvoicePdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.ru.sales.sales_invoice.panjang-pdf',
+            'Sales Invoice (RU).pdf'
+        );
     }
 
     public function apiSalesInvoicePanjangPdf(
@@ -552,6 +607,48 @@ class AscendXmlTestController extends Controller
             $pdfGenerator,
             'ascends.ru.sales.sales_invoice.normal-pdf',
             'Sales Invoice (RU) - Normal.pdf'
+        );
+    }
+
+    public function apiGsuSalesInvoicePdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSalesInvoicePdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.gsu.sales.sales_invoice.panjang-pdf',
+            'Sales Invoices (GSU).pdf'
+        );
+    }
+
+    public function apiGsuSalesInvoicePanjangPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSalesInvoicePdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.gsu.sales.sales_invoice.panjang-pdf',
+            'Sales Invoices (GSU) - Panjang.pdf'
+        );
+    }
+
+    public function apiGsuSalesInvoiceNormalPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SalesInvoiceReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSalesInvoicePdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.gsu.sales.sales_invoice.normal-pdf',
+            'Sales Invoices (GSU) - Normal.pdf'
         );
     }
 
@@ -594,6 +691,48 @@ class AscendXmlTestController extends Controller
             $pdfGenerator,
             'ascends.ru.sales.surat_jalan.normal-pdf',
             'Surat Jalan (RU) - Normal.pdf'
+        );
+    }
+
+    public function apiGsuSuratJalanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSuratJalanPdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.gsu.sales.surat_jalan.panjang-pdf',
+            'Surat Jalan (GSU).pdf'
+        );
+    }
+
+    public function apiGsuSuratJalanPanjangPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSuratJalanPdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.gsu.sales.surat_jalan.panjang-pdf',
+            'Surat Jalan (GSU) - Panjang.pdf'
+        );
+    }
+
+    public function apiGsuSuratJalanNormalPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        return $this->renderSuratJalanPdf(
+            $request,
+            $reportService,
+            $pdfGenerator,
+            'ascends.gsu.sales.surat_jalan.normal-pdf',
+            'Surat Jalan (GSU) - Normal.pdf'
         );
     }
 
@@ -744,6 +883,16 @@ class AscendXmlTestController extends Controller
                 'filename' => 'Sales Invoice (RU) - Normal.pdf',
                 'orientation' => 'portrait',
             ],
+            'gsu_sales_invoice_panjang' => [
+                'view' => 'ascends.gsu.sales.sales_invoice.panjang-pdf',
+                'filename' => 'Sales Invoices (GSU) - Panjang.pdf',
+                'orientation' => 'portrait',
+            ],
+            'gsu_sales_invoice_normal' => [
+                'view' => 'ascends.gsu.sales.sales_invoice.normal-pdf',
+                'filename' => 'Sales Invoices (GSU) - Normal.pdf',
+                'orientation' => 'portrait',
+            ],
             'surat_jalan' => [
                 'view' => 'ascends.ru.sales.surat_jalan.panjang-pdf',
                 'filename' => 'Surat Jalan (RU) - Panjang.pdf',
@@ -757,6 +906,26 @@ class AscendXmlTestController extends Controller
             'surat_jalan_normal' => [
                 'view' => 'ascends.ru.sales.surat_jalan.normal-pdf',
                 'filename' => 'Surat Jalan (RU) - Normal.pdf',
+                'orientation' => 'portrait',
+            ],
+            'gsu_surat_jalan_panjang' => [
+                'view' => 'ascends.gsu.sales.surat_jalan.panjang-pdf',
+                'filename' => 'Surat Jalan (GSU) - Panjang.pdf',
+                'orientation' => 'portrait',
+            ],
+            'gsu_surat_jalan_normal' => [
+                'view' => 'ascends.gsu.sales.surat_jalan.normal-pdf',
+                'filename' => 'Surat Jalan (GSU) - Normal.pdf',
+                'orientation' => 'portrait',
+            ],
+            'gsu_list_karyawan' => [
+                'view' => 'ascends.gsu.hrm.list_karyawan.pdf',
+                'filename' => 'List-Karyawan-GSU.pdf',
+                'orientation' => 'portrait',
+            ],
+            'uc_list_karyawan' => [
+                'view' => 'ascends.uc.hrm.list_karyawan.pdf',
+                'filename' => 'List-Karyawan-UC.pdf',
                 'orientation' => 'portrait',
             ],
             default => [

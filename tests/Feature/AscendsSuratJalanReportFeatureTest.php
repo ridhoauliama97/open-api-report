@@ -119,6 +119,108 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (RU) - Normal');
     }
 
+    public function test_internal_ascend_api_can_render_gsu_panjang_surat_jalan_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SuratJalanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: surat-jalan-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.sales.surat_jalan.panjang-pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SuratJalanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/gsu/sales/surat-jalan/panjang/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('surat-jalan-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (GSU) - Panjang');
+    }
+
+    public function test_internal_ascend_api_can_render_gsu_normal_surat_jalan_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SuratJalanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: surat-jalan-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.sales.surat_jalan.normal-pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SuratJalanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/gsu/sales/surat-jalan/normal/pdf', [
+            'xml_file' => UploadedFile::fake()->createWithContent('surat-jalan-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (GSU) - Normal');
+    }
+
+    public function test_ascend_test_upload_form_can_preview_gsu_surat_jalan_pdf(): void
+    {
+        $xml = $this->salesInvoiceXml();
+
+        $service = Mockery::mock(SuratJalanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: surat-jalan-gsu.xml')
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.gsu.sales.surat_jalan.panjang-pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(SuratJalanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/ascend-test/pdf', [
+            'company' => 'GSU',
+            'report_module' => 'sales',
+            'report_type' => 'gsu_surat_jalan_panjang',
+            'xml_file' => UploadedFile::fake()->createWithContent('surat-jalan-gsu.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (GSU) - Panjang');
+    }
+
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
     {
         $xml = $this->salesInvoiceXml();
@@ -192,7 +294,15 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
         $this->assertSame('SI/07/18/0126', $document['invoice_number']);
         $this->assertSame('KEDAUNG', $document['customer_name']);
         $this->assertSame('INV.2605-164', $document['vehicle_no']);
-        $this->assertSame('29-Mei-26', $document['delivery_date']);
+        $this->assertSame('28-Mei-26', $document['delivery_date']);
+        $this->assertSame('28-05-26', $document['delivery_date_numeric']);
+        $this->assertSame('SO/07/18/0126', $document['sales_order_number']);
+        $this->assertSame('JTR', $document['shipper']);
+        $this->assertSame('Jumroh', $document['shipping_name']);
+        $this->assertSame(
+            'Jalan Pamarayan Tambak, RT.014/RW.003, KpKedaung, Desa Blokang, Bandung,BANDUNG, KAB. SERANG, BANTEN',
+            $document['shipping_address']
+        );
         $this->assertSame(3, $document['item_count']);
         $this->assertSame(15.0, $document['total_quantity']);
         $this->assertSame('2.1.5.1.05.01', $document['items'][0]['item_code']);
@@ -249,7 +359,9 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertSee('Sales')
             ->assertSee('Surat Jalan (RU) - Panjang')
-            ->assertSee('Surat Jalan (RU) - Normal');
+            ->assertSee('Surat Jalan (RU) - Normal')
+            ->assertSee('Surat Jalan (GSU) - Panjang')
+            ->assertSee('Surat Jalan (GSU) - Normal');
     }
 
     /**
@@ -298,9 +410,14 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
     <BillingAddressLine1>JL.AHMAD YANI NO. 11-13 KOMP. CINA BUKIT TINGGI</BillingAddressLine1>
     <BillingCity>PADANG</BillingCity>
     <DONo>DO/07/18/0126</DONo>
+    <SONumber>SO/07/18/0126</SONumber>
     <InvoiceDueDate>2026-05-29T00:00:00.0000000+07:00</InvoiceDueDate>
+    <POSDeliveryDateTime>2026-05-28T14:46:57.5+07:00</POSDeliveryDateTime>
     <SalesPersonName>SIMSON</SalesPersonName>
     <VehicleNo>INV.2605-164</VehicleNo>
+    <ShipperName>JTR</ShipperName>
+    <DropShipAddress>Jumroh
+Jalan Pamarayan Tambak, RT.014/RW.003, KpKedaung, Desa Blokang, Bandung,BANDUNG, KAB. SERANG, BANTEN</DropShipAddress>
     <ItemCode>2.1.5.1.05.01</ItemCode>
     <ItemName>KOBOKAN 12CM W/MH (18 LSN)</ItemName>
     <Quantity>5.0000</Quantity>
