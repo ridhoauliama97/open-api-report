@@ -100,7 +100,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -177,10 +177,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
 
         usort(
             $rowsData,
@@ -329,16 +329,16 @@
                     $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar']);
                     $totalKeluar =
                         $totalKeluarDirect !== 0.0
-                            ? $totalKeluarDirect
-                            : $adjInpt +
-                                $bsInpt +
-                                $mldJual +
-                                $ccaInpt +
-                                $lmtInpt +
-                                $mldInpt +
-                                $packInpt +
-                                $sandInpt +
-                                $s4sInpt;
+                        ? $totalKeluarDirect
+                        : $adjInpt +
+                        $bsInpt +
+                        $mldJual +
+                        $ccaInpt +
+                        $lmtInpt +
+                        $mldInpt +
+                        $packInpt +
+                        $sandInpt +
+                        $s4sInpt;
 
                     $akhir = $valueFromAliases($row, ['MLDAkhir', 'Akhir']);
 

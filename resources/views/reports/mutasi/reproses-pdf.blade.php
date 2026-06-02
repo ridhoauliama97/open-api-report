@@ -138,7 +138,7 @@
             text-align: center;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;

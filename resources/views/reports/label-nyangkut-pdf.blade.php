@@ -86,7 +86,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -219,9 +219,7 @@
             return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
 
-        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
-            $normalizeColumnName,
-        ): ?string {
+        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use ($normalizeColumnName, ): ?string {
             foreach ($candidateNames as $candidateName) {
                 $candidateNormalized = $normalizeColumnName($candidateName);
                 foreach ($availableColumns as $column) {
@@ -382,15 +380,15 @@
                 <tr class="headers-row">
                     <th style="width: 34px; text-align:center">No</th>
                     @foreach ($columns as $column)
-                        <th>
-                            {{ match ($normalizeColumnName($column)) {
-                                'description' => 'Lokasi',
-                                'nonyangkut' => 'No Nyangkut',
-                                'nolabel' => 'No Label',
-                                'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
-                                default => $column,
-                            } }}
-                        </th>
+                                <th>
+                                    {{ match ($normalizeColumnName($column)) {
+                            'description' => 'Lokasi',
+                            'nonyangkut' => 'No Nyangkut',
+                            'nolabel' => 'No Label',
+                            'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
+                            default => $column,
+                        } }}
+                                </th>
                     @endforeach
                 </tr>
             </thead>
@@ -467,15 +465,15 @@
                 <tr class="headers-row">
                     <th style="width: 34px; text-align:center">No</th>
                     @foreach ($columns as $column)
-                        <th>
-                            {{ match ($normalizeColumnName($column)) {
-                                'description' => 'Lokasi',
-                                'nonyangkut' => 'No Nyangkut',
-                                'nolabel' => 'No Label',
-                                'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
-                                default => $column,
-                            } }}
-                        </th>
+                                <th>
+                                    {{ match ($normalizeColumnName($column)) {
+                            'description' => 'Lokasi',
+                            'nonyangkut' => 'No Nyangkut',
+                            'nolabel' => 'No Label',
+                            'jmlhbatang', 'jmlhbtg', 'jumlahbatang' => 'Jumlah Batang',
+                            default => $column,
+                        } }}
+                                </th>
                     @endforeach
                 </tr>
             </thead>

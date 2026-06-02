@@ -123,7 +123,7 @@
             border-left: 0;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 0;
@@ -174,10 +174,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
         usort(
             $rowsData,
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),

@@ -92,7 +92,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         td.duration-bold {
@@ -158,8 +158,6 @@
             border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -179,9 +177,7 @@
             return strtolower(str_replace([' ', '_', '.'], '', trim($value)));
         };
 
-        $findColumnByCandidates = static function (array $availableColumns, array $candidates) use (
-            $normalize,
-        ): ?string {
+        $findColumnByCandidates = static function (array $availableColumns, array $candidates) use ($normalize, ): ?string {
             foreach ($candidates as $candidate) {
                 $normalizedCandidate = $normalize($candidate);
                 foreach ($availableColumns as $column) {
@@ -481,8 +477,8 @@
 
                         $lamaRacipHari =
                             $lamaTungguHari !== null && $lamaAwalHari !== null
-                                ? max(0, $lamaTungguHari - $lamaAwalHari)
-                                : null;
+                            ? max(0, $lamaTungguHari - $lamaAwalHari)
+                            : null;
                         $lamaRacipText = $lamaRacipHari !== null ? $lamaRacipHari . ' hari' : '';
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
@@ -530,10 +526,7 @@
                     @php
                         $hasTruckColumn = $truckColumn !== null && in_array($truckColumn, $displayColumns, true);
                         $hasTonColumn = $tonColumn !== null && in_array($tonColumn, $displayColumns, true);
-                        $visualColumnSpan = static function (string $column) use (
-                            $tanggalRacipColumn,
-                            $tanggalLamaRacipColumn,
-                        ): int {
+                        $visualColumnSpan = static function (string $column) use ($tanggalRacipColumn, $tanggalLamaRacipColumn, ): int {
                             return $column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn ? 2 : 1;
                         };
 

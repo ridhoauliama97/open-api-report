@@ -190,8 +190,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -201,10 +199,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
         usort(
             $rowsData,
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),
@@ -345,7 +343,8 @@
                             <td class="number data-cell">{{ $fmt($bsOutput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($packingOutput, true) }}</td>
                             <td class="number data-cell {{ $totalClass($totalMasuk) }}" style="font-weight: bold;">
-                                {{ $fmt($totalMasuk, true) }}</td>
+                                {{ $fmt($totalMasuk, true) }}
+                            </td>
                             <td class="number data-cell">{{ $fmt($adjInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($jual, true) }}</td>
@@ -355,44 +354,57 @@
                             <td class="number data-cell">{{ $fmt($packingInput, true) }}</td>
                             <td class="number data-cell">{{ $fmt($sandInput, true) }}</td>
                             <td class="number data-cell {{ $totalClass($totalKeluar) }}" style="font-weight: bold;">
-                                {{ $fmt($totalKeluar, true) }}</td>
+                                {{ $fmt($totalKeluar, true) }}
+                            </td>
                             <td class="number data-cell" style="font-weight: bold;">
-                                {{ $fmt($row['Akhir'] ?? null, true) }}</td>
+                                {{ $fmt($row['Akhir'] ?? null, true) }}
+                            </td>
                         </tr>
                     @endforeach
                     <tr class="totals-row">
                         <td colspan="2" class="blank" style="text-align: center">Total</td>
                         <td class="number {{ $totalClass($mainTotals['Awal']) }}">
-                            {{ $fmt($mainTotals['Awal'], true) }}</td>
+                            {{ $fmt($mainTotals['Awal'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['AdjOutput']) }}">
                             {{ $fmt($mainTotals['AdjOutput'], true) }}
                         </td>
                         <td class="number {{ $totalClass($mainTotals['BSOutput']) }}">
-                            {{ $fmt($mainTotals['BSOutput'], true) }}</td>
+                            {{ $fmt($mainTotals['BSOutput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['PackingOutput']) }}">
-                            {{ $fmt($mainTotals['PackingOutput'], true) }}</td>
+                            {{ $fmt($mainTotals['PackingOutput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['TotalMasuk']) }}">
                             {{ $fmt($mainTotals['TotalMasuk'], true) }}
                         </td>
                         <td class="number {{ $totalClass($mainTotals['AdjInput']) }}">
-                            {{ $fmt($mainTotals['AdjInput'], true) }}</td>
+                            {{ $fmt($mainTotals['AdjInput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['BSInput']) }}">
-                            {{ $fmt($mainTotals['BSInput'], true) }}</td>
+                            {{ $fmt($mainTotals['BSInput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['Jual']) }}">
-                            {{ $fmt($mainTotals['Jual'], true) }}</td>
+                            {{ $fmt($mainTotals['Jual'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['CCAInput']) }}">
-                            {{ $fmt($mainTotals['CCAInput'], true) }}</td>
+                            {{ $fmt($mainTotals['CCAInput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['LMTInput']) }}">
-                            {{ $fmt($mainTotals['LMTInput'], true) }}</td>
+                            {{ $fmt($mainTotals['LMTInput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['MLDInput']) }}">
-                            {{ $fmt($mainTotals['MLDInput'], true) }}</td>
+                            {{ $fmt($mainTotals['MLDInput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['PackingInput']) }}">
-                            {{ $fmt($mainTotals['PackingInput'], true) }}</td>
+                            {{ $fmt($mainTotals['PackingInput'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['SANDInput']) }}">
                             {{ $fmt($mainTotals['SANDInput'], true) }}
                         </td>
                         <td class="number {{ $totalClass($mainTotals['TotalKeluar']) }}">
-                            {{ $fmt($mainTotals['TotalKeluar'], true) }}</td>
+                            {{ $fmt($mainTotals['TotalKeluar'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['Akhir']) }}">
                             {{ $fmt($mainTotals['Akhir'], true) }}
                         </td>
@@ -457,7 +469,8 @@
                             {{ $fmt($subTotals['CCAkhir'], true) }}
                         </td>
                         <td class="number {{ $totalClass($subTotals['Moulding']) }}">
-                            {{ $fmt($subTotals['Moulding'], true) }}</td>
+                            {{ $fmt($subTotals['Moulding'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($subTotals['Sanding']) }}">
                             {{ $fmt($subTotals['Sanding'], true) }}
                         </td>

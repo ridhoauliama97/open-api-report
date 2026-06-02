@@ -85,7 +85,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .headers-row th {
@@ -108,7 +108,8 @@
             font-weight: bold;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
+        ;
 
         .totals-row td {
             font-weight: bold;
@@ -222,8 +223,7 @@
                                 $cellClass .= ' number';
                             }
                         @endphp
-                        <td class="{{ $cellClass }}"
-                            @if ($cellStyle !== '') style="{{ $cellStyle }}" @endif>{{ $cellValue }}
+                        <td class="{{ $cellClass }}" @if ($cellStyle !== '') style="{{ $cellStyle }}" @endif>{{ $cellValue }}
                         </td>
                     @endforeach
                 </tr>

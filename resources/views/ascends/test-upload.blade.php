@@ -78,7 +78,7 @@
         $selectedModule = old('report_module', 'hrm_analysis_reports');
         $selectedReportType = old('report_type', 'list_karyawan');
         $selectedCompanyModules = $companyReports[$selectedCompany]['modules'] ?? [];
-        if (! array_key_exists($selectedModule, $selectedCompanyModules)) {
+        if (!array_key_exists($selectedModule, $selectedCompanyModules)) {
             $selectedModule = array_key_first($selectedCompanyModules) ?? '';
         }
     @endphp

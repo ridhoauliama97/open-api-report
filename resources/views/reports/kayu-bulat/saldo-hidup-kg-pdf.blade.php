@@ -142,7 +142,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family:  "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {

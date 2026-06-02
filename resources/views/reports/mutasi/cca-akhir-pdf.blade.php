@@ -130,7 +130,7 @@
             text-align: center;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
@@ -177,10 +177,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $generatedByName = $generatedBy?->name ?? 'sistem';

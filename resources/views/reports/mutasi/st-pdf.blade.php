@@ -91,7 +91,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibry", "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -120,7 +120,7 @@
             border-left: 0;
         }
 
-        @include('reports.partials.pdf-footer-table-style') .headers-row th {
+        .headers-row th {
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
