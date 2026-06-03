@@ -95,9 +95,11 @@ class AscendXmlTestController extends Controller
             );
             if ($selectedReport === 'perbandingan_jumlah_karyawan_tahunan_per_bulan') {
                 $company = strtoupper((string) $request->input('company', 'RU'));
+                $title = $this->sharedHrmDisplayTitle('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company);
+
                 $reportData['company'] = $company;
-                $reportData['title'] = "Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan ({$company})";
-                $reportDefinition['filename'] = "Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan ({$company}).pdf";
+                $reportData['title'] = $title;
+                $reportDefinition['filename'] = $this->sharedHrmEmployeeListFilename('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company);
             }
 
         } catch (RuntimeException $exception) {
@@ -414,7 +416,7 @@ class AscendXmlTestController extends Controller
         PdfGenerator $pdfGenerator,
     ) {
         $company = strtoupper((string) $request->input('company', 'UC'));
-        $title = "Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk ({$company})";
+        $title = $this->sharedHrmDisplayTitle('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company);
 
         try {
             $xmlPayload = $request->xmlPayload();
@@ -433,7 +435,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
@@ -447,7 +449,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $title . '.pdf"',
+            'Content-Disposition' => 'inline; filename="' . $this->sharedHrmEmployeeListFilename('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company) . '"',
         ]);
     }
 
@@ -1138,76 +1140,91 @@ class AscendXmlTestController extends Controller
     {
         return match ($report) {
             'list-karyawan' => [
-                'view' => 'ascends.shared.hrm.list_karyawan.pdf',
-                'title' => "List Karyawan ({$company})",
-                'filename' => "List Karyawan ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.list_karyawan.pdf',
+                'title' => $this->sharedHrmDisplayTitle('List Karyawan', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('List Karyawan', $company),
             ],
             'daftar-karyawan' => [
-                'view' => 'ascends.shared.hrm.daftar_karyawan.pdf',
-                'title' => "Laporan Daftar Karyawan ({$company})",
-                'filename' => "Laporan Daftar Karyawan ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.daftar_karyawan.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Daftar Karyawan', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Daftar Karyawan', $company),
             ],
             'daftar-karyawan-berdasarkan-abjad' => [
-                'view' => 'ascends.shared.hrm.daftar_karyawan_berdasarkan_abjad.pdf',
-                'title' => "Laporan Daftar Karyawan ({$company})\nBerdasarkan Abjad",
-                'filename' => "Laporan Daftar Karyawan ({$company}) - Berdasarkan Abjad.pdf",
+                'view' => 'ascends.shared.hrm.employee_list.daftar_karyawan_berdasarkan_abjad.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Daftar Karyawan Berdasarkan Abjad', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Daftar Karyawan Berdasarkan Abjad', $company),
             ],
             'data-karyawan-status-kerja' => [
-                'view' => 'ascends.shared.hrm.data_karyawan_status_kerja.pdf',
-                'title' => "Laporan Data Karyawan ({$company})\nStaff, Karyawan Tetap & Karyawan Kontrak\nBerdasarkan Status Kerja",
-                'filename' => "Laporan Data Karyawan ({$company}) - Status Kerja.pdf",
+                'view' => 'ascends.shared.hrm.employee_list.data_karyawan_status_kerja.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Data Karyawan Staff, Karyawan Tetap & Karyawan Kontrak Berdasarkan Status Kerja', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Data Karyawan Staff, Karyawan Tetap & Karyawan Kontrak Berdasarkan Status Kerja', $company),
             ],
             'karyawan-aktif-per-departemen' => [
-                'view' => 'ascends.shared.hrm.karyawan_aktif_per_departemen.pdf',
-                'title' => "Laporan Karyawan Aktif Per Departemen ({$company})",
-                'filename' => "Laporan Karyawan Aktif Per Departemen ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_aktif_per_departemen.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Aktif Per Departemen', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Aktif Per Departemen', $company),
             ],
             'karyawan-masuk-per-departemen-per-tanggal-masuk' => [
-                'view' => 'ascends.shared.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf',
-                'title' => "Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk ({$company})",
-                'filename' => "Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company),
             ],
             'karyawan-per-agama' => [
-                'view' => 'ascends.shared.hrm.karyawan_per_agama.pdf',
-                'title' => "Laporan Karyawan Per Agama ({$company})",
-                'filename' => "Laporan Karyawan Per Agama ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_per_agama.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Agama', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Agama', $company),
             ],
             'karyawan-per-departemen-per-jabatan' => [
-                'view' => 'ascends.shared.hrm.karyawan_per_departemen_per_jabatan.pdf',
-                'title' => "Laporan Karyawan Per Departemen Per Jabatan ({$company})",
-                'filename' => "Laporan Karyawan Per Departemen Per Jabatan ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_per_departemen_per_jabatan.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Departemen Per Jabatan', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Departemen Per Jabatan', $company),
             ],
             'karyawan-per-etnis' => [
-                'view' => 'ascends.shared.hrm.karyawan_per_etnis.pdf',
-                'title' => "Laporan Karyawan Per Etnis ({$company})",
-                'filename' => "Laporan Karyawan Per Etnis ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_per_etnis.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Etnis', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Etnis', $company),
             ],
             'karyawan-per-level' => [
-                'view' => 'ascends.shared.hrm.karyawan_per_level.pdf',
-                'title' => "Laporan Karyawan Per Level ({$company})",
-                'filename' => "Laporan Karyawan Per Level ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_per_level.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Level', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Level', $company),
             ],
             'karyawan-per-masa-kerja' => [
-                'view' => 'ascends.shared.hrm.karyawan_per_masa_kerja.pdf',
-                'title' => "Laporan Karyawan Per Masa Kerja ({$company})",
-                'filename' => "Laporan Karyawan Per Masa Kerja ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_per_masa_kerja.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Masa Kerja', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Masa Kerja', $company),
             ],
             'karyawan-per-umur' => [
-                'view' => 'ascends.shared.hrm.karyawan_per_umur.pdf',
-                'title' => "Laporan Karyawan Per Umur ({$company})",
-                'filename' => "Laporan Karyawan Per Umur ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.karyawan_per_umur.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Umur', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Umur', $company),
             ],
             'perbandingan-jumlah-karyawan-tahunan-per-bulan' => [
-                'view' => 'ascends.shared.hrm.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf',
-                'title' => "Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan ({$company})",
-                'filename' => "Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company),
             ],
             'usia-generasi-tahun-kelahiran-masa-kerja' => [
-                'view' => 'ascends.shared.hrm.usia_generasi_tahun_kelahiran_masa_kerja.pdf',
-                'title' => "Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja ({$company})",
-                'filename' => "Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja ({$company}).pdf",
+                'view' => 'ascends.shared.hrm.employee_list.usia_generasi_tahun_kelahiran_masa_kerja.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja', $company),
             ],
         };
+    }
+
+    private function sharedHrmDisplayTitle(string $reportName, string $company): string
+    {
+        return "{$reportName} ({$company})";
+    }
+
+    private function sharedHrmEmployeeListTitle(string $reportName, string $company): string
+    {
+        return "Employee List - {$reportName} ({$company})";
+    }
+
+    private function sharedHrmEmployeeListFilename(string $reportName, string $company): string
+    {
+        return $this->sharedHrmEmployeeListTitle($reportName, $company) . '.pdf';
     }
 
     /**
@@ -1267,7 +1284,7 @@ class AscendXmlTestController extends Controller
                 'orientation' => 'portrait',
             ],
             'perbandingan_jumlah_karyawan_tahunan_per_bulan' => [
-                'view' => 'ascends.shared.hrm.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf',
+                'view' => 'ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf',
                 'filename' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan.pdf',
                 'orientation' => 'portrait',
             ],

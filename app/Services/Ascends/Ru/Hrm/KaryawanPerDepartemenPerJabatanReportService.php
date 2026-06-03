@@ -339,7 +339,7 @@ class KaryawanPerDepartemenPerJabatanReportService
         }
 
         try {
-            return Carbon::parse($date)->format('d/m/Y');
+            return Carbon::parse($date)->locale('id')->translatedFormat('d-M-y');
         } catch (Throwable) {
             return $date;
         }

@@ -158,7 +158,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
         $this->assertSame('Evi Seroja Tampubolon', $reportData['grouped_rows'][0]['rows'][0]['Nama']);
         $this->assertSame('Ka. Div. Accounting RU', $reportData['grouped_rows'][0]['rows'][0]['Jabatan']);
         $this->assertSame('Ferra Novita', $reportData['grouped_rows'][0]['rows'][1]['Nama']);
-        $this->assertSame('04/08/2017', $reportData['grouped_rows'][0]['rows'][1]['Tanggal Masuk']);
+        $this->assertSame('04-Agt-17', $reportData['grouped_rows'][0]['rows'][1]['Tanggal Masuk']);
         $this->assertSame(2, $reportData['grouped_rows'][0]['summary']['subtotal']);
 
         $financeSummary = $reportData['grouped_rows'][0]['summary'];
@@ -243,7 +243,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
                 'Tipe' => 'ST',
                 'Level' => '2',
                 'Pendidikan Terakhir' => 'S1',
-                'Tanggal Masuk' => '04/08/2017',
+                'Tanggal Masuk' => '04-Agt-17',
                 'Kelompok Kerja' => 'Staff Office II (08.30)',
             ]],
             'grouped_rows' => [[
@@ -255,7 +255,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
                     'Tipe' => 'ST',
                     'Level' => '2',
                     'Pendidikan Terakhir' => 'S1',
-                    'Tanggal Masuk' => '04/08/2017',
+                    'Tanggal Masuk' => '04-Agt-17',
                     'Kelompok Kerja' => 'Staff Office II (08.30)',
                 ]],
                 'summary' => ['subtotal' => 1],

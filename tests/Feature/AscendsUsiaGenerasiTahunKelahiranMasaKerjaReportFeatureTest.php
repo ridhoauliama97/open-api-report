@@ -32,7 +32,7 @@ class AscendsUsiaGenerasiTahunKelahiranMasaKerjaReportFeatureTest extends TestCa
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.usia_generasi_tahun_kelahiran_masa_kerja.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.usia_generasi_tahun_kelahiran_masa_kerja.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
                     && ($data['reportData']['title'] ?? null) === 'Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)'
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
@@ -49,7 +49,7 @@ class AscendsUsiaGenerasiTahunKelahiranMasaKerjaReportFeatureTest extends TestCa
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)');
+        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)');
     }
 
     public function test_parser_groups_rows_by_generation_birth_year_and_builds_summary(): void
@@ -85,7 +85,7 @@ class AscendsUsiaGenerasiTahunKelahiranMasaKerjaReportFeatureTest extends TestCa
         $reportData = app(UsiaGenerasiTahunKelahiranMasaKerjaReportService::class)
             ->buildReportDataFromXml($this->employeeListXml('employees'), 'test xml');
 
-        $html = view('ascends.shared.hrm.usia_generasi_tahun_kelahiran_masa_kerja.pdf', [
+        $html = view('ascends.shared.hrm.employee_list.usia_generasi_tahun_kelahiran_masa_kerja.pdf', [
             'company' => 'UC',
             'reportData' => $reportData,
             'generatedAt' => now(),

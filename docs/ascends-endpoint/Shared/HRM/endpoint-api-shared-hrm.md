@@ -17,20 +17,20 @@ Karena XML HRM Ascend tidak memiliki field company yang terisi, request shared w
 
 ## Endpoint Shared
 
-- List Karyawan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/list-karyawan/pdf`
-- Laporan Daftar Karyawan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/daftar-karyawan/pdf`
-- Laporan Daftar Karyawan Berdasarkan Abjad: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/daftar-karyawan-berdasarkan-abjad/pdf`
-- Laporan Data Karyawan Berdasarkan Status Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/data-karyawan-status-kerja/pdf`
-- Laporan Karyawan Aktif Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-aktif-per-departemen/pdf`
-- Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf`
-- Laporan Karyawan Per Agama: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-agama/pdf`
-- Laporan Karyawan Per Departemen Per Jabatan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-departemen-per-jabatan/pdf`
-- Laporan Karyawan Per Etnis: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-etnis/pdf`
-- Laporan Karyawan Per Level: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-level/pdf`
-- Laporan Karyawan Per Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-masa-kerja/pdf`
-- Laporan Karyawan Per Umur: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-umur/pdf`
-- Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
-- Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
+- Employee List - List Karyawan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/list-karyawan/pdf`
+- Employee List - Laporan Daftar Karyawan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/daftar-karyawan/pdf`
+- Employee List - Laporan Daftar Karyawan Berdasarkan Abjad: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/daftar-karyawan-berdasarkan-abjad/pdf`
+- Employee List - Laporan Data Karyawan Berdasarkan Status Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/data-karyawan-status-kerja/pdf`
+- Employee List - Laporan Karyawan Aktif Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-aktif-per-departemen/pdf`
+- Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf`
+- Employee List - Laporan Karyawan Per Agama: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-agama/pdf`
+- Employee List - Laporan Karyawan Per Departemen Per Jabatan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-departemen-per-jabatan/pdf`
+- Employee List - Laporan Karyawan Per Etnis: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-etnis/pdf`
+- Employee List - Laporan Karyawan Per Level: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-level/pdf`
+- Employee List - Laporan Karyawan Per Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-masa-kerja/pdf`
+- Employee List - Laporan Karyawan Per Umur: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/karyawan-per-umur/pdf`
+- Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
+- Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
 
 ## Input
 
@@ -56,15 +56,27 @@ xml_file=AnlReports.HRM.EmployeeList.xml
 - `200 application/pdf`
 - `Content-Disposition: inline`
 
-Title dan filename mengikuti company yang dikirim, contoh:
+Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori:
 
-- `List Karyawan (RU).pdf`
-- `Laporan Daftar Karyawan (GSU).pdf`
-- `Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (RU).pdf`
-- `Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU).pdf`
-- `Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC).pdf`
-- `Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC).pdf`
-- `Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC).pdf`
+```text
+{Nama Laporan} ({company})
+```
+
+Filename PDF memakai prefix kategori folder:
+
+```text
+Employee List - {Nama Laporan} ({company}).pdf
+```
+
+Contoh:
+
+- `Employee List - List Karyawan (RU).pdf`
+- `Employee List - Laporan Daftar Karyawan (GSU).pdf`
+- `Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (RU).pdf`
+- `Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU).pdf`
+- `Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC).pdf`
+- `Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC).pdf`
+- `Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC).pdf`
 
 ## Response Gagal
 
@@ -72,21 +84,21 @@ Title dan filename mengikuti company yang dikirim, contoh:
 
 ## Template Shared HRM Tersedia
 
-Template Blade shared berada di `resources/views/ascends/shared/hrm`.
+Template Blade shared Employee List berada di `resources/views/ascends/shared/hrm/employee_list`.
 
-- `list_karyawan`
-- `daftar_karyawan`
-- `daftar_karyawan_berdasarkan_abjad`
-- `data_karyawan_status_kerja`
-- `karyawan_aktif_per_departemen`
-- `karyawan_masuk_per_departemen_per_tanggal_masuk`
-- `karyawan_per_agama`
-- `karyawan_per_departemen_per_jabatan`
-- `karyawan_per_etnis`
-- `karyawan_per_level`
-- `karyawan_per_masa_kerja`
-- `karyawan_per_umur`
-- `perbandingan_jumlah_karyawan_tahunan_per_bulan`
-- `usia_generasi_tahun_kelahiran_masa_kerja`
+- `employee_list/list_karyawan`
+- `employee_list/daftar_karyawan`
+- `employee_list/daftar_karyawan_berdasarkan_abjad`
+- `employee_list/data_karyawan_status_kerja`
+- `employee_list/karyawan_aktif_per_departemen`
+- `employee_list/karyawan_masuk_per_departemen_per_tanggal_masuk`
+- `employee_list/karyawan_per_agama`
+- `employee_list/karyawan_per_departemen_per_jabatan`
+- `employee_list/karyawan_per_etnis`
+- `employee_list/karyawan_per_level`
+- `employee_list/karyawan_per_masa_kerja`
+- `employee_list/karyawan_per_umur`
+- `employee_list/perbandingan_jumlah_karyawan_tahunan_per_bulan`
+- `employee_list/usia_generasi_tahun_kelahiran_masa_kerja`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan `company` menjadi sumber label perusahaan pada title dan filename.

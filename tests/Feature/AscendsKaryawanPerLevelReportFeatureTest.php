@@ -153,7 +153,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
 
         $this->assertSame('Level : 1', $reportData['grouped_rows'][0]['label']);
         $this->assertSame('Mulyadi', $reportData['grouped_rows'][0]['rows'][0]['Nama']);
-        $this->assertSame('16/06/2007', $reportData['grouped_rows'][0]['rows'][0]['Tanggal Masuk']);
+        $this->assertSame('16-Jun-07', $reportData['grouped_rows'][0]['rows'][0]['Tanggal Masuk']);
         $this->assertSame('Sulasmi', $reportData['grouped_rows'][0]['rows'][1]['Nama']);
         $this->assertSame(2, $reportData['grouped_rows'][0]['summary']['subtotal']);
         $this->assertSame(1, $reportData['grouped_rows'][0]['summary']['gender']['L']['count']);
@@ -234,7 +234,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
                 'L/P' => 'L',
                 'Jabatan' => 'Kru Sanding',
                 'Status' => 'KT',
-                'Tanggal Masuk' => '16/06/2007',
+                'Tanggal Masuk' => '16-Jun-07',
                 'Level' => '1',
             ]],
             'grouped_rows' => [[
@@ -244,7 +244,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
                     'L/P' => 'L',
                     'Jabatan' => 'Kru Sanding',
                     'Status' => 'KT',
-                    'Tanggal Masuk' => '16/06/2007',
+                    'Tanggal Masuk' => '16-Jun-07',
                     'Level' => '1',
                 ]],
                 'summary' => ['subtotal' => 1],

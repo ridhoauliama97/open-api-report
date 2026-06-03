@@ -193,11 +193,11 @@
             <tr>
                 <th style="width: 4%;">No</th>
                 <th style="width: 16%;">Nama</th>
-                <th style="width: 18%;">Jabatan</th>
-                <th style="width: 5%;">Tipe</th>
-                <th style="width: 5%;">Level</th>
-                <th style="width: 10%;">Tanggungan</th>
-                <th style="width: 21%;">Perusahaan<br>Sebelumnya</th>
+                <th style="width: 16%;">Jabatan</th>
+                <th style="width: 6%;">Tipe</th>
+                <th style="width: 6%;">Level</th>
+                <th style="width: 11%;">Tanggungan</th>
+                <th style="width: 20%;">Perusahaan<br>Sebelumnya</th>
                 <th style="width: 10%;">Pendidikan<br>Terakhir</th>
                 <th style="width: 11%;">Tanggal<br>Masuk</th>
             </tr>

@@ -102,7 +102,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                     && ($data['reportData']['company'] ?? null) === 'GSU'
                     && ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)'
@@ -120,7 +120,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)');
+        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)');
     }
 
     public function test_shared_hrm_generic_route_can_render_daftar_karyawan_for_selected_company(): void
@@ -138,7 +138,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.daftar_karyawan.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.daftar_karyawan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
                     && ($data['reportData']['company'] ?? null) === 'UC'
                     && ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan (UC)'
@@ -156,7 +156,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC)');
+        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Daftar Karyawan (UC)');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
