@@ -172,6 +172,48 @@ return [
         ],
 
         // -----------------------------------------------------------------
+        // Laporan Kehadiran KK/KT/ST
+        // -----------------------------------------------------------------
+        'kehadiran_kk_kt_st' => [
+            'label' => 'Laporan Kehadiran KK/KT/ST',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Full_x0020_Name' => 'Nama',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Status',
+                'Department_x0020_Name' => 'Divisi',
+                'Active' => 'Status Aktif',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
+        // Laporan List Karyawan Habis Kontrak
+        // -----------------------------------------------------------------
+        'list_karyawan_habis_kontrak' => [
+            'label' => 'Laporan List Karyawan Habis Kontrak',
+            'columns' => [
+                'Employee_x0020_Code' => 'Code',
+                'Full_x0020_Name' => 'Full Name',
+                'Job_x0020_Title' => 'Job Title',
+                'Department_x0020_Name' => 'Department',
+                'Join_x0020_Date' => 'Join Date',
+                'Expiry_x0020_Date' => 'Expiry Date',
+                'Days_x0020_to_x0020_Expiry' => 'Days to Expiry',
+                'Daily_x0020_Worker_x0020_Type_x0020_Code' => 'Status',
+                'Active' => 'Active',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => null,
+        ],
+
+        // -----------------------------------------------------------------
         // Laporan Karyawan Per Agama
         // -----------------------------------------------------------------
         'karyawan_per_agama' => [

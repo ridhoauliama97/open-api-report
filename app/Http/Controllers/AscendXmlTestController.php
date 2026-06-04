@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
+use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanReportService;
 use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
@@ -15,6 +16,8 @@ use App\Services\Ascends\Ru\Hrm\KaryawanPerEtnisReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerLevelReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerUmurReportService;
+use App\Services\Ascends\Ru\Hrm\KehadiranKkKtStReportService;
+use App\Services\Ascends\Ru\Hrm\ListKaryawanHabisKontrakReportService;
 use App\Services\Ascends\Ru\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
 use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
@@ -44,7 +47,9 @@ class AscendXmlTestController extends Controller
         KaryawanPerLevelReportService $karyawanPerLevelReportService,
         KaryawanPerUmurReportService $karyawanPerUmurReportService,
         KaryawanPerDepartemenPerJabatanReportService $karyawanPerDepartemenPerJabatanReportService,
+        ListKaryawanHabisKontrakReportService $listKaryawanHabisKontrakReportService,
         PerbandinganJumlahKaryawanTahunanPerBulanReportService $perbandinganJumlahKaryawanTahunanPerBulanReportService,
+        AbsensiBriefingHarianReportService $absensiBriefingHarianReportService,
         SalesInvoiceReportService $salesInvoiceReportService,
         SuratJalanReportService $suratJalanReportService,
         PdfGenerator $pdfGenerator,
@@ -75,7 +80,9 @@ class AscendXmlTestController extends Controller
                 'karyawan_per_level' => $karyawanPerLevelReportService,
                 'karyawan_per_umur' => $karyawanPerUmurReportService,
                 'karyawan_per_departemen_per_jabatan' => $karyawanPerDepartemenPerJabatanReportService,
+                'list_karyawan_habis_kontrak' => $listKaryawanHabisKontrakReportService,
                 'perbandingan_jumlah_karyawan_tahunan_per_bulan' => $perbandinganJumlahKaryawanTahunanPerBulanReportService,
+                'absensi_briefing_harian' => $absensiBriefingHarianReportService,
                 'sales_invoice' => $salesInvoiceReportService,
                 'sales_invoice_panjang' => $salesInvoiceReportService,
                 'sales_invoice_normal' => $salesInvoiceReportService,
@@ -89,17 +96,40 @@ class AscendXmlTestController extends Controller
                 default => $reportService,
             };
 
-            $reportData = $selectedReportService->buildReportDataFromXml(
-                $xmlPayload,
-                $request->xmlSourceLabel() ?? 'request upload: xml_file'
-            );
-            if ($selectedReport === 'perbandingan_jumlah_karyawan_tahunan_per_bulan') {
+            $reportData = match ($selectedReport) {
+                'list_karyawan_habis_kontrak' => $listKaryawanHabisKontrakReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->listKaryawanHabisKontrakFilters($request)
+                ),
+                'absensi_briefing_harian' => $absensiBriefingHarianReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->absensiBriefingHarianFilters($request)
+                ),
+                default => $selectedReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file'
+                ),
+            };
+            if (in_array($selectedReport, ['list_karyawan_habis_kontrak', 'perbandingan_jumlah_karyawan_tahunan_per_bulan'], true)) {
                 $company = strtoupper((string) $request->input('company', 'RU'));
-                $title = $this->sharedHrmDisplayTitle('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company);
+                $reportName = $selectedReport === 'list_karyawan_habis_kontrak'
+                    ? 'Laporan List Karyawan Habis Kontrak'
+                    : 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan';
+                $title = $this->sharedHrmDisplayTitle($reportName, $company);
 
                 $reportData['company'] = $company;
                 $reportData['title'] = $title;
-                $reportDefinition['filename'] = $this->sharedHrmEmployeeListFilename('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company);
+                $reportDefinition['filename'] = $this->sharedHrmEmployeeListFilename($reportName, $company);
+            }
+            if ($selectedReport === 'absensi_briefing_harian') {
+                $company = strtoupper((string) $request->input('company', 'RU'));
+                $group = trim((string) ($reportData['group'] ?? $request->input('group', 'VKD')));
+
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
+                $reportDefinition['filename'] = "Attendance Full - Laporan Absensi Briefing Harian ({$company}) - {$group}.pdf";
             }
 
         } catch (RuntimeException $exception) {
@@ -121,7 +151,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $reportDefinition['filename'] . '"',
+            'Content-Disposition' => 'inline; filename="'.$reportDefinition['filename'].'"',
         ]);
     }
 
@@ -449,7 +479,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $this->sharedHrmEmployeeListFilename('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company) . '"',
+            'Content-Disposition' => 'inline; filename="'.$this->sharedHrmEmployeeListFilename('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company).'"',
         ]);
     }
 
@@ -468,6 +498,8 @@ class AscendXmlTestController extends Controller
         KaryawanPerLevelReportService $karyawanPerLevelReportService,
         KaryawanPerMasaKerjaReportService $karyawanPerMasaKerjaReportService,
         KaryawanPerUmurReportService $karyawanPerUmurReportService,
+        KehadiranKkKtStReportService $kehadiranKkKtStReportService,
+        ListKaryawanHabisKontrakReportService $listKaryawanHabisKontrakReportService,
         PerbandinganJumlahKaryawanTahunanPerBulanReportService $perbandinganJumlahKaryawanTahunanPerBulanReportService,
         UsiaGenerasiTahunKelahiranMasaKerjaReportService $usiaGenerasiTahunKelahiranMasaKerjaReportService,
         PdfGenerator $pdfGenerator,
@@ -491,6 +523,8 @@ class AscendXmlTestController extends Controller
             'karyawan-per-level' => $karyawanPerLevelReportService,
             'karyawan-per-masa-kerja' => $karyawanPerMasaKerjaReportService,
             'karyawan-per-umur' => $karyawanPerUmurReportService,
+            'kehadiran-kk-kt-st' => $kehadiranKkKtStReportService,
+            'list-karyawan-habis-kontrak' => $listKaryawanHabisKontrakReportService,
             'perbandingan-jumlah-karyawan-tahunan-per-bulan' => $perbandinganJumlahKaryawanTahunanPerBulanReportService,
             'usia-generasi-tahun-kelahiran-masa-kerja' => $usiaGenerasiTahunKelahiranMasaKerjaReportService,
         };
@@ -501,10 +535,16 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
             }
 
-            $reportData = $reportService->buildReportDataFromXml(
-                $xmlPayload,
-                $request->xmlSourceLabel() ?? 'request xml payload'
-            );
+            $reportData = $report === 'list-karyawan-habis-kontrak'
+                ? $listKaryawanHabisKontrakReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request xml payload',
+                    $this->listKaryawanHabisKontrakFilters($request)
+                )
+                : $reportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request xml payload'
+                );
             $reportData['company'] = $company;
             $reportData['title'] = $reportDefinition['title'];
             $reportData['label'] = $reportDefinition['title'];
@@ -526,7 +566,55 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $reportDefinition['filename'] . '"',
+            'Content-Disposition' => 'inline; filename="'.$reportDefinition['filename'].'"',
+        ]);
+    }
+
+    public function apiSharedHrmAbsensiBriefingHarianPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AbsensiBriefingHarianReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        $company = strtoupper((string) $request->input('company', ''));
+        if (! in_array($company, ['RU', 'GSU', 'UC'], true)) {
+            return response()->json(['message' => 'Field company wajib dikirim dengan nilai RU, GSU, atau UC.'], 422);
+        }
+
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->absensiBriefingHarianFilters($request)
+            );
+
+            $group = trim((string) ($reportData['group'] ?? $request->input('group', 'VKD')));
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
+            $reportData['label'] = $reportData['title'];
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.absensi_briefing_harian.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian ('.$company.') - '.$group.'.pdf"',
         ]);
     }
 
@@ -1091,7 +1179,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
         ]);
     }
 
@@ -1129,7 +1217,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
         ]);
     }
 
@@ -1199,6 +1287,16 @@ class AscendXmlTestController extends Controller
                 'title' => $this->sharedHrmDisplayTitle('Laporan Karyawan Per Umur', $company),
                 'filename' => $this->sharedHrmEmployeeListFilename('Laporan Karyawan Per Umur', $company),
             ],
+            'kehadiran-kk-kt-st' => [
+                'view' => 'ascends.shared.hrm.employee_list.kehadiran_kk_kt_st.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan Kehadiran KK/KT/ST', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan Kehadiran KK KT ST', $company),
+            ],
+            'list-karyawan-habis-kontrak' => [
+                'view' => 'ascends.shared.hrm.employee_list.list_karyawan_habis_kontrak.pdf',
+                'title' => $this->sharedHrmDisplayTitle('Laporan List Karyawan Habis Kontrak', $company),
+                'filename' => $this->sharedHrmEmployeeListFilename('Laporan List Karyawan Habis Kontrak', $company),
+            ],
             'perbandingan-jumlah-karyawan-tahunan-per-bulan' => [
                 'view' => 'ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf',
                 'title' => $this->sharedHrmDisplayTitle('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $company),
@@ -1224,7 +1322,45 @@ class AscendXmlTestController extends Controller
 
     private function sharedHrmEmployeeListFilename(string $reportName, string $company): string
     {
-        return $this->sharedHrmEmployeeListTitle($reportName, $company) . '.pdf';
+        return $this->sharedHrmEmployeeListTitle($reportName, $company).'.pdf';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function listKaryawanHabisKontrakFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'month' => $request->input('month'),
+            'year' => $request->input('year'),
+            'bulan' => $request->input('bulan'),
+            'tahun' => $request->input('tahun'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'TglAwal' => $request->input('TglAwal'),
+            'TglAkhir' => $request->input('TglAkhir'),
+            'report_date' => $request->input('report_date'),
+            'tanggal' => $request->input('tanggal'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function absensiBriefingHarianFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'group' => $request->input('group'),
+            'division' => $request->input('division'),
+            'divisi' => $request->input('divisi'),
+            'report_date' => $request->input('report_date'),
+            'tanggal' => $request->input('tanggal'),
+            'date' => $request->input('date'),
+            'penanggung_jawab' => $request->input('penanggung_jawab'),
+            'responsible_person' => $request->input('responsible_person'),
+            'tema' => $request->input('tema'),
+            'theme' => $request->input('theme'),
+        ];
     }
 
     /**
@@ -1286,6 +1422,16 @@ class AscendXmlTestController extends Controller
             'perbandingan_jumlah_karyawan_tahunan_per_bulan' => [
                 'view' => 'ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf',
                 'filename' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan.pdf',
+                'orientation' => 'portrait',
+            ],
+            'list_karyawan_habis_kontrak' => [
+                'view' => 'ascends.shared.hrm.employee_list.list_karyawan_habis_kontrak.pdf',
+                'filename' => 'Laporan List Karyawan Habis Kontrak.pdf',
+                'orientation' => 'portrait',
+            ],
+            'absensi_briefing_harian' => [
+                'view' => 'ascends.shared.hrm.attendance_full.absensi_briefing_harian.pdf',
+                'filename' => 'Laporan Absensi Briefing Harian.pdf',
                 'orientation' => 'portrait',
             ],
             'sales_invoice' => [
@@ -1380,5 +1526,4 @@ class AscendXmlTestController extends Controller
             ],
         };
     }
-
 }

@@ -88,6 +88,16 @@
             border-bottom: 1px solid #000;
         }
 
+        th.no-column,
+        td.no-column {
+            border-right: 2px solid #000 !important;
+        }
+
+        th.group-start,
+        td.group-start {
+            border-left: 2px solid #000 !important;
+        }
+
         tbody td {
             border-top: 0;
             border-bottom: 0;
@@ -150,8 +160,6 @@
             padding: 12px;
             font-style: italic;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -164,6 +172,12 @@
         $summaryLines = is_array($data['summary_lines'] ?? null) ? $data['summary_lines'] : [];
         $periodLabel = (string) ($data['period_label'] ?? '');
         $displayDate = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d-M-y');
+        $groupStartIndexes = [];
+        $groupColumnOffset = 0;
+        foreach ($columnGroups as $group) {
+            $groupStartIndexes[$groupColumnOffset] = true;
+            $groupColumnOffset += max(1, (int) ($group['span'] ?? 1));
+        }
         $parseCellNumber = static function (mixed $value): ?float {
             $normalized = trim((string) ($value ?? ''));
 
@@ -257,14 +271,16 @@
         </colgroup>
         <thead>
             <tr>
-                <th rowspan="2">No</th>
+                <th rowspan="2" class="no-column">No</th>
                 @foreach ($columnGroups as $group)
-                    <th colspan="{{ $group['span'] ?? 1 }}">{!! $group['label'] ?? '' !!}</th>
+                    <th colspan="{{ $group['span'] ?? 1 }}" class="group-start">{!! $group['label'] ?? '' !!}</th>
                 @endforeach
             </tr>
             <tr>
-                @foreach ($subColumns as $column)
-                    <th>{{ $column['label'] ?? '' }}</th>
+                @foreach ($subColumns as $columnIndex => $column)
+                    <th class="{{ isset($groupStartIndexes[$columnIndex]) ? 'group-start' : '' }}">
+                        {{ $column['label'] ?? '' }}
+                    </th>
                 @endforeach
             </tr>
         </thead>
@@ -272,12 +288,15 @@
             @forelse ($rows as $index => $row)
                 <tr
                     class="{{ !empty($row['is_footer']) ? 'total-row' : (($index + 1) % 2 === 1 ? 'row-odd' : 'row-even') }}">
-                    <td class="center">{{ $row['label'] ?? '' }}</td>
-                    @foreach ($subColumns as $column)
+                    <td class="center no-column">{{ $row['label'] ?? '' }}</td>
+                    @foreach ($subColumns as $columnIndex => $column)
                         @php
                             $cellValue = $row['cells'][$column['key']] ?? '';
+                            $groupStartClass = isset($groupStartIndexes[$columnIndex]) ? ' group-start' : '';
                         @endphp
-                        <td class="number{{ $cellToneClass($column, $cellValue) }}">{{ $cellValue }}</td>
+                        <td class="number{{ $groupStartClass }}{{ $cellToneClass($column, $cellValue) }}">
+                            {{ $cellValue }}
+                        </td>
                     @endforeach
                 </tr>
             @empty

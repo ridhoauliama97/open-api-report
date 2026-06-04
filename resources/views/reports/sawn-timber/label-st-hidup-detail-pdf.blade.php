@@ -57,7 +57,6 @@
             border-left: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
-            font-family: "Noto Serif", serif;
         }
 
         table.data-table th:first-child,
@@ -112,7 +111,8 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
+        ;
     </style>
 </head>
 

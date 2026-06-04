@@ -16,10 +16,28 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
     {
         return [
             'xml' => ['nullable', 'string'],
-            'xml_file' => ['nullable', 'file', 'max:20480'],
+            'xml_file' => ['nullable', 'file', 'max:204800'],
             'preview_pdf' => ['nullable', 'boolean'],
             'company' => ['nullable', 'in:RU,GSU,UC,ru,gsu,uc'],
-            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,uc_karyawan_aktif_per_departemen,uc_daftar_karyawan,uc_daftar_karyawan_berdasarkan_abjad,uc_data_karyawan_status_kerja,uc_karyawan_masuk_per_departemen_per_tanggal_masuk,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
+            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,uc_karyawan_aktif_per_departemen,uc_daftar_karyawan,uc_daftar_karyawan_berdasarkan_abjad,uc_data_karyawan_status_kerja,uc_karyawan_masuk_per_departemen_per_tanggal_masuk,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,list_karyawan_habis_kontrak,absensi_briefing_harian,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
+            'month' => ['nullable', 'integer', 'between:1,12'],
+            'year' => ['nullable', 'integer', 'between:1900,2100'],
+            'bulan' => ['nullable', 'integer', 'between:1,12'],
+            'tahun' => ['nullable', 'integer', 'between:1900,2100'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+            'TglAwal' => ['nullable', 'date'],
+            'TglAkhir' => ['nullable', 'date'],
+            'report_date' => ['nullable', 'date'],
+            'tanggal' => ['nullable', 'date'],
+            'date' => ['nullable', 'date'],
+            'group' => ['nullable', 'string', 'max:100'],
+            'division' => ['nullable', 'string', 'max:100'],
+            'divisi' => ['nullable', 'string', 'max:100'],
+            'penanggung_jawab' => ['nullable', 'string', 'max:100'],
+            'responsible_person' => ['nullable', 'string', 'max:100'],
+            'tema' => ['nullable', 'string', 'max:255'],
+            'theme' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -49,7 +67,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
     {
         $file = $this->file('xml_file');
         if ($file !== null && $file->isValid()) {
-            return 'request upload: ' . $file->getClientOriginalName();
+            return 'request upload: '.$file->getClientOriginalName();
         }
 
         if (is_string($this->input('xml')) && trim((string) $this->input('xml')) !== '') {

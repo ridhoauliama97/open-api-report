@@ -28,6 +28,7 @@
                             'karyawan_per_level' => 'Laporan Karyawan Per Level (RU)',
                             'karyawan_per_umur' => 'Laporan Karyawan Per Umur (RU)',
                             'karyawan_per_departemen_per_jabatan' => 'Laporan Karyawan Per Departemen Per Jabatan (RU)',
+                            'list_karyawan_habis_kontrak' => 'Laporan List Karyawan Habis Kontrak (RU)',
                             'perbandingan_jumlah_karyawan_tahunan_per_bulan' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (RU)',
                         ],
                     ],
@@ -40,6 +41,12 @@
                             'surat_jalan_normal' => 'Surat Jalan (RU) - Normal',
                         ],
                     ],
+                    'hrm_attendance_full' => [
+                        'label' => 'HRM Attendance Full',
+                        'reports' => [
+                            'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (RU)',
+                        ],
+                    ],
                 ],
             ],
             'GSU' => [
@@ -49,6 +56,7 @@
                         'label' => 'HRM Analysis Reports',
                         'reports' => [
                             'gsu_list_karyawan' => 'List Karyawan (GSU)',
+                            'list_karyawan_habis_kontrak' => 'Laporan List Karyawan Habis Kontrak (GSU)',
                             'perbandingan_jumlah_karyawan_tahunan_per_bulan' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (GSU)',
                         ],
                     ],
@@ -59,6 +67,12 @@
                             'gsu_sales_invoice_normal' => 'Sales Invoices (GSU) - Normal',
                             'gsu_surat_jalan_panjang' => 'Surat Jalan (GSU) - Panjang',
                             'gsu_surat_jalan_normal' => 'Surat Jalan (GSU) - Normal',
+                        ],
+                    ],
+                    'hrm_attendance_full' => [
+                        'label' => 'HRM Attendance Full',
+                        'reports' => [
+                            'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (GSU)',
                         ],
                     ],
                 ],
@@ -75,7 +89,14 @@
                             'uc_daftar_karyawan_berdasarkan_abjad' => 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad',
                             'uc_data_karyawan_status_kerja' => 'Laporan Data Karyawan (UC) - Status Kerja',
                             'uc_karyawan_masuk_per_departemen_per_tanggal_masuk' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)',
+                            'list_karyawan_habis_kontrak' => 'Laporan List Karyawan Habis Kontrak (UC)',
                             'perbandingan_jumlah_karyawan_tahunan_per_bulan' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)',
+                        ],
+                    ],
+                    'hrm_attendance_full' => [
+                        'label' => 'HRM Attendance Full',
+                        'reports' => [
+                            'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (UC)',
                         ],
                     ],
                 ],
@@ -166,11 +187,72 @@
                                 Belum ada laporan yang dikonfigurasi untuk perusahaan ini.
                             </div>
 
+                            <div class="mb-4" id="attendance_briefing_fields">
+                                <label class="form-label fw-semibold">Parameter Absensi Briefing</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="text" class="form-control @error('group') is-invalid @enderror"
+                                            name="group" value="{{ old('group', 'VKD') }}" placeholder="Group/Divisi">
+                                        @error('group')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="date"
+                                            class="form-control @error('report_date') is-invalid @enderror"
+                                            name="report_date" value="{{ old('report_date') }}">
+                                        @error('report_date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text"
+                                            class="form-control @error('penanggung_jawab') is-invalid @enderror"
+                                            name="penanggung_jawab" value="{{ old('penanggung_jawab') }}"
+                                            placeholder="Penanggung Jawab">
+                                        @error('penanggung_jawab')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text" class="form-control @error('tema') is-invalid @enderror"
+                                            name="tema" value="{{ old('tema') }}" placeholder="Tema">
+                                        @error('tema')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-text">Contoh group: VKD. Jika tanggal kosong, dipakai tanggal terbaru di XML.</div>
+                            </div>
+
+                            <div class="mb-4" id="contract_period_fields">
+                                <label class="form-label fw-semibold">Periode Habis Kontrak</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" min="1" max="12"
+                                            class="form-control @error('month') is-invalid @enderror" name="month"
+                                            value="{{ old('month', now()->format('n')) }}" placeholder="Bulan">
+                                        @error('month')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" min="1900" max="2100"
+                                            class="form-control @error('year') is-invalid @enderror" name="year"
+                                            value="{{ old('year', now()->format('Y')) }}" placeholder="Tahun">
+                                        @error('year')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-text">Digunakan untuk filter Expiry Date pada Laporan List Karyawan Habis Kontrak.</div>
+                            </div>
+
                             <div class="mb-4">
                                 <label for="xml_file" class="form-label fw-semibold">File XML</label>
                                 <input type="file" class="form-control @error('xml_file') is-invalid @enderror"
                                     id="xml_file" name="xml_file" accept=".xml,text/xml,application/xml" required>
-                                <div class="form-text">Maksimal 20 MB.</div>
+                                <div class="form-text">Maksimal 200 MB.</div>
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
@@ -193,6 +275,8 @@
             const reportLabel = document.getElementById('report_type_label');
             const emptyMessage = document.getElementById('empty_report_message');
             const submitButton = document.getElementById('submit_button');
+            const contractPeriodFields = document.getElementById('contract_period_fields');
+            const attendanceBriefingFields = document.getElementById('attendance_briefing_fields');
 
             const option = (value, label) => {
                 const option = document.createElement('option');
@@ -240,10 +324,13 @@
                 reportSelect.disabled = !hasReports;
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
+                contractPeriodFields.classList.toggle('d-none', reportSelect.value !== 'list_karyawan_habis_kontrak');
+                attendanceBriefingFields.classList.toggle('d-none', reportSelect.value !== 'absensi_briefing_harian');
             };
 
             companySelect.addEventListener('change', refreshModuleOptions);
             moduleSelect.addEventListener('change', refreshReportOptions);
+            reportSelect.addEventListener('change', refreshReportOptions);
             refreshModuleOptions();
         })();
     </script>
