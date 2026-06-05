@@ -123,12 +123,38 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->assertSame('VKD', $reportData['group']);
         $this->assertSame('04-Jun-26', $reportData['report_date']);
         $this->assertSame(2, $reportData['total_rows']);
-        $this->assertSame('Aferlius Gulo', $reportData['rows'][0]['Nama']);
-        $this->assertSame('V', $reportData['rows'][0]['Alfa']);
-        $this->assertSame('Suriono', $reportData['rows'][1]['Nama']);
-        $this->assertSame('07:37', $reportData['rows'][1]['Jam Masuk']);
+        $this->assertSame('Suriono', $reportData['rows'][0]['Nama']);
+        $this->assertSame('07:37', $reportData['rows'][0]['Jam Masuk']);
+        $this->assertSame('Aferlius Gulo', $reportData['rows'][1]['Nama']);
+        $this->assertSame('', $reportData['rows'][1]['Alfa']);
+        $this->assertSame('1', $reportData['rows'][1]['is_not_present']);
+        $this->assertSame(1, $reportData['summary']['present_no_late']['count']);
+        $this->assertSame(1, $reportData['summary']['not_present']['count']);
         $this->assertStringNotContainsString('Other Department User', json_encode($reportData['rows']));
         $this->assertStringNotContainsString('Old Date User', json_encode($reportData['rows']));
+    }
+
+    public function test_parser_can_filter_by_date_range_and_exclude_vkd_operator_forklift(): void
+    {
+        $reportData = app(AbsensiBriefingHarianReportService::class)
+            ->buildReportDataFromXml($this->attendanceXml('attendance'), 'test xml', [
+                'group' => 'VKD',
+                'start_date' => '2026-06-03',
+                'end_date' => '2026-06-04',
+            ]);
+
+        $this->assertSame('VKD', $reportData['group']);
+        $this->assertSame('04-Jun-26', $reportData['report_date']);
+        $this->assertSame('03-Jun-26', $reportData['start_date']);
+        $this->assertSame('03-Jun-26 s/d 04-Jun-26', $reportData['period_text']);
+        $this->assertSame(3, $reportData['total_rows']);
+        $this->assertSame(2, $reportData['summary']['present_no_late']['count']);
+        $this->assertSame(0, $reportData['summary']['late']['count']);
+        $this->assertSame(1, $reportData['summary']['not_present']['count']);
+        $this->assertSame('Old Date User', $reportData['rows'][0]['Nama']);
+        $this->assertSame('Suriono', $reportData['rows'][1]['Nama']);
+        $this->assertSame('Aferlius Gulo', $reportData['rows'][2]['Nama']);
+        $this->assertStringNotContainsString('Operator Forklift User', json_encode($reportData['rows']));
     }
 
     public function test_pdf_blade_renders_expected_layout(): void
@@ -158,6 +184,12 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->assertStringContainsString('Sakit', $html);
         $this->assertStringContainsString('Izin', $html);
         $this->assertStringContainsString('Alfa', $html);
+        $this->assertStringContainsString('check-box', $html);
+        $this->assertStringContainsString('Akumulasi Hadir Tidak Telat', $html);
+        $this->assertStringContainsString('Check Jumlah', $html);
+        $this->assertStringContainsString('ABH', $html);
+        $this->assertStringContainsString('Foto', $html);
+        $this->assertStringContainsString('Selisih', $html);
         $this->assertStringContainsString('Suriono', $html);
         $this->assertStringContainsString('Kesimpulan Briefing', $html);
     }
@@ -188,6 +220,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         <Employee_x0020_Code>130218</Employee_x0020_Code>
         <Full_x0020_Name>Suriono</Full_x0020_Name>
         <Department_x0020_Name>Vacuum &amp; K/D</Department_x0020_Name>
+        <Job_x0020_Title>Ka. Div. Vacuum &amp; KD</Job_x0020_Title>
         <Division_x0020_Name>K/D</Division_x0020_Name>
         <Workgroup>Staff Office I (08.00)</Workgroup>
         <Date>2026-06-04T00:00:00+07:00</Date>
@@ -200,6 +233,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         <Employee_x0020_Code>131808</Employee_x0020_Code>
         <Full_x0020_Name>Aferlius Gulo</Full_x0020_Name>
         <Department_x0020_Name>Vacuum &amp; K/D</Department_x0020_Name>
+        <Job_x0020_Title>Kru Vacuum</Job_x0020_Title>
         <Division_x0020_Name>Vacuum</Division_x0020_Name>
         <Workgroup>Vacuum Group A</Workgroup>
         <Date>2026-06-04T00:00:00+07:00</Date>
@@ -210,6 +244,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         <Employee_x0020_Code>130001</Employee_x0020_Code>
         <Full_x0020_Name>Other Department User</Full_x0020_Name>
         <Department_x0020_Name>Produksi FJLB</Department_x0020_Name>
+        <Job_x0020_Title>Kru Produksi</Job_x0020_Title>
         <Division_x0020_Name>PHU</Division_x0020_Name>
         <Date>2026-06-04T00:00:00+07:00</Date>
         <Sign_x0020_In_x0020__x0028_Time_x0029_>07:26</Sign_x0020_In_x0020__x0028_Time_x0029_>
@@ -219,8 +254,19 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         <Employee_x0020_Code>130002</Employee_x0020_Code>
         <Full_x0020_Name>Old Date User</Full_x0020_Name>
         <Department_x0020_Name>Vacuum &amp; K/D</Department_x0020_Name>
+        <Job_x0020_Title>Kru Vacuum</Job_x0020_Title>
         <Division_x0020_Name>K/D</Division_x0020_Name>
         <Date>2026-06-03T00:00:00+07:00</Date>
+        <Sign_x0020_In_x0020__x0028_Time_x0029_>07:20</Sign_x0020_In_x0020__x0028_Time_x0029_>
+        <Present_x002F_Absent>Present</Present_x002F_Absent>
+    </{$recordTag}>
+    <{$recordTag}>
+        <Employee_x0020_Code>130003</Employee_x0020_Code>
+        <Full_x0020_Name>Operator Forklift User</Full_x0020_Name>
+        <Department_x0020_Name>Vacuum &amp; K/D</Department_x0020_Name>
+        <Job_x0020_Title>Operator Forklift</Job_x0020_Title>
+        <Division_x0020_Name>K/D</Division_x0020_Name>
+        <Date>2026-06-04T00:00:00+07:00</Date>
         <Sign_x0020_In_x0020__x0028_Time_x0029_>07:20</Sign_x0020_In_x0020__x0028_Time_x0029_>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
     </{$recordTag}>

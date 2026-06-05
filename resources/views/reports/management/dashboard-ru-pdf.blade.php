@@ -98,6 +98,11 @@
             border-left: 2px solid #000 !important;
         }
 
+        th.stock-type-start,
+        td.stock-type-start {
+            border-left: 2px solid #000 !important;
+        }
+
         tbody td {
             border-top: 0;
             border-bottom: 0;
@@ -177,6 +182,20 @@
         foreach ($columnGroups as $group) {
             $groupStartIndexes[$groupColumnOffset] = true;
             $groupColumnOffset += max(1, (int) ($group['span'] ?? 1));
+        }
+        $stockTypeStartIndexes = [];
+        $previousStockType = null;
+        foreach ($subColumns as $columnIndex => $column) {
+            if (($column['group_source'] ?? '') !== 'Stock Kayu Bulat Hidup') {
+                continue;
+            }
+
+            $label = (string) ($column['label'] ?? '');
+            $stockType = explode('-', $label, 2)[0] ?? $label;
+            if ($previousStockType !== null && $stockType !== $previousStockType) {
+                $stockTypeStartIndexes[$columnIndex] = true;
+            }
+            $previousStockType = $stockType;
         }
         $parseCellNumber = static function (mixed $value): ?float {
             $normalized = trim((string) ($value ?? ''));
@@ -278,7 +297,8 @@
             </tr>
             <tr>
                 @foreach ($subColumns as $columnIndex => $column)
-                    <th class="{{ isset($groupStartIndexes[$columnIndex]) ? 'group-start' : '' }}">
+                    <th
+                        class="{{ isset($groupStartIndexes[$columnIndex]) ? 'group-start' : '' }}{{ isset($stockTypeStartIndexes[$columnIndex]) ? ' stock-type-start' : '' }}">
                         {{ $column['label'] ?? '' }}
                     </th>
                 @endforeach
@@ -293,8 +313,10 @@
                         @php
                             $cellValue = $row['cells'][$column['key']] ?? '';
                             $groupStartClass = isset($groupStartIndexes[$columnIndex]) ? ' group-start' : '';
+                            $stockTypeStartClass = isset($stockTypeStartIndexes[$columnIndex]) ? ' stock-type-start' : '';
                         @endphp
-                        <td class="number{{ $groupStartClass }}{{ $cellToneClass($column, $cellValue) }}">
+                        <td
+                            class="number{{ $groupStartClass }}{{ $stockTypeStartClass }}{{ $cellToneClass($column, $cellValue) }}">
                             {{ $cellValue }}
                         </td>
                     @endforeach

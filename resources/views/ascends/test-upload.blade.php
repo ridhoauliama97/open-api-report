@@ -45,6 +45,14 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (RU)',
+                            'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)',
+                            'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (RU) Per Departemen',
+                        ],
+                    ],
+                    'hrm_absence' => [
+                        'label' => 'HRM Absence',
+                        'reports' => [
+                            'ketidakhadiran_bulanan' => 'Laporan Ketidakhadiran Bulanan (RU) - KK/KT',
                         ],
                     ],
                 ],
@@ -73,6 +81,14 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (GSU)',
+                            'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)',
+                            'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (GSU) Per Departemen',
+                        ],
+                    ],
+                    'hrm_absence' => [
+                        'label' => 'HRM Absence',
+                        'reports' => [
+                            'ketidakhadiran_bulanan' => 'Laporan Ketidakhadiran Bulanan (GSU) - KK/KT',
                         ],
                     ],
                 ],
@@ -97,6 +113,14 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (UC)',
+                            'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (UC)',
+                            'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (UC) Per Departemen',
+                        ],
+                    ],
+                    'hrm_absence' => [
+                        'label' => 'HRM Absence',
+                        'reports' => [
+                            'ketidakhadiran_bulanan' => 'Laporan Ketidakhadiran Bulanan (UC) - KK/KT',
                         ],
                     ],
                 ],
@@ -188,7 +212,7 @@
                             </div>
 
                             <div class="mb-4" id="attendance_briefing_fields">
-                                <label class="form-label fw-semibold">Parameter Absensi Briefing</label>
+                                <label class="form-label fw-semibold">Parameter Attendance Full</label>
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <input type="text" class="form-control @error('group') is-invalid @enderror"
@@ -198,10 +222,20 @@
                                         @enderror
                                     </div>
                                     <div class="col-6">
+                                        <label class="form-label small mb-1">Tanggal Awal</label>
                                         <input type="date"
-                                            class="form-control @error('report_date') is-invalid @enderror"
-                                            name="report_date" value="{{ old('report_date') }}">
-                                        @error('report_date')
+                                            class="form-control @error('start_date') is-invalid @enderror"
+                                            name="start_date" value="{{ old('start_date') }}">
+                                        @error('start_date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Tanggal Akhir</label>
+                                        <input type="date"
+                                            class="form-control @error('end_date') is-invalid @enderror"
+                                            name="end_date" value="{{ old('end_date') }}">
+                                        @error('end_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -221,8 +255,17 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Kategori/Tipe</label>
+                                        <input type="text"
+                                            class="form-control @error('kategori') is-invalid @enderror"
+                                            name="kategori" value="{{ old('kategori', 'ST') }}" placeholder="ST">
+                                        @error('kategori')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
-                                <div class="form-text">Contoh group: VKD. Jika tanggal kosong, dipakai tanggal terbaru di XML.</div>
+                                <div class="form-text">Gunakan tanggal awal dan tanggal akhir untuk periode Attendance Full. Field group dipakai untuk Absensi Briefing Harian. Field kategori/tipe dipakai untuk laporan Pengabaian Keterlambatan & Kehadiran Manual.</div>
                             </div>
 
                             <div class="mb-4" id="contract_period_fields">
@@ -246,6 +289,40 @@
                                     </div>
                                 </div>
                                 <div class="form-text">Digunakan untuk filter Expiry Date pada Laporan List Karyawan Habis Kontrak.</div>
+                            </div>
+
+                            <div class="mb-4" id="absence_period_fields">
+                                <label class="form-label fw-semibold">Parameter Absence</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Tanggal Awal</label>
+                                        <input type="date"
+                                            class="form-control @error('start_date') is-invalid @enderror"
+                                            name="start_date" value="{{ old('start_date') }}">
+                                        @error('start_date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Tanggal Akhir</label>
+                                        <input type="date"
+                                            class="form-control @error('end_date') is-invalid @enderror"
+                                            name="end_date" value="{{ old('end_date') }}">
+                                        @error('end_date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small mb-1">Tipe</label>
+                                        <input type="text"
+                                            class="form-control @error('tipe') is-invalid @enderror"
+                                            name="tipe" value="{{ old('tipe', 'KK/KT') }}" placeholder="KK/KT">
+                                        @error('tipe')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-text">Jika periode tidak diisi, sistem memakai tanggal yang tersedia di XML Absence.</div>
                             </div>
 
                             <div class="mb-4">
@@ -277,6 +354,7 @@
             const submitButton = document.getElementById('submit_button');
             const contractPeriodFields = document.getElementById('contract_period_fields');
             const attendanceBriefingFields = document.getElementById('attendance_briefing_fields');
+            const absencePeriodFields = document.getElementById('absence_period_fields');
 
             const option = (value, label) => {
                 const option = document.createElement('option');
@@ -284,6 +362,13 @@
                 option.textContent = label;
 
                 return option;
+            };
+
+            const toggleSection = (section, visible) => {
+                section.classList.toggle('d-none', !visible);
+                section.querySelectorAll('input, select, textarea').forEach((field) => {
+                    field.disabled = !visible;
+                });
             };
 
             const refreshModuleOptions = () => {
@@ -324,8 +409,9 @@
                 reportSelect.disabled = !hasReports;
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
-                contractPeriodFields.classList.toggle('d-none', reportSelect.value !== 'list_karyawan_habis_kontrak');
-                attendanceBriefingFields.classList.toggle('d-none', reportSelect.value !== 'absensi_briefing_harian');
+                toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'persentase_kehadiran_mingguan_per_departemen', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };
 
             companySelect.addEventListener('change', refreshModuleOptions);

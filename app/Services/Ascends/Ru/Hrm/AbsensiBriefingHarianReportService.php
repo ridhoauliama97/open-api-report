@@ -20,17 +20,22 @@ class AbsensiBriefingHarianReportService
             throw new RuntimeException('Data Attendance tidak ditemukan pada XML.');
         }
 
-        $reportDate = $this->resolveReportDate($filters, $rows);
+        $period = $this->resolveReportPeriod($filters, $rows);
+        $reportDate = $period['end'];
         $group = $this->resolveGroup($filters);
         $filteredRows = array_values(array_filter(
             $rows,
-            fn (array $row): bool => $this->shouldIncludeRow($row, $reportDate, $group)
+            fn (array $row): bool => $this->shouldIncludeRow($row, $period['start'], $period['end'], $group)
         ));
 
-        usort($filteredRows, static fn (array $left, array $right): int => [
+        usort($filteredRows, fn (array $left, array $right): int => [
+            (string) ($left['Date'] ?? ''),
+            $this->isAbsent($left) ? 1 : 0,
             (string) ($left['Full Name'] ?? ''),
             (string) ($left['Employee Code'] ?? ''),
         ] <=> [
+            (string) ($right['Date'] ?? ''),
+            $this->isAbsent($right) ? 1 : 0,
             (string) ($right['Full Name'] ?? ''),
             (string) ($right['Employee Code'] ?? ''),
         ]);
@@ -51,6 +56,11 @@ class AbsensiBriefingHarianReportService
             'theme' => trim((string) ($filters['tema'] ?? $filters['theme'] ?? '')),
             'report_date' => $reportDate->locale('id')->translatedFormat('d-M-y'),
             'report_date_sort' => $reportDate->format('Y-m-d'),
+            'start_date' => $period['start']->locale('id')->translatedFormat('d-M-y'),
+            'period_text' => $period['start']->format('Y-m-d') === $period['end']->format('Y-m-d')
+                ? $period['end']->locale('id')->translatedFormat('d-M-y')
+                : $period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
+            'summary' => $this->buildSummary($shapedRows),
             'headers' => ['No', 'Nama', 'Jam Masuk', 'Briefing', 'Telat', 'Sakit', 'Izin', 'Alfa'],
             'rows' => $shapedRows,
             'total_rows' => count($shapedRows),
@@ -98,6 +108,7 @@ class AbsensiBriefingHarianReportService
                 'Department' => $row['Department_x0020_Name'] ?? '',
                 'Division' => $row['Division_x0020_Name'] ?? '',
                 'Workgroup' => $row['Workgroup'] ?? '',
+                'Job Title' => $row['Job_x0020_Title'] ?? '',
                 'Date' => $row['Date'] ?? '',
                 'Sign In Time' => $row['Sign_x0020_In_x0020__x0028_Time_x0029_'] ?? '',
                 'Sign In Diff' => $row['Sign_x0020_In_x0020_Diff.'] ?? $row['Sign_x0020_In_x0020_Diff._x0020__x0028_Mins_x0029_'] ?? '',
@@ -145,10 +156,38 @@ class AbsensiBriefingHarianReportService
         return $group !== '' ? strtoupper($group) : 'VKD';
     }
 
-    private function shouldIncludeRow(array $row, Carbon $reportDate, string $group): bool
+    /**
+     * @param  array<string, mixed>  $filters
+     * @param  array<int, array<string, string>>  $rows
+     * @return array{start: Carbon, end: Carbon}
+     */
+    private function resolveReportPeriod(array $filters, array $rows): array
+    {
+        $startDate = trim((string) ($filters['start_date'] ?? $filters['TglAwal'] ?? ''));
+        $endDate = trim((string) ($filters['end_date'] ?? $filters['TglAkhir'] ?? ''));
+
+        if ($startDate !== '' || $endDate !== '') {
+            $start = $this->parseDate($startDate) ?? $this->parseDate($endDate);
+            $end = $this->parseDate($endDate) ?? $this->parseDate($startDate);
+
+            if ($start !== null && $end !== null) {
+                if ($end->lessThan($start)) {
+                    [$start, $end] = [$end, $start];
+                }
+
+                return ['start' => $start->startOfDay(), 'end' => $end->endOfDay()];
+            }
+        }
+
+        $date = $this->resolveReportDate($filters, $rows);
+
+        return ['start' => $date->copy()->startOfDay(), 'end' => $date->copy()->endOfDay()];
+    }
+
+    private function shouldIncludeRow(array $row, Carbon $startDate, Carbon $endDate, string $group): bool
     {
         $date = $this->parseDate((string) ($row['Date'] ?? ''));
-        if ($date === null || $date->format('Y-m-d') !== $reportDate->format('Y-m-d')) {
+        if ($date === null || ! $date->betweenIncluded($startDate, $endDate)) {
             return false;
         }
 
@@ -166,9 +205,11 @@ class AbsensiBriefingHarianReportService
         $department = strtoupper(trim((string) ($row['Department'] ?? '')));
         $division = strtoupper(trim((string) ($row['Division'] ?? '')));
         $workgroup = strtoupper(trim((string) ($row['Workgroup'] ?? '')));
+        $jobTitle = strtoupper(trim((string) ($row['Job Title'] ?? '')));
 
         if ($group === 'VKD') {
-            return $department === 'VACUUM & K/D';
+            return $department === 'VACUUM & K/D'
+                && ! str_contains($jobTitle, 'OPERATOR FORKLIFT');
         }
 
         foreach ([$department, $division, $workgroup] as $value) {
@@ -198,8 +239,42 @@ class AbsensiBriefingHarianReportService
             'Telat' => $hasSignIn && $signInDiff > 0 ? 'V' : '',
             'Sakit' => str_contains($leave, 'SICK') || str_contains($leave, 'SAKIT') ? 'V' : '',
             'Izin' => str_contains($leave, 'IZIN') || str_contains($leave, 'PERMISSION') || str_contains($leave, 'LEAVE') ? 'V' : '',
-            'Alfa' => $isAbsent && $leave === '' ? 'V' : '',
+            'Alfa' => '',
+            'has_sign_in' => $hasSignIn ? '1' : '0',
+            'is_late' => $hasSignIn && $signInDiff > 0 ? '1' : '0',
+            'is_not_present' => $isAbsent ? '1' : '0',
         ];
+    }
+
+    private function isAbsent(array $row): bool
+    {
+        return strtoupper(trim((string) ($row['Present Absent'] ?? ''))) === 'ABSENT';
+    }
+
+    /**
+     * @param  array<int, array<string, string>>  $rows
+     * @return array<string, array{count: int, percent: int}>
+     */
+    private function buildSummary(array $rows): array
+    {
+        $total = count($rows);
+        $presentNoLate = count(array_filter(
+            $rows,
+            static fn (array $row): bool => ($row['has_sign_in'] ?? '') === '1' && ($row['is_late'] ?? '') !== '1'
+        ));
+        $late = count(array_filter($rows, static fn (array $row): bool => ($row['is_late'] ?? '') === '1'));
+        $notPresent = count(array_filter($rows, static fn (array $row): bool => ($row['is_not_present'] ?? '') === '1'));
+
+        return [
+            'present_no_late' => ['count' => $presentNoLate, 'percent' => $this->percent($presentNoLate, $total)],
+            'late' => ['count' => $late, 'percent' => $this->percent($late, $total)],
+            'not_present' => ['count' => $notPresent, 'percent' => $this->percent($notPresent, $total)],
+        ];
+    }
+
+    private function percent(int $count, int $total): int
+    {
+        return $total > 0 ? (int) round(($count / $total) * 100) : 0;
     }
 
     /**

@@ -37,6 +37,12 @@ Karena XML HRM Ascend tidak memiliki field company yang terisi, request shared w
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf`
+- Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf`
+- Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf`
+
+## Endpoint Shared Absence
+
+- Absence - Laporan Ketidakhadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf`
 
 ## Input
 
@@ -61,10 +67,36 @@ Input tambahan khusus `list-karyawan-habis-kontrak`:
 Input tambahan khusus `absensi-briefing-harian`:
 
 - `group`: kode/nama group atau divisi yang tampil di judul, contoh `VKD`.
-- `report_date`: tanggal data attendance, contoh `2026-06-04`.
+- `start_date` + `end_date`: periode data attendance, contoh `2026-06-01` sampai `2026-06-05`.
+- `report_date`: fallback untuk filter satu tanggal saja, contoh `2026-06-04`.
 - `penanggung_jawab`: optional, contoh `SRO,`.
 - `tema`: optional.
 - Alias yang diterima: `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
+
+Input tambahan khusus `persentase-kehadiran-mingguan-per-departemen`:
+
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+
+Input tambahan khusus `pengabaian-keterlambatan-kehadiran-manual`:
+
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-05` sampai `2026-06-04`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- `kategori`: tipe/status/kategori karyawan dari form Ascend, contoh `ST`.
+- Alias kategori yang diterima: `Kategori`, `category`, `Category`, `status`, `Status`, `tipe`, `Tipe`, `type`, `Type`, `PilihKategori`, `pilih_kategori`, `Pilih Kategori`, atau `Pilih_x0020_Kategori`.
+- Mapping XML: nilai kategori membaca `Daily_x0020_Worker_x0020_Type_x0020_Code`. Contoh `KK/KT` membaca kode `KK` atau `KT`, sedangkan `ST` membaca kode `ST`.
+- Jika kategori tidak dikirim, default `ST`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+
+Input tambahan khusus `ketidakhadiran-bulanan`:
+
+- `start_date` + `end_date`: periode data absence, contoh `2026-05-05` sampai `2026-06-04`.
+- Alias yang diterima: `TglAwal` + `TglAkhir`.
+- `Pilih Kategori`: tipe karyawan dari form Ascend, contoh `KK/KT` atau `ST`.
+- Alias yang diterima: `Kategori`, `kategori`, `PilihKategori`, `pilih_kategori`, `Tipe`, `tipe`, `type`, atau `Type`.
+- Mapping XML: `KK/KT` membaca `Daily_x0020_Worker_x0020_Type_x0020_Code` = `KK` atau `KT`; `ST` membaca kode `ST`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 
 Contoh `multipart/form-data`:
 
@@ -82,14 +114,44 @@ year=2026
 xml_file=AnlReports.HRM.EmployeeList.xml
 ```
 
-Contoh `multipart/form-data` untuk Absensi Briefing Harian group VKD tanggal 04-Jun-2026:
+Contoh `multipart/form-data` untuk Absensi Briefing Harian group VKD periode 01-Jun-2026 sampai 05-Jun-2026:
 
 ```text
 company=RU
 group=VKD
-report_date=2026-06-04
+start_date=2026-06-01
+end_date=2026-06-05
 penanggung_jawab=SRO,
 xml_file=AnlReports.HRM.AttendanceFull.xml
+```
+
+Contoh `multipart/form-data` untuk Persentase Kehadiran Mingguan Per Departemen periode Mei 2026:
+
+```text
+company=RU
+start_date=2026-05-01
+end_date=2026-05-31
+xml_file=AnlReports.HRM.AttendanceFull.xml
+```
+
+Contoh `multipart/form-data` untuk Pengabaian Keterlambatan & Kehadiran Manual kategori ST:
+
+```text
+company=RU
+kategori=ST
+start_date=2026-05-05
+end_date=2026-06-04
+xml_file=AnlReports.HRM.AttendanceFull.xml
+```
+
+Contoh `multipart/form-data` untuk Ketidakhadiran Bulanan:
+
+```text
+company=RU
+Pilih Kategori=KK/KT
+start_date=2026-05-05
+end_date=2026-06-04
+xml_file=AnlReports.HRM.Absence.xml
 ```
 
 ## Response Sukses
@@ -121,6 +183,9 @@ Contoh:
 - `Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC).pdf`
 - `Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC).pdf`
 - `Attendance Full - Laporan Absensi Briefing Harian (RU) - VKD.pdf`
+- `Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (RU).pdf`
+- `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual ST Per Departemen (RU).pdf`
+- `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
 
 ## Response Gagal
 
@@ -150,5 +215,11 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 Template Blade shared Attendance Full berada di `resources/views/ascends/shared/hrm/attendance_full`.
 
 - `attendance_full/absensi_briefing_harian`
+- `attendance_full/persentase_kehadiran_mingguan_per_departemen`
+- `attendance_full/pengabaian_keterlambatan_kehadiran_manual`
+
+Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/absence`.
+
+- `absence/ketidakhadiran_bulanan`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan `company` menjadi sumber label perusahaan pada title dan filename.
