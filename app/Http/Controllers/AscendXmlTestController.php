@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
 use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianReportService;
+use App\Services\Ascends\Ru\Hrm\AbsensiIndividuReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanReportService;
 use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
@@ -17,11 +18,13 @@ use App\Services\Ascends\Ru\Hrm\KaryawanPerLevelReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanPerUmurReportService;
 use App\Services\Ascends\Ru\Hrm\KehadiranKkKtStReportService;
+use App\Services\Ascends\Ru\Hrm\KehadiranKruStickReportService;
 use App\Services\Ascends\Ru\Hrm\KetidakhadiranBulananReportService;
 use App\Services\Ascends\Ru\Hrm\ListKaryawanHabisKontrakReportService;
 use App\Services\Ascends\Ru\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
 use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranMingguanPerDepartemenReportService;
 use App\Services\Ascends\Ru\Hrm\PengabaianKeterlambatanKehadiranManualReportService;
+use App\Services\Ascends\Ru\Hrm\RekapitulasiAbsensiBriefingHarianReportService;
 use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
@@ -55,6 +58,9 @@ class AscendXmlTestController extends Controller
         PersentaseKehadiranMingguanPerDepartemenReportService $persentaseKehadiranMingguanPerDepartemenReportService,
         PengabaianKeterlambatanKehadiranManualReportService $pengabaianKeterlambatanKehadiranManualReportService,
         AbsensiBriefingHarianReportService $absensiBriefingHarianReportService,
+        RekapitulasiAbsensiBriefingHarianReportService $rekapitulasiAbsensiBriefingHarianReportService,
+        AbsensiIndividuReportService $absensiIndividuReportService,
+        KehadiranKruStickReportService $kehadiranKruStickReportService,
         KetidakhadiranBulananReportService $ketidakhadiranBulananReportService,
         SalesInvoiceReportService $salesInvoiceReportService,
         SuratJalanReportService $suratJalanReportService,
@@ -91,6 +97,9 @@ class AscendXmlTestController extends Controller
                 'persentase_kehadiran_mingguan_per_departemen' => $persentaseKehadiranMingguanPerDepartemenReportService,
                 'pengabaian_keterlambatan_kehadiran_manual' => $pengabaianKeterlambatanKehadiranManualReportService,
                 'absensi_briefing_harian' => $absensiBriefingHarianReportService,
+                'rekapitulasi_absensi_briefing_harian' => $rekapitulasiAbsensiBriefingHarianReportService,
+                'absensi_individu' => $absensiIndividuReportService,
+                'kehadiran_kru_stick' => $kehadiranKruStickReportService,
                 'ketidakhadiran_bulanan' => $ketidakhadiranBulananReportService,
                 'sales_invoice' => $salesInvoiceReportService,
                 'sales_invoice_panjang' => $salesInvoiceReportService,
@@ -115,6 +124,21 @@ class AscendXmlTestController extends Controller
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
                     $this->absensiBriefingHarianFilters($request)
+                ),
+                'rekapitulasi_absensi_briefing_harian' => $rekapitulasiAbsensiBriefingHarianReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->absensiBriefingHarianFilters($request)
+                ),
+                'absensi_individu' => $absensiIndividuReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->absensiIndividuFilters($request)
+                ),
+                'kehadiran_kru_stick' => $kehadiranKruStickReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->attendanceFullPeriodFilters($request)
                 ),
                 'persentase_kehadiran_mingguan_per_departemen' => $persentaseKehadiranMingguanPerDepartemenReportService->buildReportDataFromXml(
                     $xmlPayload,
@@ -155,6 +179,20 @@ class AscendXmlTestController extends Controller
                 $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
                 $reportDefinition['filename'] = "Attendance Full - Laporan Absensi Briefing Harian ({$company}) - {$group}.pdf";
             }
+            if ($selectedReport === 'rekapitulasi_absensi_briefing_harian') {
+                $company = strtoupper((string) $request->input('company', 'RU'));
+
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Rekapitulasi Absensi Briefing Harian ({$company})";
+                $reportDefinition['filename'] = "Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian ({$company}).pdf";
+            }
+            if ($selectedReport === 'kehadiran_kru_stick') {
+                $company = strtoupper((string) $request->input('company', 'RU'));
+
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Kehadiran Kru Stick ({$company})";
+                $reportDefinition['filename'] = "Attendance Full - Laporan Kehadiran Kru Stick ({$company}).pdf";
+            }
             if ($selectedReport === 'persentase_kehadiran_mingguan_per_departemen') {
                 $company = strtoupper((string) $request->input('company', 'RU'));
 
@@ -190,7 +228,7 @@ class AscendXmlTestController extends Controller
             'headers' => $reportData['headers'] ?? [],
             'rows' => $reportData['rows'] ?? [],
             'generatedAt' => now(),
-            'pdf_format' => 'A4',
+            'pdf_format' => $reportDefinition['format'] ?? 'A4',
             'pdf_orientation' => $reportDefinition['orientation'],
             'pdf_simple_tables' => false,
             'pdf_column_count' => count($reportData['headers'] ?? []),
@@ -226,7 +264,7 @@ class AscendXmlTestController extends Controller
             'headers' => $reportData['headers'] ?? [],
             'rows' => $reportData['rows'] ?? [],
             'generatedAt' => now(),
-            'pdf_format' => 'A4',
+            'pdf_format' => 'A3',
             'pdf_simple_tables' => false,
             'pdf_column_count' => count($reportData['headers'] ?? []),
         ]);
@@ -662,6 +700,147 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian ('.$company.') - '.$group.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmRekapitulasiAbsensiBriefingHarianPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        RekapitulasiAbsensiBriefingHarianReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        $company = strtoupper((string) $request->input('company', ''));
+        if (! in_array($company, ['RU', 'GSU', 'UC'], true)) {
+            return response()->json(['message' => 'Field company wajib dikirim dengan nilai RU, GSU, atau UC.'], 422);
+        }
+
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->absensiBriefingHarianFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Rekapitulasi Absensi Briefing Harian ({$company})";
+            $reportData['label'] = $reportData['title'];
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmAbsensiIndividuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AbsensiIndividuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        $company = strtoupper((string) $request->input('company', ''));
+        if (! in_array($company, ['RU', 'GSU', 'UC'], true)) {
+            return response()->json(['message' => 'Field company wajib dikirim dengan nilai RU, GSU, atau UC.'], 422);
+        }
+
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->absensiIndividuFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Absensi Individu ({$company})";
+            $reportData['label'] = $reportData['title'];
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.absensi_individu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Individu ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmKehadiranKruStickPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        KehadiranKruStickReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        $company = strtoupper((string) $request->input('company', ''));
+        if (! in_array($company, ['RU', 'GSU', 'UC'], true)) {
+            return response()->json(['message' => 'Field company wajib dikirim dengan nilai RU, GSU, atau UC.'], 422);
+        }
+
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullPeriodFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Kehadiran Kru Stick ({$company})";
+            $reportData['label'] = $reportData['title'];
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.kehadiran_kru_stick.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A3',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Stick ('.$company.').pdf"',
         ]);
     }
 
@@ -1560,6 +1739,21 @@ class AscendXmlTestController extends Controller
     /**
      * @return array<string, mixed>
      */
+    private function absensiIndividuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'employee_code' => $request->input('employee_code') ?? $request->input('kode_karyawan'),
+            'employee_name' => $request->input('employee_name') ?? $request->input('nama_karyawan'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'TglAwal' => $request->input('TglAwal'),
+            'TglAkhir' => $request->input('TglAkhir'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function attendanceFullPeriodFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
@@ -1710,6 +1904,22 @@ class AscendXmlTestController extends Controller
                 'view' => 'ascends.shared.hrm.attendance_full.absensi_briefing_harian.pdf',
                 'filename' => 'Laporan Absensi Briefing Harian.pdf',
                 'orientation' => 'portrait',
+            ],
+            'rekapitulasi_absensi_briefing_harian' => [
+                'view' => 'ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf',
+                'filename' => 'Laporan Rekapitulasi Absensi Briefing Harian.pdf',
+                'orientation' => 'portrait',
+            ],
+            'absensi_individu' => [
+                'view' => 'ascends.shared.hrm.attendance_full.absensi_individu.pdf',
+                'filename' => 'Laporan Absensi Individu.pdf',
+                'orientation' => 'portrait',
+            ],
+            'kehadiran_kru_stick' => [
+                'view' => 'ascends.shared.hrm.attendance_full.kehadiran_kru_stick.pdf',
+                'filename' => 'Laporan Kehadiran Kru Stick.pdf',
+                'orientation' => 'landscape',
+                'format' => 'A3',
             ],
             'persentase_kehadiran_mingguan_per_departemen' => [
                 'view' => 'ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf',

@@ -19,7 +19,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'xml_file' => ['nullable', 'file', 'max:204800'],
             'preview_pdf' => ['nullable', 'boolean'],
             'company' => ['nullable', 'in:RU,GSU,UC,ru,gsu,uc'],
-            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,uc_karyawan_aktif_per_departemen,uc_daftar_karyawan,uc_daftar_karyawan_berdasarkan_abjad,uc_data_karyawan_status_kerja,uc_karyawan_masuk_per_departemen_per_tanggal_masuk,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,list_karyawan_habis_kontrak,absensi_briefing_harian,persentase_kehadiran_mingguan_per_departemen,pengabaian_keterlambatan_kehadiran_manual,ketidakhadiran_bulanan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
+            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,uc_karyawan_aktif_per_departemen,uc_daftar_karyawan,uc_daftar_karyawan_berdasarkan_abjad,uc_data_karyawan_status_kerja,uc_karyawan_masuk_per_departemen_per_tanggal_masuk,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,list_karyawan_habis_kontrak,absensi_briefing_harian,rekapitulasi_absensi_briefing_harian,absensi_individu,kehadiran_kru_stick,persentase_kehadiran_mingguan_per_departemen,pengabaian_keterlambatan_kehadiran_manual,ketidakhadiran_bulanan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
             'month' => ['nullable', 'integer', 'between:1,12'],
             'year' => ['nullable', 'integer', 'between:1900,2100'],
             'bulan' => ['nullable', 'integer', 'between:1,12'],
@@ -52,6 +52,10 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'responsible_person' => ['nullable', 'string', 'max:100'],
             'tema' => ['nullable', 'string', 'max:255'],
             'theme' => ['nullable', 'string', 'max:255'],
+            'employee_code' => ['nullable', 'string', 'max:50'],
+            'kode_karyawan' => ['nullable', 'string', 'max:50'],
+            'employee_name' => ['nullable', 'string', 'max:150'],
+            'nama_karyawan' => ['nullable', 'string', 'max:150'],
         ];
     }
 

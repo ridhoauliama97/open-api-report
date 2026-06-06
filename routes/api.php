@@ -286,6 +286,21 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.absensi-briefing-harian.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmAbsensiIndividuPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.absensi-individu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-stick/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKehadiranKruStickPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.kehadiran-kru-stick.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmPersentaseKehadiranMingguanPerDepartemenPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.persentase-kehadiran-mingguan-per-departemen.pdf');

@@ -45,6 +45,9 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (RU)',
+                            'rekapitulasi_absensi_briefing_harian' => 'Laporan Rekapitulasi Absensi Briefing Harian (RU)',
+                            'absensi_individu' => 'Laporan Absensi Individu (RU)',
+                            'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (RU)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (RU) Per Departemen',
                         ],
@@ -81,6 +84,9 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (GSU)',
+                            'rekapitulasi_absensi_briefing_harian' => 'Laporan Rekapitulasi Absensi Briefing Harian (GSU)',
+                            'absensi_individu' => 'Laporan Absensi Individu (GSU)',
+                            'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (GSU)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (GSU) Per Departemen',
                         ],
@@ -113,6 +119,9 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (UC)',
+                            'rekapitulasi_absensi_briefing_harian' => 'Laporan Rekapitulasi Absensi Briefing Harian (UC)',
+                            'absensi_individu' => 'Laporan Absensi Individu (UC)',
+                            'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (UC)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (UC)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (UC) Per Departemen',
                         ],
@@ -291,6 +300,43 @@
                                 <div class="form-text">Digunakan untuk filter Expiry Date pada Laporan List Karyawan Habis Kontrak.</div>
                             </div>
 
+                            <div class="mb-4" id="attendance_individu_fields">
+                                <label class="form-label fw-semibold">Parameter Absensi Individu</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="text"
+                                            class="form-control @error('employee_code') is-invalid @enderror"
+                                            name="employee_code" value="{{ old('employee_code') }}"
+                                            placeholder="Kode Karyawan">
+                                        @error('employee_code')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text"
+                                            class="form-control @error('employee_name') is-invalid @enderror"
+                                            name="employee_name" value="{{ old('employee_name') }}"
+                                            placeholder="Nama Karyawan">
+                                        @error('employee_name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Tanggal Awal</label>
+                                        <input type="date"
+                                            class="form-control @error('start_date') is-invalid @enderror"
+                                            name="start_date" value="{{ old('start_date') }}">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Tanggal Akhir</label>
+                                        <input type="date"
+                                            class="form-control @error('end_date') is-invalid @enderror"
+                                            name="end_date" value="{{ old('end_date') }}">
+                                    </div>
+                                </div>
+                                <div class="form-text">Opsional. Kosongkan untuk menampilkan seluruh karyawan.</div>
+                            </div>
+
                             <div class="mb-4" id="absence_period_fields">
                                 <label class="form-label fw-semibold">Parameter Absence</label>
                                 <div class="row g-2">
@@ -354,6 +400,7 @@
             const submitButton = document.getElementById('submit_button');
             const contractPeriodFields = document.getElementById('contract_period_fields');
             const attendanceBriefingFields = document.getElementById('attendance_briefing_fields');
+            const attendanceIndividuFields = document.getElementById('attendance_individu_fields');
             const absencePeriodFields = document.getElementById('absence_period_fields');
 
             const option = (value, label) => {
@@ -410,7 +457,8 @@
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
                 toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
-                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'persentase_kehadiran_mingguan_per_departemen', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian', 'kehadiran_kru_stick', 'persentase_kehadiran_mingguan_per_departemen', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceIndividuFields, reportSelect.value === 'absensi_individu');
                 toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };
 

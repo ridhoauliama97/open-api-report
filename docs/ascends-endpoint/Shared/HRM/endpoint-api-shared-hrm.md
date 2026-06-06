@@ -37,6 +37,9 @@ Karena XML HRM Ascend tidak memiliki field company yang terisi, request shared w
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf`
+- Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf`
+- Attendance Full - Laporan Absensi Individu: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf`
+- Attendance Full - Laporan Kehadiran Kru Stick: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-stick/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf`
 - Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf`
 
@@ -72,6 +75,31 @@ Input tambahan khusus `absensi-briefing-harian`:
 - `penanggung_jawab`: optional, contoh `SRO,`.
 - `tema`: optional.
 - Alias yang diterima: `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
+
+Input tambahan khusus `rekapitulasi-absensi-briefing-harian`:
+
+- `start_date` + `end_date`: periode rekap data attendance, contoh `2026-06-01` sampai `2026-06-05`.
+- `group`: optional, untuk membatasi rekap pada kode/nama group atau divisi tertentu.
+- `report_date`: fallback untuk rekap satu tanggal saja.
+- Alias yang diterima: `TglAwal` + `TglAkhir`, `division`/`divisi`, dan `tanggal`/`date`.
+- Jika `group` tidak dikirim, report merekap seluruh divisi/group yang ada di XML.
+
+Input tambahan khusus `absensi-individu`:
+
+- `employee_code`: kode karyawan yang ingin ditampilkan.
+- `employee_name`: alternatif filter nama karyawan.
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-05` sampai `2026-06-04`.
+- Alias yang diterima: `kode_karyawan`, `nama_karyawan`, `TglAwal` + `TglAkhir`.
+- Jika `employee_code` dan `employee_name` tidak dikirim, sistem menampilkan seluruh karyawan dalam XML/periode, dengan tampilan per individu.
+- `Waktu Bekerja` dihitung dari `Sign In` sampai `Sign Out`, dikurangi 1 jam istirahat jika durasi minimal 5 jam.
+
+Input tambahan khusus `kehadiran-kru-stick`:
+
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-05` sampai `2026-06-04`.
+- Alias yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir untuk data Kru Stick Borongan di XML.
+- Data difilter dari XML Attendance Full dengan `Job_x0020_Title = Kru Stick Borongan` dan `Workgroup = Borongan Stick`.
+- Kolom tanggal dibuat dinamis sesuai periode, masing-masing berisi subkolom `In` dan `Out`.
 
 Input tambahan khusus `persentase-kehadiran-mingguan-per-departemen`:
 
@@ -134,6 +162,15 @@ end_date=2026-05-31
 xml_file=AnlReports.HRM.AttendanceFull.xml
 ```
 
+Contoh `multipart/form-data` untuk Kehadiran Kru Stick:
+
+```text
+company=RU
+start_date=2026-05-05
+end_date=2026-06-04
+xml_file=AnlReports.HRM.AttendanceFull.xml
+```
+
 Contoh `multipart/form-data` untuk Pengabaian Keterlambatan & Kehadiran Manual kategori ST:
 
 ```text
@@ -183,6 +220,7 @@ Contoh:
 - `Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC).pdf`
 - `Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC).pdf`
 - `Attendance Full - Laporan Absensi Briefing Harian (RU) - VKD.pdf`
+- `Attendance Full - Laporan Kehadiran Kru Stick (RU).pdf`
 - `Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (RU).pdf`
 - `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual ST Per Departemen (RU).pdf`
 - `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
@@ -215,6 +253,8 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 Template Blade shared Attendance Full berada di `resources/views/ascends/shared/hrm/attendance_full`.
 
 - `attendance_full/absensi_briefing_harian`
+- `attendance_full/rekapitulasi_absensi_briefing_harian`
+- `attendance_full/kehadiran_kru_stick`
 - `attendance_full/persentase_kehadiran_mingguan_per_departemen`
 - `attendance_full/pengabaian_keterlambatan_kehadiran_manual`
 
