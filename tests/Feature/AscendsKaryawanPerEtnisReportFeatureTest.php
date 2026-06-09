@@ -47,7 +47,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_etnis_pdf(): void
@@ -66,7 +66,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_etnis.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Etnis (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Etnis'
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -81,7 +81,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -184,7 +184,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Karyawan Per Etnis (RU)', $html);
+        $this->assertStringContainsString('Laporan Karyawan Per Etnis', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('NIK', $html);
         $this->assertStringContainsString('Nama', $html);
@@ -214,8 +214,8 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             'company' => 'RU',
             'module' => 'hrm',
             'sub_report' => 'karyawan_per_etnis',
-            'label' => 'Laporan Karyawan Per Etnis (RU)',
-            'title' => 'Laporan Karyawan Per Etnis (RU)',
+            'label' => 'Laporan Karyawan Per Etnis',
+            'title' => 'Laporan Karyawan Per Etnis',
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',

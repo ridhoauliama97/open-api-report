@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -144,8 +151,7 @@
         };
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
-    <p class="report-subtitle">Per {{ $perDate }}</p>
+    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per ' . $perDate])
 
     @foreach ($yearlyRows as $yearData)
         <div class="year-title">Tahun : {{ (int) ($yearData['year'] ?? 0) }}</div>

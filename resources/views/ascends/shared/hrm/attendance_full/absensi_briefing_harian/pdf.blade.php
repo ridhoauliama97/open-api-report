@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0 0 10px 0;
@@ -214,7 +221,7 @@
         $notPresent = $summary['not_present'] ?? ['count' => 0, 'percent' => 0];
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
+    @include('ascends.shared.partials.report-header')
 
     <table class="meta-table">
         <tr>

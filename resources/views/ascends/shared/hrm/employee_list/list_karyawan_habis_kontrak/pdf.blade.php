@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -117,8 +124,9 @@
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
-    <p class="report-subtitle">{{ $periodLabel !== '' ? 'Periode : ' . $periodLabel : 'Per : ' . $printedAt }}</p>
+    @include('ascends.shared.partials.report-header', [
+        'subtitle' => $periodLabel !== '' ? 'Periode : ' . $periodLabel : 'Per : ' . $printedAt,
+    ])
 
     <table class="data-table">
         <thead>

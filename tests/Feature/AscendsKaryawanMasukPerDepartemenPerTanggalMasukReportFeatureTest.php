@@ -48,7 +48,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_karyawan_masuk_pdf(): void
@@ -67,7 +67,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)'
+                static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -188,7 +188,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)'
+                static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -253,7 +253,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)', $html);
+        $this->assertStringContainsString('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('Nama', $html);
         $this->assertStringContainsString('L/P', $html);
@@ -286,8 +286,8 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             'company' => 'UC',
             'module' => 'hrm',
             'sub_report' => 'karyawan_masuk_per_departemen_per_tanggal_masuk',
-            'label' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)',
-            'title' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)',
+            'label' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk',
+            'title' => 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk',
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',

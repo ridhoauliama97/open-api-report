@@ -37,7 +37,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Rekapitulasi Absensi Briefing Harian (RU)'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Rekapitulasi Absensi Briefing Harian')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -54,7 +54,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian');
     }
 
     public function test_shared_attendance_full_rekap_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -156,7 +156,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
                 'start_date' => '2026-06-01',
                 'end_date' => '2026-06-02',
             ]);
-        $reportData['title'] = 'Laporan Rekapitulasi Absensi Briefing Harian (RU)';
+        $reportData['title'] = 'Laporan Rekapitulasi Absensi Briefing Harian';
 
         $html = view('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf', [
             'company' => 'RU',
@@ -166,7 +166,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Rekapitulasi Absensi Briefing Harian (RU)', $html);
+        $this->assertStringContainsString('Laporan Rekapitulasi Absensi Briefing Harian', $html);
         $this->assertStringContainsString('01-Jun-26 s/d 02-Jun-26', $html);
         $this->assertStringContainsString('Jumlah Hadir', $html);
         $this->assertStringContainsString('Jumlah Saat', $html);

@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -184,8 +191,7 @@
         };
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
-    <p class="report-subtitle"></p>
+    @include('ascends.shared.partials.report-header')
     {{-- <p class="report-subtitle">Per Tanggal {{ $printedAt }}</p> --}}
 
     <table class="data-table">

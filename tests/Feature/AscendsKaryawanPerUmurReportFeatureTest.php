@@ -47,7 +47,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_umur_pdf(): void
@@ -66,7 +66,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_umur.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Umur (RU)'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Umur'
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -81,7 +81,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -196,7 +196,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Karyawan Per Umur (RU)', $html);
+        $this->assertStringContainsString('Laporan Karyawan Per Umur', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('Nama', $html);
         $this->assertStringContainsString('Jabatan', $html);
@@ -228,8 +228,8 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             'company' => 'RU',
             'module' => 'hrm',
             'sub_report' => 'karyawan_per_umur',
-            'label' => 'Laporan Karyawan Per Umur (RU)',
-            'title' => 'Laporan Karyawan Per Umur (RU)',
+            'label' => 'Laporan Karyawan Per Umur',
+            'title' => 'Laporan Karyawan Per Umur',
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',

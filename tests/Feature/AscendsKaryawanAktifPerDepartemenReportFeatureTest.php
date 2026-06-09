@@ -47,7 +47,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_aktif_per_departemen_pdf(): void
@@ -66,7 +66,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen'
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -81,7 +81,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen');
     }
 
     public function test_internal_ascend_api_can_render_uc_karyawan_aktif_per_departemen_pdf_without_jwt(): void
@@ -189,7 +189,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -269,7 +269,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Karyawan Aktif Per Departemen (RU)', $html);
+        $this->assertStringContainsString('Laporan Karyawan Aktif Per Departemen', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('Nama', $html);
         $this->assertStringContainsString('Status', $html);
@@ -293,7 +293,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function reportData(string $title = 'Laporan Karyawan Aktif Per Departemen (RU)'): array
+    private function reportData(string $title = 'Laporan Karyawan Aktif Per Departemen'): array
     {
         return [
             'printed_at' => '20 Mei 2026 10:00',

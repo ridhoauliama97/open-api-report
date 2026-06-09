@@ -406,8 +406,7 @@
         @endphp
 
         <div class="invoice-page {{ $loop->last ? "" : "page-break-after" }}">
-            <h1 class="report-title">Sales Invoices ({{ $company }})</h1>
-            <p class="report-subtitle"></p>
+            @include('ascends.shared.partials.report-header', ['title' => 'Sales Invoices'])
 
             <table class="top-grid">
                 <colgroup>

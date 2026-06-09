@@ -247,7 +247,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Data Karyawan (RU)<br />', $html);
+        $this->assertStringContainsString('Laporan Data Karyawan', $html);
         $this->assertStringContainsString('Staff, Karyawan Tetap &amp; Karyawan Kontrak<br />', $html);
         $this->assertStringContainsString('Berdasarkan Status Kerja', $html);
         $this->assertStringContainsString('NIK', $html);

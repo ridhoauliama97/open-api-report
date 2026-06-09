@@ -24,8 +24,15 @@
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #000;
+        }
+
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .report-title {
@@ -55,7 +62,7 @@
         .data-table td {
             border-left: 1px solid #000;
             border-right: 1px solid #000;
-            padding: 2px 3px;
+            padding: 3px 4px;
             vertical-align: middle;
             word-wrap: break-word;
         }
@@ -73,7 +80,8 @@
             text-align: center;
             font-size: 11px;
             font-style: italic;
-            padding: 8px 5px;
+            padding: 5px 6px;
+            color: #9c111d;
             background: #fff;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
@@ -81,24 +89,10 @@
 
         .summary-row td {
             border-top: 1px solid #000;
-            border-bottom: 3px double #000;
             background: #fff;
             font-weight: bold;
-            padding: 8px 3px;
-        }
-
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .summary-table td {
-            border: 0;
-            padding: 1px 2px;
-            background: #fff;
-            vertical-align: top;
             text-align: center;
+            padding: 6px 3px;
         }
 
         .row-odd td {
@@ -118,8 +112,7 @@
             font-style: italic;
             font-size: 11px;
             font-weight: bold;
-            background: #fff;
-            padding: 8px 3px;
+            background: #c9d1df;
         }
     </style>
 </head>
@@ -147,8 +140,7 @@
         };
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
-    <p class="report-subtitle">{{ $periodLabel }}</p>
+    @include('ascends.shared.partials.report-header', ['subtitle' => $periodLabel])
 
     <table class="data-table">
         <thead>
@@ -166,7 +158,6 @@
             @forelse ($groupedRows as $group)
                 @php
                     $groupRows = $group['rows'] ?? [];
-                    $summary = $group['summary'] ?? [];
                 @endphp
                 <tr class="group-row">
                     <td colspan="7">{{ $group['label'] ?? '' }}</td>
@@ -182,15 +173,6 @@
                         <td class="center">{{ (string) ($row['Absen Keluar'] ?? '') }}</td>
                     </tr>
                 @endforeach
-                <tr class="summary-row">
-                    <td colspan="7">
-                        <table class="summary-table">
-                            <tr>
-                                <td>Akumulasi Di Buat Oleh&nbsp;&nbsp;:&nbsp;&nbsp;{{ $formatSummary($summary) }}</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
             @empty
                 <tr class="group-row">
                     <td colspan="7">Departemen :</td>
@@ -198,16 +180,12 @@
                 <tr class="empty-row">
                     <td colspan="7">Tidak Ada Data</td>
                 </tr>
-                <tr class="summary-row">
-                    <td colspan="7">
-                        <table class="summary-table">
-                            <tr>
-                                <td>Akumulasi Di Buat Oleh&nbsp;&nbsp;:&nbsp;&nbsp;{{ $formatSummary($grandSummary) }}</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
             @endforelse
+            <tr class="summary-row">
+                <td colspan="7">
+                    Akumulasi Di Buat Oleh : {{ $formatSummary($grandSummary) }}
+                </td>
+            </tr>
         </tbody>
     </table>
 

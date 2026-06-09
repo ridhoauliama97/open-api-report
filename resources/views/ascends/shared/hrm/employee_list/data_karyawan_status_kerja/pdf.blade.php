@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -106,8 +113,7 @@
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
     @endphp
 
-    <h1 class="report-title">{!! nl2br(e($reportData['title'])) !!}</h1>
-    <p class="report-subtitle"></p>
+    @include('ascends.shared.partials.report-header')
     {{-- <p class="report-subtitle">Per : {{ $printedAt }}</p> --}}
 
     <table class="data-table">

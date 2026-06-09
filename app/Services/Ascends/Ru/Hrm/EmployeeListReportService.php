@@ -8,7 +8,8 @@ class EmployeeListReportService
 {
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
@@ -45,12 +46,12 @@ class EmployeeListReportService
         $rawRows = $reportData['rows'] ?? [];
         $printedBy = self::resolvePrintedBy($rawRows);
         $rows = array_map(
-            static fn (array $row): array => self::shapeEmployeeListRow($row),
+            static fn(array $row): array => self::shapeEmployeeListRow($row),
             $rawRows
         );
         $rows = array_values(array_filter(
             $rows,
-            static fn (array $row): bool => trim((string) ($row['Departemen'] ?? '')) !== ''
+            static fn(array $row): bool => trim((string) ($row['Departemen'] ?? '')) !== ''
         ));
         $headers = [
             'Nama',
@@ -163,7 +164,7 @@ class EmployeeListReportService
 
     private static function formatAge(string $age): string
     {
-        return is_numeric($age) && (int) $age > 0 ? ((int) $age).' Thn' : trim($age);
+        return is_numeric($age) && (int) $age > 0 ? ((int) $age) . ' Thn' : trim($age);
     }
 
     private static function formatWorkingPeriod(string $years, string $months): string
@@ -171,11 +172,11 @@ class EmployeeListReportService
         $parts = [];
 
         if (is_numeric($years) && (int) $years > 0) {
-            $parts[] = ((int) $years).' Thn';
+            $parts[] = ((int) $years) . ' Thn';
         }
 
         if (is_numeric($months) && (int) $months > 0) {
-            $parts[] = ((int) $months).' Bln';
+            $parts[] = ((int) $months) . ' Bln';
         }
 
         return implode(' ', $parts);

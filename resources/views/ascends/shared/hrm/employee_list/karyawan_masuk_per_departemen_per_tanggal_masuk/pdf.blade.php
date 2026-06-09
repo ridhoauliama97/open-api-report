@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -194,8 +201,9 @@
         };
     @endphp
 
-    <h1 class="report-title">Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk{{ $titleCompany }}</h1>
-    <p class="report-subtitle"></p>
+    @include('ascends.shared.partials.report-header', [
+        'title' => $reportData['title'] ?? ('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk' . $titleCompany),
+    ])
     {{-- <p class="report-subtitle">Per : {{ $printedAt }}</p> --}}
 
     <table class="data-table">

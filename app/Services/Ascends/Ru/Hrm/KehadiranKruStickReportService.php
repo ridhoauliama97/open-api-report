@@ -355,17 +355,24 @@ class KehadiranKruStickReportService
         if ($joinDate !== null) {
             $diff = $joinDate->diff($periodEnd);
 
-            return "{$diff->y} - {$diff->m} - {$diff->d}";
+            return $this->formatWorkDuration((string) $diff->y, (string) $diff->m, (string) $diff->d);
         }
 
         $years = trim((string) ($row['Working Years'] ?? ''));
         $months = trim((string) ($row['Working Months'] ?? ''));
         $days = trim((string) ($row['Working Days'] ?? ''));
         if ($years !== '' || $months !== '' || $days !== '') {
-            return ($years !== '' ? $years : '0').' - '.($months !== '' ? $months : '0').' - '.($days !== '' ? $days : '0');
+            return $this->formatWorkDuration($years, $months, $days);
         }
 
         return '';
+    }
+
+    private function formatWorkDuration(string $years, string $months, string $days): string
+    {
+        return ($years !== '' ? $years : '0').' Thn '
+            .($months !== '' ? $months : '0').' Bln '
+            .($days !== '' ? $days : '0').' Hr';
     }
 
     private function numericValue(string $value): float

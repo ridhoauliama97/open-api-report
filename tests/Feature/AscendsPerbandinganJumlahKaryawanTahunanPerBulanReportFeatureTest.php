@@ -36,7 +36,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             ->once()
             ->with('ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -51,7 +51,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)');
+        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan');
     }
 
     public function test_parser_builds_yearly_monthly_comparison_from_xml_year_month_fields(): void
@@ -108,7 +108,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
 
         $reportData = app(PerbandinganJumlahKaryawanTahunanPerBulanReportService::class)
             ->buildReportDataFromXml($this->employeeListXml('employees'), 'test xml');
-        $reportData['title'] = 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)';
+        $reportData['title'] = 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan';
 
         $html = view('ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf', [
             'company' => 'UC',
@@ -116,7 +116,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)', $html);
+        $this->assertStringContainsString('Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan', $html);
         $this->assertStringContainsString('Per 01-Jun-26', $html);
         $this->assertStringContainsString('Tahun : 2025', $html);
         $this->assertStringContainsString('Tahun : 2026', $html);
@@ -136,7 +136,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             'printed_at' => '02 June 2026 16:34',
             'printed_by' => 'Ridho',
             'company' => 'UC',
-            'title' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC)',
+            'title' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan',
             'headers' => ['Bulan', 'Total Karyawan'],
             'yearly_rows' => [],
             'rows' => [],

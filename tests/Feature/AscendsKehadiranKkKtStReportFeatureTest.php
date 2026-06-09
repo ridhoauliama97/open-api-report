@@ -34,7 +34,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.shared.hrm.employee_list.kehadiran_kk_kt_st.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Kehadiran KK/KT/ST (RU)'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Kehadiran KK/KT/ST')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -133,7 +133,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
     {
         $reportData = app(KehadiranKkKtStReportService::class)
             ->buildReportDataFromXml($this->employeeListXml('employees'), 'test xml');
-        $reportData['title'] = 'Laporan Kehadiran KK/KT/ST (RU)';
+        $reportData['title'] = 'Laporan Kehadiran KK/KT/ST';
 
         $html = view('ascends.shared.hrm.employee_list.kehadiran_kk_kt_st.pdf', [
             'company' => 'RU',
@@ -141,7 +141,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Kehadiran KK/KT/ST (RU)', $html);
+        $this->assertStringContainsString('Laporan Kehadiran KK/KT/ST', $html);
         $this->assertStringContainsString('Divisi : PKB', $html);
         $this->assertStringContainsString('Divisi : VKD', $html);
         $this->assertStringContainsString('Anggota : ______ / ______ Orang', $html);
@@ -164,7 +164,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             'printed_at' => '04 June 2026 09:07',
             'printed_by' => 'Ridho',
             'company' => 'RU',
-            'title' => 'Laporan Kehadiran KK/KT/ST (RU)',
+            'title' => 'Laporan Kehadiran KK/KT/ST',
             'headers' => ['No', 'Nama', 'Keterangan'],
             'rows' => [],
             'grouped_rows' => [],

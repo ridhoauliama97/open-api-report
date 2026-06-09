@@ -37,7 +37,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->once()
             ->with('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Persentase Kehadiran Mingguan Per Departemen')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -54,7 +54,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen');
     }
 
     public function test_shared_attendance_full_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -97,6 +97,47 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
         $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (UC)');
     }
 
+    public function test_shared_attendance_full_api_uses_db_company_name_parameter(): void
+    {
+        $xml = $this->attendanceXml();
+
+        $service = Mockery::mock(PersentaseKehadiranMingguanPerDepartemenReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request upload: attendance.xml', Mockery::on(
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+            ))
+            ->andReturn($this->reportData('GSU'));
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
+                    && ($data['reportData']['title'] ?? null) === 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)'
+                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(PersentaseKehadiranMingguanPerDepartemenReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $response = $this->post('/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf', [
+            'company' => 'RU',
+            'DB_CompanyName' => 'GSU',
+            'Sys_Username' => 'Windi',
+            'start_date' => '2026-05-01',
+            'end_date' => '2026-05-31',
+            'xml_file' => UploadedFile::fake()->createWithContent('attendance.xml', $xml),
+        ])
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)');
+    }
+
     public function test_shared_attendance_full_api_rejects_request_without_xml_payload(): void
     {
         $service = Mockery::mock(PersentaseKehadiranMingguanPerDepartemenReportService::class);
@@ -124,8 +165,10 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
         $this->assertSame(3, $reportData['total_rows']);
         $this->assertSame('Departemen : Finance & Accounting', $reportData['grouped_rows'][0]['label']);
         $this->assertSame('Betty', $reportData['grouped_rows'][0]['rows'][0]['Nama']);
+        $this->assertSame('2', $reportData['grouped_rows'][0]['rows'][0]['Level']);
         $this->assertSame('100%', $reportData['grouped_rows'][0]['rows'][0]['%']);
         $this->assertSame('Aulia', $reportData['grouped_rows'][0]['rows'][1]['Nama']);
+        $this->assertSame('1', $reportData['grouped_rows'][0]['rows'][1]['Level']);
         $this->assertSame('50%', $reportData['grouped_rows'][0]['rows'][1]['%']);
         $this->assertSame(2, $reportData['grouped_rows'][0]['summary']['subtotal']);
         $this->assertSame(1, $reportData['grouped_rows'][0]['summary']['gender']['L']['count']);
@@ -143,7 +186,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
                 'start_date' => '2026-05-01',
                 'end_date' => '2026-05-02',
             ]);
-        $reportData['title'] = 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)';
+        $reportData['title'] = 'Laporan Persentase Kehadiran Mingguan Per Departemen';
 
         $html = view('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', [
             'company' => 'RU',
@@ -151,7 +194,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Persentase Kehadiran Mingguan Per Departemen (RU)', $html);
+        $this->assertStringContainsString('Laporan Persentase Kehadiran Mingguan Per Departemen', $html);
         $this->assertStringContainsString('Dari 01-Mei-26 s/d 02-Mei-26', $html);
         $this->assertStringContainsString('Departemen : Finance &amp; Accounting', $html);
         $this->assertStringContainsString('Akumulasi Persentase Kehadiran', $html);
@@ -203,6 +246,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
         <Date>2026-05-01T00:00:00+07:00</Date>
         <Scheduled_x0020_Shift>Normal</Scheduled_x0020_Shift>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
+        <Sign_x0020_In>2026-05-01T07:30:00+07:00</Sign_x0020_In>
         <HK>1.0000</HK>
         <Daily_x0020_Worker_x0020_Type_x0020_Code>KK</Daily_x0020_Worker_x0020_Type_x0020_Code>
         <Created_x0020_By>Ridho</Created_x0020_By>
@@ -229,6 +273,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
         <Date>2026-05-01T00:00:00+07:00</Date>
         <Scheduled_x0020_Shift>Normal</Scheduled_x0020_Shift>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
+        <Sign_x0020_In>2026-05-01T07:30:00+07:00</Sign_x0020_In>
         <HK>1.0000</HK>
         <Daily_x0020_Worker_x0020_Type_x0020_Code>ST</Daily_x0020_Worker_x0020_Type_x0020_Code>
     </{$recordTag}>
@@ -277,6 +322,7 @@ XML;
         <Scheduled_x0020_Shift>Staff Office</Scheduled_x0020_Shift>
         <Shift>Staff Office</Shift>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
+        <Sign_x0020_In>2026-05-02T07:30:00+07:00</Sign_x0020_In>
         <Daily_x0020_Worker_x0020_Type_x0020_Code>ST</Daily_x0020_Worker_x0020_Type_x0020_Code>
     </Attendance>
     <Attendance>

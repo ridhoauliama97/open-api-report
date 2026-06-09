@@ -38,7 +38,7 @@ class AscendsKehadiranKruStickReportFeatureTest extends TestCase
             ->with('ascends.shared.hrm.attendance_full.kehadiran_kru_stick.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                     && ($data['reportData']['title'] ?? null) === 'Laporan Kehadiran Kru Stick (RU)'
-                    && ($data['pdf_format'] ?? null) === 'A3'
+                    && ($data['pdf_format'] ?? null) === 'A4'
                     && ($data['pdf_orientation'] ?? null) === 'landscape'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -126,6 +126,9 @@ class AscendsKehadiranKruStickReportFeatureTest extends TestCase
         $this->assertSame('131356', $reportData['rows'][0]['employee']['employee_code']);
         $this->assertSame('Roma Hutabarat', $reportData['rows'][0]['employee']['name']);
         $this->assertSame('Kru Stick Borongan', $reportData['rows'][0]['employee']['job_title']);
+        $this->assertStringContainsString('Thn', $reportData['rows'][0]['employee']['year_of_service']);
+        $this->assertStringContainsString('Bln', $reportData['rows'][0]['employee']['year_of_service']);
+        $this->assertStringContainsString('Hr', $reportData['rows'][0]['employee']['year_of_service']);
         $this->assertSame('06:29', $reportData['rows'][0]['attendance']['2026-05-05']['in']);
         $this->assertSame('11:36', $reportData['rows'][0]['attendance']['2026-05-05']['out']);
         $this->assertSame('1', $reportData['rows'][0]['hk']);
@@ -151,12 +154,49 @@ class AscendsKehadiranKruStickReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Kehadiran Kru Stick (RU)', $html);
+        $this->assertStringContainsString('<h1 class="report-title">RU</h1>', $html);
+        $this->assertStringContainsString('Laporan Kehadiran Kru Stick', $html);
         $this->assertStringContainsString('Karyawan', $html);
         $this->assertStringContainsString('Masa Kerja', $html);
         $this->assertStringContainsString('05-Mei-26', $html);
         $this->assertStringContainsString('Roma Hutabarat', $html);
-        $this->assertStringContainsString('Jumlah orang 2', $html);
+        $this->assertStringContainsString('Total Seluruh Karyawan/Kru', $html);
+    }
+
+    public function test_pdf_blade_splits_date_columns_into_readable_sections(): void
+    {
+        $reportData = $this->reportData();
+        $reportData['date_columns'] = [];
+        $reportData['date_totals'] = [];
+        for ($day = 5; $day <= 12; $day++) {
+            $date = "2026-05-{$day}";
+            $label = str_pad((string) $day, 2, '0', STR_PAD_LEFT).'-Mei-26';
+            $reportData['date_columns'][] = ['date' => $date, 'label' => $label];
+            $reportData['date_totals'][$date] = 1;
+        }
+        $reportData['rows'] = [[
+            'employee' => [
+                'employee_code' => '131356',
+                'name' => 'Roma Hutabarat',
+                'join_date' => '01-Jun-21',
+                'year_of_service' => '5 Thn 0 Bln 3 Hr',
+                'job_title' => 'Kru Stick Borongan',
+            ],
+            'attendance' => [],
+            'hk' => '8',
+        ]];
+        $reportData['total_employees'] = 1;
+
+        $html = view('ascends.shared.hrm.attendance_full.kehadiran_kru_stick.pdf', [
+            'company' => 'RU',
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'],
+            'rows' => $reportData['rows'],
+            'generatedAt' => now(),
+        ])->render();
+
+        $this->assertSame(2, substr_count($html, '<table class="data-table">'));
+        $this->assertStringContainsString('12-Mei-26', $html);
     }
 
     /**

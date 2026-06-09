@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -142,26 +149,8 @@
             white-space: nowrap;
         }
 
-        htmlpagefooter table.footer-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9px;
-            color: #000;
-        }
-
-        htmlpagefooter table.footer-table td {
-            border: 0;
-            padding: 0;
-            vertical-align: bottom;
-        }
-
-        .footer-print {
-            text-align: left;
-        }
-
-        .footer-page {
+        .right {
             text-align: right;
-            white-space: nowrap;
         }
     </style>
 </head>
@@ -176,8 +165,10 @@
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] ?? 'Laporan Absensi Individu' }}</h1>
-    <p class="report-subtitle">{{ $periodLabel }}</p>
+    @include('ascends.shared.partials.report-header', [
+        'fallbackTitle' => 'Laporan Absensi Individu',
+        'subtitle' => $periodLabel,
+    ])
 
     <table class="data-table">
         <thead>
@@ -207,52 +198,53 @@
                     </td>
                 </tr>
 
-                    @forelse ($rows as $row)
-                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td>{{ (string) ($row['Hari'] ?? '') }}</td>
-                            <td>{{ (string) ($row['Absen Masuk'] ?? '') }}</td>
-                            <td>{{ (string) ($row['Absen Keluar'] ?? '') }}</td>
-                            <td class="center">{{ (string) ($row['Waktu Bekerja'] ?? '') }}</td>
-                        </tr>
-                    @empty
-                        <tr class="empty-row">
-                            <td colspan="4" class="center">Tidak ada data.</td>
-                        </tr>
-                    @endforelse
-
-                    <tr class="summary-block-row">
-                        <td colspan="4">
-                            <table class="summary-block">
-                                <tr>
-                                    <td style="width: 12%;"></td>
-                                    <td style="width: 30%;"></td>
-                                    <td style="width: 30%;"></td>
-                                    <td style="width: 28%;" class="center">{{ (string) ($summary['total'] ?? '0 Jam 0 Menit') }}</td>
-                                </tr>
-                                <tr class="summary-gap">
-                                    <td colspan="4"></td>
-                                </tr>
-                                <tr>
-                                    <td style="white-space: nowrap;">Akumulasi Min</td>
-                                    <td class="center">=</td>
-                                    <td>{{ (string) ($summary['min'] ?? '') }}</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td style="white-space: nowrap;">Akumulasi Avg</td>
-                                    <td class="center">=</td>
-                                    <td>{{ (string) ($summary['avg'] ?? '') }}</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td style="white-space: nowrap;">Akumulasi Max</td>
-                                    <td class="center">=</td>
-                                    <td>{{ (string) ($summary['max'] ?? '') }}</td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </td>
+                @forelse ($rows as $row)
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td>{{ (string) ($row['Hari'] ?? '') }}</td>
+                        <td>{{ (string) ($row['Absen Masuk'] ?? '') }}</td>
+                        <td>{{ (string) ($row['Absen Keluar'] ?? '') }}</td>
+                        <td class="center">{{ (string) ($row['Waktu Bekerja'] ?? '') }}</td>
                     </tr>
+                @empty
+                    <tr class="empty-row">
+                        <td colspan="4" class="center">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+
+                <tr class="summary-block-row">
+                    <td colspan="4">
+                        <table class="summary-block">
+                            <tr>
+                                <td style="width: 12%;"></td>
+                                <td style="width: 30%;"></td>
+                                <td style="width: 30%;"></td>
+                                <td style="width: 28%;" class="center">{{ (string) ($summary['total'] ?? '0 Jam 0 Menit') }}
+                                </td>
+                            </tr>
+                            <tr class="summary-gap">
+                                <td colspan="4"></td>
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">Akumulasi Min</td>
+                                <td class="center">=</td>
+                                <td>{{ (string) ($summary['min'] ?? '') }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">Akumulasi Avg</td>
+                                <td class="center">=</td>
+                                <td>{{ (string) ($summary['avg'] ?? '') }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">Akumulasi Max</td>
+                                <td class="center">=</td>
+                                <td>{{ (string) ($summary['max'] ?? '') }}</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
             @empty
                 <tr class="empty-row">
                     <td colspan="4">Tidak ada data.</td>
@@ -261,7 +253,12 @@
         </tbody>
     </table>
 
-    @include('reports.partials.pdf-footer-table')
+    <htmlpagefooter name="reportFooter">
+        @include('reports.partials.pdf-footer-table', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])
+    </htmlpagefooter>
 </body>
 
 </html>

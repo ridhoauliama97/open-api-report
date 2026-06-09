@@ -19,13 +19,14 @@ class PengabaianKeterlambatanKehadiranManualReportService
     {
         $rawRows = $this->parseAttendanceRows($xmlContents, $sourceLabel);
         $period = self::resolvePeriod($rawRows, $filters);
-        $category = self::resolveCategory($filters);
-        $rows = self::shapeRows($rawRows, $period, $category);
+        $status = self::resolveStatus($filters);
+        $rows = self::shapeRows($rawRows, $period, $status);
         $groupedRows = self::groupRows($rows);
 
         return [
             'title' => self::TITLE,
-            'category' => $category,
+            'status' => $status,
+            'category' => $status,
             'source_file' => $sourceLabel,
             'printed_at' => Carbon::now()->locale('id')->translatedFormat('d F Y H:i'),
             'printed_by' => self::resolvePrintedBy($rawRows),
@@ -133,10 +134,9 @@ class PengabaianKeterlambatanKehadiranManualReportService
      * @param  array{start: Carbon, end: Carbon}  $period
      * @return array<int, array<string, string>>
      */
-    private static function shapeRows(array $rawRows, array $period, string $category): array
+    private static function shapeRows(array $rawRows, array $period, string $status): array
     {
         $rows = [];
-        $categoryCodes = self::employeeTypeCodes($category);
 
         foreach ($rawRows as $row) {
             $employeeCode = trim((string) ($row['Employee_x0020_Code'] ?? ''));
@@ -149,12 +149,11 @@ class PengabaianKeterlambatanKehadiranManualReportService
                 continue;
             }
 
-            $employeeType = strtoupper(trim((string) ($row['Daily_x0020_Worker_x0020_Type_x0020_Code'] ?? '')));
-            if ($categoryCodes !== [] && ! in_array($employeeType, $categoryCodes, true)) {
+            if (! self::matchesStatus($row, $status)) {
                 continue;
             }
 
-            $creator = trim((string) ($row['Created_x0020_By'] ?? $row['Last_x0020_Modified_x0020_By'] ?? ''));
+            $creator = trim((string) ($row['Last_x0020_Modified_x0020_By'] ?? ''));
             if ($creator === '') {
                 continue;
             }
@@ -272,32 +271,70 @@ class PengabaianKeterlambatanKehadiranManualReportService
         );
     }
 
-    private static function resolveCategory(array $filters): string
+    private static function resolveStatus(array $filters): string
     {
-        foreach (['category', 'kategori', 'Kategori', 'status', 'Status', 'tipe', 'Tipe'] as $key) {
-            $value = trim((string) ($filters[$key] ?? ''));
-            if ($value !== '') {
-                return $value;
-            }
-        }
+        $value = self::filterValue($filters, [
+            'Pilih Status',
+            'Pilih_x0020_Status',
+            'pilih_status',
+            'pilihStatus',
+            'status',
+            'Status',
+            'category',
+            'Category',
+            'kategori',
+            'Kategori',
+        ]);
 
-        return 'ST';
+        return str_contains(strtoupper($value), 'STAFF') ? 'Staff' : 'KK/KT';
     }
 
     /**
-     * @return array<int, string>
+     * @param  array<string, string>  $row
      */
-    private static function employeeTypeCodes(string $category): array
+    private static function matchesStatus(array $row, string $status): bool
     {
-        $normalized = strtoupper(str_replace(['\\', '-', '+', ' '], '/', trim($category)));
-        if ($normalized === '' || in_array($normalized, ['ALL', 'SEMUA'], true)) {
-            return [];
+        $employeeType = strtoupper(trim((string) ($row['Daily_x0020_Worker_x0020_Type_x0020_Code'] ?? '')));
+
+        if ($status === 'Staff') {
+            return $employeeType === 'ST';
         }
 
-        return array_values(array_intersect(
-            preg_split('/[\/,;]+/', $normalized) ?: [],
-            ['BR', 'KK', 'KT', 'ST']
-        ));
+        return str_starts_with($employeeType, 'KK')
+            || str_starts_with($employeeType, 'KT');
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @param  array<int, string>  $aliases
+     */
+    private static function filterValue(array $filters, array $aliases): string
+    {
+        foreach ($aliases as $alias) {
+            if (array_key_exists($alias, $filters)) {
+                $value = trim((string) $filters[$alias]);
+                if ($value !== '') {
+                    return $value;
+                }
+            }
+        }
+
+        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
+        foreach ($filters as $key => $value) {
+            if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
+                $value = trim((string) $value);
+                if ($value !== '') {
+                    return $value;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    private static function normalizeKey(string $key): string
+    {
+        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
     }
 
     private static function parseDate(string $value): ?Carbon

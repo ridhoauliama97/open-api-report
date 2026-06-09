@@ -301,9 +301,19 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.kehadiran-kru-stick.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-racip/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKehadiranKruRacipPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.kehadiran-kru-racip.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmPersentaseKehadiranMingguanPerDepartemenPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.persentase-kehadiran-mingguan-per-departemen.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-bulanan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmPersentaseKehadiranBulananPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.persentase-kehadiran-bulanan.pdf');
 
 Route::post(
     '/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf',

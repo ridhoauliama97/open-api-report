@@ -16,7 +16,7 @@
         }
 
         @page {
-            margin: 12mm 10mm 14mm 10mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -26,6 +26,13 @@
             font-size: 10px;
             line-height: 1.18;
             color: #000;
+        }
+
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .report-title {
@@ -148,8 +155,7 @@
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
-    <p class="report-subtitle">Per : {{ $printedAt }}</p>
+    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per : ' . $printedAt])
 
     <table class="division-grid">
         <tbody>

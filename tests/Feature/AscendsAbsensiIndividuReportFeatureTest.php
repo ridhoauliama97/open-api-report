@@ -38,7 +38,7 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.shared.hrm.attendance_full.absensi_individu.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Absensi Individu (RU)'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Individu')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -56,7 +56,7 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Absensi Individu (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Absensi Individu');
     }
 
     public function test_shared_attendance_full_absensi_individu_api_can_render_raw_xml_body_without_jwt(): void
@@ -158,7 +158,7 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
                 'employee_name' => 'Riza',
             ]);
         $reportData['company'] = 'RU';
-        $reportData['title'] = 'Laporan Absensi Individu (RU)';
+        $reportData['title'] = 'Laporan Absensi Individu';
 
         $html = view('ascends.shared.hrm.attendance_full.absensi_individu.pdf', [
             'company' => 'RU',
@@ -168,7 +168,7 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Absensi Individu (RU)', $html);
+        $this->assertStringContainsString('Laporan Absensi Individu', $html);
         $this->assertStringContainsString('Nama', $html);
         $this->assertStringContainsString('Riza Apriadi', $html);
         $this->assertStringContainsString('Absen Masuk', $html);

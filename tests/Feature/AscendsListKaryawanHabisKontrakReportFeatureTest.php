@@ -37,7 +37,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.shared.hrm.employee_list.list_karyawan_habis_kontrak.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan List Karyawan Habis Kontrak (RU)'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan List Karyawan Habis Kontrak')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -54,7 +54,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan List Karyawan Habis Kontrak (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan List Karyawan Habis Kontrak');
     }
 
     public function test_shared_hrm_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -150,7 +150,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
     {
         $reportData = app(ListKaryawanHabisKontrakReportService::class)
             ->buildReportDataFromXml($this->employeeListXml('employees'), 'test xml', ['month' => 6, 'year' => 2026]);
-        $reportData['title'] = 'Laporan List Karyawan Habis Kontrak (RU)';
+        $reportData['title'] = 'Laporan List Karyawan Habis Kontrak';
 
         $html = view('ascends.shared.hrm.employee_list.list_karyawan_habis_kontrak.pdf', [
             'company' => 'RU',
@@ -158,7 +158,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan List Karyawan Habis Kontrak (RU)', $html);
+        $this->assertStringContainsString('Laporan List Karyawan Habis Kontrak', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('NIK', $html);
         $this->assertStringContainsString('Nama Lengkap', $html);
@@ -181,7 +181,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             'printed_at' => '04 June 2026 09:21',
             'printed_by' => 'Ridho',
             'company' => 'RU',
-            'title' => 'Laporan List Karyawan Habis Kontrak (RU)',
+            'title' => 'Laporan List Karyawan Habis Kontrak',
             'headers' => ['Code', 'Full Name', 'Job Title', 'Department', 'Join Date', 'Expiry Date', 'Active'],
             'rows' => [],
             'total_rows' => 0,

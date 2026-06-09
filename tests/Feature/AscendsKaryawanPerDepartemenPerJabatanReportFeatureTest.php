@@ -47,7 +47,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Departemen Per Jabatan (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Departemen Per Jabatan');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_departemen_per_jabatan_pdf(): void
@@ -66,7 +66,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_departemen_per_jabatan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Departemen Per Jabatan (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Departemen Per Jabatan'
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -81,7 +81,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Departemen Per Jabatan (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Departemen Per Jabatan');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Departemen Per Jabatan (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Departemen Per Jabatan');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -190,7 +190,7 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Karyawan Per Departemen Per Jabatan (RU)', $html);
+        $this->assertStringContainsString('Laporan Karyawan Per Departemen Per Jabatan', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('Nama', $html);
         $this->assertStringContainsString('L/P', $html);
@@ -222,8 +222,8 @@ class AscendsKaryawanPerDepartemenPerJabatanReportFeatureTest extends TestCase
             'company' => 'RU',
             'module' => 'hrm',
             'sub_report' => 'karyawan_per_departemen_per_jabatan',
-            'label' => 'Laporan Karyawan Per Departemen Per Jabatan (RU)',
-            'title' => 'Laporan Karyawan Per Departemen Per Jabatan (RU)',
+            'label' => 'Laporan Karyawan Per Departemen Per Jabatan',
+            'title' => 'Laporan Karyawan Per Departemen Per Jabatan',
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',

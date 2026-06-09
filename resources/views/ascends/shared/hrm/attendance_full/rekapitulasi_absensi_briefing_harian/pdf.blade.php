@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -113,8 +120,10 @@
         $footerCenterText = '';
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] ?? 'Laporan Rekapitulasi Absensi Briefing Harian' }}</h1>
-    <p class="report-subtitle">{{ $periodLabel }}</p>
+    @include('ascends.shared.partials.report-header', [
+        'fallbackTitle' => 'Laporan Rekapitulasi Absensi Briefing Harian',
+        'subtitle' => $periodLabel,
+    ])
 
     <table class="data-table">
         <thead>

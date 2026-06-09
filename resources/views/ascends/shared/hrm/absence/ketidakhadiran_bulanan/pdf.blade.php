@@ -28,6 +28,13 @@
             color: #000;
         }
 
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .report-title {
             text-align: center;
             margin: 0;
@@ -37,7 +44,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 12px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
@@ -180,8 +187,10 @@
         $additionalNoteChunks = array_chunk($additionalNotes, 4);
     @endphp
 
-    <h1 class="report-title">{{ $title }}</h1>
-    <p class="report-subtitle">{{ $periodLabel }}</p>
+    @include('ascends.shared.partials.report-header', [
+        'title' => $title,
+        'subtitle' => $periodLabel,
+    ])
 
     <table class="data-table">
         <thead>

@@ -47,7 +47,7 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan');
     }
 
     public function test_ascend_test_upload_form_can_preview_daftar_karyawan_pdf(): void
@@ -66,7 +66,7 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.daftar_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan'
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -81,7 +81,7 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan');
     }
 
     public function test_internal_ascend_api_can_render_uc_daftar_karyawan_pdf_without_jwt(): void
@@ -189,7 +189,7 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU)');
+        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -258,7 +258,7 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Daftar Karyawan (RU)', $html);
+        $this->assertStringContainsString('Laporan Daftar Karyawan', $html);
         $this->assertStringContainsString('No', $html);
         $this->assertStringContainsString('Nama', $html);
         $this->assertStringContainsString('Jabatan', $html);
@@ -282,7 +282,7 @@ class AscendsDaftarKaryawanReportFeatureTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function reportData(string $title = 'Laporan Daftar Karyawan (RU)'): array
+    private function reportData(string $title = 'Laporan Daftar Karyawan'): array
     {
         return [
             'printed_at' => '20 Mei 2026 10:00',

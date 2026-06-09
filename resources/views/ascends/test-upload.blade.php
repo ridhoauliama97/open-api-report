@@ -48,7 +48,9 @@
                             'rekapitulasi_absensi_briefing_harian' => 'Laporan Rekapitulasi Absensi Briefing Harian (RU)',
                             'absensi_individu' => 'Laporan Absensi Individu (RU)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (RU)',
+                            'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)',
+                            'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (RU)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (RU) Per Departemen',
                         ],
                     ],
@@ -87,7 +89,9 @@
                             'rekapitulasi_absensi_briefing_harian' => 'Laporan Rekapitulasi Absensi Briefing Harian (GSU)',
                             'absensi_individu' => 'Laporan Absensi Individu (GSU)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (GSU)',
+                            'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (GSU)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)',
+                            'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (GSU)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (GSU) Per Departemen',
                         ],
                     ],
@@ -122,7 +126,9 @@
                             'rekapitulasi_absensi_briefing_harian' => 'Laporan Rekapitulasi Absensi Briefing Harian (UC)',
                             'absensi_individu' => 'Laporan Absensi Individu (UC)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (UC)',
+                            'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (UC)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (UC)',
+                            'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (UC)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (UC) Per Departemen',
                         ],
                     ],
@@ -183,6 +189,20 @@
                                 @error('company')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <input type="hidden" id="DB_CompanyName" name="DB_CompanyName"
+                                    value="{{ old('DB_CompanyName', $selectedCompany) }}">
+                                <div class="form-text">Parameter Crystal: <code>DB_CompanyName</code>.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="Sys_Username" class="form-label fw-semibold">Sys Username</label>
+                                <input type="text" class="form-control @error('Sys_Username') is-invalid @enderror"
+                                    id="Sys_Username" name="Sys_Username" value="{{ old('Sys_Username') }}"
+                                    placeholder="Nama user yang mencetak">
+                                @error('Sys_Username')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="form-text">Parameter Crystal: <code>Sys_Username</code>, dipakai untuk footer Dicetak oleh.</div>
                             </div>
 
                             <div class="mb-4">
@@ -273,8 +293,28 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Pilih Type</label>
+                                        <input type="text"
+                                            class="form-control @error('Pilih Type') is-invalid @enderror"
+                                            name="Pilih Type" value="{{ old('Pilih Type', 'KK/KT') }}"
+                                            placeholder="KK/KT atau Staff">
+                                        @error('Pilih Type')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Pilih Status</label>
+                                        <input type="text"
+                                            class="form-control @error('Pilih Status') is-invalid @enderror"
+                                            name="Pilih Status" value="{{ old('Pilih Status', 'KK/KT') }}"
+                                            placeholder="KK/KT atau Staff">
+                                        @error('Pilih Status')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
-                                <div class="form-text">Gunakan tanggal awal dan tanggal akhir untuk periode Attendance Full. Field group dipakai untuk Absensi Briefing Harian. Field kategori/tipe dipakai untuk laporan Pengabaian Keterlambatan & Kehadiran Manual.</div>
+                                <div class="form-text">Gunakan tanggal awal dan tanggal akhir untuk periode Attendance Full. Field group dipakai untuk Absensi Briefing Harian. Field Pilih Type dipakai untuk Persentase Kehadiran Bulanan. Field Pilih Status dipakai untuk Pengabaian Keterlambatan & Kehadiran Manual.</div>
                             </div>
 
                             <div class="mb-4" id="contract_period_fields">
@@ -393,6 +433,7 @@
         (() => {
             const companyReports = @json($companyReports);
             const companySelect = document.getElementById('company');
+            const dbCompanyNameInput = document.getElementById('DB_CompanyName');
             const moduleSelect = document.getElementById('report_module');
             const reportSelect = document.getElementById('report_type');
             const reportLabel = document.getElementById('report_type_label');
@@ -420,6 +461,7 @@
 
             const refreshModuleOptions = () => {
                 const selectedCompany = companySelect.value;
+                dbCompanyNameInput.value = selectedCompany;
                 const currentModule = moduleSelect.value;
                 const modules = companyReports[selectedCompany]?.modules || {};
                 const moduleEntries = Object.entries(modules);
@@ -457,7 +499,7 @@
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
                 toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
-                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian', 'kehadiran_kru_stick', 'persentase_kehadiran_mingguan_per_departemen', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
                 toggleSection(attendanceIndividuFields, reportSelect.value === 'absensi_individu');
                 toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };

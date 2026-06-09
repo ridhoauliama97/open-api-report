@@ -13,7 +13,8 @@ Template shared HRM dipakai supaya struktur Blade laporan bisa digunakan lintas 
 - `GSU`
 - `UC`
 
-Karena XML HRM Ascend tidak memiliki field company yang terisi, request shared wajib mengirim field `company`.
+Nama perusahaan pada title dan filename dibaca dari parameter field `DB_CompanyName`.
+Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
 ## Endpoint Shared
 
@@ -40,7 +41,9 @@ Karena XML HRM Ascend tidak memiliki field company yang terisi, request shared w
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf`
 - Attendance Full - Laporan Absensi Individu: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf`
 - Attendance Full - Laporan Kehadiran Kru Stick: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-stick/pdf`
+- Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-racip/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf`
+- Attendance Full - Laporan Persentase Kehadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-bulanan/pdf`
 - Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf`
 
 ## Endpoint Shared Absence
@@ -49,17 +52,25 @@ Karena XML HRM Ascend tidak memiliki field company yang terisi, request shared w
 
 ## Input
 
-Input XML sama seperti report Ascends XML lain:
+Parameter field utama untuk semua endpoint Ascends Shared HRM:
 
-- `multipart/form-data` field `xml_file`
+- `xml_file`: file XML dari Ascend.
+- `DB_CompanyName`: nama/kode perusahaan dari parameter Crystal Report Ascend, contoh `RU`, `GSU`, atau `UC`.
+- `Sys_Username`: nama user print dari parameter Crystal Report Ascend, dipakai untuk footer `Dicetak oleh`, contoh `Windi`.
+
+Input XML alternatif yang tetap diterima untuk kebutuhan testing:
+
 - field `xml` berisi string XML
 - raw XML body dengan `Content-Type: application/xml`
 
 Catatan: file `AnlReports.HRM.AttendanceFull.xml` bisa berukuran lebih dari 100 MB, jadi limit PHP/web server perlu minimal mengikuti konfigurasi upload 200 MB.
 
-Input tambahan wajib untuk shared:
+Fallback kompatibilitas lama:
 
-- `company`: `RU`, `GSU`, atau `UC`
+- `company`: fallback internal/test jika `DB_CompanyName` belum dikirim.
+- `Sys_UserName`: alias lama untuk nama user print jika `Sys_Username` belum dikirim.
+
+Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
 Input tambahan khusus `list-karyawan-habis-kontrak`:
 
@@ -101,20 +112,40 @@ Input tambahan khusus `kehadiran-kru-stick`:
 - Data difilter dari XML Attendance Full dengan `Job_x0020_Title = Kru Stick Borongan` dan `Workgroup = Borongan Stick`.
 - Kolom tanggal dibuat dinamis sesuai periode, masing-masing berisi subkolom `In` dan `Out`.
 
+Input tambahan khusus `kehadiran-kru-racip`:
+
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-05` sampai `2026-06-04`.
+- Alias yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir untuk data kru racip di XML.
+- Data difilter dari XML Attendance Full dengan `Job_x0020_Title = Operator Borongan Sawmill` dan `Workgroup = Borongan Sawmill`.
+- Kolom tanggal dibuat dinamis sesuai periode, masing-masing berisi subkolom `In` dan `Out`.
+- Jika XML/periode tidak memiliki data kru racip, PDF tetap tampil dengan tabel kosong.
+
 Input tambahan khusus `persentase-kehadiran-mingguan-per-departemen`:
 
 - `start_date` + `end_date`: periode data attendance, contoh `2026-05-01` sampai `2026-05-31`.
 - Alias yang diterima: `TglAwal` + `TglAkhir`.
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 
+Input tambahan khusus `persentase-kehadiran-bulanan`:
+
+- `Pilih Type`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias yang diterima: `Pilih_x0020_Type`, `pilih_type`, `type`, atau `Type`.
+- `KK/KT`: menampilkan status pekerja yang diawali `KK`, `KT`, atau `BR`.
+- `Staff`: menampilkan status pekerja yang diawali `ST`.
+- Departemen yang diawali `ODP` atau `Management` tidak ditampilkan.
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+
 Input tambahan khusus `pengabaian-keterlambatan-kehadiran-manual`:
 
 - `start_date` + `end_date`: periode data attendance, contoh `2026-05-05` sampai `2026-06-04`.
 - Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
-- `kategori`: tipe/status/kategori karyawan dari form Ascend, contoh `ST`.
-- Alias kategori yang diterima: `Kategori`, `category`, `Category`, `status`, `Status`, `tipe`, `Tipe`, `type`, `Type`, `PilihKategori`, `pilih_kategori`, `Pilih Kategori`, atau `Pilih_x0020_Kategori`.
-- Mapping XML: nilai kategori membaca `Daily_x0020_Worker_x0020_Type_x0020_Code`. Contoh `KK/KT` membaca kode `KK` atau `KT`, sedangkan `ST` membaca kode `ST`.
-- Jika kategori tidak dikirim, default `ST`.
+- `Pilih Status`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias status yang diterima: `Pilih_x0020_Status`, `pilih_status`, `status`, `Status`, `Kategori`, `category`, atau `kategori`.
+- Mapping XML: `Staff` membaca `Daily_x0020_Worker_x0020_Type_x0020_Code = ST`; `KK/KT` membaca kode yang diawali `KK` atau `KT`.
+- Data hanya tampil jika `Last_x0020_Modified_x0020_By` terisi, sesuai formula Crystal `{Attendance.Last Modified By} <> ""`.
+- Jika status tidak dikirim, default `KK/KT`.
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 
 Input tambahan khusus `ketidakhadiran-bulanan`:
@@ -129,14 +160,14 @@ Input tambahan khusus `ketidakhadiran-bulanan`:
 Contoh `multipart/form-data`:
 
 ```text
-company=UC
+DB_CompanyName=UC
 xml_file=AnlReports.HRM.EmployeeList.xml
 ```
 
 Contoh `multipart/form-data` untuk cek karyawan habis kontrak bulan Juni 2026:
 
 ```text
-company=UC
+DB_CompanyName=UC
 month=6
 year=2026
 xml_file=AnlReports.HRM.EmployeeList.xml
@@ -145,7 +176,7 @@ xml_file=AnlReports.HRM.EmployeeList.xml
 Contoh `multipart/form-data` untuk Absensi Briefing Harian group VKD periode 01-Jun-2026 sampai 05-Jun-2026:
 
 ```text
-company=RU
+DB_CompanyName=RU
 group=VKD
 start_date=2026-06-01
 end_date=2026-06-05
@@ -156,7 +187,7 @@ xml_file=AnlReports.HRM.AttendanceFull.xml
 Contoh `multipart/form-data` untuk Persentase Kehadiran Mingguan Per Departemen periode Mei 2026:
 
 ```text
-company=RU
+DB_CompanyName=RU
 start_date=2026-05-01
 end_date=2026-05-31
 xml_file=AnlReports.HRM.AttendanceFull.xml
@@ -165,7 +196,7 @@ xml_file=AnlReports.HRM.AttendanceFull.xml
 Contoh `multipart/form-data` untuk Kehadiran Kru Stick:
 
 ```text
-company=RU
+DB_CompanyName=RU
 start_date=2026-05-05
 end_date=2026-06-04
 xml_file=AnlReports.HRM.AttendanceFull.xml
@@ -174,7 +205,7 @@ xml_file=AnlReports.HRM.AttendanceFull.xml
 Contoh `multipart/form-data` untuk Pengabaian Keterlambatan & Kehadiran Manual kategori ST:
 
 ```text
-company=RU
+DB_CompanyName=RU
 kategori=ST
 start_date=2026-05-05
 end_date=2026-06-04
@@ -184,7 +215,7 @@ xml_file=AnlReports.HRM.AttendanceFull.xml
 Contoh `multipart/form-data` untuk Ketidakhadiran Bulanan:
 
 ```text
-company=RU
+DB_CompanyName=RU
 Pilih Kategori=KK/KT
 start_date=2026-05-05
 end_date=2026-06-04
@@ -196,7 +227,7 @@ xml_file=AnlReports.HRM.Absence.xml
 - `200 application/pdf`
 - `Content-Disposition: inline`
 
-Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori:
+Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori. Nilai `{company}` berasal dari parameter `DB_CompanyName`, atau fallback field form `company` jika parameter tersebut tidak ada:
 
 ```text
 {Nama Laporan} ({company})
@@ -221,8 +252,10 @@ Contoh:
 - `Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC).pdf`
 - `Attendance Full - Laporan Absensi Briefing Harian (RU) - VKD.pdf`
 - `Attendance Full - Laporan Kehadiran Kru Stick (RU).pdf`
+- `Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU).pdf`
+- `Attendance Full - Laporan Persentase Kehadiran Bulanan KK KT (RU).pdf`
 - `Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (RU).pdf`
-- `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual ST Per Departemen (RU).pdf`
+- `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Staff Per Departemen (RU).pdf`
 - `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
 
 ## Response Gagal
@@ -255,6 +288,8 @@ Template Blade shared Attendance Full berada di `resources/views/ascends/shared/
 - `attendance_full/absensi_briefing_harian`
 - `attendance_full/rekapitulasi_absensi_briefing_harian`
 - `attendance_full/kehadiran_kru_stick`
+- `attendance_full/kehadiran_kru_racip`
+- `attendance_full/persentase_kehadiran_bulanan`
 - `attendance_full/persentase_kehadiran_mingguan_per_departemen`
 - `attendance_full/pengabaian_keterlambatan_kehadiran_manual`
 
@@ -262,4 +297,4 @@ Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/abse
 
 - `absence/ketidakhadiran_bulanan`
 
-Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan `company` menjadi sumber label perusahaan pada title dan filename.
+Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

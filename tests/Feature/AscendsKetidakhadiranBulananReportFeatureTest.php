@@ -38,7 +38,8 @@ class AscendsKetidakhadiranBulananReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.shared.hrm.absence.ketidakhadiran_bulanan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Ketidakhadiran Bulanan (RU) - KK/KT'
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Ketidakhadiran Bulanan')
+                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'KK/KT')
                     && ($data['pdf_orientation'] ?? null) === 'landscape'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -157,7 +158,7 @@ class AscendsKetidakhadiranBulananReportFeatureTest extends TestCase
                 'end_date' => '2026-05-07',
                 'tipe' => 'KK/KT',
             ]);
-        $reportData['title'] = 'Laporan Ketidakhadiran Bulanan (RU) - KK/KT';
+        $reportData['title'] = 'Laporan Ketidakhadiran Bulanan - KK/KT';
 
         $html = view('ascends.shared.hrm.absence.ketidakhadiran_bulanan.pdf', [
             'company' => 'RU',
@@ -165,7 +166,7 @@ class AscendsKetidakhadiranBulananReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('Laporan Ketidakhadiran Bulanan (RU) - KK/KT', $html);
+        $this->assertStringContainsString('Laporan Ketidakhadiran Bulanan - KK/KT', $html);
         $this->assertStringContainsString('Dari 05-Mei-26 s/d 07-Mei-26', $html);
         $this->assertStringContainsString('Tanggal', $html);
         $this->assertStringContainsString('Aulia', $html);

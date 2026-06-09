@@ -23,9 +23,16 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.15;
             color: #000;
+        }
+
+        .report-companyTitle {
+            text-align: center;
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .report-title {
@@ -37,8 +44,8 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 14px 0;
-            font-size: 11px;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
             color: #636466;
         }
 
@@ -156,8 +163,7 @@
         };
     @endphp
 
-    <h1 class="report-title">{{ $reportData['title'] }}</h1>
-    <p class="report-subtitle">Per Tanggal : {{ $printedAt }}</p>
+    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per Tanggal : ' . $printedAt])
 
     <table class="data-table">
         <thead>
@@ -174,7 +180,9 @@
             @forelse ($groupedRows as $group)
                 @php $groupRows = $group['rows'] ?? []; @endphp
                 <tr class="group-row">
-                    <td colspan="6" class="center">Generasi : {{ $generationDisplayLabel((string) ($group['label'] ?? '')) }}</td>
+                    <td colspan="6" class="center">Generasi :
+                        {{ $generationDisplayLabel((string) ($group['label'] ?? '')) }}
+                    </td>
                 </tr>
                 @foreach ($groupRows as $row)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
