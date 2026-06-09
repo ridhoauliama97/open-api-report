@@ -38,12 +38,14 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf`
-- Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf`
+- Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf`
+- Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-gsu/pdf`
 - Attendance Full - Laporan Absensi Individu: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf`
 - Attendance Full - Laporan Kehadiran Kru Stick: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-stick/pdf`
 - Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-racip/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-bulanan/pdf`
+- Attendance Full - Laporan Rekapitulasi Kehadiran < 93 % Tahunan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-kehadiran-kurang-93-tahunan/pdf`
 - Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf`
 
 ## Endpoint Shared Absence
@@ -87,13 +89,24 @@ Input tambahan khusus `absensi-briefing-harian`:
 - `tema`: optional.
 - Alias yang diterima: `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
 
-Input tambahan khusus `rekapitulasi-absensi-briefing-harian`:
+Input tambahan khusus `rekapitulasi-absensi-briefing-harian-ru`:
 
 - `start_date` + `end_date`: periode rekap data attendance, contoh `2026-06-01` sampai `2026-06-05`.
 - `group`: optional, untuk membatasi rekap pada kode/nama group atau divisi tertentu.
 - `report_date`: fallback untuk rekap satu tanggal saja.
 - Alias yang diterima: `TglAwal` + `TglAkhir`, `division`/`divisi`, dan `tanggal`/`date`.
 - Jika `group` tidak dikirim, report merekap seluruh divisi/group yang ada di XML.
+- Parameter field utama dari Ascend: `DB_CompanyName` dan `Sys_UserName`.
+- Rekap divisi mengikuti formula `sorting` Crystal; status hadir/telat dihitung dari `TimeNew` dan formula `Shift`.
+
+Input tambahan khusus `rekapitulasi-absensi-briefing-harian-gsu`:
+
+- `start_date` + `end_date`: periode rekap data attendance, contoh `2026-05-01` sampai `2026-05-31`.
+- `report_date`: fallback untuk rekap satu bulan dari tanggal tersebut.
+- Alias yang diterima: `TglAwal` + `TglAkhir`, dan `tanggal`/`date`.
+- Jika hanya satu tanggal dikirim, sistem memakai satu bulan penuh dari tanggal tersebut.
+- Parameter field utama dari Ascend: `DB_CompanyName` dan `Sys_UserName`.
+- Rekap divisi mengikuti formula `sorting`, `NameDivisi`, dan `initialDivs` Crystal khusus GSU.
 
 Input tambahan khusus `absensi-individu`:
 
@@ -136,6 +149,19 @@ Input tambahan khusus `persentase-kehadiran-bulanan`:
 - Departemen yang diawali `ODP` atau `Management` tidak ditampilkan.
 - `start_date` + `end_date`: periode data attendance, contoh `2026-05-01` sampai `2026-05-31`.
 - Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+
+Input tambahan khusus `rekapitulasi-kehadiran-kurang-93-tahunan`:
+
+- `Pilih Status`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias yang diterima: `Pilih_x0020_Status`, `pilih_status`, `status`, `Status`, `Kategori`, `category`, atau `kategori`.
+- `Staff`: membaca `Daily_x0020_Worker_x0020_Type_x0020_Code` yang diawali `ST`.
+- `KK/KT`: membaca kode yang diawali `KT`, `KK`, atau `BR`.
+- `start_date` + `end_date`: periode data attendance tahunan, contoh `2026-01-01` sampai `2026-06-09`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+- Persentase bulanan mengikuti rumus Crystal `({totalHariKerja} - Sum(TipeI, Employee Code)) / {totalHariKerja} * 100`.
+- `totalHariKerja` mengikuti mapping Crystal per bulan: Jan 24, Feb 21, Mar 26, Apr 24, Mei 18, Jun 25, Jul 24, Agt 26, Sep 25, Okt 25, Nov 26, Des 23.
+- Baris hanya tampil jika ada minimal satu bulan dengan persentase `> 0` dan `< 93`.
 
 Input tambahan khusus `pengabaian-keterlambatan-kehadiran-manual`:
 
@@ -286,11 +312,13 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 Template Blade shared Attendance Full berada di `resources/views/ascends/shared/hrm/attendance_full`.
 
 - `attendance_full/absensi_briefing_harian`
-- `attendance_full/rekapitulasi_absensi_briefing_harian`
+- `attendance_full/rekapitulasi_absensi_briefing_harian_ru`
+- `attendance_full/rekapitulasi_absensi_briefing_harian_gsu`
 - `attendance_full/kehadiran_kru_stick`
 - `attendance_full/kehadiran_kru_racip`
 - `attendance_full/persentase_kehadiran_bulanan`
 - `attendance_full/persentase_kehadiran_mingguan_per_departemen`
+- `attendance_full/rekapitulasi_kehadiran_kurang_93_tahunan`
 - `attendance_full/pengabaian_keterlambatan_kehadiran_manual`
 
 Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/absence`.

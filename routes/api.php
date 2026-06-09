@@ -286,9 +286,14 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.absensi-briefing-harian.pdf');
 
 Route::post(
-    '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf',
-    [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianPdf']
-)->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian.pdf');
+    '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianRuPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianGsuPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian-gsu.pdf');
 
 Route::post(
     '/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf',
@@ -314,6 +319,11 @@ Route::post(
     '/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-bulanan/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmPersentaseKehadiranBulananPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.persentase-kehadiran-bulanan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-kehadiran-kurang-93-tahunan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiKehadiranKurang93TahunanPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-kehadiran-kurang-93-tahunan.pdf');
 
 Route::post(
     '/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf',

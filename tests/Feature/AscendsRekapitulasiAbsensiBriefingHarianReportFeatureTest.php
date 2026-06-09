@@ -35,7 +35,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian_ru.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                     && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Rekapitulasi Absensi Briefing Harian')
                     && ($data['pdf_orientation'] ?? null) === 'portrait'
@@ -45,7 +45,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->app->instance(RekapitulasiAbsensiBriefingHarianReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $response = $this->post('/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf', [
+        $response = $this->post('/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf', [
             'company' => 'RU',
             'start_date' => '2026-06-01',
             'end_date' => '2026-06-05',
@@ -72,7 +72,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf', Mockery::type('array'))
+            ->with('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian_ru.pdf', Mockery::type('array'))
             ->andReturn('%PDF-1.4 mocked content');
 
         $this->app->instance(RekapitulasiAbsensiBriefingHarianReportService::class, $service);
@@ -81,7 +81,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
         $response = $this
             ->call(
                 'POST',
-                '/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf',
+                '/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf',
                 ['company' => 'GSU', 'start_date' => '2026-06-01', 'end_date' => '2026-06-05'],
                 [],
                 [],
@@ -104,7 +104,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
 
         $this->app->instance(RekapitulasiAbsensiBriefingHarianReportService::class, $service);
 
-        $this->postJson('/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf', [
+        $this->postJson('/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf', [
             'company' => 'RU',
         ])
             ->assertUnprocessable()
@@ -119,7 +119,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
                 'end_date' => '2026-06-02',
             ]);
 
-        $this->assertSame('01-Jun-26 s/d 02-Jun-26', $reportData['period']['label']);
+        $this->assertSame('Dari 01-Jun-26 s/d 02-Jun-26', $reportData['period']['label']);
         $this->assertSame(2, $reportData['total_rows']);
 
         $this->assertSame('SML', $reportData['rows'][0]['Divisi']);
@@ -133,7 +133,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
 
         $this->assertSame(2, $reportData['grand_summary']['Jumlah Hadir Tidak Telat']);
         $this->assertSame(1, $reportData['grand_summary']['Jumlah Telat']);
-        $this->assertSame(1, $reportData['grand_summary']['Jumlah Tidak Hadir']);
+        $this->assertSame(2, $reportData['grand_summary']['Jumlah Tidak Hadir']);
     }
 
     public function test_parser_can_filter_rekap_by_group(): void
@@ -149,6 +149,16 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->assertSame('VKD', $reportData['rows'][0]['Divisi']);
     }
 
+    public function test_parser_uses_full_month_when_only_end_date_is_sent(): void
+    {
+        $reportData = app(RekapitulasiAbsensiBriefingHarianReportService::class)
+            ->buildReportDataFromXml($this->attendanceXml('attendance'), 'test xml', [
+                'end_date' => '2026-06-02',
+            ]);
+
+        $this->assertSame('Dari 01-Jun-26 s/d 30-Jun-26', $reportData['period']['label']);
+    }
+
     public function test_pdf_blade_renders_expected_layout(): void
     {
         $reportData = app(RekapitulasiAbsensiBriefingHarianReportService::class)
@@ -158,7 +168,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
             ]);
         $reportData['title'] = 'Laporan Rekapitulasi Absensi Briefing Harian';
 
-        $html = view('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian.pdf', [
+        $html = view('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian_ru.pdf', [
             'company' => 'RU',
             'reportData' => $reportData,
             'headers' => $reportData['headers'],
@@ -167,7 +177,8 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
         ])->render();
 
         $this->assertStringContainsString('Laporan Rekapitulasi Absensi Briefing Harian', $html);
-        $this->assertStringContainsString('01-Jun-26 s/d 02-Jun-26', $html);
+        $this->assertStringContainsString('Dari 01-Jun-26 s/d 02-Jun-26', $html);
+        $this->assertStringContainsString('<th style="width: 5%;">No</th>', $html);
         $this->assertStringContainsString('Jumlah Hadir', $html);
         $this->assertStringContainsString('Jumlah Saat', $html);
         $this->assertStringContainsString('SML', $html);
@@ -185,8 +196,8 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
             'printed_by' => 'Ridho',
             'company' => $company,
             'title' => "Laporan Rekapitulasi Absensi Briefing Harian ({$company})",
-            'period' => ['label' => '01-Jun-26 s/d 05-Jun-26'],
-            'headers' => ['Divisi', 'Jumlah Hadir Tidak Telat', 'Jumlah Telat', 'Jumlah Tidak Hadir', 'Jumlah Saat Pukul 12.55 Wib', 'Selisih', 'Keterangan'],
+            'period' => ['label' => 'Dari 01-Jun-26 s/d 05-Jun-26'],
+            'headers' => ['No', 'Divisi', 'Jumlah Hadir Tidak Telat', 'Jumlah Telat', 'Jumlah Tidak Hadir', 'Jumlah Saat Pukul 12.55 Wib', 'Selisih', 'Keterangan'],
             'rows' => [],
             'grand_summary' => [],
             'total_rows' => 0,
@@ -201,9 +212,11 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
     <{$recordTag}>
         <Employee_x0020_Code>100001</Employee_x0020_Code>
         <Full_x0020_Name>Hadir Normal</Full_x0020_Name>
+        <Job_x0020_Title>Kru Sawmill</Job_x0020_Title>
         <Department_x0020_Name>Sawmill</Department_x0020_Name>
         <Division_x0020_Name>Band Saw</Division_x0020_Name>
         <Date>2026-06-01T00:00:00+07:00</Date>
+        <Scheduled_x0020_Shift>Normal Staff (08.00-17.15)</Scheduled_x0020_Shift>
         <Sign_x0020_In_x0020__x0028_Time_x0029_>07:00</Sign_x0020_In_x0020__x0028_Time_x0029_>
         <Sign_x0020_In_x0020_Diff.>0</Sign_x0020_In_x0020_Diff.>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
@@ -212,6 +225,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
     <{$recordTag}>
         <Employee_x0020_Code>100002</Employee_x0020_Code>
         <Full_x0020_Name>Hadir Telat</Full_x0020_Name>
+        <Job_x0020_Title>Kru Sawmill</Job_x0020_Title>
         <Department_x0020_Name>Sawmill</Department_x0020_Name>
         <Division_x0020_Name>Band Saw</Division_x0020_Name>
         <Date>2026-06-01T00:00:00+07:00</Date>
@@ -222,6 +236,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
     <{$recordTag}>
         <Employee_x0020_Code>100003</Employee_x0020_Code>
         <Full_x0020_Name>Tidak Hadir</Full_x0020_Name>
+        <Job_x0020_Title>Kru Sawmill</Job_x0020_Title>
         <Department_x0020_Name>Sawmill</Department_x0020_Name>
         <Division_x0020_Name>Band Saw</Division_x0020_Name>
         <Date>2026-06-01T00:00:00+07:00</Date>
@@ -230,9 +245,11 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
     <{$recordTag}>
         <Employee_x0020_Code>100004</Employee_x0020_Code>
         <Full_x0020_Name>VKD User</Full_x0020_Name>
+        <Job_x0020_Title>Operator Vacuum</Job_x0020_Title>
         <Department_x0020_Name>Vacuum &amp; K/D</Department_x0020_Name>
         <Division_x0020_Name>VKD</Division_x0020_Name>
         <Date>2026-06-02T00:00:00+07:00</Date>
+        <Scheduled_x0020_Shift>Normal Staff (08.00-17.15)</Scheduled_x0020_Shift>
         <Sign_x0020_In_x0020__x0028_Time_x0029_>07:10</Sign_x0020_In_x0020__x0028_Time_x0029_>
         <Sign_x0020_In_x0020_Diff.>0</Sign_x0020_In_x0020_Diff.>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
@@ -240,6 +257,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianReportFeatureTest extends TestCase
     <{$recordTag}>
         <Employee_x0020_Code>SPECIAL001</Employee_x0020_Code>
         <Full_x0020_Name>Special User</Full_x0020_Name>
+        <Job_x0020_Title>Kru Sawmill</Job_x0020_Title>
         <Department_x0020_Name>Sawmill</Department_x0020_Name>
         <Division_x0020_Name>Band Saw</Division_x0020_Name>
         <Date>2026-06-01T00:00:00+07:00</Date>

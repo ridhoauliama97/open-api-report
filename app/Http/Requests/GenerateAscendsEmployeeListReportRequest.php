@@ -22,7 +22,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'DB_CompanyName' => ['nullable', 'string', 'max:100'],
             'Sys_Username' => ['nullable', 'string', 'max:100'],
             'Sys_UserName' => ['nullable', 'string', 'max:100'],
-            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,uc_karyawan_aktif_per_departemen,uc_daftar_karyawan,uc_daftar_karyawan_berdasarkan_abjad,uc_data_karyawan_status_kerja,uc_karyawan_masuk_per_departemen_per_tanggal_masuk,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,list_karyawan_habis_kontrak,absensi_briefing_harian,rekapitulasi_absensi_briefing_harian,absensi_individu,kehadiran_kru_stick,kehadiran_kru_racip,persentase_kehadiran_mingguan_per_departemen,persentase_kehadiran_bulanan,pengabaian_keterlambatan_kehadiran_manual,ketidakhadiran_bulanan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
+            'report_type' => ['nullable', 'in:list_karyawan,gsu_list_karyawan,uc_list_karyawan,uc_karyawan_aktif_per_departemen,uc_daftar_karyawan,uc_daftar_karyawan_berdasarkan_abjad,uc_data_karyawan_status_kerja,uc_karyawan_masuk_per_departemen_per_tanggal_masuk,karyawan_per_masa_kerja,data_karyawan_status_kerja,daftar_karyawan_berdasarkan_abjad,daftar_karyawan,karyawan_aktif_per_departemen,karyawan_per_agama,karyawan_per_etnis,karyawan_per_level,karyawan_per_umur,karyawan_per_departemen_per_jabatan,list_karyawan_habis_kontrak,absensi_briefing_harian,rekapitulasi_absensi_briefing_harian_ru,rekapitulasi_absensi_briefing_harian_gsu,absensi_individu,kehadiran_kru_stick,kehadiran_kru_racip,persentase_kehadiran_mingguan_per_departemen,persentase_kehadiran_bulanan,rekapitulasi_kehadiran_kurang_93_tahunan,pengabaian_keterlambatan_kehadiran_manual,ketidakhadiran_bulanan,sales_invoice,sales_invoice_panjang,sales_invoice_normal,gsu_sales_invoice_panjang,gsu_sales_invoice_normal,surat_jalan,surat_jalan_panjang,surat_jalan_normal,gsu_surat_jalan_panjang,gsu_surat_jalan_normal'],
             'month' => ['nullable', 'integer', 'between:1,12'],
             'year' => ['nullable', 'integer', 'between:1900,2100'],
             'bulan' => ['nullable', 'integer', 'between:1,12'],
@@ -92,7 +92,7 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
     {
         $file = $this->file('xml_file');
         if ($file !== null && $file->isValid()) {
-            return 'request upload: ' . $file->getClientOriginalName();
+            return 'request upload: '.$file->getClientOriginalName();
         }
 
         if (is_string($this->input('xml')) && trim((string) $this->input('xml')) !== '') {
