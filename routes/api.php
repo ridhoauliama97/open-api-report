@@ -316,6 +316,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.data-peserta-makan-siang-ibadah-aula-per-departemen.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/data-peserta-makan-siang-shalat-jumat-per-departemen/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDataPesertaMakanSiangShalatJumatPerDepartemenPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.data-peserta-makan-siang-shalat-jumat-per-departemen.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmPersentaseKehadiranMingguanPerDepartemenPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.persentase-kehadiran-mingguan-per-departemen.pdf');

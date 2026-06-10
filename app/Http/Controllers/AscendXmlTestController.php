@@ -8,6 +8,7 @@ use App\Services\Ascends\Ru\Hrm\AbsensiIndividuReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanReportService;
 use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemenReportService;
+use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
 use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanAktifPerDepartemenReportService;
@@ -70,6 +71,7 @@ class AscendXmlTestController extends Controller
         RekapitulasiAbsensiBriefingHarianReportService $rekapitulasiAbsensiBriefingHarianReportService,
         RekapitulasiAbsensiBriefingHarianGsuReportService $rekapitulasiAbsensiBriefingHarianGsuReportService,
         DataPesertaMakanSiangIbadahAulaPerDepartemenReportService $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService,
+        DataPesertaMakanSiangShalatJumatPerDepartemenReportService $dataPesertaMakanSiangShalatJumatPerDepartemenReportService,
         AbsensiIndividuReportService $absensiIndividuReportService,
         KehadiranKruStickReportService $kehadiranKruStickReportService,
         KehadiranKruRacipReportService $kehadiranKruRacipReportService,
@@ -115,6 +117,7 @@ class AscendXmlTestController extends Controller
                 'rekapitulasi_absensi_briefing_harian_ru' => $rekapitulasiAbsensiBriefingHarianReportService,
                 'rekapitulasi_absensi_briefing_harian_gsu' => $rekapitulasiAbsensiBriefingHarianGsuReportService,
                 'data_peserta_makan_siang_ibadah_aula_per_departemen' => $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService,
+                'data_peserta_makan_siang_shalat_jumat_per_departemen' => $dataPesertaMakanSiangShalatJumatPerDepartemenReportService,
                 'absensi_individu' => $absensiIndividuReportService,
                 'kehadiran_kru_stick' => $kehadiranKruStickReportService,
                 'kehadiran_kru_racip' => $kehadiranKruRacipReportService,
@@ -154,6 +157,11 @@ class AscendXmlTestController extends Controller
                     $this->absensiBriefingHarianFilters($request)
                 ),
                 'data_peserta_makan_siang_ibadah_aula_per_departemen' => $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->attendanceFullMealParticipantFilters($request)
+                ),
+                'data_peserta_makan_siang_shalat_jumat_per_departemen' => $dataPesertaMakanSiangShalatJumatPerDepartemenReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
                     $this->attendanceFullMealParticipantFilters($request)
@@ -247,6 +255,13 @@ class AscendXmlTestController extends Controller
                 $reportData['company'] = $company;
                 $reportData['title'] = 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen';
                 $reportDefinition['filename'] = "Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen ({$company}).pdf";
+            }
+            if ($selectedReport === 'data_peserta_makan_siang_shalat_jumat_per_departemen') {
+                $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
+
+                $reportData['company'] = $company;
+                $reportData['title'] = 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen';
+                $reportDefinition['filename'] = "Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen ({$company}).pdf";
             }
             if ($selectedReport === 'kehadiran_kru_stick') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -1011,6 +1026,50 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmDataPesertaMakanSiangShalatJumatPerDepartemenPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DataPesertaMakanSiangShalatJumatPerDepartemenReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullMealParticipantFilters($request) + ['company' => $company]
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.data_peserta_makan_siang_shalat_jumat_per_departemen.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 2 + (count($reportData['dates'] ?? []) * 2),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen ('.$company.').pdf"',
         ]);
     }
 
@@ -2401,6 +2460,12 @@ class AscendXmlTestController extends Controller
             'data_peserta_makan_siang_ibadah_aula_per_departemen' => [
                 'view' => 'ascends.shared.hrm.attendance_full.data_peserta_makan_siang_ibadah_aula_per_departemen.pdf',
                 'filename' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen.pdf',
+                'orientation' => 'portrait',
+                'format' => 'A4',
+            ],
+            'data_peserta_makan_siang_shalat_jumat_per_departemen' => [
+                'view' => 'ascends.shared.hrm.attendance_full.data_peserta_makan_siang_shalat_jumat_per_departemen.pdf',
+                'filename' => 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen.pdf',
                 'orientation' => 'portrait',
                 'format' => 'A4',
             ],
