@@ -55,7 +55,7 @@
             table-layout: fixed;
             page-break-inside: auto;
             border-spacing: 0;
-            border: 1px solid #000;
+            /* border: 1px solid #000; */
         }
 
         .data-table th,
@@ -83,6 +83,13 @@
             background: #eef2f8;
         }
 
+        .total-row td {
+            font-size: 11px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+        }
+
         .center {
             text-align: center;
         }
@@ -102,6 +109,8 @@
         $rows = $reportData['rows'] ?? [];
         $months = $reportData['months'] ?? [];
         $monthLabels = $reportData['month_labels'] ?? [];
+        $monthTotals = $reportData['month_totals'] ?? [];
+        $grandTotal = (int) ($reportData['grand_total'] ?? 0);
         $periodLabel = (string) ($reportData['period']['label'] ?? '');
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
             ->locale('id')
@@ -134,7 +143,7 @@
                     <td class="center">{{ $loop->iteration }}</td>
                     <td>{{ (string) ($row['Nama'] ?? '') }}</td>
                     @foreach ($months as $month)
-                        <td class="center">{{ (string) ($row[(string) $month] ?? '-%') }}</td>
+                        <td class="center">{{ (string) ($row[(string) $month] ?? '-') }}</td>
                     @endforeach
                     <td class="center">{{ (int) ($row['Total'] ?? 0) }}</td>
                 </tr>
@@ -143,6 +152,16 @@
                     <td colspan="{{ 3 + count($months) }}">Tidak Ada Data</td>
                 </tr>
             @endforelse
+
+            @if (count($rows) > 0)
+                <tr class="total-row">
+                    <td colspan="2" class="center">Total</td>
+                    @foreach ($months as $month)
+                        <td class="center">{{ (int) ($monthTotals[$month] ?? 0) }}</td>
+                    @endforeach
+                    <td class="center">{{ $grandTotal }}</td>
+                </tr>
+            @endif
         </tbody>
     </table>
 

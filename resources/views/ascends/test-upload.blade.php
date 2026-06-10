@@ -52,6 +52,7 @@
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)',
                             'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (RU)',
                             'rekapitulasi_kehadiran_kurang_93_tahunan' => 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (RU)',
+                            'rekapitulasi_pengabaian_keterlambatan_tahunan' => 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan (RU)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (RU) Per Departemen',
                         ],
                     ],
@@ -94,6 +95,7 @@
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)',
                             'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (GSU)',
                             'rekapitulasi_kehadiran_kurang_93_tahunan' => 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (GSU)',
+                            'rekapitulasi_pengabaian_keterlambatan_tahunan' => 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan (GSU)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (GSU) Per Departemen',
                         ],
                     ],
@@ -131,6 +133,7 @@
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (UC)',
                             'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (UC)',
                             'rekapitulasi_kehadiran_kurang_93_tahunan' => 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (UC)',
+                            'rekapitulasi_pengabaian_keterlambatan_tahunan' => 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan (UC)',
                             'pengabaian_keterlambatan_kehadiran_manual' => 'Laporan Pengabaian Keterlambatan & Kehadiran Manual (UC) Per Departemen',
                         ],
                     ],
@@ -501,7 +504,7 @@
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
                 toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
-                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
                 toggleSection(attendanceIndividuFields, reportSelect.value === 'absensi_individu');
                 toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };

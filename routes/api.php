@@ -326,6 +326,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-kehadiran-kurang-93-tahunan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-pengabaian-keterlambatan-tahunan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiPengabaianKeterlambatanTahunanPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-pengabaian-keterlambatan-tahunan.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmPengabaianKeterlambatanKehadiranManualPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.pengabaian-keterlambatan-kehadiran-manual.pdf');

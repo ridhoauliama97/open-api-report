@@ -46,6 +46,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-bulanan/pdf`
 - Attendance Full - Laporan Rekapitulasi Kehadiran < 93 % Tahunan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-kehadiran-kurang-93-tahunan/pdf`
+- Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-pengabaian-keterlambatan-tahunan/pdf`
 - Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf`
 
 ## Endpoint Shared Absence
@@ -162,6 +163,19 @@ Input tambahan khusus `rekapitulasi-kehadiran-kurang-93-tahunan`:
 - Persentase bulanan mengikuti rumus Crystal `({totalHariKerja} - Sum(TipeI, Employee Code)) / {totalHariKerja} * 100`.
 - `totalHariKerja` mengikuti mapping Crystal per bulan: Jan 24, Feb 21, Mar 26, Apr 24, Mei 18, Jun 25, Jul 24, Agt 26, Sep 25, Okt 25, Nov 26, Des 23.
 - Baris hanya tampil jika ada minimal satu bulan dengan persentase `> 0` dan `< 93`.
+
+Input tambahan khusus `rekapitulasi-pengabaian-keterlambatan-tahunan`:
+
+- `Pilih Status`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias yang diterima: `Pilih_x0020_Status`, `pilih_status`, `status`, `Status`, `Kategori`, `category`, atau `kategori`.
+- `Staff`: membaca `Daily_x0020_Worker_x0020_Type_x0020_Code = ST`.
+- `KK/KT`: membaca kode yang diawali `KT` atau `KK`.
+- Data hanya dihitung jika `Last_x0020_Modified_x0020_By` terisi, sesuai formula Crystal `{Attendance.Last Modified By} <> " "`.
+- Employee code yang diawali `120543`, `110104`, `110131`, `110159`, `120422`, `120523`, `130673`, `130891`, `131060`, atau `131107` tidak ditampilkan.
+- `start_date` + `end_date`: periode data attendance tahunan, contoh `2026-01-01` sampai `2026-06-01`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+- Setiap baris attendance yang lolos filter dihitung sebagai 1 pengabaian pada bulan terkait. Baris total bawah berisi total pengabaian per bulan dan grand total.
 
 Input tambahan khusus `pengabaian-keterlambatan-kehadiran-manual`:
 
@@ -319,6 +333,7 @@ Template Blade shared Attendance Full berada di `resources/views/ascends/shared/
 - `attendance_full/persentase_kehadiran_bulanan`
 - `attendance_full/persentase_kehadiran_mingguan_per_departemen`
 - `attendance_full/rekapitulasi_kehadiran_kurang_93_tahunan`
+- `attendance_full/rekapitulasi_pengabaian_keterlambatan_tahunan`
 - `attendance_full/pengabaian_keterlambatan_kehadiran_manual`
 
 Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/absence`.

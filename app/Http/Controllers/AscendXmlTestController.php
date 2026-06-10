@@ -29,6 +29,7 @@ use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranMingguanPerDepartemenReportSe
 use App\Services\Ascends\Ru\Hrm\RekapitulasiAbsensiBriefingHarianGsuReportService;
 use App\Services\Ascends\Ru\Hrm\RekapitulasiAbsensiBriefingHarianReportService;
 use App\Services\Ascends\Ru\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
+use App\Services\Ascends\Ru\Hrm\RekapitulasiPengabaianKeterlambatanTahunanReportService;
 use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
@@ -62,6 +63,7 @@ class AscendXmlTestController extends Controller
         PersentaseKehadiranMingguanPerDepartemenReportService $persentaseKehadiranMingguanPerDepartemenReportService,
         PersentaseKehadiranBulananReportService $persentaseKehadiranBulananReportService,
         RekapitulasiKehadiranKurang93TahunanReportService $rekapitulasiKehadiranKurang93TahunanReportService,
+        RekapitulasiPengabaianKeterlambatanTahunanReportService $rekapitulasiPengabaianKeterlambatanTahunanReportService,
         PengabaianKeterlambatanKehadiranManualReportService $pengabaianKeterlambatanKehadiranManualReportService,
         AbsensiBriefingHarianReportService $absensiBriefingHarianReportService,
         RekapitulasiAbsensiBriefingHarianReportService $rekapitulasiAbsensiBriefingHarianReportService,
@@ -105,6 +107,7 @@ class AscendXmlTestController extends Controller
                 'persentase_kehadiran_mingguan_per_departemen' => $persentaseKehadiranMingguanPerDepartemenReportService,
                 'persentase_kehadiran_bulanan' => $persentaseKehadiranBulananReportService,
                 'rekapitulasi_kehadiran_kurang_93_tahunan' => $rekapitulasiKehadiranKurang93TahunanReportService,
+                'rekapitulasi_pengabaian_keterlambatan_tahunan' => $rekapitulasiPengabaianKeterlambatanTahunanReportService,
                 'pengabaian_keterlambatan_kehadiran_manual' => $pengabaianKeterlambatanKehadiranManualReportService,
                 'absensi_briefing_harian' => $absensiBriefingHarianReportService,
                 'rekapitulasi_absensi_briefing_harian_ru' => $rekapitulasiAbsensiBriefingHarianReportService,
@@ -173,6 +176,11 @@ class AscendXmlTestController extends Controller
                     $this->attendanceFullTypeFilters($request)
                 ),
                 'rekapitulasi_kehadiran_kurang_93_tahunan' => $rekapitulasiKehadiranKurang93TahunanReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->attendanceFullStatusFilters($request)
+                ),
+                'rekapitulasi_pengabaian_keterlambatan_tahunan' => $rekapitulasiPengabaianKeterlambatanTahunanReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
                     $this->attendanceFullStatusFilters($request)
@@ -261,6 +269,14 @@ class AscendXmlTestController extends Controller
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status}) ({$company})";
                 $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan '.str_replace('/', ' ', $status)." ({$company}).pdf";
+            }
+            if ($selectedReport === 'rekapitulasi_pengabaian_keterlambatan_tahunan') {
+                $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
+                $status = trim((string) ($reportData['status'] ?? $this->attendanceFullStatus($request)));
+
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status}) ({$company})";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan '.str_replace('/', ' ', $status)." ({$company}).pdf";
             }
             if ($selectedReport === 'pengabaian_keterlambatan_kehadiran_manual') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -434,7 +450,7 @@ class AscendXmlTestController extends Controller
             'rows' => $reportData['rows'] ?? [],
             'generatedAt' => now(),
             'pdf_format' => 'A4',
-            'pdf_orientation' => 'portrait',
+            'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
             'pdf_column_count' => count($reportData['headers'] ?? []),
         ]);
@@ -1106,7 +1122,7 @@ class AscendXmlTestController extends Controller
             'rows' => $reportData['rows'] ?? [],
             'generatedAt' => now(),
             'pdf_format' => 'A4',
-            'pdf_orientation' => 'landscape',
+            'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
             'pdf_column_count' => count($reportData['headers'] ?? []),
         ]);
@@ -1114,6 +1130,51 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmRekapitulasiPengabaianKeterlambatanTahunanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        RekapitulasiPengabaianKeterlambatanTahunanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullStatusFilters($request) + ['company' => $company]
+            );
+
+            $status = trim((string) ($reportData['status'] ?? $this->attendanceFullStatus($request)));
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status}) ({$company})";
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.rekapitulasi_pengabaian_keterlambatan_tahunan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' ('.$company.').pdf"',
         ]);
     }
 
@@ -2295,7 +2356,12 @@ class AscendXmlTestController extends Controller
             'rekapitulasi_kehadiran_kurang_93_tahunan' => [
                 'view' => 'ascends.shared.hrm.attendance_full.rekapitulasi_kehadiran_kurang_93_tahunan.pdf',
                 'filename' => 'Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan.pdf',
-                'orientation' => 'landscape',
+                'orientation' => 'portrait',
+            ],
+            'rekapitulasi_pengabaian_keterlambatan_tahunan' => [
+                'view' => 'ascends.shared.hrm.attendance_full.rekapitulasi_pengabaian_keterlambatan_tahunan.pdf',
+                'filename' => 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan.pdf',
+                'orientation' => 'portrait',
             ],
             'pengabaian_keterlambatan_kehadiran_manual' => [
                 'view' => 'ascends.shared.hrm.attendance_full.pengabaian_keterlambatan_kehadiran_manual.pdf',

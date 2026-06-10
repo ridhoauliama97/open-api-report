@@ -39,7 +39,7 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
                 static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                     && ($data['reportData']['title'] ?? null) === 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (Staff) (GSU)'
                     && ($data['reportData']['printed_by'] ?? null) === 'Windi'
-                    && ($data['pdf_orientation'] ?? null) === 'landscape'
+                    && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -68,7 +68,8 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
             ]);
 
         $this->assertSame('Staff', $reportData['status']);
-        $this->assertSame(['Nama', '01', '02', '03', '04', '05', 'Total'], $reportData['headers']);
+        $this->assertSame(['No', 'Nama', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Total'], $reportData['headers']);
+        $this->assertSame([1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei'], $reportData['month_labels']);
         $this->assertCount(1, $reportData['rows']);
 
         $this->assertSame('Frans Bossy Panjaitan', $reportData['rows'][0]['Nama']);
@@ -119,7 +120,8 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
             'company' => $company,
             'status' => $status,
             'title' => "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status}) ({$company})",
-            'headers' => ['Nama', '01', '02', 'Total'],
+            'headers' => ['No', 'Nama', 'Jan', 'Feb', 'Total'],
+            'month_labels' => [1 => 'Jan', 2 => 'Feb'],
             'months' => [1, 2],
             'rows' => [],
             'total_rows' => 0,

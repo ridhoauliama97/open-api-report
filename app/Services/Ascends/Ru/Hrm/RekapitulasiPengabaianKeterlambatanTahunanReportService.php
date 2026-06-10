@@ -7,24 +7,9 @@ use RuntimeException;
 use Throwable;
 use XMLReader;
 
-class RekapitulasiKehadiranKurang93TahunanReportService
+class RekapitulasiPengabaianKeterlambatanTahunanReportService
 {
-    private const TITLE = 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan';
-
-    private const WORKING_DAYS_BY_MONTH = [
-        1 => 24,
-        2 => 21,
-        3 => 26,
-        4 => 24,
-        5 => 18,
-        6 => 25,
-        7 => 24,
-        8 => 26,
-        9 => 25,
-        10 => 25,
-        11 => 26,
-        12 => 23,
-    ];
+    private const TITLE = 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan';
 
     private const MONTH_LABELS = [
         1 => 'Jan',
@@ -41,6 +26,19 @@ class RekapitulasiKehadiranKurang93TahunanReportService
         12 => 'Des',
     ];
 
+    private const EXCLUDED_EMPLOYEE_CODE_PREFIXES = [
+        '120543',
+        '110104',
+        '110131',
+        '110159',
+        '120422',
+        '120523',
+        '130673',
+        '130891',
+        '131060',
+        '131107',
+    ];
+
     /**
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
@@ -52,8 +50,9 @@ class RekapitulasiKehadiranKurang93TahunanReportService
         $scan = $this->scanAttendanceRows($xmlContents, $sourceLabel, $requestedPeriod, $status);
         $period = $scan['period'];
         $months = $this->resolveMonths($period);
-        $employees = $scan['employees'];
-        $rows = $this->buildRows($employees, $months);
+        $rows = $this->buildRows($scan['employees'], $months);
+        $monthTotals = $this->buildMonthTotals($rows, $months);
+        $grandTotal = array_sum($monthTotals);
 
         return [
             'title' => self::TITLE,
@@ -65,6 +64,8 @@ class RekapitulasiKehadiranKurang93TahunanReportService
             'months' => $months,
             'month_labels' => array_intersect_key(self::MONTH_LABELS, array_flip($months)),
             'rows' => $rows,
+            'month_totals' => $monthTotals,
+            'grand_total' => $grandTotal,
             'total_rows' => count($rows),
             'period' => [
                 'start_date' => $period['start']->toDateString(),
@@ -136,11 +137,9 @@ class RekapitulasiKehadiranKurang93TahunanReportService
             throw new RuntimeException('XML Attendance Full tidak memiliki record Attendance.');
         }
 
-        $period = $requestedPeriod ?? $this->periodFromXmlDates($minDate, $maxDate);
-
         return [
             'employees' => $employees,
-            'period' => $period,
+            'period' => $requestedPeriod ?? $this->periodFromXmlDates($minDate, $maxDate),
             'printed_by' => $printedBy,
         ];
     }
@@ -238,7 +237,9 @@ class RekapitulasiKehadiranKurang93TahunanReportService
         if (
             $employeeCode === ''
             || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
+            || $this->hasExcludedEmployeeCodePrefix($employeeCode)
             || ! $this->matchesStatus($row, $status)
+            || trim((string) ($row['Last_x0020_Modified_x0020_By'] ?? '')) === ''
         ) {
             return;
         }
@@ -251,10 +252,19 @@ class RekapitulasiKehadiranKurang93TahunanReportService
             ];
         }
 
-        if ($this->isDeductionRow($row)) {
-            $month = (int) $date->month;
-            $employees[$employeeCode]['months'][$month] = (int) ($employees[$employeeCode]['months'][$month] ?? 0) + 1;
+        $month = (int) $date->month;
+        $employees[$employeeCode]['months'][$month] = (int) ($employees[$employeeCode]['months'][$month] ?? 0) + 1;
+    }
+
+    private function hasExcludedEmployeeCodePrefix(string $employeeCode): bool
+    {
+        foreach (self::EXCLUDED_EMPLOYEE_CODE_PREFIXES as $prefix) {
+            if (str_starts_with($employeeCode, $prefix)) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     /**
@@ -272,13 +282,9 @@ class RekapitulasiKehadiranKurang93TahunanReportService
             ];
 
             foreach ($months as $month) {
-                $deductions = (int) ($employee['months'][$month] ?? 0);
-                $percentage = $this->percentageForMonth($month, $deductions);
-                $row[(string) $month] = $percentage === null ? '-%' : $percentage.'%';
-
-                if ($percentage !== null) {
-                    $row['Total']++;
-                }
+                $count = (int) ($employee['months'][$month] ?? 0);
+                $row[(string) $month] = $count > 0 ? $count : '-';
+                $row['Total'] += $count;
             }
 
             if ((int) $row['Total'] > 0) {
@@ -291,16 +297,23 @@ class RekapitulasiKehadiranKurang93TahunanReportService
         return $rows;
     }
 
-    private function percentageForMonth(int $month, int $deductions): ?int
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, int>  $months
+     * @return array<int, int>
+     */
+    private function buildMonthTotals(array $rows, array $months): array
     {
-        $totalWorkingDays = self::WORKING_DAYS_BY_MONTH[$month] ?? 0;
-        if ($totalWorkingDays <= 0 || $deductions <= 0) {
-            return null;
+        $totals = array_fill_keys($months, 0);
+
+        foreach ($rows as $row) {
+            foreach ($months as $month) {
+                $value = $row[(string) $month] ?? 0;
+                $totals[$month] += is_numeric($value) ? (int) $value : 0;
+            }
         }
 
-        $percentage = (int) round((($totalWorkingDays - $deductions) / $totalWorkingDays) * 100);
-
-        return $percentage > 0 && $percentage < 93 ? $percentage : null;
+        return $totals;
     }
 
     /**
@@ -311,29 +324,11 @@ class RekapitulasiKehadiranKurang93TahunanReportService
         $workerType = strtoupper(trim((string) ($row['Daily_x0020_Worker_x0020_Type_x0020_Code'] ?? '')));
 
         if ($status === 'Staff') {
-            return str_starts_with($workerType, 'ST');
+            return $workerType === 'ST';
         }
 
         return str_starts_with($workerType, 'KT')
-            || str_starts_with($workerType, 'KK')
-            || str_starts_with($workerType, 'BR');
-    }
-
-    /**
-     * @param  array<string, string>  $row
-     */
-    private function isDeductionRow(array $row): bool
-    {
-        $leaveType = strtoupper(trim((string) ($row['Leave_x0020_Type_x0020_Code'] ?? '')));
-
-        if (str_contains($leaveType, 'SKD')) {
-            return false;
-        }
-
-        return str_contains($leaveType, 'I')
-            || $leaveType === 'S'
-            || str_contains($leaveType, 'M')
-            || str_contains($leaveType, 'A');
+            || str_starts_with($workerType, 'KK');
     }
 
     /**
