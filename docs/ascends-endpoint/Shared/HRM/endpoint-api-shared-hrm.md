@@ -40,6 +40,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Attendance Full - Laporan Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-gsu/pdf`
+- Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/data-peserta-makan-siang-ibadah-aula-per-departemen/pdf`
 - Attendance Full - Laporan Absensi Individu: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf`
 - Attendance Full - Laporan Kehadiran Kru Stick: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-stick/pdf`
 - Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-racip/pdf`
@@ -108,6 +109,17 @@ Input tambahan khusus `rekapitulasi-absensi-briefing-harian-gsu`:
 - Jika hanya satu tanggal dikirim, sistem memakai satu bulan penuh dari tanggal tersebut.
 - Parameter field utama dari Ascend: `DB_CompanyName` dan `Sys_UserName`.
 - Rekap divisi mengikuti formula `sorting`, `NameDivisi`, dan `initialDivs` Crystal khusus GSU.
+
+Input tambahan khusus `data-peserta-makan-siang-ibadah-aula-per-departemen`:
+
+- `month` + `year`: periode bulan laporan, contoh `month=5` dan `year=2026`.
+- Alternatif: `start_date` + `end_date`, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias yang diterima: `bulan` + `tahun`, atau `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai bulan dari tanggal paling awal sampai paling akhir yang tersedia di XML.
+- Kolom tanggal diambil dari hari Jumat dalam periode laporan, masing-masing memiliki subkolom `Cek` dan `Terima`.
+- Record Selection mengikuti formula Crystal: hanya hari yang tampil untuk ibadah mingguan (hari Jumat) dan `Religion = Kristen`.
+- Laporan dipisah 1 halaman untuk 1 departemen/divisi berdasarkan formula `InitianDept`.
+- `PJ Penerima` mengikuti formula `InitianPJ`, misalnya `PHI = Difa Alamsah`, `PHU 1 = Yazuwar`, `PHU 2 = Tin Meilysa`, `VKD = Sihardel`, dan `KRUT = LRU`.
 
 Input tambahan khusus `absensi-individu`:
 
@@ -328,6 +340,7 @@ Template Blade shared Attendance Full berada di `resources/views/ascends/shared/
 - `attendance_full/absensi_briefing_harian`
 - `attendance_full/rekapitulasi_absensi_briefing_harian_ru`
 - `attendance_full/rekapitulasi_absensi_briefing_harian_gsu`
+- `attendance_full/data_peserta_makan_siang_ibadah_aula_per_departemen`
 - `attendance_full/kehadiran_kru_stick`
 - `attendance_full/kehadiran_kru_racip`
 - `attendance_full/persentase_kehadiran_bulanan`

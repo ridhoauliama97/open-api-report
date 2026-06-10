@@ -46,6 +46,7 @@
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (RU)',
                             'rekapitulasi_absensi_briefing_harian_ru' => 'Laporan Rekapitulasi Absensi Briefing Harian (RU)',
+                            'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (RU)',
                             'absensi_individu' => 'Laporan Absensi Individu (RU)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (RU)',
                             'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU)',
@@ -89,6 +90,7 @@
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (GSU)',
                             'rekapitulasi_absensi_briefing_harian_gsu' => 'Laporan Rekapitulasi Absensi Briefing Harian (GSU)',
+                            'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (GSU)',
                             'absensi_individu' => 'Laporan Absensi Individu (GSU)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (GSU)',
                             'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (GSU)',
@@ -127,6 +129,7 @@
                         'label' => 'HRM Attendance Full',
                         'reports' => [
                             'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (UC)',
+                            'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (UC)',
                             'absensi_individu' => 'Laporan Absensi Individu (UC)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (UC)',
                             'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (UC)',
@@ -504,7 +507,7 @@
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
                 toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
-                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'data_peserta_makan_siang_ibadah_aula_per_departemen', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
                 toggleSection(attendanceIndividuFields, reportSelect.value === 'absensi_individu');
                 toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };
