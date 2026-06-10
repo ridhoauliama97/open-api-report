@@ -35,7 +35,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.attendance_full.absensi_briefing_harian.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.attendance_full.absensi_briefing_harian_ru.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                     && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Briefing Harian')
                     && str_contains((string) ($data['reportData']['title'] ?? ''), 'VKD')
@@ -47,7 +47,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->app->instance(AbsensiBriefingHarianReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $response = $this->post('/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf', [
+        $response = $this->post('/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf', [
             'DB_CompanyName' => 'RU',
             'Sys_Username' => 'Windi',
             'group' => 'VKD',
@@ -75,7 +75,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.shared.hrm.attendance_full.absensi_briefing_harian.pdf', Mockery::type('array'))
+            ->with('ascends.shared.hrm.attendance_full.absensi_briefing_harian_ru.pdf', Mockery::type('array'))
             ->andReturn('%PDF-1.4 mocked content');
 
         $this->app->instance(AbsensiBriefingHarianReportService::class, $service);
@@ -84,7 +84,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $response = $this
             ->call(
                 'POST',
-                '/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf',
+                '/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf',
                 ['company' => 'UC', 'group' => 'VKD', 'report_date' => '2026-06-04'],
                 [],
                 [],
@@ -107,7 +107,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
 
         $this->app->instance(AbsensiBriefingHarianReportService::class, $service);
 
-        $this->postJson('/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf', [
+        $this->postJson('/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf', [
             'company' => 'RU',
             'group' => 'VKD',
         ])
@@ -137,6 +137,33 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->assertStringNotContainsString('Old Date User', json_encode($reportData['rows']));
     }
 
+    public function test_parser_accepts_pilih_group_parameter_from_multipart_form(): void
+    {
+        $reportData = app(AbsensiBriefingHarianReportService::class)
+            ->buildReportDataFromXml($this->attendanceXml('attendance'), 'test xml', [
+                'Pilih_Group' => 'PBB',
+                'report_date' => '2026-06-04',
+            ]);
+
+        $this->assertSame('PBB', $reportData['group']);
+        $this->assertSame(1, $reportData['total_rows']);
+        $this->assertSame('PBB User', $reportData['rows'][0]['Nama']);
+        $this->assertStringNotContainsString('Suriono', json_encode($reportData['rows']));
+    }
+
+    public function test_parser_accepts_pilih_group_parameter_with_space_key(): void
+    {
+        $reportData = app(AbsensiBriefingHarianReportService::class)
+            ->buildReportDataFromXml($this->attendanceXml('attendance'), 'test xml', [
+                'Pilih Group' => 'PBB',
+                'report_date' => '2026-06-04',
+            ]);
+
+        $this->assertSame('PBB', $reportData['group']);
+        $this->assertSame(1, $reportData['total_rows']);
+        $this->assertSame('PBB User', $reportData['rows'][0]['Nama']);
+    }
+
     public function test_parser_can_filter_by_date_range_and_exclude_vkd_operator_forklift(): void
     {
         $reportData = app(AbsensiBriefingHarianReportService::class)
@@ -160,6 +187,21 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         $this->assertStringNotContainsString('Operator Forklift User', json_encode($reportData['rows']));
     }
 
+    public function test_parser_adds_winnie_virtual_row_for_office_and_tally(): void
+    {
+        $reportData = app(AbsensiBriefingHarianReportService::class)
+            ->buildReportDataFromXml($this->attendanceXml('attendance'), 'test xml', [
+                'Pilih Group' => 'Office & Tally',
+                'report_date' => '2026-06-04',
+            ]);
+
+        $this->assertSame('KRUT', $reportData['group']);
+        $this->assertSame(1, $reportData['total_rows']);
+        $this->assertSame('Winnie Trinisya', $reportData['rows'][0]['Nama']);
+        $this->assertSame('1', $reportData['rows'][0]['is_not_present']);
+        $this->assertSame(1, $reportData['summary']['not_present']['count']);
+    }
+
     public function test_pdf_blade_renders_expected_layout(): void
     {
         $reportData = app(AbsensiBriefingHarianReportService::class)
@@ -171,7 +213,7 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
             ]);
         $reportData['title'] = 'Laporan Absensi Briefing Harian - VKD';
 
-        $html = view('ascends.shared.hrm.attendance_full.absensi_briefing_harian.pdf', [
+        $html = view('ascends.shared.hrm.attendance_full.absensi_briefing_harian_ru.pdf', [
             'company' => 'RU',
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -261,6 +303,17 @@ class AscendsAbsensiBriefingHarianReportFeatureTest extends TestCase
         <Division_x0020_Name>K/D</Division_x0020_Name>
         <Date>2026-06-03T00:00:00+07:00</Date>
         <Sign_x0020_In_x0020__x0028_Time_x0029_>07:20</Sign_x0020_In_x0020__x0028_Time_x0029_>
+        <Present_x002F_Absent>Present</Present_x002F_Absent>
+    </{$recordTag}>
+    <{$recordTag}>
+        <Employee_x0020_Code>130004</Employee_x0020_Code>
+        <Full_x0020_Name>PBB User</Full_x0020_Name>
+        <Department_x0020_Name>Penerimaan Bahan Baku</Department_x0020_Name>
+        <Job_x0020_Title>Kru Kayu Bulat</Job_x0020_Title>
+        <Division_x0020_Name>PBB</Division_x0020_Name>
+        <Workgroup>Kayu Bulat</Workgroup>
+        <Date>2026-06-04T00:00:00+07:00</Date>
+        <Sign_x0020_In_x0020__x0028_Time_x0029_>07:10</Sign_x0020_In_x0020__x0028_Time_x0029_>
         <Present_x002F_Absent>Present</Present_x002F_Absent>
     </{$recordTag}>
     <{$recordTag}>

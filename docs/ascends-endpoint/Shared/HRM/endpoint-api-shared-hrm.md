@@ -37,7 +37,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
 ## Endpoint Shared Attendance Full
 
-- Attendance Full - Laporan Absensi Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian/pdf`
+- Attendance Full - Laporan Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-gsu/pdf`
 - Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/data-peserta-makan-siang-ibadah-aula-per-departemen/pdf`
@@ -45,6 +45,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Attendance Full - Laporan Absensi Individu: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-individu/pdf`
 - Attendance Full - Laporan Kehadiran Kru Stick: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-stick/pdf`
 - Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-racip/pdf`
+- Attendance Full - Laporan Kehadiran Kru Bahan Baku: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/kehadiran-kru-bahan-baku/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-mingguan-per-departemen/pdf`
 - Attendance Full - Laporan Persentase Kehadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/persentase-kehadiran-bulanan/pdf`
 - Attendance Full - Laporan Rekapitulasi Kehadiran < 93 % Tahunan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-kehadiran-kurang-93-tahunan/pdf`
@@ -83,14 +84,15 @@ Input tambahan khusus `list-karyawan-habis-kontrak`:
 - Alternatif: `start_date` + `end_date` untuk filter rentang `Expiry Date` tertentu.
 - Alias yang diterima: `bulan` + `tahun`, atau `TglAwal` + `TglAkhir`.
 
-Input tambahan khusus `absensi-briefing-harian`:
+Input tambahan khusus `absensi-briefing-harian-ru`:
 
-- `group`: kode/nama group atau divisi yang tampil di judul, contoh `VKD`.
+- `Pilih Group`: parameter Crystal untuk group/divisi RU, contoh `RU vacuum & KD`.
 - `start_date` + `end_date`: periode data attendance, contoh `2026-06-01` sampai `2026-06-05`.
 - `report_date`: fallback untuk filter satu tanggal saja, contoh `2026-06-04`.
 - `penanggung_jawab`: optional, contoh `SRO,`.
 - `tema`: optional.
-- Alias yang diterima: `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
+- Opsi `Pilih Group`: `PBB`, `RU vacuum & KD`, `RU vacuum & KD (Shift II)`, `RU vacuum & KD (Shift III)`, `RU Hulu 1`, `RU Hulu 2`, `RU Hilir`, `RU Hilir (Shift II)`, `RU Hilir (Shift III)`, `Office & Tally`, `SGR`, `BandSaw`, `Finger Joint A`, `Finger Joint B`, `SLP`.
+- Alias yang diterima: `group`, `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
 
 Input tambahan khusus `rekapitulasi-absensi-briefing-harian-ru`:
 
@@ -159,6 +161,15 @@ Input tambahan khusus `kehadiran-kru-racip`:
 - Data difilter dari XML Attendance Full dengan `Job_x0020_Title = Operator Borongan Sawmill` dan `Workgroup = Borongan Sawmill`.
 - Kolom tanggal dibuat dinamis sesuai periode, masing-masing berisi subkolom `In` dan `Out`.
 - Jika XML/periode tidak memiliki data kru racip, PDF tetap tampil dengan tabel kosong.
+
+Input tambahan khusus `kehadiran-kru-bahan-baku`:
+
+- `start_date` + `end_date`: periode data attendance, contoh `2026-05-05` sampai `2026-06-04`.
+- Alias yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir untuk data kru bahan baku di XML.
+- Data difilter dari XML Attendance Full dengan `Daily_x0020_Worker_x0020_Type_x0020_Code = BR` dan `Job_x0020_Title = Kru Borongan Penerimaan Bahan Baku`, mengikuti record selection `{Attendance.Daily Worker Type Code} = "BR" and {@Group} startswith "A"`.
+- Kolom tanggal dibuat dinamis sesuai periode, masing-masing berisi subkolom `In` dan `Out`.
+- Jika XML/periode tidak memiliki data kru bahan baku, PDF tetap tampil dengan tabel kosong.
 
 Input tambahan khusus `persentase-kehadiran-mingguan-per-departemen`:
 
@@ -238,11 +249,12 @@ year=2026
 xml_file=AnlReports.HRM.EmployeeList.xml
 ```
 
-Contoh `multipart/form-data` untuk Absensi Briefing Harian group VKD periode 01-Jun-2026 sampai 05-Jun-2026:
+Contoh `multipart/form-data` untuk Absensi Briefing Harian RU group `RU vacuum & KD` periode 01-Jun-2026 sampai 05-Jun-2026:
 
 ```text
 DB_CompanyName=RU
-group=VKD
+Sys_Username=Windi
+Pilih Group=RU vacuum & KD
 start_date=2026-06-01
 end_date=2026-06-05
 penanggung_jawab=SRO,
@@ -350,13 +362,14 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 
 Template Blade shared Attendance Full berada di `resources/views/ascends/shared/hrm/attendance_full`.
 
-- `attendance_full/absensi_briefing_harian`
+- `attendance_full/absensi_briefing_harian_ru`
 - `attendance_full/rekapitulasi_absensi_briefing_harian_ru`
 - `attendance_full/rekapitulasi_absensi_briefing_harian_gsu`
 - `attendance_full/data_peserta_makan_siang_ibadah_aula_per_departemen`
 - `attendance_full/data_peserta_makan_siang_shalat_jumat_per_departemen`
 - `attendance_full/kehadiran_kru_stick`
 - `attendance_full/kehadiran_kru_racip`
+- `attendance_full/kehadiran_kru_bahan_baku`
 - `attendance_full/persentase_kehadiran_bulanan`
 - `attendance_full/persentase_kehadiran_mingguan_per_departemen`
 - `attendance_full/rekapitulasi_kehadiran_kurang_93_tahunan`

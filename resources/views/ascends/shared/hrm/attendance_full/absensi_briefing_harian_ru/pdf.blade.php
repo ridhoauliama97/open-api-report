@@ -106,6 +106,11 @@
             font-size: 10px;
         }
 
+        .row-late td {
+            font-weight: bold;
+            font-style: italic;
+        }
+
         .check-box {
             width: 10px;
             height: 10px;
@@ -259,7 +264,13 @@
         </thead>
         <tbody>
             @forelse ($rows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                @php
+                    $rowClass = $loop->odd ? 'row-odd' : 'row-even';
+                    if ((string) ($row['is_late'] ?? '') === '1') {
+                        $rowClass .= ' row-late';
+                    }
+                @endphp
+                <tr class="{{ $rowClass }}">
                     <td class="center" @if ($loop->last) style="border-bottom: 1px solid #000;" @endif>
                         {{ $loop->iteration }}
                     </td>
@@ -287,7 +298,7 @@
                 </tr>
             @empty
                 <tr class="empty-row">
-                    <td colspan="8">Tidak ada data.</td>
+                    <td colspan="7">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -44,13 +44,14 @@
                     'hrm_attendance_full' => [
                         'label' => 'HRM Attendance Full',
                         'reports' => [
-                            'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (RU)',
+                            'absensi_briefing_harian_ru' => 'Laporan Absensi Briefing Harian (RU)',
                             'rekapitulasi_absensi_briefing_harian_ru' => 'Laporan Rekapitulasi Absensi Briefing Harian (RU)',
                             'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (RU)',
                             'data_peserta_makan_siang_shalat_jumat_per_departemen' => 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (RU)',
                             'absensi_individu' => 'Laporan Absensi Individu (RU)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (RU)',
                             'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU)',
+                            'kehadiran_kru_bahan_baku' => 'Laporan Kehadiran Kru Bahan Baku (RU)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (RU)',
                             'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (RU)',
                             'rekapitulasi_kehadiran_kurang_93_tahunan' => 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (RU)',
@@ -89,13 +90,13 @@
                     'hrm_attendance_full' => [
                         'label' => 'HRM Attendance Full',
                         'reports' => [
-                            'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (GSU)',
                             'rekapitulasi_absensi_briefing_harian_gsu' => 'Laporan Rekapitulasi Absensi Briefing Harian (GSU)',
                             'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (GSU)',
                             'data_peserta_makan_siang_shalat_jumat_per_departemen' => 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (GSU)',
                             'absensi_individu' => 'Laporan Absensi Individu (GSU)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (GSU)',
                             'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (GSU)',
+                            'kehadiran_kru_bahan_baku' => 'Laporan Kehadiran Kru Bahan Baku (GSU)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)',
                             'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (GSU)',
                             'rekapitulasi_kehadiran_kurang_93_tahunan' => 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (GSU)',
@@ -130,12 +131,12 @@
                     'hrm_attendance_full' => [
                         'label' => 'HRM Attendance Full',
                         'reports' => [
-                            'absensi_briefing_harian' => 'Laporan Absensi Briefing Harian (UC)',
                             'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (UC)',
                             'data_peserta_makan_siang_shalat_jumat_per_departemen' => 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (UC)',
                             'absensi_individu' => 'Laporan Absensi Individu (UC)',
                             'kehadiran_kru_stick' => 'Laporan Kehadiran Kru Stick (UC)',
                             'kehadiran_kru_racip' => 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (UC)',
+                            'kehadiran_kru_bahan_baku' => 'Laporan Kehadiran Kru Bahan Baku (UC)',
                             'persentase_kehadiran_mingguan_per_departemen' => 'Laporan Persentase Kehadiran Mingguan Per Departemen (UC)',
                             'persentase_kehadiran_bulanan' => 'Laporan Persentase Kehadiran Bulanan (UC)',
                             'rekapitulasi_kehadiran_kurang_93_tahunan' => 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (UC)',
@@ -255,9 +256,10 @@
                                 <label class="form-label fw-semibold">Parameter Attendance Full</label>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <input type="text" class="form-control @error('group') is-invalid @enderror"
-                                            name="group" value="{{ old('group', 'VKD') }}" placeholder="Group/Divisi">
-                                        @error('group')
+                                        <label class="form-label small mb-1">Pilih Group</label>
+                                        <input type="text" class="form-control @error('Pilih_Group') is-invalid @enderror"
+                                            name="Pilih_Group" value="{{ old('Pilih_Group', 'RU vacuum & KD') }}" placeholder="RU vacuum & KD">
+                                        @error('Pilih_Group')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -325,7 +327,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="form-text">Gunakan tanggal awal dan tanggal akhir untuk periode Attendance Full. Field group dipakai untuk Absensi Briefing Harian. Field Pilih Type dipakai untuk Persentase Kehadiran Bulanan. Field Pilih Status dipakai untuk Rekapitulasi Kehadiran &lt; 93% dan Pengabaian Keterlambatan & Kehadiran Manual.</div>
+                                <div class="form-text">Gunakan tanggal awal dan tanggal akhir untuk periode Attendance Full. Field Pilih Group dipakai untuk Absensi Briefing Harian RU. Field Pilih Type dipakai untuk Persentase Kehadiran Bulanan. Field Pilih Status dipakai untuk Rekapitulasi Kehadiran &lt; 93% dan Pengabaian Keterlambatan & Kehadiran Manual.</div>
                             </div>
 
                             <div class="mb-4" id="contract_period_fields">
@@ -510,7 +512,7 @@
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
                 toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
-                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'data_peserta_makan_siang_ibadah_aula_per_departemen', 'data_peserta_makan_siang_shalat_jumat_per_departemen', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'data_peserta_makan_siang_ibadah_aula_per_departemen', 'data_peserta_makan_siang_shalat_jumat_per_departemen', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'kehadiran_kru_bahan_baku', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
                 toggleSection(attendanceIndividuFields, reportSelect.value === 'absensi_individu');
                 toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };
