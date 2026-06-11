@@ -356,6 +356,26 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.pengabaian-keterlambatan-kehadiran-manual.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/late-sign-in/durasi-denda-keterlambatan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDurasiDendaKeterlambatanPdf']
+)->name('api.internal.ascends.shared.hrm.late-sign-in.durasi-denda-keterlambatan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/overtime/lembur-bulanan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmLemburBulananPdf']
+)->name('api.internal.ascends.shared.hrm.overtime.lembur-bulanan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/holiday/daftar-libur-cuti-bersama/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDaftarLiburCutiBersamaPdf']
+)->name('api.internal.ascends.shared.hrm.holiday.daftar-libur-cuti-bersama.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/other-income-deduction/pendapatan-lain-lain/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmPendapatanLainLainPdf']
+)->name('api.internal.ascends.shared.hrm.other-income-deduction.pendapatan-lain-lain.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmKetidakhadiranBulananPdf']
 )->name('api.internal.ascends.shared.hrm.absence.ketidakhadiran-bulanan.pdf');

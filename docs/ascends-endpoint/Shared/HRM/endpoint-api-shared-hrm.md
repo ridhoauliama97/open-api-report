@@ -53,6 +53,22 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-pengabaian-keterlambatan-tahunan/pdf`
 - Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/pengabaian-keterlambatan-kehadiran-manual/pdf`
 
+## Endpoint Shared Late Sign In
+
+- Late Sign In - Laporan Durasi & Denda Keterlambatan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/late-sign-in/durasi-denda-keterlambatan/pdf`
+
+## Endpoint Shared Overtime
+
+- Overtime - Laporan Lembur Bulanan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/overtime/lembur-bulanan/pdf`
+
+## Endpoint Shared Holiday
+
+- Holiday - Daftar Libur Dan Cuti Bersama: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/holiday/daftar-libur-cuti-bersama/pdf`
+
+## Endpoint Shared Other Income Deduction
+
+- Other Income Deduction - Laporan Pendapatan Lain-Lain: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/other-income-deduction/pendapatan-lain-lain/pdf`
+
 ## Endpoint Shared Absence
 
 - Absence - Laporan Ketidakhadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf`
@@ -234,6 +250,46 @@ Input tambahan khusus `pengabaian-keterlambatan-kehadiran-manual`:
 - Data hanya tampil jika `Last_x0020_Modified_x0020_By` terisi, sesuai formula Crystal `{Attendance.Last Modified By} <> ""`.
 - Jika status tidak dikirim, default `KK/KT`.
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+
+Input tambahan khusus `durasi-denda-keterlambatan`:
+
+- Gunakan XML `AnlReports.HRM.LateEarly.xml` dari modul Late/Early Ascend.
+- `Pilih Type`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias yang diterima: `Pilih_x0020_Type`, `pilih_type`, `type`, atau `Type`.
+- `Staff`: membaca `Daily_x0020_Worker_x0020_Type_x0020_Code = ST`.
+- `KK/KT`: membaca kode `KK`, `KT`, atau `BR`.
+- Data hanya tampil jika `Ignore_x0020_Late` bukan `Ignore` dan `Late_x0020_Sign_x0020_In > 0`.
+- Departemen dengan `Department_x0020_Code` diawali `0101` atau `Department_x0020_Name` diawali `Management` tidak ditampilkan.
+- `DateInput` atau `date_input`: tanggal batas perubahan nominal denda sesuai formula Crystal. Jika tidak dikirim, sistem memakai tanggal awal periode dikurangi 1 hari.
+- Formula nominal: `ST` memakai `1500 x Late Sign In` setelah `DateInput`, selain itu `1000 x Late Sign In`; non-`ST` memakai `400 x Late Sign In` setelah `DateInput`, selain itu `250 x Late Sign In`.
+- `start_date` + `end_date`: periode data late/early, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+
+Input tambahan khusus `lembur-bulanan`:
+
+- Gunakan XML `AnlReports.HRM.Overtime.xml` dari modul Overtime Ascend.
+- `Pilih Tipe`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias yang diterima: `Pilih_x0020_Tipe`, `pilih_tipe`, `pilihTipe`, `tipe`, atau `Tipe`.
+- `Staff`: membaca `Daily_x0020_Worker_x0020_Type_x0020_Code = ST`.
+- `KK/KT`: membaca kode `KK`, `KT`, atau `BR`.
+- Kolom `Jam` dihitung dari `Original_x0020_Hours`, `Total Hari` dari jumlah tanggal lembur karyawan, dan `Total Lemburan` dari `Overtime_x002F_Hours`.
+- `start_date` + `end_date`: periode data overtime, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai `FirstPeriod` dan `LastPeriod` dari `Table1` XML sebagai bulan laporan.
+
+Input XML khusus `daftar-libur-cuti-bersama`:
+
+- Gunakan XML `AnlReports.HRM.Holiday.xml` dari modul Holiday Ascend.
+- Tabel XML yang dibaca: `Holiday`.
+- Field XML yang dipakai: `Date` dan `Name`.
+
+Input XML khusus `pendapatan-lain-lain`:
+
+- Gunakan XML `AnlReports.HRM.OtherIncomeDeduction.xml` dari modul Other Income Deduction Ascend.
+- Tabel XML yang dibaca: `income`.
+- Field utama yang ditampilkan: `Nama Lengkap`, `Tanggal`, `Keterangan`, `Disetujui Oleh`, dan `Jumlah`.
+- Data dengan `Approved By = employeeother` tidak ditampilkan, mengikuti output Crystal Report referensi.
 
 Input tambahan khusus `ketidakhadiran-bulanan`:
 

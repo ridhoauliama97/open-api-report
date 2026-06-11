@@ -8,9 +8,11 @@ use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Ru\Hrm\AbsensiIndividuReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanReportService;
+use App\Services\Ascends\Ru\Hrm\DaftarLiburCutiBersamaReportService;
 use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemenReportService;
 use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
+use App\Services\Ascends\Ru\Hrm\DurasiDendaKeterlambatanReportService;
 use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanAktifPerDepartemenReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanMasukPerDepartemenPerTanggalMasukReportService;
@@ -25,7 +27,9 @@ use App\Services\Ascends\Ru\Hrm\KehadiranKruBahanBakuReportService;
 use App\Services\Ascends\Ru\Hrm\KehadiranKruRacipReportService;
 use App\Services\Ascends\Ru\Hrm\KehadiranKruStickReportService;
 use App\Services\Ascends\Ru\Hrm\KetidakhadiranBulananReportService;
+use App\Services\Ascends\Ru\Hrm\LemburBulananReportService;
 use App\Services\Ascends\Ru\Hrm\ListKaryawanHabisKontrakReportService;
+use App\Services\Ascends\Ru\Hrm\PendapatanLainLainReportService;
 use App\Services\Ascends\Ru\Hrm\PengabaianKeterlambatanKehadiranManualReportService;
 use App\Services\Ascends\Ru\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
 use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranBulananReportService;
@@ -1453,6 +1457,188 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedHrmDurasiDendaKeterlambatanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DurasiDendaKeterlambatanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullTypeFilters($request) + [
+                    'company' => $company,
+                    'DateInput' => $request->input('DateInput') ?? $request->input('date_input'),
+                ]
+            );
+
+            $type = trim((string) ($reportData['type'] ?? $this->attendanceFullType($request)));
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Durasi & Denda Keterlambatan ({$type}) Per Departemen ({$company})";
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.late_sign_in.durasi_denda_keterlambatan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Late Sign In - Laporan Durasi & Denda Keterlambatan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmLemburBulananPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        LemburBulananReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullTypeFilters($request) + [
+                    'company' => $company,
+                    'Pilih Tipe' => $this->requestInputByAliases($request, ['Pilih Tipe', 'Pilih_x0020_Tipe', 'pilih_tipe', 'pilihTipe', 'tipe', 'Tipe']),
+                ]
+            );
+
+            $type = trim((string) ($reportData['type'] ?? $this->attendanceFullType($request)));
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Lembur Bulanan ({$type}) Per Departemen";
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.overtime.lembur_bulanan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Overtime - Laporan Lembur Bulanan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmDaftarLiburCutiBersamaPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarLiburCutiBersamaReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Daftar Libur Dan Cuti Bersama';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.holiday.daftar_libur_cuti_bersama.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Holiday - Daftar Libur Dan Cuti Bersama ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmPendapatanLainLainPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PendapatanLainLainReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload'
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Pendapatan Lain-Lain';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.other_income_deduction.pendapatan_lain_lain.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Other Income Deduction - Laporan Pendapatan Lain-Lain ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiSharedHrmKetidakhadiranBulananPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         KetidakhadiranBulananReportService $reportService,
@@ -2315,10 +2501,36 @@ class AscendXmlTestController extends Controller
     private function attendanceFullPeriodFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
-            'start_date' => $request->input('start_date'),
-            'end_date' => $request->input('end_date'),
-            'TglAwal' => $request->input('TglAwal'),
-            'TglAkhir' => $request->input('TglAkhir'),
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'startDate',
+                'date_start',
+                'DateStart',
+                'from_date',
+                'FromDate',
+                'TglAwal',
+                'TanggalAwal',
+                'AttendanceDate.StartDate',
+                'AttendanceDate_StartDate',
+                'AttendanceDate_x002e_StartDate',
+                'AttendanceDate_x0020_StartDate',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'endDate',
+                'date_end',
+                'DateEnd',
+                'to_date',
+                'ToDate',
+                'TglAkhir',
+                'TanggalAkhir',
+                'AttendanceDate.EndDate',
+                'AttendanceDate_EndDate',
+                'AttendanceDate_x002e_EndDate',
+                'AttendanceDate_x0020_EndDate',
+            ]),
         ];
     }
 
