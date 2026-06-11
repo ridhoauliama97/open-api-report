@@ -6,13 +6,726 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        :root {
+            --dash-bg: #09090b;
+            --dash-panel: #111113;
+            --dash-panel-strong: #18181b;
+            --dash-soft: #202024;
+            --dash-line: rgba(255, 255, 255, .1);
+            --dash-line-strong: rgba(255, 255, 255, .16);
+            --dash-text: #fafafa;
+            --dash-muted: #a1a1aa;
+            --dash-faint: #71717a;
+            --dash-green: #22c55e;
+            --dash-amber: #f59e0b;
+            --dash-radius: 8px;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: var(--dash-bg);
+            color: var(--dash-text);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .dashboard-shell {
+            display: grid;
+            min-height: 100vh;
+            grid-template-columns: 280px minmax(0, 1fr);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0) 340px),
+                radial-gradient(circle at 72% 0%, rgba(34, 197, 94, .13), transparent 34rem),
+                var(--dash-bg);
+        }
+
+        .dashboard-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--dash-line);
+            background: rgba(17, 17, 19, .96);
+            backdrop-filter: blur(18px);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--dash-line);
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 2.25rem;
+            height: 2.25rem;
+            place-items: center;
+            border: 1px solid var(--dash-line-strong);
+            border-radius: var(--dash-radius);
+            background: linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .03));
+            font-weight: 800;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: .95rem;
+            font-weight: 750;
+        }
+
+        .brand-subtitle {
+            margin: .12rem 0 0;
+            color: var(--dash-muted);
+            font-size: .78rem;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+            padding: 1rem;
+        }
+
+        .sidebar-label {
+            margin: .75rem .25rem .35rem;
+            color: var(--dash-faint);
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-link {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            gap: .65rem;
+            border: 1px solid transparent;
+            border-radius: var(--dash-radius);
+            padding: .68rem .75rem;
+            background: transparent;
+            color: var(--dash-muted);
+            font: inherit;
+            text-align: left;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.is-active {
+            border-color: var(--dash-line-strong);
+            background: var(--dash-panel-strong);
+            color: var(--dash-text);
+        }
+
+        .sidebar-link:disabled {
+            cursor: not-allowed;
+            opacity: .48;
+        }
+
+        .sidebar-link:disabled:hover {
+            border-color: transparent;
+            background: transparent;
+            color: var(--dash-muted);
+        }
+
+        .sidebar-icon {
+            display: grid;
+            width: 1.55rem;
+            height: 1.55rem;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .07);
+            font-size: .78rem;
+            font-weight: 800;
+        }
+
+        .sidebar-link.is-active .sidebar-icon {
+            background: var(--dash-text);
+            color: #111113;
+        }
+
+        .sidebar-text {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+        }
+
+        .count-badge {
+            display: inline-flex;
+            min-width: 2rem;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--dash-line-strong);
+            border-radius: 999px;
+            padding: .18rem .48rem;
+            background: rgba(255, 255, 255, .06);
+            color: var(--dash-text);
+            font-size: .75rem;
+            font-weight: 800;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem;
+            border-top: 1px solid var(--dash-line);
+        }
+
+        .sidebar-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            border: 1px solid var(--dash-line);
+            border-radius: var(--dash-radius);
+            padding: .75rem;
+            background: rgba(255, 255, 255, .035);
+        }
+
+        .sidebar-meta span {
+            color: var(--dash-muted);
+            font-size: .78rem;
+        }
+
+        .dashboard-main {
+            min-width: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            min-height: 4rem;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid var(--dash-line);
+            background: rgba(9, 9, 11, .78);
+            padding: .8rem 1.5rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .mobile-menu-button {
+            display: none;
+            width: 2.4rem;
+            height: 2.4rem;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--dash-line-strong);
+            border-radius: var(--dash-radius);
+            background: var(--dash-panel);
+            color: var(--dash-text);
+        }
+
+        .topbar-title h1 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .topbar-title p {
+            margin: .18rem 0 0;
+            color: var(--dash-muted);
+            font-size: .82rem;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .user-pill {
+            display: inline-flex;
+            max-width: 18rem;
+            align-items: center;
+            gap: .45rem;
+            border: 1px solid var(--dash-line);
+            border-radius: 999px;
+            padding: .45rem .7rem;
+            background: rgba(255, 255, 255, .04);
+            color: var(--dash-muted);
+            font-size: .82rem;
+        }
+
+        .user-dot {
+            width: .5rem;
+            height: .5rem;
+            border-radius: 999px;
+            background: var(--dash-green);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .14);
+        }
+
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding: 1.5rem;
+        }
+
+        .auth-panel,
+        .notice-panel,
+        .stats-card,
+        .reports-panel {
+            border: 1px solid var(--dash-line);
+            border-radius: var(--dash-radius);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .025));
+            box-shadow: 0 18px 70px rgba(0, 0, 0, .28);
+        }
+
+        .auth-panel {
+            padding: 1rem;
+        }
+
+        .auth-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+            gap: .75rem;
+            align-items: end;
+        }
+
+        .field-label {
+            margin-bottom: .35rem;
+            color: var(--dash-muted);
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        .dashboard-input {
+            width: 100%;
+            border: 1px solid var(--dash-line-strong);
+            border-radius: var(--dash-radius);
+            background: rgba(0, 0, 0, .2);
+            color: var(--dash-text);
+            padding: .62rem .75rem;
+            outline: none;
+        }
+
+        .dashboard-input:focus {
+            border-color: rgba(250, 250, 250, .45);
+            box-shadow: 0 0 0 .2rem rgba(250, 250, 250, .08);
+        }
+
+        .dashboard-input::placeholder {
+            color: var(--dash-faint);
+        }
+
+        .dashboard-button {
+            display: inline-flex;
+            min-height: 2.5rem;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--dash-line-strong);
+            border-radius: var(--dash-radius);
+            padding: .55rem .85rem;
+            background: var(--dash-text);
+            color: #111113;
+            font-size: .86rem;
+            font-weight: 800;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .dashboard-button:hover {
+            background: #e4e4e7;
+            color: #111113;
+        }
+
+        .dashboard-button.secondary {
+            background: transparent;
+            color: var(--dash-text);
+        }
+
+        .dashboard-button.secondary:hover {
+            background: rgba(255, 255, 255, .07);
+            color: var(--dash-text);
+        }
+
+        .dashboard-button.danger {
+            color: #fecdd3;
+        }
+
+        .notice-panel {
+            padding: .8rem 1rem;
+            color: var(--dash-muted);
+        }
+
+        .notice-panel.success {
+            border-color: rgba(34, 197, 94, .36);
+            color: #bbf7d0;
+        }
+
+        .notice-panel.danger {
+            border-color: rgba(251, 113, 133, .36);
+            color: #fecdd3;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .9rem;
+        }
+
+        .stats-card {
+            min-height: 9.5rem;
+            padding: 1rem;
+        }
+
+        .stats-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .stats-label {
+            color: var(--dash-muted);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .stats-token {
+            color: var(--dash-muted);
+            font-size: .74rem;
+            font-weight: 800;
+        }
+
+        .stats-value {
+            margin: 0;
+            color: var(--dash-text);
+            font-size: clamp(1.85rem, 4vw, 2.55rem);
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .stats-caption {
+            margin: .75rem 0 0;
+            color: var(--dash-muted);
+            font-size: .84rem;
+        }
+
+        .reports-panel {
+            overflow: hidden;
+        }
+
+        .reports-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--dash-line);
+        }
+
+        .reports-heading h2 {
+            margin: 0;
+            font-size: 1.02rem;
+            font-weight: 800;
+        }
+
+        .reports-heading p {
+            margin: .24rem 0 0;
+            color: var(--dash-muted);
+            font-size: .82rem;
+        }
+
+        .search-wrap {
+            position: relative;
+            width: min(24rem, 100%);
+        }
+
+        .search-wrap .dashboard-input {
+            padding-left: 2.15rem;
+        }
+
+        .search-symbol {
+            position: absolute;
+            left: .78rem;
+            top: 50%;
+            color: var(--dash-faint);
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .tabs-scroll {
+            overflow-x: auto;
+            border-bottom: 1px solid var(--dash-line);
+        }
+
+        .report-tabs {
+            display: flex;
+            width: max-content;
+            min-width: 100%;
+            gap: .35rem;
+            padding: .7rem 1rem;
+        }
+
+        .tab-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            border: 1px solid transparent;
+            border-radius: var(--dash-radius);
+            padding: .48rem .68rem;
+            background: transparent;
+            color: var(--dash-muted);
+            font: inherit;
+            font-size: .82rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover,
+        .tab-button.is-active {
+            border-color: var(--dash-line-strong);
+            background: rgba(255, 255, 255, .07);
+            color: var(--dash-text);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .reports-table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .reports-table th,
+        .reports-table td {
+            border-bottom: 1px solid var(--dash-line);
+            padding: .78rem 1rem;
+            vertical-align: middle;
+        }
+
+        .reports-table th {
+            background: rgba(255, 255, 255, .055);
+            color: var(--dash-muted);
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .reports-table td {
+            color: var(--dash-text);
+            font-size: .88rem;
+        }
+
+        .reports-table tbody tr:hover {
+            background: rgba(255, 255, 255, .035);
+        }
+
+        .row-number {
+            width: 5rem;
+            color: var(--dash-faint) !important;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .report-title {
+            font-weight: 750;
+        }
+
+        .category-chip {
+            display: inline-flex;
+            border: 1px solid var(--dash-line);
+            border-radius: 999px;
+            padding: .18rem .5rem;
+            background: rgba(255, 255, 255, .04);
+            color: var(--dash-muted);
+            font-size: .76rem;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .table-action {
+            text-align: right;
+        }
+
+        .empty-state {
+            display: none;
+            padding: 2.2rem 1rem;
+            color: var(--dash-muted);
+            text-align: center;
+        }
+
+        .empty-state.is-visible {
+            display: block;
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 9;
+            display: none;
+            background: rgba(0, 0, 0, .56);
+        }
+
+        body.sidebar-open .sidebar-backdrop {
+            display: block;
+        }
+
+        @media (max-width: 1080px) {
+            .dashboard-shell {
+                grid-template-columns: 240px minmax(0, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .dashboard-shell {
+                display: block;
+            }
+
+            .dashboard-sidebar {
+                position: fixed;
+                z-index: 10;
+                width: min(22rem, calc(100vw - 2rem));
+                transform: translateX(-105%);
+                transition: transform .2s ease;
+            }
+
+            body.sidebar-open .dashboard-sidebar {
+                transform: translateX(0);
+            }
+
+            .mobile-menu-button {
+                display: inline-flex;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                padding: .85rem 1rem;
+            }
+
+            .topbar-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .dashboard-content {
+                padding: 1rem;
+            }
+
+            .reports-toolbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .search-wrap {
+                width: 100%;
+            }
+
+            .auth-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    @php($errors = $errors ?? new \Illuminate\Support\ViewErrorBag)
+
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar" aria-label="Navigasi laporan">
+            <div class="sidebar-brand">
+                <div class="brand-mark">{{ strtoupper(substr(config('app.name', 'R'), 0, 1)) }}</div>
+                <div>
+                    <p class="brand-title">{{ config('app.name', 'Laravel') }}</p>
+                    <p class="brand-subtitle">Report Command Center</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="dashboard-menu">
+                <div class="sidebar-label">Menu Laporan</div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-meta">
+                    <span>Total aktif</span>
+                    <strong id="dashboard-total">0</strong>
+                </div>
+            </div>
+        </aside>
+
+        <div class="sidebar-backdrop" data-sidebar-close></div>
+
+        <main class="dashboard-main">
+            <header class="topbar">
+                <div class="topbar-actions">
+                    <button class="mobile-menu-button" type="button" data-sidebar-toggle aria-label="Buka menu">☰</button>
+                    <div class="topbar-title">
+                        <h1>Dashboard Report PDF</h1>
+                        <p>Pilih menu, filter sub menu, lalu buka form laporan dari tabel.</p>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    @auth
+                        <div class="user-pill" title="User aktif">
+                            <span class="user-dot"></span>
+                            <span class="text-truncate">{{ auth()->user()->name ?: auth()->user()->Username }}</span>
+                        </div>
+                        <form method="POST" action="{{ route('web.logout') }}">
+                            @csrf
+                            <button type="submit" class="dashboard-button secondary danger">Logout</button>
+                        </form>
+                    @endauth
+                </div>
+            </header>
+
+            <section class="dashboard-content">
+                @guest
+                    <div class="auth-panel">
+                        <form method="POST" action="{{ route('web.login') }}" class="auth-form">
+                            @csrf
+                            <div>
+                                <label for="dashboard-username" class="field-label">Username</label>
+                                <input type="text" id="dashboard-username" name="username" class="dashboard-input" required value="{{ old('username') }}">
+                            </div>
+                            <div>
+                                <label for="dashboard-password" class="field-label">Password</label>
+                                <input type="password" id="dashboard-password" name="password" class="dashboard-input" required>
+                            </div>
+                            <button type="submit" class="dashboard-button">Login</button>
+                        </form>
+                    </div>
+                @endguest
+
+                @if (session('success'))
+                    <div class="notice-panel success">{{ session('success') }}</div>
+                @endif
+                @if ($errors->has('login'))
+                    <div class="notice-panel danger">{{ $errors->first('login') }}</div>
+                @endif
+                @if ($errors->any() && !$errors->has('login'))
+                    <div class="notice-panel danger">
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <div class="stats-grid" id="dashboard-stats"></div>
+                <div class="reports-panel" id="dashboard-reports"></div>
+            </section>
+        </main>
+    </div>
+
+    <div id="legacy-report-source" hidden>
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-semibold" href="/">{{ config('app.name', 'Laravel') }}</a>
@@ -1865,87 +2578,237 @@
             </div>
         </div>
     </main>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const ppsSectionHeader = document.getElementById('pps-reports');
-            const wpsSectionHeader = document.getElementById('wps-reports');
-            const ppsTotalBadge = document.getElementById('pps-report-total');
-            const wpsTotalBadge = document.getElementById('wps-report-total');
+            const legacySource = document.getElementById('legacy-report-source');
+            const menuMount = document.getElementById('dashboard-menu');
+            const statsMount = document.getElementById('dashboard-stats');
+            const reportsMount = document.getElementById('dashboard-reports');
+            const dashboardTotal = document.getElementById('dashboard-total');
+            const body = document.body;
+            const menuOrder = ['ascends', 'wps', 'pps'];
+            const legacyTotals = {
+                ascends: 5,
+                wps: 200,
+                pps: 70,
+            };
 
-            const countReportLinksBetween = (startElement, endElement = null) => {
-                if (!startElement) {
-                    return 0;
-                }
+            const normalize = (value) => value.toLowerCase().replace(/\s+/g, ' ').trim();
+            const formatNumber = (value) => new Intl.NumberFormat('id-ID').format(value);
 
-                let current = startElement.nextElementSibling;
-                let total = 0;
+            const collectMenu = (key) => {
+                const header = legacySource.querySelector(`#${key}-reports`);
+                const categories = [];
+                const categoryMap = new Map();
+                let current = header?.nextElementSibling;
 
-                while (current && current !== endElement) {
-                    total += current.querySelectorAll('a.btn.btn-outline-primary.w-100.text-start').length;
+                while (current && !current.id?.endsWith('-reports')) {
+                    const title = current.querySelector('.card-body > h2')?.textContent.trim();
+                    const links = Array.from(current.querySelectorAll('a.btn.btn-outline-primary.w-100.text-start'));
+
+                    if (title && links.length > 0) {
+                        const reports = links.map((link) => ({
+                            label: link.textContent.replace(/\s+/g, ' ').trim(),
+                            href: link.getAttribute('href'),
+                        })).filter((report) => report.label && report.href);
+
+                        if (reports.length > 0) {
+                            if (!categoryMap.has(title)) {
+                                categoryMap.set(title, []);
+                                categories.push({ name: title, reports: categoryMap.get(title) });
+                            }
+
+                            categoryMap.get(title).push(...reports);
+                        }
+                    }
+
                     current = current.nextElementSibling;
                 }
 
-                return total;
+                const total = categories.reduce((sum, category) => sum + category.reports.length, 0);
+
+                return {
+                    key,
+                    label: key === 'wps' ? 'WPS' : key === 'pps' ? 'PPS' : 'Ascends',
+                    legacyTotal: legacyTotals[key],
+                    total,
+                    categories,
+                };
             };
 
-            if (ppsTotalBadge) {
-                const ppsCount = countReportLinksBetween(ppsSectionHeader, wpsSectionHeader);
-                ppsTotalBadge.textContent = `${ppsCount} Total Laporan`;
-            }
+            const menus = menuOrder.map(collectMenu);
+            const menuByKey = new Map(menus.map((menu) => [menu.key, menu]));
+            let activeMenuKey = 'wps';
+            let activeTab = 'all';
+            let searchValue = '';
 
-            if (wpsTotalBadge) {
-                const wpsCount = countReportLinksBetween(wpsSectionHeader);
-                wpsTotalBadge.textContent = `${wpsCount} Total Laporan`;
-            }
+            dashboardTotal.textContent = formatNumber(menus.reduce((sum, menu) => sum + menu.total, 0));
 
-            const reportCards = Array.from(document.querySelectorAll('main > .col-12 > .card'));
+            const renderSidebar = () => {
+                menuMount.querySelectorAll('[data-menu-target]').forEach((item) => item.remove());
 
-            reportCards.forEach((card, index) => {
-                const body = card.querySelector(':scope > .card-body');
-                const title = body?.querySelector(':scope > h2');
+                menus.forEach((menu) => {
+                    const isDisabled = menu.key === 'ascends';
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = `sidebar-link ${menu.key === activeMenuKey ? 'is-active' : ''}`;
+                    button.dataset.menuTarget = menu.key;
+                    button.disabled = isDisabled;
+                    button.title = isDisabled ? 'Menu Ascends sementara dinonaktifkan' : `Buka menu ${menu.label}`;
+                    button.innerHTML = `
+                        <span class="sidebar-icon">${menu.label.charAt(0)}</span>
+                        <span class="sidebar-text">${menu.label}</span>
+                        <span class="count-badge">${formatNumber(menu.total)}</span>
+                    `;
+                    button.addEventListener('click', () => {
+                        if (isDisabled) {
+                            return;
+                        }
 
-                if (!body || !title) {
-                    return;
-                }
+                        activeMenuKey = menu.key;
+                        activeTab = 'all';
+                        searchValue = '';
+                        body.classList.remove('sidebar-open');
+                        renderDashboard();
+                    });
+                    menuMount.appendChild(button);
+                });
+            };
 
-                const collapseId = `reportCardCollapse${index + 1}`;
-                const sectionTitle = title.textContent.trim();
-                const collapse = document.createElement('div');
-                collapse.className = 'collapse show';
-                collapse.id = collapseId;
+            const renderStats = (menu) => {
+                const gap = Math.max(0, menu.legacyTotal - menu.total);
 
-                while (body.firstChild) {
-                    if (body.firstChild === title) {
-                        body.removeChild(title);
-                        continue;
+                statsMount.innerHTML = `
+                    <article class="stats-card">
+                        <div class="stats-header">
+                            <span class="stats-label">Laporan Baru</span>
+                            <span class="stats-token">Aktif</span>
+                        </div>
+                        <p class="stats-value">${formatNumber(menu.total)}</p>
+                        <p class="stats-caption"><strong>${menu.label}</strong> laporan sudah dibuat.</p>
+                    </article>
+                    <article class="stats-card">
+                        <div class="stats-header">
+                            <span class="stats-label">Crystal Report / Lama</span>
+                            <span class="stats-token">Dummy</span>
+                        </div>
+                        <p class="stats-value">${formatNumber(menu.legacyTotal)}</p>
+                        <p class="stats-caption">Total laporan lama sebagai pembanding.</p>
+                    </article>
+                    <article class="stats-card">
+                        <div class="stats-header">
+                            <span class="stats-label">Selisih</span>
+                            <span class="stats-token">Belum Migrasi</span>
+                        </div>
+                        <p class="stats-value">${formatNumber(gap)}</p>
+                        <p class="stats-caption">Selisih dari report lama ke report baru.</p>
+                    </article>
+                `;
+            };
+
+            const visibleReports = (menu) => {
+                const needle = normalize(searchValue);
+                return menu.categories.flatMap((category) => {
+                    if (activeTab !== 'all' && category.name !== activeTab) {
+                        return [];
                     }
 
-                    collapse.appendChild(body.firstChild);
-                }
+                    return category.reports
+                        .filter((report) => !needle || normalize(`${report.label} ${category.name}`).includes(needle))
+                        .map((report) => ({ ...report, category: category.name }));
+                });
+            };
 
-                body.className = 'card-header bg-white border-0 p-0';
-                body.innerHTML = `
-                    <button class="btn btn-light w-100 text-start d-flex justify-content-between align-items-center p-4"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#${collapseId}"
-                        aria-expanded="true"
-                        aria-controls="${collapseId}">
-                        <span class="h5 mb-0">${sectionTitle}</span>
-                        <span class="small text-secondary">Buka / Tutup</span>
-                    </button>
+            const renderReports = (menu) => {
+                const reports = visibleReports(menu);
+                const tabs = [
+                    { name: 'all', label: 'All', count: menu.total },
+                    ...menu.categories.map((category) => ({
+                        name: category.name,
+                        label: category.name,
+                        count: category.reports.length,
+                    })),
+                ];
+
+                reportsMount.innerHTML = `
+                    <div class="reports-toolbar">
+                        <div class="reports-heading">
+                            <h2>List Laporan ${menu.label}</h2>
+                            <p><span data-visible-count>${formatNumber(reports.length)}</span> laporan tampil dari ${formatNumber(menu.total)} total.</p>
+                        </div>
+                        <div class="search-wrap">
+                            <span class="search-symbol">⌕</span>
+                            <input type="search" class="dashboard-input" value="${searchValue.replace(/"/g, '&quot;')}" placeholder="Cari nama laporan atau sub menu..." data-report-search>
+                        </div>
+                    </div>
+                    <div class="tabs-scroll">
+                        <div class="report-tabs" role="tablist">
+                            ${tabs.map((tab) => `
+                                <button type="button" class="tab-button ${tab.name === activeTab ? 'is-active' : ''}" data-tab-target="${tab.name}">
+                                    ${tab.label} <span class="count-badge">${formatNumber(tab.count)}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="reports-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Laporan</th>
+                                    <th>Sub Menu</th>
+                                    <th class="text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${reports.map((report, index) => `
+                                    <tr>
+                                        <td class="row-number">${index + 1}</td>
+                                        <td><div class="report-title">${report.label}</div></td>
+                                        <td><span class="category-chip">${report.category}</span></td>
+                                        <td class="table-action">
+                                            <a href="${report.href}" class="dashboard-button secondary">Buka Form</a>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state ${reports.length === 0 ? 'is-visible' : ''}">Tidak ada laporan yang cocok dengan filter saat ini.</div>
                 `;
 
-                const collapseBody = document.createElement('div');
-                collapseBody.className = 'card-body p-4';
-                while (collapse.firstChild) {
-                    collapseBody.appendChild(collapse.firstChild);
-                }
+                reportsMount.querySelector('[data-report-search]')?.addEventListener('input', (event) => {
+                    searchValue = event.target.value;
+                    renderReports(menu);
+                    reportsMount.querySelector('[data-report-search]')?.focus();
+                });
 
-                collapse.appendChild(collapseBody);
-                card.appendChild(collapse);
+                reportsMount.querySelectorAll('[data-tab-target]').forEach((tab) => {
+                    tab.addEventListener('click', () => {
+                        activeTab = tab.dataset.tabTarget;
+                        renderReports(menu);
+                    });
+                });
+            };
+
+            const renderDashboard = () => {
+                const menu = menuByKey.get(activeMenuKey);
+                renderSidebar();
+                renderStats(menu);
+                renderReports(menu);
+            };
+
+            document.querySelector('[data-sidebar-toggle]')?.addEventListener('click', () => body.classList.add('sidebar-open'));
+            document.querySelector('[data-sidebar-close]')?.addEventListener('click', () => body.classList.remove('sidebar-open'));
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    body.classList.remove('sidebar-open');
+                }
             });
+
+            renderDashboard();
         });
     </script>
 </body>
