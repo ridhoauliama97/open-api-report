@@ -38,6 +38,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf`
+- Attendance Full - Laporan Absensi Briefing Harian (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-gsu/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-gsu/pdf`
 - Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/data-peserta-makan-siang-ibadah-aula-per-departemen/pdf`
@@ -92,6 +93,16 @@ Input tambahan khusus `absensi-briefing-harian-ru`:
 - `penanggung_jawab`: optional, contoh `SRO,`.
 - `tema`: optional.
 - Opsi `Pilih Group`: `PBB`, `RU vacuum & KD`, `RU vacuum & KD (Shift II)`, `RU vacuum & KD (Shift III)`, `RU Hulu 1`, `RU Hulu 2`, `RU Hilir`, `RU Hilir (Shift II)`, `RU Hilir (Shift III)`, `Office & Tally`, `SGR`, `BandSaw`, `Finger Joint A`, `Finger Joint B`, `SLP`.
+- Alias yang diterima: `group`, `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
+
+Input tambahan khusus `absensi-briefing-harian-gsu`:
+
+- `Pilih Group`: parameter Crystal untuk group/divisi GSU, contoh `Bahan Baku, Washing & Broker`.
+- `start_date` + `end_date`: periode data attendance, contoh `2026-06-01` sampai `2026-06-05`.
+- `report_date`: fallback untuk filter satu tanggal saja, contoh `2026-06-04`.
+- `penanggung_jawab`: optional.
+- `tema`: optional.
+- Opsi `Pilih Group`: `Bahan Baku, Washing & Broker`, `Sales`, `GSU Warehouse & Spare Part`, `Prod Regu A`, `Prod Regu B`, `Prod Regu C`, `Prod Regu D`, `Prod Ekstrusi Pagi`, `Prod Ekstrusi Sore`, `Prod Ekstrusi Malam`, `PIN HULU & HILIR`.
 - Alias yang diterima: `group`, `division`/`divisi`, `tanggal`/`date`, `responsible_person`, dan `theme`.
 
 Input tambahan khusus `rekapitulasi-absensi-briefing-harian-ru`:

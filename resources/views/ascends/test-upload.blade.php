@@ -90,6 +90,7 @@
                     'hrm_attendance_full' => [
                         'label' => 'HRM Attendance Full',
                         'reports' => [
+                            'absensi_briefing_harian_gsu' => 'Laporan Absensi Briefing Harian (GSU)',
                             'rekapitulasi_absensi_briefing_harian_gsu' => 'Laporan Rekapitulasi Absensi Briefing Harian (GSU)',
                             'data_peserta_makan_siang_ibadah_aula_per_departemen' => 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (GSU)',
                             'data_peserta_makan_siang_shalat_jumat_per_departemen' => 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (GSU)',
@@ -512,7 +513,7 @@
                 submitButton.disabled = !hasReports;
                 emptyMessage.classList.toggle('d-none', hasReports);
                 toggleSection(contractPeriodFields, reportSelect.value === 'list_karyawan_habis_kontrak');
-                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'data_peserta_makan_siang_ibadah_aula_per_departemen', 'data_peserta_makan_siang_shalat_jumat_per_departemen', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'kehadiran_kru_bahan_baku', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
+                toggleSection(attendanceBriefingFields, ['absensi_briefing_harian_ru', 'absensi_briefing_harian_gsu', 'rekapitulasi_absensi_briefing_harian_ru', 'rekapitulasi_absensi_briefing_harian_gsu', 'data_peserta_makan_siang_ibadah_aula_per_departemen', 'data_peserta_makan_siang_shalat_jumat_per_departemen', 'kehadiran_kru_stick', 'kehadiran_kru_racip', 'kehadiran_kru_bahan_baku', 'persentase_kehadiran_mingguan_per_departemen', 'persentase_kehadiran_bulanan', 'rekapitulasi_kehadiran_kurang_93_tahunan', 'rekapitulasi_pengabaian_keterlambatan_tahunan', 'pengabaian_keterlambatan_kehadiran_manual'].includes(reportSelect.value));
                 toggleSection(attendanceIndividuFields, reportSelect.value === 'absensi_individu');
                 toggleSection(absencePeriodFields, reportSelect.value === 'ketidakhadiran_bulanan');
             };

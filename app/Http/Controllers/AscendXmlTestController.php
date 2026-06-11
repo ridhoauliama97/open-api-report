@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
+use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianGsuReportService;
 use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Ru\Hrm\AbsensiIndividuReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Ru\Hrm\DaftarKaryawanReportService;
+use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemenReportService;
 use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
-use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanAktifPerDepartemenReportService;
 use App\Services\Ascends\Ru\Hrm\KaryawanMasukPerDepartemenPerTanggalMasukReportService;
@@ -69,6 +70,7 @@ class AscendXmlTestController extends Controller
         RekapitulasiPengabaianKeterlambatanTahunanReportService $rekapitulasiPengabaianKeterlambatanTahunanReportService,
         PengabaianKeterlambatanKehadiranManualReportService $pengabaianKeterlambatanKehadiranManualReportService,
         AbsensiBriefingHarianReportService $absensiBriefingHarianReportService,
+        AbsensiBriefingHarianGsuReportService $absensiBriefingHarianGsuReportService,
         RekapitulasiAbsensiBriefingHarianReportService $rekapitulasiAbsensiBriefingHarianReportService,
         RekapitulasiAbsensiBriefingHarianGsuReportService $rekapitulasiAbsensiBriefingHarianGsuReportService,
         DataPesertaMakanSiangIbadahAulaPerDepartemenReportService $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService,
@@ -116,6 +118,7 @@ class AscendXmlTestController extends Controller
                 'rekapitulasi_pengabaian_keterlambatan_tahunan' => $rekapitulasiPengabaianKeterlambatanTahunanReportService,
                 'pengabaian_keterlambatan_kehadiran_manual' => $pengabaianKeterlambatanKehadiranManualReportService,
                 'absensi_briefing_harian_ru' => $absensiBriefingHarianReportService,
+                'absensi_briefing_harian_gsu' => $absensiBriefingHarianGsuReportService,
                 'rekapitulasi_absensi_briefing_harian_ru' => $rekapitulasiAbsensiBriefingHarianReportService,
                 'rekapitulasi_absensi_briefing_harian_gsu' => $rekapitulasiAbsensiBriefingHarianGsuReportService,
                 'data_peserta_makan_siang_ibadah_aula_per_departemen' => $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService,
@@ -145,6 +148,11 @@ class AscendXmlTestController extends Controller
                     $this->listKaryawanHabisKontrakFilters($request)
                 ),
                 'absensi_briefing_harian_ru' => $absensiBriefingHarianReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->absensiBriefingHarianFilters($request)
+                ),
+                'absensi_briefing_harian_gsu' => $absensiBriefingHarianGsuReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
                     $this->absensiBriefingHarianFilters($request)
@@ -807,6 +815,51 @@ class AscendXmlTestController extends Controller
         }
 
         $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.absensi_briefing_harian_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian ('.$company.') - '.$group.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmAbsensiBriefingHarianGsuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AbsensiBriefingHarianGsuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->absensiBriefingHarianFilters($request)
+            );
+
+            $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'Bahan Baku, Washing & Broker')))));
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.absensi_briefing_harian_gsu.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
@@ -2507,6 +2560,11 @@ class AscendXmlTestController extends Controller
             'absensi_briefing_harian_ru' => [
                 'view' => 'ascends.shared.hrm.attendance_full.absensi_briefing_harian_ru.pdf',
                 'filename' => 'Laporan Absensi Briefing Harian.pdf',
+                'orientation' => 'portrait',
+            ],
+            'absensi_briefing_harian_gsu' => [
+                'view' => 'ascends.shared.hrm.attendance_full.absensi_briefing_harian_gsu.pdf',
+                'filename' => 'Laporan Absensi Briefing Harian (GSU).pdf',
                 'orientation' => 'portrait',
             ],
             'rekapitulasi_absensi_briefing_harian_ru' => [
