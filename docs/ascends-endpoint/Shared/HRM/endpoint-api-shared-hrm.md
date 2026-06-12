@@ -61,6 +61,14 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
 - Overtime - Laporan Lembur Bulanan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/overtime/lembur-bulanan/pdf`
 
+## Endpoint Shared Attendance
+
+- Attendance - Laporan Perbandingan Kehadiran Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance/perbandingan-kehadiran-per-bulan/pdf`
+
+Parameter tambahan:
+
+- `start_date` + `end_date`: periode laporan attendance, contoh `2026-01-01` sampai `2026-06-12`. Jika tidak dikirim, periode diambil dari tanggal data XML.
+
 ## Endpoint Shared Holiday
 
 - Holiday - Daftar Libur Dan Cuti Bersama: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/holiday/daftar-libur-cuti-bersama/pdf`
@@ -442,6 +450,10 @@ Template Blade shared Attendance Full berada di `resources/views/ascends/shared/
 - `attendance_full/rekapitulasi_kehadiran_kurang_93_tahunan`
 - `attendance_full/rekapitulasi_pengabaian_keterlambatan_tahunan`
 - `attendance_full/pengabaian_keterlambatan_kehadiran_manual`
+
+Template Blade shared Attendance berada di `resources/views/ascends/shared/hrm/attendance`.
+
+- `attendance/perbandingan_kehadiran_per_bulan`
 
 Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/absence`.
 

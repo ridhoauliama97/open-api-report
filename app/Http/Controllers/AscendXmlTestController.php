@@ -31,6 +31,7 @@ use App\Services\Ascends\Ru\Hrm\LemburBulananReportService;
 use App\Services\Ascends\Ru\Hrm\ListKaryawanHabisKontrakReportService;
 use App\Services\Ascends\Ru\Hrm\PendapatanLainLainReportService;
 use App\Services\Ascends\Ru\Hrm\PengabaianKeterlambatanKehadiranManualReportService;
+use App\Services\Ascends\Ru\Hrm\PerbandinganKehadiranPerBulanReportService;
 use App\Services\Ascends\Ru\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
 use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranBulananReportService;
 use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranMingguanPerDepartemenReportService;
@@ -1550,6 +1551,50 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Overtime - Laporan Lembur Bulanan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmPerbandinganKehadiranPerBulanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PerbandinganKehadiranPerBulanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullPeriodFilters($request) + ['company' => $company]
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Perbandingan Kehadiran Per Bulan';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance.perbandingan_kehadiran_per_bulan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance - Laporan Perbandingan Kehadiran Per Bulan ('.$company.').pdf"',
         ]);
     }
 
