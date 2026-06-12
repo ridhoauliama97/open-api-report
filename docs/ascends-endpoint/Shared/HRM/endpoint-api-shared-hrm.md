@@ -64,6 +64,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Attendance
 
 - Attendance - Laporan Perbandingan Kehadiran Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance/perbandingan-kehadiran-per-bulan/pdf`
+- Attendance - Laporan Keterlambatan Kehadiran Briefing Harian: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance/keterlambatan-kehadiran-briefing-harian/pdf`
 
 Parameter tambahan:
 
@@ -454,6 +455,7 @@ Template Blade shared Attendance Full berada di `resources/views/ascends/shared/
 Template Blade shared Attendance berada di `resources/views/ascends/shared/hrm/attendance`.
 
 - `attendance/perbandingan_kehadiran_per_bulan`
+- `attendance/keterlambatan_kehadiran_briefing_harian`
 
 Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/absence`.
 

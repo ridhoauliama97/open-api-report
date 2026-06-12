@@ -371,6 +371,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance.perbandingan-kehadiran-per-bulan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/attendance/keterlambatan-kehadiran-briefing-harian/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKeterlambatanKehadiranBriefingHarianPdf']
+)->name('api.internal.ascends.shared.hrm.attendance.keterlambatan-kehadiran-briefing-harian.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/holiday/daftar-libur-cuti-bersama/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmDaftarLiburCutiBersamaPdf']
 )->name('api.internal.ascends.shared.hrm.holiday.daftar-libur-cuti-bersama.pdf');

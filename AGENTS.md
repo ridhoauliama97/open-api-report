@@ -15,11 +15,13 @@ composer test       # config:clear && phpunit (sqlite :memory:)
 ## Architecture
 - **170+ reports** — each is Controller + Service + FormRequest + Blade view
 - Controller signature: `preview()`, `download()`, `health()` — exactly these 3 public methods
+- Exception: `AscendXmlTestController` has many non-standard endpoint methods (internal/ascends/*)
 - ALL FormRequests extend `BaseReportRequest` (not `FormRequest` directly)
 - ALL PDF goes through `App\Services\PdfGenerator` — **never `new Mpdf()`**
 - ALL DB queries use parameterized `DB::select('EXEC SP_... ?, ?', [...])` — **no string interpolation**
 - Route registration via `$registerReportRoutes()` closure in `routes/api.php`; add one array entry per new report
 - Async PDF: `GenerateReportPdfJob` reuses existing `download()` controller via synthetic HTTP request
+- For a more detailed reference, see `AGENT_INSTRUCTIONS.md` (includes full checklist for new reports)
 
 ## Auth
 - Custom JWT middleware `AuthenticateReportJwtClaims` (HS256) with Sanctum fallback
@@ -44,7 +46,8 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php  # single t
 |---|---|
 | `reports:audit-conventions` | Validates code against conventions (BaseReportRequest, no `new Mpdf`, etc.) |
 | `reports:audit-api` | Audits routes vs OpenAPI spec |
-| `pdf:clean-expired` | Deletes expired PDFs (scheduled hourly via `routes/console.php`) |
+| `pdf:clean-expired` | Deletes expired PDFs (scheduled hourly) |
+| `reports:refresh-shared-pdfs-if-changed` | Refreshes cached shared PDFs (scheduled every 5min) |
 | `db:export-structure {connection}` | Exports SQL Server schema |
 
 ## Gotchas
@@ -55,12 +58,15 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php  # single t
 - Memory limit per specific report via env e.g. `LABEL_ST_HIDUP_DETAIL_PDF_MEMORY_LIMIT=2048M`
 - `BaseReportRequest::failedValidation()` auto-returns JSON 422 for `api/*` routes — don't override in children
 - PDF orientation auto-detects landscape when >10 columns; override via `pdf_orientation` in view data
+- `REPORT_MAX_EXECUTION_TIME` (default 300s) extends PHP timeout for report routes
 
 ## Key files
 | Need | Path |
 |---|---|
-| All report configs | `config/reports.php` |
+| All report configs (SP names, DB connections) | `config/reports.php` |
+| PDF storage/retention config | `config/app.php` |
 | All routes | `routes/api.php` |
-| PDF wrapper | `app/Services/PdfGenerator.php` |
+| PDF wrapper (mPDF) | `app/Services/PdfGenerator.php` |
 | Auth middleware | `app/Http/Middleware/AuthenticateReportJwtClaims.php` |
 | Async job | `app/Jobs/GenerateReportPdfJob.php` |
+| Detailed reference | `AGENT_INSTRUCTIONS.md` |

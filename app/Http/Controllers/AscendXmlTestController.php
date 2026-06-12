@@ -27,6 +27,7 @@ use App\Services\Ascends\Ru\Hrm\KehadiranKruBahanBakuReportService;
 use App\Services\Ascends\Ru\Hrm\KehadiranKruRacipReportService;
 use App\Services\Ascends\Ru\Hrm\KehadiranKruStickReportService;
 use App\Services\Ascends\Ru\Hrm\KetidakhadiranBulananReportService;
+use App\Services\Ascends\Ru\Hrm\KeterlambatanKehadiranBriefingHarianReportService;
 use App\Services\Ascends\Ru\Hrm\LemburBulananReportService;
 use App\Services\Ascends\Ru\Hrm\ListKaryawanHabisKontrakReportService;
 use App\Services\Ascends\Ru\Hrm\PendapatanLainLainReportService;
@@ -753,7 +754,7 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
             }
 
-            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
             $reportDefinition = $this->sharedHrmReportDefinition($report, $company);
 
             $reportData = $report === 'list-karyawan-habis-kontrak'
@@ -803,7 +804,7 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
             }
 
-            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $request->xmlSourceLabel() ?? 'request xml payload',
@@ -1595,6 +1596,50 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Attendance - Laporan Perbandingan Kehadiran Per Bulan ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmKeterlambatanKehadiranBriefingHarianPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        KeterlambatanKehadiranBriefingHarianReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullPeriodFilters($request) + ['company' => $company]
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Keterlambatan Kehadiran Briefing Harian';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance.keterlambatan_kehadiran_briefing_harian.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance - Laporan Keterlambatan Kehadiran Briefing Harian ('.$company.').pdf"',
         ]);
     }
 
