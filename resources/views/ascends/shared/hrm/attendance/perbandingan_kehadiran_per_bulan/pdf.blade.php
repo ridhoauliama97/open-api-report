@@ -46,7 +46,7 @@
             text-align: center;
             margin: 2px 0 20px 0;
             font-size: 12px;
-            color: #000;
+            color: #636466;
         }
 
         .data-table {

@@ -72,7 +72,6 @@
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
-            background: #fff;
         }
 
         .data-table tbody tr:last-child td {
