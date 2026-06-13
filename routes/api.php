@@ -281,6 +281,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.karyawan-masuk-per-departemen-per-tanggal-masuk.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/employee-termination/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmEmployeeTerminationPdf']
+)->name('api.internal.ascends.shared.hrm.employee-termination.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmAbsensiBriefingHarianPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.absensi-briefing-harian-ru.pdf');

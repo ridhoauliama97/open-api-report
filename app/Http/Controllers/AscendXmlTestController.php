@@ -43,6 +43,7 @@ use App\Services\Ascends\Ru\Hrm\RekapitulasiPengabaianKeterlambatanTahunanReport
 use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
+use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
@@ -1774,6 +1775,52 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedHrmEmployeeTerminationPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        EmployeeTerminationReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
+            $title = $this->sharedHrmDisplayTitle('Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar', $company);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullPeriodFilters($request)
+            );
+            $reportData['company'] = $company;
+            $reportData['title'] = $title;
+            $reportData['label'] = $title;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.employee_termination.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'subtitle' => $reportData['period_label'] ?? '',
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$this->sharedHrmEmployeeTerminationFilename('Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar', $company).'"',
+        ]);
+    }
+
     public function apiDaftarKaryawanBerdasarkanAbjadPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         DaftarKaryawanBerdasarkanAbjadReportService $reportService,
@@ -2523,6 +2570,16 @@ class AscendXmlTestController extends Controller
     private function sharedHrmEmployeeListFilename(string $reportName, string $company): string
     {
         return $this->sharedHrmEmployeeListTitle($reportName, $company).'.pdf';
+    }
+
+    private function sharedHrmEmployeeTerminationTitle(string $reportName, string $company): string
+    {
+        return "Employee Termination - {$reportName} ({$company})";
+    }
+
+    private function sharedHrmEmployeeTerminationFilename(string $reportName, string $company): string
+    {
+        return $this->sharedHrmEmployeeTerminationTitle($reportName, $company).'.pdf';
     }
 
     /**

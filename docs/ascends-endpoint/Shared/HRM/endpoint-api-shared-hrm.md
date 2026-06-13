@@ -34,7 +34,6 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Employee List - Laporan List Karyawan Habis Kontrak: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/list-karyawan-habis-kontrak/pdf`
 - Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
 - Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
-
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf`
@@ -81,6 +80,10 @@ Parameter tambahan:
 ## Endpoint Shared Absence
 
 - Absence - Laporan Ketidakhadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf`
+
+## Endpoint Shared Employee Termination
+
+- Employee Termination - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-termination/pdf`
 
 ## Input
 
@@ -309,6 +312,16 @@ Input tambahan khusus `ketidakhadiran-bulanan`:
 - Mapping XML: `KK/KT` membaca `Daily_x0020_Worker_x0020_Type_x0020_Code` = `KK` atau `KT`; `ST` membaca kode `ST`.
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 
+Input tambahan khusus `employee-termination`:
+
+- Gunakan XML `AnlReports.HRM.Retirement.xml` dari modul Retirement Ascend.
+- Tabel XML yang dibaca: `Employees`.
+- Field utama yang ditampilkan: `Full_x0020_Name` (Nama), `Sex` (L/P), `Job_x0020_Title` (Jabatan), `Status_x0020_Type` (Status), `Level` (Level), `Date_x0020_of_x0020_Join` (Tanggal Masuk), `Date` (Tanggal Keluar), `Retirement_x0020_Reason` (Alasan Keluar), `Department_x0020_Name` (Departemen).
+- `start_date` + `end_date`: periode tanggal keluar, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
+- Laporan dikelompokkan per departemen (`Department_x0020_Name`), masing-masing menampilkan akumulasi L/P.
+
 Contoh `multipart/form-data`:
 
 ```text
@@ -386,10 +399,10 @@ Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategor
 {Nama Laporan} ({company})
 ```
 
-Filename PDF memakai prefix kategori folder:
+Filename PDF memakai prefix section folder:
 
 ```text
-Employee List - {Nama Laporan} ({company}).pdf
+{Section} - {Nama Laporan} ({company}).pdf
 ```
 
 Contoh:
@@ -403,6 +416,7 @@ Contoh:
 - `Employee List - Laporan List Karyawan Habis Kontrak (RU).pdf`
 - `Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan (UC).pdf`
 - `Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC).pdf`
+- `Employee Termination - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU).pdf`
 - `Attendance Full - Laporan Absensi Briefing Harian (RU) - VKD.pdf`
 - `Attendance Full - Laporan Kehadiran Kru Stick (RU).pdf`
 - `Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU).pdf`
@@ -435,6 +449,10 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 - `employee_list/list_karyawan_habis_kontrak`
 - `employee_list/perbandingan_jumlah_karyawan_tahunan_per_bulan`
 - `employee_list/usia_generasi_tahun_kelahiran_masa_kerja`
+
+Template Blade shared Employee Termination berada di `resources/views/ascends/shared/hrm/employee_termination`.
+
+- `employee_termination`
 
 Template Blade shared Attendance Full berada di `resources/views/ascends/shared/hrm/attendance_full`.
 
