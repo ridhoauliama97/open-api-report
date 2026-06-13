@@ -134,7 +134,6 @@
 
         .empty-row td {
             height: 16px;
-            background: #fff;
         }
 
         .data-row td {

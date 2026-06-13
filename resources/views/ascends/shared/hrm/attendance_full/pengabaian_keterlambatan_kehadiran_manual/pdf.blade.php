@@ -82,14 +82,13 @@
             font-style: italic;
             padding: 5px 6px;
             color: #9c111d;
-            background: #fff;
+
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
         .summary-row td {
             border-top: 1px solid #000;
-            background: #fff;
             font-weight: bold;
             text-align: center;
             padding: 6px 3px;

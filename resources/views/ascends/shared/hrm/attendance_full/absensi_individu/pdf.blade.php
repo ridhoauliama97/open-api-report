@@ -80,7 +80,7 @@
             font-style: italic;
             padding: 5px 6px;
             color: #9c111d;
-            background: #fff;
+
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
@@ -94,7 +94,7 @@
         .group-info td {
             border: 0;
             padding: 0 4px;
-            background: #fff;
+
             vertical-align: top;
         }
 
@@ -109,7 +109,7 @@
         .summary-block-row td {
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
-            background: #fff;
+
             font-weight: bold;
             padding: 4px;
         }
@@ -122,7 +122,6 @@
 
         .summary-block td {
             border: 0;
-            background: #fff;
             font-weight: bold;
             padding: 2px 4px;
             vertical-align: middle;

@@ -79,7 +79,6 @@
         .section-row td {
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
-            background: #fff;
             color: #990000;
             font-weight: bold;
             font-style: italic;

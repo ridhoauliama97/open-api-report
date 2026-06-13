@@ -83,7 +83,6 @@
             font-size: 10px;
             font-style: italic;
             color: #9c111d;
-            background: #fff;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 4px 5px;

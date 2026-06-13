@@ -100,7 +100,6 @@
             font-style: italic;
             padding: 4px 5px;
             color: #000;
-            background: #fff;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }

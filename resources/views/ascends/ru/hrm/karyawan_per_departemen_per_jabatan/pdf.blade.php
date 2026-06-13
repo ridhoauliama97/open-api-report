@@ -76,15 +76,15 @@
             font-style: italic;
             padding: 4px 5px;
             color: #9c111d;
-            background: #fff;
-            border-top: 1px solid #000;
+            background:
+                border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
         .summary-row td {
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
-            background: #fff;
+            background: ;
             padding: 4px 3px;
         }
 
@@ -97,7 +97,6 @@
         .summary-table td {
             border: 0;
             padding: 1px 2px;
-            background: #fff;
             vertical-align: top;
         }
 

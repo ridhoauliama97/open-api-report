@@ -86,7 +86,6 @@
         .total-row td {
             border-top: 1px solid #000;
             font-weight: bold;
-            background: #fff;
         }
 
         .center {
