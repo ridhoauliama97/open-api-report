@@ -23,7 +23,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
         $period = $this->resolveReportPeriod($filters, $rows);
         $filteredRows = array_values(array_filter(
             $rows,
-            fn (array $row): bool => $this->shouldIncludeRow($row, $period['start'], $period['end'])
+            fn(array $row): bool => $this->shouldIncludeRow($row, $period['start'], $period['end'])
         ));
 
         $summaryRows = $this->buildSummaryRows($filteredRows, $period['start'], $period['end']);
@@ -31,12 +31,12 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
         return [
             'title' => 'Laporan Rekapitulasi Absensi Briefing Harian',
             'source_file' => $sourceLabel,
-            'printed_at' => Carbon::now()->translatedFormat('d F Y H:i'),
+            'printed_at' => Carbon::now()->translatedFormat('d-M-y H:i'),
             'printed_by' => $this->resolvePrintedBy($rows),
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
             'headers' => ['No', 'Divisi', 'Jumlah Hadir Tidak Telat', 'Jumlah Telat', 'Jumlah Tidak Hadir', 'Jumlah Saat Pukul 15.00 WIB', 'Selisih', 'Keterangan'],
             'rows' => $summaryRows,
@@ -55,7 +55,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
         }
 
         $reader = new XMLReader;
-        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("File XML tidak valid ({$sourceLabel}).");
         }
 
@@ -66,7 +66,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
             }
 
             $nodeXml = $reader->readOuterXml();
-            if (! is_string($nodeXml) || trim($nodeXml) === '') {
+            if (!is_string($nodeXml) || trim($nodeXml) === '') {
                 continue;
             }
 
@@ -138,7 +138,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
         }
 
         $dates = array_values(array_filter(array_map(
-            fn (array $row): ?Carbon => $this->parseDate((string) ($row['Date'] ?? '')),
+            fn(array $row): ?Carbon => $this->parseDate((string) ($row['Date'] ?? '')),
             $rows
         )));
 
@@ -148,7 +148,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
             return ['start' => $today->copy()->startOfDay(), 'end' => $today->copy()->endOfDay()];
         }
 
-        usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
+        usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
         $latest = $dates[count($dates) - 1];
 
         return ['start' => $latest->copy()->startOfMonth()->startOfDay(), 'end' => $latest->copy()->endOfMonth()->endOfDay()];
@@ -160,7 +160,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
         $date = $this->parseDate((string) ($row['Date'] ?? ''));
 
         return $employeeCode !== ''
-            && ! str_starts_with(strtoupper($employeeCode), 'SPECIAL')
+            && !str_starts_with(strtoupper($employeeCode), 'SPECIAL')
             && $date !== null
             && $date->betweenIncluded($startDate, $endDate)
             && trim((string) ($row['Present Absent'] ?? '')) !== '';
@@ -189,9 +189,9 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
                 continue;
             }
 
-            $presentNoLate = count(array_filter($items, fn (array $row): bool => $this->hasSignIn($row) && ! $this->isLate($row)));
-            $late = count(array_filter($items, fn (array $row): bool => $this->hasSignIn($row) && $this->isLate($row)));
-            $notPresent = count(array_filter($items, fn (array $row): bool => ! $this->hasSignIn($row)))
+            $presentNoLate = count(array_filter($items, fn(array $row): bool => $this->hasSignIn($row) && !$this->isLate($row)));
+            $late = count(array_filter($items, fn(array $row): bool => $this->hasSignIn($row) && $this->isLate($row)));
+            $notPresent = count(array_filter($items, fn(array $row): bool => !$this->hasSignIn($row)))
                 + $this->countMissingAttendanceDates($items, $startDate, $endDate);
 
             $result[] = [
@@ -243,7 +243,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
             $availableDates = array_keys($dates);
             sort($availableDates);
             $firstDate = Carbon::parse($availableDates[0])->startOfDay();
-            if (! $firstDate->equalTo($groupFirstDate)) {
+            if (!$firstDate->equalTo($groupFirstDate)) {
                 continue;
             }
 
@@ -253,7 +253,7 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
             while ($cursor->lessThanOrEqualTo($last)) {
                 if ($cursor->lessThan($firstDate)) {
                     $dateKey = $cursor->toDateString();
-                    if (! isset($dates[$dateKey])) {
+                    if (!isset($dates[$dateKey])) {
                         $missing++;
                     }
                 }
@@ -422,9 +422,9 @@ class RekapitulasiAbsensiBriefingHarianGsuReportService
     private function buildGrandSummary(array $rows): array
     {
         return [
-            'Jumlah Hadir Tidak Telat' => array_sum(array_map(static fn (array $row): int => (int) ($row['Jumlah Hadir Tidak Telat'] ?? 0), $rows)),
-            'Jumlah Telat' => array_sum(array_map(static fn (array $row): int => (int) ($row['Jumlah Telat'] ?? 0), $rows)),
-            'Jumlah Tidak Hadir' => array_sum(array_map(static fn (array $row): int => (int) ($row['Jumlah Tidak Hadir'] ?? 0), $rows)),
+            'Jumlah Hadir Tidak Telat' => array_sum(array_map(static fn(array $row): int => (int) ($row['Jumlah Hadir Tidak Telat'] ?? 0), $rows)),
+            'Jumlah Telat' => array_sum(array_map(static fn(array $row): int => (int) ($row['Jumlah Telat'] ?? 0), $rows)),
+            'Jumlah Tidak Hadir' => array_sum(array_map(static fn(array $row): int => (int) ($row['Jumlah Tidak Hadir'] ?? 0), $rows)),
             'Jumlah Saat Pukul 15.00 Wib' => '',
             'Selisih' => '',
             'Keterangan' => '',

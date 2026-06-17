@@ -77,6 +77,14 @@ Parameter tambahan:
 
 - Other Income Deduction - Laporan Pendapatan Lain-Lain: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/other-income-deduction/pendapatan-lain-lain/pdf`
 
+## Endpoint Shared Warning Notice
+
+- Warning Notice - Laporan Surat Peringatan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/warning-notice/surat-peringatan/pdf`
+
+## Endpoint Shared Loss Time
+
+- Loss Time - Laporan Loss Time: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/loss-time/pdf`
+
 ## Endpoint Shared Absence
 
 - Absence - Laporan Ketidakhadiran Bulanan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf`
@@ -322,6 +330,20 @@ Input tambahan khusus `employee-termination`:
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 - Laporan dikelompokkan per departemen (`Department_x0020_Name`), masing-masing menampilkan akumulasi L/P.
 
+Input tambahan khusus `loss-time`:
+
+- Gunakan XML `AnlReports.HRM.LossTime.xml` dari modul Loss Time Ascend.
+- Tabel XML yang dibaca: `LossTime`.
+- `Pilih Tipe`: parameter Crystal Report Ascend, contoh `KK/KT` atau `Staff`.
+- Alias yang diterima: `Pilih_x0020_Tipe`, `pilih_tipe`, `Pilih Type`, `Pilih_x0020_Type`, `type`, atau `Type`.
+- `Staff`: membaca `Daily_x0020_Worker_x0020_Type_x0020_Code = ST`.
+- `KK/KT`: membaca kode `KK`, `KT`, atau `BR`.
+- `start_date` + `end_date`: periode laporan, contoh `2026-05-01` sampai `2026-05-31`.
+- Alias tanggal yang diterima: `TglAwal` + `TglAkhir`.
+- Jika periode tidak dikirim, sistem memakai bulan dari tanggal paling awal sampai paling akhir yang tersedia di XML.
+- Kolom yang ditampilkan: NIK, Nama Karyawan, Jabatan, Tanggal Izin, Total Jam, Total Menit, Keterangan.
+- Laporan dikelompokkan per departemen, masing-masing menampilkan akumulasi Status (KK/KT/ST/BR) dan total jam/menit.
+
 Contoh `multipart/form-data`:
 
 ```text
@@ -388,6 +410,16 @@ end_date=2026-06-04
 xml_file=AnlReports.HRM.Absence.xml
 ```
 
+Contoh `multipart/form-data` untuk Loss Time:
+
+```text
+DB_CompanyName=RU
+Pilih Tipe=KK/KT
+start_date=2026-05-01
+end_date=2026-05-31
+xml_file=AnlReports.HRM.LossTime.xml
+```
+
 ## Response Sukses
 
 - `200 application/pdf`
@@ -424,6 +456,7 @@ Contoh:
 - `Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (RU).pdf`
 - `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Staff Per Departemen (RU).pdf`
 - `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
+- `Loss Time - Laporan Loss Time (RU).pdf`
 
 ## Response Gagal
 
@@ -478,5 +511,9 @@ Template Blade shared Attendance berada di `resources/views/ascends/shared/hrm/a
 Template Blade shared Absence berada di `resources/views/ascends/shared/hrm/absence`.
 
 - `absence/ketidakhadiran_bulanan`
+
+Template Blade shared Loss Time berada di `resources/views/ascends/shared/hrm/loss_time`.
+
+- `loss_time`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

@@ -391,6 +391,16 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.other-income-deduction.pendapatan-lain-lain.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/warning-notice/surat-peringatan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmSuratPeringatanPdf']
+)->name('api.internal.ascends.shared.hrm.warning-notice.surat-peringatan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/loss-time/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmLossTimePdf']
+)->name('api.internal.ascends.shared.hrm.loss-time.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmKetidakhadiranBulananPdf']
 )->name('api.internal.ascends.shared.hrm.absence.ketidakhadiran-bulanan.pdf');

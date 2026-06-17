@@ -69,7 +69,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
         return [
             'title' => self::TITLE,
             'source_file' => $sourceLabel,
-            'printed_at' => Carbon::now()->locale('id')->translatedFormat('d F Y H:i'),
+            'printed_at' => Carbon::now()->locale('id')->translatedFormat('d-M-y H:i'),
             'printed_by' => self::resolvePrintedBy($rawRows),
             'headers' => ['No', 'Nama', 'L/P', 'Jabatan', 'Status', 'Level', '%'],
             'rows' => array_map(static fn(array $row): array => self::publicRow($row), $rows),
@@ -485,7 +485,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
     {
         $formatted = self::formatLevel($level);
 
-        return $formatted !== '' ? 'Level '.$formatted : 'Level ';
+        return $formatted !== '' ? 'Level ' . $formatted : 'Level ';
     }
 
     private static function parseDate(string $value): ?Carbon

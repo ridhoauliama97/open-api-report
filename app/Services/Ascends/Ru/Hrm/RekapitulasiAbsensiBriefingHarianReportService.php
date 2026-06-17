@@ -32,7 +32,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
         return [
             'title' => 'Laporan Rekapitulasi Absensi Briefing Harian',
             'source_file' => $sourceLabel,
-            'printed_at' => Carbon::now()->translatedFormat('d F Y H:i'),
+            'printed_at' => Carbon::now()->translatedFormat('d-M-y H:i'),
             'printed_by' => $this->resolvePrintedBy($rows),
             'group' => $groupFilter,
             'period' => [

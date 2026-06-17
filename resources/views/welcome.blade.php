@@ -2738,7 +2738,7 @@
                     </article>
                     <article class="stats-card">
                         <div class="stats-header">
-                            <span class="stats-label">Crystal Report / Lama</span>
+                            <span class="stats-label">Crystal Report / Laporan Lama</span>
                             <span class="stats-token">Total Laporan</span>
                         </div>
                         <p class="stats-value">${formatNumber(menu.legacyTotal)}</p>
@@ -2747,10 +2747,10 @@
                     <article class="stats-card">
                         <div class="stats-header">
                             <span class="stats-label">Selisih</span>
-                            <span class="stats-token">Belum Migrasi</span>
+                            <span class="stats-token">Total Selisih</span>
                         </div>
                         <p class="stats-value">${formatNumber(gap)}</p>
-                        <p class="stats-caption">Total Selisih.</p>
+                        <p class="stats-caption">Selisih jumlah laporan.</p>
                     </article>
                 `;
             };
