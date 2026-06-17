@@ -121,7 +121,7 @@ class StBasahHidupPerUmurKayuTonReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -129,7 +129,7 @@ class StBasahHidupPerUmurKayuTonReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -152,7 +152,7 @@ class StBasahHidupPerUmurKayuTonReportService
             throw new RuntimeException('Jumlah parameter laporan ST Basah Hidup Per-Umur Kayu (Ton) harus 0.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST basah hidup per-umur kayu (Ton) belum dikonfigurasi.');
         }
 
@@ -162,7 +162,7 @@ class StBasahHidupPerUmurKayuTonReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST basah hidup per-umur kayu (Ton) dikonfigurasi untuk SQL Server. '
-                . 'Set ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -171,13 +171,13 @@ class StBasahHidupPerUmurKayuTonReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan ST_BASAH_HIDUP_PER_UMUR_KAYU_TON_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -190,4 +190,3 @@ class StBasahHidupPerUmurKayuTonReportService
         return $connection->select($sql);
     }
 }
-

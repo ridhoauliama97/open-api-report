@@ -55,8 +55,7 @@ class KaryawanPerUmurReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -92,15 +91,15 @@ class KaryawanPerUmurReportService
     {
         $rawRows = array_values(array_filter(
             $reportData['rows'] ?? [],
-            static fn(array $row): bool => self::shouldIncludeRow($row)
+            static fn (array $row): bool => self::shouldIncludeRow($row)
         ));
         $printedBy = self::resolvePrintedBy($rawRows);
         $rows = array_map(
-            static fn(array $row): array => self::shapeRow($row),
+            static fn (array $row): array => self::shapeRow($row),
             $rawRows
         );
 
-        usort($rows, static fn(array $left, array $right): int => [
+        usort($rows, static fn (array $left, array $right): int => [
             self::ageBucketSortValue((string) ($left['Umur Key'] ?? '')),
             (int) ($left['Umur Sort'] ?? 0),
             (string) ($left['Nama'] ?? ''),
@@ -130,7 +129,7 @@ class KaryawanPerUmurReportService
             'source_file' => $sourceLabel,
             'printed_by' => $printedBy,
             'headers' => $headers,
-            'rows' => array_map(static fn(array $row): array => self::publicRow($row), $rows),
+            'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rows),
             'grouped_rows' => $groupedRows,
             'grand_summary' => $grandSummary,
             'total_rows' => count($rows),
@@ -145,7 +144,7 @@ class KaryawanPerUmurReportService
         $employeeCode = trim((string) ($row['Kode Karyawan'] ?? ''));
 
         return strcasecmp(trim((string) ($row['Status Aktif'] ?? '')), 'Active') === 0
-            && !str_starts_with(strtoupper($employeeCode), 'SPECIAL');
+            && ! str_starts_with(strtoupper($employeeCode), 'SPECIAL');
     }
 
     /**
@@ -194,7 +193,7 @@ class KaryawanPerUmurReportService
         foreach (self::AGE_BUCKETS as $bucket) {
             $bucketRows = array_values(array_filter(
                 $rows,
-                static fn(array $row): bool => ($row['Umur Key'] ?? '') === $bucket['key']
+                static fn (array $row): bool => ($row['Umur Key'] ?? '') === $bucket['key']
             ));
 
             if ($bucketRows === []) {
@@ -202,8 +201,8 @@ class KaryawanPerUmurReportService
             }
 
             $groupedRows[] = [
-                'label' => 'Umur : ' . $bucket['label'],
-                'rows' => array_map(static fn(array $row): array => self::publicRow($row), $bucketRows),
+                'label' => 'Umur : '.$bucket['label'],
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $bucketRows),
                 'summary' => self::buildSummary($bucketRows),
             ];
         }
@@ -237,7 +236,7 @@ class KaryawanPerUmurReportService
         foreach (self::AGE_BUCKETS as $bucket) {
             $count = count(array_filter(
                 $rows,
-                static fn(array $row): bool => ($row['Umur Key'] ?? '') === $bucket['key']
+                static fn (array $row): bool => ($row['Umur Key'] ?? '') === $bucket['key']
             ));
 
             $summary[$bucket['key']] = [
@@ -265,7 +264,7 @@ class KaryawanPerUmurReportService
                 continue;
             }
 
-            if (!array_key_exists($value, $counts)) {
+            if (! array_key_exists($value, $counts)) {
                 $counts[$value] = 0;
                 $defaultLabels[$value] = $value;
             }
@@ -353,7 +352,7 @@ class KaryawanPerUmurReportService
         }
 
         if (preg_match('/(\d+)/', $level, $matches) === 1) {
-            return 'Level ' . ((int) $matches[1]);
+            return 'Level '.((int) $matches[1]);
         }
 
         return $level;
@@ -384,7 +383,7 @@ class KaryawanPerUmurReportService
 
     private static function formatWorkingPeriod(int $years, int $months, int $days): string
     {
-        return $years . ' Thn ' . $months . ' Bln ' . $days . ' Hari';
+        return $years.' Thn '.$months.' Bln '.$days.' Hari';
     }
 
     private static function parseDate(string $date): ?Carbon

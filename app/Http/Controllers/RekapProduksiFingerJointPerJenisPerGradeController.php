@@ -140,7 +140,7 @@ class RekapProduksiFingerJointPerJenisPerGradeController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{jenis:string, rows:array<int, array<string, mixed>>, totals:array{InS4S:float, InCCAkhir:float, InWIP:float, Output:float}}>
      */
     private function groupByJenis(array $rows): array

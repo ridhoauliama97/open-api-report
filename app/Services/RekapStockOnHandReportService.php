@@ -134,13 +134,13 @@ class RekapStockOnHandReportService
         $summaryRows = [];
 
         foreach (self::SECTION_DEFINITIONS as $key => $definition) {
-            if (!in_array($key, $selectedKeys, true)) {
+            if (! in_array($key, $selectedKeys, true)) {
                 continue;
             }
 
             $rows = $this->fetchRows((string) $definition['config'], $startDate, $endDate);
             $normalizedRows = array_map(
-                static fn(object $row): array => (array) $row,
+                static fn (object $row): array => (array) $row,
                 $rows,
             );
 
@@ -201,10 +201,10 @@ class RekapStockOnHandReportService
             'summary_rows' => $summaryRows,
             'summary' => [
                 'section_count' => count($sections),
-                'row_count' => array_sum(array_map(static fn(array $section): int => (int) $section['row_count'], $sections)),
-                'document_count' => array_sum(array_map(static fn(array $section): int => (int) $section['document_count'], $sections)),
-                'total_pcs' => array_sum(array_map(static fn(array $section): float => (float) $section['total_pcs'], $sections)),
-                'total_value' => array_sum(array_map(static fn(array $section): float => (float) $section['total_value'], $sections)),
+                'row_count' => array_sum(array_map(static fn (array $section): int => (int) $section['row_count'], $sections)),
+                'document_count' => array_sum(array_map(static fn (array $section): int => (int) $section['document_count'], $sections)),
+                'total_pcs' => array_sum(array_map(static fn (array $section): float => (float) $section['total_pcs'], $sections)),
+                'total_value' => array_sum(array_map(static fn (array $section): float => (float) $section['total_value'], $sections)),
             ],
         ];
     }
@@ -219,7 +219,7 @@ class RekapStockOnHandReportService
         $isHealthy = true;
 
         foreach (self::SECTION_DEFINITIONS as $key => $definition) {
-            if (!in_array($key, $selectedKeys, true)) {
+            if (! in_array($key, $selectedKeys, true)) {
                 continue;
             }
 
@@ -255,7 +255,7 @@ class RekapStockOnHandReportService
         $connectionName = config("reports.{$configKey}.database_connection");
         $procedure = (string) config("reports.{$configKey}.stored_procedure", '');
 
-        if ($procedure === '' || !preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if ($procedure === '' || ! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException("Stored procedure untuk {$configKey} belum valid.");
         }
 
@@ -278,7 +278,7 @@ class RekapStockOnHandReportService
         $defaultColumns = array_values($definition['columns']);
         $compactColumns = $definition['compact_columns'] ?? null;
 
-        if (!is_array($compactColumns) || count($rows) <= self::COMPACT_THRESHOLD) {
+        if (! is_array($compactColumns) || count($rows) <= self::COMPACT_THRESHOLD) {
             return [$defaultColumns, $rows, false];
         }
 
@@ -286,18 +286,18 @@ class RekapStockOnHandReportService
         $pcsColumn = is_string($definition['pcs_column'] ?? null) ? (string) $definition['pcs_column'] : null;
         $groupColumns = array_values(array_filter(
             $compactColumns,
-            static fn(string $column): bool => $column !== $valueColumn && $column !== $pcsColumn
+            static fn (string $column): bool => $column !== $valueColumn && $column !== $pcsColumn
         ));
 
         $grouped = [];
 
         foreach ($rows as $row) {
             $groupKey = implode('|', array_map(
-                static fn(string $column): string => trim((string) ($row[$column] ?? '')),
+                static fn (string $column): string => trim((string) ($row[$column] ?? '')),
                 $groupColumns
             ));
 
-            if (!isset($grouped[$groupKey])) {
+            if (! isset($grouped[$groupKey])) {
                 $grouped[$groupKey] = [];
                 foreach ($groupColumns as $column) {
                     $grouped[$groupKey][$column] = $row[$column] ?? null;
@@ -331,8 +331,8 @@ class RekapStockOnHandReportService
         }
 
         $selected = array_values(array_filter(
-            array_map(static fn(mixed $value): string => strtolower(trim((string) $value)), $selectedSections),
-            static fn(string $value): bool => in_array($value, $available, true)
+            array_map(static fn (mixed $value): string => strtolower(trim((string) $value)), $selectedSections),
+            static fn (string $value): bool => in_array($value, $available, true)
         ));
 
         return $selected !== [] ? array_values(array_unique($selected)) : $available;

@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
-
 class GenerateLabelNyangkutReportRequest extends BaseReportRequest
 {
     /**
@@ -24,5 +22,3 @@ class GenerateLabelNyangkutReportRequest extends BaseReportRequest
         return [];
     }
 }
-
-

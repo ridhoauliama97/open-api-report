@@ -14,7 +14,7 @@ class SupplierIntelReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     /**
@@ -56,11 +56,11 @@ class SupplierIntelReportService
             throw new RuntimeException('Jumlah parameter laporan Supplier Intel harus antara 0 sampai 2.');
         }
 
-        if ($singleParameterName === '' || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $singleParameterName)) {
+        if ($singleParameterName === '' || ! preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $singleParameterName)) {
             throw new RuntimeException('Konfigurasi single_parameter_name untuk laporan Supplier Intel tidak valid.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Supplier Intel belum dikonfigurasi.');
         }
 
@@ -70,7 +70,7 @@ class SupplierIntelReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Supplier Intel dikonfigurasi untuk SQL Server. '
-                . 'Set SUPPLIER_INTEL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set SUPPLIER_INTEL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -86,7 +86,7 @@ class SupplierIntelReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'SUPPLIER_INTEL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan SUPPLIER_INTEL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan SUPPLIER_INTEL_REPORT_CALL_SYNTAX=query.',
                 );
 
             $resolvedBindings = str_contains($query, '?') ? $bindings : [];
@@ -94,7 +94,7 @@ class SupplierIntelReportService
             return $connection->select($query, $resolvedBindings);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -106,7 +106,7 @@ class SupplierIntelReportService
 
         $callSql = $parameterCount === 0
             ? "CALL {$procedure}()"
-            : "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ')';
+            : "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
 
         $sql = match ($syntax) {
             'exec' => $execSql,
@@ -117,5 +117,3 @@ class SupplierIntelReportService
         return $connection->select($sql, $bindings);
     }
 }
-
-

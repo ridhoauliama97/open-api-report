@@ -44,6 +44,7 @@ class MutasiKdReportService
                 }
                 $outA = (string) ($a['TglKeluar'] ?? '');
                 $outB = (string) ($b['TglKeluar'] ?? '');
+
                 return strcmp($outA, $outB);
             });
 
@@ -127,7 +128,7 @@ class MutasiKdReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -135,7 +136,7 @@ class MutasiKdReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -158,7 +159,7 @@ class MutasiKdReportService
             throw new RuntimeException('Jumlah parameter laporan Mutasi KD harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Mutasi KD belum dikonfigurasi.');
         }
 
@@ -168,7 +169,7 @@ class MutasiKdReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Mutasi KD dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_KD_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_KD_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -180,7 +181,7 @@ class MutasiKdReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

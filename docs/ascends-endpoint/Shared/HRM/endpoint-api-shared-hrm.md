@@ -34,6 +34,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Employee List - Laporan List Karyawan Habis Kontrak: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/list-karyawan-habis-kontrak/pdf`
 - Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
 - Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
+- Employee List - Laporan THR (Idul Fitri/Natal/Imlek): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/thr/pdf`
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf`
@@ -330,6 +331,13 @@ Input tambahan khusus `employee-termination`:
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 - Laporan dikelompokkan per departemen (`Department_x0020_Name`), masing-masing menampilkan akumulasi L/P.
 
+Input tambahan khusus `thr`:
+
+- `Pilih THR`: parameter Crystal Report Ascend, contoh `Idul Fitri`, `Natal`, atau `Imlek`.
+- Alias yang diterima: `Pilih_x0020_THR`, `pilih_thr`, `PilihTHR`, `thr`, atau `THR`.
+- Jika tidak dikirim, default `Idul Fitri`.
+- Laporan menampilkan 3 section per tipe karyawan (Staff, Karyawan Kontrak, Karyawan Tetap) dalam 1 PDF, masing-masing dengan page break.
+
 Input tambahan khusus `loss-time`:
 
 - Gunakan XML `AnlReports.HRM.LossTime.xml` dari modul Loss Time Ascend.
@@ -410,6 +418,14 @@ end_date=2026-06-04
 xml_file=AnlReports.HRM.Absence.xml
 ```
 
+Contoh `multipart/form-data` untuk THR:
+
+```text
+DB_CompanyName=GSU
+Pilih THR=Idul Fitri
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
 Contoh `multipart/form-data` untuk Loss Time:
 
 ```text
@@ -457,6 +473,7 @@ Contoh:
 - `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Staff Per Departemen (RU).pdf`
 - `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
 - `Loss Time - Laporan Loss Time (RU).pdf`
+- `Employee List - Laporan THR (Idul Fitri) (GSU).pdf`
 
 ## Response Gagal
 
@@ -482,6 +499,7 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 - `employee_list/list_karyawan_habis_kontrak`
 - `employee_list/perbandingan_jumlah_karyawan_tahunan_per_bulan`
 - `employee_list/usia_generasi_tahun_kelahiran_masa_kerja`
+- `employee_list/thr`
 
 Template Blade shared Employee Termination berada di `resources/views/ascends/shared/hrm/employee_termination`.
 

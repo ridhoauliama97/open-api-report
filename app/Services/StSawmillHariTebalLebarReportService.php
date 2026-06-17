@@ -31,7 +31,7 @@ class StSawmillHariTebalLebarReportService
 
         $isGroupBlocks = $this->buildBlocks($rows, $dateKeys);
         $grandTotalsByDate = $this->buildGrandTotalsByDate($isGroupBlocks, $dateKeys);
-        $grandTotal = array_sum(array_map(static fn($v): float => (float) $v, $grandTotalsByDate));
+        $grandTotal = array_sum(array_map(static fn ($v): float => (float) $v, $grandTotalsByDate));
         $grandTotalsByIsGroup = $this->buildGrandTotalsByIsGroup($isGroupBlocks);
         $rangkuman = $this->buildRangkuman($rows);
 
@@ -73,7 +73,7 @@ class StSawmillHariTebalLebarReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -132,7 +132,7 @@ class StSawmillHariTebalLebarReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, string>
      */
     private function extractDateKeys(array $rows): array
@@ -157,8 +157,8 @@ class StSawmillHariTebalLebarReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $dateKeys
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $dateKeys
      * @return array<int, array{is_group: int, groups: array<int, array{name: string, tebal_blocks: array<int, array{tebal: float, lebar_rows: array<int, array{lebar: float, values: array<string, float>}> , totals_by_date: array<string, float>}>, totals_by_date: array<string, float>}> , totals_by_date: array<string, float>}>
      */
     private function buildBlocks(array $rows, array $dateKeys): array
@@ -184,18 +184,18 @@ class StSawmillHariTebalLebarReportService
                 $dateKey = $rawDate;
             }
 
-            if (!in_array($dateKey, $dateKeys, true)) {
+            if (! in_array($dateKey, $dateKeys, true)) {
                 continue;
             }
 
-            if (!isset($byIsGroup[$isGroup])) {
+            if (! isset($byIsGroup[$isGroup])) {
                 $byIsGroup[$isGroup] = [
                     'is_group' => $isGroup,
                     'groups' => [],
                 ];
             }
 
-            if (!isset($byIsGroup[$isGroup]['groups'][$groupName])) {
+            if (! isset($byIsGroup[$isGroup]['groups'][$groupName])) {
                 $byIsGroup[$isGroup]['groups'][$groupName] = [
                     'name' => $groupName,
                     'tebal_blocks' => [],
@@ -204,7 +204,7 @@ class StSawmillHariTebalLebarReportService
             }
 
             $tebalKey = (string) $tebal;
-            if (!isset($byIsGroup[$isGroup]['groups'][$groupName]['tebal_blocks'][$tebalKey])) {
+            if (! isset($byIsGroup[$isGroup]['groups'][$groupName]['tebal_blocks'][$tebalKey])) {
                 $byIsGroup[$isGroup]['groups'][$groupName]['tebal_blocks'][$tebalKey] = [
                     'tebal' => $tebal,
                     'lebar_rows' => [],
@@ -213,7 +213,7 @@ class StSawmillHariTebalLebarReportService
             }
 
             $lebarKey = (string) $lebar;
-            if (!isset($byIsGroup[$isGroup]['groups'][$groupName]['tebal_blocks'][$tebalKey]['lebar_rows'][$lebarKey])) {
+            if (! isset($byIsGroup[$isGroup]['groups'][$groupName]['tebal_blocks'][$tebalKey]['lebar_rows'][$lebarKey])) {
                 $byIsGroup[$isGroup]['groups'][$groupName]['tebal_blocks'][$tebalKey]['lebar_rows'][$lebarKey] = [
                     'lebar' => $lebar,
                     'values' => array_fill_keys($dateKeys, 0.0),
@@ -236,7 +236,7 @@ class StSawmillHariTebalLebarReportService
         $out = [];
         foreach ($byIsGroup as $isGroup => $block) {
             $groups = array_values($block['groups']);
-            usort($groups, static fn(array $a, array $b): int => strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? '')));
+            usort($groups, static fn (array $a, array $b): int => strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? '')));
 
             foreach ($groups as &$g) {
                 $tebalBlocks = array_values($g['tebal_blocks']);
@@ -246,6 +246,7 @@ class StSawmillHariTebalLebarReportService
                     if (abs($ta - $tb) > 0.0000001) {
                         return $ta <=> $tb;
                     }
+
                     return 0;
                 });
 
@@ -257,6 +258,7 @@ class StSawmillHariTebalLebarReportService
                         if (abs($la - $lb) > 0.0000001) {
                             return $la <=> $lb;
                         }
+
                         return 0;
                     });
                     $t['lebar_rows'] = $lebarRows;
@@ -285,8 +287,8 @@ class StSawmillHariTebalLebarReportService
     }
 
     /**
-     * @param array<int, array{is_group: int, totals_by_date: array<string, float>}> $isGroupBlocks
-     * @param array<int, string> $dateKeys
+     * @param  array<int, array{is_group: int, totals_by_date: array<string, float>}>  $isGroupBlocks
+     * @param  array<int, string>  $dateKeys
      * @return array<string, float>
      */
     private function buildGrandTotalsByDate(array $isGroupBlocks, array $dateKeys): array
@@ -304,7 +306,7 @@ class StSawmillHariTebalLebarReportService
     }
 
     /**
-     * @param array<int, array{is_group: int, totals_by_date: array<string, float>}> $isGroupBlocks
+     * @param  array<int, array{is_group: int, totals_by_date: array<string, float>}>  $isGroupBlocks
      * @return array<int, float>
      */
     private function buildGrandTotalsByIsGroup(array $isGroupBlocks): array
@@ -313,7 +315,7 @@ class StSawmillHariTebalLebarReportService
         foreach ($isGroupBlocks as $ig) {
             $isGroup = (int) ($ig['is_group'] ?? 0);
             $byDate = is_array($ig['totals_by_date'] ?? null) ? $ig['totals_by_date'] : [];
-            $out[$isGroup] = array_sum(array_map(static fn($v): float => (float) $v, $byDate));
+            $out[$isGroup] = array_sum(array_map(static fn ($v): float => (float) $v, $byDate));
         }
 
         ksort($out);
@@ -325,7 +327,7 @@ class StSawmillHariTebalLebarReportService
      * Build "Rangkuman" rows: totals by Jenis Kayu (Group) and Tebal (sum across Lebar and dates),
      * with percent within each Jenis Kayu.
      *
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{items: array<int, array{jenis: string, tebal: float, total: float, percent: float}>, totals_by_jenis: array<string, float>, grand_total: float}
      */
     private function buildRangkuman(array $rows): array
@@ -343,7 +345,7 @@ class StSawmillHariTebalLebarReportService
             }
 
             $tKey = (string) $tebal;
-            if (!isset($byJenisTebal[$jenis])) {
+            if (! isset($byJenisTebal[$jenis])) {
                 $byJenisTebal[$jenis] = [];
             }
             $byJenisTebal[$jenis][$tKey] = (float) ($byJenisTebal[$jenis][$tKey] ?? 0.0) + $value;
@@ -353,14 +355,14 @@ class StSawmillHariTebalLebarReportService
 
         $totalsByJenis = [];
         foreach ($byJenisTebal as $jenis => $tebalMap) {
-            $totalsByJenis[$jenis] = array_sum(array_map(static fn($v): float => (float) $v, $tebalMap));
+            $totalsByJenis[$jenis] = array_sum(array_map(static fn ($v): float => (float) $v, $tebalMap));
         }
 
         $items = [];
         foreach ($byJenisTebal as $jenis => $tebalMap) {
             $jenisTotal = (float) ($totalsByJenis[$jenis] ?? 0.0);
             $tebals = array_keys($tebalMap);
-            usort($tebals, static fn(string $a, string $b): int => ((float) $a) <=> ((float) $b));
+            usort($tebals, static fn (string $a, string $b): int => ((float) $a) <=> ((float) $b));
 
             foreach ($tebals as $tKey) {
                 $total = (float) ($tebalMap[$tKey] ?? 0.0);
@@ -374,7 +376,7 @@ class StSawmillHariTebalLebarReportService
             }
         }
 
-        $grandTotal = array_sum(array_map(static fn($v): float => (float) $v, $totalsByJenis));
+        $grandTotal = array_sum(array_map(static fn ($v): float => (float) $v, $totalsByJenis));
 
         return [
             'items' => $items,
@@ -395,7 +397,7 @@ class StSawmillHariTebalLebarReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST sawmill per hari/tebal/lebar belum dikonfigurasi.');
         }
 
@@ -406,7 +408,7 @@ class StSawmillHariTebalLebarReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST sawmill per hari/tebal/lebar dikonfigurasi untuk SQL Server. '
-                . 'Set ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_SAWMILL_HARI_TEBAL_LEBAR_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -418,7 +420,7 @@ class StSawmillHariTebalLebarReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -441,7 +443,7 @@ class StSawmillHariTebalLebarReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

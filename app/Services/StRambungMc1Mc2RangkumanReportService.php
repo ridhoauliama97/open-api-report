@@ -143,7 +143,7 @@ class StRambungMc1Mc2RangkumanReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -151,7 +151,7 @@ class StRambungMc1Mc2RangkumanReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -159,7 +159,7 @@ class StRambungMc1Mc2RangkumanReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{pcs:int, ton:float, kubik:float}
      */
     private function sumTotals(array $rows): array
@@ -197,7 +197,7 @@ class StRambungMc1Mc2RangkumanReportService
             throw new RuntimeException('Laporan ST Rambung MC1 & MC2 (Rangkuman) tidak menggunakan parameter.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST Rambung MC1 & MC2 (Rangkuman) belum dikonfigurasi.');
         }
 
@@ -207,7 +207,7 @@ class StRambungMc1Mc2RangkumanReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST Rambung MC1 & MC2 (Rangkuman) dikonfigurasi untuk SQL Server. '
-                . 'Set ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_RAMBUNG_MC1_MC2_RANGKUMAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -219,7 +219,7 @@ class StRambungMc1Mc2RangkumanReportService
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -232,4 +232,3 @@ class StRambungMc1Mc2RangkumanReportService
         return $connection->select($sql);
     }
 }
-

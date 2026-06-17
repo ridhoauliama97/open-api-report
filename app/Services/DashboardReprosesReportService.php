@@ -53,8 +53,8 @@ class DashboardReprosesReportService
 
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan di hasil SPWps_LapDashboardReproses. '
-                . 'Butuh kolom tanggal, jenis, grade, masuk, dan keluar. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
+                .'Butuh kolom tanggal, jenis, grade, masuk, dan keluar. '
+                .'Kolom terdeteksi: '.implode(', ', $detectedColumns),
             );
         }
 
@@ -186,7 +186,7 @@ class DashboardReprosesReportService
     private function applyColumnOrder(array $keys, array $orderedColumns): array
     {
         $keys = array_values(array_unique($keys));
-        usort($keys, static fn(string $a, string $b): int => strcmp($a, $b));
+        usort($keys, static fn (string $a, string $b): int => strcmp($a, $b));
 
         if ($orderedColumns === []) {
             return $keys;
@@ -199,7 +199,7 @@ class DashboardReprosesReportService
             }
         }
         foreach ($keys as $key) {
-            if (!in_array($key, $final, true)) {
+            if (! in_array($key, $final, true)) {
                 $final[] = $key;
             }
         }
@@ -216,7 +216,7 @@ class DashboardReprosesReportService
             return '';
         }
 
-        return trim($jenisNormalized . ' ' . $barangNormalized);
+        return trim($jenisNormalized.' '.$barangNormalized);
     }
 
     private function normalizeDisplayToken(string $value): string
@@ -245,7 +245,7 @@ class DashboardReprosesReportService
 
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function resolveColumns(array $rows): array
@@ -323,7 +323,7 @@ class DashboardReprosesReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -367,7 +367,7 @@ class DashboardReprosesReportService
         $parameterCount = (int) config('reports.dashboard_reproses.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan dashboard reproses belum dikonfigurasi.');
         }
 
@@ -377,7 +377,7 @@ class DashboardReprosesReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan dashboard reproses dikonfigurasi untuk SQL Server. '
-                . 'Set DASHBOARD_REPROSES_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DASHBOARD_REPROSES_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -389,13 +389,13 @@ class DashboardReprosesReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'DASHBOARD_REPROSES_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan DASHBOARD_REPROSES_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan DASHBOARD_REPROSES_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

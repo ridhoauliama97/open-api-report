@@ -61,7 +61,7 @@ class QcHarianBrokerReportService
         $customQuery = config("{$configPath}.query");
         $parameterName = (string) config("{$configPath}.single_parameter_name", 'EndDate');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan QC Harian Broker belum dikonfigurasi.');
         }
 
@@ -72,7 +72,7 @@ class QcHarianBrokerReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan QC Harian Broker dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_QC_HARIAN_BROKER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_QC_HARIAN_BROKER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -81,13 +81,13 @@ class QcHarianBrokerReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_QC_HARIAN_BROKER_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_QC_HARIAN_BROKER_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_QC_HARIAN_BROKER_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -109,7 +109,7 @@ class QcHarianBrokerReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

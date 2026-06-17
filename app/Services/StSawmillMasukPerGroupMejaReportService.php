@@ -53,7 +53,7 @@ class StSawmillMasukPerGroupMejaReportService
                 $mejaSet[$meja] = true;
             }
 
-            if (!isset($groups[$groupName])) {
+            if (! isset($groups[$groupName])) {
                 $groups[$groupName] = [
                     'name' => $groupName,
                     'jenis' => [],
@@ -61,7 +61,7 @@ class StSawmillMasukPerGroupMejaReportService
                 ];
             }
 
-            if (!isset($groups[$groupName]['jenis'][$jenisName])) {
+            if (! isset($groups[$groupName]['jenis'][$jenisName])) {
                 $groups[$groupName]['jenis'][$jenisName] = [
                     'name' => $jenisName,
                     'tebal' => [],
@@ -69,7 +69,7 @@ class StSawmillMasukPerGroupMejaReportService
                 ];
             }
 
-            if (!isset($groups[$groupName]['jenis'][$jenisName]['tebal'][$tebalKey])) {
+            if (! isset($groups[$groupName]['jenis'][$jenisName]['tebal'][$tebalKey])) {
                 $groups[$groupName]['jenis'][$jenisName]['tebal'][$tebalKey] = [
                     'tebal' => $tebal,
                     'values' => [],
@@ -106,6 +106,7 @@ class StSawmillMasukPerGroupMejaReportService
             foreach ($mejaList as $m) {
                 $out[$m] = (float) ($values[$m] ?? 0.0);
             }
+
             return $out;
         };
 
@@ -167,7 +168,7 @@ class StSawmillMasukPerGroupMejaReportService
         $customQuery = config('reports.st_sawmill_masuk_per_group_meja.query');
         $parameterCount = (int) config('reports.st_sawmill_masuk_per_group_meja.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST (Sawmill) masuk per-group belum dikonfigurasi.');
         }
 
@@ -180,7 +181,7 @@ class StSawmillMasukPerGroupMejaReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST (Sawmill) masuk per-group dikonfigurasi untuk SQL Server. '
-                . 'Set ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -189,13 +190,13 @@ class StSawmillMasukPerGroupMejaReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan ST_SAWMILL_MASUK_PER_GROUP_MEJA_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -238,7 +239,7 @@ class StSawmillMasukPerGroupMejaReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -274,11 +275,11 @@ class StSawmillMasukPerGroupMejaReportService
         if (is_numeric($value)) {
             return (int) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
+
         return $t === '' ? null : (is_numeric($t) ? (int) $t : null);
     }
 }
-

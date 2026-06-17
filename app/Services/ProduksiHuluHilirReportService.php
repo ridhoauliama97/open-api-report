@@ -72,7 +72,7 @@ class ProduksiHuluHilirReportService
                 continue;
             }
 
-            if (!isset($machineMap[$machineName])) {
+            if (! isset($machineMap[$machineName])) {
                 $machineMap[$machineName] = [
                     'name' => $machineName,
                     'label' => self::MACHINE_LABELS[$machineName] ?? $machineName,
@@ -97,7 +97,7 @@ class ProduksiHuluHilirReportService
                 $machineMap[$machineName]['target'] = $target;
             }
 
-            if (!isset($machineMap[$machineName]['days'][$dayLabel])) {
+            if (! isset($machineMap[$machineName]['days'][$dayLabel])) {
                 $machineMap[$machineName]['days'][$dayLabel] = [
                     'tebal' => 0.0,
                     'output' => 0.0,
@@ -136,7 +136,7 @@ class ProduksiHuluHilirReportService
         }
 
         foreach ($machineMap as $machineName => $machine) {
-            if (!in_array($machineName, self::MACHINE_ORDER, true)) {
+            if (! in_array($machineName, self::MACHINE_ORDER, true)) {
                 $orderedMachines[] = $machine;
             }
         }
@@ -224,7 +224,7 @@ class ProduksiHuluHilirReportService
 
         return [
             'columns' => array_map(
-                static fn(array $machine): array => [
+                static fn (array $machine): array => [
                     'key' => $machine['name'],
                     'label' => $machine['label'],
                 ],
@@ -272,15 +272,16 @@ class ProduksiHuluHilirReportService
         $connectionName = config('reports.produksi_hulu_hilir.database_connection');
         $procedure = (string) config('reports.produksi_hulu_hilir.stored_procedure', 'SPWps_LapProduksiSemuaMesinV2');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)
             ->select("EXEC {$procedure} ?, ?", [$startDate, $endDate]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
+
     private function nullableFloat(mixed $value): ?float
     {
         return is_numeric($value) ? (float) $value : null;

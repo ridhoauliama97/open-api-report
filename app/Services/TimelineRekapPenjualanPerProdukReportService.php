@@ -15,7 +15,7 @@ class TimelineRekapPenjualanPerProdukReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -56,7 +56,7 @@ class TimelineRekapPenjualanPerProdukReportService
                 'TglJual' => $row['TglJual'] ?? null,
             ];
 
-            if (!isset($products[$product])) {
+            if (! isset($products[$product])) {
                 $products[$product] = [
                     'name' => $product,
                     'rows' => [],
@@ -64,7 +64,7 @@ class TimelineRekapPenjualanPerProdukReportService
                 ];
             }
 
-            if (!isset($products[$product]['rows'][$detailKey])) {
+            if (! isset($products[$product]['rows'][$detailKey])) {
                 $products[$product]['rows'][$detailKey] = [
                     'Tebal' => $tebal,
                     'Lebar' => $lebar,
@@ -104,7 +104,7 @@ class TimelineRekapPenjualanPerProdukReportService
             foreach ($rowsByProduct as $detailRow) {
                 $tebalKey = $detailRow['Tebal'] !== null ? number_format((float) $detailRow['Tebal'], 4, '.', '') : '';
 
-                if (!isset($tebalGroups[$tebalKey])) {
+                if (! isset($tebalGroups[$tebalKey])) {
                     $tebalGroups[$tebalKey] = [
                         'tebal' => $detailRow['Tebal'],
                         'rows' => [],
@@ -216,7 +216,7 @@ class TimelineRekapPenjualanPerProdukReportService
         $syntax = (string) config('reports.timeline_rekap_penjualan_per_produk.call_syntax', 'exec');
         $customQuery = config('reports.timeline_rekap_penjualan_per_produk.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan timeline rekap penjualan per produk belum dikonfigurasi.');
         }
 
@@ -226,7 +226,7 @@ class TimelineRekapPenjualanPerProdukReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan timeline rekap penjualan per produk dikonfigurasi untuk SQL Server. '
-                . 'Set TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -235,13 +235,13 @@ class TimelineRekapPenjualanPerProdukReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan TIMELINE_REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, [$startDate, $endDate]);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -260,7 +260,7 @@ class TimelineRekapPenjualanPerProdukReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

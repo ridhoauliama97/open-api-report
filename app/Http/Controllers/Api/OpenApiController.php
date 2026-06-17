@@ -3184,7 +3184,7 @@ class OpenApiController extends Controller
      * OpenAPI di repo ini awalnya hard-coded, dan mudah tertinggal ketika report baru ditambahkan.
      * Ini memastikan semua endpoint `api/reports/*` selalu terdaftar minimal sebagai "generic report".
      *
-     * @param array<string, mixed> $spec
+     * @param  array<string, mixed>  $spec
      */
     private function augmentReportPaths(array &$spec): void
     {
@@ -3195,7 +3195,7 @@ class OpenApiController extends Controller
         $paths = &$spec['paths'];
 
         $schemas = &$spec['components']['schemas'];
-        if (!is_array($schemas ?? null)) {
+        if (! is_array($schemas ?? null)) {
             $spec['components']['schemas'] = [];
             $schemas = &$spec['components']['schemas'];
         }
@@ -3229,11 +3229,11 @@ class OpenApiController extends Controller
         // 1) Always include every registered `api/reports/*` route as a generic OpenAPI path.
         foreach ($router->getRoutes() as $route) {
             $uri = (string) $route->uri();
-            if (!str_starts_with($uri, 'api/reports/')) {
+            if (! str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
 
-            $path = '/' . $uri;
+            $path = '/'.$uri;
             $paths[$path] ??= [];
 
             $actionMethod = method_exists($route, 'getActionMethod') ? (string) $route->getActionMethod() : '';
@@ -3304,7 +3304,7 @@ class OpenApiController extends Controller
         $bases = [];
         foreach ($router->getRoutes() as $route) {
             $uri = (string) $route->uri();
-            if (!str_starts_with($uri, 'api/reports/')) {
+            if (! str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
 
@@ -3313,7 +3313,7 @@ class OpenApiController extends Controller
                 continue;
             }
 
-            $path = '/' . $uri;
+            $path = '/'.$uri;
             if (preg_match('#/(preview|download)$#', $path) === 1) {
                 continue;
             }
@@ -3355,7 +3355,7 @@ class OpenApiController extends Controller
             ];
 
             // PDF
-            $pdfPath = $base . '/pdf';
+            $pdfPath = $base.'/pdf';
             $paths[$pdfPath] ??= [];
             $paths[$pdfPath]['get'] ??= $paths[$pdfPath]['get'] ?? [
                 'summary' => 'Download PDF laporan',
@@ -3376,7 +3376,7 @@ class OpenApiController extends Controller
             $paths[$pdfPath]['post'] ??= $paths[$pdfPath]['get'];
 
             // Health
-            $healthPath = $base . '/health';
+            $healthPath = $base.'/health';
             $paths[$healthPath] ??= [
                 'post' => [
                     'summary' => 'Health check struktur output SP',
@@ -3410,4 +3410,3 @@ class OpenApiController extends Controller
         }
     }
 }
-

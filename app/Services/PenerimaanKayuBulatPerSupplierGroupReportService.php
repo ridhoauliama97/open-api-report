@@ -36,7 +36,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
             $supplier = $this->resolveSupplierName($row, $columns);
             $truckValue = $this->toFloat($columns['truck'] !== null ? ($row[$columns['truck']] ?? null) : null) ?? 0.0;
 
-            if (!isset($supplierMap[$supplier])) {
+            if (! isset($supplierMap[$supplier])) {
                 $supplierMap[$supplier] = [
                     'supplier' => $supplier,
                     'trucks' => 0.0,
@@ -63,6 +63,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
                 }
 
                 $supplierMap[$supplier]['total_ton'] += $rowTotalTon;
+
                 continue;
             }
 
@@ -73,6 +74,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
                 $supplierMap[$supplier]['groups'][$groupName] = ($supplierMap[$supplier]['groups'][$groupName] ?? 0.0) + $tonValue;
                 $groupTotals[$groupName] = ($groupTotals[$groupName] ?? 0.0) + $tonValue;
                 $supplierMap[$supplier]['total_ton'] += $tonValue;
+
                 continue;
             }
 
@@ -165,7 +167,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}
      */
     private function resolveColumns(array $rows): array
@@ -203,8 +205,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      * @return array<int, string>
      */
     private function resolveTonFallbackColumns(array $rows, array $columns): array
@@ -247,6 +249,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
 
             if (str_contains($normalized, 'ton') || str_contains($normalized, 'berat') || str_contains($normalized, 'total')) {
                 $prioritized[] = $key;
+
                 continue;
             }
 
@@ -257,8 +260,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      * @return array<int, string>
      */
     private function resolvePivotGroupColumns(array $rows, array $columns): array
@@ -319,8 +322,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array<int, string> $groupColumns
+     * @param  array<string, mixed>  $row
+     * @param  array<int, string>  $groupColumns
      * @return array<string, float>
      */
     private function resolvePivotGroupsFromRow(array $row, array $groupColumns): array
@@ -341,8 +344,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $candidates
      */
     private function findMatchingKey(array $keys, array $candidates): ?string
     {
@@ -373,8 +376,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<string, mixed>  $row
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      */
     private function resolveSupplierName(array $row, array $columns): string
     {
@@ -384,8 +387,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<string, mixed>  $row
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      */
     private function resolveGroupName(array $row, array $columns): string
     {
@@ -395,8 +398,8 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<string, mixed>  $row
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      */
     private function resolveTonValue(array $row, array $columns, array $fallbackTonColumns): float
     {
@@ -426,7 +429,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -469,7 +472,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -487,7 +490,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
         $syntax = (string) config('reports.penerimaan_kayu_bulat_per_supplier_group.call_syntax', 'exec');
         $customQuery = config('reports.penerimaan_kayu_bulat_per_supplier_group.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan penerimaan kayu bulat per supplier group belum dikonfigurasi.');
         }
 
@@ -498,7 +501,7 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan penerimaan kayu bulat per supplier group dikonfigurasi untuk SQL Server. '
-                . 'Set PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -507,13 +510,13 @@ class PenerimaanKayuBulatPerSupplierGroupReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_GROUP_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

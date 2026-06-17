@@ -42,7 +42,7 @@ class MutasiCCAkhirReportService
         $hasSubProcedure = trim($subProcedure) !== '';
         $hasSubQuery = is_string($subQuery) && trim($subQuery) !== '';
 
-        if (!$hasSubProcedure && !$hasSubQuery) {
+        if (! $hasSubProcedure && ! $hasSubQuery) {
             return [];
         }
 
@@ -58,13 +58,13 @@ class MutasiCCAkhirReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             $expectedColumns,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
         if ($missingColumns !== []) {
             throw new RuntimeException(
                 'Output sub report CC Akhir tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 
@@ -94,16 +94,16 @@ class MutasiCCAkhirReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -129,7 +129,7 @@ class MutasiCCAkhirReportService
             : 'reports.mutasi_cca_akhir.query'
         );
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(
                 $isSubProcedure
                 ? 'Stored procedure sub laporan mutasi CC Akhir belum dikonfigurasi.'
@@ -144,7 +144,7 @@ class MutasiCCAkhirReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan mutasi CC Akhir dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_CCA_AKHIR_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_CCA_AKHIR_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -153,14 +153,14 @@ class MutasiCCAkhirReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MUTASI_CCA_AKHIR_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MUTASI_CCA_AKHIR_REPORT_CALL_SYNTAX=query '
-                    . 'atau MUTASI_CCA_AKHIR_SUB_REPORT_QUERY untuk sub report.',
+                    .'Isi query manual jika menggunakan MUTASI_CCA_AKHIR_REPORT_CALL_SYNTAX=query '
+                    .'atau MUTASI_CCA_AKHIR_SUB_REPORT_QUERY untuk sub report.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

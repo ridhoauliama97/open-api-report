@@ -71,7 +71,7 @@ class ProduksiSemuaMesinReportService
             $dayLabel = Carbon::parse($dateValue)->format('d');
             $dailyLabels[$dayLabel] = true;
 
-            if (!isset($machineMap[$machineName])) {
+            if (! isset($machineMap[$machineName])) {
                 $machineMap[$machineName] = [
                     'name' => $machineName,
                     'label' => self::MACHINE_LABELS[$machineName] ?? $machineName,
@@ -103,7 +103,7 @@ class ProduksiSemuaMesinReportService
         }
 
         foreach ($machineMap as $machineName => $machine) {
-            if (!in_array($machineName, self::MACHINE_ORDER, true)) {
+            if (! in_array($machineName, self::MACHINE_ORDER, true)) {
                 $orderedMachines[] = $machine;
             }
         }
@@ -154,7 +154,7 @@ class ProduksiSemuaMesinReportService
 
         return [
             'columns' => array_map(
-                static fn(array $machine): array => [
+                static fn (array $machine): array => [
                     'key' => $machine['name'],
                     'label' => $machine['label'],
                 ],
@@ -201,14 +201,14 @@ class ProduksiSemuaMesinReportService
         $connectionName = config('reports.produksi_semua_mesin.database_connection');
         $procedure = (string) config('reports.produksi_semua_mesin.stored_procedure', 'SPWps_LapProduksiSemuaMesin');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)
             ->select("EXEC {$procedure} ?, ?", [$startDate, $endDate]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function nullableFloat(mixed $value): ?float

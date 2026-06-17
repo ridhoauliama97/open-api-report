@@ -56,7 +56,7 @@ class LossTimeReportService
         $period = self::resolvePeriod($rawRows, $filters);
         $type = self::resolveType($filters);
         $filteredRows = self::filterRows($rawRows, $period, $type);
-        $mappedRows = array_values(array_map(static fn(array $row): array => self::mapRow($row), $filteredRows));
+        $mappedRows = array_values(array_map(static fn (array $row): array => self::mapRow($row), $filteredRows));
         $groupedRows = self::groupRows($mappedRows);
         $grandSummary = self::summary($mappedRows);
 
@@ -74,7 +74,7 @@ class LossTimeReportService
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
         ];
     }
@@ -89,7 +89,7 @@ class LossTimeReportService
         }
 
         $reader = new XMLReader;
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("XML Loss Time tidak valid: {$sourceLabel}");
         }
 
@@ -100,7 +100,7 @@ class LossTimeReportService
             }
 
             $recordXml = $reader->readOuterXML();
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -111,7 +111,7 @@ class LossTimeReportService
 
             $row = json_decode(json_encode($node), true) ?: [];
             $rows[] = array_map(
-                static fn(mixed $value): string => is_array($value) ? '' : trim((string) $value),
+                static fn (mixed $value): string => is_array($value) ? '' : trim((string) $value),
                 $row
             );
         }
@@ -149,7 +149,7 @@ class LossTimeReportService
         }
 
         $dates = array_values(array_filter(array_map(
-            static fn(array $row): ?Carbon => self::parseDate((string) ($row['Date'] ?? '')),
+            static fn (array $row): ?Carbon => self::parseDate((string) ($row['Date'] ?? '')),
             $rows
         )));
 
@@ -159,7 +159,7 @@ class LossTimeReportService
             return ['start' => $now->copy()->startOfDay(), 'end' => $now->copy()->endOfMonth()->endOfDay()];
         }
 
-        usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
+        usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
 
         return [
             'start' => $dates[0]->copy()->startOfMonth()->startOfDay(),
@@ -186,7 +186,7 @@ class LossTimeReportService
     {
         return array_values(array_filter($rows, static function (array $row) use ($period, $type): bool {
             $date = self::parseDate((string) ($row['Date'] ?? ''));
-            if ($date === null || !$date->betweenIncluded($period['start'], $period['end'])) {
+            if ($date === null || ! $date->betweenIncluded($period['start'], $period['end'])) {
                 return false;
             }
 
@@ -335,7 +335,7 @@ class LossTimeReportService
             }
         }
 
-        $normalizedAliases = array_map(static fn(string $alias): string => self::normalizeKey($alias), $aliases);
+        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
         foreach ($filters as $key => $value) {
             if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
                 $value = trim((string) $value);

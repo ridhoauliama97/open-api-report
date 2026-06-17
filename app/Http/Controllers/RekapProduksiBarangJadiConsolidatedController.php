@@ -27,6 +27,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthenticated.'], 401);
             }
+
             return back()->withInput()->withErrors(['auth' => 'Silakan login terlebih dahulu untuk mencetak laporan.']);
         }
 
@@ -39,6 +40,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
             }
+
             return back()->withInput()->withErrors(['report' => $exception->getMessage()]);
         }
 
@@ -147,7 +149,8 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
         foreach ($groups as $namaMesin => $machineRows) {
             $result[] = ['nama_mesin' => $namaMesin, 'rows' => $machineRows, 'totals' => $this->computeTotals($machineRows), 'hk' => count($machineRows)];
         }
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+
         return $result;
     }
 

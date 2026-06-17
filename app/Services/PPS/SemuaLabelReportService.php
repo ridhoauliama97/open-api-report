@@ -11,7 +11,7 @@ class SemuaLabelReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     public function healthCheck(string $startDate, string $endDate): array
@@ -46,7 +46,7 @@ class SemuaLabelReportService
         $parameterCount = max(0, (int) config("{$configPath}.parameter_count", 1));
         $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan PPS Semua Label belum dikonfigurasi.');
         }
 
@@ -57,7 +57,7 @@ class SemuaLabelReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan PPS Semua Label dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_SEMUA_LABEL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_SEMUA_LABEL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -66,13 +66,13 @@ class SemuaLabelReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_SEMUA_LABEL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_SEMUA_LABEL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_SEMUA_LABEL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -99,7 +99,7 @@ class SemuaLabelReportService
         }
 
         if ($syntax === 'exec' || $driver === 'sqlsrv') {
-            $placeholders = $bindingCount > 0 ? ' ' . implode(', ', array_fill(0, $bindingCount, '?')) : '';
+            $placeholders = $bindingCount > 0 ? ' '.implode(', ', array_fill(0, $bindingCount, '?')) : '';
 
             return "SET NOCOUNT ON; EXEC {$procedure}{$placeholders}";
         }

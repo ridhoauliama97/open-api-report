@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
 class ShowDashboardSawnTimberRequest extends BaseReportRequest
@@ -29,7 +28,7 @@ class ShowDashboardSawnTimberRequest extends BaseReportRequest
             $startDate = $this->input('start_date');
             $endDate = $this->input('end_date');
 
-            if (!$startDate || !$endDate) {
+            if (! $startDate || ! $endDate) {
                 return;
             }
 
@@ -39,5 +38,3 @@ class ShowDashboardSawnTimberRequest extends BaseReportRequest
         });
     }
 }
-
-

@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
-
 class GenerateBahanTerpakaiReportRequest extends BaseReportRequest
 {
     /**
@@ -28,5 +26,3 @@ class GenerateBahanTerpakaiReportRequest extends BaseReportRequest
         ];
     }
 }
-
-

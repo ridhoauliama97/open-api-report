@@ -30,7 +30,7 @@ class DiscrepancyRekapMutasiReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate, $usingMode);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -79,7 +79,7 @@ class DiscrepancyRekapMutasiReportService
 
         $summary = [
             'section_count' => count($sections),
-            'total_rows' => array_sum(array_map(static fn(array $rows): int => count($rows), $rawSections)),
+            'total_rows' => array_sum(array_map(static fn (array $rows): int => count($rows), $rawSections)),
             'display_columns' => self::DISPLAY_COLUMNS,
         ];
 
@@ -114,7 +114,7 @@ class DiscrepancyRekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, bool>
      */
     private function detectNumericColumns(array $rows): array
@@ -125,7 +125,7 @@ class DiscrepancyRekapMutasiReportService
         foreach ($columns as $column) {
             $result[$column] = false;
             foreach ($rows as $row) {
-                if (!array_key_exists($column, $row)) {
+                if (! array_key_exists($column, $row)) {
                     continue;
                 }
 
@@ -140,8 +140,8 @@ class DiscrepancyRekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<string, bool> $numericColumns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<string, bool>  $numericColumns
      * @return array<string, float>
      */
     private function computeTotals(array $rows, array $numericColumns): array
@@ -167,8 +167,8 @@ class DiscrepancyRekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $stockNonSpkRows
-     * @param array<string, mixed>|null $stockBerSpkRow
+     * @param  array<int, array<string, mixed>>  $stockNonSpkRows
+     * @param  array<string, mixed>|null  $stockBerSpkRow
      * @return array<int, array<string, mixed>>
      */
     private function buildStockTotalData(array $stockNonSpkRows, ?array $stockBerSpkRow, array $statsSourceRows): array
@@ -207,7 +207,7 @@ class DiscrepancyRekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildStatRows(array $rows): array
@@ -223,12 +223,13 @@ class DiscrepancyRekapMutasiReportService
 
             foreach (array_keys(self::DISPLAY_COLUMNS) as $source) {
                 $values = array_values(array_filter(
-                    array_map(fn(array $row): ?float => $this->toFloat($row[$source] ?? null), $rows),
-                    static fn(?float $value): bool => $value !== null
+                    array_map(fn (array $row): ?float => $this->toFloat($row[$source] ?? null), $rows),
+                    static fn (?float $value): bool => $value !== null
                 ));
 
                 if ($values === []) {
                     $metrics[$source] = null;
+
                     continue;
                 }
 
@@ -249,7 +250,7 @@ class DiscrepancyRekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function transformTimelineRows(array $rows): array
@@ -273,7 +274,7 @@ class DiscrepancyRekapMutasiReportService
     }
 
     /**
-     * @param array<string, mixed>|null $row
+     * @param  array<string, mixed>|null  $row
      * @return array<string, mixed>|null
      */
     private function transformSingleRow(?array $row): ?array
@@ -302,7 +303,7 @@ class DiscrepancyRekapMutasiReportService
         $syntax = (string) config('reports.discrepancy_rekap_mutasi.call_syntax', 'exec');
         $customQuery = config('reports.discrepancy_rekap_mutasi.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan discrepancy rekap mutasi belum dikonfigurasi.');
         }
 
@@ -312,7 +313,7 @@ class DiscrepancyRekapMutasiReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan discrepancy rekap mutasi dikonfigurasi untuk SQL Server. '
-                . 'Set DISCREPANCY_REKAP_MUTASI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DISCREPANCY_REKAP_MUTASI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -323,13 +324,13 @@ class DiscrepancyRekapMutasiReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'DISCREPANCY_REKAP_MUTASI_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan DISCREPANCY_REKAP_MUTASI_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan DISCREPANCY_REKAP_MUTASI_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -348,7 +349,7 @@ class DiscrepancyRekapMutasiReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

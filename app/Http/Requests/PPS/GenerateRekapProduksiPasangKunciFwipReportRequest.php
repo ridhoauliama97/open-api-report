@@ -41,4 +41,3 @@ class GenerateRekapProduksiPasangKunciFwipReportRequest extends BaseReportReques
         return $date !== '' ? $date : Carbon::today()->format('Y-m-d');
     }
 }
-

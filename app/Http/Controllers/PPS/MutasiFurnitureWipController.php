@@ -73,6 +73,7 @@ class MutasiFurnitureWipController extends Controller
 
         $filename = sprintf('Laporan-Mutasi-Furniture-WIP-PPS-%s-sd-%s.pdf', $startDate, $endDate);
         $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),

@@ -16,7 +16,7 @@ class ProduksiPerSpkReportService
     {
         $rows = $this->runProcedureQuery($noSpk);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -46,9 +46,9 @@ class ProduksiPerSpkReportService
             'summary' => [
                 'dimension_rows' => count($dimensions),
                 'alive_categories' => count($aliveLabels),
-                'alive_rows' => array_sum(array_map(static fn(array $item): int => count($item['rows'] ?? []), $aliveLabels)),
+                'alive_rows' => array_sum(array_map(static fn (array $item): int => count($item['rows'] ?? []), $aliveLabels)),
                 'miss_categories' => count($missLabels),
-                'miss_rows' => array_sum(array_map(static fn(array $item): int => count($item['rows'] ?? []), $missLabels)),
+                'miss_rows' => array_sum(array_map(static fn (array $item): int => count($item['rows'] ?? []), $missLabels)),
             ],
         ];
     }
@@ -132,7 +132,7 @@ class ProduksiPerSpkReportService
             ->orderBy('Tebal')
             ->orderBy('Lebar')
             ->get()
-            ->map(static fn(object $row): array => [
+            ->map(static fn (object $row): array => [
                 'Jenis' => (string) ($row->Jenis ?? '-'),
                 'Tebal' => isset($row->Tebal) ? (float) $row->Tebal : null,
                 'Lebar' => isset($row->Lebar) ? (float) $row->Lebar : null,
@@ -144,7 +144,7 @@ class ProduksiPerSpkReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRendemenRows(array $rows): array
@@ -180,7 +180,7 @@ class ProduksiPerSpkReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function groupLabelRows(array $rows): array
@@ -190,7 +190,7 @@ class ProduksiPerSpkReportService
         foreach ($rows as $row) {
             $category = (string) ($row['Kategori'] ?? 'LAINNYA');
 
-            if (!isset($grouped[$category])) {
+            if (! isset($grouped[$category])) {
                 $grouped[$category] = [
                     'name' => $category,
                     'rows' => [],
@@ -204,7 +204,7 @@ class ProduksiPerSpkReportService
 
         $result = [];
         foreach (self::GROUP_ORDER as $category) {
-            if (!isset($grouped[$category])) {
+            if (! isset($grouped[$category])) {
                 continue;
             }
 
@@ -272,8 +272,8 @@ class ProduksiPerSpkReportService
             bool $usesUnits = true
         ) use ($condition): string {
             $formula = $usesUnits
-                ? "ROUND(d.Tebal * d.Lebar * d.Panjang * d.JmlhBatang / 1000000000 * CASE WHEN h.IdUOMTblLebar = 3 THEN 645.16 ELSE 1 END * CASE WHEN h.IdUOMPanjang = 4 THEN 304.8 ELSE 1 END, 4, 1)"
-                : "ROUND(d.Tebal * d.Lebar * d.Panjang * d.JmlhBatang / 1000000000, 4, 1)";
+                ? 'ROUND(d.Tebal * d.Lebar * d.Panjang * d.JmlhBatang / 1000000000 * CASE WHEN h.IdUOMTblLebar = 3 THEN 645.16 ELSE 1 END * CASE WHEN h.IdUOMPanjang = 4 THEN 304.8 ELSE 1 END, 4, 1)'
+                : 'ROUND(d.Tebal * d.Lebar * d.Panjang * d.JmlhBatang / 1000000000, 4, 1)';
 
             return "
                 SELECT
@@ -300,7 +300,7 @@ class ProduksiPerSpkReportService
             $build('CCA', 'CCAkhir_h', 'NoCCAkhir', 'CCAkhir_d', 'NoCCAkhir'),
             $build('SAND', 'Sanding_h', 'NoSanding', 'Sanding_d', 'NoSanding'),
             $build('PACK', 'BarangJadi_h', 'NoBJ', 'BarangJadi_d', 'NoBJ', false),
-        ]) . "\nORDER BY Kategori, Jenis, NoLabel, Tebal, Lebar, Panjang";
+        ])."\nORDER BY Kategori, Jenis, NoLabel, Tebal, Lebar, Panjang";
     }
 
     /**
@@ -313,7 +313,7 @@ class ProduksiPerSpkReportService
         $syntax = (string) config('reports.produksi_per_spk.call_syntax', 'exec');
         $customQuery = config('reports.produksi_per_spk.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan produksi per SPK belum dikonfigurasi.');
         }
 
@@ -323,7 +323,7 @@ class ProduksiPerSpkReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan produksi per SPK dikonfigurasi untuk SQL Server. '
-                . 'Set PRODUKSI_PER_SPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PRODUKSI_PER_SPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -332,13 +332,13 @@ class ProduksiPerSpkReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PRODUKSI_PER_SPK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PRODUKSI_PER_SPK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PRODUKSI_PER_SPK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, [$noSpk]);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -357,7 +357,7 @@ class ProduksiPerSpkReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

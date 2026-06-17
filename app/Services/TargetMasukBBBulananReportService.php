@@ -37,11 +37,11 @@ class TargetMasukBBBulananReportService
             }
 
             $monthKey = $this->resolveMonthKey($row);
-            if ($monthKey === null || !isset($monthIndexByKey[$monthKey])) {
+            if ($monthKey === null || ! isset($monthIndexByKey[$monthKey])) {
                 continue;
             }
 
-            if (!isset($groups[$group])) {
+            if (! isset($groups[$group])) {
                 $groups[$group] = [
                     'jenis' => $group,
                     'monthly_targets' => array_fill(0, count($monthColumns), 0.0),
@@ -154,7 +154,7 @@ class TargetMasukBBBulananReportService
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     private function resolveMonthKey(array $row): ?string
     {
@@ -169,7 +169,7 @@ class TargetMasukBBBulananReportService
 
         $bulanTahun = trim((string) ($row['BulanTahun'] ?? ''));
         if ($bulanTahun !== '') {
-            $timestamp = strtotime('01-' . $bulanTahun);
+            $timestamp = strtotime('01-'.$bulanTahun);
             if ($timestamp !== false) {
                 return date('Y-m', $timestamp);
             }
@@ -184,7 +184,7 @@ class TargetMasukBBBulananReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -213,7 +213,7 @@ class TargetMasukBBBulananReportService
     }
 
     /**
-     * @param array<int, mixed> $bindings
+     * @param  array<int, mixed>  $bindings
      * @return array<int, mixed>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -233,7 +233,7 @@ class TargetMasukBBBulananReportService
         $parameterCount = (int) config('reports.target_masuk_bb_bulanan.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan target masuk bahan baku bulanan belum dikonfigurasi.');
         }
 
@@ -243,7 +243,7 @@ class TargetMasukBBBulananReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan target masuk bahan baku bulanan dikonfigurasi untuk SQL Server. '
-                . 'Set TARGET_MASUK_BB_BULANAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TARGET_MASUK_BB_BULANAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -255,13 +255,13 @@ class TargetMasukBBBulananReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'TARGET_MASUK_BB_BULANAN_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan TARGET_MASUK_BB_BULANAN_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan TARGET_MASUK_BB_BULANAN_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

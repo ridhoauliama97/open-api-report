@@ -43,8 +43,7 @@ class KaryawanPerLevelReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -80,15 +79,15 @@ class KaryawanPerLevelReportService
     {
         $rawRows = array_values(array_filter(
             $reportData['rows'] ?? [],
-            static fn(array $row): bool => self::shouldIncludeRow($row)
+            static fn (array $row): bool => self::shouldIncludeRow($row)
         ));
         $printedBy = self::resolvePrintedBy($rawRows);
         $rows = array_map(
-            static fn(array $row): array => self::shapeRow($row),
+            static fn (array $row): array => self::shapeRow($row),
             $rawRows
         );
 
-        usort($rows, static fn(array $left, array $right): int => [
+        usort($rows, static fn (array $left, array $right): int => [
             self::levelSortValue((string) ($left['Level'] ?? '')),
             (string) ($left['Tanggal Masuk Sort'] ?? ''),
             (string) ($left['Nama'] ?? ''),
@@ -115,7 +114,7 @@ class KaryawanPerLevelReportService
             'source_file' => $sourceLabel,
             'printed_by' => $printedBy,
             'headers' => $headers,
-            'rows' => array_map(static fn(array $row): array => self::publicRow($row), $rows),
+            'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rows),
             'grouped_rows' => $groupedRows,
             'grand_summary' => $grandSummary,
             'total_rows' => count($rows),
@@ -130,7 +129,7 @@ class KaryawanPerLevelReportService
         $employeeCode = trim((string) ($row['Kode Karyawan'] ?? ''));
 
         return strcasecmp(trim((string) ($row['Status Aktif'] ?? '')), 'Active') === 0
-            && !str_starts_with(strtoupper($employeeCode), 'SPECIAL');
+            && ! str_starts_with(strtoupper($employeeCode), 'SPECIAL');
     }
 
     /**
@@ -166,13 +165,13 @@ class KaryawanPerLevelReportService
             $levelRows[$level][] = $row;
         }
 
-        uksort($levelRows, static fn(string $left, string $right): int => self::levelSortValue($left) <=> self::levelSortValue($right));
+        uksort($levelRows, static fn (string $left, string $right): int => self::levelSortValue($left) <=> self::levelSortValue($right));
 
         $groupedRows = [];
         foreach ($levelRows as $level => $rowsInLevel) {
             $groupedRows[] = [
-                'label' => 'Level : ' . trim((string) $level),
-                'rows' => array_map(static fn(array $row): array => self::publicRow($row), $rowsInLevel),
+                'label' => 'Level : '.trim((string) $level),
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rowsInLevel),
                 'summary' => self::buildSummary($rowsInLevel),
             ];
         }
@@ -209,7 +208,7 @@ class KaryawanPerLevelReportService
                 continue;
             }
 
-            if (!array_key_exists($value, $counts)) {
+            if (! array_key_exists($value, $counts)) {
                 $counts[$value] = 0;
                 $defaultLabels[$value] = $value;
             }
@@ -296,7 +295,7 @@ class KaryawanPerLevelReportService
         }
 
         if (preg_match('/(\d+)/', $level, $matches) === 1) {
-            return 'Level ' . ((int) $matches[1]);
+            return 'Level '.((int) $matches[1]);
         }
 
         return $level;

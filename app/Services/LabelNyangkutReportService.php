@@ -40,12 +40,12 @@ class LabelNyangkutReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -58,7 +58,7 @@ class LabelNyangkutReportService
         $syntax = (string) config('reports.label_nyangkut.call_syntax', 'exec');
         $customQuery = config('reports.label_nyangkut.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan label nyangkut belum dikonfigurasi.');
         }
 
@@ -68,7 +68,7 @@ class LabelNyangkutReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan label nyangkut dikonfigurasi untuk SQL Server. '
-                . 'Set LABEL_NYANGKUT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set LABEL_NYANGKUT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -77,13 +77,13 @@ class LabelNyangkutReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'LABEL_NYANGKUT_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan LABEL_NYANGKUT_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan LABEL_NYANGKUT_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

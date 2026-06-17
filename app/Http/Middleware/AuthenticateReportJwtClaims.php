@@ -4,11 +4,12 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\GenericUser;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response;
 use Laravel\Sanctum\PersonalAccessToken;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateReportJwtClaims
 {
@@ -33,13 +34,13 @@ class AuthenticateReportJwtClaims
 
             [$user, $tokenClaims] = $sanctum;
 
-            $request->setUserResolver(static fn() => $user);
+            $request->setUserResolver(static fn () => $user);
             $request->attributes->set('report_token_claims', $tokenClaims);
 
             return $next($request);
         }
 
-        if (!$this->isSignatureValid($decoded)) {
+        if (! $this->isSignatureValid($decoded)) {
             return $this->unauthenticated($request, 'invalid_signature', 'Signature token tidak valid.', $token, $decoded);
         }
 
@@ -47,16 +48,16 @@ class AuthenticateReportJwtClaims
             return $this->unauthenticated($request, 'expired_token', 'Token sudah kedaluwarsa.', $token, $decoded);
         }
 
-        if (!$this->isTokenActive($decoded)) {
+        if (! $this->isTokenActive($decoded)) {
             return $this->unauthenticated($request, 'inactive_token', 'Token belum aktif.', $token, $decoded);
         }
 
-        if (!$this->isIssuerAudienceCompatible($decoded)) {
+        if (! $this->isIssuerAudienceCompatible($decoded)) {
             return $this->unauthenticated($request, 'issuer_audience_rejected', 'Token issuer/audience tidak diizinkan.', $token, $decoded);
         }
 
         $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
-        if ($requiredScope !== '' && !$this->hasRequiredScope($decoded, $requiredScope)) {
+        if ($requiredScope !== '' && ! $this->hasRequiredScope($decoded, $requiredScope)) {
             return $this->unauthenticated($request, 'missing_scope', 'Token tidak memiliki scope untuk generate report.', $token, $decoded);
         }
 
@@ -83,7 +84,7 @@ class AuthenticateReportJwtClaims
             'Username' => $username !== '' ? $username : $name,
         ]);
 
-        $request->setUserResolver(static fn() => $user);
+        $request->setUserResolver(static fn () => $user);
         $request->attributes->set('report_token_claims', [
             ...$claims,
             'sub' => $subject !== '' ? $subject : (string) $user->getAuthIdentifier(),
@@ -98,7 +99,7 @@ class AuthenticateReportJwtClaims
     /**
      * Try resolving a Sanctum personal access token into a user and synthetic claims.
      *
-     * @return array{0: \Illuminate\Contracts\Auth\Authenticatable, 1: array<string, mixed>}|null
+     * @return array{0: Authenticatable, 1: array<string, mixed>}|null
      */
     private function resolveSanctumUser(string $token): ?array
     {
@@ -108,7 +109,7 @@ class AuthenticateReportJwtClaims
         }
 
         $accessToken = PersonalAccessToken::findToken($token);
-        if (!$accessToken) {
+        if (! $accessToken) {
             return null;
         }
 
@@ -117,7 +118,7 @@ class AuthenticateReportJwtClaims
         }
 
         $requiredScope = trim((string) config('reports.report_auth.required_scope', ''));
-        if ($requiredScope !== '' && !$this->sanctumHasScope($accessToken, $requiredScope)) {
+        if ($requiredScope !== '' && ! $this->sanctumHasScope($accessToken, $requiredScope)) {
             return null;
         }
 
@@ -177,7 +178,7 @@ class AuthenticateReportJwtClaims
         $header = json_decode($headerJson, true);
         $payload = json_decode($payloadJson, true);
 
-        if (!is_array($header) || !is_array($payload)) {
+        if (! is_array($header) || ! is_array($payload)) {
             return null;
         }
 
@@ -185,12 +186,12 @@ class AuthenticateReportJwtClaims
             'header' => $header,
             'payload' => $payload,
             'signature' => $signature,
-            'signing_input' => $encodedHeader . '.' . $encodedPayload,
+            'signing_input' => $encodedHeader.'.'.$encodedPayload,
         ];
     }
 
     /**
-     * @param array{header: array<string, mixed>, payload: array<string, mixed>, signature: string, signing_input: string} $decoded
+     * @param  array{header: array<string, mixed>, payload: array<string, mixed>, signature: string, signing_input: string}  $decoded
      */
     private function isSignatureValid(array $decoded): bool
     {
@@ -202,10 +203,10 @@ class AuthenticateReportJwtClaims
         $algorithm = strtoupper((string) ($header['alg'] ?? ''));
         $allowedAlgorithms = config('reports.report_auth.jwt_allowed_algs', ['HS256']);
         $allowedAlgorithms = is_array($allowedAlgorithms)
-            ? array_values(array_filter(array_map(static fn($alg): string => strtoupper((string) $alg), $allowedAlgorithms)))
+            ? array_values(array_filter(array_map(static fn ($alg): string => strtoupper((string) $alg), $allowedAlgorithms)))
             : ['HS256'];
 
-        if (!in_array($algorithm, $allowedAlgorithms, true)) {
+        if (! in_array($algorithm, $allowedAlgorithms, true)) {
             return false;
         }
 
@@ -246,7 +247,7 @@ class AuthenticateReportJwtClaims
     private function resolveCandidateSecrets(): array
     {
         $secrets = config('reports.report_auth.jwt_secrets', []);
-        if (!is_array($secrets)) {
+        if (! is_array($secrets)) {
             $secrets = [];
         }
 
@@ -278,7 +279,7 @@ class AuthenticateReportJwtClaims
             }
 
             foreach ($base64Candidates as $base64Secret) {
-                if (!str_starts_with($base64Secret, 'base64:')) {
+                if (! str_starts_with($base64Secret, 'base64:')) {
                     continue;
                 }
                 $raw = base64_decode(substr($base64Secret, 7), true);
@@ -292,13 +293,13 @@ class AuthenticateReportJwtClaims
     }
 
     /**
-     * @param array{payload: array<string, mixed>} $decoded
+     * @param  array{payload: array<string, mixed>}  $decoded
      */
     private function isTokenExpired(array $decoded): bool
     {
         $claims = $decoded['payload'];
         $exp = $claims['exp'] ?? null;
-        if (!is_numeric($exp)) {
+        if (! is_numeric($exp)) {
             return true;
         }
 
@@ -309,7 +310,7 @@ class AuthenticateReportJwtClaims
     }
 
     /**
-     * @param array{payload: array<string, mixed>} $decoded
+     * @param  array{payload: array<string, mixed>}  $decoded
      */
     private function isTokenActive(array $decoded): bool
     {
@@ -329,7 +330,7 @@ class AuthenticateReportJwtClaims
     }
 
     /**
-     * @param array{payload: array<string, mixed>} $decoded
+     * @param  array{payload: array<string, mixed>}  $decoded
      */
     private function isIssuerAudienceCompatible(array $decoded): bool
     {
@@ -339,7 +340,7 @@ class AuthenticateReportJwtClaims
 
         if (is_array($issuers) && count($issuers) > 0) {
             $tokenIssuer = (string) ($claims['iss'] ?? '');
-            if ($tokenIssuer === '' || !in_array($tokenIssuer, $issuers, true)) {
+            if ($tokenIssuer === '' || ! in_array($tokenIssuer, $issuers, true)) {
                 return false;
             }
         }
@@ -347,7 +348,7 @@ class AuthenticateReportJwtClaims
         if (is_array($audiences) && count($audiences) > 0) {
             $tokenAudience = $claims['aud'] ?? null;
             $tokenAudiences = is_array($tokenAudience)
-                ? array_map(static fn($aud): string => (string) $aud, $tokenAudience)
+                ? array_map(static fn ($aud): string => (string) $aud, $tokenAudience)
                 : (is_string($tokenAudience) && $tokenAudience !== '' ? [$tokenAudience] : []);
 
             if ($tokenAudiences === [] || count(array_intersect($audiences, $tokenAudiences)) === 0) {
@@ -359,7 +360,7 @@ class AuthenticateReportJwtClaims
     }
 
     /**
-     * @param array{payload: array<string, mixed>} $decoded
+     * @param  array{payload: array<string, mixed>}  $decoded
      */
     private function hasRequiredScope(array $decoded, string $requiredScope): bool
     {
@@ -369,15 +370,15 @@ class AuthenticateReportJwtClaims
         $enforceScope = (bool) config('reports.report_auth.enforce_scope', false);
 
         if (is_array($scopeValue)) {
-            $scopes = array_map(static fn($scope): string => trim((string) $scope), $scopeValue);
+            $scopes = array_map(static fn ($scope): string => trim((string) $scope), $scopeValue);
         } else {
             $scopes = preg_split('/\s+/', trim((string) $scopeValue)) ?: [];
         }
 
-        $scopes = array_values(array_filter($scopes, static fn(string $scope): bool => $scope !== ''));
+        $scopes = array_values(array_filter($scopes, static fn (string $scope): bool => $scope !== ''));
 
         if ($scopes === []) {
-            return !$enforceScope;
+            return ! $enforceScope;
         }
 
         return in_array($requiredScope, $scopes, true);
@@ -392,7 +393,7 @@ class AuthenticateReportJwtClaims
         }
 
         $decoded = base64_decode($value, true);
-        if (!is_string($decoded)) {
+        if (! is_string($decoded)) {
             return null;
         }
 
@@ -400,7 +401,7 @@ class AuthenticateReportJwtClaims
     }
 
     /**
-     * @param array{payload?: array<string, mixed>}|null $decoded
+     * @param  array{payload?: array<string, mixed>}|null  $decoded
      */
     private function unauthenticated(
         Request $request,
@@ -408,8 +409,7 @@ class AuthenticateReportJwtClaims
         string $message,
         ?string $token = null,
         ?array $decoded = null,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $claims = is_array($decoded['payload'] ?? null) ? $decoded['payload'] : [];
 
         Log::warning('Report API authentication rejected.', [

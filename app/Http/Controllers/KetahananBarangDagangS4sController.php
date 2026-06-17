@@ -142,4 +142,3 @@ class KetahananBarangDagangS4sController extends Controller
         ]);
     }
 }
-

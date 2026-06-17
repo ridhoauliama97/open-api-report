@@ -12,8 +12,7 @@ class SalesInvoiceReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -88,10 +87,10 @@ class SalesInvoiceReportService
             $invoiceId = trim((string) ($row['Invoice ID'] ?? ''));
             $invoiceKey = $invoiceId !== '' ? $invoiceId : trim((string) ($row['No SI'] ?? ''));
             if ($invoiceKey === '') {
-                $invoiceKey = 'invoice_' . count($grouped);
+                $invoiceKey = 'invoice_'.count($grouped);
             }
 
-            if (!isset($grouped[$invoiceKey])) {
+            if (! isset($grouped[$invoiceKey])) {
                 $grouped[$invoiceKey] = self::headerFromRow($row);
             }
 
@@ -101,11 +100,11 @@ class SalesInvoiceReportService
         foreach ($grouped as &$invoice) {
             $invoice['item_count'] = count($invoice['items']);
             $invoice['total_quantity'] = array_sum(array_map(
-                static fn(array $item): float => (float) ($item['qty_raw'] ?? 0),
+                static fn (array $item): float => (float) ($item['qty_raw'] ?? 0),
                 $invoice['items']
             ));
             $invoice['subtotal'] = array_sum(array_map(
-                static fn(array $item): float => (float) ($item['line_total_raw'] ?? 0),
+                static fn (array $item): float => (float) ($item['line_total_raw'] ?? 0),
                 $invoice['items']
             ));
         }
@@ -217,9 +216,9 @@ class SalesInvoiceReportService
 
         $lines = preg_split('/\R+/', $value) ?: [];
         $lines = array_values(array_filter(array_map(
-            static fn(string $line): string => trim($line),
+            static fn (string $line): string => trim($line),
             $lines
-        ), static fn(string $line): bool => $line !== ''));
+        ), static fn (string $line): bool => $line !== ''));
 
         return [
             'name' => (string) ($lines[0] ?? ''),

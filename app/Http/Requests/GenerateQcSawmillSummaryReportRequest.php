@@ -2,6 +2,4 @@
 
 namespace App\Http\Requests;
 
-class GenerateQcSawmillSummaryReportRequest extends GenerateQcSawmillReportRequest
-{
-}
+class GenerateQcSawmillSummaryReportRequest extends GenerateQcSawmillReportRequest {}

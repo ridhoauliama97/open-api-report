@@ -148,7 +148,7 @@ class S4SHidupDetailController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{JmlhBatang:int, Kubik:float}
      */
     private function computeTotals(array $rows): array

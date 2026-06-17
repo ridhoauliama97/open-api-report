@@ -77,6 +77,7 @@ class HasilProduksiHarianSpannerProduksiReportService
 
             if ($type === 'input') {
                 $inputs[] = $item;
+
                 continue;
             }
 
@@ -160,7 +161,7 @@ class HasilProduksiHarianSpannerProduksiReportService
             throw new RuntimeException('Laporan PPS Spanner Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -175,7 +176,7 @@ class HasilProduksiHarianSpannerProduksiReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

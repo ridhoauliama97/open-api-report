@@ -14,7 +14,7 @@ class LembarTallyHasilSawmillReportService
     {
         $rows = $this->runProcedureQuery($noProduksi);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     /**
@@ -55,7 +55,7 @@ class LembarTallyHasilSawmillReportService
             throw new RuntimeException('Jumlah parameter laporan lembar tally hasil sawmill harus 1.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan lembar tally hasil sawmill belum dikonfigurasi.');
         }
 
@@ -66,7 +66,7 @@ class LembarTallyHasilSawmillReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan lembar tally hasil sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -75,13 +75,13 @@ class LembarTallyHasilSawmillReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'LEMBAR_TALLY_HASIL_SAWMILL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -94,4 +94,3 @@ class LembarTallyHasilSawmillReportService
         return $connection->select($sql, $bindings);
     }
 }
-

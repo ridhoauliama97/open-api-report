@@ -21,11 +21,11 @@ class PenerimaanKayuBulatExtKgReportService
             throw new RuntimeException('Nomor kayu bulat wajib diisi.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9._\\/-]+$/', $noKayuBulat)) {
+        if (! preg_match('/^[A-Za-z0-9._\\/-]+$/', $noKayuBulat)) {
             throw new RuntimeException('Nomor kayu bulat tidak valid.');
         }
 
-        if ($procedure === '' || !preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if ($procedure === '' || ! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Stored procedure laporan penerimaan kayu bulat ExtKG belum dikonfigurasi dengan benar.');
         }
 
@@ -66,10 +66,10 @@ class PenerimaanKayuBulatExtKgReportService
                 [$noKayuBulat],
             );
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan penerimaan kayu bulat ExtKG: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan penerimaan kayu bulat ExtKG: '.$exception->getMessage(), 0, $exception);
         }
 
-        $rows = array_map(fn(object $row): array => $this->normalizeDetailRow((array) $row), $detailRows);
+        $rows = array_map(fn (object $row): array => $this->normalizeDetailRow((array) $row), $detailRows);
 
         if ($rows === []) {
             throw new RuntimeException("Data penerimaan kayu bulat ExtKG tidak ditemukan untuk nomor {$noKayuBulat}.");
@@ -144,10 +144,10 @@ class PenerimaanKayuBulatExtKgReportService
             $supplierUtama,
             trim(implode('', array_filter([
                 $singkatanJenis,
-                $kategoriPengukuran !== '' ? '-' . $kategoriPengukuran : '',
+                $kategoriPengukuran !== '' ? '-'.$kategoriPengukuran : '',
             ]))),
             $noTruk,
-        ], static fn(string $value): bool => $value !== '');
+        ], static fn (string $value): bool => $value !== '');
 
         $supplierDisplay = implode(' ', $supplierDisplayParts);
 
@@ -189,7 +189,7 @@ class PenerimaanKayuBulatExtKgReportService
                         'no' => (int) ($row['NoUrut'] ?? 0),
                         'pcs' => $pcs,
                         'berat' => $berat,
-                    ]
+                    ],
                 ],
                 'totals' => [
                     'pcs' => $pcs,

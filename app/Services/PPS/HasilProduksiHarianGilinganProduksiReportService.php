@@ -80,6 +80,7 @@ class HasilProduksiHarianGilinganProduksiReportService
 
             if ($type === 'input') {
                 $inputs[] = $item;
+
                 continue;
             }
 
@@ -149,7 +150,7 @@ class HasilProduksiHarianGilinganProduksiReportService
 
         try {
             $rows = $connection->select(
-                "SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM GilinganProduksi_dDowntime WHERE NoProduksi = ? ORDER BY NoUrut",
+                'SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM GilinganProduksi_dDowntime WHERE NoProduksi = ? ORDER BY NoUrut',
                 [$noProduksi]
             );
         } catch (Throwable) {
@@ -215,7 +216,7 @@ class HasilProduksiHarianGilinganProduksiReportService
             throw new RuntimeException('Laporan PPS Gilingan Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -232,7 +233,7 @@ class HasilProduksiHarianGilinganProduksiReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -244,7 +245,7 @@ class HasilProduksiHarianGilinganProduksiReportService
     private function stringValue(array $row, array $keys): string
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $row)) {
+            if (! array_key_exists($key, $row)) {
                 continue;
             }
 
@@ -260,7 +261,7 @@ class HasilProduksiHarianGilinganProduksiReportService
     private function floatValue(array $row, array $keys): ?float
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $row)) {
+            if (! array_key_exists($key, $row)) {
                 continue;
             }
 
@@ -303,7 +304,7 @@ class HasilProduksiHarianGilinganProduksiReportService
 
             foreach ($aliases as $alias) {
                 foreach ($rows as $row) {
-                    if (!array_key_exists($alias, $row)) {
+                    if (! array_key_exists($alias, $row)) {
                         continue;
                     }
 

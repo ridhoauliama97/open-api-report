@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GeneratePenerimaanKayuBulatKgReportRequest;
-use App\Services\PenerimaanKayuBulatKgReportService;
 use App\Services\PdfGenerator;
+use App\Services\PenerimaanKayuBulatKgReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;

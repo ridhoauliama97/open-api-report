@@ -44,7 +44,7 @@ class KeterlambatanKehadiranBriefingHarianReportService
             $rows[] = $row;
         }
 
-        usort($rows, static fn(array $left, array $right): int => strcasecmp((string) $left['Nama'], (string) $right['Nama']));
+        usort($rows, static fn (array $left, array $right): int => strcasecmp((string) $left['Nama'], (string) $right['Nama']));
 
         return [
             'title' => self::TITLE,
@@ -60,7 +60,7 @@ class KeterlambatanKehadiranBriefingHarianReportService
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' Sampai ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' Sampai '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
         ];
     }
@@ -76,7 +76,7 @@ class KeterlambatanKehadiranBriefingHarianReportService
         }
 
         $reader = new XMLReader;
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("XML Attendance tidak valid: {$sourceLabel}");
         }
 
@@ -90,7 +90,7 @@ class KeterlambatanKehadiranBriefingHarianReportService
             }
 
             $recordXml = $reader->readOuterXML();
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -106,17 +106,17 @@ class KeterlambatanKehadiranBriefingHarianReportService
             }
 
             $dates[] = $date->copy();
-            if ($period !== null && !$date->betweenIncluded($period['start'], $period['end'])) {
+            if ($period !== null && ! $date->betweenIncluded($period['start'], $period['end'])) {
                 continue;
             }
 
             $department = trim((string) ($node->{'Department_x0020_Name'} ?? ''));
-            if ($department === 'Management' || !self::isWorkday($node, $company) || !self::isLate($node, $company)) {
+            if ($department === 'Management' || ! self::isWorkday($node, $company) || ! self::isLate($node, $company)) {
                 continue;
             }
 
-            $key = $employeeCode . '|' . trim((string) ($node->{'Full_x0020_Name'} ?? '')) . '|' . trim((string) ($node->{'Job_x0020_Title'} ?? ''));
-            if (!isset($employees[$key])) {
+            $key = $employeeCode.'|'.trim((string) ($node->{'Full_x0020_Name'} ?? '')).'|'.trim((string) ($node->{'Job_x0020_Title'} ?? ''));
+            if (! isset($employees[$key])) {
                 $employees[$key] = [
                     'code' => $employeeCode,
                     'name' => trim((string) ($node->{'Full_x0020_Name'} ?? '')),
@@ -136,7 +136,7 @@ class KeterlambatanKehadiranBriefingHarianReportService
         }
 
         if ($period === null) {
-            usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
+            usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
             $period = [
                 'start' => $dates[0]->copy()->startOfDay(),
                 'end' => $dates[count($dates) - 1]->copy()->endOfDay(),
@@ -250,7 +250,6 @@ class KeterlambatanKehadiranBriefingHarianReportService
 
         return self::jamMasukGsu($workgroup, $scheduledShift);
     }
-
 
     private static function jamMasukGsu(string $workgroup, string $scheduledShift): int
     {

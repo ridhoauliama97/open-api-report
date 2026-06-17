@@ -27,7 +27,7 @@ class WebAuthController extends Controller
             (string) $credentials['password'],
         );
 
-        if (!$user instanceof Authenticatable) {
+        if (! $user instanceof Authenticatable) {
             return back()
                 ->withInput($request->only('username'))
                 ->withErrors(['login' => 'Username atau password tidak valid.']);
@@ -65,16 +65,16 @@ class WebAuthController extends Controller
             /** @var class-string<Authenticatable> $modelClass */
             $user = $modelClass::query()->where('Username', $username)->first();
 
-            if (!$user instanceof Authenticatable) {
+            if (! $user instanceof Authenticatable) {
                 continue;
             }
 
             $provider = Auth::createUserProvider($providerName);
-            if (!$provider instanceof UserProvider) {
+            if (! $provider instanceof UserProvider) {
                 continue;
             }
 
-            if (!$provider->validateCredentials($user, ['password' => $plainPassword])) {
+            if (! $provider->validateCredentials($user, ['password' => $plainPassword])) {
                 continue;
             }
 

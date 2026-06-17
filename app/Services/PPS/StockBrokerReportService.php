@@ -11,7 +11,7 @@ class StockBrokerReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate, $warehouseName);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     public function healthCheck(string $startDate, string $endDate, string $warehouseName): array
@@ -46,7 +46,7 @@ class StockBrokerReportService
         $parameterCount = max(0, (int) config("{$configPath}.parameter_count", 2));
         $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan PPS Stock Broker belum dikonfigurasi.');
         }
 
@@ -57,7 +57,7 @@ class StockBrokerReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan PPS Stock Broker dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_STOCK_BROKER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_STOCK_BROKER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -66,13 +66,13 @@ class StockBrokerReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_STOCK_BROKER_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_STOCK_BROKER_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_STOCK_BROKER_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

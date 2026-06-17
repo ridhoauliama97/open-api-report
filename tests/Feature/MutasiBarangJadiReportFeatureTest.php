@@ -298,7 +298,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
         ])->get('/api/reports/mutasi-barang-jadi/pdf?TglAwal=2026-01-01&TglAkhir=2026-01-31')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
@@ -352,7 +352,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user, ['scope' => 'profile:read']);
 
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',
         ])->postJson('/api/reports/mutasi-barang-jadi', [
             'TglAwal' => '2026-01-01',
@@ -372,7 +372,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user);
 
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',
         ])->postJson('/api/reports/mutasi-barang-jadi', [
             'TglAwal' => '2026-01-01',
@@ -392,7 +392,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user);
 
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',
         ])->postJson('/api/reports/mutasi-barang-jadi', [
             'TglAwal' => '2026-01-01',
@@ -409,7 +409,7 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
             'Accept' => 'application/json',
         ];
     }
@@ -422,7 +422,3 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
         return $this->issueJwtForUser($user);
     }
 }
-
-
-
-

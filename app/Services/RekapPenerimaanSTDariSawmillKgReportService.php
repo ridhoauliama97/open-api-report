@@ -15,7 +15,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -67,7 +67,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
 
             $dateKey = $dateKey !== '' ? $dateKey : 'Tanpa Tanggal';
 
-            if (!isset($byDate[$dateKey])) {
+            if (! isset($byDate[$dateKey])) {
                 $byDate[$dateKey] = [
                     'date_key' => $dateKey,
                     'date_label' => $this->formatDateLabel($dateKey),
@@ -76,7 +76,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
             }
 
             $receiptKey = $this->resolveReceiptKey($row, $noPenColumn, $noKbColumn, $supplierColumn, $noTrukColumn);
-            if (!isset($byDate[$dateKey]['receipts'][$receiptKey])) {
+            if (! isset($byDate[$dateKey]['receipts'][$receiptKey])) {
                 $byDate[$dateKey]['receipts'][$receiptKey] = [
                     'receipt_key' => $receiptKey,
                     'meta' => $this->buildReceiptMeta(
@@ -159,13 +159,13 @@ class RekapPenerimaanSTDariSawmillKgReportService
             ];
 
             // Group duplicate grades within the same receipt + kategori (SP often outputs multiple lines per grade).
-            if (!isset($lineIndexByReceipt[$dateKey])) {
+            if (! isset($lineIndexByReceipt[$dateKey])) {
                 $lineIndexByReceipt[$dateKey] = [];
             }
-            if (!isset($lineIndexByReceipt[$dateKey][$receiptKey])) {
+            if (! isset($lineIndexByReceipt[$dateKey][$receiptKey])) {
                 $lineIndexByReceipt[$dateKey][$receiptKey] = ['input' => [], 'output' => []];
             }
-            if (!isset($lineIndexByReceipt[$dateKey][$receiptKey][$kategori])) {
+            if (! isset($lineIndexByReceipt[$dateKey][$receiptKey][$kategori])) {
                 $lineIndexByReceipt[$dateKey][$receiptKey][$kategori] = [];
             }
 
@@ -190,10 +190,10 @@ class RekapPenerimaanSTDariSawmillKgReportService
             $grandKb += $kb;
             $grandSt += $st;
 
-            if (!isset($grandByGrade[$kategori])) {
+            if (! isset($grandByGrade[$kategori])) {
                 $grandByGrade[$kategori] = [];
             }
-            if (!isset($grandByGrade[$kategori][$gradeKey])) {
+            if (! isset($grandByGrade[$kategori][$gradeKey])) {
                 $grandByGrade[$kategori][$gradeKey] = [
                     'kategori' => $kategori,
                     'grade' => $grade,
@@ -239,12 +239,12 @@ class RekapPenerimaanSTDariSawmillKgReportService
         }
 
         $dateGroups = array_values($byDate);
-        usort($dateGroups, static fn(array $a, array $b): int => strcmp((string) $a['date_key'], (string) $b['date_key']));
+        usort($dateGroups, static fn (array $a, array $b): int => strcmp((string) $a['date_key'], (string) $b['date_key']));
 
         $grandInputRows = array_values($grandByGrade['input'] ?? []);
         $grandOutputRows = array_values($grandByGrade['output'] ?? []);
-        $grandKbTotal = array_sum(array_map(static fn(array $l): float => (float) ($l['kb'] ?? 0.0), $grandInputRows));
-        $grandStTotal = array_sum(array_map(static fn(array $l): float => (float) ($l['st'] ?? 0.0), $grandOutputRows));
+        $grandKbTotal = array_sum(array_map(static fn (array $l): float => (float) ($l['kb'] ?? 0.0), $grandInputRows));
+        $grandStTotal = array_sum(array_map(static fn (array $l): float => (float) ($l['st'] ?? 0.0), $grandOutputRows));
         $grandRendemen = $grandKbTotal > 0.0 ? (($grandStTotal / $grandKbTotal) * 100.0) : 0.0;
 
         foreach ($grandInputRows as $idx => $line) {
@@ -289,7 +289,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
             'summary' => [
                 'total_rows' => count($rows),
                 'total_dates' => count($dateGroups),
-                'total_receipts' => array_sum(array_map(static fn(array $g): int => count($g['receipts'] ?? []), $dateGroups)),
+                'total_receipts' => array_sum(array_map(static fn (array $g): int => count($g['receipts'] ?? []), $dateGroups)),
                 'grand_kb' => $grandKb,
                 'grand_st' => $grandSt,
                 'grand_rendemen' => $grandKb > 0.0 ? (($grandSt / $grandKb) * 100.0) : 0.0,
@@ -329,7 +329,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap penerimaan ST dari sawmill timbang KG belum dikonfigurasi.');
         }
 
@@ -346,7 +346,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap penerimaan ST dari sawmill timbang KG dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -358,7 +358,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -384,7 +384,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveDateColumn(array $columns): ?string
     {
@@ -409,7 +409,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveGradeColumn(array $columns): ?string
     {
@@ -446,7 +446,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
      * Some SP exports include two grade-like columns (e.g. NamaGrade and NamaGrade1).
      * We use this as a fallback when the primary grade column is empty.
      *
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveGradeAltColumn(array $columns): ?string
     {
@@ -471,7 +471,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveInOutColumn(array $columns): ?string
     {
@@ -496,7 +496,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolvePenerimaanDateColumn(array $columns): ?string
     {
@@ -521,7 +521,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveKategoriColumn(array $columns): ?string
     {
@@ -546,7 +546,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveKbColumn(array $columns): ?string
     {
@@ -571,7 +571,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveStColumn(array $columns): ?string
     {
@@ -596,7 +596,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolvePercentColumn(array $columns): ?string
     {
@@ -621,7 +621,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveNoPenerimaanColumn(array $columns): ?string
     {
@@ -646,7 +646,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveNoKbColumn(array $columns): ?string
     {
@@ -671,7 +671,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveDateCreateColumn(array $columns): ?string
     {
@@ -685,7 +685,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveMejaColumn(array $columns): ?string
     {
@@ -703,7 +703,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveSupplierColumn(array $columns): ?string
     {
@@ -726,7 +726,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveNoTrukColumn(array $columns): ?string
     {
@@ -750,7 +750,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveJenisKayuColumn(array $columns): ?string
     {
@@ -767,7 +767,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveJmlhTrukColumn(array $columns): ?string
     {
@@ -801,7 +801,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
         $supplier = $supplierColumn !== null ? trim((string) ($row[$supplierColumn] ?? '')) : '';
         $truk = $noTrukColumn !== null ? trim((string) ($row[$noTrukColumn] ?? '')) : '';
 
-        $key = trim(implode('|', array_filter([$supplier, $truk, $noKb], static fn(string $v): bool => $v !== '')));
+        $key = trim(implode('|', array_filter([$supplier, $truk, $noKb], static fn (string $v): bool => $v !== '')));
 
         return $key !== '' ? $key : 'receipt';
     }
@@ -888,7 +888,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      * @return array{0: string|null, 1: string|null}
      */
     private function resolveInputOutputColumns(array $columns): array
@@ -921,7 +921,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveValueColumn(array $columns, ?string $inputColumn, ?string $outputColumn): ?string
     {
@@ -1032,7 +1032,7 @@ class RekapPenerimaanSTDariSawmillKgReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

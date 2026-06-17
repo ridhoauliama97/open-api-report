@@ -30,7 +30,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -63,7 +63,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $totalTblStSource = $this->resolveTotalTblStColumn($columns);
 
         $schema = self::OUTPUT_SCHEMA;
-        $schemaKeys = array_values(array_map(static fn(array $spec): string => (string) ($spec['key'] ?? ''), $schema));
+        $schemaKeys = array_values(array_map(static fn (array $spec): string => (string) ($spec['key'] ?? ''), $schema));
 
         /** @var array<string, array<int, array{sort_date: string, row: array<string, mixed}}>> $rowsBySupplier */
         $rowsBySupplier = [];
@@ -184,6 +184,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                         if ($noStb === '') {
                             return -1;
                         }
+
                         return strcmp($noSta, $noStb);
                     }
 
@@ -196,6 +197,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                         if ($noKbb === '') {
                             return -1;
                         }
+
                         return strcmp($noKba, $noKbb);
                     }
 
@@ -213,7 +215,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                 return strcmp($da, $db);
             });
 
-            $rowsForSupplier = array_values(array_map(static fn(array $item): array => (array) ($item['row'] ?? []), $items));
+            $rowsForSupplier = array_values(array_map(static fn (array $item): array => (array) ($item['row'] ?? []), $items));
 
             $diaAvg = $areaSum > 0.0000001 && $pcsKbSum > 0.0000001 ? sqrt($areaSum / $pcsKbSum) : null;
             $tblAvg = $totalTblStSum > 0.0000001 && $pcsStSum > 0.0000001 ? ($totalTblStSum / $pcsStSum) : null;
@@ -316,7 +318,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveSupplierColumn(array $columns): ?string
     {
@@ -349,7 +351,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveDateColumn(array $columns): ?string
     {
@@ -415,8 +417,8 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $expectedColumns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $expectedColumns
      * @return array<int, string>
      */
     private function extractColumns(array $rows, array $expectedColumns): array
@@ -448,7 +450,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveNoStColumn(array $columns): ?string
     {
@@ -473,7 +475,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveNoTrukColumn(array $columns): ?string
     {
@@ -498,7 +500,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveMejaColumn(array $columns): ?string
     {
@@ -523,7 +525,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveNoKbColumn(array $columns): ?string
     {
@@ -548,7 +550,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveJenisKayuBulatColumn(array $columns): ?string
     {
@@ -573,7 +575,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveTonKbColumn(array $columns): ?string
     {
@@ -616,7 +618,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveTonStColumn(array $columns): ?string
     {
@@ -658,7 +660,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveAveDiaColumn(array $columns): ?string
     {
@@ -687,7 +689,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveAveTblColumn(array $columns): ?string
     {
@@ -716,7 +718,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolvePotongColumn(array $columns): ?string
     {
@@ -741,7 +743,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveRendStKbColumn(array $columns): ?string
     {
@@ -766,7 +768,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveAreaColumn(array $columns): ?string
     {
@@ -791,7 +793,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolvePcsKbColumn(array $columns): ?string
     {
@@ -816,7 +818,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolvePcsStColumn(array $columns): ?string
     {
@@ -841,7 +843,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveTotalTblStColumn(array $columns): ?string
     {
@@ -875,7 +877,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -954,7 +956,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         // In some datasets the SP returns "coded" values (e.g. 11 == 2", 12 == 3").
         $inch = $n >= 10 ? ($n - 9) : $n;
 
-        return $inch > 0 ? ($inch . '"') : '';
+        return $inch > 0 ? ($inch.'"') : '';
     }
 
     /**
@@ -969,7 +971,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap penerimaan ST dari sawmill (Non Rambung) belum dikonfigurasi.');
         }
 
@@ -980,7 +982,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap penerimaan ST dari sawmill (Non Rambung) dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -992,7 +994,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

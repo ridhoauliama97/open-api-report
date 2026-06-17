@@ -102,9 +102,9 @@ class KayuBulatKgReportsFeatureTest extends TestCase
                                 'output' => [],
                             ],
                             'totals' => ['kb_total' => 10.0, 'st_total' => 0.0, 'rendemen' => 0.0],
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
             'summary' => ['total_rows' => 1, 'total_dates' => 1, 'total_receipts' => 1],
         ]);
@@ -140,9 +140,9 @@ class KayuBulatKgReportsFeatureTest extends TestCase
                                 'output' => [],
                             ],
                             'totals' => ['kb_total' => 10000.0, 'st_total' => 0.0, 'rendemen' => 0.0],
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
             'summary' => ['total_rows' => 1, 'total_dates' => 1, 'total_receipts' => 1],
         ]);
@@ -220,7 +220,7 @@ class KayuBulatKgReportsFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ];
     }

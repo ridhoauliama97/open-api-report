@@ -26,11 +26,11 @@ class GenerateSpkSawmillReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('no_spk') && $this->filled('NoSPK')) {
+        if (! $this->filled('no_spk') && $this->filled('NoSPK')) {
             $this->merge(['no_spk' => trim((string) $this->input('NoSPK'))]);
         }
 
-        if (!$this->filled('id_produk') && $this->filled('IdProduk')) {
+        if (! $this->filled('id_produk') && $this->filled('IdProduk')) {
             $this->merge(['id_produk' => $this->input('IdProduk')]);
         }
     }

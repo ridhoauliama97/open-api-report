@@ -97,7 +97,7 @@ class MutasiBarangJadiPpsReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -109,7 +109,7 @@ class MutasiBarangJadiPpsReportService
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -137,7 +137,7 @@ class MutasiBarangJadiPpsReportService
         $syntax = (string) config('reports.pps_mutasi_barang_jadi.call_syntax', 'exec');
         $customQuery = config($queryConfig);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(match ($procedureType) {
                 'sub' => 'Stored procedure sub laporan PPS mutasi barang jadi belum dikonfigurasi.',
                 'waste' => 'Stored procedure waste laporan PPS mutasi barang jadi belum dikonfigurasi.',
@@ -152,7 +152,7 @@ class MutasiBarangJadiPpsReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan PPS mutasi barang jadi dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -161,13 +161,13 @@ class MutasiBarangJadiPpsReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_MUTASI_BARANG_JADI_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -183,7 +183,7 @@ class MutasiBarangJadiPpsReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeReportRows(array $rows): array
@@ -195,13 +195,13 @@ class MutasiBarangJadiPpsReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             self::EXPECTED_COLUMNS,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
-        if (!empty($missingColumns)) {
+        if (! empty($missingColumns)) {
             throw new RuntimeException(
                 'Output SP_PPSLapMutasiBarangJadi tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 
@@ -222,7 +222,7 @@ class MutasiBarangJadiPpsReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeSubReportRows(array $rows): array
@@ -235,7 +235,7 @@ class MutasiBarangJadiPpsReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeWasteReportRows(array $rows): array
@@ -247,13 +247,13 @@ class MutasiBarangJadiPpsReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             self::EXPECTED_WASTE_COLUMNS,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
-        if (!empty($missingColumns)) {
+        if (! empty($missingColumns)) {
             throw new RuntimeException(
                 'Output SP_PPSLapWasteMutasiBarangJadi tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 
@@ -265,4 +265,3 @@ class MutasiBarangJadiPpsReportService
         }, $rows);
     }
 }
-

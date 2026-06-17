@@ -8,6 +8,7 @@ use RuntimeException;
 class HasilOutputRacipHarianReportService
 {
     private const CONFIG_KEY = 'reports.hasil_output_racip_harian';
+
     private const DEFAULT_COLUMNS = ['Jenis', 'Masuk', 'Tebal', 'Lebar', 'Panjang', 'JlhBtg'];
 
     /**
@@ -28,7 +29,7 @@ class HasilOutputRacipHarianReportService
         $rows = $this->fetch($endDate);
         $columns = array_keys($rows[0] ?? []);
         if ($columns === []) {
-            $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', []);
+            $expectedColumns = config(self::CONFIG_KEY.'.expected_columns', []);
             $columns = is_array($expectedColumns) ? array_values(array_filter($expectedColumns, 'is_string')) : [];
             if ($columns === []) {
                 $columns = self::DEFAULT_COLUMNS;
@@ -56,7 +57,7 @@ class HasilOutputRacipHarianReportService
         $rows = $this->fetch($endDate);
         $detectedColumns = array_keys($rows[0] ?? []);
 
-        $expectedColumns = config(self::CONFIG_KEY . '.expected_columns', []);
+        $expectedColumns = config(self::CONFIG_KEY.'.expected_columns', []);
         $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
 
         $missingColumns = array_values(array_diff($expectedColumns, $detectedColumns));
@@ -73,7 +74,7 @@ class HasilOutputRacipHarianReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -82,8 +83,8 @@ class HasilOutputRacipHarianReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $columns
      * @return array<string, bool>
      */
     private function detectNumericColumns(array $rows, array $columns): array
@@ -98,8 +99,8 @@ class HasilOutputRacipHarianReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<string, bool> $numericColumns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<string, bool>  $numericColumns
      * @return array<string, float>
      */
     private function calculateTotals(array $rows, array $numericColumns): array
@@ -107,7 +108,7 @@ class HasilOutputRacipHarianReportService
         $totals = [];
 
         foreach ($numericColumns as $column => $isNumeric) {
-            if (!$isNumeric) {
+            if (! $isNumeric) {
                 continue;
             }
 
@@ -121,7 +122,7 @@ class HasilOutputRacipHarianReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function isNumericColumn(array $rows, string $column): bool
     {
@@ -143,7 +144,7 @@ class HasilOutputRacipHarianReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -165,7 +166,7 @@ class HasilOutputRacipHarianReportService
     }
 
     /**
-     * @param array<int, mixed> $bindings
+     * @param  array<int, mixed>  $bindings
      * @return array<int, mixed>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -178,14 +179,14 @@ class HasilOutputRacipHarianReportService
      */
     private function runProcedureQuery(string $endDate): array
     {
-        $connectionName = config(self::CONFIG_KEY . '.database_connection');
-        $procedure = (string) config(self::CONFIG_KEY . '.stored_procedure');
-        $syntax = (string) config(self::CONFIG_KEY . '.call_syntax', 'exec');
-        $customQuery = config(self::CONFIG_KEY . '.query');
-        $parameterCount = (int) config(self::CONFIG_KEY . '.parameter_count', 1);
+        $connectionName = config(self::CONFIG_KEY.'.database_connection');
+        $procedure = (string) config(self::CONFIG_KEY.'.stored_procedure');
+        $syntax = (string) config(self::CONFIG_KEY.'.call_syntax', 'exec');
+        $customQuery = config(self::CONFIG_KEY.'.query');
+        $parameterCount = (int) config(self::CONFIG_KEY.'.parameter_count', 1);
         $parameterCount = max(0, min(1, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan hasil output racip harian belum dikonfigurasi.');
         }
 
@@ -196,7 +197,7 @@ class HasilOutputRacipHarianReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan hasil output racip harian dikonfigurasi untuk SQL Server. '
-                . 'Set HASIL_OUTPUT_RACIP_HARIAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set HASIL_OUTPUT_RACIP_HARIAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -205,13 +206,13 @@ class HasilOutputRacipHarianReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'HASIL_OUTPUT_RACIP_HARIAN_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan HASIL_OUTPUT_RACIP_HARIAN_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan HASIL_OUTPUT_RACIP_HARIAN_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

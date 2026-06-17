@@ -34,7 +34,7 @@ class RekapPcsTellyHasilSawmillReportService
             'summary' => [
                 'total_rows' => count($rows),
                 'total_documents' => count($documents),
-                'total_pcs' => array_sum(array_map(static fn(array $document): int => (int) ($document['summary']['total_pcs'] ?? 0), $documents)),
+                'total_pcs' => array_sum(array_map(static fn (array $document): int => (int) ($document['summary']['total_pcs'] ?? 0), $documents)),
             ],
         ];
     }
@@ -119,7 +119,7 @@ class RekapPcsTellyHasilSawmillReportService
             $gradeName = trim((string) ($row['NamaGrade'] ?? ''));
             $tebalKey = (string) ((float) ($row['Tebal'] ?? 0));
 
-            if (!isset($documents[$documentKey])) {
+            if (! isset($documents[$documentKey])) {
                 $documents[$documentKey] = [
                     'header' => [
                         'supplier' => (string) ($row['NmSupplier'] ?? '-'),
@@ -136,7 +136,7 @@ class RekapPcsTellyHasilSawmillReportService
                 ];
             }
 
-            if (!isset($documents[$documentKey]['grades'][$gradeName])) {
+            if (! isset($documents[$documentKey]['grades'][$gradeName])) {
                 $documents[$documentKey]['grades'][$gradeName] = [
                     'name' => $gradeName !== '' ? $gradeName : 'Tanpa Grade',
                     'tebal_groups' => [],
@@ -144,7 +144,7 @@ class RekapPcsTellyHasilSawmillReportService
                 ];
             }
 
-            if (!isset($documents[$documentKey]['grades'][$gradeName]['tebal_groups'][$tebalKey])) {
+            if (! isset($documents[$documentKey]['grades'][$gradeName]['tebal_groups'][$tebalKey])) {
                 $documents[$documentKey]['grades'][$gradeName]['tebal_groups'][$tebalKey] = [
                     'tebal' => (float) ($row['Tebal'] ?? 0),
                     'rows' => [],
@@ -167,14 +167,14 @@ class RekapPcsTellyHasilSawmillReportService
 
         foreach ($result as &$document) {
             $grades = array_values($document['grades']);
-            usort($grades, fn(array $a, array $b): int => $this->gradeSortWeight((string) ($a['name'] ?? '')) <=> $this->gradeSortWeight((string) ($b['name'] ?? '')));
+            usort($grades, fn (array $a, array $b): int => $this->gradeSortWeight((string) ($a['name'] ?? '')) <=> $this->gradeSortWeight((string) ($b['name'] ?? '')));
 
             foreach ($grades as &$grade) {
                 $tebalGroups = array_values($grade['tebal_groups']);
-                usort($tebalGroups, static fn(array $a, array $b): int => ((float) ($a['tebal'] ?? 0)) <=> ((float) ($b['tebal'] ?? 0)));
+                usort($tebalGroups, static fn (array $a, array $b): int => ((float) ($a['tebal'] ?? 0)) <=> ((float) ($b['tebal'] ?? 0)));
 
                 foreach ($tebalGroups as &$tebalGroup) {
-                    usort($tebalGroup['rows'], static fn(array $a, array $b): int => ((float) ($a['lebar'] ?? 0)) <=> ((float) ($b['lebar'] ?? 0)));
+                    usort($tebalGroup['rows'], static fn (array $a, array $b): int => ((float) ($a['lebar'] ?? 0)) <=> ((float) ($b['lebar'] ?? 0)));
                 }
                 unset($tebalGroup);
 
@@ -201,7 +201,7 @@ class RekapPcsTellyHasilSawmillReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap pcs telly hasil sawmill belum dikonfigurasi.');
         }
 
@@ -212,7 +212,7 @@ class RekapPcsTellyHasilSawmillReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap pcs telly hasil sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PCS_TELLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -224,7 +224,7 @@ class RekapPcsTellyHasilSawmillReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -239,12 +239,12 @@ class RekapPcsTellyHasilSawmillReportService
         try {
             return $connection->select($sql, $bindings);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan rekap pcs telly hasil sawmill: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan rekap pcs telly hasil sawmill: '.$exception->getMessage(), 0, $exception);
         }
     }
 
     /**
-     * @param array<string,mixed> $row
+     * @param  array<string,mixed>  $row
      */
     private function documentKey(array $row): string
     {
@@ -281,7 +281,7 @@ class RekapPcsTellyHasilSawmillReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

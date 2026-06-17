@@ -59,6 +59,7 @@ class RekapProduksiBarangJadiConsolidatedReportService
             if ($cmp !== 0) {
                 return $cmp;
             }
+
             return ((int) ($a['Shift'] ?? 0)) <=> ((int) ($b['Shift'] ?? 0));
         });
 
@@ -89,7 +90,7 @@ class RekapProduksiBarangJadiConsolidatedReportService
         $customQuery = config('reports.rekap_produksi_barang_jadi_consolidated.query');
         $parameterCount = (int) config('reports.rekap_produksi_barang_jadi_consolidated.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap produksi Packing consolidated belum dikonfigurasi.');
         }
 
@@ -102,15 +103,16 @@ class RekapProduksiBarangJadiConsolidatedReportService
 
         if ($syntax === 'query') {
             $query = is_string($customQuery) && trim($customQuery) !== '' ? $customQuery : throw new RuntimeException('REKAP_PRODUKSI_BARANG_JADI_CONSOLIDATED_REPORT_QUERY belum diisi.');
+
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $sql = $parameterCount > 0
-            ? "SET NOCOUNT ON; EXEC {$procedure} " . implode(', ', array_fill(0, count($bindings), '?'))
+            ? "SET NOCOUNT ON; EXEC {$procedure} ".implode(', ', array_fill(0, count($bindings), '?'))
             : "SET NOCOUNT ON; EXEC {$procedure}";
 
         return $connection->select($sql, $bindings);
@@ -121,7 +123,7 @@ class RekapProduksiBarangJadiConsolidatedReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $normalized = trim(str_replace(' ', '', $value));
@@ -138,6 +140,7 @@ class RekapProduksiBarangJadiConsolidatedReportService
         } elseif (str_contains($normalized, ',')) {
             $normalized = str_replace(',', '.', $normalized);
         }
+
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }

@@ -18,8 +18,7 @@ class RekapMutasiReportService
         private readonly MutasiCCAkhirReportService $mutasiCCAkhirReportService,
         private readonly MutasiSandingReportService $mutasiSandingReportService,
         private readonly MutasiBarangJadiReportService $mutasiBarangJadiReportService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -46,7 +45,7 @@ class RekapMutasiReportService
             'summary' => [
                 'section_count' => count($sections),
                 'row_count' => array_sum(array_map(
-                    static fn(array $section): int => count($section['rows'] ?? []),
+                    static fn (array $section): int => count($section['rows'] ?? []),
                     $sections,
                 )),
             ],
@@ -173,7 +172,7 @@ class RekapMutasiReportService
             ];
         }, $sourceRows, array_keys($sourceRows));
 
-        usort($rows, fn(array $a, array $b): int => $this->compareByOrder(
+        usort($rows, fn (array $a, array $b): int => $this->compareByOrder(
             $a['Jenis'] ?? '',
             $b['Jenis'] ?? '',
             ['JABON', 'JABON TG', 'KAYU LAT JABON', 'KAYU LAT RAMBUNG', 'PULAI', 'RAMBUNG - MC 1', 'RAMBUNG - MC 2', 'RAMBUNG - STD', 'SEMBARANG'],
@@ -214,7 +213,7 @@ class RekapMutasiReportService
     {
         $mainRows = $this->aggregateByWoodGroup(
             $this->mutasiS4SReportService->fetch($startDate, $endDate),
-            fn(array $row): array => [
+            fn (array $row): array => [
                 'Awal' => $this->toFloat($row['S4SAwal'] ?? null),
                 'Masuk' => $this->sumValues($row, ['S4SMasuk', 'AdjOutputS4S', 'BSOutputS4S', 'ProdOutputS4S', 'CCAProdOutputS4S']),
                 'Jual' => $this->toFloat($row['JualS4S'] ?? null),
@@ -248,7 +247,7 @@ class RekapMutasiReportService
     {
         $mainRows = $this->aggregateByWoodGroup(
             $this->mutasiFingerJointReportService->fetch($startDate, $endDate),
-            fn(array $row): array => [
+            fn (array $row): array => [
                 'Awal' => $this->toFloat($row['FJAwal'] ?? null),
                 'Masuk' => $this->sumValues($row, ['FJMasuk', 'AdjOutputFJ', 'BSOutputFJ', 'FJProdOutput']),
                 'Jual' => $this->toFloat($row['FJJual'] ?? null),
@@ -282,7 +281,7 @@ class RekapMutasiReportService
     {
         $mainRows = $this->aggregateByWoodGroup(
             $this->mutasiMouldingReportService->fetch($startDate, $endDate),
-            fn(array $row): array => [
+            fn (array $row): array => [
                 'Awal' => $this->toFloat($row['MLDAwal'] ?? null),
                 'Masuk' => $this->sumValues($row, ['MLDMasuk', 'AdjOutputMLD', 'BSOutptutMLD', 'MLDProdOutput']),
                 'Jual' => $this->toFloat($row['MLDJual'] ?? null),
@@ -316,7 +315,7 @@ class RekapMutasiReportService
     {
         $mainRows = $this->aggregateByWoodGroup(
             $this->mutasiLaminatingReportService->fetch($startDate, $endDate),
-            fn(array $row): array => [
+            fn (array $row): array => [
                 'Awal' => $this->toFloat($row['LMTAwal'] ?? null),
                 'Masuk' => $this->sumValues($row, ['LMTMasuk', 'AdjOutputLMT', 'BSOutputLMT', 'LMTProdOuput']),
                 'Jual' => $this->toFloat($row['LMTJual'] ?? null),
@@ -350,7 +349,7 @@ class RekapMutasiReportService
     {
         $mainRows = $this->aggregateByWoodGroup(
             $this->mutasiCCAkhirReportService->fetch($startDate, $endDate),
-            fn(array $row): array => [
+            fn (array $row): array => [
                 'Awal' => $this->toFloat($row['CCAkhirAwal'] ?? null),
                 'Masuk' => $this->sumValues($row, ['CCAMasuk', 'AdjOutputCCA', 'BSOutputCCA', 'CCAProdOutput']),
                 'Jual' => $this->toFloat($row['CCAJual'] ?? null),
@@ -384,7 +383,7 @@ class RekapMutasiReportService
     {
         $mainRows = $this->aggregateByWoodGroup(
             $this->mutasiSandingReportService->fetch($startDate, $endDate),
-            fn(array $row): array => [
+            fn (array $row): array => [
                 'Awal' => $this->toFloat($row['SANDAwal'] ?? null),
                 'Masuk' => $this->sumValues($row, ['SANDMasuk', 'AdjOutputSAND', 'BSOutputSAND', 'SANDProdOutput']),
                 'Jual' => $this->toFloat($row['SANDJual'] ?? null),
@@ -460,8 +459,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $sourceRows
-     * @param callable(array<string, mixed>): array<string, float|null> $mapper
+     * @param  array<int, array<string, mixed>>  $sourceRows
+     * @param  callable(array<string, mixed>): array<string, float|null>  $mapper
      * @return array<int, array<string, mixed>>
      */
     private function aggregateByWoodGroup(array $sourceRows, callable $mapper): array
@@ -470,7 +469,7 @@ class RekapMutasiReportService
 
         foreach ($sourceRows as $row) {
             $family = $this->woodFamilyFromJenis((string) ($row['Jenis'] ?? ''));
-            if (!isset($groups[$family])) {
+            if (! isset($groups[$family])) {
                 $groups[$family] = [
                     'Jenis' => $family,
                     'Awal' => 0.0,
@@ -504,8 +503,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $sourceRows
-     * @param array<int, string> $columns
+     * @param  array<int, array<string, mixed>>  $sourceRows
+     * @param  array<int, string>  $columns
      * @return array<int, array<string, mixed>>
      */
     private function buildInputRowsGroupedByFamily(array $sourceRows, array $columns): array
@@ -514,7 +513,7 @@ class RekapMutasiReportService
 
         foreach ($sourceRows as $row) {
             $family = $this->woodFamilyFromJenis((string) ($row['Jenis'] ?? ''));
-            if (!isset($groups[$family])) {
+            if (! isset($groups[$family])) {
                 $groups[$family] = ['Jenis' => $family];
                 foreach ($columns as $column) {
                     $groups[$family][$column] = 0.0;
@@ -545,8 +544,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $sourceRows
-     * @param array<int, string> $columns
+     * @param  array<int, array<string, mixed>>  $sourceRows
+     * @param  array<int, string>  $columns
      * @return array<int, array<string, mixed>>
      */
     private function buildInputRowsDetailed(array $sourceRows, array $columns): array
@@ -576,9 +575,9 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $mainRows
-     * @param array<int, array<string, mixed>> $inputRows
-     * @param array<int, string> $inputColumns
+     * @param  array<int, array<string, mixed>>  $mainRows
+     * @param  array<int, array<string, mixed>>  $inputRows
+     * @param  array<int, string>  $inputColumns
      * @return array<string, mixed>
      */
     private function buildProductionSection(
@@ -616,8 +615,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $columns
      * @return array<string, mixed>
      */
     private function buildInputTable(string $title, array $rows, array $columns): array
@@ -631,15 +630,15 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<string, mixed> $section
-     * @param array<string, mixed> $inputTable
+     * @param  array<string, mixed>  $section
+     * @param  array<string, mixed>  $inputTable
      * @return array<string, mixed>
      */
     private function buildPerformanceBlock(array $section, array $inputTable, string $leftLabel, string $rightLabel, string $outputColumn): array
     {
         $input = array_sum(array_map(
-            fn(string $column): float => (float) ($inputTable['totals'][$column] ?? 0.0),
-            array_keys(array_filter($inputTable['columns'], static fn(string $label, string $key): bool => !in_array($key, ['No', 'Jenis'], true), ARRAY_FILTER_USE_BOTH)),
+            fn (string $column): float => (float) ($inputTable['totals'][$column] ?? 0.0),
+            array_keys(array_filter($inputTable['columns'], static fn (string $label, string $key): bool => ! in_array($key, ['No', 'Jenis'], true), ARRAY_FILTER_USE_BOTH)),
         ));
         $output = (float) ($section['totals'][$outputColumn] ?? 0.0);
 
@@ -653,8 +652,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $columns
      * @return array<string, float>
      */
     private function sumColumns(array $rows, array $columns): array
@@ -674,8 +673,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array<int, string> $keys
+     * @param  array<string, mixed>  $row
+     * @param  array<int, string>  $keys
      */
     private function sumValues(array $row, array $keys): ?float
     {
@@ -694,8 +693,8 @@ class RekapMutasiReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array<int, string> $columns
+     * @param  array<string, mixed>  $row
+     * @param  array<int, string>  $columns
      */
     private function hasNonZeroMetric(array $row, array $columns): bool
     {
@@ -767,13 +766,13 @@ class RekapMutasiReportService
         $connection = DB::connection(config('reports.rekap_mutasi.database_connection'));
         $procedure = (string) config('reports.rekap_mutasi.stored_procedure', 'SP_LapRekapMutasi');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = $connection->select("SET NOCOUNT ON; EXEC {$procedure} ?, ?", [$startDate, $endDate]);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     private function toFloat(mixed $value): ?float

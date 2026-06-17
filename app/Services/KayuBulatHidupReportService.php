@@ -83,7 +83,7 @@ class KayuBulatHidupReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, mixed>
      */
     private function buildSummary(array $rows): array
@@ -116,7 +116,7 @@ class KayuBulatHidupReportService
         $syntax = (string) config('reports.kayu_bulat_hidup.call_syntax', 'exec');
         $customQuery = config('reports.kayu_bulat_hidup.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan kayu bulat hidup belum dikonfigurasi.');
         }
 
@@ -127,7 +127,7 @@ class KayuBulatHidupReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan kayu bulat hidup dikonfigurasi untuk SQL Server. '
-                . 'Set KAYU_BULAT_HIDUP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set KAYU_BULAT_HIDUP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -136,13 +136,13 @@ class KayuBulatHidupReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'KAYU_BULAT_HIDUP_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan KAYU_BULAT_HIDUP_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan KAYU_BULAT_HIDUP_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -161,7 +161,7 @@ class KayuBulatHidupReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

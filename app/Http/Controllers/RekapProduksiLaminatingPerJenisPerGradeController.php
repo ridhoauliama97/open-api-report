@@ -165,7 +165,7 @@ class RekapProduksiLaminatingPerJenisPerGradeController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{jenis:string, rows:array<int, array<string, mixed>>, totals:array{InMoulding:float, InSanding:float, InWIP:float, InReproses:float, Output:float}}>
      */
     private function groupByJenis(array $rows): array

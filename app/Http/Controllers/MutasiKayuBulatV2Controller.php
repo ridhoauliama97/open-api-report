@@ -132,4 +132,3 @@ class MutasiKayuBulatV2Controller extends Controller
         return [(string) $startDate, (string) $endDate];
     }
 }
-

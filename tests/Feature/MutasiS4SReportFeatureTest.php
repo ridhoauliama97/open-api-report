@@ -167,7 +167,7 @@ class MutasiS4SReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
             'Accept' => 'application/json',
         ];
     }
@@ -180,8 +180,3 @@ class MutasiS4SReportFeatureTest extends TestCase
         return $this->issueJwtForUser($user);
     }
 }
-
-
-
-
-

@@ -140,7 +140,7 @@ class RekapProduksiS4SPerJenisPerGradeController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{jenis:string, rows:array<int, array<string, mixed>>, totals:array<string, float>}>
      */
     private function groupByJenis(array $rows): array
@@ -185,4 +185,3 @@ class RekapProduksiS4SPerJenisPerGradeController extends Controller
         return $result;
     }
 }
-

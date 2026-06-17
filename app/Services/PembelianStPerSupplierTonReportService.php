@@ -35,7 +35,7 @@ class PembelianStPerSupplierTonReportService
 
             $ton = (float) ($row['STTon'] ?? 0.0);
 
-            if (!isset($bySupplier[$supplier])) {
+            if (! isset($bySupplier[$supplier])) {
                 $bySupplier[$supplier] = [];
             }
             $bySupplier[$supplier][$jenis] = (float) ($bySupplier[$supplier][$jenis] ?? 0.0) + $ton;
@@ -136,7 +136,7 @@ class PembelianStPerSupplierTonReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -144,7 +144,7 @@ class PembelianStPerSupplierTonReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -154,7 +154,7 @@ class PembelianStPerSupplierTonReportService
     /**
      * Prefer the order used in the reference, then fall back to the remaining types.
      *
-     * @param array<int, string> $jenisColumns
+     * @param  array<int, string>  $jenisColumns
      * @return array<int, string>
      */
     private function preferJenisOrder(array $jenisColumns): array
@@ -207,7 +207,7 @@ class PembelianStPerSupplierTonReportService
             throw new RuntimeException('Jumlah parameter laporan Pembelian ST Per Supplier (Ton) harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Pembelian ST Per Supplier (Ton) belum dikonfigurasi.');
         }
 
@@ -217,7 +217,7 @@ class PembelianStPerSupplierTonReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Pembelian ST Per Supplier (Ton) dikonfigurasi untuk SQL Server. '
-                . 'Set PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PEMBELIAN_ST_PER_SUPPLIER_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -229,7 +229,7 @@ class PembelianStPerSupplierTonReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -244,4 +244,3 @@ class PembelianStPerSupplierTonReportService
         return $connection->select($sql, [$startDate, $endDate]);
     }
 }
-

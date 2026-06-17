@@ -128,7 +128,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -205,7 +205,7 @@
         </tbody>
     </table>
 
-    @include('reports.partials.pdf-footer-table')
+    @include('reports.partials.pdf-footer-table');
 </body>
 
 </html>

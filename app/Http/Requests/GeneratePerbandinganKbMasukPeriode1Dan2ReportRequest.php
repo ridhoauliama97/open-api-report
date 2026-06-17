@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
 class GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest extends BaseReportRequest
@@ -58,7 +57,7 @@ class GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest extends BaseReportReq
 
         $merged = [];
         foreach ($mapping as $legacyKey => $canonicalKey) {
-            if (!$this->filled($canonicalKey) && $this->filled($legacyKey)) {
+            if (! $this->filled($canonicalKey) && $this->filled($legacyKey)) {
                 $merged[$canonicalKey] = $this->input($legacyKey);
             }
         }
@@ -86,5 +85,3 @@ class GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest extends BaseReportReq
         });
     }
 }
-
-

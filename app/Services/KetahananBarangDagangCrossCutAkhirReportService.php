@@ -116,7 +116,7 @@ class KetahananBarangDagangCrossCutAkhirReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -124,7 +124,7 @@ class KetahananBarangDagangCrossCutAkhirReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -147,7 +147,7 @@ class KetahananBarangDagangCrossCutAkhirReportService
             throw new RuntimeException('Jumlah parameter laporan Ketahanan Barang Dagang CCAkhir harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Ketahanan Barang Dagang CCAkhir belum dikonfigurasi.');
         }
 
@@ -157,7 +157,7 @@ class KetahananBarangDagangCrossCutAkhirReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Ketahanan Barang Dagang CCAkhir dikonfigurasi untuk SQL Server. '
-                . 'Set KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set KETAHANAN_BARANG_CROSS_CUT_AKHIR_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -169,7 +169,7 @@ class KetahananBarangDagangCrossCutAkhirReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

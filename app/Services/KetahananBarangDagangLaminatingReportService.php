@@ -116,7 +116,7 @@ class KetahananBarangDagangLaminatingReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -124,7 +124,7 @@ class KetahananBarangDagangLaminatingReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -147,7 +147,7 @@ class KetahananBarangDagangLaminatingReportService
             throw new RuntimeException('Jumlah parameter laporan Ketahanan Barang Dagang Laminating harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Ketahanan Barang Dagang Laminating belum dikonfigurasi.');
         }
 
@@ -157,7 +157,7 @@ class KetahananBarangDagangLaminatingReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Ketahanan Barang Dagang Laminating dikonfigurasi untuk SQL Server. '
-                . 'Set KETAHANAN_BARANG_LAMINATING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set KETAHANAN_BARANG_LAMINATING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -169,7 +169,7 @@ class KetahananBarangDagangLaminatingReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

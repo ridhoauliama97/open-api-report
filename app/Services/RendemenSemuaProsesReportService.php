@@ -54,7 +54,7 @@ class RendemenSemuaProsesReportService
 
         foreach ($rows as $row) {
             $group = $row['GRP'] ?: 'LAINNYA';
-            if (!isset($groups[$group])) {
+            if (! isset($groups[$group])) {
                 $groups[$group] = [
                     'name' => $group,
                     'rows' => [],
@@ -77,7 +77,7 @@ class RendemenSemuaProsesReportService
         unset($group);
 
         $groupList = array_values($groups);
-        usort($groupList, static fn(array $a, array $b): int => strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? '')));
+        usort($groupList, static fn (array $a, array $b): int => strcmp((string) ($a['name'] ?? ''), (string) ($b['name'] ?? '')));
 
         $grandTotals['Rendemen'] = abs($grandTotals['Input']) > $eps ? ($grandTotals['Output'] / $grandTotals['Input']) * 100.0 : null;
 
@@ -124,7 +124,7 @@ class RendemenSemuaProsesReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rendemen semua proses belum dikonfigurasi.');
         }
 
@@ -139,15 +139,16 @@ class RendemenSemuaProsesReportService
             $query = is_string($customQuery) && trim($customQuery) !== ''
                 ? $customQuery
                 : throw new RuntimeException('RENDMEN_SEMUA_PROSES_REPORT_QUERY belum diisi.');
+
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $sql = $parameterCount > 0
-            ? "SET NOCOUNT ON; EXEC {$procedure} " . implode(', ', array_fill(0, count($bindings), '?'))
+            ? "SET NOCOUNT ON; EXEC {$procedure} ".implode(', ', array_fill(0, count($bindings), '?'))
             : "SET NOCOUNT ON; EXEC {$procedure}";
 
         return $connection->select($sql, $bindings);

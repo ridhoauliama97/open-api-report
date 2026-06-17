@@ -3,14 +3,12 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use RuntimeException;
 
 class PenerimaanKayuBulatPerSupplierBulananGrafikReportService
 {
     public function __construct(
         private readonly PenerimaanKayuBulatBulananPerSupplierReportService $baseService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -34,7 +32,7 @@ class PenerimaanKayuBulatPerSupplierBulananGrafikReportService
 
             $value = $this->toFloat($row['Hasil'] ?? 0) ?? 0.0;
 
-            if (!isset($grouped[$group])) {
+            if (! isset($grouped[$group])) {
                 $grouped[$group] = [
                     'months' => [],
                     'suppliers' => [],
@@ -145,7 +143,7 @@ class PenerimaanKayuBulatPerSupplierBulananGrafikReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

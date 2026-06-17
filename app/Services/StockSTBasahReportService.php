@@ -17,18 +17,18 @@ class StockSTBasahReportService
         if ($cacheTtl <= 0) {
             $rows = $this->runProcedureQuery($endDate);
 
-            return array_map(static fn($row): array => (array) $row, $rows);
+            return array_map(static fn ($row): array => (array) $row, $rows);
         }
 
         $cacheKey = sprintf(
             'report:stock_st_basah:%s:%s:%s',
             $endDate,
             (string) config('reports.stock_st_basah.call_syntax', 'exec'),
-            md5((string) config('reports.stock_st_basah.stored_procedure', 'SP_LapStockSTBasah') . '|' . (string) config('reports.stock_st_basah.query', '')),
+            md5((string) config('reports.stock_st_basah.stored_procedure', 'SP_LapStockSTBasah').'|'.(string) config('reports.stock_st_basah.query', '')),
         );
-        $rows = Cache::remember($cacheKey, now()->addSeconds($cacheTtl), fn(): array => $this->runProcedureQuery($endDate));
+        $rows = Cache::remember($cacheKey, now()->addSeconds($cacheTtl), fn (): array => $this->runProcedureQuery($endDate));
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -63,7 +63,7 @@ class StockSTBasahReportService
         $syntax = (string) config('reports.stock_st_basah.call_syntax', 'exec');
         $customQuery = config('reports.stock_st_basah.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan stock ST basah belum dikonfigurasi.');
         }
 
@@ -74,7 +74,7 @@ class StockSTBasahReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan stock ST basah dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_ST_BASAH_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set STOCK_ST_BASAH_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -83,13 +83,13 @@ class StockSTBasahReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'STOCK_ST_BASAH_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_ST_BASAH_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan STOCK_ST_BASAH_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

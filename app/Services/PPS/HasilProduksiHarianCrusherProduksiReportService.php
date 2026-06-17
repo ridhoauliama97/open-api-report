@@ -79,6 +79,7 @@ class HasilProduksiHarianCrusherProduksiReportService
 
             if ($type === 'input') {
                 $inputs[] = $item;
+
                 continue;
             }
 
@@ -146,12 +147,12 @@ class HasilProduksiHarianCrusherProduksiReportService
         $connection = DB::connection($connectionName ?: null);
 
         $rows = $connection->select(
-            "
+            '
             SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM CrusherProduksi_dDowntime WHERE NoCrusherProduksi = ?
             UNION ALL
             SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM CrusherProduksi_dDowntime1 WHERE NoCrusherProduksi = ?
             ORDER BY NoUrut
-            ",
+            ',
             [$noProduksi, $noProduksi]
         );
 
@@ -214,7 +215,7 @@ class HasilProduksiHarianCrusherProduksiReportService
             throw new RuntimeException('Laporan PPS Crusher Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -231,7 +232,7 @@ class HasilProduksiHarianCrusherProduksiReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -243,7 +244,7 @@ class HasilProduksiHarianCrusherProduksiReportService
     private function stringValue(array $row, array $keys): string
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $row)) {
+            if (! array_key_exists($key, $row)) {
                 continue;
             }
 
@@ -259,7 +260,7 @@ class HasilProduksiHarianCrusherProduksiReportService
     private function floatValue(array $row, array $keys): ?float
     {
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $row)) {
+            if (! array_key_exists($key, $row)) {
                 continue;
             }
 
@@ -302,7 +303,7 @@ class HasilProduksiHarianCrusherProduksiReportService
 
             foreach ($aliases as $alias) {
                 foreach ($rows as $row) {
-                    if (!array_key_exists($alias, $row)) {
+                    if (! array_key_exists($alias, $row)) {
                         continue;
                     }
 

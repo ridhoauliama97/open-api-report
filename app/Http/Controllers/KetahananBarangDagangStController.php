@@ -142,4 +142,3 @@ class KetahananBarangDagangStController extends Controller
         ]);
     }
 }
-

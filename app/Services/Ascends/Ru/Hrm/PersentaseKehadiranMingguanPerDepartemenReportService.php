@@ -54,7 +54,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
         $employees = self::aggregateEmployees($rawRows, $period, $company);
         $rows = self::shapeRows($employees);
 
-        usort($rows, static fn(array $left, array $right): int => [
+        usort($rows, static fn (array $left, array $right): int => [
             (string) ($left['Departemen'] ?? ''),
             -1 * (int) ($left['Persentase'] ?? 0),
             (string) ($left['Nama'] ?? ''),
@@ -72,14 +72,14 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
             'printed_at' => Carbon::now()->locale('id')->translatedFormat('d-M-y H:i'),
             'printed_by' => self::resolvePrintedBy($rawRows),
             'headers' => ['No', 'Nama', 'L/P', 'Jabatan', 'Status', 'Level', '%'],
-            'rows' => array_map(static fn(array $row): array => self::publicRow($row), $rows),
+            'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rows),
             'grouped_rows' => $groupedRows,
             'grand_summary' => self::buildSummary($rows),
             'total_rows' => count($rows),
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
         ];
     }
@@ -106,7 +106,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
             }
 
             $recordXml = $reader->readOuterXML();
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -117,7 +117,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
 
             $row = json_decode(json_encode($node), true) ?: [];
             $rows[] = array_map(
-                static fn(mixed $value): string => is_array($value) ? '' : trim((string) $value),
+                static fn (mixed $value): string => is_array($value) ? '' : trim((string) $value),
                 $row
             );
         }
@@ -155,7 +155,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
         }
 
         $dates = array_values(array_filter(array_map(
-            static fn(array $row): ?Carbon => self::parseDate((string) ($row['Date'] ?? '')),
+            static fn (array $row): ?Carbon => self::parseDate((string) ($row['Date'] ?? '')),
             $rows
         )));
 
@@ -165,7 +165,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
             return ['start' => $now->copy()->startOfDay(), 'end' => $now->copy()->endOfMonth()->endOfDay()];
         }
 
-        usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
+        usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
 
         return [
             'start' => $dates[0]->copy()->startOfDay(),
@@ -190,14 +190,14 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
                 $employeeCode === ''
                 || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
                 || $date === null
-                || !$date->betweenIncluded($period['start'], $period['end'])
+                || ! $date->betweenIncluded($period['start'], $period['end'])
             ) {
                 continue;
             }
 
             $department = trim((string) ($row['Department_x0020_Name'] ?? ''));
             $key = $employeeCode;
-            if (!isset($employees[$key])) {
+            if (! isset($employees[$key])) {
                 $employees[$key] = [
                     'code' => $employeeCode,
                     'name' => trim((string) ($row['Full_x0020_Name'] ?? '')),
@@ -251,7 +251,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
                 'Level Summary' => (string) ($employee['level_summary'] ?? ''),
                 'Persentase' => $percentage,
                 'Persentase Raw' => $percentageRaw,
-                'Persentase Text' => $percentage . '%',
+                'Persentase Text' => $percentage.'%',
                 'Valid Present Days' => (int) ($employee['valid_present_days'] ?? 0),
                 'Departemen' => (string) ($employee['department'] ?? ''),
             ];
@@ -277,8 +277,8 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
         $groups = [];
         foreach ($departmentRows as $department => $rowsInDepartment) {
             $groups[] = [
-                'label' => 'Departemen : ' . $department,
-                'rows' => array_map(static fn(array $row): array => self::publicRow($row), $rowsInDepartment),
+                'label' => 'Departemen : '.$department,
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rowsInDepartment),
                 'summary' => self::buildSummary($rowsInDepartment),
             ];
         }
@@ -308,18 +308,18 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
      */
     private static function buildSummary(array $rows): array
     {
-        $percentages = array_map(static fn(array $row): int => (int) ($row['Persentase'] ?? 0), $rows);
-        $rawPercentages = array_map(static fn(array $row): float => (float) ($row['Persentase Raw'] ?? $row['Persentase'] ?? 0), $rows);
+        $percentages = array_map(static fn (array $row): int => (int) ($row['Persentase'] ?? 0), $rows);
+        $rawPercentages = array_map(static fn (array $row): float => (float) ($row['Persentase Raw'] ?? $row['Persentase'] ?? 0), $rows);
         $minimumRows = array_values(array_filter(
             $rows,
-            static fn(array $row): bool => !(
+            static fn (array $row): bool => ! (
                 strtoupper((string) ($row['Status'] ?? '')) === 'BR'
                 && (int) ($row['Valid Present Days'] ?? 0) <= 1
             )
         ));
         $minimumPercentages = $minimumRows === []
             ? $percentages
-            : array_map(static fn(array $row): int => (int) ($row['Persentase'] ?? 0), $minimumRows);
+            : array_map(static fn (array $row): int => (int) ($row['Persentase'] ?? 0), $minimumRows);
 
         return [
             'subtotal' => count($rows),
@@ -347,7 +347,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
         foreach ($defaultLabels as $key => $label) {
             $count = count(array_filter(
                 $rows,
-                static fn(array $row): bool => strtoupper((string) ($row[$field] ?? '')) === strtoupper($key)
+                static fn (array $row): bool => strtoupper((string) ($row[$field] ?? '')) === strtoupper($key)
             ));
             $result[$key] = [
                 'label' => $label,
@@ -399,7 +399,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
      */
     private static function isValidPresent(array $row, string $company): bool
     {
-        if (!self::isPresent($row)) {
+        if (! self::isPresent($row)) {
             return false;
         }
 
@@ -424,7 +424,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
 
         foreach ($rows as $row) {
             $date = self::parseDate((string) ($row['Date'] ?? ''));
-            if ($date === null || !$date->betweenIncluded($period['start'], $period['end'])) {
+            if ($date === null || ! $date->betweenIncluded($period['start'], $period['end'])) {
                 continue;
             }
 
@@ -485,7 +485,7 @@ class PersentaseKehadiranMingguanPerDepartemenReportService
     {
         $formatted = self::formatLevel($level);
 
-        return $formatted !== '' ? 'Level ' . $formatted : 'Level ';
+        return $formatted !== '' ? 'Level '.$formatted : 'Level ';
     }
 
     private static function parseDate(string $value): ?Carbon

@@ -40,16 +40,16 @@ class SaldoKayuBulatReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -67,7 +67,7 @@ class SaldoKayuBulatReportService
         $syntax = (string) config('reports.saldo_kayu_bulat.call_syntax', 'exec');
         $customQuery = config('reports.saldo_kayu_bulat.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan saldo kayu bulat belum dikonfigurasi.');
         }
 
@@ -78,7 +78,7 @@ class SaldoKayuBulatReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan saldo kayu bulat dikonfigurasi untuk SQL Server. '
-                . 'Set SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -87,13 +87,13 @@ class SaldoKayuBulatReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'SALDO_KAYU_BULAT_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan SALDO_KAYU_BULAT_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

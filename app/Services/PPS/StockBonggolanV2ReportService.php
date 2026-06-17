@@ -11,7 +11,7 @@ class StockBonggolanV2ReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate, $warehouse);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     public function healthCheck(string $startDate, string $endDate, string $warehouse): array
@@ -46,7 +46,7 @@ class StockBonggolanV2ReportService
         $parameterCount = max(0, (int) config("{$configPath}.parameter_count", 2));
         $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan PPS Stock Bonggolan V2 belum dikonfigurasi.');
         }
 
@@ -57,7 +57,7 @@ class StockBonggolanV2ReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan PPS Stock Bonggolan V2 dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -66,13 +66,13 @@ class StockBonggolanV2ReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_STOCK_BONGGOLAN_V2_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_STOCK_BONGGOLAN_V2_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -87,8 +87,7 @@ class StockBonggolanV2ReportService
         string $startDate,
         string $endDate,
         string $warehouse,
-    ): array
-    {
+    ): array {
         return match ($parameterCount) {
             0 => [],
             1 => [strtolower($singleParameterName) === 'tglawal' ? $startDate : $endDate],
@@ -102,8 +101,7 @@ class StockBonggolanV2ReportService
         string $procedure,
         int $parameterCount,
         string $singleParameterName,
-    ): string
-    {
+    ): string {
         if ($syntax === 'call') {
             $bindingCount = match ($parameterCount) {
                 0 => 0,

@@ -67,7 +67,7 @@ class StockRacipKayuLatReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -98,7 +98,7 @@ class StockRacipKayuLatReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{jenis: string, rows: array<int, array<string, mixed>>}>
      */
     private function groupByJenis(array $rows): array
@@ -107,7 +107,7 @@ class StockRacipKayuLatReportService
 
         foreach ($rows as $row) {
             $jenis = (string) ($row['Jenis'] ?? '');
-            if (!array_key_exists($jenis, $result)) {
+            if (! array_key_exists($jenis, $result)) {
                 $result[$jenis] = [
                     'jenis' => $jenis,
                     'rows' => [],
@@ -126,7 +126,7 @@ class StockRacipKayuLatReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -155,7 +155,7 @@ class StockRacipKayuLatReportService
     }
 
     /**
-     * @param array<int, mixed> $bindings
+     * @param  array<int, mixed>  $bindings
      * @return array<int, mixed>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -175,7 +175,7 @@ class StockRacipKayuLatReportService
         $parameterCount = (int) config('reports.stock_racip_kayu_lat.parameter_count', 1);
         $parameterCount = max(0, min(1, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan stok racip kayu lat belum dikonfigurasi.');
         }
 
@@ -185,7 +185,7 @@ class StockRacipKayuLatReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan stok racip kayu lat dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_RACIP_KAYU_LAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set STOCK_RACIP_KAYU_LAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -197,13 +197,13 @@ class StockRacipKayuLatReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'STOCK_RACIP_KAYU_LAT_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_RACIP_KAYU_LAT_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan STOCK_RACIP_KAYU_LAT_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

@@ -81,7 +81,7 @@ class StSawmillHariTebalLebarReportFeatureTest extends TestCase
         $this->app->instance(StSawmillHariTebalLebarReportService::class, $service);
 
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ])->postJson('/api/reports/sawn-timber/st-sawmill-hari-tebal-lebar', [
             'TglAwal' => '2026-01-01',
@@ -152,7 +152,7 @@ class StSawmillHariTebalLebarReportFeatureTest extends TestCase
         $this->app->instance(StSawmillHariTebalLebarReportService::class, $service);
 
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ])->postJson('/api/reports/sawn-timber/st-sawmill-hari-tebal-lebar/health', [
             'TglAwal' => '2026-01-01',
@@ -164,4 +164,3 @@ class StSawmillHariTebalLebarReportFeatureTest extends TestCase
             ->assertJsonPath('meta.TglAkhir', '2026-01-31');
     }
 }
-

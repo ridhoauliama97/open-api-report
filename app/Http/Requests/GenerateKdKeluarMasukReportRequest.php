@@ -63,4 +63,3 @@ class GenerateKdKeluarMasukReportRequest extends BaseReportRequest
         });
     }
 }
-

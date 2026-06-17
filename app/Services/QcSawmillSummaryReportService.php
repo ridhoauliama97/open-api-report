@@ -15,7 +15,7 @@ class QcSawmillSummaryReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(fn(object $row): array => $this->normalizeRow((array) $row), $rows);
+        return array_map(fn (object $row): array => $this->normalizeRow((array) $row), $rows);
     }
 
     /**
@@ -41,12 +41,12 @@ class QcSawmillSummaryReportService
                 $dateKeys[$tanggal] = true;
             }
 
-            $rowKey = $meja . '|' . $namaMeja;
+            $rowKey = $meja.'|'.$namaMeja;
 
-            if (!isset($mejaRows[$rowKey])) {
+            if (! isset($mejaRows[$rowKey])) {
                 $mejaRows[$rowKey] = [
                     'meja' => $meja,
-                    'nama_meja' => $namaMeja !== '' ? $namaMeja : 'Meja ' . $meja,
+                    'nama_meja' => $namaMeja !== '' ? $namaMeja : 'Meja '.$meja,
                     'cells' => [],
                     'avg_accurate' => 0.0,
                     '_sort_meja' => is_numeric($meja) ? (float) $meja : PHP_FLOAT_MAX,
@@ -65,12 +65,12 @@ class QcSawmillSummaryReportService
         }
 
         $dateKeys = array_keys($dateKeys);
-        usort($dateKeys, static fn(string $a, string $b): int => strcmp($a, $b));
+        usort($dateKeys, static fn (string $a, string $b): int => strcmp($a, $b));
 
         $mejaRows = array_values($mejaRows);
         foreach ($mejaRows as &$mejaRow) {
             $values = array_map(
-                static fn(array $cell): float => (float) ($cell['accurate'] ?? 0),
+                static fn (array $cell): float => (float) ($cell['accurate'] ?? 0),
                 array_values($mejaRow['cells'] ?? []),
             );
             $mejaRow['avg_accurate'] = $values !== [] ? array_sum($values) / count($values) : 0.0;
@@ -136,7 +136,7 @@ class QcSawmillSummaryReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan QC Sawmill - Summary belum dikonfigurasi.');
         }
 
@@ -146,7 +146,7 @@ class QcSawmillSummaryReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan QC Sawmill - Summary dikonfigurasi untuk SQL Server. '
-                . 'Set QC_SAWMILL_SUMMARY_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set QC_SAWMILL_SUMMARY_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -158,7 +158,7 @@ class QcSawmillSummaryReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure laporan QC Sawmill - Summary tidak valid.');
         }
 
@@ -173,12 +173,12 @@ class QcSawmillSummaryReportService
         try {
             return $connection->select($sql, [$startDate, $endDate]);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan QC Sawmill - Summary: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan QC Sawmill - Summary: '.$exception->getMessage(), 0, $exception);
         }
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<string, mixed>
      */
     private function normalizeRow(array $row): array
@@ -220,7 +220,7 @@ class QcSawmillSummaryReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

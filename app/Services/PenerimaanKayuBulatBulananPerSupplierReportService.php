@@ -99,16 +99,16 @@ class PenerimaanKayuBulatBulananPerSupplierReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{supplier: string, rows: array<int, array<string, mixed>>}>
      */
     private function groupRowsBySupplier(array $rows, ?string $supplierColumn): array
@@ -140,7 +140,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportService
     }
 
     /**
-     * @param array<int, array{supplier: string, rows: array<int, array<string, mixed>>}> $groups
+     * @param  array<int, array{supplier: string, rows: array<int, array<string, mixed>>}>  $groups
      * @return array<int, array<string, mixed>>
      */
     private function flattenGroupedRows(array $groups): array
@@ -157,7 +157,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function resolveSupplierColumn(array $rows): ?string
     {
@@ -192,7 +192,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportService
     }
 
     /**
-     * @param array<int, array{supplier: string, rows: array<int, array<string, mixed>>}> $groups
+     * @param  array<int, array{supplier: string, rows: array<int, array<string, mixed>>}>  $groups
      * @return array<string, mixed>
      */
     private function buildSummary(array $groups): array
@@ -240,7 +240,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -250,7 +250,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportService
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     private function resolveEffectiveTon(array $row): float
     {
@@ -329,7 +329,7 @@ SQL;
     }
 
     /**
-     * @param array<int, array{supplier: string, rows: array<int, array<string, mixed>>}> $groups
+     * @param  array<int, array{supplier: string, rows: array<int, array<string, mixed>>}>  $groups
      * @return array<string, mixed>
      */
     private function buildDetailSummary(array $groups, string $startDate, string $endDate): array
@@ -392,7 +392,7 @@ SQL;
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, mixed>
      */
     private function buildRecapSummary(array $rows): array
@@ -405,7 +405,7 @@ SQL;
                 continue;
             }
 
-            if (!isset($daily[$date])) {
+            if (! isset($daily[$date])) {
                 $daily[$date] = [
                     'tanggal' => $date,
                     'jabon_truk' => [],
@@ -432,6 +432,7 @@ SQL;
                     $daily[$date]['jabon_truk'][$truck] = true;
                 }
                 $daily[$date]['jabon_ton'] += $ton;
+
                 continue;
             }
 
@@ -440,6 +441,7 @@ SQL;
                     $daily[$date]['jabon_tgtd_truk'][$truck] = true;
                 }
                 $daily[$date]['jabon_tgtd_ton'] += $ton;
+
                 continue;
             }
 
@@ -448,6 +450,7 @@ SQL;
                     $daily[$date]['pulai_truk'][$truck] = true;
                 }
                 $daily[$date]['pulai_ton'] += $ton;
+
                 continue;
             }
 
@@ -513,7 +516,7 @@ SQL;
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -539,7 +542,7 @@ SQL;
                 : 'reports.penerimaan_kayu_bulat_bulanan_per_supplier.query'
         );
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(
                 $isSubProcedure
                     ? 'Stored procedure sub laporan penerimaan kayu bulat bulanan per supplier belum dikonfigurasi.'
@@ -554,7 +557,7 @@ SQL;
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan penerimaan kayu bulat bulanan per supplier dikonfigurasi untuk SQL Server. '
-                . 'Set PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -563,14 +566,14 @@ SQL;
                 ? $customQuery
                 : throw new RuntimeException(
                     'PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_CALL_SYNTAX=query '
-                    . 'atau PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_QUERY untuk sub report.',
+                    .'Isi query manual jika menggunakan PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_REPORT_CALL_SYNTAX=query '
+                    .'atau PENERIMAAN_KAYU_BULAT_BULANAN_PER_SUPPLIER_SUB_REPORT_QUERY untuk sub report.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

@@ -24,12 +24,14 @@ class GenerateRekapProduksiCrusherReportRequest extends BaseReportRequest
     public function reportDates(): array
     {
         $date = $this->reportDate();
+
         return [$date, $date];
     }
 
     public function reportDate(): string
     {
         $date = (string) $this->input('end_date', $this->input('TglAkhir', $this->input('report_date', '')));
+
         return $date !== '' ? $date : Carbon::today()->format('Y-m-d');
     }
 }

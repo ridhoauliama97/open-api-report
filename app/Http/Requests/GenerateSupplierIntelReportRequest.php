@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
 class GenerateSupplierIntelReportRequest extends BaseReportRequest
@@ -21,7 +20,7 @@ class GenerateSupplierIntelReportRequest extends BaseReportRequest
         $requiresDateRange = $parameterCount >= 2;
         $singleParameterName = strtolower((string) config('reports.supplier_intel.single_parameter_name', 'TglAkhir'));
         $requiresSingleStartDate = $parameterCount === 1 && in_array($singleParameterName, ['tglawal', 'start_date'], true);
-        $requiresSingleEndDate = $parameterCount === 1 && !$requiresSingleStartDate;
+        $requiresSingleEndDate = $parameterCount === 1 && ! $requiresSingleStartDate;
 
         return [
             'start_date' => [
@@ -78,7 +77,3 @@ class GenerateSupplierIntelReportRequest extends BaseReportRequest
         });
     }
 }
-
-
-
-

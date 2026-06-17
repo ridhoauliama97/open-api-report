@@ -68,7 +68,3 @@ class OpenApiFeatureTest extends TestCase
             ->assertJsonPath('components.schemas.AuthTokenResponse.properties.token_type.example', 'bearer');
     }
 }
-
-
-
-

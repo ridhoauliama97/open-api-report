@@ -198,7 +198,3 @@ class AuthApiFeatureTest extends TestCase
         $this->assertContains('profile:read', $accessToken?->abilities ?? []);
     }
 }
-
-
-
-

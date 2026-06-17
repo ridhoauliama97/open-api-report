@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('sessions')) {
+        if (! Schema::hasTable('sessions')) {
             return;
         }
 
@@ -29,6 +29,7 @@ return new class extends Migration
             ");
             DB::statement('ALTER TABLE [sessions] ALTER COLUMN [user_id] NVARCHAR(255) NULL');
             DB::statement('CREATE INDEX [sessions_user_id_index] ON [sessions] ([user_id])');
+
             return;
         }
 
@@ -44,7 +45,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (!Schema::hasTable('sessions')) {
+        if (! Schema::hasTable('sessions')) {
             return;
         }
 
@@ -62,6 +63,7 @@ return new class extends Migration
             ");
             DB::statement('ALTER TABLE [sessions] ALTER COLUMN [user_id] BIGINT NULL');
             DB::statement('CREATE INDEX [sessions_user_id_index] ON [sessions] ([user_id])');
+
             return;
         }
 

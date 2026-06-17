@@ -30,7 +30,7 @@ class RekapRendemenNonRambungReportService
     {
         $rows = $this->runProcedureQuery($year, $month);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -46,7 +46,7 @@ class RekapRendemenNonRambungReportService
         return [
             'rows' => $rows,
             'raw_rows' => $rawRows,
-            'column_order' => array_values(array_map(static fn(array $item): string => (string) $item['key'], $columnSchema)),
+            'column_order' => array_values(array_map(static fn (array $item): string => (string) $item['key'], $columnSchema)),
             'column_schema' => $columnSchema,
             'summary' => [
                 'total_rows' => count($rows),
@@ -79,7 +79,7 @@ class RekapRendemenNonRambungReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function mapRows(array $rows): array
@@ -123,8 +123,8 @@ class RekapRendemenNonRambungReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $expectedColumns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $expectedColumns
      * @return array<int, string>
      */
     private function extractColumns(array $rows, array $expectedColumns): array
@@ -168,8 +168,8 @@ class RekapRendemenNonRambungReportService
     }
 
     /**
-     * @param array<int, string> $columns
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, string>  $columns
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildColumnSchema(array $columns, array $rows): array
@@ -189,7 +189,7 @@ class RekapRendemenNonRambungReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function detectColumnType(string $column, array $rows): string
     {
@@ -277,8 +277,8 @@ class RekapRendemenNonRambungReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $columnSchema
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $columnSchema
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function buildNumericTotals(array $columnSchema, array $rows): array
@@ -324,7 +324,7 @@ class RekapRendemenNonRambungReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -359,7 +359,7 @@ class RekapRendemenNonRambungReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 1);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap rendemen non rambung belum dikonfigurasi.');
         }
 
@@ -370,7 +370,7 @@ class RekapRendemenNonRambungReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap rendemen non rambung dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_RENDEMEN_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_RENDEMEN_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -382,7 +382,7 @@ class RekapRendemenNonRambungReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

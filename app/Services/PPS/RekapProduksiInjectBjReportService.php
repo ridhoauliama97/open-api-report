@@ -14,7 +14,7 @@ class RekapProduksiInjectBjReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -38,7 +38,7 @@ class RekapProduksiInjectBjReportService
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -59,7 +59,7 @@ class RekapProduksiInjectBjReportService
         $parameterCount = max(0, (int) config("{$configPath}.parameter_count", 2));
         $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan PPS Rekap Produksi Inject BJ belum dikonfigurasi.');
         }
 
@@ -70,7 +70,7 @@ class RekapProduksiInjectBjReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan PPS Rekap Produksi Inject BJ dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -79,13 +79,13 @@ class RekapProduksiInjectBjReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_REKAP_PRODUKSI_INJECT_BJ_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -119,7 +119,7 @@ class RekapProduksiInjectBjReportService
         }
 
         if ($syntax === 'exec' || $driver === 'sqlsrv') {
-            $placeholders = $bindingCount > 0 ? ' ' . implode(', ', array_fill(0, $bindingCount, '?')) : '';
+            $placeholders = $bindingCount > 0 ? ' '.implode(', ', array_fill(0, $bindingCount, '?')) : '';
 
             return "SET NOCOUNT ON; EXEC {$procedure}{$placeholders}";
         }

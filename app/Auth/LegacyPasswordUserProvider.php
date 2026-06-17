@@ -2,8 +2,8 @@
 
 namespace App\Auth;
 
-use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use RuntimeException;
 use Throwable;
 
@@ -41,7 +41,7 @@ class LegacyPasswordUserProvider extends EloquentUserProvider
 
     private function matchesLegacyEncryptedPassword(string $plain, string $stored): bool
     {
-        if (!function_exists('openssl_encrypt')) {
+        if (! function_exists('openssl_encrypt')) {
             return false;
         }
 
@@ -120,7 +120,7 @@ class LegacyPasswordUserProvider extends EloquentUserProvider
             substr(hash('sha256', $legacyKey, true), 0, 8),
         ];
 
-        return array_values(array_filter(array_unique($keys), static fn($key) => is_string($key) && $key !== ''));
+        return array_values(array_filter(array_unique($keys), static fn ($key) => is_string($key) && $key !== ''));
     }
 
     public function rehashPasswordIfRequired(UserContract $user, array $credentials, bool $force = false): void
@@ -144,7 +144,7 @@ class LegacyPasswordUserProvider extends EloquentUserProvider
             $needsRehash = true;
         }
 
-        if (!$force && !$needsRehash) {
+        if (! $force && ! $needsRehash) {
             return;
         }
 

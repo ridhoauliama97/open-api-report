@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateKayuBulatHidupReportRequest;
 use App\Services\KayuBulatHidupReportService;
 use App\Services\PdfGenerator;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -85,8 +86,8 @@ class KayuBulatHidupController extends Controller
 
         ]);
 
-        $startLabel = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
-        $endLabel = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
+        $startLabel = Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
+        $endLabel = Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $filename = sprintf('Laporan Kayu Bulat Hidup - Periode %s s/d %s.pdf', $startLabel, $endLabel);
 
         $dispositionType = $inline ? 'inline' : 'attachment';
@@ -96,7 +97,7 @@ class KayuBulatHidupController extends Controller
             'Content-Disposition' => sprintf(
                 '%s; filename="%s"; filename*=UTF-8\'\'%s',
                 $dispositionType,
-                addcslashes($filename, "\"\\"),
+                addcslashes($filename, '"\\'),
                 rawurlencode($filename)
             ),
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',

@@ -33,7 +33,7 @@ class TracingStReportService
             'summary' => [
                 'total_rows' => count($rows),
                 'suppliers' => array_values(array_unique(array_filter(array_map(
-                    static fn(array $row): string => (string) ($row['NmSupplier'] ?? ''),
+                    static fn (array $row): string => (string) ($row['NmSupplier'] ?? ''),
                     $rows
                 )))),
             ],
@@ -101,7 +101,7 @@ class TracingStReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan tracing ST belum dikonfigurasi.');
         }
 
@@ -111,7 +111,7 @@ class TracingStReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan tracing ST dikonfigurasi untuk SQL Server. '
-                . 'Set TRACING_ST_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TRACING_ST_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -123,7 +123,7 @@ class TracingStReportService
             return $connection->select($query, str_contains($query, '?') ? [$noProduk] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -136,7 +136,7 @@ class TracingStReportService
         try {
             return $connection->select($sql, [$noProduk]);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan tracing ST: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan tracing ST: '.$exception->getMessage(), 0, $exception);
         }
     }
 

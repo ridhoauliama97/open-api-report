@@ -19,7 +19,7 @@ class HasilProduksiHarianMixerProduksiReportService
             if ($rows !== []) {
                 return $this->buildReportDataFromProcedure($noProduksi, $rows);
             }
-        } catch (QueryException | RuntimeException $exception) {
+        } catch (QueryException|RuntimeException $exception) {
         }
 
         return $this->buildReportDataFromTables($noProduksi);
@@ -43,7 +43,7 @@ class HasilProduksiHarianMixerProduksiReportService
                 'row_count' => count($rows),
                 'mode' => 'stored_procedure',
             ];
-        } catch (QueryException | RuntimeException $exception) {
+        } catch (QueryException|RuntimeException $exception) {
             $report = $this->buildReportDataFromTables($noProduksi);
 
             return [
@@ -101,6 +101,7 @@ class HasilProduksiHarianMixerProduksiReportService
 
             if ($type === 'input') {
                 $inputs[] = $item;
+
                 continue;
             }
 
@@ -405,7 +406,7 @@ class HasilProduksiHarianMixerProduksiReportService
             throw new RuntimeException('Laporan PPS Mixer Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -420,7 +421,7 @@ class HasilProduksiHarianMixerProduksiReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

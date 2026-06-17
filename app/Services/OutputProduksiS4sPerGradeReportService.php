@@ -39,7 +39,7 @@ class OutputProduksiS4sPerGradeReportService
             $target = $this->toFloat($r['Target'] ?? null);
             $output = $this->toFloat($r['Output'] ?? null);
 
-            if (!isset($byMachine[$machine])) {
+            if (! isset($byMachine[$machine])) {
                 $byMachine[$machine] = [
                     'target_by_date' => [],
                     'rows' => [],
@@ -48,7 +48,7 @@ class OutputProduksiS4sPerGradeReportService
             }
 
             // Target per tanggal per mesin: ambil yang pertama non-null.
-            if ($target !== null && !isset($byMachine[$machine]['target_by_date'][$dateKey])) {
+            if ($target !== null && ! isset($byMachine[$machine]['target_by_date'][$dateKey])) {
                 $byMachine[$machine]['target_by_date'][$dateKey] = $target;
             }
 
@@ -146,8 +146,8 @@ class OutputProduksiS4sPerGradeReportService
     }
 
     /**
-     * @param array<string, array<string, float>> $jnsToGradesMap For each jns, map grade->value
-     * @param array<int, array{jns:string, grades:array<int,string>}> $jnsCols
+     * @param  array<string, array<string, float>>  $jnsToGradesMap  For each jns, map grade->value
+     * @param  array<int, array{jns:string, grades:array<int,string>}>  $jnsCols
      * @return array<string, mixed>
      */
     private function buildComputedRow(
@@ -198,8 +198,8 @@ class OutputProduksiS4sPerGradeReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param 'sum'|'avg'|'min'|'max' $mode
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  'sum'|'avg'|'min'|'max'  $mode
      * @return array<string, mixed>
      */
     private function reduceRows(array $rows, string $mode): array
@@ -247,7 +247,7 @@ class OutputProduksiS4sPerGradeReportService
                 if ($mode !== 'sum') {
                     $vals = array_values(array_filter(
                         $vals,
-                        static fn(float $v): bool => abs($v) > self::EPS,
+                        static fn (float $v): bool => abs($v) > self::EPS,
                     ));
                 }
 
@@ -273,11 +273,11 @@ class OutputProduksiS4sPerGradeReportService
             $grandAgg += $jnsTotal;
         }
 
-        $targetVals = array_map(static fn($r) => (float) ($r['target'] ?? 0.0), $rows);
+        $targetVals = array_map(static fn ($r) => (float) ($r['target'] ?? 0.0), $rows);
         if ($mode !== 'sum') {
             $targetVals = array_values(array_filter(
                 $targetVals,
-                static fn(float $v): bool => abs($v) > self::EPS,
+                static fn (float $v): bool => abs($v) > self::EPS,
             ));
         }
         $targetAgg = match ($mode) {
@@ -307,7 +307,7 @@ class OutputProduksiS4sPerGradeReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -315,7 +315,7 @@ class OutputProduksiS4sPerGradeReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -338,7 +338,7 @@ class OutputProduksiS4sPerGradeReportService
             throw new RuntimeException('Jumlah parameter laporan Output Produksi S4S Per Grade harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Output Produksi S4S Per Grade belum dikonfigurasi.');
         }
 
@@ -348,7 +348,7 @@ class OutputProduksiS4sPerGradeReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Output Produksi S4S Per Grade dikonfigurasi untuk SQL Server. '
-                . 'Set OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set OUTPUT_PRODUKSI_S4S_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -360,7 +360,7 @@ class OutputProduksiS4sPerGradeReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -376,7 +376,7 @@ class OutputProduksiS4sPerGradeReportService
     }
 
     /**
-     * @param array<string, array<string, bool>> $jnsGrades
+     * @param  array<string, array<string, bool>>  $jnsGrades
      * @return array<int, array{jns:string, grades:array<int,string>}>
      */
     private function buildLayoutColumns(string $machineName, array $jnsGrades): array
@@ -438,6 +438,7 @@ class OutputProduksiS4sPerGradeReportService
                     return false;
                 }
                 $seen[$g] = true;
+
                 return true;
             }));
 

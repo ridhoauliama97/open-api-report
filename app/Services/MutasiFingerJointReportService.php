@@ -44,13 +44,13 @@ class MutasiFingerJointReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             $expectedColumns,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
         if ($missingColumns !== []) {
             throw new RuntimeException(
                 'Output sub report finger joint tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 
@@ -80,7 +80,7 @@ class MutasiFingerJointReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -92,7 +92,7 @@ class MutasiFingerJointReportService
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -118,7 +118,7 @@ class MutasiFingerJointReportService
                 : 'reports.mutasi_finger_joint.query'
         );
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(
                 $isSubProcedure
                     ? 'Stored procedure sub laporan mutasi finger joint belum dikonfigurasi.'
@@ -133,7 +133,7 @@ class MutasiFingerJointReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan mutasi finger joint dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_FINGER_JOINT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_FINGER_JOINT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -142,14 +142,14 @@ class MutasiFingerJointReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MUTASI_FINGER_JOINT_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MUTASI_FINGER_JOINT_REPORT_CALL_SYNTAX=query '
-                    . 'atau MUTASI_FINGER_JOINT_SUB_REPORT_QUERY untuk sub report.',
+                    .'Isi query manual jika menggunakan MUTASI_FINGER_JOINT_REPORT_CALL_SYNTAX=query '
+                    .'atau MUTASI_FINGER_JOINT_SUB_REPORT_QUERY untuk sub report.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

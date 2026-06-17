@@ -58,4 +58,3 @@ class GenerateRekapPenerimaanSTDariSawmillKgReportRequest extends BaseReportRequ
         });
     }
 }
-

@@ -91,7 +91,7 @@ class SaldoHidupKayuBulatKgReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeMainRows(array $rows): array
@@ -107,7 +107,7 @@ class SaldoHidupKayuBulatKgReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeSubRows(array $rows): array
@@ -121,7 +121,7 @@ class SaldoHidupKayuBulatKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildSubRowsFromMain(array $rows): array
@@ -159,7 +159,7 @@ class SaldoHidupKayuBulatKgReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.{$queryKey}");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(
                 $isSubProcedure
                     ? 'Stored procedure sub laporan saldo hidup kayu bulat timbang KG belum dikonfigurasi.'
@@ -173,7 +173,7 @@ class SaldoHidupKayuBulatKgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan saldo hidup kayu bulat timbang KG dikonfigurasi untuk SQL Server. '
-                . 'Set SALDO_HIDUP_KAYU_BULAT_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set SALDO_HIDUP_KAYU_BULAT_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -185,7 +185,7 @@ class SaldoHidupKayuBulatKgReportService
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -204,7 +204,7 @@ class SaldoHidupKayuBulatKgReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

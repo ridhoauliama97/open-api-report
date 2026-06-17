@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
 class ShowRekapPembelianKayuBulatRequest extends BaseReportRequest
@@ -33,7 +32,7 @@ class ShowRekapPembelianKayuBulatRequest extends BaseReportRequest
             $startDate = $this->input('start_date', $this->input('TglAwal'));
             $endDate = $this->input('end_date', $this->input('TglAkhir'));
 
-            if (!$startDate || !$endDate) {
+            if (! $startDate || ! $endDate) {
                 return;
             }
 
@@ -50,5 +49,3 @@ class ShowRekapPembelianKayuBulatRequest extends BaseReportRequest
         });
     }
 }
-
-

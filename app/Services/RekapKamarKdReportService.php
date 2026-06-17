@@ -8,6 +8,7 @@ use RuntimeException;
 class RekapKamarKdReportService
 {
     private const EPS = 0.0000001;
+
     private const CAPACITY_M3 = 80.0;
 
     /**
@@ -120,7 +121,7 @@ class RekapKamarKdReportService
                 }
 
                 $roomJenis[] = [
-                    'label' => chr(ord('A') + $letterIndex) . '.',
+                    'label' => chr(ord('A') + $letterIndex).'.',
                     'jenis' => $jenis,
                     'summary_rows' => $summaryRows,
                     'detail_rows' => $detailComputed,
@@ -238,7 +239,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeMainRows(array $rows): array
@@ -267,7 +268,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeSub1Rows(array $rows): array
@@ -293,7 +294,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeSub2Rows(array $rows): array
@@ -338,7 +339,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $sub1Rows
+     * @param  array<int, array<string, mixed>>  $sub1Rows
      * @return array<int, array<string, array<string, array{Ton: float, m3: float}>>>
      */
     private function buildSub1Index(array $sub1Rows): array
@@ -361,7 +362,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function resolveHariForKd(array $rows, int $kd): int
     {
@@ -380,8 +381,8 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, string> $jenisKeys
-     * @param array<int, array{raw: string, order: array<int, string>}> $jenisOrderByKd
+     * @param  array<int, string>  $jenisKeys
+     * @param  array<int, array{raw: string, order: array<int, string>}>  $jenisOrderByKd
      * @return array<int, string>
      */
     private function sortJenisForKd(int $kd, array $jenisKeys, array $jenisOrderByKd): array
@@ -389,6 +390,7 @@ class RekapKamarKdReportService
         $order = $jenisOrderByKd[$kd]['order'] ?? [];
         if ($order === []) {
             sort($jenisKeys);
+
             return array_values($jenisKeys);
         }
 
@@ -403,6 +405,7 @@ class RekapKamarKdReportService
             if ($pa !== $pb) {
                 return $pa <=> $pb;
             }
+
             return strcmp($a, $b);
         });
 
@@ -410,7 +413,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function sortSub1Rows(array $rows): array
@@ -421,6 +424,7 @@ class RekapKamarKdReportService
             if (abs($ta - $tb) > self::EPS) {
                 return $ta <=> $tb;
             }
+
             return 0;
         });
 
@@ -428,7 +432,7 @@ class RekapKamarKdReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function sortMainRows(array $rows): array
@@ -449,6 +453,7 @@ class RekapKamarKdReportService
             if (abs($tonA - $tonB) > self::EPS) {
                 return $tonB <=> $tonA;
             }
+
             return 0;
         });
 
@@ -468,7 +473,7 @@ class RekapKamarKdReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -476,7 +481,7 @@ class RekapKamarKdReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -513,7 +518,7 @@ class RekapKamarKdReportService
             default => 2,
         };
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap kamar KD belum dikonfigurasi.');
         }
 
@@ -530,7 +535,7 @@ class RekapKamarKdReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap kamar KD dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_KAMAR_KD_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_KAMAR_KD_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -542,7 +547,7 @@ class RekapKamarKdReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

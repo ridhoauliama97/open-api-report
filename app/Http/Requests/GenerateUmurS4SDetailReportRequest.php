@@ -27,7 +27,7 @@ class GenerateUmurS4SDetailReportRequest extends BaseReportRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            if (!$this->filled('Umur1') || !$this->filled('Umur2') || !$this->filled('Umur3') || !$this->filled('Umur4')) {
+            if (! $this->filled('Umur1') || ! $this->filled('Umur2') || ! $this->filled('Umur3') || ! $this->filled('Umur4')) {
                 return;
             }
 
@@ -93,4 +93,3 @@ class GenerateUmurS4SDetailReportRequest extends BaseReportRequest
         }
     }
 }
-

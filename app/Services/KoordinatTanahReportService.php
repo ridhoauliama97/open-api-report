@@ -86,7 +86,7 @@ class KoordinatTanahReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, mixed>
      */
     private function buildHeader(array $rows, string $noSpk): array
@@ -102,7 +102,7 @@ class KoordinatTanahReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildProducts(array $rows): array
@@ -125,7 +125,7 @@ class KoordinatTanahReportService
                 continue;
             }
 
-            if (!isset($grouped[$key])) {
+            if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'Jenis' => trim((string) ($row['Jenis'] ?? '')),
                     'NamaBarangJadi' => trim((string) ($row['NamaBarangJadi'] ?? '')),
@@ -162,7 +162,7 @@ class KoordinatTanahReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildLands(array $rows): array
@@ -186,7 +186,7 @@ class KoordinatTanahReportService
                 continue;
             }
 
-            if (!isset($grouped[$key])) {
+            if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'NamaTanah' => trim((string) ($row['NamaTanah'] ?? '')),
                     'NamaPemilik' => trim((string) ($row['NamaPemilik'] ?? '')),
@@ -231,7 +231,7 @@ class KoordinatTanahReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildGpsPercentages(array $rows): array
@@ -258,7 +258,7 @@ class KoordinatTanahReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

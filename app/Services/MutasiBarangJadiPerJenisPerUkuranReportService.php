@@ -58,12 +58,12 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -76,7 +76,7 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
         $syntax = (string) config('reports.mutasi_barang_jadi_per_jenis_per_ukuran.call_syntax', 'exec');
         $customQuery = config('reports.mutasi_barang_jadi_per_jenis_per_ukuran.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan mutasi barang jadi per-jenis per-ukuran belum dikonfigurasi.');
         }
 
@@ -87,7 +87,7 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan mutasi barang jadi per-jenis per-ukuran dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -96,7 +96,7 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan MUTASI_BARANG_JADI_PER_JENIS_PER_UKURAN_REPORT_CALL_SYNTAX=query.',
                 );
 
             $resolvedBindings = str_contains($query, '?') ? $bindings : [];
@@ -104,7 +104,7 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
             return $connection->select($query, $resolvedBindings);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -120,7 +120,7 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeReportRows(array $rows): array
@@ -132,13 +132,13 @@ class MutasiBarangJadiPerJenisPerUkuranReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             self::EXPECTED_COLUMNS,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
         if ($missingColumns !== []) {
             throw new RuntimeException(
                 'Output SP_LapMutasiBJPerJenisPerUkuran tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 

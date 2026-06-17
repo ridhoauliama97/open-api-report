@@ -30,8 +30,8 @@ class DashboardSandingReportService
 
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan di hasil SPWps_LapDashboardSanding. '
-                . 'Butuh kolom tanggal, jenis, grade, masuk, dan keluar. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
+                .'Butuh kolom tanggal, jenis, grade, masuk, dan keluar. '
+                .'Kolom terdeteksi: '.implode(', ', $detectedColumns),
             );
         }
 
@@ -163,7 +163,7 @@ class DashboardSandingReportService
     private function applyColumnOrder(array $keys, array $orderedColumns): array
     {
         $keys = array_values(array_unique($keys));
-        usort($keys, static fn(string $a, string $b): int => strcmp($a, $b));
+        usort($keys, static fn (string $a, string $b): int => strcmp($a, $b));
 
         if ($orderedColumns === []) {
             return $keys;
@@ -176,7 +176,7 @@ class DashboardSandingReportService
             }
         }
         foreach ($keys as $key) {
-            if (!in_array($key, $final, true)) {
+            if (! in_array($key, $final, true)) {
                 $final[] = $key;
             }
         }
@@ -193,7 +193,7 @@ class DashboardSandingReportService
             return '';
         }
 
-        return trim($jenisNormalized . ' ' . $barangNormalized);
+        return trim($jenisNormalized.' '.$barangNormalized);
     }
 
     private function normalizeDisplayToken(string $value): string
@@ -222,7 +222,7 @@ class DashboardSandingReportService
 
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function resolveColumns(array $rows): array
@@ -300,7 +300,7 @@ class DashboardSandingReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -344,7 +344,7 @@ class DashboardSandingReportService
         $parameterCount = (int) config('reports.dashboard_sanding.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan dashboard sanding belum dikonfigurasi.');
         }
 
@@ -354,7 +354,7 @@ class DashboardSandingReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan dashboard sanding dikonfigurasi untuk SQL Server. '
-                . 'Set DASHBOARD_SANDING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DASHBOARD_SANDING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -366,13 +366,13 @@ class DashboardSandingReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'DASHBOARD_SANDING_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan DASHBOARD_SANDING_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan DASHBOARD_SANDING_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

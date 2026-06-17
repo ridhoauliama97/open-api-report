@@ -32,8 +32,7 @@ class DataKaryawanStatusKerjaReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -69,11 +68,11 @@ class DataKaryawanStatusKerjaReportService
     {
         $rawRows = array_values(array_filter(
             $reportData['rows'] ?? [],
-            static fn(array $row): bool => self::shouldIncludeRow($row)
+            static fn (array $row): bool => self::shouldIncludeRow($row)
         ));
         $printedBy = self::resolvePrintedBy($rawRows);
         $rows = array_map(
-            static fn(array $row): array => self::shapeRow($row),
+            static fn (array $row): array => self::shapeRow($row),
             $rawRows
         );
 

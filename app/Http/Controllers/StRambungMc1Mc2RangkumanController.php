@@ -122,4 +122,3 @@ class StRambungMc1Mc2RangkumanController extends Controller
         ]);
     }
 }
-

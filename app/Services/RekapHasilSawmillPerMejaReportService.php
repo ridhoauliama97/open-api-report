@@ -73,7 +73,7 @@ class RekapHasilSawmillPerMejaReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -110,7 +110,7 @@ class RekapHasilSawmillPerMejaReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, string>
      */
     private function extractDateKeys(array $rows): array
@@ -135,8 +135,8 @@ class RekapHasilSawmillPerMejaReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $dateKeys
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $dateKeys
      * @return array<int, array{no_meja: int, rows: array<int, array{tebal: float, uom: string, values: array<string, float>, row_total: float}>}>
      */
     private function pivotRows(array $rows, array $dateKeys): array
@@ -161,15 +161,15 @@ class RekapHasilSawmillPerMejaReportService
             }
 
             $mejaKey = (string) $noMeja;
-            if (!isset($byMeja[$mejaKey])) {
+            if (! isset($byMeja[$mejaKey])) {
                 $byMeja[$mejaKey] = [
                     'no_meja' => $noMeja,
                     'rows' => [],
                 ];
             }
 
-            $rowKey = $tebal . '|' . $uom;
-            if (!isset($byMeja[$mejaKey]['rows'][$rowKey])) {
+            $rowKey = $tebal.'|'.$uom;
+            if (! isset($byMeja[$mejaKey]['rows'][$rowKey])) {
                 $byMeja[$mejaKey]['rows'][$rowKey] = [
                     'tebal' => $tebal,
                     'uom' => $uom,
@@ -196,6 +196,7 @@ class RekapHasilSawmillPerMejaReportService
                 if (abs($ta - $tb) > 0.0000001) {
                     return $ta <=> $tb;
                 }
+
                 return strcmp((string) ($a['uom'] ?? ''), (string) ($b['uom'] ?? ''));
             });
 
@@ -220,7 +221,7 @@ class RekapHasilSawmillPerMejaReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap hasil sawmill per meja belum dikonfigurasi.');
         }
 
@@ -231,7 +232,7 @@ class RekapHasilSawmillPerMejaReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap hasil sawmill per meja dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_HASIL_SAWMILL_PER_MEJA_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -243,7 +244,7 @@ class RekapHasilSawmillPerMejaReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -262,7 +263,7 @@ class RekapHasilSawmillPerMejaReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -285,4 +286,3 @@ class RekapHasilSawmillPerMejaReportService
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }
-

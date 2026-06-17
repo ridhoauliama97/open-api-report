@@ -16,7 +16,7 @@ class PenjualanLokalReportService
             'end_date' => $endDate,
         ]);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     /**

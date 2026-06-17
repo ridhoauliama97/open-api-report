@@ -28,11 +28,11 @@ class GenerateQcSawmillReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('start_date') && $this->filled('TglAwal')) {
+        if (! $this->filled('start_date') && $this->filled('TglAwal')) {
             $this->merge(['start_date' => $this->input('TglAwal')]);
         }
 
-        if (!$this->filled('end_date') && $this->filled('TglAkhir')) {
+        if (! $this->filled('end_date') && $this->filled('TglAkhir')) {
             $this->merge(['end_date' => $this->input('TglAkhir')]);
         }
     }

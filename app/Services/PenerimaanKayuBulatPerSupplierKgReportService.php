@@ -36,7 +36,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
             $supplier = $this->resolveSupplierName($row, $columns);
             $truckValue = $this->toFloat($columns['truck'] !== null ? ($row[$columns['truck']] ?? null) : null) ?? 0.0;
 
-            if (!isset($supplierMap[$supplier])) {
+            if (! isset($supplierMap[$supplier])) {
                 $supplierMap[$supplier] = [
                     'supplier' => $supplier,
                     'trucks' => 0.0,
@@ -60,6 +60,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
                 }
 
                 $supplierMap[$supplier]['total_ton'] += $rowTotalTon;
+
                 continue;
             }
 
@@ -70,6 +71,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
                 $supplierMap[$supplier]['groups'][$groupName] = ($supplierMap[$supplier]['groups'][$groupName] ?? 0.0) + $tonValue;
                 $groupTotals[$groupName] = ($groupTotals[$groupName] ?? 0.0) + $tonValue;
                 $supplierMap[$supplier]['total_ton'] += $tonValue;
+
                 continue;
             }
 
@@ -178,7 +180,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}
      */
     private function resolveColumns(array $rows): array
@@ -203,8 +205,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      * @return array<int, string>
      */
     private function resolveTonFallbackColumns(array $rows, array $columns): array
@@ -250,6 +252,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
                 str_contains($normalized, 'total')
             ) {
                 $prioritized[] = $key;
+
                 continue;
             }
 
@@ -260,8 +263,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      * @return array<int, string>
      */
     private function resolvePivotGroupColumns(array $rows, array $columns): array
@@ -315,8 +318,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array<int, string> $groupColumns
+     * @param  array<string, mixed>  $row
+     * @param  array<int, string>  $groupColumns
      * @return array<string, float>
      */
     private function resolvePivotGroupsFromRow(array $row, array $groupColumns): array
@@ -337,8 +340,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $candidates
      */
     private function findMatchingKey(array $keys, array $candidates): ?string
     {
@@ -376,7 +379,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<int, string> $groupNames
+     * @param  array<int, string>  $groupNames
      * @return array<int, string>
      */
     private function sortGroupNames(array $groupNames): array
@@ -408,8 +411,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<int, string> $groupNames
-     * @param array<string, float> $groupTotals
+     * @param  array<int, string>  $groupNames
+     * @param  array<string, float>  $groupTotals
      * @return array<string, float>
      */
     private function buildGroupRatios(array $groupNames, array $groupTotals, float $grandTotalTon): array
@@ -425,8 +428,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<string, mixed>  $row
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      */
     private function resolveSupplierName(array $row, array $columns): string
     {
@@ -436,8 +439,8 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
+     * @param  array<string, mixed>  $row
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
      */
     private function resolveGroupName(array $row, array $columns): string
     {
@@ -447,9 +450,9 @@ class PenerimaanKayuBulatPerSupplierKgReportService
     }
 
     /**
-     * @param array<string, mixed> $row
-     * @param array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string} $columns
-     * @param array<int, string> $fallbackTonColumns
+     * @param  array<string, mixed>  $row
+     * @param  array{supplier: ?string, truck: ?string, group: ?string, ton: ?string, total_ton: ?string, ratio: ?string}  $columns
+     * @param  array<int, string>  $fallbackTonColumns
      */
     private function resolveTonValue(array $row, array $columns, array $fallbackTonColumns): float
     {
@@ -479,7 +482,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -537,7 +540,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
             throw new RuntimeException('Jumlah parameter laporan penerimaan kayu bulat per supplier timbang KG harus antara 1 sampai 2.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan penerimaan kayu bulat per supplier timbang KG belum dikonfigurasi.');
         }
 
@@ -547,7 +550,7 @@ class PenerimaanKayuBulatPerSupplierKgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan penerimaan kayu bulat per supplier timbang KG dikonfigurasi untuk SQL Server. '
-                . 'Set PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -558,13 +561,13 @@ class PenerimaanKayuBulatPerSupplierKgReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PENERIMAAN_KAYU_BULAT_PER_SUPPLIER_KG_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

@@ -24,7 +24,7 @@ class FingerJointHidupDetailReportService
             $jenis = trim((string) ($item['Jenis'] ?? $item['JenisKayu'] ?? $item['GroupKayu'] ?? ''));
             $grade = trim((string) ($item['NamaGrade'] ?? $item['Grade'] ?? ''));
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis . ($grade !== '' ? ' - ' . $grade : ''))
+                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
                 : $grade;
 
             $tebal = $this->toFloat($item['Tebal'] ?? null);
@@ -55,6 +55,7 @@ class FingerJointHidupDetailReportService
             if ($cmp !== 0) {
                 return $cmp;
             }
+
             return strcmp((string) ($a['NoFJ'] ?? ''), (string) ($b['NoFJ'] ?? ''));
         });
 
@@ -94,7 +95,7 @@ class FingerJointHidupDetailReportService
         $customQuery = config('reports.finger_joint_hidup_detail.query');
         $parameterCount = (int) config('reports.finger_joint_hidup_detail.parameter_count', 0);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Finger Joint (Hidup) detail belum dikonfigurasi.');
         }
 
@@ -107,7 +108,7 @@ class FingerJointHidupDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Finger Joint (Hidup) detail dikonfigurasi untuk SQL Server. '
-                . 'Set FINGER_JOINT_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set FINGER_JOINT_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -116,13 +117,13 @@ class FingerJointHidupDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'FINGER_JOINT_HIDUP_DETAIL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan FINGER_JOINT_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan FINGER_JOINT_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -165,7 +166,7 @@ class FingerJointHidupDetailReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -204,4 +205,3 @@ class FingerJointHidupDetailReportService
         return (int) round($f);
     }
 }
-

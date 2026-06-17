@@ -76,7 +76,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -129,6 +129,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
 
             $leftUom = (string) ($left['UOM'] ?? '');
             $rightUom = (string) ($right['UOM'] ?? '');
+
             return strcmp($leftUom, $rightUom);
         });
 
@@ -138,7 +139,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
     /**
      * Group rows by No. Meja then by Tanggal.
      *
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{no_meja: int, nama_meja: string, date_groups: array<int, array{date: string, rows: array<int, array<string, mixed>>}>}>
      */
     private function groupRowsByMejaAndDate(array $rows): array
@@ -149,10 +150,10 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
         foreach ($rows as $row) {
             $noMeja = (int) ($row['NoMeja'] ?? 0);
             $namaMeja = (string) ($row['NamaMeja'] ?? '');
-            $namaMeja = $namaMeja !== '' ? $namaMeja : ('Meja ' . $noMeja);
+            $namaMeja = $namaMeja !== '' ? $namaMeja : ('Meja '.$noMeja);
             $dateKey = (string) ($row['TglSawmill'] ?? '');
 
-            if (!isset($byMeja[$noMeja])) {
+            if (! isset($byMeja[$noMeja])) {
                 $byMeja[$noMeja] = [
                     'no_meja' => $noMeja,
                     'nama_meja' => $namaMeja,
@@ -160,7 +161,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
                 ];
             }
 
-            if (!isset($byMeja[$noMeja]['by_date'][$dateKey])) {
+            if (! isset($byMeja[$noMeja]['by_date'][$dateKey])) {
                 $byMeja[$noMeja]['by_date'][$dateKey] = [];
             }
 
@@ -193,7 +194,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
     }
 
     /**
-     * @param array<int, array{no_meja: int, nama_meja: string, date_groups: array<int, array{date: string, rows: array<int, array<string, mixed>>}>}> $groups
+     * @param  array<int, array{no_meja: int, nama_meja: string, date_groups: array<int, array{date: string, rows: array<int, array<string, mixed>>}>}>  $groups
      * @return array<string, mixed>
      */
     private function buildSummary(array $groups, string $tonColumn, ?string $smColumn = null): array
@@ -223,7 +224,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
                 'no_meja' => $group['no_meja'],
                 'nama_meja' => $group['nama_meja'],
                 'total_rows' => array_sum(array_map(
-                    static fn(array $dg): int => is_array($dg['rows'] ?? null) ? count($dg['rows']) : 0,
+                    static fn (array $dg): int => is_array($dg['rows'] ?? null) ? count($dg['rows']) : 0,
                     $dateGroups,
                 )),
                 'total_ton' => $totalTon,
@@ -234,8 +235,8 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
         return [
             'total_meja' => count($groups),
             'total_rows' => array_sum(array_map(
-                static fn(array $group): int => array_sum(array_map(
-                    static fn(array $dg): int => is_array($dg['rows'] ?? null) ? count($dg['rows']) : 0,
+                static fn (array $group): int => array_sum(array_map(
+                    static fn (array $dg): int => is_array($dg['rows'] ?? null) ? count($dg['rows']) : 0,
                     is_array($group['date_groups'] ?? null) ? $group['date_groups'] : [],
                 )),
                 $groups,
@@ -260,7 +261,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
         $customQuery = config("{$configKey}.{$queryKey}");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap hasil sawmill per meja (upah borongan) belum dikonfigurasi.');
         }
 
@@ -271,7 +272,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap hasil sawmill per meja (upah borongan) dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_HASIL_SAWMILL_PER_MEJA_UPAH_BORONGAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -283,7 +284,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -302,7 +303,7 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -325,4 +326,3 @@ class RekapHasilSawmillPerMejaUpahBoronganReportService
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }
-

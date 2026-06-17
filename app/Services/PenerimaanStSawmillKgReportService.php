@@ -13,7 +13,7 @@ class PenerimaanStSawmillKgReportService
     public function fetch(string $startDate, string $endDate): array
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
-        $rows = array_map(static fn(object $row): array => (array) $row, $rows);
+        $rows = array_map(static fn (object $row): array => (array) $row, $rows);
         $supplierColumn = $this->resolveSupplierColumn($rows);
         $noPenerimaanColumn = $this->resolveNoPenerimaanColumn($rows);
         $inOutColumn = $this->resolveInOutColumn($rows);
@@ -30,7 +30,7 @@ class PenerimaanStSawmillKgReportService
                 }
 
                 // Prefer INPUT row as canonical supplier source.
-                if ($inOut === '1' || !isset($noPenToSupplier[$noPen])) {
+                if ($inOut === '1' || ! isset($noPenToSupplier[$noPen])) {
                     $noPenToSupplier[$noPen] = $supplier;
                 }
             }
@@ -115,7 +115,7 @@ class PenerimaanStSawmillKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function resolveSupplierColumn(array $rows): ?string
     {
@@ -143,7 +143,7 @@ class PenerimaanStSawmillKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function resolveNoPenerimaanColumn(array $rows): ?string
     {
@@ -172,7 +172,7 @@ class PenerimaanStSawmillKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      */
     private function resolveInOutColumn(array $rows): ?string
     {
@@ -191,15 +191,14 @@ class PenerimaanStSawmillKgReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{no_penerimaan_st: string, supplier: string, rows: array<int, array<string, mixed>>}>
      */
     private function groupRowsBySupplier(
         array $rows,
         ?string $supplierColumn,
         ?string $noPenerimaanColumn,
-    ): array
-    {
+    ): array {
         if ($rows === []) {
             return [];
         }
@@ -231,7 +230,7 @@ class PenerimaanStSawmillKgReportService
     }
 
     /**
-     * @param array<int, array{no_penerimaan_st: string, supplier: string, rows: array<int, array<string, mixed>>}> $groups
+     * @param  array<int, array{no_penerimaan_st: string, supplier: string, rows: array<int, array<string, mixed>>}>  $groups
      * @return array<string, mixed>
      */
     private function buildSummary(array $groups): array
@@ -281,7 +280,7 @@ class PenerimaanStSawmillKgReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -320,7 +319,7 @@ class PenerimaanStSawmillKgReportService
             throw new RuntimeException('Jumlah parameter laporan penerimaan ST dari sawmill harus antara 1 sampai 2.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan penerimaan ST dari sawmill belum dikonfigurasi.');
         }
 
@@ -330,7 +329,7 @@ class PenerimaanStSawmillKgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan penerimaan ST dari sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -342,13 +341,13 @@ class PenerimaanStSawmillKgReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PENERIMAAN_ST_DARI_SAWMILL_KG_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

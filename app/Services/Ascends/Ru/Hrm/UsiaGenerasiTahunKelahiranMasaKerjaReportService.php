@@ -22,8 +22,7 @@ class UsiaGenerasiTahunKelahiranMasaKerjaReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -314,11 +313,11 @@ class UsiaGenerasiTahunKelahiranMasaKerjaReportService
 
     private static function percentText(int $count, int $total): string
     {
-        return $total > 0 ? number_format(($count / $total) * 100, 1, '.', '') . '%' : '0.0%';
+        return $total > 0 ? number_format(($count / $total) * 100, 1, '.', '').'%' : '0.0%';
     }
 
     private static function formatWorkingPeriod(int $years, int $months): string
     {
-        return $years . ' Thn ' . $months . ' bln';
+        return $years.' Thn '.$months.' bln';
     }
 }

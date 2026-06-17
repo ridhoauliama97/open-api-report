@@ -134,5 +134,4 @@ class StokOpnameStDetailKdController extends Controller
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
     }
-
 }

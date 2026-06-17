@@ -38,8 +38,8 @@ class DashboardBarangJadiReportService
 
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan di hasil SPWps_LapDashboardBJ. '
-                . 'Butuh kolom tanggal, jenis, nama barang jadi, masuk, dan keluar. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
+                .'Butuh kolom tanggal, jenis, nama barang jadi, masuk, dan keluar. '
+                .'Kolom terdeteksi: '.implode(', ', $detectedColumns),
             );
         }
 
@@ -77,11 +77,11 @@ class DashboardBarangJadiReportService
             $inflow = $this->toFloat($row[$columns['masuk']] ?? 0);
             $outflow = $this->toFloat($row[$columns['keluar']] ?? 0);
 
-            if (!isset($daily[$date])) {
+            if (! isset($daily[$date])) {
                 $daily[$date] = [];
             }
 
-            if (!isset($daily[$date][$key])) {
+            if (! isset($daily[$date][$key])) {
                 $daily[$date][$key] = ['in' => 0.0, 'out' => 0.0];
             }
 
@@ -196,15 +196,15 @@ class DashboardBarangJadiReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $orderedColumns
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $orderedColumns
      * @return array<int, string>
      */
     private function applyColumnOrder(array $keys, array $orderedColumns): array
     {
         $keys = array_values(array_unique($keys));
 
-        usort($keys, static fn(string $a, string $b): int => strcmp($a, $b));
+        usort($keys, static fn (string $a, string $b): int => strcmp($a, $b));
 
         if ($orderedColumns === []) {
             return $keys;
@@ -218,7 +218,7 @@ class DashboardBarangJadiReportService
         }
 
         foreach ($keys as $key) {
-            if (!in_array($key, $final, true)) {
+            if (! in_array($key, $final, true)) {
                 $final[] = $key;
             }
         }
@@ -235,7 +235,7 @@ class DashboardBarangJadiReportService
             return '';
         }
 
-        return trim($jenisNormalized . ' ' . $barangNormalized);
+        return trim($jenisNormalized.' '.$barangNormalized);
     }
 
     private function normalizeDisplayToken(string $value): string
@@ -271,16 +271,16 @@ class DashboardBarangJadiReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{date: ?string, jenis: ?string, barang_jadi: ?string, masuk: ?string, keluar: ?string, s_akhir: ?string, ctr: ?string}
      */
     private function resolveColumns(array $rows): array
@@ -306,8 +306,8 @@ class DashboardBarangJadiReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $candidates
      */
     private function findMatchingKey(array $keys, array $candidates): ?string
     {
@@ -364,7 +364,7 @@ class DashboardBarangJadiReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -396,7 +396,7 @@ class DashboardBarangJadiReportService
     }
 
     /**
-     * @param array<int, mixed> $bindings
+     * @param  array<int, mixed>  $bindings
      * @return array<int, mixed>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -416,7 +416,7 @@ class DashboardBarangJadiReportService
         $parameterCount = (int) config('reports.dashboard_barang_jadi.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan dashboard barang jadi belum dikonfigurasi.');
         }
 
@@ -426,7 +426,7 @@ class DashboardBarangJadiReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan dashboard barang jadi dikonfigurasi untuk SQL Server. '
-                . 'Set DASHBOARD_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DASHBOARD_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -438,13 +438,13 @@ class DashboardBarangJadiReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'DASHBOARD_BARANG_JADI_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan DASHBOARD_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan DASHBOARD_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

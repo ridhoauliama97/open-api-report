@@ -72,7 +72,7 @@ class PersentaseKehadiranBulananReportService
             }
 
             $recordXml = $reader->readOuterXML();
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -192,17 +192,17 @@ class PersentaseKehadiranBulananReportService
                 $employeeCode === ''
                 || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
                 || $date === null
-                || !$date->betweenIncluded($period['start'], $period['end'])
+                || ! $date->betweenIncluded($period['start'], $period['end'])
             ) {
                 continue;
             }
 
             $department = trim((string) ($row['Department_x0020_Name'] ?? ''));
-            if (!self::matchesType($row, $department, $type)) {
+            if (! self::matchesType($row, $department, $type)) {
                 continue;
             }
 
-            if (!isset($employees[$employeeCode])) {
+            if (! isset($employees[$employeeCode])) {
                 $employees[$employeeCode] = [
                     'code' => $employeeCode,
                     'name' => trim((string) ($row['Full_x0020_Name'] ?? '')),
@@ -360,7 +360,7 @@ class PersentaseKehadiranBulananReportService
 
     private static function formatWorkingPeriod(mixed $joinDate, Carbon $endDate): string
     {
-        if (!$joinDate instanceof Carbon) {
+        if (! $joinDate instanceof Carbon) {
             return '';
         }
 
@@ -409,7 +409,7 @@ class PersentaseKehadiranBulananReportService
      */
     private static function isValidPresent(array $row, string $company): bool
     {
-        if (!self::isPresent($row)) {
+        if (! self::isPresent($row)) {
             return false;
         }
 
@@ -434,7 +434,7 @@ class PersentaseKehadiranBulananReportService
 
         foreach ($rows as $row) {
             $date = self::parseDate((string) ($row['Date'] ?? ''));
-            if ($date === null || !$date->betweenIncluded($period['start'], $period['end'])) {
+            if ($date === null || ! $date->betweenIncluded($period['start'], $period['end'])) {
                 continue;
             }
 

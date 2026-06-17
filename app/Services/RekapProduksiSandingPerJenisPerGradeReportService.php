@@ -76,7 +76,7 @@ class RekapProduksiSandingPerJenisPerGradeReportService
         $customQuery = config('reports.rekap_produksi_sanding_per_jenis_per_grade.query');
         $parameterCount = (int) config('reports.rekap_produksi_sanding_per_jenis_per_grade.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap produksi Sanding per-jenis dan per-grade belum dikonfigurasi.');
         }
 
@@ -90,7 +90,7 @@ class RekapProduksiSandingPerJenisPerGradeReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap produksi Sanding per-jenis dan per-grade dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -99,13 +99,13 @@ class RekapProduksiSandingPerJenisPerGradeReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan REKAP_PRODUKSI_SANDING_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -126,7 +126,7 @@ class RekapProduksiSandingPerJenisPerGradeReportService
             return "EXEC {$procedure}";
         }
 
-        return "EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?'));
+        return "EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?'));
     }
 
     private function buildCallSql(string $procedure, int $parameterCount): string
@@ -135,7 +135,7 @@ class RekapProduksiSandingPerJenisPerGradeReportService
             return "CALL {$procedure}()";
         }
 
-        return "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ")";
+        return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
     }
 
     private function toFloat(mixed $value): ?float
@@ -144,7 +144,7 @@ class RekapProduksiSandingPerJenisPerGradeReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

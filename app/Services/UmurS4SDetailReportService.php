@@ -25,7 +25,7 @@ class UmurS4SDetailReportService
 
             // Avoid leading "- " when the base "Jenis" is empty.
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis . ($grade !== '' ? ' - ' . $grade : ''))
+                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
                 : $grade;
 
             $p1 = $this->toFloat($item['Period1'] ?? null);
@@ -120,7 +120,7 @@ class UmurS4SDetailReportService
                 $this->dimensionKey($row['Panjang'] ?? null),
             ]);
 
-            if (!isset($groupedRows[$key])) {
+            if (! isset($groupedRows[$key])) {
                 $groupedRows[$key] = $row;
 
                 continue;
@@ -182,7 +182,7 @@ class UmurS4SDetailReportService
         $customQuery = config('reports.umur_s4s_detail.query');
         $parameterCount = (int) config('reports.umur_s4s_detail.parameter_count', 4);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan umur S4S belum dikonfigurasi.');
         }
 
@@ -200,7 +200,7 @@ class UmurS4SDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan umur S4S dikonfigurasi untuk SQL Server. '
-                . 'Set UMUR_S4S_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set UMUR_S4S_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -209,13 +209,13 @@ class UmurS4SDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'UMUR_S4S_DETAIL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan UMUR_S4S_DETAIL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan UMUR_S4S_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -258,7 +258,7 @@ class UmurS4SDetailReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

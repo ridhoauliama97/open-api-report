@@ -19,7 +19,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
     {
         $rows = $this->runProcedureQuery($tanggalAkhir);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -69,8 +69,8 @@ class StockHidupPerNoSpkDiscrepancyReportService
         if ($missing !== []) {
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan pada output SP_LapSemuaStockHidupPerSPK. '
-                . 'Kolom terdeteksi: ' . implode(', ', $columns) . '. '
-                . 'Kolom wajib: ' . implode(', ', $missing) . '.'
+                .'Kolom terdeteksi: '.implode(', ', $columns).'. '
+                .'Kolom wajib: '.implode(', ', $missing).'.'
             );
         }
 
@@ -85,7 +85,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
             $noSpk = trim((string) ($row[$noSpkCol] ?? ''));
             $noSpk = $noSpk !== '' ? $noSpk : '-';
 
-            if (!isset($categories[$kategori])) {
+            if (! isset($categories[$kategori])) {
                 $categories[$kategori] = [
                     'name' => $kategori,
                     'spks' => [],
@@ -93,7 +93,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
                 ];
             }
 
-            if (!isset($categories[$kategori]['spks'][$noSpk])) {
+            if (! isset($categories[$kategori]['spks'][$noSpk])) {
                 $categories[$kategori]['spks'][$noSpk] = [
                     'no_spk' => $noSpk,
                     'buyer' => trim((string) ($buyerCol ? ($row[$buyerCol] ?? '') : '')),
@@ -204,7 +204,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function pickColumn(array $columns, array $candidates): ?string
     {
@@ -229,7 +229,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
         $customQuery = config('reports.stock_hidup_per_nospk_discrepancy.query');
         $usingMode = (int) config('reports.stock_hidup_per_nospk_discrepancy.using_mode', 1);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan stock hidup per NoSPK (Discrepancy) belum dikonfigurasi.');
         }
 
@@ -239,7 +239,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan stock hidup per NoSPK (Discrepancy) dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -248,13 +248,13 @@ class StockHidupPerNoSpkDiscrepancyReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan STOCK_HIDUP_PER_NOSPK_DISCREPANCY_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, [$tanggalAkhir, $usingMode]);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -273,7 +273,7 @@ class StockHidupPerNoSpkDiscrepancyReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

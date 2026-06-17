@@ -14,7 +14,7 @@ class RekapPenjualanPerProdukReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -46,7 +46,7 @@ class RekapPenjualanPerProdukReportService
         foreach ($normalizedRows as $row) {
             $product = $row['Product'];
 
-            if (!isset($grouped[$product])) {
+            if (! isset($grouped[$product])) {
                 $grouped[$product] = [
                     'name' => $product,
                     'rows' => [],
@@ -60,7 +60,7 @@ class RekapPenjualanPerProdukReportService
         }
 
         $products = array_values($grouped);
-        $grandTotal = array_sum(array_map(static fn(array $product): float => (float) ($product['total_m3'] ?? 0.0), $products));
+        $grandTotal = array_sum(array_map(static fn (array $product): float => (float) ($product['total_m3'] ?? 0.0), $products));
 
         foreach ($products as $productIndex => &$product) {
             $cumulative = 0.0;
@@ -128,7 +128,7 @@ class RekapPenjualanPerProdukReportService
         $syntax = (string) config('reports.rekap_penjualan_per_produk.call_syntax', 'exec');
         $customQuery = config('reports.rekap_penjualan_per_produk.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap penjualan per produk belum dikonfigurasi.');
         }
 
@@ -138,7 +138,7 @@ class RekapPenjualanPerProdukReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap penjualan per produk dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -147,13 +147,13 @@ class RekapPenjualanPerProdukReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'REKAP_PENJUALAN_PER_PRODUK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan REKAP_PENJUALAN_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, [$startDate, $endDate]);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -172,7 +172,7 @@ class RekapPenjualanPerProdukReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

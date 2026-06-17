@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\PpsUser;
+use App\Models\User;
+
 return [
 
     /*
@@ -66,15 +69,15 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'dual-legacy-eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', User::class),
         ],
         'wps_users' => [
             'driver' => 'legacy-eloquent',
-            'model' => App\Models\User::class,
+            'model' => User::class,
         ],
         'pps_users' => [
             'driver' => 'legacy-eloquent',
-            'model' => App\Models\PpsUser::class,
+            'model' => PpsUser::class,
         ],
 
         // 'users' => [

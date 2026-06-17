@@ -68,7 +68,7 @@ class TimelineKayuBulatHarianReportService
             $date = (string) ($row['Tanggal'] ?? '');
             $label = $date !== '' ? $date : 'Tanpa Tanggal';
 
-            if (!isset($periodMap[$label])) {
+            if (! isset($periodMap[$label])) {
                 $periodMap[$label] = [
                     'key' => $label,
                     'label' => $label,
@@ -94,7 +94,7 @@ class TimelineKayuBulatHarianReportService
             'summary' => [
                 'total_rows' => count($rows),
                 'total_periods' => count($periodMap),
-                'total_ton' => array_sum(array_map(static fn(array $period): float => (float) $period['total_ton'], $periodMap)),
+                'total_ton' => array_sum(array_map(static fn (array $period): float => (float) $period['total_ton'], $periodMap)),
                 'top_suppliers' => array_slice($supplierTotals, 0, 10, true),
             ],
         ];
@@ -133,7 +133,7 @@ class TimelineKayuBulatHarianReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan timeline kayu bulat harian belum dikonfigurasi.');
         }
 
@@ -145,7 +145,7 @@ class TimelineKayuBulatHarianReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan timeline kayu bulat harian dikonfigurasi untuk SQL Server. '
-                . 'Set TIMELINE_KAYU_BULAT_HARIAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TIMELINE_KAYU_BULAT_HARIAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -154,7 +154,7 @@ class TimelineKayuBulatHarianReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'TIMELINE_KAYU_BULAT_HARIAN_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan TIMELINE_KAYU_BULAT_HARIAN_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan TIMELINE_KAYU_BULAT_HARIAN_REPORT_CALL_SYNTAX=query.',
                 );
 
             $resolvedBindings = str_contains($query, '?') ? $bindings : [];
@@ -162,7 +162,7 @@ class TimelineKayuBulatHarianReportService
             return $connection->select($query, $resolvedBindings);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -245,7 +245,7 @@ class TimelineKayuBulatHarianReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

@@ -36,7 +36,7 @@ class NormalizePdfDownloadFilename
             sprintf(
                 '%s; filename="%s"; filename*=UTF-8\'\'%s',
                 $dispositionType,
-                addcslashes($formattedFilename, "\"\\"),
+                addcslashes($formattedFilename, '"\\'),
                 rawurlencode($formattedFilename)
             )
         );
@@ -53,7 +53,7 @@ class NormalizePdfDownloadFilename
 
         $contentType = strtolower((string) $response->headers->get('Content-Type', ''));
 
-        return !str_contains($contentType, 'application/pdf');
+        return ! str_contains($contentType, 'application/pdf');
     }
 
     private function extractDispositionType(string $contentDisposition): string

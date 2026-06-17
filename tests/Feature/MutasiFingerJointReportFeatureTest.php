@@ -195,7 +195,7 @@ class MutasiFingerJointReportFeatureTest extends TestCase
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
         ])->get('/api/reports/mutasi-finger-joint/pdf?TglAwal=2026-01-01&TglAkhir=2026-01-31')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
@@ -244,7 +244,7 @@ class MutasiFingerJointReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
             'Accept' => 'application/json',
         ];
     }
@@ -257,7 +257,3 @@ class MutasiFingerJointReportFeatureTest extends TestCase
         return $this->issueJwtForUser($user);
     }
 }
-
-
-
-

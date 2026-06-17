@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\AuthenticateReportJwtClaims;
+use App\Http\Middleware\ForceInlinePdfPreview;
+use App\Http\Middleware\LogUserActivity;
+use App\Http\Middleware\NormalizePdfDownloadFilename;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,19 +17,19 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\LogUserActivity::class,
-            \App\Http\Middleware\ForceInlinePdfPreview::class,
-            \App\Http\Middleware\NormalizePdfDownloadFilename::class,
+            LogUserActivity::class,
+            ForceInlinePdfPreview::class,
+            NormalizePdfDownloadFilename::class,
         ]);
 
         $middleware->api(append: [
-            \App\Http\Middleware\LogUserActivity::class,
-            \App\Http\Middleware\NormalizePdfDownloadFilename::class,
+            LogUserActivity::class,
+            NormalizePdfDownloadFilename::class,
         ]);
 
         $middleware->alias([
-            'report.jwt.claims' => \App\Http\Middleware\AuthenticateReportJwtClaims::class,
-            'activity.log' => \App\Http\Middleware\LogUserActivity::class,
+            'report.jwt.claims' => AuthenticateReportJwtClaims::class,
+            'activity.log' => LogUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

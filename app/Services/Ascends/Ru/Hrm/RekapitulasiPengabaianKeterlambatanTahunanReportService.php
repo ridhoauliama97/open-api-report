@@ -60,7 +60,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             'source_file' => $sourceLabel,
             'printed_at' => Carbon::now()->locale('id')->translatedFormat('d-M-y H:i'),
             'printed_by' => $scan['printed_by'],
-            'headers' => array_merge(['No', 'Nama'], array_map(static fn(int $month): string => self::MONTH_LABELS[$month] ?? str_pad((string) $month, 2, '0', STR_PAD_LEFT), $months), ['Total']),
+            'headers' => array_merge(['No', 'Nama'], array_map(static fn (int $month): string => self::MONTH_LABELS[$month] ?? str_pad((string) $month, 2, '0', STR_PAD_LEFT), $months), ['Total']),
             'months' => $months,
             'month_labels' => array_intersect_key(self::MONTH_LABELS, array_flip($months)),
             'rows' => $rows,
@@ -70,7 +70,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
         ];
     }
@@ -86,7 +86,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
         }
 
         $reader = new XMLReader;
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("XML Attendance Full tidak valid: {$sourceLabel}");
         }
 
@@ -123,7 +123,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
 
             if (
                 $date === null
-                || ($requestedPeriod !== null && !$date->betweenIncluded($requestedPeriod['start'], $requestedPeriod['end']))
+                || ($requestedPeriod !== null && ! $date->betweenIncluded($requestedPeriod['start'], $requestedPeriod['end']))
             ) {
                 continue;
             }
@@ -133,7 +133,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
 
         $reader->close();
 
-        if (!$hasAttendanceRecord) {
+        if (! $hasAttendanceRecord) {
             throw new RuntimeException('XML Attendance Full tidak memiliki record Attendance.');
         }
 
@@ -150,7 +150,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
     private function readAttendanceRow(XMLReader $reader): array
     {
         $recordXml = $reader->readOuterXML();
-        if (!is_string($recordXml) || trim($recordXml) === '') {
+        if (! is_string($recordXml) || trim($recordXml) === '') {
             return [];
         }
 
@@ -162,7 +162,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
         $row = json_decode(json_encode($node), true) ?: [];
 
         return array_map(
-            static fn(mixed $value): string => is_array($value) ? '' : trim((string) $value),
+            static fn (mixed $value): string => is_array($value) ? '' : trim((string) $value),
             $row
         );
     }
@@ -238,13 +238,13 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             $employeeCode === ''
             || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
             || $this->hasExcludedEmployeeCodePrefix($employeeCode)
-            || !$this->matchesStatus($row, $status)
+            || ! $this->matchesStatus($row, $status)
             || trim((string) ($row['Last_x0020_Modified_x0020_By'] ?? '')) === ''
         ) {
             return;
         }
 
-        if (!isset($employees[$employeeCode])) {
+        if (! isset($employees[$employeeCode])) {
             $employees[$employeeCode] = [
                 'code' => $employeeCode,
                 'name' => trim((string) ($row['Full_x0020_Name'] ?? '')),
@@ -292,7 +292,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             }
         }
 
-        usort($rows, static fn(array $left, array $right): int => strnatcasecmp((string) ($left['Nama'] ?? ''), (string) ($right['Nama'] ?? '')));
+        usort($rows, static fn (array $left, array $right): int => strnatcasecmp((string) ($left['Nama'] ?? ''), (string) ($right['Nama'] ?? '')));
 
         return $rows;
     }
@@ -367,7 +367,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             }
         }
 
-        $normalizedAliases = array_map(static fn(string $alias): string => self::normalizeKey($alias), $aliases);
+        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
         foreach ($filters as $key => $value) {
             if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
                 $value = trim((string) $value);

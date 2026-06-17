@@ -30,7 +30,7 @@ class RekapMutasiCrossTabReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -73,7 +73,7 @@ class RekapMutasiCrossTabReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function transformTimelineRows(array $rows): array
@@ -97,7 +97,7 @@ class RekapMutasiCrossTabReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildStatRows(array $rows): array
@@ -113,12 +113,13 @@ class RekapMutasiCrossTabReportService
 
             foreach (array_keys(self::DISPLAY_COLUMNS) as $source) {
                 $values = array_values(array_filter(
-                    array_map(fn(array $row): ?float => $this->toFloat($row[$source] ?? null), $rows),
-                    static fn(?float $value): bool => $value !== null
+                    array_map(fn (array $row): ?float => $this->toFloat($row[$source] ?? null), $rows),
+                    static fn (?float $value): bool => $value !== null
                 ));
 
                 if ($values === []) {
                     $metrics[$source] = null;
+
                     continue;
                 }
 
@@ -148,7 +149,7 @@ class RekapMutasiCrossTabReportService
         $syntax = (string) config('reports.rekap_mutasi_cross_tab.call_syntax', 'exec');
         $customQuery = config('reports.rekap_mutasi_cross_tab.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap mutasi (cross tab) belum dikonfigurasi.');
         }
 
@@ -158,7 +159,7 @@ class RekapMutasiCrossTabReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap mutasi (cross tab) dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_MUTASI_CROSS_TAB_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_MUTASI_CROSS_TAB_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -169,13 +170,13 @@ class RekapMutasiCrossTabReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'REKAP_MUTASI_CROSS_TAB_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_MUTASI_CROSS_TAB_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan REKAP_MUTASI_CROSS_TAB_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -194,7 +195,7 @@ class RekapMutasiCrossTabReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

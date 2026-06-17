@@ -54,32 +54,32 @@ class FlowProduksiPerPeriodeReportService
             'summary_lines' => [
                 [
                     'label' => 'Kayu Bulat (KB)',
-                    'text' => 'Pembelian - Racip = ' . $this->formatSignedTon($totals['KBTonBeli'] - $totals['KBRacip']),
+                    'text' => 'Pembelian - Racip = '.$this->formatSignedTon($totals['KBTonBeli'] - $totals['KBRacip']),
                 ],
                 [
                     'label' => 'Sawn Timber (ST)',
-                    'text' => 'ST Hasil Racip - ST Siap Vaccum Stick = ' . $this->formatSignedTon($totals['STRacipan'] - $totals['STVacuumStick']),
+                    'text' => 'ST Hasil Racip - ST Siap Vaccum Stick = '.$this->formatSignedTon($totals['STRacipan'] - $totals['STVacuumStick']),
                 ],
                 [
                     'label' => '',
-                    'text' => 'ST Hasil Racip - ST Masuk KD = ' . $this->formatSignedTon($totals['STRacipan'] - $totals['STKDIn']),
+                    'text' => 'ST Hasil Racip - ST Masuk KD = '.$this->formatSignedTon($totals['STRacipan'] - $totals['STKDIn']),
                 ],
                 [
                     'label' => 'WIP',
-                    'text' => 'ST Keluar KD - ST Pakai di S4S = ' . $this->formatSignedTon($totals['STKDOut'] - $totals['STm3Input']),
+                    'text' => 'ST Keluar KD - ST Pakai di S4S = '.$this->formatSignedTon($totals['STKDOut'] - $totals['STm3Input']),
                 ],
                 [
                     'label' => '',
-                    'text' => 'WIP Bersih S4S - WIP Pakai di FJ = ' . $this->formatSignedM3($totals['WIPBersihOutput'] - $totals['WIPFJInput']),
+                    'text' => 'WIP Bersih S4S - WIP Pakai di FJ = '.$this->formatSignedM3($totals['WIPBersihOutput'] - $totals['WIPFJInput']),
                 ],
                 [
                     'label' => '',
-                    'text' => 'WIP Hasil FJ - WIP Moulding = ' . $this->formatSignedM3($totals['WIPFJOutput'] - $totals['WIPMouldingInput']),
+                    'text' => 'WIP Hasil FJ - WIP Moulding = '.$this->formatSignedM3($totals['WIPFJOutput'] - $totals['WIPMouldingInput']),
                 ],
             ],
             'summary' => [
                 'row_count' => count($normalizedRows),
-                'group_count' => count(array_filter(array_map(static fn(array $row): string => (string) ($row['Group Kayu'] ?? ''), $normalizedRows))),
+                'group_count' => count(array_filter(array_map(static fn (array $row): string => (string) ($row['Group Kayu'] ?? ''), $normalizedRows))),
             ],
         ];
     }
@@ -114,14 +114,14 @@ class FlowProduksiPerPeriodeReportService
         $connectionName = config('reports.flow_produksi_per_periode.database_connection');
         $procedure = (string) config('reports.flow_produksi_per_periode.stored_procedure', 'SPWps_LapFlowProduksiPerPeriode');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)
             ->select("EXEC {$procedure} ?, ?", [$startDate, $endDate]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function toFloat(mixed $value): float

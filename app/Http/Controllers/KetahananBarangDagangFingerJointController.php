@@ -142,4 +142,3 @@ class KetahananBarangDagangFingerJointController extends Controller
         ]);
     }
 }
-

@@ -24,7 +24,7 @@ class GenerateStokOpnameStDetailKdReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('no_proc_kd') && $this->filled('NoProcKD')) {
+        if (! $this->filled('no_proc_kd') && $this->filled('NoProcKD')) {
             $this->merge(['no_proc_kd' => $this->input('NoProcKD')]);
         }
     }

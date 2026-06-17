@@ -23,7 +23,7 @@ class GenerateLembarTallyHasilSawmillReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('no_produksi') && $this->filled('NoProduksi')) {
+        if (! $this->filled('no_produksi') && $this->filled('NoProduksi')) {
             $this->merge(['no_produksi' => $this->input('NoProduksi')]);
         }
     }
@@ -33,4 +33,3 @@ class GenerateLembarTallyHasilSawmillReportRequest extends BaseReportRequest
         return trim((string) $this->input('no_produksi'));
     }
 }
-

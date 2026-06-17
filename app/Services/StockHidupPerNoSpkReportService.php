@@ -19,7 +19,7 @@ class StockHidupPerNoSpkReportService
     {
         $rows = $this->runProcedureQuery($tanggalAkhir);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -71,8 +71,8 @@ class StockHidupPerNoSpkReportService
         if ($missing !== []) {
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan pada output SP_LapSemuaStockHidupPerSPK. '
-                . 'Kolom terdeteksi: ' . implode(', ', $columns) . '. '
-                . 'Kolom wajib: ' . implode(', ', $missing) . '.'
+                .'Kolom terdeteksi: '.implode(', ', $columns).'. '
+                .'Kolom wajib: '.implode(', ', $missing).'.'
             );
         }
 
@@ -87,7 +87,7 @@ class StockHidupPerNoSpkReportService
             $noSpk = trim((string) ($row[$noSpkCol] ?? ''));
             $noSpk = $noSpk !== '' ? $noSpk : '-';
 
-            if (!isset($categories[$kategori])) {
+            if (! isset($categories[$kategori])) {
                 $categories[$kategori] = [
                     'name' => $kategori,
                     'spks' => [],
@@ -95,7 +95,7 @@ class StockHidupPerNoSpkReportService
                 ];
             }
 
-            if (!isset($categories[$kategori]['spks'][$noSpk])) {
+            if (! isset($categories[$kategori]['spks'][$noSpk])) {
                 $categories[$kategori]['spks'][$noSpk] = [
                     'no_spk' => $noSpk,
                     'no_contract' => trim((string) ($contractCol ? ($row[$contractCol] ?? '') : '')),
@@ -208,7 +208,7 @@ class StockHidupPerNoSpkReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function pickColumn(array $columns, array $candidates): ?string
     {
@@ -233,7 +233,7 @@ class StockHidupPerNoSpkReportService
         $customQuery = config('reports.stock_hidup_per_nospk.query');
         $usingMode = (int) config('reports.stock_hidup_per_nospk.using_mode', 3);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan stock hidup per NoSPK belum dikonfigurasi.');
         }
 
@@ -243,7 +243,7 @@ class StockHidupPerNoSpkReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan stock hidup per NoSPK dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -252,13 +252,13 @@ class StockHidupPerNoSpkReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'STOCK_HIDUP_PER_NOSPK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan STOCK_HIDUP_PER_NOSPK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, [$tanggalAkhir, $usingMode]);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -277,7 +277,7 @@ class StockHidupPerNoSpkReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

@@ -95,7 +95,7 @@ class HasilProduksiHarianInjectProduksiReportService
                 continue;
             }
 
-            if (!in_array($group, ['fwip', 'bj'], true)) {
+            if (! in_array($group, ['fwip', 'bj'], true)) {
                 continue;
             }
 
@@ -191,7 +191,7 @@ class HasilProduksiHarianInjectProduksiReportService
             throw new RuntimeException('Laporan PPS Inject Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -206,7 +206,7 @@ class HasilProduksiHarianInjectProduksiReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -226,8 +226,8 @@ class HasilProduksiHarianInjectProduksiReportService
     }
 
     /**
-     * @param array<int, array{nama_barang: string, jumlah_label: string, qty: ?float, berat: ?float}> $goods
-     * @param array<int, array{nama_barang: string, jumlah_label: string, reject_qty: ?float}> $rejects
+     * @param  array<int, array{nama_barang: string, jumlah_label: string, qty: ?float, berat: ?float}>  $goods
+     * @param  array<int, array{nama_barang: string, jumlah_label: string, reject_qty: ?float}>  $rejects
      * @return array<int, array{items: array<int, array{nama_barang: string, jumlah_label: ?string, qty: ?float, berat: ?float, reject: ?float}>}>
      */
     private function buildDisplayRows(array $goods, array $rejects): array
@@ -268,7 +268,7 @@ class HasilProduksiHarianInjectProduksiReportService
     }
 
     /**
-     * @param array<int, array{jenis: string, qty: ?float}> $inputs
+     * @param  array<int, array{jenis: string, qty: ?float}>  $inputs
      * @return array<int, array{jenis: string, qty: float}>
      */
     private function aggregateInputsByName(array $inputs): array
@@ -282,7 +282,7 @@ class HasilProduksiHarianInjectProduksiReportService
                 continue;
             }
 
-            if (!array_key_exists($jenis, $grouped)) {
+            if (! array_key_exists($jenis, $grouped)) {
                 $grouped[$jenis] = [
                     'jenis' => $jenis,
                     'qty' => 0.0,

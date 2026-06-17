@@ -35,7 +35,7 @@ class SpkSawmillReportService
             'summary' => [
                 'header_rows' => count($headerRows),
                 'detail_rows' => count($detailRows),
-                'total_racip' => array_sum(array_map(static fn(array $row): float => (float) ($row['Ton'] ?? 0), $detailRows)),
+                'total_racip' => array_sum(array_map(static fn (array $row): float => (float) ($row['Ton'] ?? 0), $detailRows)),
                 'saldo_terakhir' => $detailRows === [] ? 0.0 : (float) ($detailRows[array_key_last($detailRows)]['SaldoTerakhir'] ?? 0),
             ],
         ];
@@ -84,7 +84,7 @@ class SpkSawmillReportService
     {
         $rows = $this->runProcedureQuery('header', $noSpk, $idProduk);
 
-        $normalized = array_map(fn(object $row): array => $this->normalizeHeaderRow((array) $row), $rows);
+        $normalized = array_map(fn (object $row): array => $this->normalizeHeaderRow((array) $row), $rows);
         usort($normalized, static function (array $a, array $b): int {
             $tebalCompare = ((float) ($a['Tebal'] ?? 0)) <=> ((float) ($b['Tebal'] ?? 0));
 
@@ -103,8 +103,8 @@ class SpkSawmillReportService
     {
         $rows = $this->runProcedureQuery('detail', $noSpk, $idProduk);
 
-        $normalized = array_map(fn(object $row): array => $this->normalizeDetailRow((array) $row), $rows);
-        usort($normalized, static fn(array $a, array $b): int => strcmp((string) ($a['TglSawmill'] ?? ''), (string) ($b['TglSawmill'] ?? '')));
+        $normalized = array_map(fn (object $row): array => $this->normalizeDetailRow((array) $row), $rows);
+        usort($normalized, static fn (array $a, array $b): int => strcmp((string) ($a['TglSawmill'] ?? ''), (string) ($b['TglSawmill'] ?? '')));
 
         return array_values($normalized);
     }
@@ -120,7 +120,7 @@ class SpkSawmillReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.{$section}_query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan SPK Sawmill belum dikonfigurasi.');
         }
 
@@ -130,7 +130,7 @@ class SpkSawmillReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan SPK Sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set SPK_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set SPK_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -142,7 +142,7 @@ class SpkSawmillReportService
             return $connection->select($query, str_contains($query, '?') ? [$noSpk, $idProduk] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure laporan SPK Sawmill tidak valid.');
         }
 
@@ -157,12 +157,12 @@ class SpkSawmillReportService
         try {
             return $connection->select($sql, [$noSpk, $idProduk]);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan SPK Sawmill: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan SPK Sawmill: '.$exception->getMessage(), 0, $exception);
         }
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<string, mixed>
      */
     private function normalizeHeaderRow(array $row): array
@@ -180,7 +180,7 @@ class SpkSawmillReportService
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<string, mixed>
      */
     private function normalizeDetailRow(array $row): array
@@ -204,7 +204,7 @@ class SpkSawmillReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

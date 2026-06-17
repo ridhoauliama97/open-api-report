@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Http\Middleware\AuthenticateReportJwtClaims;
+use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\PenerimaanKayuBulatPerSupplierBulananGrafikReportService;
 use Mockery;
@@ -148,7 +148,7 @@ class PenerimaanKayuBulatPerSupplierBulananGrafikReportFeatureTest extends TestC
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
             'Accept' => 'application/json',
         ];
     }

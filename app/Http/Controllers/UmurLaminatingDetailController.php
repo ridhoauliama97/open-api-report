@@ -159,7 +159,7 @@ class UmurLaminatingDetailController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array
@@ -177,7 +177,7 @@ class UmurLaminatingDetailController extends Controller
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $params
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $params
      */
     private function buildFilename(array $params): string
     {

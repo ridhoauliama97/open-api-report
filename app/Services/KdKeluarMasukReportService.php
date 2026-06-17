@@ -56,7 +56,7 @@ class KdKeluarMasukReportService
                 number_format($aveTebal, 1, '.', ''),
             ]);
 
-            if (!isset($keyed[$key])) {
+            if (! isset($keyed[$key])) {
                 $record = [
                     'Tanggal (Out)' => $tglKeluar,
                     'Tanggal (In)' => $tglMasuk,
@@ -109,8 +109,8 @@ class KdKeluarMasukReportService
             );
         });
 
-        $rowsKeluar = array_values(array_filter($rows, static fn(array $r): bool => trim((string) ($r['Tanggal (Out)'] ?? '')) !== ''));
-        $rowsMasih = array_values(array_filter($rows, static fn(array $r): bool => trim((string) ($r['Tanggal (Out)'] ?? '')) === ''));
+        $rowsKeluar = array_values(array_filter($rows, static fn (array $r): bool => trim((string) ($r['Tanggal (Out)'] ?? '')) !== ''));
+        $rowsMasih = array_values(array_filter($rows, static fn (array $r): bool => trim((string) ($r['Tanggal (Out)'] ?? '')) === ''));
 
         $sumCols = function (array $items) use ($groupColumns): array {
             $tot = [];
@@ -177,7 +177,7 @@ class KdKeluarMasukReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -189,6 +189,7 @@ class KdKeluarMasukReportService
                     $item[$k] = trim($v);
                 }
             }
+
             return $item;
         }, $rows));
     }
@@ -223,9 +224,10 @@ class KdKeluarMasukReportService
                 return null;
             }
             $trimmed = str_replace(',', '', $trimmed);
-            if (!is_numeric($trimmed)) {
+            if (! is_numeric($trimmed)) {
                 return null;
             }
+
             return (float) $trimmed;
         }
 
@@ -257,7 +259,7 @@ class KdKeluarMasukReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan KD (Keluar - Masuk) belum dikonfigurasi.');
         }
 
@@ -267,7 +269,7 @@ class KdKeluarMasukReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan KD (Keluar - Masuk) dikonfigurasi untuk SQL Server. '
-                . 'Set KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -278,13 +280,13 @@ class KdKeluarMasukReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'KD_KELUAR_MASUK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -297,4 +299,3 @@ class KdKeluarMasukReportService
         return $connection->select($sql, $bindings);
     }
 }
-

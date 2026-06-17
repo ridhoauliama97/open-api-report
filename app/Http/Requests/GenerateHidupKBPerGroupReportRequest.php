@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
-
 class GenerateHidupKBPerGroupReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
@@ -19,5 +17,3 @@ class GenerateHidupKBPerGroupReportRequest extends BaseReportRequest
         return [];
     }
 }
-
-

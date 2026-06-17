@@ -60,7 +60,7 @@ class UmurKayuBulatRambungReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows, Carbon|string|null $printedAt): array
@@ -130,7 +130,7 @@ class UmurKayuBulatRambungReportService
         $customQuery = config('reports.umur_kayu_bulat_rambung.query');
         $parameterCount = (int) config('reports.umur_kayu_bulat_rambung.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan umur kayu bulat (rambung) belum dikonfigurasi.');
         }
 
@@ -143,7 +143,7 @@ class UmurKayuBulatRambungReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan umur kayu bulat (rambung) dikonfigurasi untuk SQL Server. '
-                . 'Set UMUR_KAYU_BULAT_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set UMUR_KAYU_BULAT_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -152,13 +152,13 @@ class UmurKayuBulatRambungReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'UMUR_KAYU_BULAT_RAMBUNG_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan UMUR_KAYU_BULAT_RAMBUNG_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan UMUR_KAYU_BULAT_RAMBUNG_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -214,7 +214,7 @@ class UmurKayuBulatRambungReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

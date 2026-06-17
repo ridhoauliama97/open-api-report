@@ -112,4 +112,3 @@ class LabelS4SHidupPerJenisKayuController extends Controller
         ]);
     }
 }
-

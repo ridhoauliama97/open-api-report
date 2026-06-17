@@ -8,8 +8,11 @@ use Illuminate\Support\Str;
 class PdfJobStatus extends Model
 {
     public const STATUS_QUEUED = 'queued';
+
     public const STATUS_PROCESSING = 'processing';
+
     public const STATUS_DONE = 'done';
+
     public const STATUS_FAILED = 'failed';
 
     protected $table = 'pdf_job_statuses';

@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\PenerimaanKayuBulatBulananPerSupplierReportService;
 use App\Services\PdfGenerator;
+use App\Services\PenerimaanKayuBulatBulananPerSupplierReportService;
 use Mockery;
 use Tests\TestCase;
 
@@ -176,7 +176,7 @@ class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
             'Accept' => 'application/json',
         ];
     }
@@ -186,6 +186,3 @@ class PenerimaanKayuBulatBulananPerSupplierReportFeatureTest extends TestCase
         return $this->issueJwtForUser($user);
     }
 }
-
-
-

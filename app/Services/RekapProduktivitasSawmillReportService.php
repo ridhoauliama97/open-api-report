@@ -69,7 +69,7 @@ class RekapProduktivitasSawmillReportService
             'rows' => $out,
             'summary' => [
                 'total_rows' => count($out),
-                'total_dates' => count(array_unique(array_map(static fn($r): string => (string) ($r['Tanggal'] ?? ''), $out))),
+                'total_dates' => count(array_unique(array_map(static fn ($r): string => (string) ($r['Tanggal'] ?? ''), $out))),
             ],
         ];
     }
@@ -95,7 +95,7 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -128,8 +128,8 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<string, string> $categoryColumns mapping output label => source column name
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<string, string>  $categoryColumns  mapping output label => source column name
      * @return array<int, array<string, mixed>>
      */
     private function buildFromPivotRows(
@@ -148,7 +148,7 @@ class RekapProduktivitasSawmillReportService
                 continue;
             }
 
-            if (!isset($byDate[$dateKey])) {
+            if (! isset($byDate[$dateKey])) {
                 $byDate[$dateKey] = [
                     'Tanggal' => $dateKey,
                     'JumlahMeja' => 0,
@@ -203,7 +203,7 @@ class RekapProduktivitasSawmillReportService
     /**
      * Fallback when SP returns "long" rows (Tanggal + Jenis + Nilai).
      *
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function buildFromLongRows(array $rows, ?string $dateColumn, ?string $jumlahMejaColumn): array
@@ -238,7 +238,7 @@ class RekapProduktivitasSawmillReportService
             $detectedColumns = array_keys($rows[0] ?? []);
             throw new RuntimeException(
                 'Kolom pivot tidak ditemukan. Pastikan SPWps_LapRekapProduktivitasSawmill mengembalikan kolom tanggal + jenis + nilai. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
+                .'Kolom terdeteksi: '.implode(', ', $detectedColumns),
             );
         }
 
@@ -251,7 +251,7 @@ class RekapProduktivitasSawmillReportService
                 continue;
             }
 
-            if (!isset($byDate[$dateKey])) {
+            if (! isset($byDate[$dateKey])) {
                 $byDate[$dateKey] = [
                     'Tanggal' => $dateKey,
                     'JumlahMeja' => 0,
@@ -297,7 +297,7 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveDateColumn(array $columns): ?string
     {
@@ -305,7 +305,7 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveJumlahMejaColumn(array $columns): ?string
     {
@@ -313,7 +313,7 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function resolveTotalColumn(array $columns): ?string
     {
@@ -321,7 +321,7 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      * @return array<string, string> mapping output label => source column name
      */
     private function resolveCategoryColumns(array $columns): array
@@ -338,6 +338,7 @@ class RekapProduktivitasSawmillReportService
                     return $normToCol[$k];
                 }
             }
+
             return null;
         };
 
@@ -394,8 +395,8 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, string> $columns
-     * @param array<int, string> $needles
+     * @param  array<int, string>  $columns
+     * @param  array<int, string>  $needles
      */
     private function firstExistingColumn(array $columns, array $needles): ?string
     {
@@ -415,8 +416,8 @@ class RekapProduktivitasSawmillReportService
     }
 
     /**
-     * @param array<int, string> $columns
-     * @param array<int, string> $needles
+     * @param  array<int, string>  $columns
+     * @param  array<int, string>  $needles
      */
     private function hasAnyColumn(array $columns, array $needles): bool
     {
@@ -457,7 +458,7 @@ class RekapProduktivitasSawmillReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap produktivitas sawmill belum dikonfigurasi.');
         }
 
@@ -468,7 +469,7 @@ class RekapProduktivitasSawmillReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap produktivitas sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKTIVITAS_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKTIVITAS_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -480,7 +481,7 @@ class RekapProduktivitasSawmillReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -507,9 +508,10 @@ class RekapProduktivitasSawmillReportService
                 return null;
             }
             $trimmed = str_replace(',', '', $trimmed);
-            if (!is_numeric($trimmed)) {
+            if (! is_numeric($trimmed)) {
                 return null;
             }
+
             return (float) $trimmed;
         }
 
@@ -519,7 +521,7 @@ class RekapProduktivitasSawmillReportService
     /**
      * Fallback date column detection: any column containing "tgl" or "tanggal".
      *
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function guessDateColumn(array $columns): ?string
     {
@@ -541,8 +543,8 @@ class RekapProduktivitasSawmillReportService
      * - Take remaining columns that look numeric in the first row
      * - Map their column names to one of the required output labels
      *
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, string> $columns
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, string>  $columns
      * @return array<string, string> mapping output label => source column name
      */
     private function inferCategoryColumnsFromPivot(
@@ -587,7 +589,7 @@ class RekapProduktivitasSawmillReportService
             }
 
             // Keep first match per label to avoid ambiguity.
-            if (!isset($mapping[$label])) {
+            if (! isset($mapping[$label])) {
                 $mapping[$label] = $col;
             }
         }

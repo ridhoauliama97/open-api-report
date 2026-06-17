@@ -40,16 +40,16 @@ class MutasiHasilRacipReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -67,7 +67,7 @@ class MutasiHasilRacipReportService
         $syntax = (string) config('reports.mutasi_hasil_racip.call_syntax', 'exec');
         $customQuery = config('reports.mutasi_hasil_racip.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan mutasi hasil racip belum dikonfigurasi.');
         }
 
@@ -78,7 +78,7 @@ class MutasiHasilRacipReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan mutasi hasil racip dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -87,13 +87,13 @@ class MutasiHasilRacipReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MUTASI_HASIL_RACIP_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan MUTASI_HASIL_RACIP_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -108,4 +108,3 @@ class MutasiHasilRacipReportService
         return $connection->select($sql, $bindings);
     }
 }
-

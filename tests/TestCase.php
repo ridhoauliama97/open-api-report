@@ -3,14 +3,15 @@
 namespace Tests;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Testing\TestResponse;
 
 abstract class TestCase extends BaseTestCase
 {
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
     protected function issueJwtForUser(User $user, array $claims = []): string
     {
@@ -38,16 +39,16 @@ abstract class TestCase extends BaseTestCase
         $encodedHeader = $this->base64UrlEncode(json_encode($header, JSON_UNESCAPED_SLASHES));
         $encodedPayload = $this->base64UrlEncode(json_encode($payload, JSON_UNESCAPED_SLASHES));
 
-        $signingInput = $encodedHeader . '.' . $encodedPayload;
+        $signingInput = $encodedHeader.'.'.$encodedPayload;
         $signature = hash_hmac('sha256', $signingInput, $secret, true);
         $encodedSignature = $this->base64UrlEncode($signature);
 
-        return $signingInput . '.' . $encodedSignature;
+        return $signingInput.'.'.$encodedSignature;
     }
 
     private function ensureAuthTablesForTokenTests(): void
     {
-        if (!Schema::hasTable('MstUsername')) {
+        if (! Schema::hasTable('MstUsername')) {
             Schema::create('MstUsername', function (Blueprint $table): void {
                 $table->string('Username')->primary();
                 $table->string('Password');
@@ -56,7 +57,7 @@ abstract class TestCase extends BaseTestCase
             });
         }
 
-        if (!Schema::hasTable('personal_access_tokens')) {
+        if (! Schema::hasTable('personal_access_tokens')) {
             Schema::create('personal_access_tokens', function (Blueprint $table): void {
                 $table->id();
                 $table->string('tokenable_type');
@@ -80,12 +81,12 @@ abstract class TestCase extends BaseTestCase
     /**
      * Assert Content-Disposition for generated PDFs after NormalizePdfDownloadFilename middleware.
      *
-     * @param \Illuminate\Testing\TestResponse $response
+     * @param  TestResponse  $response
      */
     protected function assertPdfDisposition($response, string $type = 'attachment', string $filenameContains = ''): void
     {
         $contentDisposition = (string) $response->headers->get('Content-Disposition', '');
-        $this->assertStringContainsString(strtolower($type) . ';', strtolower($contentDisposition));
+        $this->assertStringContainsString(strtolower($type).';', strtolower($contentDisposition));
 
         if ($filenameContains !== '') {
             $this->assertStringContainsString(strtolower($filenameContains), strtolower($contentDisposition));

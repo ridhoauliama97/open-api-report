@@ -9,6 +9,7 @@ use Illuminate\Routing\Router;
 class GenerateSwaggerSpec extends Command
 {
     protected $signature = 'swagger:generate';
+
     protected $description = 'Generate OpenAPI 3.0 spec JSON from registered API routes for L5-Swagger UI';
 
     /**
@@ -64,10 +65,10 @@ class GenerateSwaggerSpec extends Command
 
         /** @var Route $route */
         foreach ($router->getRoutes() as $route) {
-            $uri = '/' . ltrim((string) $route->uri(), '/');
+            $uri = '/'.ltrim((string) $route->uri(), '/');
 
             // Only include /api/* routes
-            if (!str_starts_with($uri, '/api/')) {
+            if (! str_starts_with($uri, '/api/')) {
                 continue;
             }
 
@@ -95,7 +96,7 @@ class GenerateSwaggerSpec extends Command
                 $operation = [
                     'tags' => [$tag],
                     'summary' => $summary,
-                    'operationId' => $method . '_' . str_replace(['/', '{', '}', '-'], ['_', '', '', '_'], $uri),
+                    'operationId' => $method.'_'.str_replace(['/', '{', '}', '-'], ['_', '', '', '_'], $uri),
                     'responses' => $this->buildResponses($uri, $method),
                 ];
 
@@ -107,7 +108,7 @@ class GenerateSwaggerSpec extends Command
                 }
 
                 // Add request body for POST endpoints (skip non-body auth endpoints)
-                if ($method === 'post' && !in_array($uri, ['/api/auth/logout', '/api/auth/refresh'])) {
+                if ($method === 'post' && ! in_array($uri, ['/api/auth/logout', '/api/auth/refresh'])) {
                     $operation['requestBody'] = $this->buildRequestBody($uri, $tag);
                 }
 
@@ -147,7 +148,7 @@ class GenerateSwaggerSpec extends Command
                     break;
                 }
             }
-            if (!$exists) {
+            if (! $exists) {
                 $spec['tags'][] = [
                     'name' => $tag,
                     'description' => "Endpoint untuk {$tag}",
@@ -159,11 +160,11 @@ class GenerateSwaggerSpec extends Command
         ksort($spec['paths']);
 
         $outputDir = storage_path('api-docs');
-        if (!is_dir($outputDir)) {
+        if (! is_dir($outputDir)) {
             mkdir($outputDir, 0755, true);
         }
 
-        $outputPath = $outputDir . '/api-docs.json';
+        $outputPath = $outputDir.'/api-docs.json';
         file_put_contents(
             $outputPath,
             json_encode($spec, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
@@ -182,7 +183,7 @@ class GenerateSwaggerSpec extends Command
     {
         // Sort by longest prefix first for most specific match
         $sorted = self::TAG_MAP;
-        uksort($sorted, fn(string $a, string $b) => strlen($b) - strlen($a));
+        uksort($sorted, fn (string $a, string $b) => strlen($b) - strlen($a));
 
         foreach ($sorted as $prefix => $tag) {
             if (str_starts_with($uri, $prefix)) {
@@ -299,6 +300,7 @@ class GenerateSwaggerSpec extends Command
         // Auth token responses
         if (in_array($uri, ['/api/auth/register', '/api/auth/login', '/api/auth/refresh'])) {
             $code = $uri === '/api/auth/register' ? '201' : '200';
+
             return [
                 $code => [
                     'description' => $uri === '/api/auth/register' ? 'Registrasi berhasil' : 'Berhasil',

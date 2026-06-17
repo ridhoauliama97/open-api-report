@@ -67,11 +67,11 @@ class StHidupPerSpkReportService
             $totalCol ? null : 'TotalTon',
         ]));
 
-        if (!empty($missing)) {
+        if (! empty($missing)) {
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan pada output SPWps_LapSTHidupPerProdukV2. '
-                . 'Kolom terdeteksi: ' . implode(', ', $columns) . '. '
-                . 'Kolom wajib: ' . implode(', ', $missing) . '.'
+                .'Kolom terdeteksi: '.implode(', ', $columns).'. '
+                .'Kolom wajib: '.implode(', ', $missing).'.'
             );
         }
 
@@ -89,14 +89,14 @@ class StHidupPerSpkReportService
             $spk = trim((string) ($row[$spkCol] ?? ''));
             $spk = $spk !== '' ? $spk : '-';
 
-            if (!isset($groups[$jenis])) {
+            if (! isset($groups[$jenis])) {
                 $groups[$jenis] = [
                     'name' => $jenis,
                     'products' => [],
                 ];
             }
 
-            if (!isset($groups[$jenis]['products'][$produk])) {
+            if (! isset($groups[$jenis]['products'][$produk])) {
                 $groups[$jenis]['products'][$produk] = [
                     'name' => $produk,
                     'spks' => [],
@@ -104,7 +104,7 @@ class StHidupPerSpkReportService
                 $produkCount++;
             }
 
-            if (!isset($groups[$jenis]['products'][$produk]['spks'][$spk])) {
+            if (! isset($groups[$jenis]['products'][$produk]['spks'][$spk])) {
                 $groups[$jenis]['products'][$produk]['spks'][$spk] = [
                     'no_spk' => $spk,
                     'rows' => [],
@@ -148,8 +148,10 @@ class StHidupPerSpkReportService
         $finalGroups = array_values(array_map(static function (array $g): array {
             $g['products'] = array_values(array_map(static function (array $p): array {
                 $p['spks'] = array_values($p['spks']);
+
                 return $p;
             }, $g['products']));
+
             return $g;
         }, $groups));
 
@@ -187,7 +189,7 @@ class StHidupPerSpkReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function pickColumn(array $columns, array $candidates): ?string
     {
@@ -197,6 +199,7 @@ class StHidupPerSpkReportService
                 return $name;
             }
         }
+
         return null;
     }
 
@@ -210,7 +213,7 @@ class StHidupPerSpkReportService
         $syntax = (string) config('reports.st_hidup_per_spk.call_syntax', 'exec');
         $customQuery = config('reports.st_hidup_per_spk.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST hidup per SPK belum dikonfigurasi.');
         }
 
@@ -220,7 +223,7 @@ class StHidupPerSpkReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST hidup per SPK dikonfigurasi untuk SQL Server. '
-                . 'Set ST_HIDUP_PER_SPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_HIDUP_PER_SPK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -229,13 +232,13 @@ class StHidupPerSpkReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'ST_HIDUP_PER_SPK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan ST_HIDUP_PER_SPK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan ST_HIDUP_PER_SPK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -254,7 +257,7 @@ class StHidupPerSpkReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

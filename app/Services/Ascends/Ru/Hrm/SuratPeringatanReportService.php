@@ -18,9 +18,10 @@ class SuratPeringatanReportService
     {
         $rows = $this->parseXml($xmlContents, $sourceLabel);
         $reportDate = self::resolveReportDate($filters);
-        $mappedRows = array_values(array_map(static fn(array $row): array => self::mapRow($row), $rows));
+        $mappedRows = array_values(array_map(static fn (array $row): array => self::mapRow($row), $rows));
         $groupedRows = self::groupRows($mappedRows);
         $grandSummary = self::summary($mappedRows);
+
         return [
             'title' => self::TITLE,
             'source_file' => $sourceLabel,
@@ -33,7 +34,7 @@ class SuratPeringatanReportService
             'total_rows' => count($mappedRows),
             'period' => [
                 'report_date' => $reportDate->toDateString(),
-                'label' => 'Per Tanggal ' . $reportDate->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Per Tanggal '.$reportDate->locale('id')->translatedFormat('d-M-y'),
             ],
         ];
     }
@@ -48,7 +49,7 @@ class SuratPeringatanReportService
         }
 
         $reader = new XMLReader;
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("XML Warning Notice tidak valid: {$sourceLabel}");
         }
 
@@ -59,7 +60,7 @@ class SuratPeringatanReportService
             }
 
             $recordXml = $reader->readOuterXML();
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -69,7 +70,7 @@ class SuratPeringatanReportService
             }
 
             $rows[] = array_map(
-                static fn(mixed $value): string => is_array($value) ? '' : trim((string) $value),
+                static fn (mixed $value): string => is_array($value) ? '' : trim((string) $value),
                 json_decode(json_encode($node), true) ?: []
             );
         }
@@ -223,7 +224,7 @@ class SuratPeringatanReportService
     private static function warningLevel(string $value): string
     {
         if (preg_match('/(\d+)/', $value, $matches) === 1) {
-            return 'SP ' . $matches[1];
+            return 'SP '.$matches[1];
         }
 
         return trim($value);

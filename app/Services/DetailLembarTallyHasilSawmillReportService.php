@@ -34,8 +34,8 @@ class DetailLembarTallyHasilSawmillReportService
             'summary' => [
                 'total_rows' => count($rows),
                 'total_documents' => count($groups),
-                'total_batang' => array_sum(array_map(static fn(array $group): float => (float) ($group['summary']['total_batang'] ?? 0), $groups)),
-                'total_ton' => array_sum(array_map(static fn(array $group): float => (float) ($group['summary']['total_ton'] ?? 0), $groups)),
+                'total_batang' => array_sum(array_map(static fn (array $group): float => (float) ($group['summary']['total_batang'] ?? 0), $groups)),
+                'total_ton' => array_sum(array_map(static fn (array $group): float => (float) ($group['summary']['total_ton'] ?? 0), $groups)),
             ],
         ];
     }
@@ -132,7 +132,7 @@ class DetailLembarTallyHasilSawmillReportService
                 (string) ($row['NoPlat'] ?? ''),
             ]);
 
-            if (!isset($groups[$groupKey])) {
+            if (! isset($groups[$groupKey])) {
                 $groups[$groupKey] = [
                     'header' => [
                         'no_meja' => (string) ($row['NoMeja'] ?? '-'),
@@ -182,7 +182,7 @@ class DetailLembarTallyHasilSawmillReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan tally hasil sawmill detail belum dikonfigurasi.');
         }
 
@@ -193,7 +193,7 @@ class DetailLembarTallyHasilSawmillReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan tally hasil sawmill detail dikonfigurasi untuk SQL Server. '
-                . 'Set DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DETAIL_LEMBAR_TALLY_HASIL_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -205,7 +205,7 @@ class DetailLembarTallyHasilSawmillReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -220,7 +220,7 @@ class DetailLembarTallyHasilSawmillReportService
         try {
             return $connection->select($sql, $bindings);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan tally hasil sawmill detail: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan tally hasil sawmill detail: '.$exception->getMessage(), 0, $exception);
         }
     }
 
@@ -234,7 +234,7 @@ class DetailLembarTallyHasilSawmillReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

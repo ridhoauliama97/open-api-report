@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             $this->extendExecutionTimeForReportRequests();
         }
 
@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $request = request();
 
-        if (!$request->is('reports/*') && !$request->is('api/reports/*') && !$request->is('dashboard/*')) {
+        if (! $request->is('reports/*') && ! $request->is('api/reports/*') && ! $request->is('dashboard/*')) {
             return;
         }
 

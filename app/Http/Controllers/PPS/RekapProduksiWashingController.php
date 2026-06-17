@@ -30,6 +30,7 @@ class RekapProduksiWashingController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
             }
+
             return back()->withInput()->withErrors(['report' => $exception->getMessage()]);
         }
 

@@ -55,7 +55,7 @@ class GradeAbcHarianReportService
 
             $pcs = $this->toFloat($pcsRaw) ?? 0.0;
 
-            if (!isset($byDate[$dateKey])) {
+            if (! isset($byDate[$dateKey])) {
                 $byDate[$dateKey] = array_fill_keys($gradeKeys, 0.0);
             }
             $byDate[$dateKey][$gradeKey] = (float) ($byDate[$dateKey][$gradeKey] ?? 0.0) + $pcs;
@@ -168,7 +168,7 @@ class GradeAbcHarianReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -176,7 +176,7 @@ class GradeAbcHarianReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -199,7 +199,7 @@ class GradeAbcHarianReportService
             throw new RuntimeException('Jumlah parameter laporan Grade ABC Harian harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Grade ABC Harian belum dikonfigurasi.');
         }
 
@@ -209,7 +209,7 @@ class GradeAbcHarianReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Grade ABC Harian dikonfigurasi untuk SQL Server. '
-                . 'Set GRADE_ABC_HARIAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set GRADE_ABC_HARIAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -221,7 +221,7 @@ class GradeAbcHarianReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

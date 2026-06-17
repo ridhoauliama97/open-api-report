@@ -24,7 +24,7 @@ class MouldingHidupDetailReportService
             $jenis = trim((string) ($item['Jenis'] ?? $item['JenisKayu'] ?? $item['GroupKayu'] ?? ''));
             $grade = trim((string) ($item['NamaGrade'] ?? $item['Grade'] ?? ''));
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis . ($grade !== '' ? ' - ' . $grade : ''))
+                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
                 : $grade;
 
             return [
@@ -86,7 +86,7 @@ class MouldingHidupDetailReportService
         $customQuery = config('reports.moulding_hidup_detail.query');
         $parameterCount = (int) config('reports.moulding_hidup_detail.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Moulding (Hidup) detail belum dikonfigurasi.');
         }
 
@@ -98,7 +98,7 @@ class MouldingHidupDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Moulding (Hidup) detail dikonfigurasi untuk SQL Server. '
-                . 'Set MOULDING_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MOULDING_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -107,13 +107,13 @@ class MouldingHidupDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MOULDING_HIDUP_DETAIL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MOULDING_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan MOULDING_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? array_slice($bindings, 0, $parameterCount) : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -134,7 +134,7 @@ class MouldingHidupDetailReportService
             return "EXEC {$procedure}";
         }
 
-        return "EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?'));
+        return "EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?'));
     }
 
     private function buildCallSql(string $procedure, int $parameterCount): string
@@ -143,7 +143,7 @@ class MouldingHidupDetailReportService
             return "CALL {$procedure}()";
         }
 
-        return "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ")";
+        return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
     }
 
     private function toFloat(mixed $value): ?float
@@ -152,7 +152,7 @@ class MouldingHidupDetailReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

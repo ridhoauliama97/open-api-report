@@ -22,7 +22,7 @@ class GenerateHasilProduksiHarianCrusherProduksiReportRequest extends BaseReport
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('no_produksi') && $this->filled('NoCrusherProduksi')) {
+        if (! $this->filled('no_produksi') && $this->filled('NoCrusherProduksi')) {
             $this->merge(['no_produksi' => $this->input('NoCrusherProduksi')]);
         }
     }

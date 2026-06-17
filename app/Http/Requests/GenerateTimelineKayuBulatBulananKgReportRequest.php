@@ -58,4 +58,3 @@ class GenerateTimelineKayuBulatBulananKgReportRequest extends BaseReportRequest
         });
     }
 }
-

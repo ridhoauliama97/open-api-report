@@ -5,23 +5,23 @@ declare(strict_types=1);
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\Console\Kernel;
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
-$app = require __DIR__ . '/bootstrap/app.php';
+$app = require __DIR__.'/bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 
 $inputPath = $argv[1] ?? 'D:\XML Ascends\AnlReports.Inventory.AdjustmentByItem.xml';
-$outputPath = $argv[2] ?? __DIR__ . '\resources\views\ascends\ascend_ru\analysis_report\AnlReports.Inventory.AdjustmentByItem.pdf';
+$outputPath = $argv[2] ?? __DIR__.'\resources\views\ascends\ascend_ru\analysis_report\AnlReports.Inventory.AdjustmentByItem.pdf';
 
-if (!is_file($inputPath)) {
-    fwrite(STDERR, "XML file not found: {$inputPath}" . PHP_EOL);
+if (! is_file($inputPath)) {
+    fwrite(STDERR, "XML file not found: {$inputPath}".PHP_EOL);
     exit(1);
 }
 
 $xml = simplexml_load_file($inputPath);
 
 if ($xml === false) {
-    fwrite(STDERR, "Failed to parse XML file: {$inputPath}" . PHP_EOL);
+    fwrite(STDERR, "Failed to parse XML file: {$inputPath}".PHP_EOL);
     exit(1);
 }
 
@@ -72,7 +72,7 @@ $warehouseSummary = [];
 foreach ($rows as $row) {
     $key = $row['warehouse_code'] !== '' ? $row['warehouse_code'] : '-';
 
-    if (!isset($warehouseSummary[$key])) {
+    if (! isset($warehouseSummary[$key])) {
         $warehouseSummary[$key] = [
             'warehouse_code' => $row['warehouse_code'],
             'warehouse_name' => $row['warehouse_name'],
@@ -95,7 +95,7 @@ $reportData = [
 ];
 
 $outputDirectory = dirname($outputPath);
-if (!is_dir($outputDirectory)) {
+if (! is_dir($outputDirectory)) {
     mkdir($outputDirectory, 0777, true);
 }
 
@@ -114,4 +114,4 @@ app(PdfGenerator::class)->renderToFile(
     $outputPath
 );
 
-fwrite(STDOUT, "PDF generated: {$outputPath}" . PHP_EOL);
+fwrite(STDOUT, "PDF generated: {$outputPath}".PHP_EOL);

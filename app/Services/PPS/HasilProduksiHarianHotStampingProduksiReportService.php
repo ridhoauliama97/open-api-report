@@ -164,7 +164,7 @@ class HasilProduksiHarianHotStampingProduksiReportService
             throw new RuntimeException('Laporan PPS Hot Stamping Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -179,7 +179,7 @@ class HasilProduksiHarianHotStampingProduksiReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

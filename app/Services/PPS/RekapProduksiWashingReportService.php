@@ -10,7 +10,8 @@ class RekapProduksiWashingReportService
     public function fetch(string $startDate, string $endDate): array
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
-        return array_map(static fn($row): array => (array) $row, $rows);
+
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     public function healthCheck(string $startDate, string $endDate): array
@@ -19,6 +20,7 @@ class RekapProduksiWashingReportService
         $detectedColumns = array_keys($rows[0] ?? []);
         $expectedColumns = config('reports.pps_rekap_produksi_washing.expected_columns', []);
         $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
+
         return [
             'is_healthy' => empty(array_diff($expectedColumns, $detectedColumns)),
             'expected_columns' => $expectedColumns,
@@ -44,7 +46,7 @@ class RekapProduksiWashingReportService
         $parameterCount = max(0, (int) config("{$configPath}.parameter_count", 2));
         $singleParameterName = (string) config("{$configPath}.single_parameter_name", 'TglAkhir');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan PPS Rekap Produksi Washing belum dikonfigurasi.');
         }
 
@@ -55,7 +57,7 @@ class RekapProduksiWashingReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan PPS Rekap Produksi Washing dikonfigurasi untuk SQL Server. '
-                . 'Set PPS_REKAP_PRODUKSI_WASHING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PPS_REKAP_PRODUKSI_WASHING_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -64,17 +66,18 @@ class RekapProduksiWashingReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PPS_REKAP_PRODUKSI_WASHING_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PPS_REKAP_PRODUKSI_WASHING_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PPS_REKAP_PRODUKSI_WASHING_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $sql = $this->buildProcedureSql($driver, $syntax, $procedure, count($bindings));
+
         return $connection->select($sql, $bindings);
     }
 
@@ -91,13 +94,16 @@ class RekapProduksiWashingReportService
     {
         if ($syntax === 'call') {
             $placeholders = $bindingCount > 0 ? implode(', ', array_fill(0, $bindingCount, '?')) : '';
+
             return "CALL {$procedure}({$placeholders})";
         }
         if ($syntax === 'exec' || $driver === 'sqlsrv') {
-            $placeholders = $bindingCount > 0 ? ' ' . implode(', ', array_fill(0, $bindingCount, '?')) : '';
+            $placeholders = $bindingCount > 0 ? ' '.implode(', ', array_fill(0, $bindingCount, '?')) : '';
+
             return "SET NOCOUNT ON; EXEC {$procedure}{$placeholders}";
         }
         $placeholders = $bindingCount > 0 ? implode(', ', array_fill(0, $bindingCount, '?')) : '';
+
         return "CALL {$procedure}({$placeholders})";
     }
 }

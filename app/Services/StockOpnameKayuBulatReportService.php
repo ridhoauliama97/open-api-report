@@ -72,7 +72,7 @@ class StockOpnameKayuBulatReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array{no_kayu_bulat: string, rows: array<int, array<string, mixed>>}>
      */
     private function groupByNoKayuBulat(array $rows): array
@@ -98,8 +98,8 @@ class StockOpnameKayuBulatReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<int, array{no_kayu_bulat: string, rows: array<int, array<string, mixed>>}> $grouped
+     * @param  array<int, array<string, mixed>>  $rows
+     * @param  array<int, array{no_kayu_bulat: string, rows: array<int, array<string, mixed>>}>  $grouped
      * @return array<string, mixed>
      */
     private function buildSummary(array $rows, array $grouped): array
@@ -147,7 +147,7 @@ class StockOpnameKayuBulatReportService
         $syntax = (string) config('reports.stock_opname_kayu_bulat.call_syntax', 'exec');
         $customQuery = config('reports.stock_opname_kayu_bulat.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan stock opname kayu bulat belum dikonfigurasi.');
         }
 
@@ -157,7 +157,7 @@ class StockOpnameKayuBulatReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan stock opname kayu bulat dikonfigurasi untuk SQL Server. '
-                . 'Set STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -166,13 +166,13 @@ class StockOpnameKayuBulatReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'STOCK_OPNAME_KAYU_BULAT_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan STOCK_OPNAME_KAYU_BULAT_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

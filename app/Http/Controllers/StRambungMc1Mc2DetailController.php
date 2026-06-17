@@ -121,4 +121,3 @@ class StRambungMc1Mc2DetailController extends Controller
         ]);
     }
 }
-

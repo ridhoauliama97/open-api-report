@@ -113,5 +113,4 @@ class HasilOutputRacipHarianController extends Controller
             'health' => $result,
         ]);
     }
-
 }

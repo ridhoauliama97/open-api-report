@@ -84,6 +84,7 @@ class RekapProduksiS4SConsolidatedReportService
             if ($cmp !== 0) {
                 return $cmp;
             }
+
             return ((int) ($a['Shift'] ?? 0)) <=> ((int) ($b['Shift'] ?? 0));
         });
 
@@ -135,7 +136,7 @@ class RekapProduksiS4SConsolidatedReportService
         $customQuery = config('reports.rekap_produksi_s4s_consolidated.query');
         $parameterCount = (int) config('reports.rekap_produksi_s4s_consolidated.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap produksi S4S consolidated belum dikonfigurasi.');
         }
 
@@ -149,7 +150,7 @@ class RekapProduksiS4SConsolidatedReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap produksi S4S consolidated dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -158,13 +159,13 @@ class RekapProduksiS4SConsolidatedReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -207,7 +208,7 @@ class RekapProduksiS4SConsolidatedReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

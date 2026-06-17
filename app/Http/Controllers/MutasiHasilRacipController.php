@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateMutasiHasilRacipReportRequest;
-use App\Services\PdfGenerator;
 use App\Services\MutasiHasilRacipReportService;
+use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;

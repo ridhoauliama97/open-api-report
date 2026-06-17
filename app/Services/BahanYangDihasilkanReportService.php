@@ -32,7 +32,7 @@ class BahanYangDihasilkanReportService
             $category = trim((string) ($row['Group'] ?? ''));
             $category = $category !== '' ? $category : 'LAINNYA';
 
-            if (!isset($grouped[$category])) {
+            if (! isset($grouped[$category])) {
                 $grouped[$category] = [
                     'name' => $category,
                     'rows' => [],
@@ -64,7 +64,7 @@ class BahanYangDihasilkanReportService
             }
         }
         foreach ($grouped as $categoryKey => $group) {
-            if (!in_array($categoryKey, self::CATEGORY_ORDER, true)) {
+            if (! in_array($categoryKey, self::CATEGORY_ORDER, true)) {
                 $orderedCategories[] = $group;
             }
         }
@@ -132,14 +132,14 @@ class BahanYangDihasilkanReportService
         $connectionName = config('reports.bahan_yang_dihasilkan.database_connection');
         $procedure = (string) config('reports.bahan_yang_dihasilkan.stored_procedure', 'SPWps_LapBahanYangDihasilkan');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)
             ->select("SET NOCOUNT ON; EXEC {$procedure} ?", [$date]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function toFloat(mixed $value): ?float

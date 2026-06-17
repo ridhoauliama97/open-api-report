@@ -396,6 +396,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.warning-notice.surat-peringatan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/thr/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmThrPdf']
+)->name('api.internal.ascends.shared.hrm.thr.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/loss-time/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmLossTimePdf']
 )->name('api.internal.ascends.shared.hrm.loss-time.pdf');

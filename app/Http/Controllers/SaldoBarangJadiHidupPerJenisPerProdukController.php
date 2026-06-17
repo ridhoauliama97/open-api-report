@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\PdfGenerator;
 use App\Services\SaldoBarangJadiHidupPerJenisPerProdukReportService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use RuntimeException;
 
 class SaldoBarangJadiHidupPerJenisPerProdukController extends Controller

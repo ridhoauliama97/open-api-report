@@ -27,7 +27,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
     {
         $rows = $this->runProcedureQuery();
 
-        return $this->normalizeReportRows(array_map(static fn($row): array => (array) $row, $rows));
+        return $this->normalizeReportRows(array_map(static fn ($row): array => (array) $row, $rows));
     }
 
     /**
@@ -61,7 +61,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
             $produk = trim((string) ($row['NamaBarangJadi'] ?? ''));
             $produk = $produk !== '' ? $produk : '-';
 
-            if (!isset($groups[$jenis])) {
+            if (! isset($groups[$jenis])) {
                 $groups[$jenis] = [
                     'name' => $jenis,
                     'products' => [],
@@ -70,7 +70,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
                 ];
             }
 
-            if (!isset($groups[$jenis]['products'][$produk])) {
+            if (! isset($groups[$jenis]['products'][$produk])) {
                 $groups[$jenis]['products'][$produk] = [
                     'name' => $produk,
                     'rows' => [],
@@ -160,7 +160,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
         $syntax = (string) config('reports.saldo_barang_jadi_hidup_per_jenis_per_produk.call_syntax', 'exec');
         $customQuery = config('reports.saldo_barang_jadi_hidup_per_jenis_per_produk.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan saldo barang jadi hidup per-jenis per-produk belum dikonfigurasi.');
         }
 
@@ -170,7 +170,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan saldo barang jadi hidup per-jenis per-produk dikonfigurasi untuk SQL Server. '
-                . 'Set SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -179,13 +179,13 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan SALDO_BARANG_JADI_HIDUP_PER_JENIS_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -199,7 +199,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeReportRows(array $rows): array
@@ -211,13 +211,13 @@ class SaldoBarangJadiHidupPerJenisPerProdukReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             self::EXPECTED_COLUMNS,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
         if ($missingColumns !== []) {
             throw new RuntimeException(
                 'Output SP_LapBJHidupPerProduk tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 

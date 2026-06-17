@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\PdfGenerator;
 use App\Services\MutasiHasilRacipReportService;
+use App\Services\PdfGenerator;
 use Mockery;
 use Tests\TestCase;
 
@@ -147,7 +147,7 @@ class MutasiHasilRacipReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->createBearerToken($user),
+            'Authorization' => 'Bearer '.$this->createBearerToken($user),
             'Accept' => 'application/json',
         ];
     }
@@ -160,8 +160,3 @@ class MutasiHasilRacipReportFeatureTest extends TestCase
         return $this->issueJwtForUser($user);
     }
 }
-
-
-
-
-

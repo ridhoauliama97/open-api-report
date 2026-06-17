@@ -46,6 +46,7 @@ class StRambungMc1Mc2DetailReportService
                     if ($c !== 0) {
                         return $c;
                     }
+
                     return ((float) ($a['Lebar'] ?? 0.0)) <=> ((float) ($b['Lebar'] ?? 0.0));
                 });
 
@@ -175,7 +176,7 @@ class StRambungMc1Mc2DetailReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -183,7 +184,7 @@ class StRambungMc1Mc2DetailReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -191,7 +192,7 @@ class StRambungMc1Mc2DetailReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{pcs:int, ton:float, kubik:float}
      */
     private function sumTotals(array $rows): array
@@ -229,7 +230,7 @@ class StRambungMc1Mc2DetailReportService
             throw new RuntimeException('Laporan ST Rambung MC1 & MC2 (Detail) tidak menggunakan parameter.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan ST Rambung MC1 & MC2 (Detail) belum dikonfigurasi.');
         }
 
@@ -239,7 +240,7 @@ class StRambungMc1Mc2DetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan ST Rambung MC1 & MC2 (Detail) dikonfigurasi untuk SQL Server. '
-                . 'Set ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set ST_RAMBUNG_MC1_MC2_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -251,7 +252,7 @@ class StRambungMc1Mc2DetailReportService
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

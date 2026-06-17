@@ -26,7 +26,7 @@ class S4SHidupDetailReportService
 
             // Match reference: "JENIS - GRADE" when grade exists.
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis . ($grade !== '' ? ' - ' . $grade : ''))
+                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
                 : $grade;
 
             $tebal = $this->toFloat($item['Tebal'] ?? null);
@@ -57,6 +57,7 @@ class S4SHidupDetailReportService
             if ($cmp !== 0) {
                 return $cmp;
             }
+
             return strcmp((string) ($a['NoS4S'] ?? ''), (string) ($b['NoS4S'] ?? ''));
         });
 
@@ -96,7 +97,7 @@ class S4SHidupDetailReportService
         $customQuery = config('reports.s4s_hidup_detail.query');
         $parameterCount = (int) config('reports.s4s_hidup_detail.parameter_count', 0);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan S4S (Hidup) detail belum dikonfigurasi.');
         }
 
@@ -109,7 +110,7 @@ class S4SHidupDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan S4S (Hidup) detail dikonfigurasi untuk SQL Server. '
-                . 'Set S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -118,13 +119,13 @@ class S4SHidupDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'S4S_HIDUP_DETAIL_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -167,7 +168,7 @@ class S4SHidupDetailReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

@@ -114,7 +114,7 @@ class DashboardRuReportService
             'period_label' => Carbon::parse($reportDate)->locale('id')->translatedFormat('F Y'),
             'report_date' => $reportDate,
             'column_groups' => array_map(
-                static fn(array $group): array => [
+                static fn (array $group): array => [
                     'label' => $group['label'],
                     'span' => count($group['subs']),
                 ],
@@ -128,7 +128,7 @@ class DashboardRuReportService
             ],
             'summary' => [
                 'row_count' => count($normalizedRows),
-                'daily_row_count' => count(array_filter($normalizedRows, static fn(array $row): bool => !$row['is_footer'])),
+                'daily_row_count' => count(array_filter($normalizedRows, static fn (array $row): bool => ! $row['is_footer'])),
                 'group_count' => count(self::GROUP_DEFINITIONS),
                 'sub_column_count' => count($subColumns),
                 'stock_kb_non_pulai_tronton' => $stockNonPulaiTronton,
@@ -157,7 +157,7 @@ class DashboardRuReportService
             $detectedColumns[$group][] = $sub;
         }
 
-        $expectedGroups = array_map(static fn(array $group): string => $group['source'], self::GROUP_DEFINITIONS);
+        $expectedGroups = array_map(static fn (array $group): string => $group['source'], self::GROUP_DEFINITIONS);
         $missingGroups = array_values(array_diff($expectedGroups, array_keys($detectedGroups)));
         $expectedColumns = [];
         $missingColumns = [];
@@ -192,13 +192,13 @@ class DashboardRuReportService
         $connectionName = config('reports.dashboard_ru.database_connection');
         $procedure = (string) config('reports.dashboard_ru.stored_procedure', 'SP_LapProduktivitasDashboard');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)->select("EXEC {$procedure} ?", [$reportDate]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -211,7 +211,7 @@ class DashboardRuReportService
         foreach (self::GROUP_DEFINITIONS as $group) {
             foreach ($group['subs'] as $sub) {
                 $columns[] = [
-                    'key' => $group['source'] . '::' . $sub,
+                    'key' => $group['source'].'::'.$sub,
                     'group_source' => $group['source'],
                     'label' => $sub,
                 ];
@@ -233,6 +233,7 @@ class DashboardRuReportService
         foreach ($labels as $label) {
             if (preg_match('/^\d{2}$/', $label) === 1) {
                 $daily[] = $label;
+
                 continue;
             }
 
@@ -290,7 +291,7 @@ class DashboardRuReportService
         $prefix = $parsed['prefix'];
         $decimals = $parsed['decimals'];
 
-        return $prefix . number_format($parsed['value'], $decimals, '.', ',');
+        return $prefix.number_format($parsed['value'], $decimals, '.', ',');
     }
 
     /**
@@ -329,7 +330,7 @@ class DashboardRuReportService
 
             if (count($parts) > 2) {
                 $allThousands = collect(array_slice($parts, 1))
-                    ->every(static fn(string $part): bool => strlen($part) === 3);
+                    ->every(static fn (string $part): bool => strlen($part) === 3);
                 $decimalSeparator = $allThousands ? null : $separator;
             } elseif (strlen($lastPart) !== 3) {
                 $decimalSeparator = $separator;
@@ -355,5 +356,4 @@ class DashboardRuReportService
     {
         return number_format($value, 2, '.', '');
     }
-
 }

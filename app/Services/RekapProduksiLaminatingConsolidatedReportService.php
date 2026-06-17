@@ -132,7 +132,7 @@ class RekapProduksiLaminatingConsolidatedReportService
         $customQuery = config('reports.rekap_produksi_laminating_consolidated.query');
         $parameterCount = (int) config('reports.rekap_produksi_laminating_consolidated.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap produksi laminating consolidated belum dikonfigurasi.');
         }
 
@@ -146,7 +146,7 @@ class RekapProduksiLaminatingConsolidatedReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap produksi laminating consolidated dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -155,13 +155,13 @@ class RekapProduksiLaminatingConsolidatedReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -182,7 +182,7 @@ class RekapProduksiLaminatingConsolidatedReportService
             return "EXEC {$procedure}";
         }
 
-        return "EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?'));
+        return "EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?'));
     }
 
     private function buildCallSql(string $procedure, int $parameterCount): string
@@ -191,7 +191,7 @@ class RekapProduksiLaminatingConsolidatedReportService
             return "CALL {$procedure}()";
         }
 
-        return "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ")";
+        return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
     }
 
     private function toFloat(mixed $value): ?float
@@ -200,7 +200,7 @@ class RekapProduksiLaminatingConsolidatedReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

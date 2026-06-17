@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateBalokSudahSemprotReportRequest;
-use App\Services\PenjualanLokalReportService;
 use App\Services\PdfGenerator;
+use App\Services\PenjualanLokalReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -154,7 +154,7 @@ class PenjualanLokalController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{rows: array<int, array<string, mixed>>, subtotal_ton: float, grand_total_ton: float}
      */
     private function buildSummary(array $rows): array
@@ -173,7 +173,7 @@ class PenjualanLokalController extends Controller
             }
 
             $sectionKey = $proses !== '' ? $proses : 'LAINNYA';
-            if (!isset($sections[$sectionKey])) {
+            if (! isset($sections[$sectionKey])) {
                 $sections[$sectionKey] = [
                     'proses' => $sectionKey,
                     'rows' => [],
@@ -189,8 +189,8 @@ class PenjualanLokalController extends Controller
             ];
             $sections[$sectionKey]['subtotal_ton'] += $ton;
 
-            $groupKey = $jenisLabel . '|' . $namaGrade;
-            if (!isset($grouped[$groupKey])) {
+            $groupKey = $jenisLabel.'|'.$namaGrade;
+            if (! isset($grouped[$groupKey])) {
                 $grouped[$groupKey] = [
                     'jenis' => $jenisLabel,
                     'nama_grade' => $namaGrade,
@@ -242,7 +242,7 @@ class PenjualanLokalController extends Controller
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

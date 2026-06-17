@@ -31,8 +31,7 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -261,7 +260,7 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
             return '0.0%';
         }
 
-        return number_format(($value / $total) * 100, 1, '.', '') . '%';
+        return number_format(($value / $total) * 100, 1, '.', '').'%';
     }
 
     private static function numericValue(string $value): int

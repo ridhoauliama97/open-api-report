@@ -8,7 +8,9 @@ use RuntimeException;
 class KapasitasRacipKayuBulatHidupReportService
 {
     private const TOTAL_TON_CAPACITY = 323.7837;
+
     private const NON_RAMBUNG_RENDEMEN = 0.85;
+
     private const RAMBUNG_RENDEMEN = 0.20;
 
     /**
@@ -111,7 +113,7 @@ class KapasitasRacipKayuBulatHidupReportService
         $procedure = (string) ($config['stored_procedure'] ?? '');
         $parameterCount = (int) ($config['parameter_count'] ?? 0);
 
-        if ($procedure === '' || !preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if ($procedure === '' || ! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException("Stored procedure untuk {$configKey} belum valid.");
         }
 
@@ -121,10 +123,10 @@ class KapasitasRacipKayuBulatHidupReportService
             default => throw new RuntimeException("Parameter count untuk {$configKey} belum didukung."),
         };
 
-        $placeholders = $parameterCount > 0 ? ' ' . implode(', ', array_fill(0, $parameterCount, '?')) : '';
+        $placeholders = $parameterCount > 0 ? ' '.implode(', ', array_fill(0, $parameterCount, '?')) : '';
         $rows = DB::connection($connectionName ?: null)->select("SET NOCOUNT ON; EXEC {$procedure}{$placeholders}", $bindings);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function fetchSingleCount(string $configKey, string $startDate, string $endDate): int

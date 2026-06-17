@@ -87,11 +87,13 @@ class HasilProduksiHarianWashingProduksiReportService
                 }
 
                 $inputs[] = $item;
+
                 continue;
             }
 
             if ($type === 'output') {
                 $outputs[] = $item;
+
                 continue;
             }
 
@@ -180,12 +182,12 @@ class HasilProduksiHarianWashingProduksiReportService
         $connection = DB::connection($connectionName ?: null);
 
         $rows = $connection->select(
-            "
+            '
             SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM WashingProduksi_dDownTime WHERE NoProduksi = ?
             UNION ALL
             SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM WashingProduksi_dDownTime1 WHERE NoProduksi = ?
             ORDER BY NoUrut
-            ",
+            ',
             [$noProduksi, $noProduksi]
         );
 
@@ -225,7 +227,7 @@ class HasilProduksiHarianWashingProduksiReportService
             throw new RuntimeException('Laporan PPS Washing Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -242,7 +244,7 @@ class HasilProduksiHarianWashingProduksiReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

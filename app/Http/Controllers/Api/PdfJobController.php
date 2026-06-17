@@ -17,7 +17,7 @@ class PdfJobController extends Controller
     public function dispatch(Request $request, string $reportPath, Router $router): JsonResponse
     {
         $normalizedPath = trim($reportPath, '/');
-        $syncUri = 'api/reports/' . $normalizedPath . '/pdf';
+        $syncUri = 'api/reports/'.$normalizedPath.'/pdf';
         $actionName = $this->findSyncPdfAction($router, $syncUri);
 
         if ($actionName === null) {
@@ -52,7 +52,7 @@ class PdfJobController extends Controller
     {
         $job = PdfJobStatus::query()->find($jobId);
 
-        if (!$job instanceof PdfJobStatus) {
+        if (! $job instanceof PdfJobStatus) {
             return response()->json(['message' => 'Job tidak ditemukan.'], 404);
         }
 
@@ -79,20 +79,20 @@ class PdfJobController extends Controller
     {
         $job = PdfJobStatus::query()->find($jobId);
 
-        if (!$job instanceof PdfJobStatus) {
+        if (! $job instanceof PdfJobStatus) {
             return response()->json(['message' => 'Job tidak ditemukan.'], 404);
         }
 
         if ($job->status !== PdfJobStatus::STATUS_DONE) {
             return response()->json([
-                'message' => 'PDF belum siap. Status saat ini: ' . $job->status,
+                'message' => 'PDF belum siap. Status saat ini: '.$job->status,
                 'status' => $job->status,
             ], 409);
         }
 
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
 
-        if (!is_string($job->file_path) || !$disk->exists($job->file_path)) {
+        if (! is_string($job->file_path) || ! $disk->exists($job->file_path)) {
             return response()->json([
                 'message' => 'File PDF tidak ditemukan. Mungkin sudah kadaluarsa.',
             ], 410);
@@ -131,7 +131,7 @@ class PdfJobController extends Controller
             }
 
             $methods = $route->methods();
-            if (!in_array('POST', $methods, true) && !in_array('GET', $methods, true)) {
+            if (! in_array('POST', $methods, true) && ! in_array('GET', $methods, true)) {
                 continue;
             }
 

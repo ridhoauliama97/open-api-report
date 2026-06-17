@@ -12,8 +12,11 @@ use RuntimeException;
 class UmurFingerJointDetailController extends Controller
 {
     private const DEFAULT_UMUR_1 = 15;
+
     private const DEFAULT_UMUR_2 = 30;
+
     private const DEFAULT_UMUR_3 = 60;
+
     private const DEFAULT_UMUR_4 = 90;
 
     public function index(): View
@@ -193,7 +196,7 @@ class UmurFingerJointDetailController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array

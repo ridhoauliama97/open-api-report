@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateSupplierIntelReportRequest;
-use App\Services\SupplierIntelReportService;
 use App\Services\PdfGenerator;
+use App\Services\SupplierIntelReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -143,4 +143,3 @@ class SupplierIntelController extends Controller
         return [$request->startDate(), $request->endDate()];
     }
 }
-

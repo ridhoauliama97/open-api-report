@@ -36,9 +36,9 @@ class LabelPerhariReportService
             $ket = trim((string) ($row['Ket'] ?? ''));
             $category = $ket !== '' ? $ket : 'LAINNYA';
             $noLabel = trim((string) ($row['NoLabel'] ?? ''));
-            $labelKey = $noLabel !== '' ? $noLabel : '__EMPTY__:' . md5(json_encode($row));
+            $labelKey = $noLabel !== '' ? $noLabel : '__EMPTY__:'.md5(json_encode($row));
 
-            if (!isset($grouped[$category])) {
+            if (! isset($grouped[$category])) {
                 $grouped[$category] = [
                     'name' => $category,
                     'label_groups' => [],
@@ -50,7 +50,7 @@ class LabelPerhariReportService
             $pcs = $this->nullableFloat($row['JmlhBatang'] ?? null);
             $berat = $this->nullableFloat($row['Berat'] ?? null);
 
-            if (!isset($grouped[$category]['label_groups'][$labelKey])) {
+            if (! isset($grouped[$category]['label_groups'][$labelKey])) {
                 $grouped[$category]['label_groups'][$labelKey] = [
                     'NoLabel' => $noLabel,
                     'NoUrutValues' => [],
@@ -94,7 +94,7 @@ class LabelPerhariReportService
         }
 
         foreach ($grouped as $category => $group) {
-            if (!in_array($category, self::CATEGORY_ORDER, true)) {
+            if (! in_array($category, self::CATEGORY_ORDER, true)) {
                 $orderedCategories[] = $group;
             }
         }
@@ -193,14 +193,14 @@ class LabelPerhariReportService
         $connectionName = config('reports.label_perhari.database_connection');
         $procedure = (string) config('reports.label_perhari.stored_procedure', 'SPWps_LapLabelPerhari');
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $rows = DB::connection($connectionName ?: null)
             ->select("EXEC {$procedure} ?, ?", [$startDate, $endDate]);
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     private function nullableFloat(mixed $value): ?float
@@ -209,7 +209,7 @@ class LabelPerhariReportService
     }
 
     /**
-     * @param array<int, string> $bucket
+     * @param  array<int, string>  $bucket
      */
     private function pushUniqueString(array &$bucket, string $value): void
     {
@@ -221,7 +221,7 @@ class LabelPerhariReportService
     }
 
     /**
-     * @param array<int, string> $bucket
+     * @param  array<int, string>  $bucket
      */
     private function pushUniqueFormattedValue(array &$bucket, ?float $value, int $decimals): void
     {
@@ -230,13 +230,13 @@ class LabelPerhariReportService
         }
 
         $formatted = number_format($value, $decimals, '.', ',');
-        if (!in_array($formatted, $bucket, true)) {
+        if (! in_array($formatted, $bucket, true)) {
             $bucket[] = $formatted;
         }
     }
 
     /**
-     * @param array<int, string> $values
+     * @param  array<int, string>  $values
      */
     private function implodeValues(array $values): string
     {

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
 class GenerateMutasiKayuBulatKGV2ReportRequest extends BaseReportRequest
@@ -31,7 +30,7 @@ class GenerateMutasiKayuBulatKGV2ReportRequest extends BaseReportRequest
             $startDate = $this->input('start_date', $this->input('TglAwal'));
             $endDate = $this->input('end_date', $this->input('TglAkhir'));
 
-            if (!$startDate || !$endDate) {
+            if (! $startDate || ! $endDate) {
                 return;
             }
 
@@ -41,5 +40,3 @@ class GenerateMutasiKayuBulatKGV2ReportRequest extends BaseReportRequest
         });
     }
 }
-
-

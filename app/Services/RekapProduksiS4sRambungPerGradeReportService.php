@@ -49,7 +49,7 @@ class RekapProduksiS4sRambungPerGradeReportService
                 continue;
             }
 
-            if (!isset($byDate[$dateKey])) {
+            if (! isset($byDate[$dateKey])) {
                 $byDate[$dateKey] = [
                     'input' => array_fill_keys($inputCols, 0.0),
                     'output' => array_fill_keys($outputCols, 0.0),
@@ -57,13 +57,13 @@ class RekapProduksiS4sRambungPerGradeReportService
             }
 
             if ($type === 'INPUT') {
-                if (!array_key_exists($jenis, $byDate[$dateKey]['input'])) {
+                if (! array_key_exists($jenis, $byDate[$dateKey]['input'])) {
                     // Ignore unexpected jenis for layout stability.
                     continue;
                 }
                 $byDate[$dateKey]['input'][$jenis] = (float) ($byDate[$dateKey]['input'][$jenis] ?? 0.0) + $total;
             } elseif ($type === 'OUTPUT') {
-                if (!array_key_exists($jenis, $byDate[$dateKey]['output'])) {
+                if (! array_key_exists($jenis, $byDate[$dateKey]['output'])) {
                     continue;
                 }
                 $byDate[$dateKey]['output'][$jenis] = (float) ($byDate[$dateKey]['output'][$jenis] ?? 0.0) + $total;
@@ -177,7 +177,7 @@ class RekapProduksiS4sRambungPerGradeReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -185,7 +185,7 @@ class RekapProduksiS4sRambungPerGradeReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -208,7 +208,7 @@ class RekapProduksiS4sRambungPerGradeReportService
             throw new RuntimeException('Jumlah parameter laporan Rekap Produksi Rambung Per Grade harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Rekap Produksi Rambung Per Grade belum dikonfigurasi.');
         }
 
@@ -218,7 +218,7 @@ class RekapProduksiS4sRambungPerGradeReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Rekap Produksi Rambung Per Grade dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKSI_S4S_RAMBUNG_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -230,7 +230,7 @@ class RekapProduksiS4sRambungPerGradeReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -245,4 +245,3 @@ class RekapProduksiS4sRambungPerGradeReportService
         return $connection->select($sql, [$startDate, $endDate]);
     }
 }
-

@@ -30,7 +30,7 @@ class GenerateStSawmillMasukPerGroupMejaReportRequest extends BaseReportRequest
             $startDate = $this->input('start_date', $this->input('TglAwal'));
             $endDate = $this->input('end_date', $this->input('TglAkhir'));
 
-            if (!$startDate || !$endDate) {
+            if (! $startDate || ! $endDate) {
                 return;
             }
 
@@ -40,4 +40,3 @@ class GenerateStSawmillMasukPerGroupMejaReportRequest extends BaseReportRequest
         });
     }
 }
-

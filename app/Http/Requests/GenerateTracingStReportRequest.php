@@ -24,7 +24,7 @@ class GenerateTracingStReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('no_produk') && $this->filled('NoProduk')) {
+        if (! $this->filled('no_produk') && $this->filled('NoProduk')) {
             $this->merge(['no_produk' => $this->input('NoProduk')]);
         }
     }

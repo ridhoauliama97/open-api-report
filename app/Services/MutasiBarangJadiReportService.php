@@ -104,7 +104,7 @@ class MutasiBarangJadiReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -116,7 +116,7 @@ class MutasiBarangJadiReportService
     }
 
     /**
-     * @param array<int, string> $bindings
+     * @param  array<int, string>  $bindings
      * @return array<int, string>
      */
     private function resolveBindings(string $query, array $bindings): array
@@ -142,7 +142,7 @@ class MutasiBarangJadiReportService
                 : 'reports.mutasi_barang_jadi.query'
         );
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException(
                 $isSubProcedure
                     ? 'Stored procedure sub laporan mutasi barang jadi belum dikonfigurasi.'
@@ -157,7 +157,7 @@ class MutasiBarangJadiReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan mutasi barang jadi dikonfigurasi untuk SQL Server. '
-                . 'Set MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -166,13 +166,13 @@ class MutasiBarangJadiReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'MUTASI_BARANG_JADI_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan MUTASI_BARANG_JADI_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -188,7 +188,7 @@ class MutasiBarangJadiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeReportRows(array $rows): array
@@ -200,13 +200,13 @@ class MutasiBarangJadiReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             self::EXPECTED_COLUMNS,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
-        if (!empty($missingColumns)) {
+        if (! empty($missingColumns)) {
             throw new RuntimeException(
                 'Output SP_Mutasi_BarangJadi tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 
@@ -227,7 +227,7 @@ class MutasiBarangJadiReportService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeSubReportRows(array $rows): array
@@ -239,13 +239,13 @@ class MutasiBarangJadiReportService
         $sample = $rows[0];
         $missingColumns = array_values(array_filter(
             self::EXPECTED_SUB_COLUMNS,
-            static fn(string $column): bool => !array_key_exists($column, $sample),
+            static fn (string $column): bool => ! array_key_exists($column, $sample),
         ));
 
-        if (!empty($missingColumns)) {
+        if (! empty($missingColumns)) {
             throw new RuntimeException(
                 'Output SP_SubMutasi_BarangJadi tidak sesuai. Kolom tidak ditemukan: '
-                . implode(', ', $missingColumns),
+                .implode(', ', $missingColumns),
             );
         }
 
@@ -264,4 +264,3 @@ class MutasiBarangJadiReportService
         return $normalized;
     }
 }
-

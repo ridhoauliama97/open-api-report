@@ -146,7 +146,7 @@ class CrossCutAkhirHidupDetailController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array{M3:float}
      */
     private function computeTotals(array $rows): array

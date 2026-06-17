@@ -13,7 +13,8 @@ class QcSawmillReportService
     public function fetch(string $startDate, string $endDate): array
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
-        return array_map(fn(object $row): array => $this->normalizeRow((array) $row), $rows);
+
+        return array_map(fn (object $row): array => $this->normalizeRow((array) $row), $rows);
     }
 
     /**
@@ -48,7 +49,7 @@ class QcSawmillReportService
                 (string) ($row['NamaMeja'] ?? ''),
             ]);
 
-            if (!isset($groups[$groupKey])) {
+            if (! isset($groups[$groupKey])) {
                 $groups[$groupKey] = [
                     'tanggal' => (string) ($row['QcTgl'] ?? ''),
                     'no_meja' => (int) ($row['QcNoMeja'] ?? 0),
@@ -71,9 +72,9 @@ class QcSawmillReportService
         foreach ($groups as &$group) {
             $groupRows = is_array($group['rows'] ?? null) ? $group['rows'] : [];
             $totalRows = count($groupRows);
-            $sumDeviationTebal = array_sum(array_map(static fn(array $row): float => (float) ($row['DeviationTebal'] ?? 0), $groupRows));
-            $sumDeviationLebar = array_sum(array_map(static fn(array $row): float => (float) ($row['DeviationLebar'] ?? 0), $groupRows));
-            $totalAccurate = count(array_filter($groupRows, static fn(array $row): bool => (bool) ($row['IsAccurate'] ?? false)));
+            $sumDeviationTebal = array_sum(array_map(static fn (array $row): float => (float) ($row['DeviationTebal'] ?? 0), $groupRows));
+            $sumDeviationLebar = array_sum(array_map(static fn (array $row): float => (float) ($row['DeviationLebar'] ?? 0), $groupRows));
+            $totalAccurate = count(array_filter($groupRows, static fn (array $row): bool => (bool) ($row['IsAccurate'] ?? false)));
 
             $group['summary'] = [
                 'total_rows' => $totalRows,
@@ -127,7 +128,7 @@ class QcSawmillReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan QC Sawmill belum dikonfigurasi.');
         }
 
@@ -137,7 +138,7 @@ class QcSawmillReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan QC Sawmill dikonfigurasi untuk SQL Server. '
-                . 'Set QC_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set QC_SAWMILL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -149,7 +150,7 @@ class QcSawmillReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure laporan QC Sawmill tidak valid.');
         }
 
@@ -164,12 +165,12 @@ class QcSawmillReportService
         try {
             return $connection->select($sql, [$startDate, $endDate]);
         } catch (\Throwable $exception) {
-            throw new RuntimeException('Gagal mengambil data laporan QC Sawmill: ' . $exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Gagal mengambil data laporan QC Sawmill: '.$exception->getMessage(), 0, $exception);
         }
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<string, mixed>
      */
     private function normalizeRow(array $row): array
@@ -182,7 +183,7 @@ class QcSawmillReportService
         $deviationLebar = $actualLebar - $cuttingLebar;
         $hasNegativeDeviation = $deviationTebal < -0.00001 || $deviationLebar < -0.00001;
         $hasExceededTolerance = $deviationTebal >= 2 || $deviationLebar >= 2;
-        $isAccurate = !$hasNegativeDeviation && !$hasExceededTolerance;
+        $isAccurate = ! $hasNegativeDeviation && ! $hasExceededTolerance;
 
         return [
             'NoQc' => trim((string) ($row['NoQc'] ?? '')),
@@ -210,7 +211,7 @@ class QcSawmillReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

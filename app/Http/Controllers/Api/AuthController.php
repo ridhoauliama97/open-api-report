@@ -182,7 +182,7 @@ class AuthController extends Controller
 
         if (
             $accessToken === null
-            || (!$tokenable instanceof User && !$tokenable instanceof PpsUser)
+            || (! $tokenable instanceof User && ! $tokenable instanceof PpsUser)
         ) {
             return response()->json([
                 'message' => 'Token tidak valid atau sudah kedaluwarsa.',
@@ -224,7 +224,7 @@ class AuthController extends Controller
     }
 
     /**
-     * @param array<string, string> $credentials
+     * @param  array<string, string>  $credentials
      * @return array{token: string, user: Authenticatable}|false
      */
     private function attemptWithConfiguredClaims(array $credentials): array|false
@@ -240,16 +240,16 @@ class AuthController extends Controller
             /** @var class-string<Authenticatable> $modelClass */
             $user = $modelClass::query()->where('Username', $username)->first();
 
-            if (!$user instanceof Authenticatable) {
+            if (! $user instanceof Authenticatable) {
                 continue;
             }
 
             $provider = Auth::createUserProvider($providerName);
-            if (!$provider instanceof UserProvider) {
+            if (! $provider instanceof UserProvider) {
                 continue;
             }
 
-            if (!$provider->validateCredentials($user, ['password' => $plainPassword])) {
+            if (! $provider->validateCredentials($user, ['password' => $plainPassword])) {
                 continue;
             }
 

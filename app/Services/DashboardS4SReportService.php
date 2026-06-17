@@ -43,8 +43,8 @@ class DashboardS4SReportService
 
             throw new RuntimeException(
                 'Kolom wajib tidak ditemukan di hasil SPWps_LapDashboardS4S. '
-                . 'Butuh kolom tanggal, jenis, grade, awal, masuk, jual, dan keluar. '
-                . 'Kolom terdeteksi: ' . implode(', ', $detectedColumns),
+                .'Butuh kolom tanggal, jenis, grade, awal, masuk, jual, dan keluar. '
+                .'Kolom terdeteksi: '.implode(', ', $detectedColumns),
             );
         }
 
@@ -64,7 +64,7 @@ class DashboardS4SReportService
             }
 
             $key = $this->buildGroupKey((string) ($row[$columns['jenis']] ?? ''), (string) ($row[$columns['barang_jadi']] ?? ''));
-            if (!array_key_exists($key, self::GROUP_LABELS)) {
+            if (! array_key_exists($key, self::GROUP_LABELS)) {
                 continue;
             }
 
@@ -74,7 +74,7 @@ class DashboardS4SReportService
             $keluarTambahan = $this->toFloat($row[$columns['keluar']] ?? 0);
             $keluar = $jual + $keluarTambahan;
 
-            if (!isset($groupMetrics[$key])) {
+            if (! isset($groupMetrics[$key])) {
                 $groupMetrics[$key] = [
                     'awal' => $awal,
                     'masuk_total' => 0.0,
@@ -156,7 +156,7 @@ class DashboardS4SReportService
 
     private function buildGroupKey(string $jenis, string $barangJadi): string
     {
-        return strtoupper(trim($jenis . ' ' . $barangJadi));
+        return strtoupper(trim($jenis.' '.$barangJadi));
     }
 
     /**
@@ -179,11 +179,11 @@ class DashboardS4SReportService
 
     private function normalizeRows(array $rows): array
     {
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, string|null>
      */
     private function resolveColumns(array $rows): array
@@ -209,8 +209,8 @@ class DashboardS4SReportService
     }
 
     /**
-     * @param array<int, string> $keys
-     * @param array<int, string> $candidates
+     * @param  array<int, string>  $keys
+     * @param  array<int, string>  $candidates
      */
     private function findMatchingKey(array $keys, array $candidates): ?string
     {
@@ -265,7 +265,7 @@ class DashboardS4SReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return 0.0;
         }
 
@@ -309,7 +309,7 @@ class DashboardS4SReportService
         $parameterCount = (int) config('reports.dashboard_s4s.parameter_count', 2);
         $parameterCount = max(0, min(2, $parameterCount));
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan dashboard s4s belum dikonfigurasi.');
         }
 
@@ -319,7 +319,7 @@ class DashboardS4SReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan dashboard s4s dikonfigurasi untuk SQL Server. '
-                . 'Set DASHBOARD_S4S_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set DASHBOARD_S4S_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -331,13 +331,13 @@ class DashboardS4SReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'DASHBOARD_S4S_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan DASHBOARD_S4S_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan DASHBOARD_S4S_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, $this->resolveBindings($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

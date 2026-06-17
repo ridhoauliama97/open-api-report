@@ -48,7 +48,7 @@ class SaldoStHidupPerProdukReportService
             $produkName = trim((string) ($row['Produk'] ?? ''));
             $produkName = $produkName !== '' ? $produkName : 'Tanpa Produk';
 
-            if (!isset($groups[$groupName])) {
+            if (! isset($groups[$groupName])) {
                 $groups[$groupName] = [
                     'name' => $groupName,
                     'products' => [],
@@ -56,7 +56,7 @@ class SaldoStHidupPerProdukReportService
                 ];
             }
 
-            if (!isset($groups[$groupName]['products'][$produkName])) {
+            if (! isset($groups[$groupName]['products'][$produkName])) {
                 $groups[$groupName]['products'][$produkName] = [
                     'name' => $produkName,
                     'rows' => [],
@@ -151,7 +151,7 @@ class SaldoStHidupPerProdukReportService
         $syntax = (string) config('reports.saldo_st_hidup_per_produk.call_syntax', 'exec');
         $customQuery = config('reports.saldo_st_hidup_per_produk.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan saldo ST hidup per produk belum dikonfigurasi.');
         }
 
@@ -161,7 +161,7 @@ class SaldoStHidupPerProdukReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan saldo ST hidup per produk dikonfigurasi untuk SQL Server. '
-                . 'Set SALDO_ST_HIDUP_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set SALDO_ST_HIDUP_PER_PRODUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -170,13 +170,13 @@ class SaldoStHidupPerProdukReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'SALDO_ST_HIDUP_PER_PRODUK_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan SALDO_ST_HIDUP_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan SALDO_ST_HIDUP_PER_PRODUK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -195,7 +195,7 @@ class SaldoStHidupPerProdukReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -220,4 +220,3 @@ class SaldoStHidupPerProdukReportService
         return is_numeric($normalized) ? (float) $normalized : null;
     }
 }
-

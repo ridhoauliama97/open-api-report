@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
 use Illuminate\Validation\Validator;
 
 class GenerateBalokSudahSemprotReportRequest extends BaseReportRequest
@@ -59,5 +58,3 @@ class GenerateBalokSudahSemprotReportRequest extends BaseReportRequest
         });
     }
 }
-
-

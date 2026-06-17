@@ -24,7 +24,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
         $groupFilter = $this->resolveGroupFilter($filters);
         $filteredRows = array_values(array_filter(
             $rows,
-            fn(array $row): bool => $this->shouldIncludeRow($row, $period['start'], $period['end'], $groupFilter)
+            fn (array $row): bool => $this->shouldIncludeRow($row, $period['start'], $period['end'], $groupFilter)
         ));
 
         $summaryRows = $this->buildSummaryRows($filteredRows);
@@ -38,7 +38,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
             'headers' => ['No', 'Divisi', 'Jumlah Hadir Tidak Telat', 'Jumlah Telat', 'Jumlah Tidak Hadir', 'Jumlah Saat Pukul 12.55 Wib', 'Selisih', 'Keterangan'],
             'rows' => $summaryRows,
@@ -57,7 +57,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
         }
 
         $reader = new XMLReader;
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("File XML tidak valid ({$sourceLabel}).");
         }
 
@@ -68,7 +68,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
             }
 
             $nodeXml = $reader->readOuterXml();
-            if (!is_string($nodeXml) || trim($nodeXml) === '') {
+            if (! is_string($nodeXml) || trim($nodeXml) === '') {
                 continue;
             }
 
@@ -144,7 +144,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
         }
 
         $dates = array_values(array_filter(array_map(
-            fn(array $row): ?Carbon => $this->parseDate((string) ($row['Date'] ?? '')),
+            fn (array $row): ?Carbon => $this->parseDate((string) ($row['Date'] ?? '')),
             $rows
         )));
 
@@ -154,7 +154,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
             return ['start' => $today->copy()->startOfDay(), 'end' => $today->copy()->endOfDay()];
         }
 
-        usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
+        usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
         $latest = $dates[count($dates) - 1];
 
         return ['start' => $latest->copy()->startOfMonth()->startOfDay(), 'end' => $latest->copy()->endOfMonth()->endOfDay()];
@@ -176,7 +176,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
             $employeeCode === ''
             || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
             || $date === null
-            || !$date->betweenIncluded($startDate, $endDate)
+            || ! $date->betweenIncluded($startDate, $endDate)
         ) {
             return false;
         }
@@ -222,8 +222,8 @@ class RekapitulasiAbsensiBriefingHarianReportService
                 continue;
             }
 
-            $presentNoLate = count(array_filter($items, fn(array $row): bool => $this->isBriefingPresentNoLate($row)));
-            $notPresent = count(array_filter($items, fn(array $row): bool => !$this->hasSignIn($row)));
+            $presentNoLate = count(array_filter($items, fn (array $row): bool => $this->isBriefingPresentNoLate($row)));
+            $notPresent = count(array_filter($items, fn (array $row): bool => ! $this->hasSignIn($row)));
             $late = count($items) - $presentNoLate - $notPresent;
 
             $result[] = [
@@ -260,9 +260,9 @@ class RekapitulasiAbsensiBriefingHarianReportService
      */
     private function buildGrandSummary(array $rows, int $vinyNotPresentAdjustment = 0): array
     {
-        $presentNoLate = array_sum(array_map(static fn(array $row): int => (int) ($row['Jumlah Hadir Tidak Telat'] ?? 0), $rows));
-        $late = array_sum(array_map(static fn(array $row): int => (int) ($row['Jumlah Telat'] ?? 0), $rows));
-        $notPresent = array_sum(array_map(static fn(array $row): int => (int) ($row['Jumlah Tidak Hadir'] ?? 0), $rows)) + $vinyNotPresentAdjustment;
+        $presentNoLate = array_sum(array_map(static fn (array $row): int => (int) ($row['Jumlah Hadir Tidak Telat'] ?? 0), $rows));
+        $late = array_sum(array_map(static fn (array $row): int => (int) ($row['Jumlah Telat'] ?? 0), $rows));
+        $notPresent = array_sum(array_map(static fn (array $row): int => (int) ($row['Jumlah Tidak Hadir'] ?? 0), $rows)) + $vinyNotPresentAdjustment;
 
         return [
             'Jumlah Hadir Tidak Telat' => $presentNoLate,
@@ -289,7 +289,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
 
     private function isBriefingPresentNoLate(array $row): bool
     {
-        if (!$this->hasSignIn($row)) {
+        if (! $this->hasSignIn($row)) {
             return false;
         }
 
@@ -301,7 +301,7 @@ class RekapitulasiAbsensiBriefingHarianReportService
 
     private function timeNew(string $value): ?float
     {
-        if (!preg_match('/(\d{1,2}):(\d{2})/', $value, $matches)) {
+        if (! preg_match('/(\d{1,2}):(\d{2})/', $value, $matches)) {
             return null;
         }
 

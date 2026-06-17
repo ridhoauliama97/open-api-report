@@ -43,14 +43,14 @@ class PembelianStTimelineTonReportService
                 $monthKey = 'Tanpa Periode';
             }
 
-            if (!isset($bySupplier[$supplier])) {
+            if (! isset($bySupplier[$supplier])) {
                 $bySupplier[$supplier] = [];
             }
 
             $bySupplier[$supplier][$monthKey] = (float) ($bySupplier[$supplier][$monthKey] ?? 0.0) + $ton;
             $totalsByMonth[$monthKey] = (float) ($totalsByMonth[$monthKey] ?? 0.0) + $ton;
 
-            if (!isset($monthMeta[$monthKey])) {
+            if (! isset($monthMeta[$monthKey])) {
                 $monthMeta[$monthKey] = [
                     'key' => $monthKey,
                     'year' => $year,
@@ -73,6 +73,7 @@ class PembelianStTimelineTonReportService
             if ($da === null && $db !== null) {
                 return 1;
             }
+
             return strnatcasecmp($a, $b);
         });
 
@@ -84,7 +85,7 @@ class PembelianStTimelineTonReportService
 
             $y = (int) ($meta['year'] ?? 0);
             if ($y > 0) {
-                if (!isset($yearGroups[$y])) {
+                if (! isset($yearGroups[$y])) {
                     $yearGroups[$y] = ['year' => $y, 'months' => []];
                 }
                 $yearGroups[$y]['months'][] = $key;
@@ -207,6 +208,7 @@ class PembelianStTimelineTonReportService
     {
         if ($value instanceof \DateTimeInterface) {
             $c = Carbon::instance($value)->locale('id');
+
             return [$c->format('Y-m'), $c->translatedFormat('M'), (int) $c->format('Y'), (int) $c->format('n')];
         }
 
@@ -218,6 +220,7 @@ class PembelianStTimelineTonReportService
 
             try {
                 $c = Carbon::parse($t)->locale('id');
+
                 return [$c->format('Y-m'), $c->translatedFormat('M'), (int) $c->format('Y'), (int) $c->format('n')];
             } catch (\Throwable) {
                 return [$t, $t, 0, 0];
@@ -227,6 +230,7 @@ class PembelianStTimelineTonReportService
         if (is_numeric($value)) {
             // Rare, but keep stable.
             $t = (string) $value;
+
             return [$t, $t, 0, 0];
         }
 
@@ -235,12 +239,12 @@ class PembelianStTimelineTonReportService
 
     private function tryParseMonthKey(string $key): ?int
     {
-        if (!preg_match('/^\\d{4}-\\d{2}$/', $key)) {
+        if (! preg_match('/^\\d{4}-\\d{2}$/', $key)) {
             return null;
         }
 
         try {
-            return Carbon::parse($key . '-01')->getTimestamp();
+            return Carbon::parse($key.'-01')->getTimestamp();
         } catch (\Throwable) {
             return null;
         }
@@ -254,7 +258,7 @@ class PembelianStTimelineTonReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -262,7 +266,7 @@ class PembelianStTimelineTonReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -285,7 +289,7 @@ class PembelianStTimelineTonReportService
             throw new RuntimeException('Jumlah parameter laporan Pembelian ST Time Line (Ton) harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Pembelian ST Time Line (Ton) belum dikonfigurasi.');
         }
 
@@ -295,7 +299,7 @@ class PembelianStTimelineTonReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Pembelian ST Time Line (Ton) dikonfigurasi untuk SQL Server. '
-                . 'Set PEMBELIAN_ST_TIMELINE_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PEMBELIAN_ST_TIMELINE_TON_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -307,7 +311,7 @@ class PembelianStTimelineTonReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

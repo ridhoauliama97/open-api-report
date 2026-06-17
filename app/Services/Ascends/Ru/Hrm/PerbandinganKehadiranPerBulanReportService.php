@@ -57,11 +57,11 @@ class PerbandinganKehadiranPerBulanReportService
             'printed_by' => '',
             'headers' => ['Bulan', 'Total Karyawan', 'Jumlah Ketidakhadiran', '% Ketidakhadiran', 'Jumlah Terlambat', '% Terlambat'],
             'sections' => $sections,
-            'total_rows' => array_sum(array_map(static fn(array $section): int => count($section['rows'] ?? []), $sections)),
+            'total_rows' => array_sum(array_map(static fn (array $section): int => count($section['rows'] ?? []), $sections)),
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
         ];
     }
@@ -77,7 +77,7 @@ class PerbandinganKehadiranPerBulanReportService
         }
 
         $reader = new XMLReader;
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("XML Attendance tidak valid: {$sourceLabel}");
         }
 
@@ -89,12 +89,12 @@ class PerbandinganKehadiranPerBulanReportService
         ];
 
         while ($reader->read()) {
-            if ($reader->nodeType !== XMLReader::ELEMENT || !in_array(strtolower($reader->name), ['attendacesimple', 'attendance'], true)) {
+            if ($reader->nodeType !== XMLReader::ELEMENT || ! in_array(strtolower($reader->name), ['attendacesimple', 'attendance'], true)) {
                 continue;
             }
 
             $recordXml = $reader->readOuterXML();
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -110,7 +110,7 @@ class PerbandinganKehadiranPerBulanReportService
             }
 
             $dates[] = $date->copy();
-            if ($period !== null && !$date->betweenIncluded($period['start'], $period['end'])) {
+            if ($period !== null && ! $date->betweenIncluded($period['start'], $period['end'])) {
                 continue;
             }
 
@@ -126,7 +126,7 @@ class PerbandinganKehadiranPerBulanReportService
             }
 
             $monthKey = $date->format('Y-m');
-            if (!isset($types[$type][$monthKey])) {
+            if (! isset($types[$type][$monthKey])) {
                 $types[$type][$monthKey] = [
                     'employees' => [],
                     'absence_count' => 0,
@@ -145,7 +145,7 @@ class PerbandinganKehadiranPerBulanReportService
             }
 
             $holidayName = trim((string) ($node->{'Holiday_x0020_Name'} ?? ''));
-            if ($holidayName === '' && !self::isNationalHoliday($date) && self::isLateByFormula($signInTime, $signIn, (string) ($node->Shift ?? ''), (string) ($node->Workgroup ?? ''))) {
+            if ($holidayName === '' && ! self::isNationalHoliday($date) && self::isLateByFormula($signInTime, $signIn, (string) ($node->Shift ?? ''), (string) ($node->Workgroup ?? ''))) {
                 $types[$type][$monthKey]['late_count']++;
             }
         }
@@ -157,7 +157,7 @@ class PerbandinganKehadiranPerBulanReportService
         }
 
         if ($period === null) {
-            usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
+            usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
             $period = [
                 'start' => $dates[0]->copy()->startOfDay(),
                 'end' => $dates[count($dates) - 1]->copy()->endOfDay(),
@@ -378,6 +378,6 @@ class PerbandinganKehadiranPerBulanReportService
 
     private static function formatPercent(float $value): string
     {
-        return number_format(round($value), 0, '.', ',') . '%';
+        return number_format(round($value), 0, '.', ',').'%';
     }
 }

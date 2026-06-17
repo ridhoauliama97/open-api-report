@@ -88,7 +88,7 @@ class RendemenSemuaProsesReportFeatureTest extends TestCase
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator->shouldReceive('render')
             ->once()
-            ->with('reports.rendemen-kayu.rendemen-semua-proses-pdf', Mockery::on(fn($data) => isset($data['pdf_orientation']) && $data['pdf_orientation'] === 'landscape'))
+            ->with('reports.rendemen-kayu.rendemen-semua-proses-pdf', Mockery::on(fn ($data) => isset($data['pdf_orientation']) && $data['pdf_orientation'] === 'landscape'))
             ->andReturn('%PDF-1.4 mocked content');
 
         $this->app->instance(RendemenSemuaProsesReportService::class, $service);
@@ -141,7 +141,7 @@ class RendemenSemuaProsesReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ];
     }

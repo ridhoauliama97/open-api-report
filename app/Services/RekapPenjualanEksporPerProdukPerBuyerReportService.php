@@ -14,7 +14,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -53,7 +53,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
             $product = $row['Product'];
             $buyer = $row['Pembeli'];
 
-            if (!isset($grouped[$product])) {
+            if (! isset($grouped[$product])) {
                 $grouped[$product] = [
                     'name' => $product,
                     'buyers' => [],
@@ -61,7 +61,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
                 ];
             }
 
-            if (!isset($grouped[$product]['buyers'][$buyer])) {
+            if (! isset($grouped[$product]['buyers'][$buyer])) {
                 $grouped[$product]['buyers'][$buyer] = [
                     'name' => $buyer,
                     'rows' => [],
@@ -114,7 +114,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
             'summary' => [
                 'total_rows' => count($normalizedRows),
                 'total_products' => count($products),
-                'total_buyers' => array_sum(array_map(static fn(array $product): int => count($product['buyers'] ?? []), $products)),
+                'total_buyers' => array_sum(array_map(static fn (array $product): int => count($product['buyers'] ?? []), $products)),
                 'grand_total_m3' => $grandTotal,
             ],
         ];
@@ -158,7 +158,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
             throw new RuntimeException('Jumlah parameter laporan Rekap Penjualan Ekspor Per-Produk dan Per-Buyer harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Rekap Penjualan Ekspor Per-Produk dan Per-Buyer belum dikonfigurasi.');
         }
 
@@ -168,7 +168,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Rekap Penjualan Ekspor Per-Produk dan Per-Buyer dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -180,7 +180,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
             return $connection->select($query, [$startDate, $endDate]);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -199,7 +199,7 @@ class RekapPenjualanEksporPerProdukPerBuyerReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

@@ -14,7 +14,7 @@ class KbKhususBangkangReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     /**
@@ -55,7 +55,7 @@ class KbKhususBangkangReportService
             throw new RuntimeException('Jumlah parameter laporan KB khusus bangkang harus antara 0 sampai 2.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan KB khusus bangkang belum dikonfigurasi.');
         }
 
@@ -65,7 +65,7 @@ class KbKhususBangkangReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan KB khusus bangkang dikonfigurasi untuk SQL Server. '
-                . 'Set KB_KHUSUS_BANGKANG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set KB_KHUSUS_BANGKANG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -76,7 +76,7 @@ class KbKhususBangkangReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'KB_KHUSUS_BANGKANG_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan KB_KHUSUS_BANGKANG_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan KB_KHUSUS_BANGKANG_REPORT_CALL_SYNTAX=query.',
                 );
 
             $resolvedBindings = str_contains($query, '?') ? $bindings : [];
@@ -84,24 +84,24 @@ class KbKhususBangkangReportService
             return $connection->select($query, $resolvedBindings);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
         $sql = match ($syntax) {
             'exec' => $parameterCount === 0
                 ? "SET NOCOUNT ON; EXEC {$procedure}"
-                : "SET NOCOUNT ON; EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?')),
+                : "SET NOCOUNT ON; EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?')),
             'call' => $parameterCount === 0
                 ? "CALL {$procedure}()"
-                : "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ')',
+                : "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')',
             default => $driver === 'sqlsrv'
                 ? ($parameterCount === 0
                     ? "SET NOCOUNT ON; EXEC {$procedure}"
-                    : "SET NOCOUNT ON; EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?')))
+                    : "SET NOCOUNT ON; EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?')))
                 : ($parameterCount === 0
                     ? "CALL {$procedure}()"
-                    : "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ')'),
+                    : "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')'),
         };
 
         return $connection->select($sql, $bindings);

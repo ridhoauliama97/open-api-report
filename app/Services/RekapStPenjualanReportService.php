@@ -33,6 +33,7 @@ class RekapStPenjualanReportService
                 if ($c !== 0) {
                     return $c;
                 }
+
                 return strcmp((string) ($a['NoST'] ?? ''), (string) ($b['NoST'] ?? ''));
             });
 
@@ -117,11 +118,11 @@ class RekapStPenjualanReportService
             $ton = (float) ($this->toFloat($item['Ton'] ?? null) ?? 0.0);
 
             $uomTbl = $item['UOMTblLebar'] ?? null;
-            if (!is_string($uomTbl) || trim($uomTbl) === '') {
+            if (! is_string($uomTbl) || trim($uomTbl) === '') {
                 $uomTbl = $this->uomLabel((int) ($item['IdUOMTblLebar'] ?? 0));
             }
             $uomPjg = $item['UOMPanjang'] ?? null;
-            if (!is_string($uomPjg) || trim($uomPjg) === '') {
+            if (! is_string($uomPjg) || trim($uomPjg) === '') {
                 $uomPjg = $this->uomLabel((int) ($item['IdUOMPanjang'] ?? 0));
             }
 
@@ -163,7 +164,7 @@ class RekapStPenjualanReportService
         if (is_int($value) || is_float($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
         $t = trim($value);
@@ -171,7 +172,7 @@ class RekapStPenjualanReportService
             return null;
         }
         $t = str_replace(',', '', $t);
-        if (!is_numeric($t)) {
+        if (! is_numeric($t)) {
             return null;
         }
 
@@ -194,7 +195,7 @@ class RekapStPenjualanReportService
             throw new RuntimeException('Jumlah parameter laporan Rekap ST Penjualan harus 2 (Tanggal Awal dan Tanggal Akhir).');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan Rekap ST Penjualan belum dikonfigurasi.');
         }
 
@@ -204,7 +205,7 @@ class RekapStPenjualanReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan Rekap ST Penjualan dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_ST_PENJUALAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_ST_PENJUALAN_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -216,7 +217,7 @@ class RekapStPenjualanReportService
             return $connection->select($query, str_contains($query, '?') ? [$startDate, $endDate] : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

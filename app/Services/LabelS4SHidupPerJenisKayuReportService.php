@@ -56,6 +56,7 @@ class LabelS4SHidupPerJenisKayuReportService
                 if ($y === null) {
                     return -1;
                 }
+
                 return $x <=> $y;
             };
 
@@ -67,6 +68,7 @@ class LabelS4SHidupPerJenisKayuReportService
             if ($cmp !== 0) {
                 return $cmp;
             }
+
             return $cmpFloat($a['Panjang'] ?? null, $b['Panjang'] ?? null);
         });
 
@@ -105,7 +107,7 @@ class LabelS4SHidupPerJenisKayuReportService
         $customQuery = config('reports.label_s4s_hidup_per_jenis_kayu.query');
         $parameterCount = (int) config('reports.label_s4s_hidup_per_jenis_kayu.parameter_count', 0);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan label S4S (hidup) per-jenis kayu belum dikonfigurasi.');
         }
 
@@ -118,7 +120,7 @@ class LabelS4SHidupPerJenisKayuReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan label S4S (hidup) per-jenis kayu dikonfigurasi untuk SQL Server. '
-                . 'Set LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -127,13 +129,13 @@ class LabelS4SHidupPerJenisKayuReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan LABEL_S4S_HIDUP_PER_JENIS_KAYU_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -176,7 +178,7 @@ class LabelS4SHidupPerJenisKayuReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
@@ -215,4 +217,3 @@ class LabelS4SHidupPerJenisKayuReportService
         return (int) round($f);
     }
 }
-

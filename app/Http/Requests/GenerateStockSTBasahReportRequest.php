@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
-
 class GenerateStockSTBasahReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
@@ -30,10 +28,8 @@ class GenerateStockSTBasahReportRequest extends BaseReportRequest
     {
         parent::prepareForValidation();
 
-        if (!$this->filled('end_date') && $this->filled('TglAkhir')) {
+        if (! $this->filled('end_date') && $this->filled('TglAkhir')) {
             $this->merge(['end_date' => $this->input('TglAkhir')]);
         }
     }
 }
-
-

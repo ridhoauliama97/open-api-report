@@ -25,10 +25,10 @@ class GenerateUmurReprosesDetailReportRequest extends BaseReportRequest
     {
         $validator->after(function (Validator $validator): void {
             if (
-                !$this->filled('Umur1')
-                || !$this->filled('Umur2')
-                || !$this->filled('Umur3')
-                || !$this->filled('Umur4')
+                ! $this->filled('Umur1')
+                || ! $this->filled('Umur2')
+                || ! $this->filled('Umur3')
+                || ! $this->filled('Umur4')
             ) {
                 return;
             }

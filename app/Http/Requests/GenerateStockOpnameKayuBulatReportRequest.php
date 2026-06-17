@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseReportRequest;
-
 class GenerateStockOpnameKayuBulatReportRequest extends BaseReportRequest
 {
     public function authorize(): bool
@@ -19,5 +17,3 @@ class GenerateStockOpnameKayuBulatReportRequest extends BaseReportRequest
         return [];
     }
 }
-
-

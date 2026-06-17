@@ -20,7 +20,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
     ): array {
         $rows = $this->runProcedureQuery($period1StartDate, $period1EndDate, $period2StartDate, $period2EndDate);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     /**
@@ -49,7 +49,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
             $phoneKey = $phone !== '' ? $phone : '-';
             $groupKey = "{$supplierKey}||{$phoneKey}";
 
-            if (!isset($supplierGroups[$groupKey])) {
+            if (! isset($supplierGroups[$groupKey])) {
                 $supplierGroups[$groupKey] = [
                     'supplier' => $supplier,
                     'phone' => $phone,
@@ -62,7 +62,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
                 ];
             }
 
-            if (!isset($supplierGroups[$groupKey]['rows'][$grade])) {
+            if (! isset($supplierGroups[$groupKey]['rows'][$grade])) {
                 $supplierGroups[$groupKey]['rows'][$grade] = [
                     'grade' => $grade,
                     'ton1' => 0.0,
@@ -105,7 +105,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
         $supplierGroups = array_values($supplierGroups);
         usort(
             $supplierGroups,
-            static fn(array $a, array $b): int => strcasecmp((string) ($a['supplier'] ?? ''), (string) ($b['supplier'] ?? '')),
+            static fn (array $a, array $b): int => strcasecmp((string) ($a['supplier'] ?? ''), (string) ($b['supplier'] ?? '')),
         );
 
         return [
@@ -168,7 +168,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
             throw new RuntimeException('Jumlah parameter laporan perbandingan KB masuk (KG) harus antara 1 sampai 4.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan perbandingan KB masuk periode 1 dan 2 (KG) belum dikonfigurasi.');
         }
 
@@ -178,7 +178,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan perbandingan KB masuk periode 1 dan 2 (KG) dikonfigurasi untuk SQL Server. '
-                . 'Set PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -195,7 +195,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan PERBANDINGAN_KB_MASUK_PERIODE_1_DAN_2_KG_REPORT_CALL_SYNTAX=query.',
                 );
 
             $resolvedBindings = str_contains($query, '?') ? $bindings : [];
@@ -203,7 +203,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
             return $connection->select($query, $resolvedBindings);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -244,7 +244,7 @@ class PerbandinganKbMasukPeriode1Dan2KgReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

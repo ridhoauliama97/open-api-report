@@ -83,7 +83,7 @@ class SaldoKayuBulatController extends Controller
             'Content-Disposition' => sprintf(
                 '%s; filename="%s"; filename*=UTF-8\'\'%s',
                 $dispositionType,
-                addcslashes($filename, "\"\\"),
+                addcslashes($filename, '"\\'),
                 rawurlencode($filename)
             ),
         ]);

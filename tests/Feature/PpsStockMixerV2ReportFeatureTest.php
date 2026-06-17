@@ -86,7 +86,7 @@ class PpsStockMixerV2ReportFeatureTest extends TestCase
 
     private function authJsonHeaders(User $user): array
     {
-        return ['Authorization' => 'Bearer ' . $this->createBearerToken($user), 'Accept' => 'application/json'];
+        return ['Authorization' => 'Bearer '.$this->createBearerToken($user), 'Accept' => 'application/json'];
     }
 
     private function createBearerToken(User $user): string

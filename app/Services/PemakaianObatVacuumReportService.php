@@ -152,7 +152,7 @@ class PemakaianObatVacuumReportService
     }
 
     /**
-     * @param array<int, object> $rows
+     * @param  array<int, object>  $rows
      * @return array<int, array<string, mixed>>
      */
     private function normalizeRows(array $rows): array
@@ -198,9 +198,10 @@ class PemakaianObatVacuumReportService
                 return null;
             }
             $trimmed = str_replace(',', '', $trimmed);
-            if (!is_numeric($trimmed)) {
+            if (! is_numeric($trimmed)) {
                 return null;
             }
+
             return (float) $trimmed;
         }
 
@@ -208,7 +209,7 @@ class PemakaianObatVacuumReportService
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param  array<int, string>  $columns
      */
     private function guessDateColumn(array $columns): ?string
     {
@@ -256,7 +257,7 @@ class PemakaianObatVacuumReportService
         $customQuery = config("{$configKey}.query");
         $parameterCount = (int) config("{$configKey}.parameter_count", 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan pemakaian obat vacuum belum dikonfigurasi.');
         }
 
@@ -267,7 +268,7 @@ class PemakaianObatVacuumReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan pemakaian obat vacuum dikonfigurasi untuk SQL Server. '
-                . 'Set PEMAKAIAN_OBAT_VACUUM_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PEMAKAIAN_OBAT_VACUUM_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -279,7 +280,7 @@ class PemakaianObatVacuumReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 

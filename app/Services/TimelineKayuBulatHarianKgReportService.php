@@ -36,7 +36,7 @@ class TimelineKayuBulatHarianKgReportService
             $date = (string) ($row['Tanggal'] ?? '');
             $label = $date !== '' ? $date : 'Tanpa Tanggal';
 
-            if (!isset($periodMap[$label])) {
+            if (! isset($periodMap[$label])) {
                 $periodMap[$label] = [
                     'key' => $label,
                     'label' => $label,
@@ -97,7 +97,7 @@ class TimelineKayuBulatHarianKgReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan time line KB harian rambung timbang KG belum dikonfigurasi.');
         }
 
@@ -108,7 +108,7 @@ class TimelineKayuBulatHarianKgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan time line KB harian rambung timbang KG dikonfigurasi untuk SQL Server. '
-                . 'Set TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TIMELINE_KAYU_BULAT_HARIAN_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -120,7 +120,7 @@ class TimelineKayuBulatHarianKgReportService
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -141,7 +141,7 @@ class TimelineKayuBulatHarianKgReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

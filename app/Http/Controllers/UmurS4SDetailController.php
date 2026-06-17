@@ -12,8 +12,11 @@ use RuntimeException;
 class UmurS4SDetailController extends Controller
 {
     private const DEFAULT_UMUR_1 = 15;
+
     private const DEFAULT_UMUR_2 = 30;
+
     private const DEFAULT_UMUR_3 = 60;
+
     private const DEFAULT_UMUR_4 = 90;
 
     public function index(): View
@@ -181,7 +184,7 @@ class UmurS4SDetailController extends Controller
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param  array<int, array<string, mixed>>  $rows
      * @return array<string, float>
      */
     private function computeTotals(array $rows): array
@@ -199,7 +202,7 @@ class UmurS4SDetailController extends Controller
     }
 
     /**
-     * @param array{Umur1:int,Umur2:int,Umur3:int,Umur4:int} $params
+     * @param  array{Umur1:int,Umur2:int,Umur3:int,Umur4:int}  $params
      */
     private function buildFilename(array $params): string
     {

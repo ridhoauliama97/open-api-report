@@ -72,7 +72,7 @@ class QcHarianBahanBakuReportService
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<int, float>
      */
     private function densityValuesFromRow(array $row): array
@@ -82,7 +82,7 @@ class QcHarianBahanBakuReportService
         foreach (['Density', 'Density2', 'Density3'] as $key) {
             $value = $row[$key] ?? null;
 
-            if (!is_numeric($value)) {
+            if (! is_numeric($value)) {
                 continue;
             }
 
@@ -98,7 +98,7 @@ class QcHarianBahanBakuReportService
     }
 
     /**
-     * @param array<int, float> $densityValues
+     * @param  array<int, float>  $densityValues
      */
     private function averageDensity(array $densityValues): ?float
     {

@@ -17,4 +17,3 @@ class GenerateStHidupPerSpkReportRequest extends BaseReportRequest
         return [];
     }
 }
-

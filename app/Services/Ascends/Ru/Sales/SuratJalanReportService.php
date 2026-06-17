@@ -12,8 +12,7 @@ class SuratJalanReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -85,7 +84,7 @@ class SuratJalanReportService
             $invoiceId = trim((string) ($row['Invoice ID'] ?? ''));
             $documentKey = $invoiceId !== '' ? $invoiceId : trim((string) ($row['No Surat Jalan'] ?? ''));
             if ($documentKey === '') {
-                $documentKey = 'surat_jalan_' . count($grouped);
+                $documentKey = 'surat_jalan_'.count($grouped);
             }
 
             if (! isset($grouped[$documentKey])) {

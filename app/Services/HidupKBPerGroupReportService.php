@@ -14,7 +14,7 @@ class HidupKBPerGroupReportService
     {
         $rows = $this->runProcedureQuery();
 
-        return array_map(static fn($row): array => (array) $row, $rows);
+        return array_map(static fn ($row): array => (array) $row, $rows);
     }
 
     /**
@@ -78,7 +78,7 @@ class HidupKBPerGroupReportService
         $syntax = (string) config('reports.hidup_kb_per_group.call_syntax', 'exec');
         $customQuery = config('reports.hidup_kb_per_group.query');
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan hidup KB per group belum dikonfigurasi.');
         }
 
@@ -88,7 +88,7 @@ class HidupKBPerGroupReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan hidup KB per group dikonfigurasi untuk SQL Server. '
-                . 'Set HIDUP_KB_PER_GROUP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set HIDUP_KB_PER_GROUP_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -97,13 +97,13 @@ class HidupKBPerGroupReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'HIDUP_KB_PER_GROUP_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan HIDUP_KB_PER_GROUP_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan HIDUP_KB_PER_GROUP_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -122,7 +122,7 @@ class HidupKBPerGroupReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

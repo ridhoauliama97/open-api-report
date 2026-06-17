@@ -13,12 +13,12 @@ class HasilProduksiHarianBrokerProduksiReportService
     {
         try {
             $rows = $this->runProcedureQuery($noProduksi);
-            $rows = array_map(static fn($row): array => (array) $row, $rows);
+            $rows = array_map(static fn ($row): array => (array) $row, $rows);
 
             if ($rows !== []) {
                 return $this->buildReportDataFromProcedure($noProduksi, $rows);
             }
-        } catch (QueryException | RuntimeException $exception) {
+        } catch (QueryException|RuntimeException $exception) {
         }
 
         return $this->buildReportDataFromTables($noProduksi);
@@ -28,7 +28,7 @@ class HasilProduksiHarianBrokerProduksiReportService
     {
         try {
             $rows = $this->runProcedureQuery($noProduksi);
-            $rows = array_map(static fn($row): array => (array) $row, $rows);
+            $rows = array_map(static fn ($row): array => (array) $row, $rows);
             $detectedColumns = array_keys($rows[0] ?? []);
             $expectedColumns = config('reports.pps_broker_produksi_harian.expected_columns', []);
             $expectedColumns = is_array($expectedColumns) ? array_values($expectedColumns) : [];
@@ -42,7 +42,7 @@ class HasilProduksiHarianBrokerProduksiReportService
                 'row_count' => count($rows),
                 'mode' => 'stored_procedure',
             ];
-        } catch (QueryException | RuntimeException $exception) {
+        } catch (QueryException|RuntimeException $exception) {
             $report = $this->buildReportDataFromTables($noProduksi);
 
             return [
@@ -102,17 +102,19 @@ class HasilProduksiHarianBrokerProduksiReportService
 
             if ($type === 'input') {
                 $inputs[] = $item;
+
                 continue;
             }
 
             if ($type === 'output') {
                 $outputs[] = $item;
+
                 continue;
             }
         }
 
         usort($outputs, static function (array $left, array $right): int {
-            $weight = static fn(string $group): int => match ($group) {
+            $weight = static fn (string $group): int => match ($group) {
                 'BRK' => 0,
                 'BONG' => 1,
                 default => 2,
@@ -180,7 +182,7 @@ class HasilProduksiHarianBrokerProduksiReportService
             ->groupBy('i.NoBahanBaku')
             ->orderBy('i.NoBahanBaku')
             ->get()
-            ->map(static fn($row): array => [
+            ->map(static fn ($row): array => [
                 'reference' => (string) ($row->reference ?? ''),
                 'group' => (string) ($row->input_group ?? 'BB'),
                 'jenis' => (string) ($row->reference ?? ''),
@@ -201,7 +203,7 @@ class HasilProduksiHarianBrokerProduksiReportService
             ->groupBy('i.NoWashing')
             ->orderBy('i.NoWashing')
             ->get()
-            ->map(static fn($row): array => [
+            ->map(static fn ($row): array => [
                 'reference' => (string) ($row->reference ?? ''),
                 'group' => (string) ($row->input_group ?? 'WASH'),
                 'jenis' => (string) ($row->jenis ?? $row->reference ?? ''),
@@ -232,7 +234,7 @@ class HasilProduksiHarianBrokerProduksiReportService
             ->groupBy('o.NoBroker')
             ->orderBy('o.NoBroker')
             ->get()
-            ->map(static fn($row): array => [
+            ->map(static fn ($row): array => [
                 'reference' => (string) ($row->reference ?? ''),
                 'group' => (string) ($row->output_group ?? 'BRK'),
                 'jenis' => (string) ($row->jenis ?? $row->reference ?? ''),
@@ -253,7 +255,7 @@ class HasilProduksiHarianBrokerProduksiReportService
             ->groupBy('o.NoBonggolan')
             ->orderBy('o.NoBonggolan')
             ->get()
-            ->map(static fn($row): array => [
+            ->map(static fn ($row): array => [
                 'reference' => (string) ($row->reference ?? ''),
                 'group' => (string) ($row->output_group ?? 'BONG'),
                 'jenis' => (string) ($row->jenis ?? $row->reference ?? ''),
@@ -339,12 +341,12 @@ class HasilProduksiHarianBrokerProduksiReportService
                 'input_qty' => $totalInputQty,
                 'output_qty' => array_reduce(
                     $outputs,
-                    static fn(float $carry, array $row): float => $carry + (($row['reject_qty'] ?? null) === null ? (float) ($row['qty'] ?? 0) : 0.0),
+                    static fn (float $carry, array $row): float => $carry + (($row['reject_qty'] ?? null) === null ? (float) ($row['qty'] ?? 0) : 0.0),
                     0.0,
                 ),
                 'reject_qty' => array_reduce(
                     $outputs,
-                    static fn(float $carry, array $row): float => $carry + (float) ($row['reject_qty'] ?? 0),
+                    static fn (float $carry, array $row): float => $carry + (float) ($row['reject_qty'] ?? 0),
                     0.0,
                 ),
             ],
@@ -363,12 +365,12 @@ class HasilProduksiHarianBrokerProduksiReportService
         $connection = DB::connection($connectionName ?: null);
 
         $rows = $connection->select(
-            "
+            '
             SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM BrokerProduksi_dDowntime WHERE NoProduksi = ?
             UNION ALL
             SELECT NoUrut, TimeStart, TimeEnd, Remarks FROM BrokerProduksi_dDowntime1 WHERE NoProduksi = ?
             ORDER BY NoUrut
-            ",
+            ',
             [$noProduksi, $noProduksi]
         );
 
@@ -408,7 +410,7 @@ class HasilProduksiHarianBrokerProduksiReportService
             throw new RuntimeException('Laporan PPS Broker Produksi Harian dikonfigurasi untuk SQL Server.');
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -423,7 +425,7 @@ class HasilProduksiHarianBrokerProduksiReportService
         if (is_numeric($value)) {
             return (float) $value;
         }
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

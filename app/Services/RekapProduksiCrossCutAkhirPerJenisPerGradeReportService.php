@@ -75,7 +75,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeReportService
         $customQuery = config('reports.rekap_produksi_cross_cut_akhir_per_jenis_per_grade.query');
         $parameterCount = (int) config('reports.rekap_produksi_cross_cut_akhir_per_jenis_per_grade.parameter_count', 2);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap produksi CCAkhir per-jenis dan per-grade belum dikonfigurasi.');
         }
 
@@ -89,7 +89,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap produksi CCAkhir per-jenis dan per-grade dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -98,13 +98,13 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan REKAP_PRODUKSI_CROSS_CUT_AKHIR_PER_JENIS_PER_GRADE_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -125,7 +125,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeReportService
             return "EXEC {$procedure}";
         }
 
-        return "EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?'));
+        return "EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?'));
     }
 
     private function buildCallSql(string $procedure, int $parameterCount): string
@@ -134,7 +134,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeReportService
             return "CALL {$procedure}()";
         }
 
-        return "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ")";
+        return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
     }
 
     private function toFloat(mixed $value): ?float
@@ -143,7 +143,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

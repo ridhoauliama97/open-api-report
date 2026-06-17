@@ -79,13 +79,14 @@ class ProduksiS4sPerNomorProduksiReportService
             $direction = $this->detectDirection($row);
             $detail = $this->mapDetailRow($row);
 
-            if (!$this->hasDetailContent($detail)) {
+            if (! $this->hasDetailContent($detail)) {
                 continue;
             }
 
             if ($direction === 'input') {
                 $inputRows[] = $detail;
                 $inputLabel ??= $this->extractSectionLabel($row, 'input');
+
                 continue;
             }
 
@@ -142,7 +143,7 @@ class ProduksiS4sPerNomorProduksiReportService
         $customQuery = config("{$configPath}.query");
         $parameterCount = (int) config("{$configPath}.parameter_count", 1);
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan produksi S4S per nomor produksi belum dikonfigurasi.');
         }
 
@@ -152,7 +153,7 @@ class ProduksiS4sPerNomorProduksiReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan produksi S4S per nomor produksi dikonfigurasi untuk SQL Server. '
-                . 'Set PRODUKSI_S4S_PER_NOMOR_PRODUKSI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set PRODUKSI_S4S_PER_NOMOR_PRODUKSI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -163,10 +164,10 @@ class ProduksiS4sPerNomorProduksiReportService
 
             $bindings = str_contains($query, '?') ? array_pad([$noProduksi], $parameterCount, null) : [];
 
-            return array_map(static fn($row): array => (array) $row, $connection->select($query, $bindings));
+            return array_map(static fn ($row): array => (array) $row, $connection->select($query, $bindings));
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -182,7 +183,7 @@ class ProduksiS4sPerNomorProduksiReportService
         $bindings[0] = $noProduksi;
 
         return array_map(
-            static fn($row): array => (array) $row,
+            static fn ($row): array => (array) $row,
             $connection->select("SET NOCOUNT ON; {$sql}", $bindings),
         );
     }
@@ -193,7 +194,7 @@ class ProduksiS4sPerNomorProduksiReportService
             return "EXEC {$procedure}";
         }
 
-        return "EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?'));
+        return "EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?'));
     }
 
     private function buildCallSql(string $procedure, int $parameterCount): string
@@ -202,7 +203,7 @@ class ProduksiS4sPerNomorProduksiReportService
             return "CALL {$procedure}()";
         }
 
-        return "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ")";
+        return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
     }
 
     /**
@@ -408,7 +409,7 @@ class ProduksiS4sPerNomorProduksiReportService
     private function firstNonEmptyString(array $row, array $aliases): ?string
     {
         foreach ($aliases as $alias) {
-            if (!array_key_exists($alias, $row)) {
+            if (! array_key_exists($alias, $row)) {
                 continue;
             }
 
@@ -428,7 +429,7 @@ class ProduksiS4sPerNomorProduksiReportService
     private function firstNumber(array $row, array $aliases): ?float
     {
         foreach ($aliases as $alias) {
-            if (!array_key_exists($alias, $row)) {
+            if (! array_key_exists($alias, $row)) {
                 continue;
             }
 
@@ -475,7 +476,7 @@ class ProduksiS4sPerNomorProduksiReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

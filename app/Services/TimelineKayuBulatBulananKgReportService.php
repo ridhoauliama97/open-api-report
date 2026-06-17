@@ -14,7 +14,7 @@ class TimelineKayuBulatBulananKgReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_map(static fn(object $row): array => (array) $row, $rows);
+        return array_map(static fn (object $row): array => (array) $row, $rows);
     }
 
     /**
@@ -55,7 +55,7 @@ class TimelineKayuBulatBulananKgReportService
             throw new RuntimeException('Jumlah parameter laporan timeline kayu bulat bulanan harus antara 0 sampai 2.');
         }
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan timeline kayu bulat bulanan belum dikonfigurasi.');
         }
 
@@ -65,7 +65,7 @@ class TimelineKayuBulatBulananKgReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan timeline kayu bulat bulanan dikonfigurasi untuk SQL Server. '
-                . 'Set TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -80,7 +80,7 @@ class TimelineKayuBulatBulananKgReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_QUERY belum diisi. '
-                    . 'Isi query manual jika menggunakan TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_CALL_SYNTAX=query.',
+                    .'Isi query manual jika menggunakan TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_CALL_SYNTAX=query.',
                 );
 
             $resolvedBindings = str_contains($query, '?') ? $bindings : [];
@@ -88,7 +88,7 @@ class TimelineKayuBulatBulananKgReportService
             return $connection->select($query, $resolvedBindings);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -119,4 +119,3 @@ class TimelineKayuBulatBulananKgReportService
         return $connection->select($sql, $bindings);
     }
 }
-

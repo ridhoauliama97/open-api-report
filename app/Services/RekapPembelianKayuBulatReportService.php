@@ -62,7 +62,7 @@ class RekapPembelianKayuBulatReportService
         ksort($years);
         $rows = array_values(array_filter(
             $rows,
-            static fn(array $row): bool => (int) ($row['Tahun'] ?? 0) >= $startYear
+            static fn (array $row): bool => (int) ($row['Tahun'] ?? 0) >= $startYear
                 && (int) ($row['Tahun'] ?? 0) <= $endYear,
         ));
 
@@ -112,7 +112,7 @@ class RekapPembelianKayuBulatReportService
         $syntax = (string) config("{$configKey}.call_syntax", 'exec');
         $customQuery = config("{$configKey}.query");
 
-        if ($procedure === '' && !is_string($customQuery)) {
+        if ($procedure === '' && ! is_string($customQuery)) {
             throw new RuntimeException('Stored procedure laporan rekap pembelian kayu bulat belum dikonfigurasi.');
         }
 
@@ -122,7 +122,7 @@ class RekapPembelianKayuBulatReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap pembelian kayu bulat dikonfigurasi untuk SQL Server. '
-                . 'Set REKAP_PEMBELIAN_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                .'Set REKAP_PEMBELIAN_KAYU_BULAT_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -134,7 +134,7 @@ class RekapPembelianKayuBulatReportService
             return $connection->select($query);
         }
 
-        if (!preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
+        if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
             throw new RuntimeException('Nama stored procedure tidak valid.');
         }
 
@@ -153,7 +153,7 @@ class RekapPembelianKayuBulatReportService
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

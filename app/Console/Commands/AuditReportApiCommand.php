@@ -24,14 +24,14 @@ class AuditReportApiCommand extends Command
         sort($missingInOpenApi);
         sort($extraInOpenApi);
 
-        $this->line('API Report Route Count: ' . count($routePaths));
-        $this->line('OpenAPI Report Path Count: ' . count($openApiPaths));
+        $this->line('API Report Route Count: '.count($routePaths));
+        $this->line('OpenAPI Report Path Count: '.count($openApiPaths));
         $this->newLine();
 
         if ($missingInOpenApi !== []) {
             $this->warn('Paths missing in OpenAPI (but exist in routes):');
             foreach ($missingInOpenApi as $p) {
-                $this->line('- ' . $p);
+                $this->line('- '.$p);
             }
             $this->newLine();
         } else {
@@ -42,7 +42,7 @@ class AuditReportApiCommand extends Command
         if ($extraInOpenApi !== []) {
             $this->warn('Paths present in OpenAPI (but not found in routes):');
             foreach ($extraInOpenApi as $p) {
-                $this->line('- ' . $p);
+                $this->line('- '.$p);
             }
             $this->newLine();
         }
@@ -51,7 +51,7 @@ class AuditReportApiCommand extends Command
         if ($groupIssues !== []) {
             $this->warn('Endpoint group issues (preview/pdf/health):');
             foreach ($groupIssues as $issue) {
-                $this->line('- ' . $issue);
+                $this->line('- '.$issue);
             }
             $this->newLine();
         } else {
@@ -76,10 +76,10 @@ class AuditReportApiCommand extends Command
         /** @var Route $route */
         foreach ($router->getRoutes() as $route) {
             $uri = (string) $route->uri();
-            if (!str_starts_with($uri, 'api/reports/')) {
+            if (! str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
-            $paths[] = '/' . $uri;
+            $paths[] = '/'.$uri;
         }
 
         return array_values(array_unique($paths));
@@ -95,10 +95,10 @@ class AuditReportApiCommand extends Command
 
         $out = [];
         foreach (array_keys($paths) as $path) {
-            if (!is_string($path)) {
+            if (! is_string($path)) {
                 continue;
             }
-            if (!str_starts_with($path, '/api/reports/')) {
+            if (! str_starts_with($path, '/api/reports/')) {
                 continue;
             }
             $out[] = $path;
@@ -120,7 +120,7 @@ class AuditReportApiCommand extends Command
         /** @var Route $route */
         foreach ($router->getRoutes() as $route) {
             $uri = (string) $route->uri();
-            if (!str_starts_with($uri, 'api/reports/')) {
+            if (! str_starts_with($uri, 'api/reports/')) {
                 continue;
             }
             if (str_starts_with($uri, 'api/reports/jobs/')) {
@@ -130,7 +130,7 @@ class AuditReportApiCommand extends Command
                 continue;
             }
 
-            $path = '/' . $uri;
+            $path = '/'.$uri;
             $base = preg_replace('#/(health|pdf|preview|download)$#', '', $path) ?? $path;
             $seen[$base] ??= [
                 'preview' => false,
@@ -140,18 +140,22 @@ class AuditReportApiCommand extends Command
 
             if (str_ends_with($path, '/health')) {
                 $seen[$base]['health'] = true;
+
                 continue;
             }
             if (str_ends_with($path, '/download')) {
                 $seen[$base]['pdf'] = true;
+
                 continue;
             }
             if (str_ends_with($path, '/pdf')) {
                 $seen[$base]['pdf'] = true;
+
                 continue;
             }
             if (str_ends_with($path, '/preview')) {
                 $seen[$base]['preview'] = true;
+
                 continue;
             }
             $seen[$base]['preview'] = true;
@@ -160,22 +164,23 @@ class AuditReportApiCommand extends Command
         $issues = [];
         foreach ($seen as $base => $flags) {
             $missing = [];
-            if (!$flags['preview']) {
+            if (! $flags['preview']) {
                 $missing[] = 'preview';
             }
-            if (!$flags['pdf']) {
+            if (! $flags['pdf']) {
                 $missing[] = 'pdf';
             }
-            if (!$flags['health']) {
+            if (! $flags['health']) {
                 $missing[] = 'health';
             }
 
             if ($missing !== []) {
-                $issues[] = $base . ' missing: ' . implode(', ', $missing);
+                $issues[] = $base.' missing: '.implode(', ', $missing);
             }
         }
 
         sort($issues);
+
         return $issues;
     }
 }

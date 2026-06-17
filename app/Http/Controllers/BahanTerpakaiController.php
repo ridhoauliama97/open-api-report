@@ -138,9 +138,6 @@ class BahanTerpakaiController extends Controller
         ]);
     }
 
-    /**
-     * @return string
-     */
     private function extractDate(GenerateBahanTerpakaiReportRequest $request): string
     {
         return (string) $request->input('date', $request->input('start_date', $request->input('TglAwal')));
