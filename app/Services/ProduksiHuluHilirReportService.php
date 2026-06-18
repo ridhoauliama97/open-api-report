@@ -222,7 +222,12 @@ class ProduksiHuluHilirReportService
             $targetRow['cells'][$machine['name']] = $machine['target'];
         }
 
+        $lemburService = app(HasilProduksiMesinLemburDanNonLemburReportService::class);
+        $lemburData = $lemburService->buildReportData($startDate, $endDate);
+
         return [
+            'summary_rows' => $lemburData['summary_rows'],
+            'grand_totals' => $lemburData['grand_totals'],
             'columns' => array_map(
                 static fn (array $machine): array => [
                     'key' => $machine['name'],

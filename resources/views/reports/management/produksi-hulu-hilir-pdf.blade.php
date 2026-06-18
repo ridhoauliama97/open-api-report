@@ -153,6 +153,8 @@
         $rows = is_array($data['rows'] ?? null) ? $data['rows'] : [];
         $statRows = is_array($data['stat_rows'] ?? null) ? $data['stat_rows'] : [];
         $targetRow = is_array($data['target_row'] ?? null) ? $data['target_row'] : ['label' => 'Target', 'cells' => []];
+        $summaryRows = is_array($data['summary_rows'] ?? null) ? $data['summary_rows'] : [];
+        $grandTotals = is_array($data['grand_totals'] ?? null) ? $data['grand_totals'] : [];
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
 
@@ -180,6 +182,19 @@
             }
 
             return number_format($float, 1, '.', ',') . '%';
+        };
+
+        $fmtBlank = static function ($value, int $decimals = 4): string {
+            if ($value === null || !is_numeric($value)) {
+                return '';
+            }
+
+            $float = (float) $value;
+            if (abs($float) < 0.0000001) {
+                return '';
+            }
+
+            return number_format($float, $decimals, '.', ',');
         };
 
         $isOutputBelowTarget = static function ($output, $target): bool {
@@ -262,6 +277,51 @@
             </tr>
         </tbody>
     </table>
+
+    <div style="page-break-before: always;">
+        <h2 style="text-align: center; margin: 0 0 8px 0; font-size: 12px; font-weight: bold;">Rangkuman</h2>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 5%;">No</th>
+                    <th rowspan="2">Nama Mesin</th>
+                    <th colspan="3">Jam Kerja Normal</th>
+                    <th colspan="3">Jam Kerja Lembur</th>
+                </tr>
+                <tr>
+                    <th>TK</th>
+                    <th>HM</th>
+                    <th>mtr3</th>
+                    <th>TK</th>
+                    <th>HM</th>
+                    <th>mtr3</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($summaryRows as $row)
+                    <tr class="{{ $loop->index % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                        <td class="center">{{ $row['No'] ?? '' }}</td>
+                        <td>{{ $row['NamaMesin'] ?? '-' }}</td>
+                        <td class="center">{{ $fmtBlank($row['total_tk'] ?? null, 0) }}</td>
+                        <td class="center">{{ $fmtBlank($row['total_hm'] ?? null, 0) }}</td>
+                        <td class="number">{{ $fmtBlank($row['Output'] ?? null, 4) }}</td>
+                        <td class="center">{{ $fmtBlank($row['total_tk_lembur'] ?? null, 0) }}</td>
+                        <td class="center">{{ $fmtBlank($row['total_hm_lembur'] ?? null, 0) }}</td>
+                        <td class="number">{{ $fmtBlank($row['OutputLembur'] ?? null, 4) }}</td>
+                    </tr>
+                @endforeach
+                <tr class="total-row">
+                    <td colspan="2" class="center">Grand Total</td>
+                    <td class="center">{{ $fmtBlank($grandTotals['total_tk'] ?? null, 0) }}</td>
+                    <td class="center">{{ $fmtBlank($grandTotals['total_hm'] ?? null, 0) }}</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['output'] ?? null, 4) }}</td>
+                    <td class="center">{{ $fmtBlank($grandTotals['total_tk_lembur'] ?? null, 0) }}</td>
+                    <td class="center">{{ $fmtBlank($grandTotals['total_hm_lembur'] ?? null, 0) }}</td>
+                    <td class="number">{{ $fmtBlank($grandTotals['output_lembur'] ?? null, 4) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     @include('reports.partials.pdf-footer-table')
 </body>
