@@ -15,7 +15,10 @@ class HasilProduksiMesinLemburDanNonLemburReportService
         'Shift',
         'NamaMesin',
         'JamKerja',
+        'JamNormal',
+        'JamLembur',
         'JmlhAnggota',
+        'IsTanggalMerah',
         'Output',
         'OutputLembur',
     ];
@@ -69,6 +72,10 @@ class HasilProduksiMesinLemburDanNonLemburReportService
                 $machineMap[$machineName] = [
                     'name' => $machineName,
                     'rows' => [],
+                    'total_tk' => 0.0,
+                    'total_hm' => 0.0,
+                    'total_tk_lembur' => 0.0,
+                    'total_hm_lembur' => 0.0,
                     'total_output' => 0.0,
                     'total_output_lembur' => 0.0,
                     'total_produksi' => 0.0,
@@ -78,7 +85,11 @@ class HasilProduksiMesinLemburDanNonLemburReportService
 
             $output = $this->nullableFloat($row['Output'] ?? null);
             $outputLembur = $this->nullableFloat($row['OutputLembur'] ?? null);
+            $jmlhAnggota = $this->nullableFloat($row['JmlhAnggota'] ?? null);
             $jmlhAnggotaLembur = $this->extractOptionalFloat($row, self::OPTIONAL_LEMBUR_TK_KEYS);
+            $jamKerja = $this->nullableFloat(
+                ! empty($row['IsTanggalMerah']) ? ($row['JamNormal'] ?? 0) : ($row['JamKerja'] ?? null)
+            );
             $jamKerjaLembur = $this->extractOptionalFloat($row, self::OPTIONAL_LEMBUR_HM_KEYS);
             $totalProduksi = ($output ?? 0.0) + ($outputLembur ?? 0.0);
             $tanggal = trim((string) ($row['Tanggal'] ?? ''));
@@ -88,8 +99,8 @@ class HasilProduksiMesinLemburDanNonLemburReportService
                 'Tanggal' => $tanggal,
                 'Hari' => (string) ($row['Hari'] ?? ''),
                 'Shift' => (string) ($row['Shift'] ?? ''),
-                'JamKerja' => $this->nullableFloat($row['JamKerja'] ?? null),
-                'JmlhAnggota' => $this->nullableFloat($row['JmlhAnggota'] ?? null),
+                'JamKerja' => $jamKerja,
+                'JmlhAnggota' => $jmlhAnggota,
                 'JamKerjaLembur' => $jamKerjaLembur,
                 'JmlhAnggotaLembur' => $jmlhAnggotaLembur,
                 'Output' => $output,
@@ -97,6 +108,10 @@ class HasilProduksiMesinLemburDanNonLemburReportService
                 'TotalProduksi' => $totalProduksi,
             ];
 
+            $machineMap[$machineName]['total_tk'] += $jmlhAnggota ?? 0.0;
+            $machineMap[$machineName]['total_hm'] += $jamKerja ?? 0.0;
+            $machineMap[$machineName]['total_tk_lembur'] += $jmlhAnggotaLembur ?? 0.0;
+            $machineMap[$machineName]['total_hm_lembur'] += $jamKerjaLembur ?? 0.0;
             $machineMap[$machineName]['total_output'] += $output ?? 0.0;
             $machineMap[$machineName]['total_output_lembur'] += $outputLembur ?? 0.0;
             $machineMap[$machineName]['total_produksi'] += $totalProduksi;
@@ -120,13 +135,7 @@ class HasilProduksiMesinLemburDanNonLemburReportService
         }
 
         $machines = [];
-        $summaryRows = [];
         $flatRows = [];
-        $grandTotals = [
-            'output' => 0.0,
-            'output_lembur' => 0.0,
-            'total_produksi' => 0.0,
-        ];
 
         foreach (array_values($orderedMachines) as $index => $machine) {
             usort($machine['rows'], static function (array $left, array $right): int {
@@ -146,6 +155,10 @@ class HasilProduksiMesinLemburDanNonLemburReportService
                 'name' => $machine['name'],
                 'rows' => $machine['rows'],
                 'hari_aktif' => $hariAktif,
+                'total_tk' => $machine['total_tk'],
+                'total_hm' => $machine['total_hm'],
+                'total_tk_lembur' => $machine['total_tk_lembur'],
+                'total_hm_lembur' => $machine['total_hm_lembur'],
                 'total_output' => $machine['total_output'],
                 'total_output_lembur' => $machine['total_output_lembur'],
                 'total_produksi' => $machine['total_produksi'],
@@ -159,19 +172,6 @@ class HasilProduksiMesinLemburDanNonLemburReportService
                 ];
             }
 
-            $summaryRows[] = [
-                'No' => $index + 1,
-                'NamaMesin' => $machine['name'],
-                'HariAktif' => $hariAktif,
-                'Output' => $machine['total_output'],
-                'OutputLembur' => $machine['total_output_lembur'],
-                'TotalProduksi' => $machine['total_produksi'],
-                'AvgProduksi' => $avgProduksi,
-            ];
-
-            $grandTotals['output'] += $machine['total_output'];
-            $grandTotals['output_lembur'] += $machine['total_output_lembur'];
-            $grandTotals['total_produksi'] += $machine['total_produksi'];
         }
 
         usort($flatRows, static function (array $left, array $right): int {
@@ -187,6 +187,98 @@ class HasilProduksiMesinLemburDanNonLemburReportService
 
             return strcmp((string) ($left['Shift'] ?? ''), (string) ($right['Shift'] ?? ''));
         });
+
+        // Assign unit number per (Tanggal, NamaMesin) group for Rangkuman
+        $unitCounter = [];
+        $rangkumanMap = [];
+
+        foreach ($flatRows as &$row) {
+            $tgl = (string) ($row['Tanggal'] ?? '');
+            $mesin = (string) ($row['NamaMesin'] ?? '');
+            $key = $tgl.'|'.$mesin;
+
+            if (! isset($unitCounter[$key])) {
+                $unitCounter[$key] = 0;
+            }
+            $unitCounter[$key]++;
+            $unitNum = $unitCounter[$key];
+            $row['UnitNumber'] = $unitNum;
+
+            $logicalKey = $mesin.'#'.$unitNum;
+            if (! isset($rangkumanMap[$logicalKey])) {
+                $rangkumanMap[$logicalKey] = [
+                    'NamaMesin' => $mesin,
+                    'UnitNumber' => $unitNum,
+                    'total_tk' => 0.0,
+                    'total_hm' => 0.0,
+                    'total_tk_lembur' => 0.0,
+                    'total_hm_lembur' => 0.0,
+                    'total_output' => 0.0,
+                    'total_output_lembur' => 0.0,
+                    'total_produksi' => 0.0,
+                ];
+            }
+
+            $rangkumanMap[$logicalKey]['total_tk'] += $row['JmlhAnggota'] ?? 0.0;
+            $rangkumanMap[$logicalKey]['total_hm'] += $row['JamKerja'] ?? 0.0;
+            $rangkumanMap[$logicalKey]['total_tk_lembur'] += $row['JmlhAnggotaLembur'] ?? 0.0;
+            $rangkumanMap[$logicalKey]['total_hm_lembur'] += $row['JamKerjaLembur'] ?? 0.0;
+            $rangkumanMap[$logicalKey]['total_output'] += $row['Output'] ?? 0.0;
+            $rangkumanMap[$logicalKey]['total_output_lembur'] += $row['OutputLembur'] ?? 0.0;
+            $rangkumanMap[$logicalKey]['total_produksi'] += ($row['Output'] ?? 0.0) + ($row['OutputLembur'] ?? 0.0);
+        }
+        unset($row);
+
+        // Build summary rows ordered by MACHINE_ORDER
+        $orderedKeys = [];
+        foreach (self::MACHINE_ORDER as $mName) {
+            for ($u = 1; $u <= 20; $u++) {
+                $lk = $mName.'#'.$u;
+                if (isset($rangkumanMap[$lk])) {
+                    $orderedKeys[] = $lk;
+                }
+            }
+        }
+        foreach ($rangkumanMap as $lk => $_) {
+            if (! in_array($lk, $orderedKeys, true)) {
+                $orderedKeys[] = $lk;
+            }
+        }
+
+        $summaryRows = [];
+        $grandTotals = [
+            'total_tk' => 0.0,
+            'total_hm' => 0.0,
+            'total_tk_lembur' => 0.0,
+            'total_hm_lembur' => 0.0,
+            'output' => 0.0,
+            'output_lembur' => 0.0,
+            'total_produksi' => 0.0,
+        ];
+
+        foreach ($orderedKeys as $lk) {
+            $entry = $rangkumanMap[$lk];
+
+            $summaryRows[] = [
+                'No' => count($summaryRows) + 1,
+                'NamaMesin' => $entry['NamaMesin'],
+                'total_tk' => $entry['total_tk'],
+                'total_hm' => $entry['total_hm'],
+                'total_tk_lembur' => $entry['total_tk_lembur'],
+                'total_hm_lembur' => $entry['total_hm_lembur'],
+                'Output' => $entry['total_output'],
+                'OutputLembur' => $entry['total_output_lembur'],
+                'TotalProduksi' => $entry['total_produksi'],
+            ];
+
+            $grandTotals['total_tk'] += $entry['total_tk'];
+            $grandTotals['total_hm'] += $entry['total_hm'];
+            $grandTotals['total_tk_lembur'] += $entry['total_tk_lembur'];
+            $grandTotals['total_hm_lembur'] += $entry['total_hm_lembur'];
+            $grandTotals['output'] += $entry['total_output'];
+            $grandTotals['output_lembur'] += $entry['total_output_lembur'];
+            $grandTotals['total_produksi'] += $entry['total_produksi'];
+        }
 
         $groupedRows = [];
         foreach ($flatRows as $row) {

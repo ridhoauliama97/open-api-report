@@ -141,6 +141,7 @@
     @php
         $data = is_array($reportData ?? null) ? $reportData : [];
         $groupedRows = is_array($data['grouped_rows'] ?? null) ? $data['grouped_rows'] : [];
+        $summaryRows = is_array($data['summary_rows'] ?? null) ? $data['summary_rows'] : [];
         $grandTotals = is_array($data['grand_totals'] ?? null) ? $data['grand_totals'] : [];
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
@@ -158,13 +159,7 @@
             return number_format($float, $decimals, '.', ',');
         };
 
-        $fmtInt = static function ($value): string {
-            if ($value === null || !is_numeric($value)) {
-                return '';
-            }
 
-            return number_format((float) $value, 0, '.', ',');
-        };
     @endphp
 
     <h1 class="report-title">Laporan Hasil Produksi Mesin Lembur Dan Non Lembur</h1>
@@ -204,11 +199,11 @@
                             </td>
                         @endif
                         <td>{{ $row['NamaMesin'] ?? '-' }}</td>
-                        <td class="center">{{ $fmtInt($row['JmlhAnggota'] ?? null) }}</td>
-                        <td class="center">{{ $fmtInt($row['JamKerja'] ?? null) }}</td>
+                        <td class="center">{{ $fmtNumber($row['JmlhAnggota'] ?? null, 0, true) }}</td>
+                        <td class="center">{{ $fmtNumber($row['JamKerja'] ?? null, 0, true) }}</td>
                         <td class="number">{{ $fmtNumber($row['Output'] ?? null, 4, true) }}</td>
-                        <td class="center">{{ $fmtInt($row['JmlhAnggotaLembur'] ?? null) }}</td>
-                        <td class="center">{{ $fmtInt($row['JamKerjaLembur'] ?? null) }}</td>
+                        <td class="center">{{ $fmtNumber($row['JmlhAnggotaLembur'] ?? null, 0, true) }}</td>
+                        <td class="center">{{ $fmtNumber($row['JamKerjaLembur'] ?? null, 0, true) }}</td>
                         <td class="number">{{ $fmtNumber($row['OutputLembur'] ?? null, 4, true) }}</td>
                     </tr>
                 @endforeach
@@ -224,6 +219,51 @@
             </tr>
         </tbody>
     </table>
+
+    <div style="page-break-before: always;">
+        <h2 style="text-align: center; margin: 0 0 8px 0; font-size: 14px; font-weight: bold;">Rangkuman</h2>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 5%;">No</th>
+                    <th rowspan="2">Nama Mesin</th>
+                    <th colspan="3">Jam Kerja Normal</th>
+                    <th colspan="3">Jam Kerja Lembur</th>
+                </tr>
+                <tr>
+                    <th>TK</th>
+                    <th>HM</th>
+                    <th>mtr3</th>
+                    <th>TK</th>
+                    <th>HM</th>
+                    <th>mtr3</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($summaryRows as $row)
+                    <tr class="{{ $loop->index % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                        <td class="center">{{ $row['No'] ?? '' }}</td>
+                        <td>{{ $row['NamaMesin'] ?? '-' }}</td>
+                        <td class="center">{{ $fmtNumber($row['total_tk'] ?? null, 0, true) }}</td>
+                        <td class="center">{{ $fmtNumber($row['total_hm'] ?? null, 0, true) }}</td>
+                        <td class="number">{{ $fmtNumber($row['Output'] ?? null, 4, true) }}</td>
+                        <td class="center">{{ $fmtNumber($row['total_tk_lembur'] ?? null, 0, true) }}</td>
+                        <td class="center">{{ $fmtNumber($row['total_hm_lembur'] ?? null, 0, true) }}</td>
+                        <td class="number">{{ $fmtNumber($row['OutputLembur'] ?? null, 4, true) }}</td>
+                    </tr>
+                @endforeach
+                <tr class="total-row">
+                    <td colspan="2" class="center">Grand Total</td>
+                    <td class="center">{{ $fmtNumber($grandTotals['total_tk'] ?? null, 0, true) }}</td>
+                    <td class="center">{{ $fmtNumber($grandTotals['total_hm'] ?? null, 0, true) }}</td>
+                    <td class="number">{{ $fmtNumber($grandTotals['output'] ?? null, 4, true) }}</td>
+                    <td class="center">{{ $fmtNumber($grandTotals['total_tk_lembur'] ?? null, 0, true) }}</td>
+                    <td class="center">{{ $fmtNumber($grandTotals['total_hm_lembur'] ?? null, 0, true) }}</td>
+                    <td class="number">{{ $fmtNumber($grandTotals['output_lembur'] ?? null, 4, true) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     @include('reports.partials.pdf-footer-table')
 </body>

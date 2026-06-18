@@ -115,7 +115,6 @@
         .totals-row td {
             font-size: 11px;
             font-weight: bold;
-            border: 1px solid #000;
             background: #fff !important;
         }
 
@@ -185,15 +184,13 @@
         }
 
         .report-table th {
-            font-size: 9px;
+            font-size: 11px;
         }
 
         .report-table td {
             font-size: 10px;
             padding: 2px 3px;
         }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
