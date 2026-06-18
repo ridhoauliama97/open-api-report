@@ -161,7 +161,7 @@
             background: #fff !important;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+
     </style>
 </head>
 

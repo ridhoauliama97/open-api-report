@@ -140,8 +140,6 @@
             margin-top: 4px;
             margin-bottom: 8px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

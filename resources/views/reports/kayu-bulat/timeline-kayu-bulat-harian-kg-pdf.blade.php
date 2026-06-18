@@ -147,8 +147,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -247,7 +245,8 @@
                                 <td class="number">{{ $fmtBlankZero((float) ($row['by_date'][$dateKey] ?? 0.0)) }}</td>
                             @endforeach
                             <td class="number col-total" style="font-weight: bold;">
-                                {{ $fmtBlankZero((float) ($row['total'] ?? 0.0)) }}</td>
+                                {{ $fmtBlankZero((float) ($row['total'] ?? 0.0)) }}
+                            </td>
                         </tr>
                     @empty
                         <tr>

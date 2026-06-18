@@ -46,6 +46,7 @@ use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
+use App\Services\Ascends\Shared\Hrm\MppTahunanPerDivisiGsuReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -1829,6 +1830,53 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedHrmMppTahunanPerDivisiGsuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        MppTahunanPerDivisiGsuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
+            $filters = $this->mppTahunanPerDivisiGsuFilters($request);
+            $filters['company'] = $company;
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters
+            );
+
+            $reportData['company'] = $company;
+            $divisi = $reportData['divisi'] ?? '';
+            $reportData['title'] = 'Laporan MPP Tahunan Per Divisi '.$divisi;
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.employee_list.mpp_tahunan_per_divisi_gsu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Employee List - Laporan MPP Tahunan Per Divisi '.$divisi.' ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiSharedHrmKetidakhadiranBulananPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         KetidakhadiranBulananReportService $reportService,
@@ -2787,6 +2835,26 @@ class AscendXmlTestController extends Controller
             'date' => $request->input('date'),
             'Tanggal' => $request->input('Tanggal'),
             'print_date' => $request->input('print_date'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function mppTahunanPerDivisiGsuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'Pilih Divisi' => $this->requestInputByAliases($request, [
+                'Pilih Divisi',
+                'Pilih_x0020_Divisi',
+                'Pilih Divisi_x0020_',
+                'pilih_divisi',
+                'pilihDivisi',
+                'divisi',
+                'Divisi',
+                'division',
+                'Division',
+            ]),
         ];
     }
 

@@ -146,8 +146,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -237,9 +235,11 @@
                             </td>
                         @endforeach
                         <td class="number data-cell" style="font-weight: bold;">
-                            {{ $fmtTonBlankZero((float) ($row['total_ton'] ?? 0.0)) }}</td>
+                            {{ $fmtTonBlankZero((float) ($row['total_ton'] ?? 0.0)) }}
+                        </td>
                         <td class="number data-cell" style="font-weight:bold;">
-                            {{ $fmtRatioBlankZero((float) ($row['ratio'] ?? 0.0)) }}</td>
+                            {{ $fmtRatioBlankZero((float) ($row['ratio'] ?? 0.0)) }}
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -287,19 +287,22 @@
 
         <p class="notes-title">Keterangan :</p>
         <p class="notes-line">{{ $start }} s/d {{ $end }} ({{ $workingDays }} hari): rata-rata masuk
-            {{ $fmtTon($dailyTon) }} ton/hari, estimasi 25 hari {{ $fmtTon($estimated25Days) }} ton.</p>
+            {{ $fmtTon($dailyTon) }} ton/hari, estimasi 25 hari {{ $fmtTon($estimated25Days) }} ton.
+        </p>
         <p class="notes-line">Dengan kapasitas 1 meja/hari = {{ number_format($mejaCapacityTonPerDay, 2, '.', ',') }}
             ton, kebutuhan meja/hari sekitar {{ number_format($neededMejaPerDay, 4, '.', ',') }} meja.</p>
         <p class="notes-line">Target container: kebutuhan {{ number_format($containerNeedTonPerMonth, 0, '.', ',') }}
             ton/bulan setara {{ number_format($neededStTonPerDayForContainer, 4, '.', ',') }} ton ST/hari; kebutuhan 2
             container ({{ number_format($stPerContainerTon * 2, 0, '.', ',') }} ton) sekitar
-            {{ number_format($neededStTonPerDayFor2Container, 4, '.', ',') }} ton ST/hari.</p>
+            {{ number_format($neededStTonPerDayFor2Container, 4, '.', ',') }} ton ST/hari.
+        </p>
         <p class="notes-line">Kapasitas racip: {{ number_format($racipCapacityTonPerMejaPerDay, 0, '.', ',') }}
             ton/meja/hari x {{ $availableMeja }} meja = {{ number_format($racipCapacityPerDay, 0, '.', ',') }}
             ton/hari, sehingga butuh sekitar {{ number_format($neededRacipDays, 1, '.', ',') }} hari racip untuk
             memenuhi 2 container.</p>
         <p class="notes-line">Rekap periode: {{ (int) ($summary['total_suppliers'] ?? 0) }} supplier,
-            {{ $totalTrucks }} truk, total {{ $fmtTon($totalTon) }} ton.</p>
+            {{ $totalTrucks }} truk, total {{ $fmtTon($totalTon) }} ton.
+        </p>
     </div>
 
     @include('reports.partials.pdf-footer-table')

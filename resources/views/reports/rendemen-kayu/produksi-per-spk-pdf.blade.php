@@ -158,8 +158,6 @@
         .spacer {
             height: 8px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

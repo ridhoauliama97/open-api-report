@@ -173,8 +173,6 @@
             margin: 6px 0 0 0;
             font-size: 11px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

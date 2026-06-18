@@ -162,8 +162,6 @@
             border-top: 1px solid #000 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -209,7 +207,8 @@
                         <td class="number">{{ $fmtInt($row['JmlhBatang'] ?? null) }}</td>
                         <td class="number">{{ $fmtM3($row['M3'] ?? null) }}</td>
                         <td class="number">
-                            {{ $row['Ratio'] !== null ? number_format((float) $row['Ratio'], 2, '.', ',') : '' }}</td>
+                            {{ $row['Ratio'] !== null ? number_format((float) $row['Ratio'], 2, '.', ',') : '' }}
+                        </td>
                         <td class="number">
                             {{ !empty($row['DisplayCumulative']) ? $fmtPct($row['CumulativeRatio'] ?? null) : '' }}
                         </td>

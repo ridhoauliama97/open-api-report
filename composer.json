@@ -15,6 +15,7 @@
         "laravel/tinker": "^2.10.1",
         "mpdf/mpdf": "^8.2",
         "opcodesio/log-viewer": "^3.24",
+        "phpoffice/phpspreadsheet": "^5.8",
         "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {

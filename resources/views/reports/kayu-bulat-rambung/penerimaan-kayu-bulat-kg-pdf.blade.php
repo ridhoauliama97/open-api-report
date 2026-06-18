@@ -200,8 +200,6 @@
             font-weight: bold;
             font-size: 11px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -303,7 +301,8 @@
             <td class="grand-total-value" style="width: 70px;">{{ $formatInt((int) ($summary['total_pcs'] ?? 0)) }}
             </td>
             <td class="grand-total-value" style="width: 72px;">
-                {{ $formatWeight((float) ($summary['total_berat'] ?? 0)) }}</td>
+                {{ $formatWeight((float) ($summary['total_berat'] ?? 0)) }}
+            </td>
         </tr>
     </table>
 

@@ -168,8 +168,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

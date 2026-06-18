@@ -225,8 +225,6 @@
             font-weight: bold;
             font-size: 11px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -324,7 +322,8 @@
                     $isDateSeparator = $previousTanggal !== null && $currentTanggal !== $previousTanggal;
                     $previousTanggal = $currentTanggal;
                 @endphp
-                <tr class="{{ $loop->iteration % 2 === 1 ? 'row-odd' : 'row-even' }} {{ $isDateSeparator ? 'date-separator' : '' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 1 ? 'row-odd' : 'row-even' }} {{ $isDateSeparator ? 'date-separator' : '' }}">
                     <td class="nowrap center">{{ $fmtTableDate($row['DisplayTanggal'] ?? '') }}</td>
                     <td class="nowrap">{{ $row['NoST'] ?? '-' }}</td>
                     <td>{{ $row['JenisKayu'] ?? '-' }}</td>

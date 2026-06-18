@@ -105,8 +105,6 @@
             font-size: 11px;
             border-top: #000 solid 1px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -224,7 +222,8 @@
             <tr>
                 <th style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
-                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}
+                    </th>
                 @endforeach
                 <th style="width: 10%;">Total</th>
             </tr>
@@ -265,7 +264,8 @@
                     @endphp
                     <td class="number">{{ number_format($totalValue, 2, '.', ',') }}</td>
                 @endforeach
-                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}
+                </td>
             </tr>
         </tbody>
     </table>

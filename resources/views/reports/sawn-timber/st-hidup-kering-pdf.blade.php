@@ -122,8 +122,6 @@
         .row-even td {
             background: #eef2f8;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

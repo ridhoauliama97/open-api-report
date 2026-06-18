@@ -156,8 +156,6 @@
             border-top: 1px solid #000 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

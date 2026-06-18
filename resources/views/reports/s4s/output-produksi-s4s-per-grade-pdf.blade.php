@@ -146,8 +146,6 @@
             font-size: 11px;
             background: transparent !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -301,9 +299,9 @@
                         $cells = is_array($r['cells'] ?? null) ? $r['cells'] : [];
                     @endphp
                     {{-- @if ($srIndex > 0)
-                        <tr class="table-end-line">
-                            <td colspan="{{ $colCount }}"></td>
-                        </tr>
+                    <tr class="table-end-line">
+                        <td colspan="{{ $colCount }}"></td>
+                    </tr>
                     @endif --}}
                     <tr class="{{ $cls }} strong">
                         <td class="center">{{ $label }}</td>

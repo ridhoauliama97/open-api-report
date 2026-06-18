@@ -138,8 +138,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -213,9 +211,11 @@
                     <td class="number data-cell">{{ number_format((float) ($row['Lebar'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number data-cell">{{ number_format((float) ($row['Panjang'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number data-cell" style="font-weight: bold;">
-                        {{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', ',') }}</td>
+                        {{ number_format((float) ($row['Pcs'] ?? 0), 0, '.', ',') }}
+                    </td>
                     <td class="number data-cell" style="font-weight: bold;">
-                        {{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}</td>
+                        {{ number_format((float) ($row['JmlhTon'] ?? 0), 4, '.', ',') }}
+                    </td>
                 </tr>
             @empty
                 <tr>

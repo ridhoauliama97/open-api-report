@@ -120,8 +120,6 @@
         tfoot {
             display: table-footer-group;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -162,12 +160,14 @@
                     @forelse ($yearRows as $row)
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="center data-cell" style="font-weight:bold; font-size: 11px;">
-                                {{ $row['tahun'] ?? '' }}</td>
+                                {{ $row['tahun'] ?? '' }}
+                            </td>
                             @foreach ($monthLabels as $month => $label)
                                 <td class="number data-cell">{{ $fmt((float) ($row['months'][$month] ?? 0.0)) }}</td>
                             @endforeach
                             <td class="number data-cell" style="font-weight: bold; font-size:11px;">
-                                {{ $fmt((float) ($row['total'] ?? 0.0)) }}</td>
+                                {{ $fmt((float) ($row['total'] ?? 0.0)) }}
+                            </td>
                         </tr>
                     @empty
                         <tr>

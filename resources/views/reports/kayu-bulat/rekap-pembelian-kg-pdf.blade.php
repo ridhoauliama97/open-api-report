@@ -137,8 +137,6 @@
         tfoot {
             display: table-footer-group;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -187,10 +185,12 @@
                             <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $row['tahun'] ?? '' }}</td>
                             @foreach ($monthLabels as $month => $label)
                                 <td class="number data-cell" style="{{ $dataCellMonthStyle }}">
-                                    {{ $fmt((float) ($row['months'][$month] ?? 0.0)) }}</td>
+                                    {{ $fmt((float) ($row['months'][$month] ?? 0.0)) }}
+                                </td>
                             @endforeach
                             <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                {{ $fmt((float) ($row['total'] ?? 0.0)) }}</td>
+                                {{ $fmt((float) ($row['total'] ?? 0.0)) }}
+                            </td>
                         </tr>
                     @empty
                         <tr>

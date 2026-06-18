@@ -159,8 +159,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -252,10 +250,10 @@
                 <th colspan="2" style="border-top: 1px solid #000;">Saldo Awal</th>
                 <th colspan="4" style="border-top: 1px solid #000;">Masuk</th>
                 <th colspan="4" style="border-top: 1px solid #000;">Keluar</th>
-                <th colspan="2" style="border-top: 1px solid #000;">Akhir</th>
+                <th colspan="2" style="border-top: 1px solid #000;">Saldo Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th style="border-top: 1px solid #000;">Saldo Awal</th>
+                <th style="border-top: 1px solid #000;">Awal</th>
                 <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
                 <th style="border-top: 1px solid #000;">Masuk</th>
                 <th style="border-top: 1px solid #000;">Jlh <br> Batang</th>
@@ -276,19 +274,24 @@
                     <td class="center data-cell">{{ $loop->iteration }}</td>
                     <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
                     <td class="number data-cell" style="text-align: center;">
-                        {{ $formatNumeric('Tebal', $toFloat($row['Tebal'] ?? null)) }}</td>
+                        {{ $formatNumeric('Tebal', $toFloat($row['Tebal'] ?? null)) }}
+                    </td>
                     <td class="number data-cell" style="text-align: center;">
-                        {{ $formatNumeric('Lebar', $toFloat($row['Lebar'] ?? null)) }}</td>
+                        {{ $formatNumeric('Lebar', $toFloat($row['Lebar'] ?? null)) }}
+                    </td>
                     <td class="number data-cell" style="text-align: center;">
-                        {{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}</td>
+                        {{ $formatNumeric('Panjang', $toFloat($row['Panjang'] ?? null)) }}
+                    </td>
                     <td class="number data-cell">{{ $formatNumeric('Sawal', $toFloat($row['Sawal'] ?? null)) }}</td>
                     <td class="number data-cell" style="font-weight: bold;">
-                        {{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}</td>
+                        {{ $formatNumeric('SawalJlhBtg', $toFloat($row['SawalJlhBtg'] ?? null)) }}
+                    </td>
                     <td class="number data-cell">{{ $formatNumeric('Masuk', $toFloat($row['Masuk'] ?? null)) }}</td>
                     <td class="number data-cell">{{ $formatNumeric('MskJlhBtg', $toFloat($row['MskJlhBtg'] ?? null)) }}
                     </td>
                     <td class="number data-cell">
-                        {{ $formatNumeric('AdjusmentOutput', $toFloat($row['AdjusmentOutput'] ?? null)) }}</td>
+                        {{ $formatNumeric('AdjusmentOutput', $toFloat($row['AdjusmentOutput'] ?? null)) }}
+                    </td>
                     <td class="number data-cell">
                         {{ $formatNumeric('AdjOutJlhBtg', $toFloat($row['AdjOutJlhBtg'] ?? null)) }}
                     </td>
@@ -300,11 +303,15 @@
                         {{ $formatNumeric('AdjusmentInput', $toFloat($row['AdjusmentInput'] ?? null)) }}
                     </td>
                     <td class="number data-cell">
-                        {{ $formatNumeric('AdjInJlhBtg', $toFloat($row['AdjInJlhBtg'] ?? null)) }}</td>
+                        {{ $formatNumeric('AdjInJlhBtg', $toFloat($row['AdjInJlhBtg'] ?? null)) }}
+                    </td>
                     <td class="number data-cell" style="font-weight: bold;">
-                        {{ $formatNumeric('Akhir', $toFloat($row['Akhir'] ?? null)) }}</td>
-                    <td class="number data-cell" style="font-weight: bold;">
-                        {{ $formatNumeric('AkhirJlhBtg', $toFloat($row['AkhirJlhBtg'] ?? null)) }}</td>
+                        {{ $formatNumeric('Akhir', $toFloat($row['Akhir'] ?? null)) }}
+                    </td>
+                    <td class="number data-cell"
+                        style="font-weight: bold;{{ ($toFloat($row['AkhirJlhBtg'] ?? null) ?? 0) < 0 ? ' color: red;' : '' }}">
+                        {{ $formatNumeric('AkhirJlhBtg', $toFloat($row['AkhirJlhBtg'] ?? null)) }}
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -315,32 +322,40 @@
                 <tr class="totals-row">
                     <td colspan="5" class="center" style="font-weight: bold;">Total</td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('Sawal', $toFloat($totals['Sawal'] ?? null)) }}</td>
+                        {{ $formatNumeric('Sawal', $toFloat($totals['Sawal'] ?? null)) }}
+                    </td>
                     <td class="number" style="font-weight: bold;">
                         {{ $formatNumeric('SawalJlhBtg', $toFloat($totals['SawalJlhBtg'] ?? null)) }}
                     </td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('Masuk', $toFloat($totals['Masuk'] ?? null)) }}</td>
+                        {{ $formatNumeric('Masuk', $toFloat($totals['Masuk'] ?? null)) }}
+                    </td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('MskJlhBtg', $toFloat($totals['MskJlhBtg'] ?? null)) }}</td>
+                        {{ $formatNumeric('MskJlhBtg', $toFloat($totals['MskJlhBtg'] ?? null)) }}
+                    </td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('AdjusmentOutput', $toFloat($totals['AdjusmentOutput'] ?? null)) }}</td>
+                        {{ $formatNumeric('AdjusmentOutput', $toFloat($totals['AdjusmentOutput'] ?? null)) }}
+                    </td>
                     <td class="number" style="font-weight: bold;">
                         {{ $formatNumeric('AdjOutJlhBtg', $toFloat($totals['AdjOutJlhBtg'] ?? null)) }}
                     </td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('Keluar', $toFloat($totals['Keluar'] ?? null)) }}</td>
+                        {{ $formatNumeric('Keluar', $toFloat($totals['Keluar'] ?? null)) }}
+                    </td>
                     <td class="number" style="font-weight: bold;">
                         {{ $formatNumeric('KeluarJlhBtg', $toFloat($totals['KeluarJlhBtg'] ?? null)) }}
                     </td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('AdjusmentInput', $toFloat($totals['AdjusmentInput'] ?? null)) }}</td>
+                        {{ $formatNumeric('AdjusmentInput', $toFloat($totals['AdjusmentInput'] ?? null)) }}
+                    </td>
                     <td class="number" style="font-weight: bold;">
                         {{ $formatNumeric('AdjInJlhBtg', $toFloat($totals['AdjInJlhBtg'] ?? null)) }}
                     </td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $formatNumeric('Akhir', $toFloat($totals['Akhir'] ?? null)) }}</td>
-                    <td class="number" style="font-weight: bold;">
+                        {{ $formatNumeric('Akhir', $toFloat($totals['Akhir'] ?? null)) }}
+                    </td>
+                    <td class="number"
+                        style="font-weight: bold;{{ ($toFloat($totals['AkhirJlhBtg'] ?? null) ?? 0) < 0 ? ' color: red;' : '' }}">
                         {{ $formatNumeric('AkhirJlhBtg', $toFloat($totals['AkhirJlhBtg'] ?? null)) }}
                     </td>
                 </tr>

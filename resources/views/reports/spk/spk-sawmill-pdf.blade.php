@@ -204,8 +204,6 @@
         .racip-table tbody tr.data-row td {
             height: 11px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

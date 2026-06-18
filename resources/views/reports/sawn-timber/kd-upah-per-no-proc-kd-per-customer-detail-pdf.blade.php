@@ -138,8 +138,6 @@
             border: 0;
             padding: 2px 4px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

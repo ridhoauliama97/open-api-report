@@ -122,8 +122,6 @@
         .total-column {
             width: 32px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -199,7 +197,8 @@
                         </td>
                     @endforeach
                     <td class="percent-cell data-cell" style="font-weight: bold;">
-                        {{ $formatPercent($mejaRow['avg_accurate'] ?? 0) }}</td>
+                        {{ $formatPercent($mejaRow['avg_accurate'] ?? 0) }}
+                    </td>
                 </tr>
             @empty
                 <tr>

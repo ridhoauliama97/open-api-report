@@ -151,8 +151,6 @@
             border-left: 0 !important;
             background: #fff;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -288,9 +286,11 @@
                         <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['S4S'] ?? 0.0), 'S4S')) }}</td>
                         <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['ST'] ?? 0.0), 'ST')) }}</td>
                         <td class="number" style="font-weight: bold;">
-                            {{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}</td>
+                            {{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}
+                        </td>
                         <td class="number" style="font-weight: bold;">
-                            {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputS4S'] ?? 0.0), 'OutputS4S')) }}</td>
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputS4S'] ?? 0.0), 'OutputS4S')) }}
+                        </td>
                         <td class="number"></td>
                         <td class="center"></td>
                         <td class="number"></td>

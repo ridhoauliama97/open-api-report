@@ -39,6 +39,8 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'group' => ['nullable', 'string', 'max:100'],
             'division' => ['nullable', 'string', 'max:100'],
             'divisi' => ['nullable', 'string', 'max:100'],
+            'Pilih Divisi' => ['nullable', 'string', 'max:100'],
+            'Pilih_x0020_Divisi' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string', 'max:50'],
             'Category' => ['nullable', 'string', 'max:50'],
             'status' => ['nullable', 'string', 'max:50'],

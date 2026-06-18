@@ -689,6 +689,27 @@ return [
             'Product,Tebal,Lebar,Panjang,JmlhBatang,M3,BJM3,TglJual'
         )))),
     ],
+    'mpp_per_divisi' => [
+        'Accounting' => 2,
+        'Assembly' => 12,
+        'Sales' => 6,
+        'Cuci Bahan Baku' => 6,
+        'Barang Umum' => 1,
+        'Barang Jadi' => 26,
+        'Bahan Baku' => 4,
+        'Digital Marketing' => 2,
+        'Ekstrusi Bahan Baku' => 15,
+        'Finance' => 1,
+        'GA' => 3,
+        'Hot Stamping' => 9,
+        'HR' => 1,
+        'Injeksi' => 46,
+        'Offline Marketing' => 1,
+        'Packing' => 20,
+        'Pencampuran Bahan Baku' => 5,
+        'Penerimaan Bahan Baku' => 3,
+    ],
+
     'rekap_penjualan_ekspor_per_produk_per_buyer' => [
         'database_connection' => env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_PENJUALAN_EKSPOR_PER_PRODUK_PER_BUYER_REPORT_PROCEDURE', 'SP_LapJualPerProdukPerBuyer'),

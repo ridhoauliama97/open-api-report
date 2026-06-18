@@ -213,8 +213,6 @@
         .signature-space {
             width: 100px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

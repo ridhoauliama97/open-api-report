@@ -125,8 +125,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -147,8 +145,8 @@
         );
         $totalM3 =
             ($totals['M3'] ?? null) !== null
-                ? (float) ($totals['M3'] ?? 0)
-                : array_sum(array_map(static fn($row): float => (float) (is_array($row) ? $row['M3'] ?? 0 : 0), $rows));
+            ? (float) ($totals['M3'] ?? 0)
+            : array_sum(array_map(static fn($row): float => (float) (is_array($row) ? $row['M3'] ?? 0 : 0), $rows));
     @endphp
 
     <h1 class="report-title">Laporan Moulding (Hidup) Detail</h1>

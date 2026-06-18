@@ -105,10 +105,6 @@
             font-size: 11px;
             border-top: #000 solid 1px;
         }
-
-
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -228,7 +224,8 @@
                 <th style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
                     <th style="width: 10%;">
-                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}
+                    </th>
                 @endforeach
                 <th style="width: 10%;">Total</th>
             </tr>

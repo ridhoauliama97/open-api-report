@@ -162,8 +162,6 @@
         .summary-note .label {
             font-weight: bold;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -290,7 +288,8 @@
                     @foreach ($monthLabels as $label)
                         <th
                             style="width: {{ count($monthLabels) > 0 ? number_format(52 / count($monthLabels), 2, '.', ',') : '12' }}%">
-                            {{ $formatMonthLabel($label) }}</th>
+                            {{ $formatMonthLabel($label) }}
+                        </th>
                     @endforeach
                 </tr>
             </thead>
@@ -301,7 +300,8 @@
                         <td class="number data-cell">{{ $fmt4BlankZero($supplierRow['total'] ?? 0) }}</td>
                         @foreach ($monthKeys as $monthKey)
                             <td class="number data-cell">
-                                {{ $fmt4BlankZero($supplierRow['month_values'][$monthKey] ?? 0) }}</td>
+                                {{ $fmt4BlankZero($supplierRow['month_values'][$monthKey] ?? 0) }}
+                            </td>
                         @endforeach
                     </tr>
                 @empty
@@ -358,21 +358,21 @@
 
         <div class="chart-wrap">
             <p class="chart-title">Grafik Supplier Bulanan - {{ $groupName }}</p>
-            <svg width="{{ $svgWidth }}" height="{{ $svgHeight }}"
-                viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}" xmlns="http://www.w3.org/2000/svg">
+            <svg width="{{ $svgWidth }}" height="{{ $svgHeight }}" viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}"
+                xmlns="http://www.w3.org/2000/svg">
                 <rect x="0" y="0" width="{{ $svgWidth }}" height="{{ $svgHeight }}" fill="#fff" />
                 <line x1="{{ $padLeft }}" y1="{{ $padTop + $plotHeight }}" x2="{{ $padLeft + $plotWidth }}"
                     y2="{{ $padTop + $plotHeight }}" stroke="#333" stroke-width="1" />
-                <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}"
-                    y2="{{ $padTop + $plotHeight }}" stroke="#333" stroke-width="1" />
+                <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}" y2="{{ $padTop + $plotHeight }}"
+                    stroke="#333" stroke-width="1" />
 
                 @for ($i = 0; $i <= $yTicks; $i++)
                     @php
                         $tickVal = $yStep * $i;
                         $y = $padTop + $plotHeight - $plotHeight * ($i / $yTicks);
                     @endphp
-                    <line x1="{{ $padLeft }}" y1="{{ $y }}" x2="{{ $padLeft + $plotWidth }}"
-                        y2="{{ $y }}" stroke="#ddd" stroke-width="1" />
+                    <line x1="{{ $padLeft }}" y1="{{ $y }}" x2="{{ $padLeft + $plotWidth }}" y2="{{ $y }}" stroke="#ddd"
+                        stroke-width="1" />
                     <text x="{{ $padLeft - 6 }}" y="{{ $y + 3 }}" font-size="9" text-anchor="end"
                         fill="#444">{{ number_format($tickVal, 0, '.', ',') }}</text>
                 @endfor
@@ -386,14 +386,12 @@
                         $label = (string) ($supplier['supplier'] ?? '');
                         $short = mb_substr($label, 0, 24) . (mb_strlen($label) > 24 ? '...' : '');
                     @endphp
-                    <rect x="{{ $x }}" y="{{ $y }}" width="{{ $barWidth }}"
-                        height="{{ $barH }}" fill="#0d6efd" />
+                    <rect x="{{ $x }}" y="{{ $y }}" width="{{ $barWidth }}" height="{{ $barH }}" fill="#0d6efd" />
                     @if ($val > 0)
                         <text x="{{ $x + $barWidth / 2 }}" y="{{ $y - 2 }}" font-size="8" text-anchor="middle"
                             fill="#222">{{ number_format($val, 1, '.', ',') }}</text>
                     @endif
-                    <text x="{{ $x + $barWidth / 2 }}" y="{{ $padTop + $plotHeight + 12 }}" font-size="8"
-                        text-anchor="end"
+                    <text x="{{ $x + $barWidth / 2 }}" y="{{ $padTop + $plotHeight + 12 }}" font-size="8" text-anchor="end"
                         transform="rotate(-45 {{ $x + $barWidth / 2 }} {{ $padTop + $plotHeight + 12 }})"
                         fill="#333">{{ $short }}</text>
                 @endforeach

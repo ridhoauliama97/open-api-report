@@ -130,8 +130,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -160,9 +158,11 @@
                     <td class="center data-cell" style="width: 44px;">{{ $loop->iteration }}</td>
                     <td class="data-cell">{{ (string) ($row['Group'] ?? '') }}</td>
                     <td class="number data-cell" style="font-weight: bold;">
-                        {{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}</td>
+                        {{ number_format((float) ($row['Ton'] ?? 0), 4, '.', ',') }}
+                    </td>
                     <td class="number data-cell" style="font-weight: bold;">
-                        {{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %</td>
+                        {{ number_format((float) ($row['Rasio'] ?? 0), 2, '.', ',') }} %
+                    </td>
                 </tr>
             @empty
                 <tr>

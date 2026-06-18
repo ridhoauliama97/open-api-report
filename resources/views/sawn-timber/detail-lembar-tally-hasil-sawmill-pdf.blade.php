@@ -179,8 +179,6 @@
             border-top: 1px solid #000;
             margin: 0 auto 2px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -214,7 +212,8 @@
 
     <h1 class="report-title">Laporan Tally Hasil Sawmill Detail</h1>
     <p class="report-subtitle">Periode : {{ $formatDate(isset($startDate) ? (string) $startDate : null) }} s/d
-        {{ $formatDate(isset($endDate) ? (string) $endDate : null) }}</p>
+        {{ $formatDate(isset($endDate) ? (string) $endDate : null) }}
+    </p>
     @foreach ($groups as $group)
         @php
             $header = is_array($group['header'] ?? null) ? $group['header'] : [];
@@ -296,8 +295,7 @@
             </thead>
             <tbody>
                 @foreach ($rows as $row)
-                    <tr
-                        class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
                         <td class="data-cell">{{ $row['no'] ?? '' }}</td>
                         <td class="data-cell">{{ $formatDecimal($row['tebal'] ?? 0) }}</td>
                         <td class="data-cell">{{ $formatDecimal($row['lebar'] ?? 0) }}</td>
@@ -340,8 +338,7 @@
                         $header = is_array($group['header'] ?? null) ? $group['header'] : [];
                         $summary = is_array($group['summary'] ?? null) ? $group['summary'] : [];
                     @endphp
-                    <tr
-                        class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
                         <td class="data-cell">{{ $loop->iteration }}</td>
                         <td class="data-cell">{{ $header['no_meja'] ?? '-' }}</td>
                         <td class="data-cell">{{ $header['no_st'] ?? '-' }}</td>

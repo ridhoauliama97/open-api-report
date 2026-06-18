@@ -164,8 +164,6 @@
             padding: 12px;
             font-style: italic;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -223,8 +221,7 @@
             <thead>
                 <tr>
                     @foreach ($columns as $key => $label)
-                        <th
-                            @if ($key === 'No') style="width: 42px;" @elseif ($key === 'Jenis') style="width: 180px;" @endif>
+                        <th @if ($key === 'No') style="width: 42px;" @elseif ($key === 'Jenis') style="width: 180px;" @endif>
                             {!! $formatHeaderLabel((string) $key, (string) $label) !!}
                         </th>
                     @endforeach
@@ -279,8 +276,7 @@
                 <thead>
                     <tr>
                         @foreach ($inputColumns as $key => $label)
-                            <th
-                                @if ($key === 'No') style="width: 42px;" @elseif ($key === 'Jenis') style="width: 190px;" @endif>
+                            <th @if ($key === 'No') style="width: 42px;" @elseif ($key === 'Jenis') style="width: 190px;" @endif>
                                 {!! $formatHeaderLabel((string) $key, (string) $label) !!}
                             </th>
                         @endforeach
@@ -290,8 +286,7 @@
                     @forelse ($inputRows as $index => $row)
                         <tr class="{{ ($index + 1) % 2 === 1 ? 'row-odd' : 'row-even' }}">
                             @foreach ($inputColumns as $key => $label)
-                                <td
-                                    class="{{ in_array($key, ['No'], true) ? 'center' : ($key === 'Jenis' ? '' : 'number') }}">
+                                <td class="{{ in_array($key, ['No'], true) ? 'center' : ($key === 'Jenis' ? '' : 'number') }}">
                                     @if ($key === 'No' || $key === 'Jenis')
                                         {{ $row[$key] ?? '' }}
                                     @else

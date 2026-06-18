@@ -139,8 +139,6 @@
             height: 0;
             line-height: 0;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -178,10 +176,7 @@
             return str_contains(strtoupper(trim((string) $categoryName)), 'ST') ? 'Ton' : 'm3';
         };
 
-        $fmtWeightWithUnit = static function ($value, ?string $categoryName) use (
-            $fmtNumber,
-            $resolveWeightUnit,
-        ): string {
+        $fmtWeightWithUnit = static function ($value, ?string $categoryName) use ($fmtNumber, $resolveWeightUnit, ): string {
             $formatted = $fmtNumber($value, 4, true);
 
             if ($formatted === '') {
@@ -244,7 +239,8 @@
                         <tr class="total-row">
                             <td colspan="10" class="center">Total {{ $category['name'] ?? '-' }}</td>
                             <td class="number">{{ $fmtInt($category['total_pcs'] ?? null) }}</td>
-                            <td class="number">{!! $fmtWeightWithUnit($category['total_berat'] ?? null, $category['name'] ?? null) !!}</td>
+                            <td class="number">
+                                {!! $fmtWeightWithUnit($category['total_berat'] ?? null, $category['name'] ?? null) !!}</td>
                         </tr>
                     @endif
                 </tbody>

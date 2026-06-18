@@ -193,7 +193,7 @@
             padding: 2px 3px;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -358,9 +358,11 @@
                     <tr class="totals-row">
                         <td colspan="5" class="center">Per-Meja {{ $mejaGroup['nama_meja'] ?? '-' }} :</td>
                         <td class="number" style="width: 12%">
-                            {{ $formatDecimal($mejaSummary['avg_deviation_tebal'] ?? 0) }}</td>
+                            {{ $formatDecimal($mejaSummary['avg_deviation_tebal'] ?? 0) }}
+                        </td>
                         <td class="number" style="width: 12%">
-                            {{ $formatDecimal($mejaSummary['avg_deviation_lebar'] ?? 0) }}</td>
+                            {{ $formatDecimal($mejaSummary['avg_deviation_lebar'] ?? 0) }}
+                        </td>
                         <td class="center" style="width: 21%">{{ $formatPercent($mejaSummary['accurate_rate'] ?? 0) }}
                         </td>
                     </tr>

@@ -206,7 +206,7 @@
             margin: 0 0 2px;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+
     </style>
 </head>
 

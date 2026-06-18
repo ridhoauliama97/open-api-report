@@ -215,7 +215,7 @@
             white-space: nowrap;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+
     </style>
 </head>
 

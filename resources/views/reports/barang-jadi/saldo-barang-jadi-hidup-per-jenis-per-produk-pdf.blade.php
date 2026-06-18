@@ -162,8 +162,6 @@
         .summary-list li {
             margin: 0 0 2px 0;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

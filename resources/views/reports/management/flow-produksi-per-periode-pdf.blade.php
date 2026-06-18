@@ -162,8 +162,6 @@
             width: 12px;
             text-align: center;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

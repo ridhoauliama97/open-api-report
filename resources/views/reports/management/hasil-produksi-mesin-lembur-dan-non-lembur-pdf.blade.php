@@ -134,8 +134,6 @@
         .report-table tbody tr:first-child.date-group-start td {
             border-top: 0 !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

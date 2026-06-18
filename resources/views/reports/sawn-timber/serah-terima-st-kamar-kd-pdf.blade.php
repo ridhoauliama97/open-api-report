@@ -175,8 +175,6 @@
         .signature-space {
             height: 60px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 

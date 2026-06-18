@@ -105,8 +105,6 @@
             font-size: 11px;
             border-top: #000 solid 1px;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -130,10 +128,10 @@
         $columns = array_keys($rowsData[0] ?? []);
         $visibleColumns =
             $columns !== []
-                ? array_values(
-                    array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
-                )
-                : $preferredOrder;
+            ? array_values(
+                array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
+            )
+            : $preferredOrder;
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
                 return (float) $value;

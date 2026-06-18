@@ -406,6 +406,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.loss-time.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/employee-list/mpp-tahunan-per-divisi-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmMppTahunanPerDivisiGsuPdf']
+)->name('api.internal.ascends.shared.hrm.employee-list.mpp-tahunan-per-divisi-gsu.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmKetidakhadiranBulananPdf']
 )->name('api.internal.ascends.shared.hrm.absence.ketidakhadiran-bulanan.pdf');

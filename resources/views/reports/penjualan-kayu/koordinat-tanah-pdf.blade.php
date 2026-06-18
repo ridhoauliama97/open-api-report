@@ -137,8 +137,6 @@
             line-height: 0 !important;
             background: #fff !important;
         }
-
-        @include('reports.partials.pdf-footer-table-style');
     </style>
 </head>
 
@@ -273,11 +271,12 @@
             @endforelse
             @if (count($gpsPercentages) > 0)
                 <tr>
-                    <td colspan="2" class="center"
-                        style="font-weight: bold; border-top: 1px solid #000; background: #fff;">Total
+                    <td colspan="2" class="center" style="font-weight: bold; border-top: 1px solid #000; background: #fff;">
+                        Total
                     </td>
                     <td class="number" style="font-weight: bold; border-top: 1px solid #000; background: #fff;">
-                        {{ $fmtDec($gpsTotal) }}</td>
+                        {{ $fmtDec($gpsTotal) }}
+                    </td>
                     <td colspan="4" style="border-top: 1px solid #000; background: #fff;">&nbsp;</td>
                 </tr>
             @endif
