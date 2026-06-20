@@ -276,8 +276,7 @@
                         }
                         $subtotalGroup += $rowTotal;
                     @endphp
-                    <tr
-                        class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}{{ $ridx === 0 ? ' group-start' : '' }}">
+                    <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}{{ $ridx === 0 ? ' group-start' : '' }}">
                         @if ($ridx === 0)
                             <td class="center" rowspan="{{ $rowspan }}">{{ $noMeja }}</td>
                         @endif

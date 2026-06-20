@@ -213,13 +213,7 @@
             return (float) $t;
         };
 
-        $formatCell = static function (string $col, mixed $val) use (
-            $fmtInt,
-            $fmt2,
-            $fmt4,
-            $dateLabel,
-            $toFloat,
-        ): string {
+        $formatCell = static function (string $col, mixed $val) use ($fmtInt, $fmt2, $fmt4, $dateLabel, $toFloat, ): string {
             if ($col === 'Tanggal') {
                 $t = trim((string) ($val ?? ''));
                 return $t === 'Total' ? $t : $dateLabel($t);

@@ -2913,7 +2913,11 @@
                 reportsMount.querySelector('[data-report-search]')?.addEventListener('input', (event) => {
                     searchValue = event.target.value;
                     renderReports(menu);
-                    reportsMount.querySelector('[data-report-search]')?.focus();
+                    const searchInput = reportsMount.querySelector('[data-report-search]');
+                    if (searchInput) {
+                        searchInput.focus();
+                        searchInput.setSelectionRange(searchValue.length, searchValue.length);
+                    }
                 });
 
                 reportsMount.querySelector('[data-export-pdf]')?.addEventListener('click', () => {

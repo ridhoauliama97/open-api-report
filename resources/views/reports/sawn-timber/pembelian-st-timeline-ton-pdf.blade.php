@@ -127,7 +127,6 @@
         .totals-row td {
             border-top: 1px solid #000 !important;
             font-weight: bold;
-            background: #fff;
             font-size: 11px;
         }
 
@@ -304,8 +303,7 @@
                     @endphp
                     <td class="data-cell">
                         @if ($rowTotalText !== '' || $rowTotalPct !== '')
-                            <span class="cell-pre"
-                                style="font-weight: bold;">{{ $fmtCell($rowTotalText, $rowTotalPct) }}</span>
+                            <span class="cell-pre" style="font-weight: bold;">{{ $fmtCell($rowTotalText, $rowTotalPct) }}</span>
                         @endif
                     </td>
                 </tr>

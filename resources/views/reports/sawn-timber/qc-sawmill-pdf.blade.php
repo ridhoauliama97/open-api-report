@@ -191,6 +191,22 @@
             font-size: 10px;
             padding: 2px 3px;
         }
+
+        .rangkuman-qc-container {
+            margin-top: 24px;
+        }
+
+        .rangkuman-qc-container,
+        .rangkuman-qc-container table,
+        .rangkuman-qc-container th,
+        .rangkuman-qc-container td {
+            font-size: 8px;
+        }
+
+        .rangkuman-qc-container th,
+        .rangkuman-qc-container td {
+            padding: 1px 3px;
+        }
     </style>
 </head>
 
@@ -272,6 +288,57 @@
         unset($mejaGroup);
 
         $mejaGroups = array_values($mejaGroups);
+
+        $rangkumanKategori = [];
+        foreach ($mejaGroups as $mg) {
+            $nama = $mg['nama_meja'] ?? '';
+            $kat = str_contains($nama, 'SLP') ? 'SLP' : 'BANSAW';
+            if (!isset($rangkumanKategori[$kat])) {
+                $rangkumanKategori[$kat] = [
+                    'label' => 'Grand Total ' . $kat,
+                    'total_rows' => 0,
+                    'total_accurate' => 0,
+                    '_weighted_dev_tebal' => 0.0,
+                    '_weighted_dev_lebar' => 0.0,
+                ];
+            }
+            $s = $mg['summary'] ?? [];
+            $totalRows = (int) ($s['total_rows'] ?? 0);
+            $rangkumanKategori[$kat]['total_rows'] += $totalRows;
+            $rangkumanKategori[$kat]['total_accurate'] += (int) ($s['total_accurate'] ?? 0);
+            $rangkumanKategori[$kat]['_weighted_dev_tebal'] += ((float) ($s['avg_deviation_tebal'] ?? 0)) * $totalRows;
+            $rangkumanKategori[$kat]['_weighted_dev_lebar'] += ((float) ($s['avg_deviation_lebar'] ?? 0)) * $totalRows;
+        }
+
+        $rangkumanRows = [];
+        $grandAll = ['total_rows' => 0, 'total_accurate' => 0, '_weighted_dev_tebal' => 0.0, '_weighted_dev_lebar' => 0.0];
+
+        foreach (['BANSAW', 'SLP'] as $kat) {
+            $entry = $rangkumanKategori[$kat] ?? null;
+            if (!$entry) {
+                continue;
+            }
+            $tr = $entry['total_rows'];
+            $entry['avg_deviation_tebal'] = $tr > 0 ? $entry['_weighted_dev_tebal'] / $tr : 0.0;
+            $entry['avg_deviation_lebar'] = $tr > 0 ? $entry['_weighted_dev_lebar'] / $tr : 0.0;
+            $entry['accurate_rate'] = $tr > 0 ? ($entry['total_accurate'] / $tr) * 100 : 0.0;
+            $rangkumanRows[] = $entry;
+
+            $grandAll['total_rows'] += $entry['total_rows'];
+            $grandAll['total_accurate'] += $entry['total_accurate'];
+            $grandAll['_weighted_dev_tebal'] += $entry['_weighted_dev_tebal'];
+            $grandAll['_weighted_dev_lebar'] += $entry['_weighted_dev_lebar'];
+        }
+
+        $allTr = $grandAll['total_rows'];
+        $grandAllRow = [
+            'label' => 'Grand Total Seluruhnya',
+            'total_rows' => $grandAll['total_rows'],
+            'total_accurate' => $grandAll['total_accurate'],
+            'avg_deviation_tebal' => $allTr > 0 ? $grandAll['_weighted_dev_tebal'] / $allTr : 0.0,
+            'avg_deviation_lebar' => $allTr > 0 ? $grandAll['_weighted_dev_lebar'] / $allTr : 0.0,
+            'accurate_rate' => $allTr > 0 ? ($grandAll['total_accurate'] / $allTr) * 100 : 0.0,
+        ];
     @endphp
 
     <h1 class="report-title">Laporan QC Sawmill</h1>
@@ -375,6 +442,41 @@
             </tbody>
         </table>
     @endforelse
+
+    @if (!empty($rangkumanRows))
+        <div class="rangkuman-qc-container">
+            <h2 style="text-align: center; margin: 0 0 8px 0; font-size: 11px; font-weight: bold;">Rangkuman Grand Total</h2>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Kategori</th>
+                        <th style="width: 15%;">Total Data</th>
+                        <th style="width: 18%;">Rata-rata Dev Tebal</th>
+                        <th style="width: 18%;">Rata-rata Dev Lebar</th>
+                        <th style="width: 19%;">Akurasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($rangkumanRows as $rr)
+                        <tr class="{{ $loop->index % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                            <td>{{ $rr['label'] }}</td>
+                            <td class="number">{{ number_format((float) ($rr['total_rows'] ?? 0), 0, '.', ',') }}</td>
+                            <td class="number">{{ $formatDecimal($rr['avg_deviation_tebal'] ?? 0) }}</td>
+                            <td class="number">{{ $formatDecimal($rr['avg_deviation_lebar'] ?? 0) }}</td>
+                            <td class="number">{{ $formatPercent($rr['accurate_rate'] ?? 0) }}</td>
+                        </tr>
+                    @endforeach
+                    <tr class="totals-row">
+                        <td>{{ $grandAllRow['label'] }}</td>
+                        <td class="number">{{ number_format((float) ($grandAllRow['total_rows'] ?? 0), 0, '.', ',') }}</td>
+                        <td class="number">{{ $formatDecimal($grandAllRow['avg_deviation_tebal'] ?? 0) }}</td>
+                        <td class="number">{{ $formatDecimal($grandAllRow['avg_deviation_lebar'] ?? 0) }}</td>
+                        <td class="number">{{ $formatPercent($grandAllRow['accurate_rate'] ?? 0) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    @endif
 
     @include('reports.partials.pdf-footer-table')
 </body>

@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 10mm 8mm 12mm 8mm;
+            margin: 12mm 8mm 12mm 8mm;
             footer: html_reportFooter;
         }
 
@@ -156,14 +156,12 @@
         .total-row td {
             font-weight: bold;
             font-size: 10px;
-            background: #fff;
             border: 1px solid #000;
         }
 
         .grand-total-row td {
             font-weight: bold;
             font-size: 11px;
-            background: #fff;
             border: 1px solid #000;
         }
 

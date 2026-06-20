@@ -224,6 +224,10 @@
             border-right: 1px solid #000 !important;
         }
 
+        tr.data-row.row-negative td {
+            color: red !important;
+        }
+
         .table-end-line td {
             border: 0 !important;
             border-top: 1px solid #000 !important;
@@ -395,11 +399,7 @@
             $columnHeaderOverrides[$panjangColumn] = 'Panjang (ft)';
         }
 
-        $formatHeaderLabel = static function (string $column) use (
-            $normalizeName,
-            $headerLabelMap,
-            $columnHeaderOverrides,
-        ): string {
+        $formatHeaderLabel = static function (string $column) use ($normalizeName, $headerLabelMap, $columnHeaderOverrides, ): string {
             if (isset($columnHeaderOverrides[$column])) {
                 return $columnHeaderOverrides[$column];
             }
@@ -550,7 +550,13 @@
 
                 <tbody>
                     @foreach ($produkRows as $row)
-                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        @php
+                            $isNegative = (
+                                ($pcsColumn !== null && ($toFloat($row[$pcsColumn] ?? null) ?? 0) < 0) ||
+                                ($tonColumn !== null && ($toFloat($row[$tonColumn] ?? null) ?? 0) < 0)
+                            );
+                        @endphp
+                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}{{ $isNegative ? ' row-negative' : '' }}">
                             <td class="data-cell center">{{ $loop->iteration }}</td>
                             @foreach ($tableColumns as $column)
                                 @php

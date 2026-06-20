@@ -141,8 +141,6 @@
         .sub-header {
             font-size: 8px;
         }
-
-
     </style>
 </head>
 
@@ -246,7 +244,8 @@
                         <td class="center">{{ $fmtNumber($cell['tebal'] ?? null, 0) }}</td>
                         <td
                             class="number {{ $isOutputBelowTarget($cell['output'] ?? null, $targetRow['cells'][$column['key']] ?? null) ? 'output-below-target' : '' }}">
-                            {{ $fmtNumber($cell['output'] ?? null, 2) }}</td>
+                            {{ $fmtNumber($cell['output'] ?? null, 2) }}
+                        </td>
                         <td class="number">{{ $fmtPercent($cell['rend'] ?? null) }}</td>
                     @endforeach
                 </tr>
@@ -272,56 +271,12 @@
                 <td class="center">{{ $targetRow['label'] ?? 'Target' }}</td>
                 @foreach ($columns as $column)
                     <td class="center" colspan="3">
-                        {{ $fmtNumber($targetRow['cells'][$column['key']] ?? null, 0, false) }}</td>
+                        {{ $fmtNumber($targetRow['cells'][$column['key']] ?? null, 0, false) }}
+                    </td>
                 @endforeach
             </tr>
         </tbody>
     </table>
-
-    <div style="page-break-before: always;">
-        <h2 style="text-align: center; margin: 0 0 8px 0; font-size: 12px; font-weight: bold;">Rangkuman</h2>
-        <table class="report-table">
-            <thead>
-                <tr>
-                    <th rowspan="2" style="width: 5%;">No</th>
-                    <th rowspan="2">Nama Mesin</th>
-                    <th colspan="3">Jam Kerja Normal</th>
-                    <th colspan="3">Jam Kerja Lembur</th>
-                </tr>
-                <tr>
-                    <th>TK</th>
-                    <th>HM</th>
-                    <th>mtr3</th>
-                    <th>TK</th>
-                    <th>HM</th>
-                    <th>mtr3</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($summaryRows as $row)
-                    <tr class="{{ $loop->index % 2 === 0 ? 'row-odd' : 'row-even' }}">
-                        <td class="center">{{ $row['No'] ?? '' }}</td>
-                        <td>{{ $row['NamaMesin'] ?? '-' }}</td>
-                        <td class="center">{{ $fmtBlank($row['total_tk'] ?? null, 0) }}</td>
-                        <td class="center">{{ $fmtBlank($row['total_hm'] ?? null, 0) }}</td>
-                        <td class="number">{{ $fmtBlank($row['Output'] ?? null, 4) }}</td>
-                        <td class="center">{{ $fmtBlank($row['total_tk_lembur'] ?? null, 0) }}</td>
-                        <td class="center">{{ $fmtBlank($row['total_hm_lembur'] ?? null, 0) }}</td>
-                        <td class="number">{{ $fmtBlank($row['OutputLembur'] ?? null, 4) }}</td>
-                    </tr>
-                @endforeach
-                <tr class="total-row">
-                    <td colspan="2" class="center">Grand Total</td>
-                    <td class="center">{{ $fmtBlank($grandTotals['total_tk'] ?? null, 0) }}</td>
-                    <td class="center">{{ $fmtBlank($grandTotals['total_hm'] ?? null, 0) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['output'] ?? null, 4) }}</td>
-                    <td class="center">{{ $fmtBlank($grandTotals['total_tk_lembur'] ?? null, 0) }}</td>
-                    <td class="center">{{ $fmtBlank($grandTotals['total_hm_lembur'] ?? null, 0) }}</td>
-                    <td class="number">{{ $fmtBlank($grandTotals['output_lembur'] ?? null, 4) }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
     @include('reports.partials.pdf-footer-table')
 </body>
