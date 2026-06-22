@@ -19,18 +19,15 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Adjustment By Item
 
 - Adjustment By Item - Laporan Penyesuaian Persediaan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/penyesuaian-persediaan/pdf`
-
-## Endpoint Shared Adjustment Kursi
-
 - Adjustment By Item - Laporan Adjustment Selisih Kursi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-kursi/pdf`
-
-## Endpoint Shared Adjustment Lemari
-
 - Adjustment By Item - Laporan Adjustment Selisih Lemari: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-lemari/pdf`
-
-## Endpoint Adjustment Lemari
-
 - Adjustment By Item - Laporan Adjustment Lemari: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/adjustment/adjustment-lemari/pdf`
+
+
+## Endpoint Shared Goods Delivery Note
+
+- Goods Delivery Note - Laporan Rekapan Value Surat Jalan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/rekapan-value-surat-jalan/pdf`
+- Laporan Pengiriman Lemari: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/pengiriman-lemari/pdf`
 
 ## Input
 
@@ -52,7 +49,7 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, dan `adjustment-lemari`:
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, dan `pengiriman-lemari`:
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
 - Alias tanggal yang diterima: `start_date` + `end_date`, `StartDate` + `EndDate`, `TglAwal` + `TglAkhir`, `date_start` + `date_end`, `dari_tanggal` + `sampai_tanggal`, dan `AdjustmentDate.StartDatee` (typo variant).
@@ -100,6 +97,8 @@ Contoh:
 - `Adjustment By Item - Laporan Adjustment Selisih Kursi (GSU).pdf`
 - `Adjustment By Item - Laporan Adjustment Selisih Lemari (GSU).pdf`
 - `Adjustment By Item - Laporan Adjustment Lemari (GSU).pdf`
+- `Goods Delivery Note - Laporan Rekapan Value Surat Jalan (GSU).pdf`
+- `Laporan Pengiriman Lemari (GSU).pdf`
 
 ## Response Gagal
 
@@ -113,5 +112,7 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `adjustment_by_item/adjustment/khusus_kursi`
 - `adjustment_by_item/adjustment/khusus_lemari`
 - `adjustment_by_item/adjustment/adjustment_lemari`
+- `goods_delivery_note/rekapan_value_surat_jalan`
+- `goods_delivery_note/pengiriman_lemari`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

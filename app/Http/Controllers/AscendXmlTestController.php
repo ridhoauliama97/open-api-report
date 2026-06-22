@@ -48,7 +48,9 @@ use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
 use App\Services\Ascends\Shared\Analysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
+use App\Services\Ascends\Shared\Analysis\PengirimanLemariReportService;
 use App\Services\Ascends\Shared\Analysis\PenyesuaianPersediaanReportService;
+use App\Services\Ascends\Shared\Analysis\RekapanValueSuratJalanReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
 use App\Services\Ascends\Shared\Hrm\MppTahunanPerDivisiGsuReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
@@ -335,7 +337,7 @@ class AscendXmlTestController extends Controller
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Persentase Kehadiran Bulanan {$type} ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Persentase Kehadiran Bulanan '.str_replace('/', ' ', $type)." ({$company}).pdf";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Persentase Kehadiran Bulanan ' . str_replace('/', ' ', $type) . " ({$company}).pdf";
             }
             if ($selectedReport === 'rekapitulasi_kehadiran_kurang_93_tahunan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -343,7 +345,7 @@ class AscendXmlTestController extends Controller
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status}) ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan '.str_replace('/', ' ', $status)." ({$company}).pdf";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan ' . str_replace('/', ' ', $status) . " ({$company}).pdf";
             }
             if ($selectedReport === 'rekapitulasi_pengabaian_keterlambatan_tahunan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -351,7 +353,7 @@ class AscendXmlTestController extends Controller
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status}) ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan '.str_replace('/', ' ', $status)." ({$company}).pdf";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ' . str_replace('/', ' ', $status) . " ({$company}).pdf";
             }
             if ($selectedReport === 'pengabaian_keterlambatan_kehadiran_manual') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -359,7 +361,7 @@ class AscendXmlTestController extends Controller
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Pengabaian Keterlambatan & Kehadiran Manual ({$status}) Per Departemen ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual '.str_replace('/', ' ', $status)." Per Departemen ({$company}).pdf";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual ' . str_replace('/', ' ', $status) . " Per Departemen ({$company}).pdf";
             }
             if ($selectedReport === 'ketidakhadiran_bulanan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -367,7 +369,7 @@ class AscendXmlTestController extends Controller
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Ketidakhadiran Bulanan ({$company}) - {$tipe}";
-                $reportDefinition['filename'] = "Absence - Laporan Ketidakhadiran Bulanan ({$company}) - ".str_replace('/', ' ', $tipe).'.pdf';
+                $reportDefinition['filename'] = "Absence - Laporan Ketidakhadiran Bulanan ({$company}) - " . str_replace('/', ' ', $tipe) . '.pdf';
             }
 
         } catch (RuntimeException $exception) {
@@ -391,7 +393,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$reportDefinition['filename'].'"',
+            'Content-Disposition' => 'inline; filename="' . $reportDefinition['filename'] . '"',
         ]);
     }
 
@@ -720,7 +722,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$this->sharedHrmEmployeeListFilename('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company).'"',
+            'Content-Disposition' => 'inline; filename="' . $this->sharedHrmEmployeeListFilename('Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk', $company) . '"',
         ]);
     }
 
@@ -805,7 +807,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$reportDefinition['filename'].'"',
+            'Content-Disposition' => 'inline; filename="' . $reportDefinition['filename'] . '"',
         ]);
     }
 
@@ -850,7 +852,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian ('.$company.') - '.$group.'.pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian (' . $company . ') - ' . $group . '.pdf"',
         ]);
     }
 
@@ -895,7 +897,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian ('.$company.') - '.$group.'.pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian (' . $company . ') - ' . $group . '.pdf"',
         ]);
     }
 
@@ -939,7 +941,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (' . $company . ').pdf"',
         ]);
     }
 
@@ -983,7 +985,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (' . $company . ').pdf"',
         ]);
     }
 
@@ -1027,7 +1029,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Individu ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Individu (' . $company . ').pdf"',
         ]);
     }
 
@@ -1071,7 +1073,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Stick ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Stick (' . $company . ').pdf"',
         ]);
     }
 
@@ -1115,7 +1117,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (' . $company . ').pdf"',
         ]);
     }
 
@@ -1159,7 +1161,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (' . $company . ').pdf"',
         ]);
     }
 
@@ -1203,7 +1205,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (' . $company . ').pdf"',
         ]);
     }
 
@@ -1247,7 +1249,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Bahan Baku ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Kehadiran Kru Bahan Baku (' . $company . ').pdf"',
         ]);
     }
 
@@ -1291,7 +1293,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (' . $company . ').pdf"',
         ]);
     }
 
@@ -1336,7 +1338,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Persentase Kehadiran Bulanan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Persentase Kehadiran Bulanan ' . str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')) . ' (' . $company . ').pdf"',
         ]);
     }
 
@@ -1381,7 +1383,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan ' . str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')) . ' (' . $company . ').pdf"',
         ]);
     }
 
@@ -1426,7 +1428,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ' . str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')) . ' (' . $company . ').pdf"',
         ]);
     }
 
@@ -1471,7 +1473,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual ' . str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')) . ' Per Departemen (' . $company . ').pdf"',
         ]);
     }
 
@@ -1519,7 +1521,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Late Sign In - Laporan Durasi & Denda Keterlambatan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Late Sign In - Laporan Durasi & Denda Keterlambatan ' . str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')) . ' Per Departemen (' . $company . ').pdf"',
         ]);
     }
 
@@ -1567,7 +1569,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Overtime - Laporan Lembur Bulanan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Overtime - Laporan Lembur Bulanan ' . str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')) . ' Per Departemen (' . $company . ').pdf"',
         ]);
     }
 
@@ -1611,7 +1613,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance - Laporan Perbandingan Kehadiran Per Bulan ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance - Laporan Perbandingan Kehadiran Per Bulan (' . $company . ').pdf"',
         ]);
     }
 
@@ -1655,7 +1657,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance - Laporan Keterlambatan Kehadiran Briefing Harian ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance - Laporan Keterlambatan Kehadiran Briefing Harian (' . $company . ').pdf"',
         ]);
     }
 
@@ -1698,7 +1700,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Holiday - Daftar Libur Dan Cuti Bersama ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Holiday - Daftar Libur Dan Cuti Bersama (' . $company . ').pdf"',
         ]);
     }
 
@@ -1741,7 +1743,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Other Income Deduction - Laporan Pendapatan Lain-Lain ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Other Income Deduction - Laporan Pendapatan Lain-Lain (' . $company . ').pdf"',
         ]);
     }
 
@@ -1785,7 +1787,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Warning Notice - Laporan Surat Peringatan ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Warning Notice - Laporan Surat Peringatan (' . $company . ').pdf"',
         ]);
     }
 
@@ -1809,7 +1811,7 @@ class AscendXmlTestController extends Controller
 
             $reportData['company'] = $company;
             $type = $reportData['type'];
-            $reportData['title'] = 'Laporan Loss Time ('.$type.')';
+            $reportData['title'] = 'Laporan Loss Time (' . $type . ')';
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -1830,7 +1832,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Loss Time - Laporan Loss Time '.$type.' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Loss Time - Laporan Loss Time ' . $type . ' (' . $company . ').pdf"',
         ]);
     }
 
@@ -1856,7 +1858,7 @@ class AscendXmlTestController extends Controller
 
             $reportData['company'] = $company;
             $divisi = $reportData['divisi'] ?? '';
-            $reportData['title'] = 'Laporan MPP Tahunan Per Divisi '.$divisi;
+            $reportData['title'] = 'Laporan MPP Tahunan Per Divisi ' . $divisi;
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -1877,7 +1879,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Employee List - Laporan MPP Tahunan Per Divisi '.$divisi.' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Employee List - Laporan MPP Tahunan Per Divisi ' . $divisi . ' (' . $company . ').pdf"',
         ]);
     }
 
@@ -1922,7 +1924,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Absence - Laporan Ketidakhadiran Bulanan ('.$company.') - '.str_replace('/', ' ', (string) ($reportData['tipe'] ?? 'KK/KT')).'.pdf"',
+            'Content-Disposition' => 'inline; filename="Absence - Laporan Ketidakhadiran Bulanan (' . $company . ') - ' . str_replace('/', ' ', (string) ($reportData['tipe'] ?? 'KK/KT')) . '.pdf"',
         ]);
     }
 
@@ -1968,7 +1970,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$this->sharedHrmEmployeeTerminationFilename('Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar', $company).'"',
+            'Content-Disposition' => 'inline; filename="' . $this->sharedHrmEmployeeTerminationFilename('Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar', $company) . '"',
         ]);
     }
 
@@ -2018,7 +2020,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Employee List - Laporan THR ('.$thrType.') ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Employee List - Laporan THR (' . $thrType . ') (' . $company . ').pdf"',
         ]);
     }
 
@@ -2061,7 +2063,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Penyesuaian Persediaan ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Penyesuaian Persediaan (' . $company . ').pdf"',
         ]);
     }
 
@@ -2104,7 +2106,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Lemari ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Lemari (' . $company . ').pdf"',
         ]);
     }
 
@@ -2144,7 +2146,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Selisih Kursi ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Selisih Kursi (' . $company . ').pdf"',
         ]);
     }
 
@@ -2184,7 +2186,87 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Selisih Lemari ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Selisih Lemari (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiRekapanValueSuratJalanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        RekapanValueSuratJalanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->penyesuaianPersediaanFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Rekapan Value Surat Jalan';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.goods_delivery_note.rekapan_value_surat_jalan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Goods Delivery Note - Laporan Rekapan Value Surat Jalan (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiPengirimanLemariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PengirimanLemariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->penyesuaianPersediaanFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Pengiriman Lemari';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.goods_delivery_note.pengiriman_lemari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Goods Delivery Note - Laporan Pengiriman Lemari (' . $company . ').pdf"',
         ]);
     }
 
@@ -2749,7 +2831,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$filename.'"',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
     }
 
@@ -2787,7 +2869,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$filename.'"',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
     }
 
@@ -2936,7 +3018,7 @@ class AscendXmlTestController extends Controller
 
     private function sharedHrmEmployeeListFilename(string $reportName, string $company): string
     {
-        return $this->sharedHrmEmployeeListTitle($reportName, $company).'.pdf';
+        return $this->sharedHrmEmployeeListTitle($reportName, $company) . '.pdf';
     }
 
     private function sharedHrmEmployeeTerminationTitle(string $reportName, string $company): string
@@ -2946,7 +3028,7 @@ class AscendXmlTestController extends Controller
 
     private function sharedHrmEmployeeTerminationFilename(string $reportName, string $company): string
     {
-        return $this->sharedHrmEmployeeTerminationTitle($reportName, $company).'.pdf';
+        return $this->sharedHrmEmployeeTerminationTitle($reportName, $company) . '.pdf';
     }
 
     /**
@@ -3265,7 +3347,7 @@ class AscendXmlTestController extends Controller
             }
         }
 
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeRequestKey($alias), $aliases);
+        $normalizedAliases = array_map(static fn(string $alias): string => self::normalizeRequestKey($alias), $aliases);
         foreach ($request->all() as $key => $value) {
             if (in_array(self::normalizeRequestKey((string) $key), $normalizedAliases, true)) {
                 $value = trim((string) $value);
