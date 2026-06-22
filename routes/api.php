@@ -554,6 +554,11 @@ Route::post(
     [AscendXmlTestController::class, 'apiGsuSuratJalanNormalPdf']
 )->name('api.internal.ascends.gsu.sales.surat-jalan.normal.pdf');
 
+Route::post(
+    '/internal/ascends/shared/analysis/adjustment-by-item/penyesuaian-persediaan/pdf',
+    [AscendXmlTestController::class, 'apiSharedAnalysisPenyesuaianPersediaanPdf']
+)->name('api.internal.ascends.shared.analysis.adjustment-by-item.penyesuaian-persediaan.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

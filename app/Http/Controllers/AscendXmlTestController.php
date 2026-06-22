@@ -45,6 +45,7 @@ use App\Services\Ascends\Ru\Hrm\SuratPeringatanReportService;
 use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
+use App\Services\Ascends\Shared\Analysis\PenyesuaianPersediaanReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
 use App\Services\Ascends\Shared\Hrm\MppTahunanPerDivisiGsuReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
@@ -2018,6 +2019,49 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedAnalysisPenyesuaianPersediaanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PenyesuaianPersediaanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->penyesuaianPersediaanFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Penyesuaian Persediaan';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.adjustment_by_item.penyesuaian_persediaan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Penyesuaian Persediaan ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiDaftarKaryawanBerdasarkanAbjadPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         DaftarKaryawanBerdasarkanAbjadReportService $reportService,
@@ -3059,6 +3103,33 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function penyesuaianPersediaanFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'AdjustmentDate.StartDate',
+                'AdjustmentDate.StartDatee',
+                'TglAwal',
+                'tgl_awal',
+                'date_start',
+                'DateStart',
+                'dari_tanggal',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'AdjustmentDate.EndDate',
+                'TglAkhir',
+                'tgl_akhir',
+                'date_end',
+                'DateEnd',
+                'sampai_tanggal',
+            ]),
+        ];
+    }
+
     private function requestInputByAliases(GenerateAscendsEmployeeListReportRequest $request, array $aliases): ?string
     {
         foreach ($aliases as $alias) {
@@ -3083,7 +3154,7 @@ class AscendXmlTestController extends Controller
 
     private static function normalizeRequestKey(string $key): string
     {
-        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
+        return strtolower(str_replace([' ', '_x0020_', '_x002e_', '_', '-', '.'], '', $key));
     }
 
     private function attendanceFullCategory(GenerateAscendsEmployeeListReportRequest $request): string

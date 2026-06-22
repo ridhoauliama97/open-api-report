@@ -111,6 +111,7 @@
             width: 40px;
             text-align: right;
         }
+
     </style>
 </head>
 
