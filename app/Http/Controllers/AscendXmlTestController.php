@@ -45,6 +45,7 @@ use App\Services\Ascends\Ru\Hrm\SuratPeringatanReportService;
 use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
+use App\Services\Ascends\Shared\Analysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\PenyesuaianPersediaanReportService;
@@ -2061,6 +2062,49 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Penyesuaian Persediaan ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiAdjustmentLemariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AdjustmentLemariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->penyesuaianPersediaanFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Adjustment Lemari';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.adjustment_by_item.adjustment.adjustment_lemari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Adjustment By Item - Laporan Adjustment Lemari ('.$company.').pdf"',
         ]);
     }
 

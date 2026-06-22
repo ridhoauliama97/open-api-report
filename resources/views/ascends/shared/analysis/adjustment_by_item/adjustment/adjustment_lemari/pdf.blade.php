@@ -98,10 +98,6 @@
             text-align: right;
         }
 
-        .center {
-            text-align: center;
-        }
-
         .nowrap {
             white-space: nowrap;
         }
@@ -116,6 +112,7 @@
 <body>
     @php
         $rows = $reportData['rows'] ?? [];
+        $headers = $reportData['headers'] ?? [];
         $printedAt = $reportData['printed_at'] ?? '';
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
             ->locale('id')->translatedFormat('d-M-y H:i');
@@ -129,54 +126,46 @@
     <h1 class="report-title">{{ $headerTitle }}</h1>
     <p class="report-subtitle">{{ $headerSubtitle }}</p>
 
-
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 5%">No</th>
-                <th style="width: 10%">Tanggal</th>
-                <th style="width: 43%">Nama</th>
-                <th style="width: 12%">Keterangan</th>
-                <th style="width: 10%">Jumlah</th>
-                <th style="width: 20%">Adjustment Value</th>
+                <th style="width: 4%">No</th>
+                <th style="width: 12%">No. Memo</th>
+                <th style="width: 15%">Customer</th>
+                <th style="width: 13%">Tanggal</th>
+                <th style="width: 26%">Nama Barang</th>
+                <th style="width: 7%">Jumlah</th>
+                <th style="width: 6%">UOM</th>
+                <th style="width: 16%">Adjustment Value</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($rows as $index => $row)
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $index + 1 }}</td>
-                    <td class="center nowrap">{{ $row['Tanggal'] ?? '' }}</td>
-                    <td>{{ $row['Nama'] ?? '' }}</td>
-                    <td>{{ $row['Keterangan'] ?? '' }}</td>
+                    <td class="center nowrap">{{ $row['No. Memo'] ?? '' }}</td>
+                    <td>{{ $row['Konsumen/Pelanggan'] ?? '' }}</td>
+                    <td class="center nowrap">{{ $row['Tanggal Penyesuaian'] ?? '' }}</td>
+                    <td>{{ $row['Nama Barang'] ?? '' }}</td>
                     <td class="number nowrap">{{ $row['Jumlah'] ?? '' }}</td>
-                    <td class="number nowrap">{{ $row['Nilai yang Disesuaikan'] ?? '0.00' }}</td>
+                    <td class="center">{{ $row['UOM'] ?? '' }}</td>
+                    <td class="number nowrap">{{ $row['Penyesuaian Nilai'] ?? '0.00' }}</td>
                 </tr>
             @empty
                 <tr class="empty-row">
-                    <td colspan="6">Tidak ada data.</td>
+                    <td colspan="8">Tidak ada data.</td>
                 </tr>
             @endforelse
             @if (!empty($rows))
-                @php
-                    $totalQty = (float) ($reportData['totals']['quantity'] ?? 0);
-                    $totalUoms = $reportData['totals']['uoms'] ?? [];
-                    if (count($totalUoms) === 1) {
-                        $totalQtyDisplay = number_format($totalQty, 0, '.', ',') . ' ' . array_key_first($totalUoms);
-                    } elseif (count($totalUoms) > 1) {
-                        $parts = [];
-                        foreach ($totalUoms as $uom => $qty) {
-                            $parts[] = number_format($qty, 0, '.', ',') . ' ' . $uom;
-                        }
-                        $totalQtyDisplay = implode(', ', $parts);
-                    } else {
-                        $totalQtyDisplay = number_format($totalQty, 0, '.', ',');
-                    }
-                @endphp
                 <tr class="total-row">
-                    <td colspan="4" class="center">Total</td>
-                    <td class="number nowrap">{{ $totalQtyDisplay }}</td>
+                    <td colspan="5" class="center">Total</td>
                     <td class="number nowrap">
-                        {{ number_format((float) ($reportData['totals']['adjusted_value'] ?? 0), 2, '.', ',') }}</td>
+                        {{ number_format((float) ($reportData['totals']['quantity'] ?? 0), 0, '.', ',') }}
+                    </td>
+                    <td></td>
+                    <td class="number nowrap">
+                        {{ number_format((float) ($reportData['totals']['adjusted_value'] ?? 0), 2, '.', ',') }}
+                    </td>
                 </tr>
             @endif
         </tbody>

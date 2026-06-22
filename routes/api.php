@@ -569,6 +569,11 @@ Route::post(
     [AscendXmlTestController::class, 'apiLemariAdjustmentPdf']
 )->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.khusus-lemari.pdf');
 
+Route::post(
+    '/internal/ascends/shared/analysis/adjustment-by-item/adjustment/adjustment-lemari/pdf',
+    [AscendXmlTestController::class, 'apiAdjustmentLemariPdf']
+)->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.adjustment-lemari.pdf');
+
 /**
  * Group route autentikasi API publik.
  */
