@@ -20,6 +20,14 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
 - Adjustment By Item - Laporan Penyesuaian Persediaan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/penyesuaian-persediaan/pdf`
 
+## Endpoint Shared Adjustment Kursi
+
+- Adjustment By Item - Laporan Adjustment Selisih Kursi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-kursi/pdf`
+
+## Endpoint Shared Adjustment Lemari
+
+- Adjustment By Item - Laporan Adjustment Selisih Lemari: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-lemari/pdf`
+
 ## Input
 
 Parameter field utama untuk semua endpoint Ascends Shared Analysis:
@@ -40,7 +48,7 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`:
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, dan `khusus-lemari`:
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
 - Alias tanggal yang diterima: `start_date` + `end_date`, `StartDate` + `EndDate`, `TglAwal` + `TglAkhir`, `date_start` + `date_end`, `dari_tanggal` + `sampai_tanggal`, dan `AdjustmentDate.StartDatee` (typo variant).
@@ -85,6 +93,8 @@ Contoh:
 
 - `Adjustment By Item - Laporan Penyesuaian Persediaan (GSU).pdf`
 - `Adjustment By Item - Laporan Penyesuaian Persediaan (RU).pdf`
+- `Adjustment By Item - Laporan Adjustment Selisih Kursi (GSU).pdf`
+- `Adjustment By Item - Laporan Adjustment Selisih Lemari (GSU).pdf`
 
 ## Response Gagal
 
@@ -95,5 +105,7 @@ Contoh:
 Template Blade shared Adjustment By Item berada di `resources/views/ascends/shared/analysis/adjustment_by_item`.
 
 - `adjustment_by_item/penyesuaian_persediaan`
+- `adjustment_by_item/adjustment/khusus_kursi`
+- `adjustment_by_item/adjustment/khusus_lemari`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

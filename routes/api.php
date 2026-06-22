@@ -559,6 +559,16 @@ Route::post(
     [AscendXmlTestController::class, 'apiSharedAnalysisPenyesuaianPersediaanPdf']
 )->name('api.internal.ascends.shared.analysis.adjustment-by-item.penyesuaian-persediaan.pdf');
 
+Route::post(
+    '/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-kursi/pdf',
+    [AscendXmlTestController::class, 'apiKursiAdjustmentPdf']
+)->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.khusus-kursi.pdf');
+
+Route::post(
+    '/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-lemari/pdf',
+    [AscendXmlTestController::class, 'apiLemariAdjustmentPdf']
+)->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.khusus-lemari.pdf');
+
 /**
  * Group route autentikasi API publik.
  */
