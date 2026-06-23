@@ -38,7 +38,7 @@ class PengirimanLemariReportService
             'title' => self::TITLE,
             'source_file' => $sourceLabel,
             'period_label' => $period !== null
-                ? 'Periode : ' . $period['start']->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $period['end']->locale('id')->translatedFormat('d-M-y')
+                ? 'Periode : '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y')
                 : '',
             'printed_at' => Carbon::now()->locale('id')->translatedFormat('d F Y H:i'),
             'printed_by' => $records['printed_by'],
@@ -51,7 +51,7 @@ class PengirimanLemariReportService
     {
         $reader = new XMLReader;
 
-        if (!@$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("XML tidak valid: {$sourceLabel}");
         }
 
@@ -65,7 +65,7 @@ class PengirimanLemariReportService
 
             $recordXml = $reader->readOuterXML();
 
-            if (!is_string($recordXml) || trim($recordXml) === '') {
+            if (! is_string($recordXml) || trim($recordXml) === '') {
                 continue;
             }
 
@@ -87,7 +87,7 @@ class PengirimanLemariReportService
             $itemName = trim((string) ($node->Item_x0020_Name ?? ''));
 
             if (
-                !str_contains($condName, 'GRANDE PLASTIK KABINET PK')
+                ! str_contains($condName, 'GRANDE PLASTIK KABINET PK')
                 || $condCode === ''
                 || $condCode === $itemCode
             ) {
@@ -128,7 +128,7 @@ class PengirimanLemariReportService
         foreach ($rows as $row) {
             $parentKey = $row['item_code'];
 
-            if (!isset($groups[$parentKey])) {
+            if (! isset($groups[$parentKey])) {
                 $groups[$parentKey] = [
                     'item_code' => $row['item_code'],
                     'item_name' => $row['item_name'],
@@ -138,7 +138,7 @@ class PengirimanLemariReportService
 
             $childKey = $row['cond_code'];
 
-            if (!isset($groups[$parentKey]['children'][$childKey])) {
+            if (! isset($groups[$parentKey]['children'][$childKey])) {
                 $groups[$parentKey]['children'][$childKey] = [
                     'cond_code' => $row['cond_code'],
                     'cond_name' => $row['cond_name'],
@@ -151,14 +151,14 @@ class PengirimanLemariReportService
 
         $groups = array_values($groups);
 
-        usort($groups, static fn(array $a, array $b): int => strcasecmp($a['item_name'], $b['item_name']));
+        usort($groups, static fn (array $a, array $b): int => strcasecmp($a['item_name'], $b['item_name']));
 
         foreach ($groups as &$group) {
             $group['children'] = array_values($group['children']);
 
-            usort($group['children'], static fn(array $a, array $b): int => strcasecmp($a['cond_name'], $b['cond_name']));
+            usort($group['children'], static fn (array $a, array $b): int => strcasecmp($a['cond_name'], $b['cond_name']));
 
-            $group['subtotal_qty'] = array_sum(array_map(static fn(array $child): float => $child['qty'], $group['children']));
+            $group['subtotal_qty'] = array_sum(array_map(static fn (array $child): float => $child['qty'], $group['children']));
         }
         unset($group);
 
@@ -209,7 +209,7 @@ class PengirimanLemariReportService
     private static function resolvePeriodFromRows(array $rows): ?array
     {
         $dates = array_values(array_filter(array_map(
-            static fn(array $row): ?Carbon => $row['gdn_date'] ?? null,
+            static fn (array $row): ?Carbon => $row['gdn_date'] ?? null,
             $rows,
         )));
 
@@ -217,7 +217,7 @@ class PengirimanLemariReportService
             return null;
         }
 
-        usort($dates, static fn(Carbon $left, Carbon $right): int => $left <=> $right);
+        usort($dates, static fn (Carbon $left, Carbon $right): int => $left <=> $right);
 
         return [
             'start' => $dates[0]->copy()->startOfDay(),

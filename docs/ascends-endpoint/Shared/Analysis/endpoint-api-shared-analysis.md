@@ -27,7 +27,11 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Goods Delivery Note
 
 - Goods Delivery Note - Laporan Rekapan Value Surat Jalan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/rekapan-value-surat-jalan/pdf`
-- Laporan Pengiriman Lemari: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/pengiriman-lemari/pdf`
+- Goods Delivery Note - Laporan Pengiriman Lemari: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/pengiriman-lemari/pdf`
+
+## Endpoint Shared Outstanding Undelivery Goods
+
+- Outstanding Undelivery Goods - Laporan List DO Belum Terkirim: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/outstanding-undelivery-goods/list-do-belum-terkirim/pdf`
 
 ## Input
 
@@ -49,11 +53,16 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, dan `pengiriman-lemari`:
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, dan `list-do-belum-terkirim`:
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
 - Alias tanggal yang diterima: `start_date` + `end_date`, `StartDate` + `EndDate`, `TglAwal` + `TglAkhir`, `date_start` + `date_end`, `dari_tanggal` + `sampai_tanggal`, dan `AdjustmentDate.StartDatee` (typo variant).
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di data XML.
+
+Input tambahan khusus `list-do-belum-terkirim`:
+
+- `PerDate`: tanggal filter untuk menentukan status DO per tanggal tertentu, contoh `2026-05-31`.
+- Alias yang diterima: `per_date`, `PerDate`, `Per Date`, `perDate`, `tgl_per`, `TglPer`.
 
 Contoh `multipart/form-data`:
 
@@ -99,6 +108,7 @@ Contoh:
 - `Adjustment By Item - Laporan Adjustment Lemari (GSU).pdf`
 - `Goods Delivery Note - Laporan Rekapan Value Surat Jalan (GSU).pdf`
 - `Laporan Pengiriman Lemari (GSU).pdf`
+- `Laporan List DO Belum Terkirim (GSU).pdf`
 
 ## Response Gagal
 
@@ -114,5 +124,6 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `adjustment_by_item/adjustment/adjustment_lemari`
 - `goods_delivery_note/rekapan_value_surat_jalan`
 - `goods_delivery_note/pengiriman_lemari`
+- `outstanding_undelivery_goods/list_do_belum_terkirim`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

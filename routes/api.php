@@ -582,8 +582,14 @@ Route::post(
     '/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/pengiriman-lemari/pdf',
     [AscendXmlTestController::class, 'apiPengirimanLemariPdf']
 )->name('api.internal.ascends.shared.analysis.adjustment-by-item.goods-delivery-note.pengiriman-lemari.pdf');
-
-
+Route::post(
+    '/internal/ascends/shared/analysis/outstanding-undelivery-goods/list-do-belum-terkirim/pdf',
+    [AscendXmlTestController::class, 'apiListDOBelumTerkirimPdf']
+)->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.list-do-belum-terkirim.pdf');
+Route::post(
+    '/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-customer-belum-terkirim/pdf',
+    [AscendXmlTestController::class, 'apiDOCustomerBelumTerkirimPdf']
+)->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.do-customer-belum-terkirim.pdf');
 
 /**
  * Group route autentikasi API publik.
