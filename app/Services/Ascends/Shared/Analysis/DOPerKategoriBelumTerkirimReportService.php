@@ -7,9 +7,9 @@ use RuntimeException;
 use Throwable;
 use XMLReader;
 
-class DOCustomerBelumTerkirimReportService
+class DOPerKategoriBelumTerkirimReportService
 {
-    private const TITLE = 'Laporan DO Customer Belum Terkirim';
+    private const TITLE = 'Laporan DO Per Kategori Belum Terkirim';
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
@@ -21,7 +21,7 @@ class DOCustomerBelumTerkirimReportService
         $allRows = $records['rows'];
 
         if ($allRows === []) {
-            throw new RuntimeException('Data DO Customer tidak ditemukan setelah filter.');
+            throw new RuntimeException('Data DO Per Kategori tidak ditemukan setelah filter.');
         }
 
         $groupedRows = $this->groupRows($allRows);
@@ -67,8 +67,6 @@ class DOCustomerBelumTerkirimReportService
                 continue;
             }
 
-            $invoiceNumber = trim((string) ($node->Invoice_x0020_Number ?? ''));
-            $invoiceType = trim((string) ($node->Invoice_x0020_Type ?? ''));
             $invoiceDate = self::parseDate((string) ($node->Invoice_x0020_Date ?? ''));
             $itemName = trim((string) ($node->Item_x0020_Name ?? ''));
             $itemCode = trim((string) ($node->Item_x0020_Code ?? ''));
@@ -93,6 +91,7 @@ class DOCustomerBelumTerkirimReportService
                 continue;
             }
 
+            $invoiceType = trim((string) ($node->Invoice_x0020_Type ?? ''));
             if (! str_starts_with($invoiceType, 'DO')) {
                 continue;
             }
@@ -110,22 +109,20 @@ class DOCustomerBelumTerkirimReportService
             $rawRows[] = [
                 'sales_person' => $salesPerson,
                 'customer' => $customerName,
-                'invoice_date' => $invoiceDate,
-                'item_code' => $itemCode,
                 'item_name' => $itemName,
+                'invoice_date' => $invoiceDate,
                 'qty_purchased' => $qtyPurchased,
                 'qty_outstanding' => $qtyOutstanding,
                 'qty_delivered' => $qtyDelivered,
                 'uom' => $uom,
                 'days' => $days,
-                'familiname' => $familiname,
             ];
         }
 
         $reader->close();
 
         if ($rawRows === []) {
-            throw new RuntimeException('Data DO Customer tidak ditemukan di XML.');
+            throw new RuntimeException('Data DO Per Kategori tidak ditemukan di XML.');
         }
 
         return [
@@ -182,70 +179,36 @@ class DOCustomerBelumTerkirimReportService
         $groups = [];
 
         foreach ($rows as $row) {
-            $salesKey = $row['sales_person'] !== '' ? $row['sales_person'] : '(tanpa sales)';
-            $customerKey = $row['customer'] !== '' ? $row['customer'] : '(tanpa customer)';
-            $detailKey = $row['item_code'];
+            $itemKey = $row['item_name'] !== '' ? $row['item_name'] : '(tanpa nama)';
 
-            if (! isset($groups[$salesKey])) {
-                $groups[$salesKey] = [
-                    'sales_person' => $row['sales_person'],
-                    'customers' => [],
-                    'sales_total_purchased' => 0,
-                    'sales_total_outstanding' => 0,
-                    'sales_total_delivered' => 0,
-                ];
-            }
-
-            if (! isset($groups[$salesKey]['customers'][$customerKey])) {
-                $groups[$salesKey]['customers'][$customerKey] = [
-                    'customer' => $row['customer'],
-                    'rows' => [],
-                    'customer_total_purchased' => 0,
-                    'customer_total_outstanding' => 0,
-                    'customer_total_delivered' => 0,
-                ];
-            }
-
-            if (! isset($groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey])) {
-                $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey] = [
-                    'item_code' => $row['item_code'],
+            if (! isset($groups[$itemKey])) {
+                $groups[$itemKey] = [
                     'item_name' => $row['item_name'],
-                    'invoice_date' => $row['invoice_date'],
-                    'qty_purchased' => 0,
-                    'qty_outstanding' => 0,
-                    'qty_delivered' => 0,
-                    'uom' => $row['uom'],
-                    'days' => $row['days'],
+                    'rows' => [],
+                    'total_purchased' => 0,
+                    'total_outstanding' => 0,
+                    'total_delivered' => 0,
                 ];
             }
 
-            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey]['qty_purchased'] += $row['qty_purchased'];
-            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey]['qty_outstanding'] += $row['qty_outstanding'];
-            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey]['qty_delivered'] += $row['qty_delivered'];
-
-            $groups[$salesKey]['customers'][$customerKey]['customer_total_purchased'] += $row['qty_purchased'];
-            $groups[$salesKey]['customers'][$customerKey]['customer_total_outstanding'] += $row['qty_outstanding'];
-            $groups[$salesKey]['customers'][$customerKey]['customer_total_delivered'] += $row['qty_delivered'];
-
-            $groups[$salesKey]['sales_total_purchased'] += $row['qty_purchased'];
-            $groups[$salesKey]['sales_total_outstanding'] += $row['qty_outstanding'];
-            $groups[$salesKey]['sales_total_delivered'] += $row['qty_delivered'];
+            $groups[$itemKey]['rows'][] = $row;
+            $groups[$itemKey]['total_purchased'] += $row['qty_purchased'];
+            $groups[$itemKey]['total_outstanding'] += $row['qty_outstanding'];
+            $groups[$itemKey]['total_delivered'] += $row['qty_delivered'];
         }
 
-        ksort($groups);
+        uksort($groups, static fn (string $a, string $b): int => strcasecmp($a, $b));
 
-        foreach ($groups as $salesKey => &$salesGroup) {
-            ksort($salesGroup['customers']);
-
-            foreach ($salesGroup['customers'] as $customerKey => &$customerGroup) {
-                uasort($customerGroup['rows'], static fn (array $a, array $b): int => strcasecmp($a['item_name'], $b['item_name']));
-                $customerGroup['rows'] = array_values($customerGroup['rows']);
-            }
-
-            $salesGroup['customers'] = array_values($salesGroup['customers']);
+        foreach ($groups as &$group) {
+            $this->sortDetailRows($group['rows']);
         }
 
         return array_values($groups);
+    }
+
+    private function sortDetailRows(array &$rows): void
+    {
+        usort($rows, static fn (array $a, array $b): int => $b['days'] <=> $a['days']);
     }
 
     private function computeGrandTotals(array $groups): array
@@ -255,9 +218,9 @@ class DOCustomerBelumTerkirimReportService
         $grandDelivered = 0;
 
         foreach ($groups as $group) {
-            $grandPurchased += $group['sales_total_purchased'];
-            $grandOutstanding += $group['sales_total_outstanding'];
-            $grandDelivered += $group['sales_total_delivered'];
+            $grandPurchased += $group['total_purchased'];
+            $grandOutstanding += $group['total_outstanding'];
+            $grandDelivered += $group['total_delivered'];
         }
 
         return [

@@ -47,6 +47,8 @@ use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
 use App\Services\Ascends\Shared\Analysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\Analysis\DOCustomerBelumTerkirimReportService;
+use App\Services\Ascends\Shared\Analysis\DOLemariBelumTerkirimReportService;
+use App\Services\Ascends\Shared\Analysis\DOPerKategoriBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\ListDOBelumTerkirimReportService;
@@ -2352,6 +2354,86 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiDOLemariBelumTerkirimPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DOLemariBelumTerkirimReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->doLemariBelumTerkirimFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan DO Lemari Belum Terkirim';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.outstanding_undelivery_goods.do_lemari_belum_terkirim.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Outstanding Undelivery Goods - Laporan DO Lemari Belum Terkirim ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiDOPerKategoriBelumTerkirimPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DOPerKategoriBelumTerkirimReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->doPerKategoriBelumTerkirimFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan DO Per Kategori Belum Terkirim';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.outstanding_undelivery_goods.do_per_kategori_belum_terkirim.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Outstanding Undelivery Goods - Laporan DO Per Kategori Belum Terkirim ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiDaftarKaryawanBerdasarkanAbjadPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         DaftarKaryawanBerdasarkanAbjadReportService $reportService,
@@ -3435,6 +3517,34 @@ class AscendXmlTestController extends Controller
     }
 
     private function doCustomerBelumTerkirimFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'per_date' => $this->requestInputByAliases($request, [
+                'per_date',
+                'PerDate',
+                'Per Date',
+                'perDate',
+                'tgl_per',
+                'TglPer',
+            ]),
+        ];
+    }
+
+    private function doLemariBelumTerkirimFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'per_date' => $this->requestInputByAliases($request, [
+                'per_date',
+                'PerDate',
+                'Per Date',
+                'perDate',
+                'tgl_per',
+                'TglPer',
+            ]),
+        ];
+    }
+
+    private function doPerKategoriBelumTerkirimFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
             'per_date' => $this->requestInputByAliases($request, [

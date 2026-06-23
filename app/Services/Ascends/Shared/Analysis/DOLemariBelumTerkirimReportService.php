@@ -7,9 +7,9 @@ use RuntimeException;
 use Throwable;
 use XMLReader;
 
-class DOCustomerBelumTerkirimReportService
+class DOLemariBelumTerkirimReportService
 {
-    private const TITLE = 'Laporan DO Customer Belum Terkirim';
+    private const TITLE = 'Laporan DO Lemari Belum Terkirim';
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
@@ -21,7 +21,7 @@ class DOCustomerBelumTerkirimReportService
         $allRows = $records['rows'];
 
         if ($allRows === []) {
-            throw new RuntimeException('Data DO Customer tidak ditemukan setelah filter.');
+            throw new RuntimeException('Data DO Lemari tidak ditemukan setelah filter.');
         }
 
         $groupedRows = $this->groupRows($allRows);
@@ -67,13 +67,11 @@ class DOCustomerBelumTerkirimReportService
                 continue;
             }
 
-            $invoiceNumber = trim((string) ($node->Invoice_x0020_Number ?? ''));
-            $invoiceType = trim((string) ($node->Invoice_x0020_Type ?? ''));
             $invoiceDate = self::parseDate((string) ($node->Invoice_x0020_Date ?? ''));
             $itemName = trim((string) ($node->Item_x0020_Name ?? ''));
-            $itemCode = trim((string) ($node->Item_x0020_Code ?? ''));
             $customerName = trim((string) ($node->Customer_x0020_Name ?? ''));
             $salesPerson = trim((string) ($node->SalesPerson_x0020_Name ?? ''));
+            $family = trim((string) ($node->Item_x0020_Family ?? ''));
 
             if ($invoiceDate === null) {
                 continue;
@@ -83,16 +81,20 @@ class DOCustomerBelumTerkirimReportService
                 continue;
             }
 
+            if (! str_starts_with($family, 'PLASTIK KABINET 1') && ! str_starts_with($family, 'PLASTIK KABINET 2')) {
+                continue;
+            }
+
             $promo = $this->resolvePromo($itemName);
             if ($promo !== 'TAMPIL') {
                 continue;
             }
 
-            $familiname = $this->resolveFamiliname($itemCode);
-            if ($familiname === 'NULL') {
+            if (str_contains($itemName, 'HANGER')) {
                 continue;
             }
 
+            $invoiceType = trim((string) ($node->Invoice_x0020_Type ?? ''));
             if (! str_starts_with($invoiceType, 'DO')) {
                 continue;
             }
@@ -111,21 +113,19 @@ class DOCustomerBelumTerkirimReportService
                 'sales_person' => $salesPerson,
                 'customer' => $customerName,
                 'invoice_date' => $invoiceDate,
-                'item_code' => $itemCode,
                 'item_name' => $itemName,
                 'qty_purchased' => $qtyPurchased,
                 'qty_outstanding' => $qtyOutstanding,
                 'qty_delivered' => $qtyDelivered,
                 'uom' => $uom,
                 'days' => $days,
-                'familiname' => $familiname,
             ];
         }
 
         $reader->close();
 
         if ($rawRows === []) {
-            throw new RuntimeException('Data DO Customer tidak ditemukan di XML.');
+            throw new RuntimeException('Data DO Lemari tidak ditemukan di XML.');
         }
 
         return [
@@ -143,40 +143,6 @@ class DOCustomerBelumTerkirimReportService
         return 'TAMPIL';
     }
 
-    private function resolveFamiliname(string $itemCode): string
-    {
-        if (
-            str_contains($itemCode, '2.1.3.1.01')
-            || str_contains($itemCode, '2.1.3.1.02')
-            || str_contains($itemCode, '2.1.3.1.04')
-        ) {
-            return 'PF1';
-        }
-
-        if (
-            str_contains($itemCode, '2.1.3.1.03')
-            || str_contains($itemCode, '2.1.3.2.03')
-            || str_contains($itemCode, '2.1.3.2.02')
-            || str_contains($itemCode, '2.1.1.3.12')
-        ) {
-            return 'PF2';
-        }
-
-        if (str_contains($itemCode, '2.1.5.1.')) {
-            return 'ENAMEL';
-        }
-
-        if (str_contains($itemCode, '2.1.5.9.11')) {
-            return 'FL';
-        }
-
-        if (str_contains($itemCode, '2.1.3.4.')) {
-            return 'PKAB';
-        }
-
-        return 'NULL';
-    }
-
     private function groupRows(array $rows): array
     {
         $groups = [];
@@ -184,7 +150,7 @@ class DOCustomerBelumTerkirimReportService
         foreach ($rows as $row) {
             $salesKey = $row['sales_person'] !== '' ? $row['sales_person'] : '(tanpa sales)';
             $customerKey = $row['customer'] !== '' ? $row['customer'] : '(tanpa customer)';
-            $detailKey = $row['item_code'];
+            $detailKey = $row['item_name'];
 
             if (! isset($groups[$salesKey])) {
                 $groups[$salesKey] = [
@@ -208,7 +174,6 @@ class DOCustomerBelumTerkirimReportService
 
             if (! isset($groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey])) {
                 $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey] = [
-                    'item_code' => $row['item_code'],
                     'item_name' => $row['item_name'],
                     'invoice_date' => $row['invoice_date'],
                     'qty_purchased' => 0,
