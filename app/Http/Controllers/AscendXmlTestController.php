@@ -51,6 +51,8 @@ use App\Services\Ascends\Shared\Analysis\DOLemariBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\DOPerKategoriBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
+use App\Services\Ascends\Shared\Analysis\KhususPlastikKabinetReportService;
+use App\Services\Ascends\Shared\Analysis\LaporanHppDanStockReportService;
 use App\Services\Ascends\Shared\Analysis\ListDOBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\PengirimanLemariReportService;
 use App\Services\Ascends\Shared\Analysis\PenyesuaianPersediaanReportService;
@@ -2434,6 +2436,86 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiLaporanHppDanStockPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        LaporanHppDanStockReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->laporanHppDanStockFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan HPP Dan Stock';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.laporan_hpp_dan_stock.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Stock Activities Summary - Laporan HPP Dan Stock ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiKhususPlastikKabinetPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        KhususPlastikKabinetReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->khususPlastikKabinetFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Khusus Plastik Kabinet';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.khusus_plastik_kabinet.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Stock Activities Summary - Laporan Khusus Plastik Kabinet ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiDaftarKaryawanBerdasarkanAbjadPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         DaftarKaryawanBerdasarkanAbjadReportService $reportService,
@@ -3554,6 +3636,50 @@ class AscendXmlTestController extends Controller
                 'perDate',
                 'tgl_per',
                 'TglPer',
+            ]),
+        ];
+    }
+
+    private function laporanHppDanStockFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'DateRange.StartDate',
+                'DateRange_StartDate',
+                'DateRange_x0020_StartDate',
+                'DateRange.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'DateRange.EndDate',
+                'DateRange_EndDate',
+                'DateRange_x0020_EndDate',
+                'DateRange.End Date',
+            ]),
+        ];
+    }
+
+    private function khususPlastikKabinetFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'DateRange.StartDate',
+                'DateRange_StartDate',
+                'DateRange_x0020_StartDate',
+                'DateRange.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'DateRange.EndDate',
+                'DateRange_EndDate',
+                'DateRange_x0020_EndDate',
+                'DateRange.End Date',
             ]),
         ];
     }

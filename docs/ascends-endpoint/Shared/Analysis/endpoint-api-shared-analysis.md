@@ -32,6 +32,14 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Outstanding Undelivery Goods
 
 - Outstanding Undelivery Goods - Laporan List DO Belum Terkirim: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/outstanding-undelivery-goods/list-do-belum-terkirim/pdf`
+- Outstanding Undelivery Goods - Laporan DO Customer Belum Terkirim: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-customer-belum-terkirim/pdf`
+- Outstanding Undelivery Goods - Laporan DO Lemari Belum Terkirim: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-lemari-belum-terkirim/pdf`
+- Outstanding Undelivery Goods - Laporan DO Per Kategori Belum Terkirim: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-per-kategori-belum-terkirim/pdf`
+
+## Endpoint Shared Stock Activities Summary
+
+- Stock Activities Summary - Laporan HPP Dan Stock: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/stock-activities-summary/laporan-hpp-dan-stock/pdf`
+- Stock Activities Summary - Laporan Khusus Plastik Kabinet: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/stock-activities-summary/khusus-plastik-kabinet/pdf`
 
 ## Input
 
@@ -53,18 +61,19 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, dan `list-do-belum-terkirim`:
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, dan `khusus-plastik-kabinet`:
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
+- `DateRange.StartDate` + `DateRange.EndDate`: tanggal range label untuk laporan Stock Activities Summary (HPP Dan Stock, Khusus Plastik Kabinet), contoh `2026-06-01` sampai `2026-06-23`.
 - Alias tanggal yang diterima: `start_date` + `end_date`, `StartDate` + `EndDate`, `TglAwal` + `TglAkhir`, `date_start` + `date_end`, `dari_tanggal` + `sampai_tanggal`, dan `AdjustmentDate.StartDatee` (typo variant).
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di data XML.
 
-Input tambahan khusus `list-do-belum-terkirim`:
+Input tambahan khusus `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, dan `do-per-kategori-belum-terkirim`:
 
 - `PerDate`: tanggal filter untuk menentukan status DO per tanggal tertentu, contoh `2026-05-31`.
 - Alias yang diterima: `per_date`, `PerDate`, `Per Date`, `perDate`, `tgl_per`, `TglPer`.
 
-Contoh `multipart/form-data`:
+Contoh `multipart/form-data` (Adjustment By Item):
 
 ```text
 DB_CompanyName=GSU
@@ -72,6 +81,16 @@ Sys_Username=Ridho
 AdjustmentDate.StartDate=2026-05-10
 AdjustmentDate.EndDate=2026-05-31
 xml_file=AnlReports.Inventory.AdjustmentByItem.xml
+```
+
+Contoh `multipart/form-data` (Stock Activities Summary):
+
+```text
+DB_CompanyName=GSU
+Sys_Username=Ridho
+DateRange.StartDate=2026-06-01
+DateRange.EndDate=2026-06-23
+xml_file=AnlReports.Inventory.StockActivitiesSummary.xml
 ```
 
 Contoh tanpa parameter tanggal (periode otomatis dari data):
@@ -109,6 +128,11 @@ Contoh:
 - `Goods Delivery Note - Laporan Rekapan Value Surat Jalan (GSU).pdf`
 - `Laporan Pengiriman Lemari (GSU).pdf`
 - `Laporan List DO Belum Terkirim (GSU).pdf`
+- `Outstanding Undelivery Goods - Laporan DO Customer Belum Terkirim (GSU).pdf`
+- `Outstanding Undelivery Goods - Laporan DO Lemari Belum Terkirim (GSU).pdf`
+- `Outstanding Undelivery Goods - Laporan DO Per Kategori Belum Terkirim (GSU).pdf`
+- `Stock Activities Summary - Laporan HPP Dan Stock (GSU).pdf`
+- `Stock Activities Summary - Laporan Khusus Plastik Kabinet (GSU).pdf`
 
 ## Response Gagal
 
@@ -125,5 +149,10 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `goods_delivery_note/rekapan_value_surat_jalan`
 - `goods_delivery_note/pengiriman_lemari`
 - `outstanding_undelivery_goods/list_do_belum_terkirim`
+- `outstanding_undelivery_goods/do_customer_belum_terkirim`
+- `outstanding_undelivery_goods/do_lemari_belum_terkirim`
+- `outstanding_undelivery_goods/do_per_kategori_belum_terkirim`
+- `stock_activities_summary/laporan_hpp_dan_stock`
+- `stock_activities_summary/khusus_plastik_kabinet`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

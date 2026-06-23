@@ -599,6 +599,16 @@ Route::post(
     [AscendXmlTestController::class, 'apiDOPerKategoriBelumTerkirimPdf']
 )->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.do-per-kategori-belum-terkirim.pdf');
 
+Route::post(
+    '/internal/ascends/shared/analysis/stock-activities-summary/laporan-hpp-dan-stock/pdf',
+    [AscendXmlTestController::class, 'apiLaporanHppDanStockPdf']
+)->name('api.internal.ascends.shared.analysis.stock-activities-summary.laporan-hpp-dan-stock.pdf');
+
+Route::post(
+    '/internal/ascends/shared/analysis/stock-activities-summary/khusus-plastik-kabinet/pdf',
+    [AscendXmlTestController::class, 'apiKhususPlastikKabinetPdf']
+)->name('api.internal.ascends.shared.analysis.stock-activities-summary.khusus-plastik-kabinet.pdf');
+
 /**
  * Group route autentikasi API publik.
  */
