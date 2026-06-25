@@ -65,6 +65,7 @@ use App\Services\Ascends\Shared\Hrm\ThrReportService;
 use App\Services\Ascends\Shared\Production\HasilBrokerPerHariReportService;
 use App\Services\Ascends\Shared\Production\HasilBrokerPerKategoriReportService;
 use App\Services\Ascends\Shared\Production\HasilBrokerPerMesinReportService;
+use App\Services\Ascends\Shared\Production\HasilCuciPerHariReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
@@ -2718,6 +2719,46 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Production - Laporan Hasil Broker Per Mesin ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiHasilCuciPerHariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        HasilCuciPerHariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->hasilBrokerPerHariFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Harian Hasil Cuci';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_cuci_per_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Production - Laporan Harian Hasil Cuci ('.$company.').pdf"',
         ]);
     }
 

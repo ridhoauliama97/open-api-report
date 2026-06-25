@@ -634,6 +634,11 @@ Route::post(
     [AscendXmlTestController::class, 'apiHasilBrokerPerMesinPdf']
 )->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-mesin.pdf');
 
+Route::post(
+    '/internal/ascends/shared/analysis/production/hasil-cuci-per-hari/pdf',
+    [AscendXmlTestController::class, 'apiHasilCuciPerHariPdf']
+)->name('api.internal.ascends.shared.analysis.production.hasil-cuci-per-hari.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

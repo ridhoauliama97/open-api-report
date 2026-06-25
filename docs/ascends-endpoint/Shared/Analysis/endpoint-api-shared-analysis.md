@@ -47,6 +47,8 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
 - Production - Laporan Harian Hasil Broker: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production/hasil-broker-per-hari/pdf`
 - Production - Laporan Hasil Broker Per Kategori: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production/hasil-broker-per-kategori/pdf`
+- Production - Laporan Hasil Broker Per Mesin: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production/hasil-broker-per-mesin/pdf`
+- Production - Laporan Harian Hasil Cuci: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production/hasil-cuci-per-hari/pdf`
 
 ## Input
 
@@ -68,7 +70,7 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, `khusus-plastik-kabinet`, `aktifitas-stock-gsu`, `aktifitas-stock-gsu-per-gudang`, `hasil-broker-per-hari`, dan `hasil-broker-per-kategori` (dan Stock Activities Summary lainnya):
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, `khusus-plastik-kabinet`, `aktifitas-stock-gsu`, `aktifitas-stock-gsu-per-gudang`, `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, dan `hasil-cuci-per-hari` (dan Stock Activities Summary lainnya):
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
 - `DateRange.StartDate` + `DateRange.EndDate`: tanggal range label untuk laporan Stock Activities Summary (HPP Dan Stock, Khusus Plastik Kabinet, Ringkasan Valuasi Persediaan, Ringkasan Valuasi Persediaan Per Gudang), contoh `2026-06-01` sampai `2026-06-23`.
@@ -113,7 +115,7 @@ xml_file=AnlReports.Inventory.AdjustmentByItem.xml
 
 - `200 application/pdf`
 - `Content-Disposition: inline` (semua endpoint kecuali production)
-- `Content-Disposition: attachment` (khusus `hasil-broker-per-hari` dan `hasil-broker-per-kategori`)
+- `Content-Disposition: attachment` (khusus `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, dan `hasil-cuci-per-hari`)
 
 Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori. Nilai `{company}` berasal dari parameter `DB_CompanyName`, atau fallback field form `company` jika parameter tersebut tidak ada:
 
@@ -146,6 +148,8 @@ Contoh:
 - `Stock Activities Summary - Ringkasan Valuasi Persediaan Per Gudang (GSU).pdf`
 - `Production - Laporan Harian Hasil Broker (GSU).pdf`
 - `Production - Laporan Hasil Broker Per Kategori (GSU).pdf`
+- `Production - Laporan Hasil Broker Per Mesin (GSU).pdf`
+- `Production - Laporan Harian Hasil Cuci (GSU).pdf`
 
 ## Response Gagal
 
@@ -171,5 +175,7 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `stock_activities_summary/aktifitas_stock_gsu_per_gudang`
 - `production/hasil_broker_per_hari`
 - `production/hasil_broker_per_kategori`
+- `production/hasil_broker_per_mesin`
+- `production/hasil_cuci_per_hari`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.
