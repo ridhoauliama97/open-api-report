@@ -609,6 +609,31 @@ Route::post(
     [AscendXmlTestController::class, 'apiKhususPlastikKabinetPdf']
 )->name('api.internal.ascends.shared.analysis.stock-activities-summary.khusus-plastik-kabinet.pdf');
 
+Route::post(
+    '/internal/ascends/shared/analysis/stock-activities-summary/aktifitas-stock-gsu/pdf',
+    [AscendXmlTestController::class, 'apiAktifitasStockGsuPdf']
+)->name('api.internal.ascends.shared.analysis.stock-activities-summary.aktifitas-stock-gsu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/analysis/stock-activities-summary/aktifitas-stock-gsu-per-gudang/pdf',
+    [AscendXmlTestController::class, 'apiAktifitasStockGsuPerGudangPdf']
+)->name('api.internal.ascends.shared.analysis.stock-activities-summary.aktifitas-stock-gsu-per-gudang.pdf');
+
+Route::post(
+    '/internal/ascends/shared/analysis/production/hasil-broker-per-hari/pdf',
+    [AscendXmlTestController::class, 'apiHasilBrokerPerHariPdf']
+)->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-hari.pdf');
+
+Route::post(
+    '/internal/ascends/shared/analysis/production/hasil-broker-per-kategori/pdf',
+    [AscendXmlTestController::class, 'apiHasilBrokerPerKategoriPdf']
+)->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-kategori.pdf');
+
+Route::post(
+    '/internal/ascends/shared/analysis/production/hasil-broker-per-mesin/pdf',
+    [AscendXmlTestController::class, 'apiHasilBrokerPerMesinPdf']
+)->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-mesin.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

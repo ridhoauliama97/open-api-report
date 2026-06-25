@@ -46,13 +46,15 @@ use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
 use App\Services\Ascends\Shared\Analysis\AdjustmentLemariReportService;
+use App\Services\Ascends\Shared\Analysis\AktifitasStockGsuPerGudangReportService;
+use App\Services\Ascends\Shared\Analysis\AktifitasStockGsuReportService;
 use App\Services\Ascends\Shared\Analysis\DOCustomerBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\DOLemariBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\DOPerKategoriBelumTerkirimReportService;
-use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
-use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\KhususPlastikKabinetReportService;
+use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\LaporanHppDanStockReportService;
+use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
 use App\Services\Ascends\Shared\Analysis\ListDOBelumTerkirimReportService;
 use App\Services\Ascends\Shared\Analysis\PengirimanLemariReportService;
 use App\Services\Ascends\Shared\Analysis\PenyesuaianPersediaanReportService;
@@ -60,6 +62,9 @@ use App\Services\Ascends\Shared\Analysis\RekapanValueSuratJalanReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
 use App\Services\Ascends\Shared\Hrm\MppTahunanPerDivisiGsuReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
+use App\Services\Ascends\Shared\Production\HasilBrokerPerHariReportService;
+use App\Services\Ascends\Shared\Production\HasilBrokerPerKategoriReportService;
+use App\Services\Ascends\Shared\Production\HasilBrokerPerMesinReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
@@ -2516,6 +2521,206 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiAktifitasStockGsuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AktifitasStockGsuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->aktifitasStockGsuFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Ringkasan Valuasi Persediaan';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.aktifitas_stock_gsu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Stock Activities Summary - Ringkasan Valuasi Persediaan ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiAktifitasStockGsuPerGudangPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AktifitasStockGsuPerGudangReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->aktifitasStockGsuPerGudangFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Ringkasan Valuasi Persediaan Per Gudang';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.aktifitas_stock_gsu_per_gudang.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Stock Activities Summary - Ringkasan Valuasi Persediaan Per Gudang ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiHasilBrokerPerHariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        HasilBrokerPerHariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->hasilBrokerPerHariFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Harian Hasil Broker';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_broker_per_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Production - Laporan Harian Hasil Broker ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiHasilBrokerPerKategoriPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        HasilBrokerPerKategoriReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->hasilBrokerPerHariFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Hasil Broker Per Kategori';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_broker_per_kategori.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Production - Laporan Hasil Broker Per Kategori ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiHasilBrokerPerMesinPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        HasilBrokerPerMesinReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->hasilBrokerPerHariFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Hasil Broker Per Mesin';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_broker_per_mesin.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Production - Laporan Hasil Broker Per Mesin ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiDaftarKaryawanBerdasarkanAbjadPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         DaftarKaryawanBerdasarkanAbjadReportService $reportService,
@@ -3584,6 +3789,26 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function hasilBrokerPerHariFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'ProductionDate.StartDate',
+                'ProductionDate_StartDate',
+                'ProductionDate_x0020_StartDate',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'ProductionDate.EndDate',
+                'ProductionDate_EndDate',
+                'ProductionDate_x0020_EndDate',
+            ]),
+        ];
+    }
+
     private function listDOBelumTerkirimFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
@@ -3663,6 +3888,50 @@ class AscendXmlTestController extends Controller
     }
 
     private function khususPlastikKabinetFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'DateRange.StartDate',
+                'DateRange_StartDate',
+                'DateRange_x0020_StartDate',
+                'DateRange.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'DateRange.EndDate',
+                'DateRange_EndDate',
+                'DateRange_x0020_EndDate',
+                'DateRange.End Date',
+            ]),
+        ];
+    }
+
+    private function aktifitasStockGsuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'DateRange.StartDate',
+                'DateRange_StartDate',
+                'DateRange_x0020_StartDate',
+                'DateRange.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'DateRange.EndDate',
+                'DateRange_EndDate',
+                'DateRange_x0020_EndDate',
+                'DateRange.End Date',
+            ]),
+        ];
+    }
+
+    private function aktifitasStockGsuPerGudangFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
             'start_date' => $this->requestInputByAliases($request, [
