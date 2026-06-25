@@ -97,7 +97,7 @@
             border-collapse: collapse;
             border-spacing: 0;
             table-layout: fixed;
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .report-table th,
@@ -166,7 +166,7 @@
             padding: 0 10px;
             text-align: center;
             vertical-align: top;
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .signature-space td {

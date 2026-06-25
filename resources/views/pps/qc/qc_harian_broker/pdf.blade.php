@@ -16,7 +16,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
@@ -145,7 +145,7 @@
                     ])
                         ->filter(
                             static fn($item) => ($item['moisture'] !== null && $item['moisture'] !== '') ||
-                                ($item['density'] !== null && $item['density'] !== ''),
+                            ($item['density'] !== null && $item['density'] !== ''),
                         )
                         ->values()
                         ->all();
@@ -161,7 +161,8 @@
                     <td class="number">{{ $formatNumber($measurements[0]['moisture'] ?? null) }}</td>
                     <td class="number">{{ $formatNumber($measurements[0]['density'] ?? null) }}</td>
                     <td class="number merged-cell" rowspan="{{ $rowspan }}">
-                        {{ $formatNumber($row['MFI'] ?? null) }}</td>
+                        {{ $formatNumber($row['MFI'] ?? null) }}
+                    </td>
                     <td class="merged-cell" rowspan="{{ $rowspan }}">{{ $row['VisualNote'] ?? '' }}</td>
                 </tr>
 

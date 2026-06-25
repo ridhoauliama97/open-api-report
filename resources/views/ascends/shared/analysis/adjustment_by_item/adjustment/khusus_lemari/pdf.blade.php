@@ -234,7 +234,7 @@
         </tbody>
     </table>
 
-    <p style="margin-top: 10px; font-size: 9px; font-style: italic;">
+    <p style="margin-top: 10px; font-size: 10px; font-style: italic;">
         Note: (-) Beban, (+) Pendapatan
     </p>
 

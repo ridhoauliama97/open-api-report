@@ -243,7 +243,7 @@
         }
 
         .payment-note-footnote {
-            font-size: 9px;
+            font-size: 10px;
             margin: 8px 0 0 0;
             font-style: italic;
             color: red;
@@ -387,7 +387,7 @@
 
         .footer-laporan {
             width: 100%;
-            font-size: 9px;
+            font-size: 10px;
             font-style: italic;
         }
     </style>

@@ -53,6 +53,10 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Production - Laporan Hasil Cuci Per Supplier: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production/hasil-cuci-per-supplier/pdf`
 - Production - Laporan Hasil Produksi Per Mesin: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production/hasil-produksi-per-mesin/pdf`
 
+## Endpoint Shared Production By Item
+
+- Production By Item - Laporan Produksi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production_by_item/produksi/pdf`
+
 ## Input
 
 Parameter field utama untuk semua endpoint Ascends Shared Analysis:
@@ -118,7 +122,7 @@ xml_file=AnlReports.Inventory.AdjustmentByItem.xml
 
 - `200 application/pdf`
 - `Content-Disposition: inline` (semua endpoint kecuali production)
-- `Content-Disposition: attachment` (khusus `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, dan `hasil-produksi-per-mesin`)
+- `Content-Disposition: attachment` (khusus `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, `hasil-produksi-per-mesin`, dan `produksi`)
 
 Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori. Nilai `{company}` berasal dari parameter `DB_CompanyName`, atau fallback field form `company` jika parameter tersebut tidak ada:
 
@@ -156,6 +160,7 @@ Contoh:
 - `Production - Laporan Hasil Cuci Per Mesin (GSU).pdf`
 - `Production - Laporan Hasil Cuci Per Supplier (GSU).pdf`
 - `Production - Laporan Hasil Produksi Per Mesin (GSU).pdf`
+- `Production By Item - Laporan Produksi (GSU).pdf`
 
 ## Response Gagal
 
@@ -186,5 +191,6 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `production/hasil_cuci_per_mesin`
 - `production/hasil_cuci_per_supplier`
 - `production/hasil_produksi_per_mesin`
+- `production_by_item/produksi`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

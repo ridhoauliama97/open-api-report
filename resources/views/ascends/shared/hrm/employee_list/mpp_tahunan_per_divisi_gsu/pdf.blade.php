@@ -78,14 +78,14 @@
         .data-table th,
         .summary-table th {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
         }
 
         .data-table td {
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .row-odd td {
@@ -241,7 +241,9 @@
             </thead>
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="11" style="text-align: center; font-style: italic; background: #c9d1df; font-weight: bold; font-size: 11px; padding: 10px; border-bottom: 1px solid #000;">Tidak Ada Data</td>
+                    <td colspan="11"
+                        style="text-align: center; font-style: italic; background: #c9d1df; font-weight: bold; font-size: 11px; padding: 10px; border-bottom: 1px solid #000;">
+                        Tidak Ada Data</td>
                 </tr>
             </tbody>
         </table>

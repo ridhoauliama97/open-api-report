@@ -114,7 +114,7 @@
 
         .report-table thead th {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             background: #fff;
@@ -224,7 +224,7 @@
             padding: 0 14px;
             vertical-align: top;
             text-align: center;
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .signature-total-cell {
@@ -375,17 +375,7 @@
         $ketCol = $findColumn($availableColumns, ['Ket', 'Keterangan']);
         $noCol = $findColumn($availableColumns, ['No', 'Nomor', 'Urut']);
 
-        $computeBeratRow = static function (array $row) use (
-            $toFloat,
-            $truncate4,
-            $beratCol,
-            $tebalCol,
-            $lebarCol,
-            $panjangCol,
-            $jmlhBatangCol,
-            $idUOMTblLebarCol,
-            $idUOMPanjangCol,
-        ): float {
+        $computeBeratRow = static function (array $row) use ($toFloat, $truncate4, $beratCol, $tebalCol, $lebarCol, $panjangCol, $jmlhBatangCol, $idUOMTblLebarCol, $idUOMPanjangCol, ): float {
             $beratValue = $beratCol !== null ? $toFloat($row[$beratCol] ?? null) : null;
             $idUOMTblLebarValue = $idUOMTblLebarCol !== null ? (int) ($row[$idUOMTblLebarCol] ?? 0) : 0;
             $idUOMPanjangValue = $idUOMPanjangCol !== null ? (int) ($row[$idUOMPanjangCol] ?? 0) : 0;
@@ -450,8 +440,8 @@
             $ket = $normalizeSummaryKey((string) ($ketCol !== null ? $row[$ketCol] ?? '' : ''));
             $rowNo =
                 $noCol !== null && isset($row[$noCol]) && trim((string) $row[$noCol]) !== ''
-                    ? (string) $row[$noCol]
-                    : (string) ($index + 1);
+                ? (string) $row[$noCol]
+                : (string) ($index + 1);
             $tebalText =
                 $tebalCol !== null ? number_format((float) ($toFloat($row[$tebalCol] ?? null) ?? 0), 0, '.', '') : '';
             $lebarText =
@@ -517,7 +507,8 @@
                                 <td class="meta-label">Supplier</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
-                                    {{ (string) ($supplierCol !== null ? $headRow[$supplierCol] ?? '-' : '-') }}</td>
+                                    {{ (string) ($supplierCol !== null ? $headRow[$supplierCol] ?? '-' : '-') }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="meta-label">No.Kayu Bulat</td>
@@ -530,7 +521,8 @@
                                 <td class="meta-label">No. Suket</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
-                                    {{ (string) ($suketCol !== null ? $headRow[$suketCol] ?? '-' : '-') }}</td>
+                                    {{ (string) ($suketCol !== null ? $headRow[$suketCol] ?? '-' : '-') }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -542,17 +534,20 @@
                                 <td class="meta-label">No. Meja</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
-                                    {{ (string) ($noMejaCol !== null ? $headRow[$noMejaCol] ?? '-' : '-') }}</td>
+                                    {{ (string) ($noMejaCol !== null ? $headRow[$noMejaCol] ?? '-' : '-') }}
+                                </td>
                                 <td class="meta-label" style="padding-left: 18px;">Status</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
-                                    {{ (string) ($statusCol !== null ? $headRow[$statusCol] ?? '-' : '-') }}</td>
+                                    {{ (string) ($statusCol !== null ? $headRow[$statusCol] ?? '-' : '-') }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="meta-label">No.Plat</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
-                                    {{ (string) ($noPlatCol !== null ? $headRow[$noPlatCol] ?? '-' : '-') }}</td>
+                                    {{ (string) ($noPlatCol !== null ? $headRow[$noPlatCol] ?? '-' : '-') }}
+                                </td>
                                 <td class="meta-label" style="padding-left: 18px;">Berat (Tim)</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
@@ -563,7 +558,8 @@
                                 <td class="meta-label">Jenis Kayu</td>
                                 <td class="meta-separator">:</td>
                                 <td class="meta-value">
-                                    {{ (string) ($jenisCol !== null ? $headRow[$jenisCol] ?? '-' : '-') }}</td>
+                                    {{ (string) ($jenisCol !== null ? $headRow[$jenisCol] ?? '-' : '-') }}
+                                </td>
                                 <td colspan="3"></td>
                             </tr>
                             <tr>
@@ -659,8 +655,7 @@
                     <td style="width: 50%;"
                         class="{{ $columnIndex === 0 ? 'summary-column-left' : 'summary-column-right' }}">
                         @foreach ($summaryKeys as $summaryKey)
-                            <table
-                                class="summary-block {{ $columnIndex === 0 ? 'summary-block-left' : 'summary-block-right' }}"
+                            <table class="summary-block {{ $columnIndex === 0 ? 'summary-block-left' : 'summary-block-right' }}"
                                 style="margin-bottom: 4px;">
                                 <tbody>
                                     <tr>

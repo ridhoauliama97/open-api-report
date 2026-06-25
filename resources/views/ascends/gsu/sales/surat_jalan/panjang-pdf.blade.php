@@ -323,7 +323,7 @@
 
         .footer-laporan {
             width: 100%;
-            font-size: 9px;
+            font-size: 10px;
             font-style: italic;
         }
     </style>

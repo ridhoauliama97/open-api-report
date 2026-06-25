@@ -215,7 +215,7 @@
     <h1 class="report-title">Laporan Dashboard Sawn Timber</h1>
     <p class="report-subtitle">Dari {{ $startText }} s/d {{ $endText }}</p>
     @if ($pdfTruncatedTypes)
-        <p style="margin: 0 0 10px 0; font-size: 9px; text-align: center;">Menampilkan {{ count($types) }} dari
+        <p style="margin: 0 0 10px 0; font-size: 10px; text-align: center;">Menampilkan {{ count($types) }} dari
             {{ $pdfOriginalTypeCount }} jenis ST teratas untuk menjaga render PDF tetap stabil.
         </p>
     @endif
@@ -269,7 +269,8 @@
                 <td class="label"># Ctr</td>
                 @foreach ($types as $type)
                     <td class="number" colspan="2" style="text-align: center;">
-                        {{ $fmt2($stockByType[$type]['ctr'] ?? 0) }}</td>
+                        {{ $fmt2($stockByType[$type]['ctr'] ?? 0) }}
+                    </td>
                 @endforeach
             </tr>
         </tfoot>

@@ -84,7 +84,7 @@
             text-align: center;
             font-weight: bold;
             background: #fff;
-            font-size: 9px;
+            font-size: 10px;
             white-space: nowrap;
             border-bottom: 1px solid #000;
         }

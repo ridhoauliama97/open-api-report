@@ -20,7 +20,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }

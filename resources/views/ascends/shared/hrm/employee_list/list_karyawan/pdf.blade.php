@@ -113,7 +113,7 @@
         htmlpagefooter table.footer-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
+            font-size: 10px;
             color: #000;
         }
 

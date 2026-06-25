@@ -107,7 +107,7 @@
         }
 
         .item-list {
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.4;
         }
     </style>
@@ -211,19 +211,24 @@
                     <td colspan="7">Sub Total = {{ number_format($reportData['sub_total'] ?? 0, 0, '.', ',') }}</td>
                 </tr>
                 <tr>
-                    <td colspan="7">Akumulasi Grand Total Input (Kg) = {{ number_format($grandTotals['total_material'], 0, '.', ',') }} (100%)</td>
+                    <td colspan="7">Akumulasi Grand Total Input (Kg) =
+                        {{ number_format($grandTotals['total_material'], 0, '.', ',') }} (100%)</td>
                 </tr>
                 <tr>
-                    <td colspan="7">Akumulasi Grand Total Output (Kg) = {{ number_format($grandTotals['total_output'], 0, '.', ',') }} (100%)</td>
+                    <td colspan="7">Akumulasi Grand Total Output (Kg) =
+                        {{ number_format($grandTotals['total_output'], 0, '.', ',') }} (100%)</td>
                 </tr>
                 <tr>
-                    <td colspan="7">Akumulasi Grand Total Reproses (Kg) = {{ number_format($grandTotals['total_reproses'], 0, '.', ',') }} (100%)</td>
+                    <td colspan="7">Akumulasi Grand Total Reproses (Kg) =
+                        {{ number_format($grandTotals['total_reproses'], 0, '.', ',') }} (100%)</td>
                 </tr>
                 <tr>
-                    <td colspan="7">Akumulasi Grand Total Bonggolan (Kg) = {{ number_format($grandTotals['total_bonggolan'], 0, '.', ',') }} (100%)</td>
+                    <td colspan="7">Akumulasi Grand Total Bonggolan (Kg) =
+                        {{ number_format($grandTotals['total_bonggolan'], 0, '.', ',') }} (100%)</td>
                 </tr>
                 <tr>
-                    <td colspan="7">Akumulasi Grand Total Downtime Machine (Kg) = {{ number_format($grandTotals['total_downtime'], 0, '.', ',') }} (0%)</td>
+                    <td colspan="7">Akumulasi Grand Total Downtime Machine (Kg) =
+                        {{ number_format($grandTotals['total_downtime'], 0, '.', ',') }} (0%)</td>
                 </tr>
             @endif
         </tbody>

@@ -143,7 +143,7 @@
         }
 
         .rates-table th {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: normal;
         }
 

@@ -78,14 +78,14 @@
         .data-table th,
         .summary-table th {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
         }
 
         .data-table td {
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .row-odd td {

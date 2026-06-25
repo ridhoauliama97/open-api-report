@@ -181,7 +181,7 @@
     @foreach ($sections as $sectionIndex => $section)
         <div class="section-title">{{ $sectionIndex + 1 }}. {{ $section['label'] ?? '-' }}</div>
         @if (!empty($section['compact_note']))
-            <div style="margin: 0 0 4px 0; font-size: 9px; color: #444;">
+            <div style="margin: 0 0 4px 0; font-size: 10px; color: #444;">
                 {{ $section['compact_note'] }}
                 @if (($section['displayed_row_count'] ?? 0) !== ($section['row_count'] ?? 0))
                     ({{ $fmt0($section['row_count'] ?? null) }} baris asli menjadi

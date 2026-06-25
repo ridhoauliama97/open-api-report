@@ -185,7 +185,7 @@
         }
 
         .report-table th {
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .report-table td {

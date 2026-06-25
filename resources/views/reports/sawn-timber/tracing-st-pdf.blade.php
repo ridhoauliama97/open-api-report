@@ -79,13 +79,13 @@
         }
 
         .day {
-            font-size: 9px;
+            font-size: 10px;
             color: #333;
             text-align: right;
         }
 
         .summary {
-            font-size: 9px;
+            font-size: 10px;
             font-style: italic;
         }
 

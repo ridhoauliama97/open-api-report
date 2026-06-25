@@ -74,41 +74,8 @@
             text-align: center;
         }
 
-        .group-row td {
-            font-weight: bold;
-            text-align: center;
-            font-size: 11px;
-            font-style: italic;
-            padding: 3px 4px;
-            color: #9c111d;
-        }
-
-        .subgroup-header {
-            font-weight: bold;
-            font-size: 10px;
-            text-align: center;
-            padding: 3px 4px;
-            border-bottom: 1px solid #000;
-        }
-
         .center {
             text-align: center;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .empty-row td {
-            text-align: center;
-            font-style: italic;
-            background: #c9d1df;
-            font-weight: bold;
-            font-size: 11px;
         }
 
         .number {
@@ -119,29 +86,60 @@
             white-space: nowrap;
         }
 
-        .subtotal-row td {
+        .group-header td {
+            padding: 4px;
             font-weight: bold;
+            font-size: 11px;
+            text-align: center;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            font-style: italic;
+            color: #9c111d;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .total-row td {
+            font-weight: bold;
+            font-size: 11px;
             border-top: 1px solid #000;
         }
 
-        .pintu-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            font-size: 10px;
+        .total-row td.label {
+            text-align: center;
         }
 
         .grand-total-row td {
             font-weight: bold;
-            border-top: 1px solid #000;
             font-size: 12px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .grand-total-row td.label {
+            text-align: center;
+        }
+
+        .empty-row td {
+            text-align: center;
+            font-style: italic;
+            background: #c9d1df;
+            font-weight: bold;
+            font-size: 11px;
         }
     </style>
 </head>
 
 <body>
     @php
-        $pintuGroups = $reportData['groups']['pintu_groups'] ?? [];
-        $grandTotal = (float) ($reportData['groups']['grand_total'] ?? 0);
+        $groups = $reportData['groups'] ?? [];
+        $grandTotal = $reportData['grand_total'] ?? 0;
         $printedAt = $reportData['printed_at'] ?? '';
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
             ->locale('id')->translatedFormat('d-M-y H:i');
@@ -149,7 +147,6 @@
         $headerCompany = trim((string) ($company ?? $reportData['company'] ?? ''));
         $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
-        $rowNumber = 0;
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
@@ -159,83 +156,51 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 4%">No</th>
-                <th style="width: 36%">Nama Barang</th>
-                <th style="width: 8%">Unit</th>
-                <th style="width: 17%">Masuk (Kredit)</th>
-                <th style="width: 17%">Keluar (Debit)</th>
-                <th style="width: 18%">Selisih</th>
+                <th style="width: 50%">Nama Barang</th>
+                <th style="width: 20%">UOM</th>
+                <th style="width: 30%">Quantity</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($pintuGroups as $pintuIdx => $pintuGroup)
-                <tr class="group-row">
-                    <td colspan="6">
-                        {{ $pintuGroup['pintu'] }}
+            @forelse ($groups as $groupIndex => $group)
+                <tr class="group-header">
+                    <td colspan="3">
+                        {{ $group['group_name'] }}
                     </td>
                 </tr>
-                @foreach ($pintuGroup['name_groups'] as $ngIdx => $nameGroup)
-                    <tr class="subgroup-header">
-                        <td colspan="6">
-                            {{ $nameGroup['name_group'] }}
-                        </td>
-                    </tr>
-                    @foreach ($nameGroup['pairs'] as $pair)
-                        @php $rowNumber++; @endphp
-                        <tr class="{{ $rowNumber % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                            <td class="center">{{ $rowNumber }}</td>
-                            <td>{{ $pair['nama_barang'] ?? '' }}</td>
-                            <td class="center">{{ $pair['unit'] ?? '' }}</td>
-                            <td class="number nowrap">
-                                {{ number_format((float) ($pair['masuk'] ?? 0), 2, '.', ',') }}
-                            </td>
-                            <td class="number nowrap">
-                                {{ number_format((float) ($pair['keluar'] ?? 0), 2, '.', ',') }}
-                            </td>
-                            <td class="number nowrap">
-                                {{ number_format((float) ($pair['selisih'] ?? 0), 2, '.', ',') }}
-                            </td>
-                        </tr>
-                    @endforeach
-                    <tr class="subtotal-row">
-                        <td colspan="5" class="center">
-                            Sub Total {{ $nameGroup['name_group'] }}
-                        </td>
+
+                @foreach ($group['items'] as $itemIndex => $item)
+                    <tr class="{{ $itemIndex % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                        <td>{{ $item['item_name'] }}</td>
+                        <td class="center">{{ $item['uom'] }}</td>
                         <td class="number nowrap">
-                            {{ number_format((float) ($nameGroup['subtotal_selisih'] ?? 0), 2, '.', ',') }}
+                            {{ number_format($item['quantity'], 0, '.', ',') }}
                         </td>
                     </tr>
                 @endforeach
-                <tr class="pintu-total-row">
-                    <td colspan="5" class="center">
-                        Total {{ $pintuGroup['pintu'] }}
-                    </td>
+
+                <tr class="total-row">
+                    <td colspan="2" class="label">Total :</td>
                     <td class="number nowrap">
-                        {{ number_format((float) ($pintuGroup['total_selisih'] ?? 0), 2, '.', ',') }}
+                        {{ number_format($group['total_quantity'], 0, '.', ',') }}
                     </td>
                 </tr>
             @empty
                 <tr class="empty-row">
-                    <td colspan="6">Tidak ada data.</td>
+                    <td colspan="3">Tidak ada data.</td>
                 </tr>
             @endforelse
 
-            @if (!empty($pintuGroups))
+            @if (!empty($groups))
                 <tr class="grand-total-row">
-                    <td colspan="5" class="center">
-                        Grand Total
-                    </td>
+                    <td colspan="2" class="label">Grand Total :</td>
                     <td class="number nowrap">
-                        {{ number_format($grandTotal, 2, '.', ',') }}
+                        {{ number_format($grandTotal, 0, '.', ',') }}
                     </td>
                 </tr>
             @endif
         </tbody>
     </table>
-
-    <p style="margin-top: 10px; font-size: 10px; font-style: italic;">
-        Note: (-) Beban, (+) Pendapatan
-    </p>
 
     @include('ascends.shared.partials.report-footer')
 </body>
