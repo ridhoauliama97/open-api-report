@@ -194,6 +194,7 @@
 
         .rangkuman-qc-container {
             margin-top: 24px;
+            page-break-before: always;
         }
 
         .rangkuman-qc-container,

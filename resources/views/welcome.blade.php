@@ -2769,7 +2769,6 @@
             };
 
             const exportReportsPdf = (menu, reports) => {
-                const currentTabLabel = activeTab === 'all' ? 'All' : activeTab;
                 const generatedAt = new Date().toLocaleString('id-ID', {
                     day: '2-digit',
                     month: 'long',
@@ -2790,61 +2789,258 @@
                     return;
                 }
 
-                const rows = reports.map((report, index) => `
-                    <tr>
-                        <td style="width:34px;border:1px solid #d1d5db;padding:6px 7px;text-align:center;vertical-align:top;">${index + 1}</td>
-                        <td style="border:1px solid #d1d5db;padding:6px 7px;vertical-align:top;">${escapeHtml(report.label)}</td>
-                        <td style="width:170px;border:1px solid #d1d5db;padding:6px 7px;vertical-align:top;">${escapeHtml(report.category)}</td>
-                    </tr>
-                `).join('');
+                const pageTitle = `List Laporan ${menu.label}`;
+                const companyName = 'Utama Corporation';
+                const reportRows = reports.map((report, index) => ({
+                    no: index + 1,
+                    name: report.label,
+                    level: report.category,
+                }));
+                const splitIndex = Math.ceil(reportRows.length / 2);
+                const leftRows = reportRows.slice(0, splitIndex);
+                const rightRows = reportRows.slice(splitIndex);
+                const pairedRows = leftRows.map((left, index) => ({
+                    left,
+                    right: rightRows[index] ?? null,
+                }));
+                const statColors = ['#4f46e5', '#16a34a', '#ea580c'];
 
-                printWindow.document.write(`
-                    <div style="box-sizing:border-box;margin:0;padding:14mm;color:#111827;font-family:Arial,Helvetica,sans-serif;font-size:11px;">
-                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px;border-bottom:2px solid #111827;padding-bottom:10px;">
-                            <div>
-                                <h1 style="margin:0 0 6px;font-size:18px;line-height:1.2;">List Laporan ${escapeHtml(menu.label)}</h1>
-                                <div style="color:#4b5563;line-height:1.45;">
-                                    Sub Menu: ${escapeHtml(currentTabLabel)}<br>
-                                    Filter: ${escapeHtml(searchValue || '-')}<br>
-                                    Dicetak: ${escapeHtml(generatedAt)}
-                                </div>
-                            </div>
-                            <div style="min-width:150px;border:1px solid #d1d5db;padding:8px 10px;text-align:right;">
-                                Total tampil
-                                <strong style="display:block;color:#111827;font-size:20px;line-height:1;">${formatNumber(reports.length)}</strong>
-                                laporan
-                            </div>
-                        </div>
-                        ${statCards.length > 0 ? `
-                            <div style="display:grid;grid-template-columns:repeat(${statCards.length},1fr);gap:10px;margin-bottom:16px;">
-                                ${statCards.map((stat) => `
-                                    <div style="border:1px solid #d1d5db;padding:10px;background:#f9fafb;">
-                                        <div style="margin-bottom:4px;color:#4b5563;font-size:10px;font-weight:700;text-transform:uppercase;">${escapeHtml(stat.label)}</div>
-                                        ${stat.token ? `<div style="margin-bottom:8px;color:#6b7280;font-size:9px;font-weight:700;text-transform:uppercase;">${escapeHtml(stat.token)}</div>` : ''}
-                                        <div style="color:#111827;font-size:22px;font-weight:800;line-height:1;">${escapeHtml(stat.value)}</div>
-                                        <div style="margin-top:5px;color:#6b7280;">${escapeHtml(stat.caption)}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                        ${reports.length > 0 ? `
-                            <table style="width:100%;border-collapse:collapse;">
-                                <thead>
-                                    <tr>
-                                        <th style="width:34px;border:1px solid #d1d5db;background:#f3f4f6;color:#111827;padding:6px 7px;text-align:center;text-transform:uppercase;">No</th>
-                                        <th style="border:1px solid #d1d5db;background:#f3f4f6;color:#111827;padding:6px 7px;text-align:left;text-transform:uppercase;">Nama Laporan</th>
-                                        <th style="width:170px;border:1px solid #d1d5db;background:#f3f4f6;color:#111827;padding:6px 7px;text-align:left;text-transform:uppercase;">Sub Menu</th>
-                                    </tr>
-                                </thead>
-                                <tbody>${rows}</tbody>
-                            </table>
-                        ` : '<div style="border:1px solid #d1d5db;padding:18px;color:#6b7280;text-align:center;">Tidak ada laporan yang cocok dengan filter saat ini.</div>'}
-                    </div>
-                `);
-                printWindow.document.close();
-                const printStyle = printWindow.document.createElement('style');
-                printStyle.textContent = '@page { size: A4 portrait; margin: 0; }';
-                printWindow.document.head.appendChild(printStyle);
+                const doc = printWindow.document;
+                doc.open();
+                doc.write('\x3c!doctype html>\x3chtml lang="id">\x3chead>\x3cmeta charset="utf-8">\x3ctitle>\x3c/title>\x3c/head>\x3cbody>\x3c/body>\x3c/html>');
+                doc.close();
+                doc.title = pageTitle;
+
+                const printStyle = doc.createElement('style');
+                printStyle.textContent = `
+                    @page { size: A4 portrait; margin: 0; }
+                    * { box-sizing: border-box; }
+                    body {
+                        margin: 0;
+                        color: #111827;
+                        background: #ffffff;
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 13px;
+                    }
+                    .export-cover { background: #09111f; color: #ffffff; padding: 22mm 14mm 18mm; }
+                    .cover-inner { display: flex; align-items: center; justify-content: space-between; gap: 18mm; }
+                    .brand-block { display: flex; align-items: center; gap: 12px; }
+                    .brand-mark {
+                        display: grid;
+                        width: 44px;
+                        height: 44px;
+                        place-items: center;
+                        background: #ffffff;
+                        color: #111827;
+                        font-size: 17px;
+                        font-weight: 800;
+                    }
+                    .brand-title { margin: 0; font-size: 24px; font-weight: 800; line-height: 1; }
+                    .brand-subtitle,
+                    .document-label {
+                        color: #cbd5e1;
+                        font-size: 13px;
+                        letter-spacing: .02em;
+                        text-transform: uppercase;
+                    }
+                    .document-title { margin-top: 4px; font-size: 21px; font-weight: 800; }
+                    .accent-bar { display: flex; height: 7px; }
+                    .accent-red { flex: 3; background: #b91c1c; }
+                    .accent-orange { flex: 2; background: #f97316; }
+                    .export-body { padding: 13mm 14mm 16mm; }
+                    .meta-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, minmax(0, 1fr));
+                        gap: 18mm;
+                        padding-bottom: 11mm;
+                        border-bottom: 2px solid #e2e8f0;
+                    }
+                    .meta-label,
+                    .summary-label {
+                        color: #64748b;
+                        font-weight: 800;
+                        text-transform: uppercase;
+                    }
+                    .meta-label { margin-bottom: 4px; font-size: 13px; }
+                    .meta-value { color: #111827; font-size: 17px; line-height: 1.25; }
+                    .section-title {
+                        display: flex;
+                        align-items: center;
+                        gap: 9px;
+                        margin: 11mm 0 7mm;
+                        color: #111827;
+                        font-size: 17px;
+                        font-weight: 800;
+                        text-transform: uppercase;
+                    }
+                    .section-title::before {
+                        content: "";
+                        width: 5px;
+                        height: 18px;
+                        background: #b91c1c;
+                    }
+                    .summary-grid {
+                        display: grid;
+                        grid-template-columns: repeat(${Math.max(statCards.length, 1)}, minmax(0, 1fr));
+                        gap: 6mm;
+                    }
+                    .summary-card {
+                        min-height: 22mm;
+                        border: 1px solid #dbe3ec;
+                        border-top: 4px solid var(--summary-color);
+                        padding: 5mm 6mm;
+                    }
+                    .summary-label { font-size: 13px; }
+                    .summary-value {
+                        margin-top: 1px;
+                        color: var(--summary-color);
+                        font-size: 26px;
+                        font-weight: 800;
+                        line-height: 1;
+                    }
+                    .report-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        table-layout: fixed;
+                        font-size: 12px;
+                    }
+                    .report-table th,
+                    .report-table td {
+                        border: 1px solid #dbe3ec;
+                        padding: 5px 7px;
+                        vertical-align: middle;
+                    }
+                    .report-table th {
+                        background: #f1f5f9;
+                        color: #64748b;
+                        font-size: 12px;
+                        text-align: left;
+                        text-transform: uppercase;
+                    }
+                    .report-table .unit-level {
+                        width: 112px;
+                        color: #64748b;
+                        font-size: 11px;
+                        font-weight: 800;
+                        text-align: center;
+                        text-transform: uppercase;
+                        overflow-wrap: anywhere;
+                    }
+                    .unit-name { width: calc((100% - 224px) / 2); overflow-wrap: break-word; }
+                    .unit-prefix { color: #64748b; font-weight: 800; }
+                    .row-even td { background: #ffffff; }
+                    .row-odd td { background: #edf1f6; }
+                    .empty-message {
+                        border: 1px solid #dbe3ec;
+                        padding: 12mm;
+                        background: #edf1f6;
+                        color: #64748b;
+                        font-weight: 800;
+                        text-align: center;
+                    }
+                    .print-footer {
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 12px;
+                        margin: 12mm 14mm 0;
+                        border-top: 2px solid #e2e8f0;
+                        padding-top: 6px;
+                        color: #64748b;
+                        font-size: 11px;
+                    }
+                `;
+                doc.head.appendChild(printStyle);
+
+                const append = (parent, tag, className = '', text = '') => {
+                    const node = doc.createElement(tag);
+                    if (className) {
+                        node.className = className;
+                    }
+                    if (text !== '') {
+                        node.textContent = text;
+                    }
+                    parent.appendChild(node);
+
+                    return node;
+                };
+                const addMeta = (parent, label, value) => {
+                    const item = append(parent, 'div');
+                    append(item, 'div', 'meta-label', label);
+                    append(item, 'div', 'meta-value', value);
+                };
+                const addSectionTitle = (parent, text) => append(parent, 'div', 'section-title', text);
+                const addReportCell = (row, report) => {
+                    const nameCell = append(row, 'td', 'unit-name');
+                    const prefix = append(nameCell, 'span', 'unit-prefix', `${report.no}.`);
+                    nameCell.appendChild(doc.createTextNode(` ${report.name}`));
+                    append(row, 'td', 'unit-level', report.level);
+
+                    return prefix;
+                };
+
+                const page = append(doc.body, 'div', 'export-page');
+                const cover = append(page, 'header', 'export-cover');
+                const coverInner = append(cover, 'div', 'cover-inner');
+                const brandBlock = append(coverInner, 'div', 'brand-block');
+                append(brandBlock, 'div', 'brand-mark', 'UC');
+                const brandText = append(brandBlock, 'div');
+                append(brandText, 'p', 'brand-title', companyName);
+                append(brandText, 'div', 'brand-subtitle', 'Indonesia');
+                const docTitle = append(coverInner, 'div');
+                docTitle.style.textAlign = 'right';
+                append(docTitle, 'div', 'document-label', 'Dokumen Resmi');
+                append(docTitle, 'div', 'document-title', 'Laporan Data Analytics');
+
+                const accent = append(page, 'div', 'accent-bar');
+                append(accent, 'div', 'accent-red');
+                append(accent, 'div', 'accent-orange');
+
+                const main = append(page, 'main', 'export-body');
+                const metaGrid = append(main, 'section', 'meta-grid');
+                addMeta(metaGrid, 'Dataset', pageTitle);
+                addMeta(metaGrid, 'Dihasilkan Pada', generatedAt);
+                addMeta(metaGrid, 'Sumber', 'SWL API - ReportAPI Platform');
+
+                addSectionTitle(main, 'Ringkasan Data');
+                const summaryGrid = append(main, 'section', 'summary-grid');
+                const summaryCards = statCards.length > 0
+                    ? statCards
+                    : [{ label: 'Total Tampil', value: formatNumber(reports.length) }];
+                summaryCards.forEach((stat, index) => {
+                    const card = append(summaryGrid, 'article', 'summary-card');
+                    card.style.setProperty('--summary-color', statColors[index % statColors.length]);
+                    append(card, 'div', 'summary-label', stat.label);
+                    append(card, 'div', 'summary-value', stat.value);
+                });
+
+                addSectionTitle(main, 'Detail Struktur Unit');
+                if (reports.length > 0) {
+                    const table = append(main, 'table', 'report-table');
+                    const thead = append(table, 'thead');
+                    const headerRow = append(thead, 'tr');
+                    append(headerRow, 'th', 'unit-name', 'Nama Unit');
+                    append(headerRow, 'th', 'unit-level', 'Level');
+                    append(headerRow, 'th', 'unit-name', 'Nama Unit');
+                    append(headerRow, 'th', 'unit-level', 'Level');
+                    const tbody = append(table, 'tbody');
+                    pairedRows.forEach((pair, index) => {
+                        const row = append(tbody, 'tr', index % 2 === 0 ? 'row-even' : 'row-odd');
+                        addReportCell(row, pair.left);
+                        if (pair.right) {
+                            addReportCell(row, pair.right);
+                        } else {
+                            append(row, 'td', 'unit-name');
+                            append(row, 'td', 'unit-level');
+                        }
+                    });
+                } else {
+                    append(main, 'div', 'empty-message', 'Tidak ada laporan yang cocok dengan filter saat ini.');
+                }
+
+                const footer = append(page, 'footer', 'print-footer');
+                append(footer, 'div', '', 'Catatan: Laporan ini dihasilkan otomatis dari sistem. Untuk data real-time, lakukan refresh melalui dashboard.');
+                append(footer, 'div', '', `ReportAPI Platform · ${generatedAt}`);
+
                 printWindow.focus();
                 setTimeout(() => printWindow.print(), 250);
             };
