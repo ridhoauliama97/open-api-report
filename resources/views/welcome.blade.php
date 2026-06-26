@@ -2662,6 +2662,11 @@
                     current = current.nextElementSibling;
                 }
 
+                categories.forEach((category) => {
+                    category.reports.sort((a, b) => normalize(a.label).localeCompare(normalize(b.label)));
+                });
+                categories.sort((a, b) => normalize(a.name).localeCompare(normalize(b.name)));
+
                 const total = categories.reduce((sum, category) => sum + category.reports.length, 0);
                 const auditedTotal = auditedTotals[key] ?? total;
 
