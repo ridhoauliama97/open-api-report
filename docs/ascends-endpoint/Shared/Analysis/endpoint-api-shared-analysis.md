@@ -56,6 +56,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 ## Endpoint Shared Production By Item
 
 - Production By Item - Laporan Produksi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production_by_item/produksi/pdf`
+- Production By Item - Laporan Produksi Per Minggu: `POST http://192.168.10.100:5006/api/internal/ascends/shared/analysis/production_by_item/produksi-per-minggu/pdf`
 
 ## Input
 
@@ -161,6 +162,7 @@ Contoh:
 - `Production - Laporan Hasil Cuci Per Supplier (GSU).pdf`
 - `Production - Laporan Hasil Produksi Per Mesin (GSU).pdf`
 - `Production By Item - Laporan Produksi (GSU).pdf`
+- `Production By Item - Laporan Produksi Per Minggu (GSU).pdf`
 
 ## Response Gagal
 
@@ -192,5 +194,6 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `production/hasil_cuci_per_supplier`
 - `production/hasil_produksi_per_mesin`
 - `production_by_item/produksi`
+- `production_by_item/produksi_per_minggu`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.

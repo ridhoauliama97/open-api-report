@@ -70,6 +70,7 @@ use App\Services\Ascends\Shared\Production\HasilCuciPerMesinReportService;
 use App\Services\Ascends\Shared\Production\HasilCuciPerSupplierReportService;
 use App\Services\Ascends\Shared\Production\HasilProduksiPerMesinReportService;
 use App\Services\Ascends\Shared\ProductionByItem\ProduksiReportService;
+use App\Services\Ascends\Shared\ProductionByItem\ProduksiPerMingguReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
@@ -2923,6 +2924,46 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Production By Item - Laporan Produksi ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiProduksiPerMingguPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        ProduksiPerMingguReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->hasilBrokerPerHariFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Produksi Per Minggu';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.analysis.production_by_item.produksi_per_minggu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Production By Item - Laporan Produksi Per Minggu ('.$company.').pdf"',
         ]);
     }
 
