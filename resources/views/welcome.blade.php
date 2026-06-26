@@ -1456,6 +1456,18 @@
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.cross-cut-akhir.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Cross Cut Akhir
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.cca-akhir.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi CC Akhir
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.cross-cut-akhir.rekap-produksi-cc-akhir-consolidated.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Rekap Produksi CCAkhir Consolidated
@@ -1493,6 +1505,18 @@
                                 <a href="{{ route('reports.sanding.sanding-hidup-detail.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Sanding (Hidup) Detail
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.sanding.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Sanding
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.sanding.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Sanding
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
@@ -1536,6 +1560,17 @@
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.reproses.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Reproses</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.reproses.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Reproses
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.reproses.ketahanan-barang-reproses.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Ketahanan Barang Dagang Reproses
@@ -1567,6 +1602,17 @@
                                 <a href="{{ route('reports.barang-jadi.barang-jadi-hidup-detail.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Barang Jadi (Hidup) Detail
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.barang-jadi.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Barang Jadi</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.barang-jadi.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Barang Jadi
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
@@ -1769,77 +1815,6 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm mb-4 h-100">
                     <div class="card-body p-4">
-                        <h2 class="h5 mb-3">Mutasi</h2>
-                        <div class="row g-2">
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.barang-jadi.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Barang Jadi</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.finger-joint.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Finger Joint</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.moulding.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Moulding</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.laminating.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Laminating</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.sanding.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Sanding</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.s4s.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi S4S</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.st.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Sawn Timber (Ton)</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.cca-akhir.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi CC Akhir</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.reproses.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Reproses</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.kayu-bulat.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.kayu-bulat-v2.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat Gantung</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.kayu-bulat-kg.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat - Timbang KG</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi.kayu-bulat-kgv2.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat (Gantung) -
-                                    Timbang KG</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi-hasil-racip.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Hasil Racip</a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('reports.mutasi-racip-detail.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Mutasi Racip Detail</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12">
-                <div class="card border-0 shadow-sm mb-4 h-100">
-                    <div class="card-body p-4">
                         <h2 class="h5 mb-3">Verifikasi</h2>
                         <div class="row g-2">
                             <div class="col-12 col-md-6">
@@ -1906,6 +1881,22 @@
                                     Kayu</a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.s4s.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi S4S</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.s4s.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard S4S
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.s4s-v2.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard S4S v2
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.s4s.label-s4s-hidup-per-produk-per-jenis-kayu.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">Label S4S (Hidup) Per-Produk &
                                     Per-Jenis Kayu</a>
@@ -1952,6 +1943,17 @@
                                     Rekap Produksi Finger Joint Consolidated</a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.finger-joint.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Finger Joint</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.finger-joint.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Finger Joint
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.finger-joint.rekap-produksi-finger-joint-per-jenis-per-grade.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Rekap Produksi Finger Joint Per-Jenis & Per-Grade (m3)</a>
@@ -1994,6 +1996,18 @@
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.laminating.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Laminating
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.laminating.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Laminating
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.laminating.rekap-produksi-laminating-per-jenis-per-grade.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Rekap Produksi Laminating Per-Jenis & Per-Grade (m3)
@@ -2031,6 +2045,17 @@
                                 <a href="{{ route('reports.moulding.moulding-hidup-detail.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Moulding (Hidup) Detail
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.moulding.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Moulding</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.moulding.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dashboard Moulding
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
@@ -2079,6 +2104,15 @@
                                     Laporan Target Masuk Bahan Baku Bulanan
                                 </a>
                             </div>
+
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.kayu-bulat.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.kayu-bulat-v2.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat Gantung</a>
+                            </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.penerimaan-bulanan-per-supplier.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
@@ -2109,9 +2143,15 @@
                                     Laporan Penerimaan Kayu Bulat - (Ext Ton)
                                 </a>
                             </div>
-                            {{-- <div class="col-12 col-md-6">
 
-                            </div> --}}
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi-hasil-racip.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Hasil Racip</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi-racip-detail.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Racip Detail</a>
+                            </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.stock-opname.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
@@ -2179,7 +2219,6 @@
                                     Laporan Umur Kayu Bulat (NON RAMBUNG)
                                 </a>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -2219,6 +2258,15 @@
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan Penerimaan Kayu Bulat - (Ext KG)
                                 </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.kayu-bulat-kg.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat - Timbang KG</a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.kayu-bulat-kgv2.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">Mutasi Kayu Bulat (Gantung) -
+                                    Timbang KG</a>
                             </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.kayu-bulat.penerimaan-per-supplier-kg.index') }}"
@@ -2276,76 +2324,6 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h2 class="h5 mb-3">Dashboard</h2>
-                        <div class="row g-2">
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.sawn-timber.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Dasboard Sawn Timber (Chart)
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.barang-jadi.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Barang Jadi
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.cross-cut-akhir.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Cross Cut Akhir
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.finger-joint.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Finger Joint
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.laminating.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Laminating
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.moulding.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Moulding
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.reproses.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Reproses
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.sanding.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard Sanding
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.s4s.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard S4S
-                                </a>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <a href="{{ route('dashboard.s4s-v2.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">
-                                    Laporan Dashboard S4S v2
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body p-4">
                         <h2 class="h5 mb-3">Sawn Timber</h2>
                         <div class="row g-2">
                             <div class="col-12 col-md-6">
@@ -2376,6 +2354,17 @@
                                 <a href="{{ route('reports.sawn-timber.kd-keluar-masuk.index') }}"
                                     class="btn btn-outline-primary w-100 text-start">
                                     Laporan KD (Keluar - Masuk)
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.mutasi.st.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Mutasi Sawn Timber </a>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('dashboard.sawn-timber.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Dasboard Sawn Timber
                                 </a>
                             </div>
                             <div class="col-12 col-md-6">
