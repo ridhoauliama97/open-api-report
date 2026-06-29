@@ -296,6 +296,11 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.absensi-briefing-harian-gsu.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmAbsensiBriefingHarianUcPdf']
+)->name('api.internal.ascends.shared.hrm.attendance-full.absensi-briefing-harian-uc.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianRuPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian-ru.pdf');
@@ -555,114 +560,129 @@ Route::post(
 )->name('api.internal.ascends.gsu.sales.surat-jalan.normal.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/adjustment-by-item/penyesuaian-persediaan/pdf',
+    '/internal/ascends/shared/inventory_analysis/adjustment-by-item/penyesuaian-persediaan/pdf',
     [AscendXmlTestController::class, 'apiSharedAnalysisPenyesuaianPersediaanPdf']
-)->name('api.internal.ascends.shared.analysis.adjustment-by-item.penyesuaian-persediaan.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.adjustment-by-item.penyesuaian-persediaan.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-kursi/pdf',
+    '/internal/ascends/shared/inventory_analysis/adjustment-by-item/adjustment/khusus-kursi/pdf',
     [AscendXmlTestController::class, 'apiKursiAdjustmentPdf']
-)->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.khusus-kursi.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.adjustment-by-item.adjustment.khusus-kursi.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/adjustment-by-item/adjustment/khusus-lemari/pdf',
+    '/internal/ascends/shared/inventory_analysis/adjustment-by-item/adjustment/khusus-lemari/pdf',
     [AscendXmlTestController::class, 'apiLemariAdjustmentPdf']
-)->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.khusus-lemari.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.adjustment-by-item.adjustment.khusus-lemari.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/adjustment-by-item/adjustment/adjustment-lemari/pdf',
+    '/internal/ascends/shared/inventory_analysis/adjustment-by-item/adjustment/adjustment-lemari/pdf',
     [AscendXmlTestController::class, 'apiAdjustmentLemariPdf']
-)->name('api.internal.ascends.shared.analysis.adjustment-by-item.adjustment.adjustment-lemari.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.adjustment-by-item.adjustment.adjustment-lemari.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/rekapan-value-surat-jalan/pdf',
+    '/internal/ascends/shared/inventory_analysis/adjustment-by-item/goods-delivery-note/rekapan-value-surat-jalan/pdf',
     [AscendXmlTestController::class, 'apiRekapanValueSuratJalanPdf']
-)->name('api.internal.ascends.shared.analysis.adjustment-by-item.goods-delivery-note.rekapan-value-surat-jalan.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.adjustment-by-item.goods-delivery-note.rekapan-value-surat-jalan.pdf');
 Route::post(
-    '/internal/ascends/shared/analysis/adjustment-by-item/goods-delivery-note/pengiriman-lemari/pdf',
+    '/internal/ascends/shared/inventory_analysis/adjustment-by-item/goods-delivery-note/pengiriman-lemari/pdf',
     [AscendXmlTestController::class, 'apiPengirimanLemariPdf']
-)->name('api.internal.ascends.shared.analysis.adjustment-by-item.goods-delivery-note.pengiriman-lemari.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.adjustment-by-item.goods-delivery-note.pengiriman-lemari.pdf');
 Route::post(
-    '/internal/ascends/shared/analysis/outstanding-undelivery-goods/list-do-belum-terkirim/pdf',
+    '/internal/ascends/shared/inventory_analysis/outstanding-undelivery-goods/list-do-belum-terkirim/pdf',
     [AscendXmlTestController::class, 'apiListDOBelumTerkirimPdf']
-)->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.list-do-belum-terkirim.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.outstanding-undelivery-goods.list-do-belum-terkirim.pdf');
 Route::post(
-    '/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-customer-belum-terkirim/pdf',
+    '/internal/ascends/shared/inventory_analysis/outstanding-undelivery-goods/do-customer-belum-terkirim/pdf',
     [AscendXmlTestController::class, 'apiDOCustomerBelumTerkirimPdf']
-)->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.do-customer-belum-terkirim.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.outstanding-undelivery-goods.do-customer-belum-terkirim.pdf');
 Route::post(
-    '/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-lemari-belum-terkirim/pdf',
+    '/internal/ascends/shared/inventory_analysis/outstanding-undelivery-goods/do-lemari-belum-terkirim/pdf',
     [AscendXmlTestController::class, 'apiDOLemariBelumTerkirimPdf']
-)->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.do-lemari-belum-terkirim.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.outstanding-undelivery-goods.do-lemari-belum-terkirim.pdf');
 Route::post(
-    '/internal/ascends/shared/analysis/outstanding-undelivery-goods/do-per-kategori-belum-terkirim/pdf',
+    '/internal/ascends/shared/inventory_analysis/outstanding-undelivery-goods/do-per-kategori-belum-terkirim/pdf',
     [AscendXmlTestController::class, 'apiDOPerKategoriBelumTerkirimPdf']
-)->name('api.internal.ascends.shared.analysis.outstanding-undelivery-goods.do-per-kategori-belum-terkirim.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.outstanding-undelivery-goods.do-per-kategori-belum-terkirim.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/stock-activities-summary/laporan-hpp-dan-stock/pdf',
+    '/internal/ascends/shared/inventory_analysis/stock-activities-summary/laporan-hpp-dan-stock/pdf',
     [AscendXmlTestController::class, 'apiLaporanHppDanStockPdf']
-)->name('api.internal.ascends.shared.analysis.stock-activities-summary.laporan-hpp-dan-stock.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.laporan-hpp-dan-stock.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/stock-activities-summary/khusus-plastik-kabinet/pdf',
+    '/internal/ascends/shared/inventory_analysis/stock-activities-summary/khusus-plastik-kabinet/pdf',
     [AscendXmlTestController::class, 'apiKhususPlastikKabinetPdf']
-)->name('api.internal.ascends.shared.analysis.stock-activities-summary.khusus-plastik-kabinet.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.khusus-plastik-kabinet.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/stock-activities-summary/aktifitas-stock-gsu/pdf',
+    '/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-gsu/pdf',
     [AscendXmlTestController::class, 'apiAktifitasStockGsuPdf']
-)->name('api.internal.ascends.shared.analysis.stock-activities-summary.aktifitas-stock-gsu.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.aktifitas-stock-gsu.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/stock-activities-summary/aktifitas-stock-gsu-per-gudang/pdf',
+    '/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-gsu-per-gudang/pdf',
     [AscendXmlTestController::class, 'apiAktifitasStockGsuPerGudangPdf']
-)->name('api.internal.ascends.shared.analysis.stock-activities-summary.aktifitas-stock-gsu-per-gudang.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.aktifitas-stock-gsu-per-gudang.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-broker-per-hari/pdf',
+    '/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-uc/pdf',
+    [AscendXmlTestController::class, 'apiSaldoStokBarangPerGudangUcPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.stock-blanace.saldo-stok-barang-per-gudang-uc.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-ru/pdf',
+    [AscendXmlTestController::class, 'apiSaldoStokBarangPerGudangRuPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.stock-blanace.saldo-stok-barang-per-gudang-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSaldoStokBarangPerGudangGsuPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.stock-blanace.saldo-stok-barang-per-gudang-gsu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/production/hasil-broker-per-hari/pdf',
     [AscendXmlTestController::class, 'apiHasilBrokerPerHariPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-hari.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-broker-per-hari.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-broker-per-kategori/pdf',
+    '/internal/ascends/shared/inventory_analysis/production/hasil-broker-per-kategori/pdf',
     [AscendXmlTestController::class, 'apiHasilBrokerPerKategoriPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-kategori.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-broker-per-kategori.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-broker-per-mesin/pdf',
+    '/internal/ascends/shared/inventory_analysis/production/hasil-broker-per-mesin/pdf',
     [AscendXmlTestController::class, 'apiHasilBrokerPerMesinPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-broker-per-mesin.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-broker-per-mesin.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-cuci-per-hari/pdf',
+    '/internal/ascends/shared/inventory_analysis/production/hasil-cuci-per-hari/pdf',
     [AscendXmlTestController::class, 'apiHasilCuciPerHariPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-cuci-per-hari.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-cuci-per-hari.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-cuci-per-mesin/pdf',
+    '/internal/ascends/shared/inventory_analysis/production/hasil-cuci-per-mesin/pdf',
     [AscendXmlTestController::class, 'apiHasilCuciPerMesinPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-cuci-per-mesin.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-cuci-per-mesin.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-cuci-per-supplier/pdf',
+    '/internal/ascends/shared/inventory_analysis/production/hasil-cuci-per-supplier/pdf',
     [AscendXmlTestController::class, 'apiHasilCuciPerSupplierPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-cuci-per-supplier.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-cuci-per-supplier.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production/hasil-produksi-per-mesin/pdf',
+    '/internal/ascends/shared/inventory_analysis/production/hasil-produksi-per-mesin/pdf',
     [AscendXmlTestController::class, 'apiHasilProduksiPerMesinPdf']
-)->name('api.internal.ascends.shared.analysis.production.hasil-produksi-per-mesin.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production.hasil-produksi-per-mesin.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production_by_item/produksi/pdf',
+    '/internal/ascends/shared/inventory_analysis/production_by_item/produksi/pdf',
     [AscendXmlTestController::class, 'apiProduksiPdf']
-)->name('api.internal.ascends.shared.analysis.production_by_item.produksi.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production_by_item.produksi.pdf');
 
 Route::post(
-    '/internal/ascends/shared/analysis/production_by_item/produksi-per-minggu/pdf',
+    '/internal/ascends/shared/inventory_analysis/production_by_item/produksi-per-minggu/pdf',
     [AscendXmlTestController::class, 'apiProduksiPerMingguPdf']
-)->name('api.internal.ascends.shared.analysis.production_by_item.produksi-per-minggu.pdf');
+)->name('api.internal.ascends.shared.inventory_analysis.production_by_item.produksi-per-minggu.pdf');
 
 /**
  * Group route autentikasi API publik.

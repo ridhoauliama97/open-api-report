@@ -245,6 +245,14 @@
             <td class="meta-separator">:</td>
             <td>{{ (string) ($reportData['theme'] ?? '') }}</td>
         </tr>
+        <tr>
+            <td class="meta-label">Tamu</td>
+            <td class="meta-separator">:</td>
+            <td>{{ (string) ($reportData['guests'] ?? '') }}</td>
+            <td class="meta-label">Jam</td>
+            <td class="meta-separator">:</td>
+            <td>{{ (string) ($reportData['time'] ?? '') }}</td>
+        </tr>
     </table>
 
     <table class="data-table">

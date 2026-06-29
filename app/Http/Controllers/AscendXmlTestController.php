@@ -3,62 +3,66 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
-use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianGsuReportService;
-use App\Services\Ascends\Ru\Hrm\AbsensiBriefingHarianReportService;
-use App\Services\Ascends\Ru\Hrm\AbsensiIndividuReportService;
-use App\Services\Ascends\Ru\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
-use App\Services\Ascends\Ru\Hrm\DaftarKaryawanReportService;
-use App\Services\Ascends\Ru\Hrm\DaftarLiburCutiBersamaReportService;
-use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
-use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemenReportService;
-use App\Services\Ascends\Ru\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
-use App\Services\Ascends\Ru\Hrm\DurasiDendaKeterlambatanReportService;
-use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanAktifPerDepartemenReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanMasukPerDepartemenPerTanggalMasukReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanPerAgamaReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanPerDepartemenPerJabatanReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanPerEtnisReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanPerLevelReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
-use App\Services\Ascends\Ru\Hrm\KaryawanPerUmurReportService;
-use App\Services\Ascends\Ru\Hrm\KehadiranKkKtStReportService;
-use App\Services\Ascends\Ru\Hrm\KehadiranKruBahanBakuReportService;
-use App\Services\Ascends\Ru\Hrm\KehadiranKruRacipReportService;
-use App\Services\Ascends\Ru\Hrm\KehadiranKruStickReportService;
-use App\Services\Ascends\Ru\Hrm\KeterlambatanKehadiranBriefingHarianReportService;
-use App\Services\Ascends\Ru\Hrm\KetidakhadiranBulananReportService;
-use App\Services\Ascends\Ru\Hrm\LemburBulananReportService;
-use App\Services\Ascends\Ru\Hrm\ListKaryawanHabisKontrakReportService;
-use App\Services\Ascends\Ru\Hrm\LossTimeReportService;
-use App\Services\Ascends\Ru\Hrm\PendapatanLainLainReportService;
-use App\Services\Ascends\Ru\Hrm\PengabaianKeterlambatanKehadiranManualReportService;
-use App\Services\Ascends\Ru\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
-use App\Services\Ascends\Ru\Hrm\PerbandinganKehadiranPerBulanReportService;
-use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranBulananReportService;
-use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranMingguanPerDepartemenReportService;
-use App\Services\Ascends\Ru\Hrm\RekapitulasiAbsensiBriefingHarianGsuReportService;
-use App\Services\Ascends\Ru\Hrm\RekapitulasiAbsensiBriefingHarianReportService;
-use App\Services\Ascends\Ru\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
-use App\Services\Ascends\Ru\Hrm\RekapitulasiPengabaianKeterlambatanTahunanReportService;
-use App\Services\Ascends\Ru\Hrm\SuratPeringatanReportService;
-use App\Services\Ascends\Ru\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianGsuReportService;
+use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianReportService;
+use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianUcReportService;
+use App\Services\Ascends\Shared\Hrm\AbsensiIndividuReportService;
+use App\Services\Ascends\Shared\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
+use App\Services\Ascends\Shared\Hrm\DaftarKaryawanReportService;
+use App\Services\Ascends\Shared\Hrm\DaftarLiburCutiBersamaReportService;
+use App\Services\Ascends\Shared\Hrm\DataKaryawanStatusKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemenReportService;
+use App\Services\Ascends\Shared\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
+use App\Services\Ascends\Shared\Hrm\DurasiDendaKeterlambatanReportService;
+use App\Services\Ascends\Shared\Hrm\EmployeeListReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanAktifPerDepartemenReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanMasukPerDepartemenPerTanggalMasukReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerAgamaReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerDepartemenPerJabatanReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerEtnisReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerLevelReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerMasaKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerUmurReportService;
+use App\Services\Ascends\Shared\Hrm\KehadiranKkKtStReportService;
+use App\Services\Ascends\Shared\Hrm\KehadiranKruBahanBakuReportService;
+use App\Services\Ascends\Shared\Hrm\KehadiranKruRacipReportService;
+use App\Services\Ascends\Shared\Hrm\KehadiranKruStickReportService;
+use App\Services\Ascends\Shared\Hrm\KeterlambatanKehadiranBriefingHarianReportService;
+use App\Services\Ascends\Shared\Hrm\KetidakhadiranBulananReportService;
+use App\Services\Ascends\Shared\Hrm\LemburBulananReportService;
+use App\Services\Ascends\Shared\Hrm\ListKaryawanHabisKontrakReportService;
+use App\Services\Ascends\Shared\Hrm\LossTimeReportService;
+use App\Services\Ascends\Shared\Hrm\PendapatanLainLainReportService;
+use App\Services\Ascends\Shared\Hrm\PengabaianKeterlambatanKehadiranManualReportService;
+use App\Services\Ascends\Shared\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
+use App\Services\Ascends\Shared\Hrm\PerbandinganKehadiranPerBulanReportService;
+use App\Services\Ascends\Shared\Hrm\PersentaseKehadiranBulananReportService;
+use App\Services\Ascends\Shared\Hrm\PersentaseKehadiranMingguanPerDepartemenReportService;
+use App\Services\Ascends\Shared\Hrm\RekapitulasiAbsensiBriefingHarianGsuReportService;
+use App\Services\Ascends\Shared\Hrm\RekapitulasiAbsensiBriefingHarianReportService;
+use App\Services\Ascends\Shared\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
+use App\Services\Ascends\Shared\Hrm\RekapitulasiPengabaianKeterlambatanTahunanReportService;
+use App\Services\Ascends\Shared\Hrm\SuratPeringatanReportService;
+use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
-use App\Services\Ascends\Shared\Analysis\AdjustmentLemariReportService;
-use App\Services\Ascends\Shared\Analysis\AktifitasStockGsuPerGudangReportService;
-use App\Services\Ascends\Shared\Analysis\AktifitasStockGsuReportService;
-use App\Services\Ascends\Shared\Analysis\DOCustomerBelumTerkirimReportService;
-use App\Services\Ascends\Shared\Analysis\DOLemariBelumTerkirimReportService;
-use App\Services\Ascends\Shared\Analysis\DOPerKategoriBelumTerkirimReportService;
-use App\Services\Ascends\Shared\Analysis\KhususPlastikKabinetReportService;
-use App\Services\Ascends\Shared\Analysis\KursiAdjustmentReportService;
-use App\Services\Ascends\Shared\Analysis\LaporanHppDanStockReportService;
-use App\Services\Ascends\Shared\Analysis\LemariAdjustmentReportService;
-use App\Services\Ascends\Shared\Analysis\ListDOBelumTerkirimReportService;
-use App\Services\Ascends\Shared\Analysis\PengirimanLemariReportService;
-use App\Services\Ascends\Shared\Analysis\PenyesuaianPersediaanReportService;
-use App\Services\Ascends\Shared\Analysis\RekapanValueSuratJalanReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\DOCustomerBelumTerkirimReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\DOLemariBelumTerkirimReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\DOPerKategoriBelumTerkirimReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\KhususPlastikKabinetReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\KursiAdjustmentReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\LaporanHppDanStockReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\LemariAdjustmentReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\ListDOBelumTerkirimReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\PengirimanLemariReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\PenyesuaianPersediaanReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\RekapanValueSuratJalanReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SaldoStokBarangPerGudangGsuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SaldoStokBarangPerGudangRuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SaldoStokBarangPerGudangUcReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
 use App\Services\Ascends\Shared\Hrm\MppTahunanPerDivisiGsuReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
@@ -105,6 +109,7 @@ class AscendXmlTestController extends Controller
         PengabaianKeterlambatanKehadiranManualReportService $pengabaianKeterlambatanKehadiranManualReportService,
         AbsensiBriefingHarianReportService $absensiBriefingHarianReportService,
         AbsensiBriefingHarianGsuReportService $absensiBriefingHarianGsuReportService,
+        AbsensiBriefingHarianUcReportService $absensiBriefingHarianUcReportService,
         RekapitulasiAbsensiBriefingHarianReportService $rekapitulasiAbsensiBriefingHarianReportService,
         RekapitulasiAbsensiBriefingHarianGsuReportService $rekapitulasiAbsensiBriefingHarianGsuReportService,
         DataPesertaMakanSiangIbadahAulaPerDepartemenReportService $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService,
@@ -154,6 +159,7 @@ class AscendXmlTestController extends Controller
                 'pengabaian_keterlambatan_kehadiran_manual' => $pengabaianKeterlambatanKehadiranManualReportService,
                 'absensi_briefing_harian_ru' => $absensiBriefingHarianReportService,
                 'absensi_briefing_harian_gsu' => $absensiBriefingHarianGsuReportService,
+                'absensi_briefing_harian_uc' => $absensiBriefingHarianUcReportService,
                 'rekapitulasi_absensi_briefing_harian_ru' => $rekapitulasiAbsensiBriefingHarianReportService,
                 'rekapitulasi_absensi_briefing_harian_gsu' => $rekapitulasiAbsensiBriefingHarianGsuReportService,
                 'data_peserta_makan_siang_ibadah_aula_per_departemen' => $dataPesertaMakanSiangIbadahAulaPerDepartemenReportService,
@@ -189,6 +195,11 @@ class AscendXmlTestController extends Controller
                     $this->absensiBriefingHarianFilters($request)
                 ),
                 'absensi_briefing_harian_gsu' => $absensiBriefingHarianGsuReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->absensiBriefingHarianFilters($request)
+                ),
+                'absensi_briefing_harian_uc' => $absensiBriefingHarianUcReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
                     $this->absensiBriefingHarianFilters($request)
@@ -287,6 +298,22 @@ class AscendXmlTestController extends Controller
             if ($selectedReport === 'absensi_briefing_harian_ru') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
                 $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'VKD')))));
+
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
+                $reportDefinition['filename'] = "Attendance Full - Laporan Absensi Briefing Harian ({$company}) - {$group}.pdf";
+            }
+            if ($selectedReport === 'absensi_briefing_harian_gsu') {
+                $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
+                $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'Bahan Baku, Washing & Broker')))));
+
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
+                $reportDefinition['filename'] = "Attendance Full - Laporan Absensi Briefing Harian ({$company}) - {$group}.pdf";
+            }
+            if ($selectedReport === 'absensi_briefing_harian_uc') {
+                $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'UC');
+                $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'Security Pagi')))));
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
@@ -901,6 +928,51 @@ class AscendXmlTestController extends Controller
         }
 
         $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.absensi_briefing_harian_gsu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Absensi Briefing Harian ('.$company.') - '.$group.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmAbsensiBriefingHarianUcPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AbsensiBriefingHarianUcReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'UC');
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->absensiBriefingHarianFilters($request)
+            );
+
+            $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'Security Pagi')))));
+            $reportData['company'] = $company;
+            $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.attendance_full.absensi_briefing_harian_uc.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
@@ -2066,7 +2138,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.adjustment_by_item.penyesuaian_persediaan.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.adjustment_by_item.penyesuaian_persediaan.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
@@ -2109,7 +2181,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.adjustment_by_item.adjustment.adjustment_lemari.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.adjustment_by_item.adjustment.adjustment_lemari.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'headers' => $reportData['headers'] ?? [],
@@ -2152,7 +2224,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.adjustment_by_item.adjustment.khusus_kursi.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.adjustment_by_item.adjustment.khusus_kursi.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2192,7 +2264,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.adjustment_by_item.adjustment.khusus_lemari.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.adjustment_by_item.adjustment.khusus_lemari.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2232,7 +2304,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.goods_delivery_note.rekapan_value_surat_jalan.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.goods_delivery_note.rekapan_value_surat_jalan.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2272,7 +2344,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.goods_delivery_note.pengiriman_lemari.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.goods_delivery_note.pengiriman_lemari.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2312,7 +2384,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.outstanding_undelivery_goods.list_do_belum_terkirim.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.outstanding_undelivery_goods.list_do_belum_terkirim.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2352,7 +2424,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.outstanding_undelivery_goods.do_customer_belum_terkirim.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.outstanding_undelivery_goods.do_customer_belum_terkirim.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2392,7 +2464,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.outstanding_undelivery_goods.do_lemari_belum_terkirim.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.outstanding_undelivery_goods.do_lemari_belum_terkirim.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2432,7 +2504,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.outstanding_undelivery_goods.do_per_kategori_belum_terkirim.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.outstanding_undelivery_goods.do_per_kategori_belum_terkirim.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2472,7 +2544,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.laporan_hpp_dan_stock.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_activities_summary.laporan_hpp_dan_stock.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2512,7 +2584,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.khusus_plastik_kabinet.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_activities_summary.khusus_plastik_kabinet.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2552,7 +2624,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.aktifitas_stock_gsu.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_activities_summary.aktifitas_stock_gsu.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2592,7 +2664,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.stock_activities_summary.aktifitas_stock_gsu_per_gudang.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_activities_summary.aktifitas_stock_gsu_per_gudang.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2604,6 +2676,126 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Stock Activities Summary - Ringkasan Valuasi Persediaan Per Gudang ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSaldoStokBarangPerGudangUcPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SaldoStokBarangPerGudangUcReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->saldoStokBarangPerGudangUcFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'UC'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Pendukung Stock Opname';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_blanace.saldo_stok_barang_per_gudang_uc.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Pendukung Stock Opname ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSaldoStokBarangPerGudangRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SaldoStokBarangPerGudangRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->saldoStokBarangPerGudangRuFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'RU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Pendukung Stock Opname';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_blanace.saldo_stok_barang_per_gudang_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Pendukung Stock Opname ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSaldoStokBarangPerGudangGsuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SaldoStokBarangPerGudangGsuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->saldoStokBarangPerGudangGsuFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Pendukung Stock Opname';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_blanace.saldo_stok_barang_per_gudang_gsu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Pendukung Stock Opname ('.$company.').pdf"',
         ]);
     }
 
@@ -2632,7 +2824,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_broker_per_hari.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_broker_per_hari.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2672,7 +2864,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_broker_per_kategori.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_broker_per_kategori.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2712,7 +2904,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_broker_per_mesin.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_broker_per_mesin.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2752,7 +2944,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_cuci_per_hari.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_cuci_per_hari.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2792,7 +2984,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_cuci_per_mesin.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_cuci_per_mesin.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2832,7 +3024,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_cuci_per_supplier.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_cuci_per_supplier.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2872,7 +3064,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production.hasil_produksi_per_mesin.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production.hasil_produksi_per_mesin.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2912,7 +3104,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production_by_item.produksi.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production_by_item.produksi.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -2952,7 +3144,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.analysis.production_by_item.produksi_per_minggu.pdf', [
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.production_by_item.produksi_per_minggu.pdf', [
             'company' => $company,
             'reportData' => $reportData,
             'generatedAt' => now(),
@@ -3759,6 +3951,13 @@ class AscendXmlTestController extends Controller
             'Pilih_x0020_Group' => $request->input('Pilih_x0020_Group'),
             'division' => $request->input('division'),
             'divisi' => $request->input('divisi'),
+            'AttendanceDate.StartDate' => $request->input('AttendanceDate.StartDate'),
+            'AttendanceDate_StartDate' => $request->input('AttendanceDate_StartDate'),
+            'AttendanceDate_x0020_StartDate' => $request->input('AttendanceDate_x0020_StartDate'),
+            'AttendanceDate.EndDate' => $request->input('AttendanceDate.EndDate'),
+            'AttendanceDate_EndDate' => $request->input('AttendanceDate_EndDate'),
+            'AttendanceDate_x0020_EndDate' => $request->input('AttendanceDate_x0020_EndDate'),
+            'attendance_date' => $request->input('attendance_date'),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
             'TglAwal' => $request->input('TglAwal'),
@@ -3770,6 +3969,10 @@ class AscendXmlTestController extends Controller
             'responsible_person' => $request->input('responsible_person'),
             'tema' => $request->input('tema'),
             'theme' => $request->input('theme'),
+            'tamu' => $request->input('tamu'),
+            'guests' => $request->input('guests'),
+            'jam' => $request->input('jam'),
+            'time' => $request->input('time'),
         ];
     }
 
@@ -4199,6 +4402,63 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function saldoStokBarangPerGudangUcFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'per_date' => $this->requestInputByAliases($request, [
+                'per_date',
+                'PerDate',
+                'Per Date',
+                'Per_x0020_Date',
+                'tanggal',
+                'Tanggal',
+                'date',
+                'Date',
+                'report_date',
+                'ReportDate',
+                'Report Date',
+            ]),
+        ];
+    }
+
+    private function saldoStokBarangPerGudangRuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'per_date' => $this->requestInputByAliases($request, [
+                'per_date',
+                'PerDate',
+                'Per Date',
+                'Per_x0020_Date',
+                'tanggal',
+                'Tanggal',
+                'date',
+                'Date',
+                'report_date',
+                'ReportDate',
+                'Report Date',
+            ]),
+        ];
+    }
+
+    private function saldoStokBarangPerGudangGsuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'per_date' => $this->requestInputByAliases($request, [
+                'per_date',
+                'PerDate',
+                'Per Date',
+                'Per_x0020_Date',
+                'tanggal',
+                'Tanggal',
+                'date',
+                'Date',
+                'report_date',
+                'ReportDate',
+                'Report Date',
+            ]),
+        ];
+    }
+
     private function requestInputByAliases(GenerateAscendsEmployeeListReportRequest $request, array $aliases): ?string
     {
         foreach ($aliases as $alias) {
@@ -4347,6 +4607,11 @@ class AscendXmlTestController extends Controller
             'absensi_briefing_harian_gsu' => [
                 'view' => 'ascends.shared.hrm.attendance_full.absensi_briefing_harian_gsu.pdf',
                 'filename' => 'Laporan Absensi Briefing Harian (GSU).pdf',
+                'orientation' => 'portrait',
+            ],
+            'absensi_briefing_harian_uc' => [
+                'view' => 'ascends.shared.hrm.attendance_full.absensi_briefing_harian_uc.pdf',
+                'filename' => 'Laporan Absensi Briefing Harian (UC).pdf',
                 'orientation' => 'portrait',
             ],
             'rekapitulasi_absensi_briefing_harian_ru' => [
