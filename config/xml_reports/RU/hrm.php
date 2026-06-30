@@ -490,6 +490,17 @@ return [
         // -----------------------------------------------------------------
         // Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan
         // -----------------------------------------------------------------
+        // -----------------------------------------------------------------
+        // Laporan Diagram Karyawan Per Departemen
+        // -----------------------------------------------------------------
+        'diagram_karyawan_per_departemen' => [
+            'label' => 'Laporan Diagram Karyawan Per Departemen',
+            'columns' => [
+                'Department_x0020_Name' => 'Departemen',
+            ],
+            'filter' => ['Active' => 'Active'],
+        ],
+
         'perbandingan_jumlah_karyawan_tahunan_per_bulan' => [
             'label' => 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan',
             'columns' => [

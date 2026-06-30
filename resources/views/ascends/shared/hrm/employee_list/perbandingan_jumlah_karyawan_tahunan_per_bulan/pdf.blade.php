@@ -88,6 +88,10 @@
             font-size: 10px;
         }
 
+        .data-table tr.sub-header th {
+            border-top: none;
+        }
+
         .row-odd td {
             background: #c9d1df;
         }
@@ -96,27 +100,18 @@
             background: #eef2f8;
         }
 
-        .summary-grid {
+        .summary-section {
             width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
             margin-top: 6px;
             margin-bottom: 10px;
         }
 
-        .summary-grid td {
-            width: 33.333%;
-            padding: 2px 8px 2px 0;
-            vertical-align: top;
-        }
-
-        .summary-title {
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .summary-line {
+        .summary-section .summary-line {
             margin-bottom: 1px;
+        }
+
+        .summary-section .summary-title {
+            font-weight: bold;
         }
 
         .center {
@@ -143,11 +138,13 @@
             ->locale('id')
             ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-        $summaryText = static function (array $summary, string $key): string {
-            $label = ucfirst($key);
-
-            return $label . ' = ' . (int) ($summary[$key] ?? 0)
-                . ' (' . (string) ($summary[$key . '_percent'] ?? '0.0%') . ')';
+        $summaryLine = static function (array $s): string {
+            return 'Min = ' . (int) ($s['min'] ?? 0)
+                . ' (' . (string) ($s['min_percent'] ?? '0.0%') . ')'
+                . '   Max = ' . (int) ($s['max'] ?? 0)
+                . ' (' . (string) ($s['max_percent'] ?? '0.0%') . ')'
+                . '   Avg = ' . (int) ($s['avg'] ?? 0)
+                . ' (' . (string) ($s['avg_percent'] ?? '0.0%') . ')';
         };
     @endphp
 
@@ -158,16 +155,17 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: 13%;">Bulan</th>
-                    <th rowspan="2" style="width: 10%;">Total<br>Karyawan</th>
-                    <th colspan="2" style="width: 16%;">Karyawan Masuk</th>
-                    <th colspan="2" style="width: 16%;">Karyawan Keluar</th>
-                    <th rowspan="2" style="width: 9%;">%<br>Karyawan</th>
-                    <th rowspan="2" style="width: 8%;">MPP</th>
-                    <th colspan="2" style="width: 16%;">GAP</th>
-                    <th rowspan="2" style="width: 12%;">Remark</th>
+                    <th rowspan="2" style="width: 12%;">Bulan</th>
+                    <th rowspan="2" style="width: 8%;">MPP<br>Karyawan</th>
+                    <th colspan="2" style="width: 14%;">Karyawan Masuk</th>
+                    <th colspan="2" style="width: 14%;">Karyawan Keluar</th>
+                    <th colspan="2" style="width: 14%;">Total Karyawan</th>
+                    <th colspan="2" style="width: 14%;">GAP</th>
+                    <th rowspan="2" style="width: 24%;">Remark</th>
                 </tr>
-                <tr>
+                <tr class="sub-header">
+                    <th>Jumlah</th>
+                    <th>%</th>
                     <th>Jumlah</th>
                     <th>%</th>
                     <th>Jumlah</th>
@@ -180,13 +178,13 @@
                 @foreach (($yearData['rows'] ?? []) as $row)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                         <td>{{ (string) ($row['Bulan'] ?? '') }}</td>
-                        <td class="center">{{ (int) ($row['Total Karyawan'] ?? 0) }}</td>
+                        <td class="center">{{ (int) ($row['MPP'] ?? 0) }}</td>
                         <td class="center">{{ (int) ($row['Karyawan Masuk'] ?? 0) }}</td>
                         <td class="center nowrap">{{ (string) ($row['% Masuk'] ?? '0.0%') }}</td>
                         <td class="center">{{ (int) ($row['Karyawan Keluar'] ?? 0) }}</td>
                         <td class="center nowrap">{{ (string) ($row['% Keluar'] ?? '0.0%') }}</td>
-                        <td class="center nowrap">{{ (string) ($row['% Karyawan'] ?? '0.0%') }}</td>
-                        <td class="center">{{ (int) ($row['MPP'] ?? 0) }}</td>
+                        <td class="center">{{ (int) ($row['Total Karyawan'] ?? 0) }}</td>
+                        <td class="center nowrap">{{ (string) ($row['% Total'] ?? '0.0%') }}</td>
                         <td class="center">{{ (int) ($row['GAP'] ?? 0) }}</td>
                         <td class="center nowrap">{{ (string) ($row['% GAP'] ?? '0.0%') }}</td>
                         <td>{{ (string) ($row['Remark'] ?? '') }}</td>
@@ -195,29 +193,22 @@
             </tbody>
         </table>
 
-        @php $summary = $yearData['summary'] ?? []; @endphp
-        <table class="summary-grid">
-            <tr>
-                <td>
-                    <div class="summary-title">Akumulasi Karyawan Masuk Per Bulan :</div>
-                    <div class="summary-line">{{ $summaryText($summary['joined'] ?? [], 'min') }}</div>
-                    <div class="summary-line">{{ $summaryText($summary['joined'] ?? [], 'max') }}</div>
-                    <div class="summary-line">{{ $summaryText($summary['joined'] ?? [], 'avg') }}</div>
-                </td>
-                <td>
-                    <div class="summary-title">Akumulasi Karyawan Keluar Per Bulan :</div>
-                    <div class="summary-line">{{ $summaryText($summary['terminated'] ?? [], 'min') }}</div>
-                    <div class="summary-line">{{ $summaryText($summary['terminated'] ?? [], 'max') }}</div>
-                    <div class="summary-line">{{ $summaryText($summary['terminated'] ?? [], 'avg') }}</div>
-                </td>
-                <td>
-                    <div class="summary-title">Akumulasi Total Karyawan Akhir Per Bulan :</div>
-                    <div class="summary-line">{{ $summaryText($summary['total'] ?? [], 'min') }}</div>
-                    <div class="summary-line">{{ $summaryText($summary['total'] ?? [], 'max') }}</div>
-                    <div class="summary-line">{{ $summaryText($summary['total'] ?? [], 'avg') }}</div>
-                </td>
-            </tr>
-        </table>
+        @php
+            $summary = $yearData['summary'] ?? [];
+            $summaryLabels = [
+                'Akumulasi Karyawan Masuk Per Bulan' => $summary['joined'] ?? [],
+                'Akumulasi Karyawan Keluar Per Bulan' => $summary['terminated'] ?? [],
+                'Akumulasi Total Karyawan Akhir Per Bulan' => $summary['total'] ?? [],
+            ];
+        @endphp
+        <div class="summary-section">
+            @foreach ($summaryLabels as $label => $data)
+                <div class="summary-line">
+                    <span class="summary-title">{{ $label }} :</span>
+                    <span>{{ $summaryLine($data) }}</span>
+                </div>
+            @endforeach
+        </div>
     @endforeach
 
     @include('reports.partials.pdf-footer-table')

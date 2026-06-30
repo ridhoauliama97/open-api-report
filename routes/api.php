@@ -301,6 +301,21 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.attendance-full.absensi-briefing-harian-uc.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/custom-reports/karyawan-masuk/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKaryawanMasukCustomPdf']
+)->name('api.internal.ascends.shared.hrm.custom-reports.karyawan-masuk.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/custom-reports/karyawan-keluar/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKaryawanKeluarCustomPdf']
+)->name('api.internal.ascends.shared.hrm.custom-reports.karyawan-keluar.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/custom-reports/karyawan-keluar-tahunan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmKaryawanKeluarTahunanCustomPdf']
+)->name('api.internal.ascends.shared.hrm.custom-reports.karyawan-keluar-tahunan.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianRuPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian-ru.pdf');
@@ -414,6 +429,11 @@ Route::post(
     '/internal/ascends/shared/hrm/employee-list/mpp-tahunan-per-divisi-gsu/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmMppTahunanPerDivisiGsuPdf']
 )->name('api.internal.ascends.shared.hrm.employee-list.mpp-tahunan-per-divisi-gsu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-departemen/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDiagramKaryawanPerDepartemenPdf']
+)->name('api.internal.ascends.shared.hrm.employee-list.diagram-karyawan-per-departemen.pdf');
 
 Route::post(
     '/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf',

@@ -16,7 +16,7 @@ Template shared HRM dipakai supaya struktur Blade laporan bisa digunakan lintas 
 Nama perusahaan pada title dan filename dibaca dari parameter field `DB_CompanyName`.
 Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
-## Endpoint Shared
+## Endpoint Shared Employee List
 
 - Employee List - List Karyawan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/list-karyawan/pdf`
 - Employee List - Laporan Daftar Karyawan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/daftar-karyawan/pdf`
@@ -35,6 +35,86 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
 - Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
 - Employee List - Laporan THR (Idul Fitri/Natal/Imlek): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/thr/pdf`
+- Employee List - Laporan Diagram Karyawan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-departemen/pdf`
+
+## Endpoint Custom Reports
+
+Custom reports mempunyai endpoint khusus dengan parameter filter sendiri:
+
+- Karyawan Masuk - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/custom-reports/karyawan-masuk/pdf`
+- Karyawan Keluar - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/custom-reports/karyawan-keluar/pdf`
+- Karyawan Keluar Tahunan - Laporan Karyawan Keluar Tahunan ({Status}): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/custom-reports/karyawan-keluar-tahunan/pdf`
+
+Input tambahan khusus `karyawan-masuk` dan `karyawan-keluar`:
+
+- `StartDate` + `EndDate`: periode tanggal masuk/keluar, contoh `2026-01-01` sampai `2026-06-30`.
+- Alias yang diterima: `date_start` + `date_end`, `start_date` + `end_date`, `DateRange.StartDate` + `DateRange.EndDate`.
+- Jika tidak dikirim, periode dari tanggal paling awal sampai paling akhir di XML.
+
+Input tambahan khusus `karyawan-keluar-tahunan`:
+
+- `PeriodStart` + `PeriodEnd`: periode tahun laporan, contoh `2025-01-01` sampai `2026-12-31`.
+- Alias yang diterima: `period_start` + `period_end`, `Period.PeriodStart` + `Period.PeriodEnd`.
+- `Status`: tipe karyawan dari Crystal Report Ascend, contoh `KK/KT` atau `ST`. Nilai ini muncul di title dan filename. Jika tidak dikirim, title menjadi `Laporan Karyawan Keluar Tahunan` (tanpa status).
+- Alias yang diterima: `status`.
+
+Input tambahan khusus `perbandingan-jumlah-karyawan-tahunan-per-bulan`:
+
+- `PerDate`: tanggal referensi periode laporan, contoh `2026-04-30`. Menentukan tahun (PerDate-1 dan PerDate) dan bulan (Januari sampai bulan PerDate).
+- Alias yang diterima: `per_date`, `perdate`.
+- Jika tidak dikirim, sistem memakai tanggal server saat ini.
+
+Contoh `multipart/form-data` untuk Karyawan Masuk periode Januari-Juni 2026:
+
+```text
+DB_CompanyName=RU
+StartDate=2026-01-01
+EndDate=2026-06-30
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
+Contoh `multipart/form-data` untuk Karyawan Keluar Tahunan (KK/KT) periode 2025-2026:
+
+```text
+DB_CompanyName=RU
+PeriodStart=2025-01-01
+PeriodEnd=2026-12-31
+Status=KK/KT
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
+Contoh `multipart/form-data` untuk Karyawan Keluar Tahunan (ST) periode 2025-2026:
+
+```text
+DB_CompanyName=RU
+PeriodStart=2025-01-01
+PeriodEnd=2026-12-31
+Status=ST
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
+Input tambahan khusus `diagram-karyawan-per-departemen`:
+
+- `PerDate`: tanggal referensi data karyawan aktif, contoh `2026-05-01`. Menentukan subtitle laporan.
+- Alias yang diterima: `per_date`, `perdate`.
+- Jika tidak dikirim, sistem memakai tanggal server saat ini.
+
+Contoh `multipart/form-data` untuk Diagram Karyawan Per Departemen per 30 April 2026:
+
+```text
+DB_CompanyName=UC
+PerDate=2026-04-30
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
+Contoh `multipart/form-data` untuk Perbandingan Jumlah Karyawan Tahunan Per Bulan per 30 April 2026:
+
+```text
+DB_CompanyName=UC
+PerDate=2026-04-30
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
 ## Endpoint Shared Attendance Full
 
 - Attendance Full - Laporan Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/attendance-full/absensi-briefing-harian-ru/pdf`
@@ -474,12 +554,23 @@ Contoh:
 - `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
 - `Loss Time - Laporan Loss Time (RU).pdf`
 - `Employee List - Laporan THR (Idul Fitri) (GSU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Departemen (RU).pdf`
+- `Custom Reports - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (RU).pdf`
+- `Custom Reports - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU).pdf`
+- `Custom Reports - Laporan Karyawan Keluar Tahunan (KK/KT) (RU).pdf`
+- `Custom Reports - Laporan Karyawan Keluar Tahunan (ST) (RU).pdf`
 
 ## Response Gagal
 
 - `422 application/json` jika XML kosong, tidak valid, atau tidak bisa diproses.
 
 ## Template Shared HRM Tersedia
+
+Template Blade shared Custom Reports berada di `resources/views/ascends/shared/hrm/custom_reports`.
+
+- `custom_reports/karyawan_masuk`
+- `custom_reports/karyawan_keluar`
+- `custom_reports/karyawan_keluar_tahunan`
 
 Template Blade shared Employee List berada di `resources/views/ascends/shared/hrm/employee_list`.
 
@@ -500,6 +591,7 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 - `employee_list/perbandingan_jumlah_karyawan_tahunan_per_bulan`
 - `employee_list/usia_generasi_tahun_kelahiran_masa_kerja`
 - `employee_list/thr`
+- `employee_list/diagram_karyawan_per_departemen`
 
 Template Blade shared Employee Termination berada di `resources/views/ascends/shared/hrm/employee_termination`.
 

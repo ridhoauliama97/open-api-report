@@ -46,7 +46,7 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
     /**
      * @return array<string, mixed>
      */
-    public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload'): array
+    public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $reportData = $this->xmlDataSourceService->loadSubReportFromXmlContents(
             'RU',
@@ -56,21 +56,21 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
             $sourceLabel
         );
 
-        return $this->shapeReportData($reportData, $sourceLabel);
+        return $this->shapeReportData($reportData, $sourceLabel, $filters);
     }
 
     /**
      * @param  array<string, mixed>  $reportData
      * @return array<string, mixed>
      */
-    private function shapeReportData(array $reportData, string $sourceLabel): array
+    private function shapeReportData(array $reportData, string $sourceLabel, array $filters = []): array
     {
         $rawRows = array_values(array_filter(
             $reportData['rows'] ?? [],
             static fn (array $row): bool => self::shouldIncludeRow($row)
         ));
 
-        $period = self::resolveReportPeriod();
+        $period = self::resolveReportPeriod($filters);
         $years = array_values(array_unique(array_filter([
             $period['year'] - 1,
             $period['year'],
@@ -93,24 +93,31 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
 
         $headers = [
             'Bulan',
-            'Total Karyawan',
+            'MPP Karyawan',
             'Karyawan Masuk',
-            '% Masuk',
+            '%',
             'Karyawan Keluar',
-            '% Keluar',
-            '% Karyawan',
-            'MPP',
+            '%',
+            'Total Karyawan',
+            '%',
             'GAP',
-            '% GAP',
+            '%',
             'Remark',
         ];
+
+        $now = Carbon::now()->locale('id');
+
+        $perDateFilter = $filters['PerDate'] ?? '';
+        $perDateValue = $perDateFilter !== ''
+            ? Carbon::parse($perDateFilter)->toDateString()
+            : $period['date']->toDateString();
 
         return array_merge($reportData, [
             'title' => $reportData['label'] ?? self::TITLE,
             'source_file' => $sourceLabel,
             'printed_by' => self::resolvePrintedBy($rawRows),
-            'printed_at' => $period['date']->translatedFormat('d F Y H:i'),
-            'per_date' => $period['date']->toDateString(),
+            'printed_at' => $now->translatedFormat('d F Y H:i'),
+            'per_date' => $perDateValue,
             'headers' => $headers,
             'yearly_rows' => $yearlyRows,
             'rows' => array_merge(...array_map(static fn (array $year): array => $year['rows'], $yearlyRows)),
@@ -132,14 +139,18 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
     /**
      * @return array{year: int, month: int, date: Carbon}
      */
-    private static function resolveReportPeriod(): array
+    private static function resolveReportPeriod(array $filters = []): array
     {
-        $now = Carbon::now()->locale('id');
+        $perDateValue = $filters['PerDate'] ?? '';
+
+        $ref = $perDateValue !== ''
+            ? Carbon::parse($perDateValue)->locale('id')
+            : Carbon::now()->locale('id');
 
         return [
-            'year' => (int) $now->year,
-            'month' => (int) $now->month,
-            'date' => Carbon::create((int) $now->year, (int) $now->month, 1, 0, 0, 0)->locale('id'),
+            'year' => (int) $ref->year,
+            'month' => (int) $ref->month,
+            'date' => Carbon::create((int) $ref->year, (int) $ref->month, 1, 0, 0, 0)->locale('id'),
         ];
     }
 
@@ -163,13 +174,13 @@ class PerbandinganJumlahKaryawanTahunanPerBulanReportService
 
             $monthlyRows[] = [
                 'Bulan' => self::MONTH_LABELS[$month] ?? (string) $month,
-                'Total Karyawan' => $total,
+                'MPP' => $mpp,
                 'Karyawan Masuk' => $joined,
                 '% Masuk' => self::percentText($joined, $mpp),
                 'Karyawan Keluar' => $terminated,
                 '% Keluar' => self::percentText($terminated, $mpp),
-                '% Karyawan' => $employeeChangePercent,
-                'MPP' => $mpp,
+                'Total Karyawan' => $total,
+                '% Total' => $employeeChangePercent,
                 'GAP' => $gap,
                 '% GAP' => self::percentText($gap, $mpp),
                 'Remark' => '',
