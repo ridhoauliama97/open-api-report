@@ -446,9 +446,24 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.employee-list.diagram-karyawan-per-masa-kerja.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-jenis-kelamin/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDiagramKaryawanPerJenisKelaminPdf']
+)->name('api.internal.ascends.shared.hrm.employee-list.diagram-karyawan-per-jenis-kelamin.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-usia-generasi/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDiagramKaryawanPerUsiaGenerasiPdf']
+)->name('api.internal.ascends.shared.hrm.employee-list.diagram-karyawan-per-usia-generasi.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-level/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmDiagramKaryawanPerLevelPdf']
 )->name('api.internal.ascends.shared.hrm.employee-list.diagram-karyawan-per-level.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-strata-pendidikan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmDiagramKaryawanPerStrataPendidikanPdf']
+)->name('api.internal.ascends.shared.hrm.employee-list.diagram-karyawan-per-strata-pendidikan.pdf');
 
 Route::post(
     '/internal/ascends/shared/hrm/absence/ketidakhadiran-bulanan/pdf',

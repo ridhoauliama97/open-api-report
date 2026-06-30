@@ -5,9 +5,19 @@ namespace App\Services\Ascends\Shared\Hrm;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 
-class DiagramKaryawanPerDepartemenReportService
+class DiagramKaryawanPerUsiaGenerasiReportService
 {
-    private const TITLE = 'Laporan Diagram Karyawan Per Departemen';
+    private const TITLE = 'Laporan Diagram Karyawan Per Usia Generasi';
+
+    private const GENERATION_RANGES = [
+        ['label' => 'Generasi GI', 'min' => 1901, 'max' => 1927],
+        ['label' => 'Generasi Pendiam', 'min' => 1928, 'max' => 1945],
+        ['label' => 'Generasi Baby Boomer', 'min' => 1946, 'max' => 1964],
+        ['label' => 'Generasi X', 'min' => 1965, 'max' => 1980],
+        ['label' => 'Generasi Milenial', 'min' => 1981, 'max' => 1996],
+        ['label' => 'Generasi Z', 'min' => 1997, 'max' => 2012],
+        ['label' => 'Generasi Alpha', 'min' => 2010, 'max' => 2024],
+    ];
 
     public const CHART_COLORS = [
         [52, 73, 94],
@@ -30,9 +40,9 @@ class DiagramKaryawanPerDepartemenReportService
 
     public function buildReportData(): array
     {
-        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_departemen');
+        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_usia_generasi');
 
-        return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/AnlReports.HRM.EmployeeList.xml');
+        return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/Diagram/AnlReports.HRM.EmployeeList.xml');
     }
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
@@ -40,7 +50,7 @@ class DiagramKaryawanPerDepartemenReportService
         $reportData = $this->xmlDataSourceService->loadSubReportFromXmlContents(
             'RU',
             'hrm',
-            'diagram_karyawan_per_departemen',
+            'diagram_karyawan_per_usia_generasi',
             $xmlContents,
             $sourceLabel
         );
@@ -52,36 +62,50 @@ class DiagramKaryawanPerDepartemenReportService
     {
         $rawRows = $reportData['rows'] ?? [];
 
-        $deptCounts = [];
-        foreach ($rawRows as $row) {
-            $kode = trim((string) ($row['Kode Dept.'] ?? ''));
-            $name = trim((string) ($row['Departemen'] ?? ''));
-            $key = $kode !== '' ? $kode : $name;
-            if ($name === '') {
-                continue;
-            }
-            if (! isset($deptCounts[$key])) {
-                $deptCounts[$key] = ['kode' => $kode, 'name' => $name, 'count' => 0];
-            }
-            $deptCounts[$key]['count']++;
+        $genCounts = [];
+        foreach (self::GENERATION_RANGES as $range) {
+            $genCounts[$range['label']] = ['name' => $range['label'], 'count' => 0];
         }
 
-        uasort($deptCounts, static fn (array $a, array $b): int => $b['count'] - $a['count']);
+        foreach ($rawRows as $row) {
+            $empCode = trim((string) ($row['Kode Karyawan'] ?? ''));
+            if (str_contains($empCode, 'SPECIAL')) {
+                continue;
+            }
 
-        $total = array_sum(array_column($deptCounts, 'count'));
+            $birthYear = (int) ($row['Tahun Lahir'] ?? 0);
+            if ($birthYear <= 0) {
+                continue;
+            }
+
+            $matched = false;
+            foreach (self::GENERATION_RANGES as $range) {
+                if ($birthYear >= $range['min'] && $birthYear <= $range['max']) {
+                    $genCounts[$range['label']]['count']++;
+                    $matched = true;
+                    break;
+                }
+            }
+        }
+
+        $genCounts = array_filter($genCounts, static fn (array $item): bool => $item['count'] > 0);
+
+        $total = array_sum(array_column($genCounts, 'count'));
         $departments = [];
         $chartData = [];
 
-        foreach ($deptCounts as $item) {
+        foreach ($genCounts as $item) {
             $percent = $total > 0 ? round(($item['count'] / $total) * 100, 1) : 0;
             $departments[] = [
-                'kode' => $item['kode'],
                 'name' => $item['name'],
                 'count' => $item['count'],
                 'percent' => $percent,
             ];
             $chartData[] = ['name' => $item['name'], 'count' => $item['count'], 'percent' => $percent];
         }
+
+        $tableRows = $departments;
+        usort($tableRows, static fn (array $a, array $b): int => $b['percent'] <=> $a['percent']);
 
         $pieChartBase64 = $total > 0 ? $this->generatePieChart($chartData) : '';
 
@@ -91,13 +115,12 @@ class DiagramKaryawanPerDepartemenReportService
             ? Carbon::parse($perDateFilter)->toDateString()
             : $now->toDateString();
 
-        $headers = ['Kode Dept.', 'Departemen', 'Jumlah', '%'];
+        $headers = ['Generasi', 'Jumlah', '%'];
         $rows = array_map(static fn (array $d): array => [
-            'Kode Dept.' => $d['kode'],
-            'Departemen' => $d['name'],
+            'Generasi' => $d['name'],
             'Jumlah' => $d['count'],
             '%' => number_format($d['percent'], 1, '.', '').'%',
-        ], $departments);
+        ], $tableRows);
 
         return [
             'title' => $reportData['label'] ?? self::TITLE,
@@ -108,6 +131,7 @@ class DiagramKaryawanPerDepartemenReportService
             'headers' => $headers,
             'rows' => $rows,
             'departments' => $departments,
+            'tableRows' => $tableRows,
             'total' => $total,
             'pie_chart_base64' => $pieChartBase64,
         ];

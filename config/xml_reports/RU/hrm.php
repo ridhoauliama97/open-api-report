@@ -498,6 +498,10 @@ return [
             'columns' => [
                 'Department_x0020_Code' => 'Kode Dept.',
                 'Department_x0020_Name' => 'Departemen',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
             ],
             'filter' => ['Active' => 'Active'],
         ],
@@ -508,6 +512,10 @@ return [
                 'Sub-Department_x0020_Code' => 'Kode Sub Dept.',
                 'Sub-Department_x0020_Name' => 'Sub Departemen',
                 'Employee_x0020_Code' => 'Kode Karyawan',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
             ],
             'filter' => ['Active' => 'Active'],
         ],
@@ -517,6 +525,23 @@ return [
             'columns' => [
                 'Employee_x0020_Code' => 'Kode Karyawan',
                 'Level_x0020_Name' => 'Level',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => ['Active' => 'Active'],
+        ],
+
+        'diagram_karyawan_per_strata_pendidikan' => [
+            'label' => 'Laporan Diagram Karyawan Per Strata Pendidikan',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Last_x0020_Academic_x0020_Level' => 'Pendidikan Terakhir',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
             ],
             'filter' => ['Active' => 'Active'],
         ],
@@ -546,6 +571,36 @@ return [
             'columns' => [
                 'Employee_x0020_Code' => 'Kode Karyawan',
                 'Join_x0020_Date' => 'Tanggal Masuk',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => ['Active' => 'Active'],
+        ],
+
+        'diagram_karyawan_per_jenis_kelamin' => [
+            'label' => 'Laporan Diagram Karyawan Per Jenis Kelamin',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Sex' => 'Jenis Kelamin',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
+            ],
+            'filter' => ['Active' => 'Active'],
+        ],
+
+        'diagram_karyawan_per_usia_generasi' => [
+            'label' => 'Laporan Diagram Karyawan Per Usia Generasi',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Birth_x0020_Date_x0020__x0028_Year_x0029_' => 'Tahun Lahir',
+                'Nama_x0020_User' => 'Nama User',
+                'User_x0020_Name' => 'User Name',
+                'Printed_x0020_By' => 'Printed By',
+                'Created_x0020_By' => 'Created By',
             ],
             'filter' => ['Active' => 'Active'],
         ],

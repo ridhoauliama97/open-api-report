@@ -20,8 +20,11 @@ use App\Services\Ascends\Shared\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemen
 use App\Services\Ascends\Shared\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerJenisKelaminReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerLevelReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerMasaKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerStrataPendidikanReportService;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerUsiaGenerasiReportService;
 use App\Services\Ascends\Shared\Hrm\DurasiDendaKeterlambatanReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeListReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
@@ -978,6 +981,7 @@ class AscendXmlTestController extends Controller
             $reportData['company'] = $company;
             $reportData['title'] = 'Laporan Diagram Karyawan Per Departemen'.($company !== '' ? ' ('.$company.')' : '');
             $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -1017,6 +1021,7 @@ class AscendXmlTestController extends Controller
             $reportData['company'] = $company;
             $reportData['title'] = 'Laporan Diagram Karyawan Per Divisi'.($company !== '' ? ' ('.$company.')' : '');
             $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -1056,6 +1061,7 @@ class AscendXmlTestController extends Controller
             $reportData['company'] = $company;
             $reportData['title'] = 'Laporan Diagram Karyawan Per Masa Kerja'.($company !== '' ? ' ('.$company.')' : '');
             $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -1072,6 +1078,86 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Employee List - Laporan Diagram Karyawan Per Masa Kerja'.($company !== '' ? ' ('.$company.')' : '').'.pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmDiagramKaryawanPerJenisKelaminPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DiagramKaryawanPerJenisKelaminReportService $diagramKaryawanPerJenisKelaminReportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+            $company = trim((string) ($request->input('DB_CompanyName', $request->input('company', ''))));
+            $company = $company !== '' ? strtoupper($company) : '';
+            $reportData = $diagramKaryawanPerJenisKelaminReportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->diagramKaryawanPerJenisKelaminFilters($request)
+            );
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Diagram Karyawan Per Jenis Kelamin'.($company !== '' ? ' ('.$company.')' : '');
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.employee_list.diagram_karyawan_per_jenis_kelamin.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Employee List - Laporan Diagram Karyawan Per Jenis Kelamin'.($company !== '' ? ' ('.$company.')' : '').'.pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmDiagramKaryawanPerUsiaGenerasiPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DiagramKaryawanPerUsiaGenerasiReportService $diagramKaryawanPerUsiaGenerasiReportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+            $company = trim((string) ($request->input('DB_CompanyName', $request->input('company', ''))));
+            $company = $company !== '' ? strtoupper($company) : '';
+            $reportData = $diagramKaryawanPerUsiaGenerasiReportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->diagramKaryawanPerUsiaGenerasiFilters($request)
+            );
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Diagram Karyawan Per Usia Generasi'.($company !== '' ? ' ('.$company.')' : '');
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.employee_list.diagram_karyawan_per_usia_generasi.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Employee List - Laporan Diagram Karyawan Per Usia Generasi'.($company !== '' ? ' ('.$company.')' : '').'.pdf"',
         ]);
     }
 
@@ -1095,6 +1181,7 @@ class AscendXmlTestController extends Controller
             $reportData['company'] = $company;
             $reportData['title'] = 'Laporan Diagram Karyawan Per Level'.($company !== '' ? ' ('.$company.')' : '');
             $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -1111,6 +1198,46 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Employee List - Laporan Diagram Karyawan Per Level'.($company !== '' ? ' ('.$company.')' : '').'.pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmDiagramKaryawanPerStrataPendidikanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DiagramKaryawanPerStrataPendidikanReportService $diagramKaryawanPerStrataPendidikanReportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+            $company = trim((string) ($request->input('DB_CompanyName', $request->input('company', ''))));
+            $company = $company !== '' ? strtoupper($company) : '';
+            $reportData = $diagramKaryawanPerStrataPendidikanReportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->diagramKaryawanPerStrataPendidikanFilters($request)
+            );
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Diagram Karyawan Per Strata Pendidikan'.($company !== '' ? ' ('.$company.')' : '');
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.employee_list.diagram_karyawan_per_strata_pendidikan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Employee List - Laporan Diagram Karyawan Per Strata Pendidikan'.($company !== '' ? ' ('.$company.')' : '').'.pdf"',
         ]);
     }
 
@@ -4456,7 +4583,55 @@ class AscendXmlTestController extends Controller
     /**
      * @return array<string, mixed>
      */
+    private function diagramKaryawanPerJenisKelaminFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'PerDate' => $request->input('PerDate'),
+            'per_date' => $request->input('per_date'),
+            'perdate' => $request->input('perdate'),
+            'DB_CompanyName' => $request->input('DB_CompanyName'),
+            'company' => $request->input('company'),
+            'Sys_Username' => $request->input('Sys_Username'),
+            'sys_username' => $request->input('sys_username'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function diagramKaryawanPerUsiaGenerasiFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'PerDate' => $request->input('PerDate'),
+            'per_date' => $request->input('per_date'),
+            'perdate' => $request->input('perdate'),
+            'DB_CompanyName' => $request->input('DB_CompanyName'),
+            'company' => $request->input('company'),
+            'Sys_Username' => $request->input('Sys_Username'),
+            'sys_username' => $request->input('sys_username'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function diagramKaryawanPerLevelFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'PerDate' => $request->input('PerDate'),
+            'per_date' => $request->input('per_date'),
+            'perdate' => $request->input('perdate'),
+            'DB_CompanyName' => $request->input('DB_CompanyName'),
+            'company' => $request->input('company'),
+            'Sys_Username' => $request->input('Sys_Username'),
+            'sys_username' => $request->input('sys_username'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function diagramKaryawanPerStrataPendidikanFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
             'PerDate' => $request->input('PerDate'),
