@@ -43,7 +43,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 20px 0;
+            margin: 2px 0 10px 0;
             font-size: 12px;
             color: #636466;
         }
@@ -159,7 +159,7 @@
 
     @if ($pieChart !== '')
         <div class="chart-wrapper">
-            <img src="{{ $pieChart }}" alt="Diagram Pie Karyawan Per Departemen">
+            <img src="{{ $pieChart }}" alt="Diagram Pie Masa Kerja">
         </div>
     @endif
 
@@ -169,26 +169,24 @@
                 <td>
                     @foreach ($leftDepts as $i => $dept)
                         @php
-                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService::CHART_COLORS[$i % 12] ?? [0, 0, 0];
+                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerMasaKerjaReportService::CHART_COLORS[$i % 12] ?? [0, 0, 0];
                         @endphp
                         <div>
                             <span class="dept-label-checkbox"
                                 style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $dept['kode'] !== '' ? $dept['kode'] . ' - ' : '' }}{{ $dept['name'] }} ({{ $dept['count'] }}) -
-                            {{ number_format($dept['percent'], 1) }}%
+                            {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
                         </div>
                     @endforeach
                 </td>
                 <td>
                     @foreach ($rightDepts as $i => $dept)
                         @php
-                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
+                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerMasaKerjaReportService::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
                         @endphp
                         <div>
                             <span class="dept-label-checkbox"
                                 style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $dept['kode'] !== '' ? $dept['kode'] . ' - ' : '' }}{{ $dept['name'] }} ({{ $dept['count'] }}) -
-                            {{ number_format($dept['percent'], 1) }}%
+                            {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
                         </div>
                     @endforeach
                 </td>
@@ -200,8 +198,7 @@
         <thead>
             <tr>
                 <th style="width: 8%;">No.</th>
-                <th style="width: 12%;">Kode</th>
-                <th style="width: 40%;">Departemen</th>
+                <th style="width: 52%;">Masa Kerja</th>
                 <th style="width: 20%;">Jumlah</th>
                 <th style="width: 20%;">%</th>
             </tr>
@@ -210,14 +207,13 @@
             @foreach ($departments as $dept)
                 <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="center">{{ $loop->iteration }}</td>
-                    <td class="center">{{ $dept['kode'] }}</td>
                     <td>{{ $dept['name'] }}</td>
                     <td class="center">{{ $dept['count'] }}</td>
                     <td class="center nowrap">{{ number_format($dept['percent'], 1) }}%</td>
                 </tr>
             @endforeach
             <tr class="total-row">
-                <td class="center" colspan="3">Total :</td>
+                <td class="center" colspan="2">Total :</td>
                 <td class="center">{{ $total }}</td>
                 <td class="center nowrap">{{ $total > 0 ? '100.0%' : '0.0%' }}</td>
             </tr>

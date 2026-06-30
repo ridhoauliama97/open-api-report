@@ -496,7 +496,27 @@ return [
         'diagram_karyawan_per_departemen' => [
             'label' => 'Laporan Diagram Karyawan Per Departemen',
             'columns' => [
+                'Department_x0020_Code' => 'Kode Dept.',
                 'Department_x0020_Name' => 'Departemen',
+            ],
+            'filter' => ['Active' => 'Active'],
+        ],
+
+        'diagram_karyawan_per_divisi' => [
+            'label' => 'Laporan Diagram Karyawan Per Divisi',
+            'columns' => [
+                'Sub-Department_x0020_Code' => 'Kode Sub Dept.',
+                'Sub-Department_x0020_Name' => 'Sub Departemen',
+                'Employee_x0020_Code' => 'Kode Karyawan',
+            ],
+            'filter' => ['Active' => 'Active'],
+        ],
+
+        'diagram_karyawan_per_level' => [
+            'label' => 'Laporan Diagram Karyawan Per Level',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Level_x0020_Name' => 'Level',
             ],
             'filter' => ['Active' => 'Active'],
         ],
@@ -519,6 +539,15 @@ return [
                 'Created_x0020_By' => 'Created By',
             ],
             'filter' => null,
+        ],
+
+        'diagram_karyawan_per_masa_kerja' => [
+            'label' => 'Laporan Diagram Karyawan Per Masa Kerja',
+            'columns' => [
+                'Employee_x0020_Code' => 'Kode Karyawan',
+                'Join_x0020_Date' => 'Tanggal Masuk',
+            ],
+            'filter' => ['Active' => 'Active'],
         ],
 
     ],

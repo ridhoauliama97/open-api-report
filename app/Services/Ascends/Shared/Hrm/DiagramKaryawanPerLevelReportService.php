@@ -5,9 +5,9 @@ namespace App\Services\Ascends\Shared\Hrm;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 
-class DiagramKaryawanPerDepartemenReportService
+class DiagramKaryawanPerLevelReportService
 {
-    private const TITLE = 'Laporan Diagram Karyawan Per Departemen';
+    private const TITLE = 'Laporan Diagram Karyawan Per Level';
 
     public const CHART_COLORS = [
         [52, 73, 94],
@@ -26,14 +26,13 @@ class DiagramKaryawanPerDepartemenReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     public function buildReportData(): array
     {
-        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_departemen');
+        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_level');
 
-        return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/AnlReports.HRM.EmployeeList.xml');
+        return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/Diagram/AnlReports.HRM.EmployeeList.xml');
     }
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
@@ -41,7 +40,7 @@ class DiagramKaryawanPerDepartemenReportService
         $reportData = $this->xmlDataSourceService->loadSubReportFromXmlContents(
             'RU',
             'hrm',
-            'diagram_karyawan_per_departemen',
+            'diagram_karyawan_per_level',
             $xmlContents,
             $sourceLabel
         );
@@ -53,36 +52,43 @@ class DiagramKaryawanPerDepartemenReportService
     {
         $rawRows = $reportData['rows'] ?? [];
 
-        $deptCounts = [];
+        $levelCounts = [];
         foreach ($rawRows as $row) {
-            $kode = trim((string) ($row['Kode Dept.'] ?? ''));
-            $name = trim((string) ($row['Departemen'] ?? ''));
-            $key = $kode !== '' ? $kode : $name;
-            if ($name === '') {
+            $empCode = trim((string) ($row['Kode Karyawan'] ?? ''));
+            if (str_contains($empCode, 'SPECIAL')) {
                 continue;
             }
-            if (!isset($deptCounts[$key])) {
-                $deptCounts[$key] = ['kode' => $kode, 'name' => $name, 'count' => 0];
+
+            $level = trim((string) ($row['Level'] ?? ''));
+            if ($level === '') {
+                continue;
             }
-            $deptCounts[$key]['count']++;
+
+            $label = 'Level '.$level;
+            if (! isset($levelCounts[$level])) {
+                $levelCounts[$level] = ['name' => $label, 'count' => 0];
+            }
+            $levelCounts[$level]['count']++;
         }
 
-        uasort($deptCounts, static fn(array $a, array $b): int => $b['count'] - $a['count']);
+        ksort($levelCounts, SORT_NUMERIC);
 
-        $total = array_sum(array_column($deptCounts, 'count'));
+        $total = array_sum(array_column($levelCounts, 'count'));
         $departments = [];
         $chartData = [];
 
-        foreach ($deptCounts as $item) {
+        foreach ($levelCounts as $item) {
             $percent = $total > 0 ? round(($item['count'] / $total) * 100, 1) : 0;
             $departments[] = [
-                'kode' => $item['kode'],
                 'name' => $item['name'],
                 'count' => $item['count'],
                 'percent' => $percent,
             ];
             $chartData[] = ['name' => $item['name'], 'count' => $item['count'], 'percent' => $percent];
         }
+
+        $tableRows = $departments;
+        usort($tableRows, static fn (array $a, array $b): int => $b['count'] - $a['count']);
 
         $pieChartBase64 = $total > 0 ? $this->generatePieChart($chartData) : '';
 
@@ -92,12 +98,11 @@ class DiagramKaryawanPerDepartemenReportService
             ? Carbon::parse($perDateFilter)->toDateString()
             : $now->toDateString();
 
-        $headers = ['Kode Dept.', 'Departemen', 'Jumlah', '%'];
-        $rows = array_map(static fn(array $d): array => [
-            'Kode Dept.' => $d['kode'],
-            'Departemen' => $d['name'],
+        $headers = ['Level', 'Jumlah', '%'];
+        $rows = array_map(static fn (array $d): array => [
+            'Level' => $d['name'],
             'Jumlah' => $d['count'],
-            '%' => number_format($d['percent'], 1, '.', '') . '%',
+            '%' => number_format($d['percent'], 1, '.', '').'%',
         ], $departments);
 
         return [
@@ -109,6 +114,7 @@ class DiagramKaryawanPerDepartemenReportService
             'headers' => $headers,
             'rows' => $rows,
             'departments' => $departments,
+            'tableRows' => $tableRows,
             'total' => $total,
             'pie_chart_base64' => $pieChartBase64,
         ];
@@ -161,17 +167,12 @@ class DiagramKaryawanPerDepartemenReportService
 
         imagearc($image, $cx, $cy, $radius * 2, $radius * 2, 0, 360, imagecolorallocate($image, 255, 255, 255));
 
-        $holeRadius = 60;
-        $holeColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
-        imagefilledellipse($image, $cx, $cy, $holeRadius * 2, $holeRadius * 2, $holeColor);
-        imageellipse($image, $cx, $cy, $holeRadius * 2, $holeRadius * 2, imagecolorallocate($image, 255, 255, 255));
-
         ob_start();
         imagepng($image);
         $imageData = ob_get_clean();
         imagedestroy($image);
 
-        return 'data:image/png;base64,' . base64_encode($imageData);
+        return 'data:image/png;base64,'.base64_encode($imageData);
     }
 
     private static function resolvePrintedBy(array $rows): string

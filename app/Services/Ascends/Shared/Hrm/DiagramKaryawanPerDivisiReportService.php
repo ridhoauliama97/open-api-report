@@ -5,9 +5,9 @@ namespace App\Services\Ascends\Shared\Hrm;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 
-class DiagramKaryawanPerDepartemenReportService
+class DiagramKaryawanPerDivisiReportService
 {
-    private const TITLE = 'Laporan Diagram Karyawan Per Departemen';
+    private const TITLE = 'Laporan Diagram Karyawan Per Divisi';
 
     public const CHART_COLORS = [
         [52, 73, 94],
@@ -31,7 +31,7 @@ class DiagramKaryawanPerDepartemenReportService
 
     public function buildReportData(): array
     {
-        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_departemen');
+        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_divisi');
 
         return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/AnlReports.HRM.EmployeeList.xml');
     }
@@ -41,7 +41,7 @@ class DiagramKaryawanPerDepartemenReportService
         $reportData = $this->xmlDataSourceService->loadSubReportFromXmlContents(
             'RU',
             'hrm',
-            'diagram_karyawan_per_departemen',
+            'diagram_karyawan_per_divisi',
             $xmlContents,
             $sourceLabel
         );
@@ -55,14 +55,19 @@ class DiagramKaryawanPerDepartemenReportService
 
         $deptCounts = [];
         foreach ($rawRows as $row) {
-            $kode = trim((string) ($row['Kode Dept.'] ?? ''));
-            $name = trim((string) ($row['Departemen'] ?? ''));
-            $key = $kode !== '' ? $kode : $name;
-            if ($name === '') {
+            $empCode = trim((string) ($row['Kode Karyawan'] ?? ''));
+            if (str_contains($empCode, 'SPECIAL')) {
                 continue;
             }
+
+            $kode = trim((string) ($row['Kode Sub Dept.'] ?? ''));
+            $name = trim((string) ($row['Sub Departemen'] ?? ''));
+
+            $displayName = $name !== '' ? $name : 'NULL';
+            $key = $kode !== '' ? $kode : 'NULL';
+
             if (!isset($deptCounts[$key])) {
-                $deptCounts[$key] = ['kode' => $kode, 'name' => $name, 'count' => 0];
+                $deptCounts[$key] = ['kode' => $kode, 'name' => $displayName, 'count' => 0];
             }
             $deptCounts[$key]['count']++;
         }
@@ -92,10 +97,10 @@ class DiagramKaryawanPerDepartemenReportService
             ? Carbon::parse($perDateFilter)->toDateString()
             : $now->toDateString();
 
-        $headers = ['Kode Dept.', 'Departemen', 'Jumlah', '%'];
+        $headers = ['Kode', 'Divisi', 'Jumlah', '%'];
         $rows = array_map(static fn(array $d): array => [
-            'Kode Dept.' => $d['kode'],
-            'Departemen' => $d['name'],
+            'Kode' => $d['kode'],
+            'Divisi' => $d['name'],
             'Jumlah' => $d['count'],
             '%' => number_format($d['percent'], 1, '.', '') . '%',
         ], $departments);
@@ -160,11 +165,6 @@ class DiagramKaryawanPerDepartemenReportService
         }
 
         imagearc($image, $cx, $cy, $radius * 2, $radius * 2, 0, 360, imagecolorallocate($image, 255, 255, 255));
-
-        $holeRadius = 60;
-        $holeColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
-        imagefilledellipse($image, $cx, $cy, $holeRadius * 2, $holeRadius * 2, $holeColor);
-        imageellipse($image, $cx, $cy, $holeRadius * 2, $holeRadius * 2, imagecolorallocate($image, 255, 255, 255));
 
         ob_start();
         imagepng($image);

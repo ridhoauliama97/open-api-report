@@ -5,9 +5,9 @@ namespace App\Services\Ascends\Shared\Hrm;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 
-class DiagramKaryawanPerDepartemenReportService
+class DiagramKaryawanPerMasaKerjaReportService
 {
-    private const TITLE = 'Laporan Diagram Karyawan Per Departemen';
+    private const TITLE = 'Laporan Diagram Karyawan Per Masa Kerja';
 
     public const CHART_COLORS = [
         [52, 73, 94],
@@ -24,16 +24,23 @@ class DiagramKaryawanPerDepartemenReportService
         [93, 173, 226],
     ];
 
+    private const PERIOD_LABELS = [
+        1 => '0 - 6 Bulan',
+        2 => '6 - 12 Bulan',
+        3 => '1 - 2 Tahun',
+        4 => '2 - 3 Tahun',
+        5 => '3 Tahun Lebih',
+    ];
+
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     public function buildReportData(): array
     {
-        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_departemen');
+        $reportData = $this->xmlDataSourceService->loadSubReport('RU', 'hrm', 'diagram_karyawan_per_masa_kerja');
 
-        return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/AnlReports.HRM.EmployeeList.xml');
+        return $this->shapeReportData($reportData, 'storage/app/xml_sources/RU/hrm/Diagram/AnlReports.HRM.EmployeeList.xml');
     }
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
@@ -41,7 +48,7 @@ class DiagramKaryawanPerDepartemenReportService
         $reportData = $this->xmlDataSourceService->loadSubReportFromXmlContents(
             'RU',
             'hrm',
-            'diagram_karyawan_per_departemen',
+            'diagram_karyawan_per_masa_kerja',
             $xmlContents,
             $sourceLabel
         );
@@ -53,35 +60,58 @@ class DiagramKaryawanPerDepartemenReportService
     {
         $rawRows = $reportData['rows'] ?? [];
 
-        $deptCounts = [];
+        $refDate = Carbon::now()->startOfDay();
+        $periods = [
+            1 => ['label' => self::PERIOD_LABELS[1], 'count' => 0],
+            2 => ['label' => self::PERIOD_LABELS[2], 'count' => 0],
+            3 => ['label' => self::PERIOD_LABELS[3], 'count' => 0],
+            4 => ['label' => self::PERIOD_LABELS[4], 'count' => 0],
+            5 => ['label' => self::PERIOD_LABELS[5], 'count' => 0],
+        ];
+
         foreach ($rawRows as $row) {
-            $kode = trim((string) ($row['Kode Dept.'] ?? ''));
-            $name = trim((string) ($row['Departemen'] ?? ''));
-            $key = $kode !== '' ? $kode : $name;
-            if ($name === '') {
+            $empCode = trim((string) ($row['Kode Karyawan'] ?? ''));
+            if (str_contains($empCode, 'SPECIAL')) {
                 continue;
             }
-            if (!isset($deptCounts[$key])) {
-                $deptCounts[$key] = ['kode' => $kode, 'name' => $name, 'count' => 0];
+
+            $joinStr = trim((string) ($row['Tanggal Masuk'] ?? ''));
+            if ($joinStr === '') {
+                continue;
             }
-            $deptCounts[$key]['count']++;
+
+            $joinDate = Carbon::parse($joinStr);
+            $diffDays = (int) $joinDate->diffInDays($refDate);
+
+            if ($diffDays < 180) {
+                $urutan = 1;
+            } elseif ($diffDays <= 360) {
+                $urutan = 2;
+            } elseif ($diffDays <= 720) {
+                $urutan = 3;
+            } elseif ($diffDays <= 1080) {
+                $urutan = 4;
+            } else {
+                $urutan = 5;
+            }
+
+            $periods[$urutan]['count']++;
         }
 
-        uasort($deptCounts, static fn(array $a, array $b): int => $b['count'] - $a['count']);
+        ksort($periods);
 
-        $total = array_sum(array_column($deptCounts, 'count'));
+        $total = array_sum(array_column($periods, 'count'));
         $departments = [];
         $chartData = [];
 
-        foreach ($deptCounts as $item) {
-            $percent = $total > 0 ? round(($item['count'] / $total) * 100, 1) : 0;
+        foreach ($periods as $p) {
+            $percent = $total > 0 ? round(($p['count'] / $total) * 100, 1) : 0;
             $departments[] = [
-                'kode' => $item['kode'],
-                'name' => $item['name'],
-                'count' => $item['count'],
+                'name' => $p['label'],
+                'count' => $p['count'],
                 'percent' => $percent,
             ];
-            $chartData[] = ['name' => $item['name'], 'count' => $item['count'], 'percent' => $percent];
+            $chartData[] = ['name' => $p['label'], 'count' => $p['count'], 'percent' => $percent];
         }
 
         $pieChartBase64 = $total > 0 ? $this->generatePieChart($chartData) : '';
@@ -92,12 +122,11 @@ class DiagramKaryawanPerDepartemenReportService
             ? Carbon::parse($perDateFilter)->toDateString()
             : $now->toDateString();
 
-        $headers = ['Kode Dept.', 'Departemen', 'Jumlah', '%'];
-        $rows = array_map(static fn(array $d): array => [
-            'Kode Dept.' => $d['kode'],
-            'Departemen' => $d['name'],
+        $headers = ['Masa Kerja', 'Jumlah', '%'];
+        $rows = array_map(static fn (array $d): array => [
+            'Masa Kerja' => $d['name'],
             'Jumlah' => $d['count'],
-            '%' => number_format($d['percent'], 1, '.', '') . '%',
+            '%' => number_format($d['percent'], 1, '.', '').'%',
         ], $departments);
 
         return [
@@ -161,17 +190,12 @@ class DiagramKaryawanPerDepartemenReportService
 
         imagearc($image, $cx, $cy, $radius * 2, $radius * 2, 0, 360, imagecolorallocate($image, 255, 255, 255));
 
-        $holeRadius = 60;
-        $holeColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
-        imagefilledellipse($image, $cx, $cy, $holeRadius * 2, $holeRadius * 2, $holeColor);
-        imageellipse($image, $cx, $cy, $holeRadius * 2, $holeRadius * 2, imagecolorallocate($image, 255, 255, 255));
-
         ob_start();
         imagepng($image);
         $imageData = ob_get_clean();
         imagedestroy($image);
 
-        return 'data:image/png;base64,' . base64_encode($imageData);
+        return 'data:image/png;base64,'.base64_encode($imageData);
     }
 
     private static function resolvePrintedBy(array $rows): string

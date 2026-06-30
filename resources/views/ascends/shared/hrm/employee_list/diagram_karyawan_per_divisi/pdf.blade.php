@@ -159,7 +159,7 @@
 
     @if ($pieChart !== '')
         <div class="chart-wrapper">
-            <img src="{{ $pieChart }}" alt="Diagram Pie Karyawan Per Departemen">
+            <img src="{{ $pieChart }}" alt="Diagram Pie Karyawan Per Divisi">
         </div>
     @endif
 
@@ -169,26 +169,24 @@
                 <td>
                     @foreach ($leftDepts as $i => $dept)
                         @php
-                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService::CHART_COLORS[$i % 12] ?? [0, 0, 0];
+                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService::CHART_COLORS[$i % 12] ?? [0, 0, 0];
                         @endphp
                         <div>
                             <span class="dept-label-checkbox"
                                 style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $dept['kode'] !== '' ? $dept['kode'] . ' - ' : '' }}{{ $dept['name'] }} ({{ $dept['count'] }}) -
-                            {{ number_format($dept['percent'], 1) }}%
+                            {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
                         </div>
                     @endforeach
                 </td>
                 <td>
                     @foreach ($rightDepts as $i => $dept)
                         @php
-                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
+                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
                         @endphp
                         <div>
                             <span class="dept-label-checkbox"
                                 style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $dept['kode'] !== '' ? $dept['kode'] . ' - ' : '' }}{{ $dept['name'] }} ({{ $dept['count'] }}) -
-                            {{ number_format($dept['percent'], 1) }}%
+                            {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
                         </div>
                     @endforeach
                 </td>
@@ -201,7 +199,7 @@
             <tr>
                 <th style="width: 8%;">No.</th>
                 <th style="width: 12%;">Kode</th>
-                <th style="width: 40%;">Departemen</th>
+                <th style="width: 40%;">Divisi</th>
                 <th style="width: 20%;">Jumlah</th>
                 <th style="width: 20%;">%</th>
             </tr>
