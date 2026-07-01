@@ -268,7 +268,7 @@ class AscendXmlTestController extends Controller
                 'persentase_kehadiran_bulanan' => $persentaseKehadiranBulananReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
-                    $this->attendanceFullTypeFilters($request)
+                    $this->persentaseKehadiranBulananFilters($request)
                 ),
                 'rekapitulasi_kehadiran_kurang_93_tahunan' => $rekapitulasiKehadiranKurang93TahunanReportService->buildReportDataFromXml(
                     $xmlPayload,
@@ -444,8 +444,8 @@ class AscendXmlTestController extends Controller
                 $type = trim((string) ($reportData['type'] ?? $this->attendanceFullType($request)));
 
                 $reportData['company'] = $company;
-                $reportData['title'] = "Laporan Persentase Kehadiran Bulanan {$type} ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Persentase Kehadiran Bulanan '.str_replace('/', ' ', $type)." ({$company}).pdf";
+                $reportData['title'] = "Laporan Persentase Kehadiran Bulanan ({$type})";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Persentase Kehadiran Bulanan ('.$type.').pdf';
             }
             if ($selectedReport === 'rekapitulasi_kehadiran_kurang_93_tahunan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -474,10 +474,11 @@ class AscendXmlTestController extends Controller
             if ($selectedReport === 'ketidakhadiran_bulanan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
                 $tipe = trim((string) ($reportData['tipe'] ?? $this->absenceCategory($request)));
+                $tipeLabel = $tipe === 'ST' ? 'Staff' : 'KK/KT';
 
                 $reportData['company'] = $company;
-                $reportData['title'] = "Laporan Ketidakhadiran Bulanan ({$company}) - {$tipe}";
-                $reportDefinition['filename'] = "Absence - Laporan Ketidakhadiran Bulanan ({$company}) - ".str_replace('/', ' ', $tipe).'.pdf';
+                $reportData['title'] = "Laporan Ketidakhadiran Bulanan ({$tipeLabel})";
+                $reportDefinition['filename'] = "Absence - Laporan Ketidakhadiran Bulanan ({$company}) - {$tipeLabel}.pdf";
             }
 
         } catch (RuntimeException $exception) {
@@ -1878,12 +1879,12 @@ class AscendXmlTestController extends Controller
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $request->xmlSourceLabel() ?? 'request xml payload',
-                $this->attendanceFullTypeFilters($request) + ['company' => $company]
+                $this->persentaseKehadiranBulananFilters($request) + ['company' => $company]
             );
 
             $type = trim((string) ($reportData['type'] ?? $this->attendanceFullType($request)));
             $reportData['company'] = $company;
-            $reportData['title'] = "Laporan Persentase Kehadiran Bulanan {$type} ({$company})";
+            $reportData['title'] = "Laporan Persentase Kehadiran Bulanan ({$type})";
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -1904,7 +1905,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Persentase Kehadiran Bulanan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Persentase Kehadiran Bulanan ('.(string) ($reportData['type'] ?? 'KK/KT').').pdf"',
         ]);
     }
 
@@ -2468,8 +2469,9 @@ class AscendXmlTestController extends Controller
             );
 
             $tipe = trim((string) ($reportData['tipe'] ?? $this->absenceCategory($request)));
+            $tipeLabel = $tipe === 'ST' ? 'Staff' : 'KK/KT';
             $reportData['company'] = $company;
-            $reportData['title'] = "Laporan Ketidakhadiran Bulanan ({$company}) - {$tipe}";
+            $reportData['title'] = "Laporan Ketidakhadiran Bulanan ({$tipeLabel})";
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -2490,7 +2492,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Absence - Laporan Ketidakhadiran Bulanan ('.$company.') - '.str_replace('/', ' ', (string) ($reportData['tipe'] ?? 'KK/KT')).'.pdf"',
+            'Content-Disposition' => 'inline; filename="Absence - Laporan Ketidakhadiran Bulanan ('.$company.') - '.$tipeLabel.'.pdf"',
         ]);
     }
 
@@ -5171,21 +5173,23 @@ class AscendXmlTestController extends Controller
      */
     private function absenceFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
+        $all = $request->all();
+
         return [
-            'start_date' => $request->input('start_date'),
-            'end_date' => $request->input('end_date'),
-            'TglAwal' => $request->input('TglAwal'),
-            'TglAkhir' => $request->input('TglAkhir'),
-            'tipe' => $request->input('tipe'),
-            'Tipe' => $request->input('Tipe'),
-            'kategori' => $request->input('kategori'),
-            'Kategori' => $request->input('Kategori'),
-            'pilih_kategori' => $request->input('pilih_kategori'),
-            'PilihKategori' => $request->input('PilihKategori'),
-            'Pilih Kategori' => $request->input('Pilih Kategori'),
-            'Pilih_x0020_Kategori' => $request->input('Pilih_x0020_Kategori'),
-            'type' => $request->input('type'),
-            'Type' => $request->input('Type'),
+            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
+            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
+            'Pilih Kategori' => $all['Pilih_Kategori'] ?? $all['Pilih Kategori'] ?? null,
+        ];
+    }
+
+    private function persentaseKehadiranBulananFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
+            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
+            'Pilih Type' => $all['Pilih_Type'] ?? $all['Pilih Type'] ?? null,
         ];
     }
 

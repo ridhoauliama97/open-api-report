@@ -74,6 +74,10 @@
             text-align: center;
         }
 
+        th .sub-header{
+            border-top: none;
+        }
+
         .data-table tbody tr:last-child td {
             border-bottom: 1px solid #000;
         }
@@ -92,6 +96,10 @@
 
         .nowrap {
             white-space: nowrap;
+        }
+
+        .sub-header th {
+            border-top: none;
         }
 
         .empty-row td {
@@ -200,7 +208,7 @@
                 <th colspan="{{ count($dateColumns) }}">Tanggal</th>
                 <th rowspan="2" style="width: 5%;">Total</th>
             </tr>
-            <tr>
+            <tr class="sub-header">
                 @foreach ($dateColumns as $column)
                     <th style="width: 2.3%;">{{ (string) ($column['label'] ?? '') }}</th>
                 @endforeach

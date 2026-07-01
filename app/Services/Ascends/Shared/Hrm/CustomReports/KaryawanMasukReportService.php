@@ -141,9 +141,9 @@ class KaryawanMasukReportService
     {
         $value = trim((string) (
             $filters[$suffix]
-            ?? $filters['DateRange.' . $suffix]
-            ?? $filters['DateRange_' . $suffix]
-            ?? $filters['date_' . strtolower($suffix)]
+            ?? $filters['DateRange.'.$suffix]
+            ?? $filters['DateRange_'.$suffix]
+            ?? $filters['date_'.strtolower($suffix)]
             ?? $filters[strtolower($suffix)]
             ?? ''
         ));
@@ -223,7 +223,7 @@ class KaryawanMasukReportService
         $groupedRows = [];
         foreach ($departmentRows as $department => $rowsInDepartment) {
             $groupedRows[] = [
-                'label' => 'Departemen : ' . $department,
+                'label' => 'Departemen : '.$department,
                 'subtotal' => count($rowsInDepartment),
                 'rows' => array_map(fn (array $row): array => $this->publicRow($row), $rowsInDepartment),
                 'summary' => $this->buildSummary($rowsInDepartment),
@@ -300,7 +300,7 @@ class KaryawanMasukReportService
             return '';
         }
         if (preg_match('/(\d+)/', $level, $matches) === 1) {
-            return 'Level ' . ((int) $matches[1]);
+            return 'Level '.((int) $matches[1]);
         }
 
         return $level;

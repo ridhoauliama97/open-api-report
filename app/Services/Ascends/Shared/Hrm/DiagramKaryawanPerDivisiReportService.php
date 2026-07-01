@@ -26,8 +26,7 @@ class DiagramKaryawanPerDivisiReportService
 
     public function __construct(
         private readonly XmlDataSourceService $xmlDataSourceService,
-    ) {
-    }
+    ) {}
 
     public function buildReportData(): array
     {
@@ -66,13 +65,13 @@ class DiagramKaryawanPerDivisiReportService
             $displayName = $name !== '' ? $name : 'NULL';
             $key = $kode !== '' ? $kode : 'NULL';
 
-            if (!isset($deptCounts[$key])) {
+            if (! isset($deptCounts[$key])) {
                 $deptCounts[$key] = ['kode' => $kode, 'name' => $displayName, 'count' => 0];
             }
             $deptCounts[$key]['count']++;
         }
 
-        uasort($deptCounts, static fn(array $a, array $b): int => $b['count'] - $a['count']);
+        uasort($deptCounts, static fn (array $a, array $b): int => $b['count'] - $a['count']);
 
         $total = array_sum(array_column($deptCounts, 'count'));
         $departments = [];
@@ -98,11 +97,11 @@ class DiagramKaryawanPerDivisiReportService
             : $now->toDateString();
 
         $headers = ['Kode', 'Divisi', 'Jumlah', '%'];
-        $rows = array_map(static fn(array $d): array => [
+        $rows = array_map(static fn (array $d): array => [
             'Kode' => $d['kode'],
             'Divisi' => $d['name'],
             'Jumlah' => $d['count'],
-            '%' => number_format($d['percent'], 1, '.', '') . '%',
+            '%' => number_format($d['percent'], 1, '.', '').'%',
         ], $departments);
 
         return [
@@ -171,7 +170,7 @@ class DiagramKaryawanPerDivisiReportService
         $imageData = ob_get_clean();
         imagedestroy($image);
 
-        return 'data:image/png;base64,' . base64_encode($imageData);
+        return 'data:image/png;base64,'.base64_encode($imageData);
     }
 
     private static function resolvePrintedBy(array $rows): string

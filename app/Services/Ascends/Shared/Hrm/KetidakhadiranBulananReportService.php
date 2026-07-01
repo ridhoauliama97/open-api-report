@@ -99,8 +99,8 @@ class KetidakhadiranBulananReportService
      */
     private static function resolvePeriod(array $rows, array $filters): array
     {
-        $startDate = trim((string) ($filters['start_date'] ?? $filters['TglAwal'] ?? ''));
-        $endDate = trim((string) ($filters['end_date'] ?? $filters['TglAkhir'] ?? ''));
+        $startDate = trim((string) ($filters['AttendanceDate.StartDate'] ?? ''));
+        $endDate = trim((string) ($filters['AttendanceDate.EndDate'] ?? ''));
 
         if ($startDate !== '' || $endDate !== '') {
             $start = self::parseDate($startDate) ?? self::parseDate($endDate);
@@ -417,21 +417,7 @@ class KetidakhadiranBulananReportService
      */
     private static function resolveTipe(array $filters): string
     {
-        $tipe = trim((string) (
-            $filters['tipe']
-            ?? $filters['Tipe']
-            ?? $filters['kategori']
-            ?? $filters['Kategori']
-            ?? $filters['pilih_kategori']
-            ?? $filters['PilihKategori']
-            ?? $filters['Pilih Kategori']
-            ?? $filters['Pilih_x0020_Kategori']
-            ?? $filters['type']
-            ?? $filters['Type']
-            ?? ''
-        ));
-
-        return $tipe !== '' ? $tipe : 'KK/KT';
+        return trim((string) ($filters['Pilih Kategori'] ?? ''));
     }
 
     private static function parseDate(string $value): ?Carbon

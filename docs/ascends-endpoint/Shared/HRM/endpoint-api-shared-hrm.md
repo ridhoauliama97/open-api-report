@@ -36,6 +36,12 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
 - Employee List - Laporan THR (Idul Fitri/Natal/Imlek): `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/thr/pdf`
 - Employee List - Laporan Diagram Karyawan Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-departemen/pdf`
+- Employee List - Laporan Diagram Karyawan Per Divisi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-divisi/pdf`
+- Employee List - Laporan Diagram Karyawan Per Masa Kerja: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-masa-kerja/pdf`
+- Employee List - Laporan Diagram Karyawan Per Level: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-level/pdf`
+- Employee List - Laporan Diagram Karyawan Per Strata Pendidikan: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-strata-pendidikan/pdf`
+- Employee List - Laporan Diagram Karyawan Per Jenis Kelamin: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-jenis-kelamin/pdf`
+- Employee List - Laporan Diagram Karyawan Per Usia Generasi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/hrm/employee-list/diagram-karyawan-per-usia-generasi/pdf`
 
 ## Endpoint Custom Reports
 
@@ -93,7 +99,7 @@ Status=ST
 xml_file=AnlReports.HRM.EmployeeList.xml
 ```
 
-Input tambahan khusus `diagram-karyawan-per-departemen`:
+Input tambahan khusus untuk semua laporan Diagram Karyawan (`diagram-karyawan-per-departemen`, `diagram-karyawan-per-divisi`, `diagram-karyawan-per-masa-kerja`, `diagram-karyawan-per-level`, `diagram-karyawan-per-strata-pendidikan`, `diagram-karyawan-per-jenis-kelamin`, `diagram-karyawan-per-usia-generasi`):
 
 - `PerDate`: tanggal referensi data karyawan aktif, contoh `2026-05-01`. Menentukan subtitle laporan.
 - Alias yang diterima: `per_date`, `perdate`.
@@ -103,6 +109,22 @@ Contoh `multipart/form-data` untuk Diagram Karyawan Per Departemen per 30 April 
 
 ```text
 DB_CompanyName=UC
+PerDate=2026-04-30
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
+Contoh `multipart/form-data` untuk Diagram Karyawan Per Divisi per 30 April 2026:
+
+```text
+DB_CompanyName=UC
+PerDate=2026-04-30
+xml_file=AnlReports.HRM.EmployeeList.xml
+```
+
+Contoh `multipart/form-data` untuk Diagram Karyawan Per Jenis Kelamin per 30 April 2026:
+
+```text
+DB_CompanyName=RU
 PerDate=2026-04-30
 xml_file=AnlReports.HRM.EmployeeList.xml
 ```
@@ -394,10 +416,8 @@ Input XML khusus `pendapatan-lain-lain`:
 
 Input tambahan khusus `ketidakhadiran-bulanan`:
 
-- `start_date` + `end_date`: periode data absence, contoh `2026-05-05` sampai `2026-06-04`.
-- Alias yang diterima: `TglAwal` + `TglAkhir`.
-- `Pilih Kategori`: tipe karyawan dari form Ascend, contoh `KK/KT` atau `ST`.
-- Alias yang diterima: `Kategori`, `kategori`, `PilihKategori`, `pilih_kategori`, `Tipe`, `tipe`, `type`, atau `Type`.
+- `Pilih_Kategori` (required): tipe karyawan, harus `KK/KT` atau `ST`.
+- `AttendanceDate.StartDate` + `AttendanceDate.EndDate`: periode data absence, contoh `2026-05-05` sampai `2026-06-04`.
 - Mapping XML: `KK/KT` membaca `Daily_x0020_Worker_x0020_Type_x0020_Code` = `KK` atau `KT`; `ST` membaca kode `ST`.
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di XML.
 
@@ -492,9 +512,9 @@ Contoh `multipart/form-data` untuk Ketidakhadiran Bulanan:
 
 ```text
 DB_CompanyName=RU
-Pilih Kategori=KK/KT
-start_date=2026-05-05
-end_date=2026-06-04
+Pilih_Kategori=KK/KT
+AttendanceDate.StartDate=2026-05-05
+AttendanceDate.EndDate=2026-06-04
 xml_file=AnlReports.HRM.Absence.xml
 ```
 
@@ -551,10 +571,16 @@ Contoh:
 - `Attendance Full - Laporan Persentase Kehadiran Bulanan KK KT (RU).pdf`
 - `Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (RU).pdf`
 - `Attendance Full - Laporan Pengabaian Keterlambatan & Kehadiran Manual Staff Per Departemen (RU).pdf`
-- `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK KT.pdf`
+- `Absence - Laporan Ketidakhadiran Bulanan (RU) - KK/KT.pdf`
 - `Loss Time - Laporan Loss Time (RU).pdf`
 - `Employee List - Laporan THR (Idul Fitri) (GSU).pdf`
 - `Employee List - Laporan Diagram Karyawan Per Departemen (RU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Divisi (RU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Masa Kerja (RU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Level (RU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Strata Pendidikan (RU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Jenis Kelamin (RU).pdf`
+- `Employee List - Laporan Diagram Karyawan Per Usia Generasi (RU).pdf`
 - `Custom Reports - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (RU).pdf`
 - `Custom Reports - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU).pdf`
 - `Custom Reports - Laporan Karyawan Keluar Tahunan (KK/KT) (RU).pdf`
@@ -592,6 +618,12 @@ Template Blade shared Employee List berada di `resources/views/ascends/shared/hr
 - `employee_list/usia_generasi_tahun_kelahiran_masa_kerja`
 - `employee_list/thr`
 - `employee_list/diagram_karyawan_per_departemen`
+- `employee_list/diagram_karyawan_per_divisi`
+- `employee_list/diagram_karyawan_per_masa_kerja`
+- `employee_list/diagram_karyawan_per_level`
+- `employee_list/diagram_karyawan_per_strata_pendidikan`
+- `employee_list/diagram_karyawan_per_jenis_kelamin`
+- `employee_list/diagram_karyawan_per_usia_generasi`
 
 Template Blade shared Employee Termination berada di `resources/views/ascends/shared/hrm/employee_termination`.
 
