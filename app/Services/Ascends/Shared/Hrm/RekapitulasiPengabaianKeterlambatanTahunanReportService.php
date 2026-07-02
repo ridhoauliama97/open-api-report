@@ -173,8 +173,8 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
      */
     private function resolvePeriodFromFilters(array $filters): ?array
     {
-        $startDate = trim((string) ($filters['start_date'] ?? $filters['TglAwal'] ?? ''));
-        $endDate = trim((string) ($filters['end_date'] ?? $filters['TglAkhir'] ?? ''));
+        $startDate = trim((string) ($filters['AttendanceDate.StartDate'] ?? ''));
+        $endDate = trim((string) ($filters['AttendanceDate.EndDate'] ?? ''));
 
         if ($startDate !== '' || $endDate !== '') {
             $start = $this->parseDate($startDate) ?? $this->parseDate($endDate);
@@ -239,7 +239,6 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
             || $this->hasExcludedEmployeeCodePrefix($employeeCode)
             || ! $this->matchesStatus($row, $status)
-            || trim((string) ($row['Last_x0020_Modified_x0020_By'] ?? '')) === ''
         ) {
             return;
         }
@@ -336,53 +335,9 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
      */
     private function resolveStatus(array $filters): string
     {
-        $value = $this->filterValue($filters, [
-            'Pilih Status',
-            'Pilih_x0020_Status',
-            'pilih_status',
-            'pilihStatus',
-            'status',
-            'Status',
-            'category',
-            'Category',
-            'kategori',
-            'Kategori',
-        ]);
+        $value = trim((string) ($filters['Pilih Status'] ?? ''));
 
-        return str_contains(strtoupper($value), 'STAFF') ? 'Staff' : 'KK/KT';
-    }
-
-    /**
-     * @param  array<string, mixed>  $filters
-     * @param  array<int, string>  $aliases
-     */
-    private function filterValue(array $filters, array $aliases): string
-    {
-        foreach ($aliases as $alias) {
-            if (array_key_exists($alias, $filters)) {
-                $value = trim((string) $filters[$alias]);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
-        foreach ($filters as $key => $value) {
-            if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
-                $value = trim((string) $value);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    private static function normalizeKey(string $key): string
-    {
-        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
+        return $value === 'Staff' ? 'Staff' : 'KK/KT';
     }
 
     /**

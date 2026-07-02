@@ -273,12 +273,12 @@ class AscendXmlTestController extends Controller
                 'rekapitulasi_kehadiran_kurang_93_tahunan' => $rekapitulasiKehadiranKurang93TahunanReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
-                    $this->attendanceFullStatusFilters($request)
+                    $this->rekapitulasiKehadiranKurang93TahunanFilters($request)
                 ),
                 'rekapitulasi_pengabaian_keterlambatan_tahunan' => $rekapitulasiPengabaianKeterlambatanTahunanReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
-                    $this->attendanceFullStatusFilters($request)
+                    $this->rekapitulasiPengabaianKeterlambatanTahunanFilters($request)
                 ),
                 'pengabaian_keterlambatan_kehadiran_manual' => $pengabaianKeterlambatanKehadiranManualReportService->buildReportDataFromXml(
                     $xmlPayload,
@@ -449,19 +449,19 @@ class AscendXmlTestController extends Controller
             }
             if ($selectedReport === 'rekapitulasi_kehadiran_kurang_93_tahunan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
-                $status = trim((string) ($reportData['status'] ?? $this->attendanceFullStatus($request)));
+                $status = trim((string) ($reportData['status'] ?? ''));
 
                 $reportData['company'] = $company;
-                $reportData['title'] = "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status}) ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan '.str_replace('/', ' ', $status)." ({$company}).pdf";
+                $reportData['title'] = "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status})";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Kehadiran Kurang dari 93 % Tahunan ('.$status.').pdf';
             }
             if ($selectedReport === 'rekapitulasi_pengabaian_keterlambatan_tahunan') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
-                $status = trim((string) ($reportData['status'] ?? $this->attendanceFullStatus($request)));
+                $status = trim((string) ($reportData['status'] ?? ''));
 
                 $reportData['company'] = $company;
-                $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status}) ({$company})";
-                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan '.str_replace('/', ' ', $status)." ({$company}).pdf";
+                $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status})";
+                $reportDefinition['filename'] = 'Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ('.$status.').pdf';
             }
             if ($selectedReport === 'pengabaian_keterlambatan_kehadiran_manual') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -1924,12 +1924,12 @@ class AscendXmlTestController extends Controller
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $request->xmlSourceLabel() ?? 'request xml payload',
-                $this->attendanceFullStatusFilters($request) + ['company' => $company]
+                $this->rekapitulasiKehadiranKurang93TahunanFilters($request) + ['company' => $company]
             );
 
-            $status = trim((string) ($reportData['status'] ?? $this->attendanceFullStatus($request)));
+            $status = trim((string) ($reportData['status'] ?? ''));
             $reportData['company'] = $company;
-            $reportData['title'] = "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status}) ({$company})";
+            $reportData['title'] = "Laporan Rekapitulasi Kehadiran < 93 % Tahunan ({$status})";
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -1950,7 +1950,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Kehadiran Kurang dari 93 % Tahunan ('.(string) ($reportData['status'] ?? 'KK/KT').').pdf"',
         ]);
     }
 
@@ -1960,21 +1960,32 @@ class AscendXmlTestController extends Controller
         PdfGenerator $pdfGenerator,
     ) {
         try {
-            $xmlPayload = $request->xmlPayload();
-            if ($xmlPayload === null) {
-                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
             }
 
-            $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
-            $reportData = $reportService->buildReportDataFromXml(
-                $xmlPayload,
-                $request->xmlSourceLabel() ?? 'request xml payload',
-                $this->attendanceFullStatusFilters($request) + ['company' => $company]
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml($xmlPayload, $sourceLabel,
+                $this->rekapitulasiPengabaianKeterlambatanTahunanFilters($request) + ['company' => $company]
             );
 
-            $status = trim((string) ($reportData['status'] ?? $this->attendanceFullStatus($request)));
+            $status = trim((string) ($reportData['status'] ?? ''));
             $reportData['company'] = $company;
-            $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status}) ({$company})";
+            $reportData['title'] = "Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ({$status})";
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -1995,7 +2006,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan '.str_replace('/', ' ', (string) ($reportData['status'] ?? 'KK KT')).' ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan ('.(string) ($reportData['status'] ?? 'KK/KT').').pdf"',
         ]);
     }
 
@@ -5193,6 +5204,28 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function rekapitulasiPengabaianKeterlambatanTahunanFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
+            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
+            'Pilih Status' => $all['Pilih_Status'] ?? $all['Pilih Status'] ?? null,
+        ];
+    }
+
+    private function rekapitulasiKehadiranKurang93TahunanFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
+            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
+            'Pilih Status' => $all['Pilih_Status'] ?? $all['Pilih Status'] ?? null,
+        ];
+    }
+
     private function pengabaianKeterlambatanKehadiranManualFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         $all = $request->all();
@@ -5359,7 +5392,7 @@ class AscendXmlTestController extends Controller
             ],
             'rekapitulasi_pengabaian_keterlambatan_tahunan' => [
                 'view' => 'ascends.shared.hrm.attendance_full.rekapitulasi_pengabaian_keterlambatan_tahunan.pdf',
-                'filename' => 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan.pdf',
+                'filename' => 'Attendance Full - Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan.pdf',
                 'orientation' => 'portrait',
             ],
             'pengabaian_keterlambatan_kehadiran_manual' => [

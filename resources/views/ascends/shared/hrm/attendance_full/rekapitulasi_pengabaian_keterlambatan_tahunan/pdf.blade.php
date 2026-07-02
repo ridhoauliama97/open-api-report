@@ -75,6 +75,10 @@
             text-align: center;
         }
 
+        .sub-header th {
+            border-top: none;
+        }
+
         .row-odd td {
             background: #c9d1df;
         }
@@ -131,7 +135,7 @@
                 <th colspan="{{ count($months) }}">Bulan</th>
                 <th rowspan="2" style="width: {{ $monthWidth }}%;">Total</th>
             </tr>
-            <tr>
+            <tr class="sub-header">
                 @foreach ($months as $month)
                     <th style="width: {{ $monthWidth }}%;">{{ (string) ($monthLabels[$month] ?? str_pad((string) $month, 2, '0', STR_PAD_LEFT)) }}</th>
                 @endforeach
