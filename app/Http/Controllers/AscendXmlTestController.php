@@ -12,6 +12,8 @@ use App\Services\Ascends\Shared\Hrm\AbsensiIndividuReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\KaryawanKeluarReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\KaryawanKeluarTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\KaryawanMasukReportService;
+use App\Services\Ascends\Shared\Hrm\CustomReports\LemburBulananReportService as CustomLemburBulananReportService;
+use App\Services\Ascends\Shared\Hrm\CustomReports\VerifikasiLemburReportService;
 use App\Services\Ascends\Shared\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Shared\Hrm\DaftarKaryawanReportService;
 use App\Services\Ascends\Shared\Hrm\DaftarLiburCutiBersamaReportService;
@@ -57,6 +59,7 @@ use App\Services\Ascends\Shared\Hrm\RekapitulasiAbsensiBriefingHarianReportServi
 use App\Services\Ascends\Shared\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
 use App\Services\Ascends\Shared\Hrm\RekapitulasiPengabaianKeterlambatanTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\SuratPeringatanReportService;
+use App\Services\Ascends\Shared\Hrm\CustomReports\SuratPeringatanReportService as SuratPeringatanCustomReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
 use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
@@ -108,6 +111,8 @@ class AscendXmlTestController extends Controller
         KaryawanMasukReportService $karyawanMasukReportService,
         KaryawanKeluarReportService $karyawanKeluarReportService,
         KaryawanKeluarTahunanReportService $karyawanKeluarTahunanReportService,
+        CustomLemburBulananReportService $customLemburBulananReportService,
+        VerifikasiLemburReportService $verifikasiLemburReportService,
         KaryawanPerAgamaReportService $karyawanPerAgamaReportService,
         KaryawanPerEtnisReportService $karyawanPerEtnisReportService,
         KaryawanPerLevelReportService $karyawanPerLevelReportService,
@@ -133,6 +138,7 @@ class AscendXmlTestController extends Controller
         KehadiranKruBahanBakuReportService $kehadiranKruBahanBakuReportService,
         KetidakhadiranBulananReportService $ketidakhadiranBulananReportService,
         SuratPeringatanReportService $suratPeringatanReportService,
+        SuratPeringatanCustomReportService $suratPeringatanCustomReportService,
         SalesInvoiceReportService $salesInvoiceReportService,
         SuratJalanReportService $suratJalanReportService,
         PdfGenerator $pdfGenerator,
@@ -166,6 +172,8 @@ class AscendXmlTestController extends Controller
                 'karyawan_masuk' => $karyawanMasukReportService,
                 'karyawan_keluar' => $karyawanKeluarReportService,
                 'karyawan_keluar_tahunan' => $karyawanKeluarTahunanReportService,
+                'lembur_bulanan' => $customLemburBulananReportService,
+                'verifikasi_lembur' => $verifikasiLemburReportService,
                 'list_karyawan_habis_kontrak' => $listKaryawanHabisKontrakReportService,
                 'perbandingan_jumlah_karyawan_tahunan_per_bulan' => $perbandinganJumlahKaryawanTahunanPerBulanReportService,
                 'persentase_kehadiran_mingguan_per_departemen' => $persentaseKehadiranMingguanPerDepartemenReportService,
@@ -310,6 +318,16 @@ class AscendXmlTestController extends Controller
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
                     $this->karyawanKeluarTahunanFilters($request)
                 ),
+                'lembur_bulanan' => $customLemburBulananReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->lemburBulananFilters($request)
+                ),
+                'verifikasi_lembur' => $verifikasiLemburReportService->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request upload: xml_file',
+                    $this->verifikasiLemburFilters($request)
+                ),
                 'perbandingan_jumlah_karyawan_tahunan_per_bulan' => $perbandinganJumlahKaryawanTahunanPerBulanReportService->buildReportDataFromXml(
                     $xmlPayload,
                     $request->xmlSourceLabel() ?? 'request upload: xml_file',
@@ -396,6 +414,17 @@ class AscendXmlTestController extends Controller
                 $reportData['headerCompany'] = $company;
                 $reportData['company'] = $company;
                 $reportDefinition['filename'] = 'Laporan Karyawan Keluar Per Departemen Tahunan ('.$status.')'.$titleCompany.'.pdf';
+            }
+            if ($selectedReport === 'lembur_bulanan') {
+                $typeLabel = $reportData['type_label'] ?? 'KK/KT';
+                $reportData['company'] = $company;
+                $reportData['title'] = "Laporan Lembur Bulanan Per Departemen ({$typeLabel})";
+                $reportDefinition['filename'] = 'Custom Reports - Laporan Lembur Bulanan Per Departemen ('.$typeLabel.').pdf';
+            }
+            if ($selectedReport === 'verifikasi_lembur') {
+                $reportData['company'] = $company;
+                $reportData['title'] = 'Laporan Verifikasi Lembur';
+                $reportDefinition['filename'] = 'Custom Reports - Laporan Verifikasi Lembur ('.$company.').pdf';
             }
             if ($selectedReport === 'data_peserta_makan_siang_ibadah_aula_per_departemen') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
@@ -2078,7 +2107,7 @@ class AscendXmlTestController extends Controller
 
             $type = trim((string) ($reportData['type'] ?? $this->attendanceFullType($request)));
             $reportData['company'] = $company;
-            $reportData['title'] = "Laporan Durasi & Denda Keterlambatan ({$type}) Per Departemen ({$company})";
+            $reportData['title'] = "Laporan Durasi & Denda Keterlambatan Per Departemen ({$type})";
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
@@ -2099,7 +2128,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Late Sign In - Laporan Durasi & Denda Keterlambatan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+            'Content-Disposition' => 'inline; filename="Late Sign In - Laporan Durasi & Denda Keterlambatan Per Departemen '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' ('.$company.').pdf"',
         ]);
     }
 
@@ -2148,6 +2177,169 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Overtime - Laporan Lembur Bulanan '.str_replace('/', ' ', (string) ($reportData['type'] ?? 'KK KT')).' Per Departemen ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmCustomLemburBulananPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        CustomLemburBulananReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $this->lemburBulananFilters($request) + ['company' => $company]
+            );
+
+            $reportData['company'] = $company;
+            $typeLabel = $reportData['type_label'] ?? 'KK/KT';
+            $reportData['title'] = "Laporan Lembur Bulanan Per Departemen ({$typeLabel})";
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.custom_reports.lembur_bulanan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 7,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Custom Reports - Laporan Lembur Bulanan Per Departemen ('.($reportData['type_label'] ?? 'KK/KT').').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmVerifikasiLemburPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        VerifikasiLemburReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $this->verifikasiLemburFilters($request) + ['company' => $company]
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Verifikasi Lembur';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.custom_reports.verifikasi_lembur.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 11,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Custom Reports - Laporan Verifikasi Lembur ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedHrmSuratPeringatanCustomPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SuratPeringatanCustomReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Surat Peringatan';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.hrm.custom_reports.surat_peringatan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 8,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Custom Reports - Laporan Surat Peringatan ('.$company.').pdf"',
         ]);
     }
 
@@ -5226,6 +5418,26 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function lemburBulananFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
+            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
+        ];
+    }
+
+    private function verifikasiLemburFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
+            'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
+        ];
+    }
+
     private function pengabaianKeterlambatanKehadiranManualFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         $all = $request->all();
@@ -5508,6 +5720,16 @@ class AscendXmlTestController extends Controller
             'karyawan_keluar_tahunan' => [
                 'view' => 'ascends.shared.hrm.custom_reports.karyawan_keluar_tahunan.pdf',
                 'filename' => 'Laporan Karyawan Keluar Per Departemen Tahunan.pdf',
+                'orientation' => 'landscape',
+            ],
+            'lembur_bulanan' => [
+                'view' => 'ascends.shared.hrm.custom_reports.lembur_bulanan.pdf',
+                'filename' => 'Custom Reports - Laporan Lembur Bulanan Per Departemen (KK KT).pdf',
+                'orientation' => 'portrait',
+            ],
+            'verifikasi_lembur' => [
+                'view' => 'ascends.shared.hrm.custom_reports.verifikasi_lembur.pdf',
+                'filename' => 'Custom Reports - Laporan Verifikasi Lembur.pdf',
                 'orientation' => 'landscape',
             ],
             default => [

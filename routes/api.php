@@ -316,6 +316,21 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.custom-reports.karyawan-keluar-tahunan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/hrm/custom-reports/lembur-bulanan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmCustomLemburBulananPdf']
+)->name('api.internal.ascends.shared.hrm.custom-reports.lembur-bulanan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/custom-reports/verifikasi-lembur/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmVerifikasiLemburPdf']
+)->name('api.internal.ascends.shared.hrm.custom-reports.verifikasi-lembur.pdf');
+
+Route::post(
+    '/internal/ascends/shared/hrm/custom-reports/surat-peringatan/pdf',
+    [AscendXmlTestController::class, 'apiSharedHrmSuratPeringatanCustomPdf']
+)->name('api.internal.ascends.shared.hrm.custom-reports.surat-peringatan.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianRuPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian-ru.pdf');

@@ -74,7 +74,7 @@ class DurasiDendaKeterlambatanReportService
             'period' => [
                 'start_date' => $period['start']->toDateString(),
                 'end_date' => $period['end']->toDateString(),
-                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' Sampai '.$period['end']->locale('id')->translatedFormat('d-M-y'),
+                'label' => 'Dari '.$period['start']->locale('id')->translatedFormat('d-M-y').' s/d '.$period['end']->locale('id')->translatedFormat('d-M-y'),
             ],
             'date_input' => $dateInput->toDateString(),
         ];
