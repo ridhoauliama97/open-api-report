@@ -117,7 +117,7 @@
         $totalByMonth = $totals['by_month'] ?? [];
         $grandTotal = (int) ($totals['grand_total'] ?? 0);
         $headerCompany = $reportData['headerCompany'] ?? '';
-        $headerTitle = $reportData['headerTitle'] ?? 'Laporan Karyawan Keluar Tahunan';
+        $headerTitle = $reportData['headerTitle'] ?? 'Laporan Karyawan Keluar Per Departemen Tahunan';
         $subtitle = $reportData['subtitle'] ?? '';
         $generatedAtText = $reportData['printed_at'] ?? '';
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));

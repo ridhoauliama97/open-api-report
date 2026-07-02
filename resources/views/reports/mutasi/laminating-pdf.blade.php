@@ -236,6 +236,7 @@
             'cca_prod_inp' => 0.0,
             'lmt_jual' => 0.0,
             'mld_prod_inp' => 0.0,
+            's4s_prod_inp' => 0.0,
             'total_keluar' => 0.0,
             'akhir' => 0.0,
         ];
@@ -266,23 +267,24 @@
         <thead>
             <tr class="headers-row">
                 <th rowspan="2" style="width:30px; border-top: 1px solid #000;">No</th>
-                <th rowspan="2" style="width:230px; border-top: 1px solid #000;">Jenis</th>
-                <th rowspan="2" style="width:65px; border-top: 1px solid #000;">Awal</th>
+                <th rowspan="2" style="width:222px; border-top: 1px solid #000;">Jenis</th>
+                <th rowspan="2" style="width:60px; border-top: 1px solid #000;">Awal</th>
                 <th colspan="3" style="border-top: 1px solid #000;">Masuk</th>
-                <th rowspan="2" style="width:70px; border-top: 1px solid #000;">Total<br>Masuk</th>
-                <th colspan="5" style="border-top: 1px solid #000;">Keluar</th>
-                <th rowspan="2" style="width:70px; border-top: 1px solid #000;">Total<br>Keluar</th>
-                <th rowspan="2" style="width:65px; border-top: 1px solid #000;">Akhir</th>
+                <th rowspan="2" style="width:68px; border-top: 1px solid #000;">Total<br>Masuk</th>
+                <th colspan="6" style="border-top: 1px solid #000;">Keluar</th>
+                <th rowspan="2" style="width:68px; border-top: 1px solid #000;">Total<br>Keluar</th>
+                <th rowspan="2" style="width:60px; border-top: 1px solid #000;">Akhir</th>
             </tr>
             <tr class="headers-row">
                 <th style="width:68px; border-top: 1px solid #000;">Adj Out<br>LMT</th>
                 <th style="width:68px; border-top: 1px solid #000;">BS Out<br>LMT</th>
                 <th style="width:68px; border-top: 1px solid #000;">LMT Prod<br>Out</th>
-                <th style="width:68px; border-top: 1px solid #000;">Adj Inp<br>LMT</th>
-                <th style="width:68px; border-top: 1px solid #000;">BS Inpt<br>LMT</th>
-                <th style="width:68px; border-top: 1px solid #000;">CCA Prod<br>Inpt</th>
-                <th style="width:68px; border-top: 1px solid #000;">LMT<br>Jual</th>
-                <th style="width:68px; border-top: 1px solid #000;">Mld Prod<br>Inpt</th>
+                <th style="width:60px; border-top: 1px solid #000;">Adj Inp<br>LMT</th>
+                <th style="width:60px; border-top: 1px solid #000;">BS Inpt<br>LMT</th>
+                <th style="width:60px; border-top: 1px solid #000;">CCA Prod<br>Inpt</th>
+                <th style="width:60px; border-top: 1px solid #000;">LMT<br>Jual</th>
+                <th style="width:60px; border-top: 1px solid #000;">Mld Prod<br>Inpt</th>
+                <th style="width:60px; border-top: 1px solid #000;">S4S Prod<br>Inpt</th>
             </tr>
         </thead>
         <tbody>
@@ -299,7 +301,8 @@
                     $ccaProdInp = $valueFromAliases($row, ['CCAProdInptLMT', 'CCAInptLMT']);
                     $lmtJual = $valueFromAliases($row, ['LMTJual', 'JualLMT', 'Jual']);
                     $mldProdInp = $valueFromAliases($row, ['MldProdInptLMT', 'MLDProdInptLMT', 'MLDInptLMT']);
-                    $totalKeluar = $adjInp + $bsInp + $ccaProdInp + $lmtJual + $mldProdInp;
+                    $s4sProdInp = $valueFromAliases($row, ['S4SProdInptLMT', 'S4SProdInpt']);
+                    $totalKeluar = $adjInp + $bsInp + $ccaProdInp + $lmtJual + $mldProdInp + $s4sProdInp;
 
                     $akhir = $valueFromAliases($row, ['LMTAkhir', 'Akhir']);
 
@@ -313,6 +316,7 @@
                     $totals['cca_prod_inp'] += $ccaProdInp;
                     $totals['lmt_jual'] += $lmtJual;
                     $totals['mld_prod_inp'] += $mldProdInp;
+                    $totals['s4s_prod_inp'] += $s4sProdInp;
                     $totals['total_keluar'] += $totalKeluar;
                     $totals['akhir'] += $akhir;
                 @endphp
@@ -329,12 +333,13 @@
                     <td class="number data-cell">{{ $fmt($ccaProdInp, true) }}</td>
                     <td class="number data-cell">{{ $fmt($lmtJual, true) }}</td>
                     <td class="number data-cell">{{ $fmt($mldProdInp, true) }}</td>
+                    <td class="number data-cell">{{ $fmt($s4sProdInp, true) }}</td>
                     <td class="number data-cell" style="font-weight: bold;">{{ $fmt($totalKeluar, true) }}</td>
                     <td class="number data-cell" style="font-weight: bold;">{{ $fmt($akhir, true) }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="14" class="center">Tidak ada data.</td>
+                    <td colspan="15" class="center">Tidak ada data.</td>
                 </tr>
             @endforelse
             <tr class="totals-row">
@@ -349,6 +354,7 @@
                 <td class="number">{{ $fmt($totals['cca_prod_inp'], true) }}</td>
                 <td class="number">{{ $fmt($totals['lmt_jual'], true) }}</td>
                 <td class="number">{{ $fmt($totals['mld_prod_inp'], true) }}</td>
+                <td class="number">{{ $fmt($totals['s4s_prod_inp'], true) }}</td>
                 <td class="number">{{ $fmt($totals['total_keluar'], true) }}</td>
                 <td class="number">{{ $fmt($totals['akhir'], true) }}</td>
             </tr>

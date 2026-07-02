@@ -45,9 +45,9 @@ class KaryawanKeluarTahunanReportService
         $maxPeriodLabel = $monthColumns[count($monthColumns) - 1]['label'] ?? '';
 
         return [
-            'title' => 'Laporan Karyawan Keluar Tahunan ('.$status.')',
+            'title' => 'Laporan Karyawan Keluar Per Departemen Tahunan ('.$status.')',
             'headerCompany' => trim((string) ($filters['DB_CompanyName'] ?? $filters['company'] ?? '')),
-            'headerTitle' => 'Laporan Karyawan Keluar Tahunan ('.$status.')',
+            'headerTitle' => 'Laporan Karyawan Keluar Per Departemen Tahunan ('.$status.')',
             'subtitle' => 'Periode : '.$minPeriodLabel.' s/d '.$maxPeriodLabel,
             'status_label' => $status,
             'month_columns' => $monthColumns,

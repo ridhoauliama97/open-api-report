@@ -13,7 +13,7 @@
         }
 
         @page {
-            margin: 14mm 10mm 14mm 12mm;
+            margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
 
@@ -240,6 +240,7 @@
         $subSpec = [
             ['key' => 'CCAkhir', 'label' => 'CCAkhir'],
             ['key' => 'FJ', 'label' => 'FJ'],
+            ['key' => 'Lmt', 'label' => 'Laminating'],
             ['key' => 'Moulding', 'label' => 'Moulding'],
             ['key' => 'Reproses', 'label' => 'Reproses'],
             ['key' => 'S4S', 'label' => 'S4S'],
@@ -248,6 +249,7 @@
         $subTotals = [
             'CCAkhir' => 0.0,
             'FJ' => 0.0,
+            'Lmt' => 0.0,
             'Moulding' => 0.0,
             'Reproses' => 0.0,
             'S4S' => 0.0,
@@ -374,11 +376,11 @@
             <thead>
                 <tr class="headers-row">
                     <th style="width: 32px;">No</th>
-                    <th style="width: 220px;">Jenis</th>
+                    <th style="width: 214px;">Jenis</th>
                     @foreach ($subSpec as $spec)
-                        <th style="width: 84px;">{{ $spec['label'] }}</th>
+                        <th style="width: 72px;">{{ $spec['label'] }}</th>
                     @endforeach
-                    <th style="width: 84px;">Total</th>
+                    <th style="width: 72px;">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -394,6 +396,7 @@
                                 $aliases = match ($spec['key']) {
                                     'CCAkhir' => ['CCAkhir', 'WIP'],
                                     'Moulding' => ['Moulding', 'MLD'],
+                                    'Lmt' => ['LMT', 'Lmt'],
                                     default => [$spec['key']],
                                 };
                                 $value = $valueFromAliases($row, $aliases);
