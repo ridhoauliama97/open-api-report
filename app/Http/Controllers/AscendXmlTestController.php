@@ -1342,6 +1342,12 @@ class AscendXmlTestController extends Controller
             $reportData['title'] = $reportDefinition['title'];
             $reportData['label'] = $reportDefinition['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
+
+            if ($report === 'usia-generasi-tahun-kelahiran-masa-kerja') {
+                $reportData['per_date'] = \Carbon\Carbon::parse(
+                    trim((string) ($request->all()['PerDate'] ?? ''))
+                )->locale('id')->translatedFormat('d-M-y');
+            }
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }

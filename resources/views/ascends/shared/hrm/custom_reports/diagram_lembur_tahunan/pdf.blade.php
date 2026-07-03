@@ -77,9 +77,9 @@
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
         $barColors = ['#2196F3', '#FF9800', '#4CAF50',
-                       '#E91E63', '#9C27B0', '#00BCD4',
-                       '#FF5722', '#607D8B', '#CDDC39',
-                       '#795548', '#03A9F4', '#8BC34A'];
+                    '#E91E63', '#9C27B0', '#00BCD4',
+                    '#FF5722', '#607D8B', '#CDDC39',
+                    '#795548', '#03A9F4', '#8BC34A'];
 
         $deptColor = static function (string $dept) use ($barColors): string {
             static $assigned = [];

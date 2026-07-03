@@ -162,7 +162,7 @@
         };
     @endphp
 
-    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per Tanggal : ' . $printedAt])
+    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per Tanggal : ' . $reportData['per_date']])
 
     <table class="data-table">
         <thead>
