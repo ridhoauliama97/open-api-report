@@ -63,6 +63,9 @@ use App\Services\Ascends\Shared\Hrm\CustomReports\SuratPeringatanReportService a
 use App\Services\Ascends\Shared\Hrm\CustomReports\DiagramLemburTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
 use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
+use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
+use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
+use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
@@ -2624,6 +2627,195 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Warning Notice - Laporan Surat Peringatan ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedAssociateCustomerModifikasi6BulanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        CustomerModifikasiReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+                + $this->customerModifikasi6BulanFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Customer (Periode 1 Tahun)';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+
+            $all = $request->all();
+            $perDateRaw = trim((string) ($all['PerDate'] ?? ''));
+            $reportData['per_date'] = $perDateRaw !== ''
+                ? 'Per Tanggal : '.\Carbon\Carbon::parse($perDateRaw)->locale('id')->translatedFormat('d-M-y')
+                : '';
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.associate.customer_modifikasi_6_bulan_terakhir.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        $companySuffix = $company !== '' ? ' '.$company : '';
+        $filename = 'Associate - Laporan Customer Modifikasi 6 Bulan Terakhir (Periode 1 Tahun)'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedAssociateCustomerBaruPerTahunPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        CustomerBaruPerTahunReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+                + $this->customerBaruPerTahunFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Penambahan Customer Baru (Periode 1 Tahun)';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.associate.customer_baru_per_tahun.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        $companySuffix = $company !== '' ? ' '.$company : '';
+        $filename = 'Associate - Laporan Penambahan Customer Baru (Periode 1 Tahun)'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedAssociateCustomerBaruPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        CustomerBaruReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+                + $this->customerBaruFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Customer Baru';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.associate.customer_baru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        $companySuffix = $company !== '' ? ' '.$company : '';
+        $filename = 'Associate - Laporan Customer Baru'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
         ]);
     }
 
@@ -5511,6 +5703,33 @@ class AscendXmlTestController extends Controller
         return [
             'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
             'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
+        ];
+    }
+
+    private function customerModifikasi6BulanFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'per_date' => $all['PerDate'] ?? null,
+        ];
+    }
+
+    private function customerBaruPerTahunFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'tahun' => $all['Tahun'] ?? null,
+        ];
+    }
+
+    private function customerBaruFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'tanggal' => $all['Tanggal'] ?? null,
         ];
     }
 
