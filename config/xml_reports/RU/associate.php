@@ -50,5 +50,16 @@ return [
             ],
             'filter' => null,
         ],
+
+        'list_customer' => [
+            'label' => 'Laporan Data Customer Per Kota',
+            'columns' => [
+                'Customer_x0020_Code' => 'Kode Customer',
+                'Customer_x0020_Name' => 'Nama Customer',
+                'Billing_x0020_Address_x0020_1' => 'Alamat',
+                'Billing_x0020_City' => 'Kota',
+            ],
+            'filter' => null,
+        ],
     ],
 ];

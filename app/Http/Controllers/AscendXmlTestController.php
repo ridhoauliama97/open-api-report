@@ -66,6 +66,7 @@ use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportSer
 use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
 use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
 use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
+use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
@@ -2812,6 +2813,67 @@ class AscendXmlTestController extends Controller
 
         $companySuffix = $company !== '' ? ' '.$company : '';
         $filename = 'Associate - Laporan Customer Baru'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedAssociateListCustomerPerKotaPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        ListCustomerPerKotaReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+                + $this->listCustomerPerKotaFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Data Customer Per Kota';
+            $reportData['label'] = $reportData['title'];
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.associate.list_customer.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'headers' => $reportData['headers'] ?? [],
+            'rows' => $reportData['rows'] ?? [],
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => count($reportData['headers'] ?? []),
+        ]);
+
+        $companySuffix = $company !== '' ? ' '.$company : '';
+        $filename = 'Associate - Laporan Data Customer Per Kota'.$companySuffix.'.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -5731,6 +5793,11 @@ class AscendXmlTestController extends Controller
         return [
             'tanggal' => $all['Tanggal'] ?? null,
         ];
+    }
+
+    private function listCustomerPerKotaFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [];
     }
 
     private function pengabaianKeterlambatanKehadiranManualFilters(GenerateAscendsEmployeeListReportRequest $request): array

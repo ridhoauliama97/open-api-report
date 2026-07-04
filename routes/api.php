@@ -351,6 +351,11 @@ Route::post(
 )->name('api.internal.ascends.shared.associate.customer-baru.pdf');
 
 Route::post(
+    '/internal/ascends/shared/associate/list-customer-per-kota/pdf',
+    [AscendXmlTestController::class, 'apiSharedAssociateListCustomerPerKotaPdf']
+)->name('api.internal.ascends.shared.associate.list-customer-per-kota.pdf');
+
+Route::post(
     '/internal/ascends/shared/hrm/attendance-full/rekapitulasi-absensi-briefing-harian-ru/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmRekapitulasiAbsensiBriefingHarianRuPdf']
 )->name('api.internal.ascends.shared.hrm.attendance-full.rekapitulasi-absensi-briefing-harian-ru.pdf');
