@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
 use App\Services\Ascends\Ru\Sales\SalesInvoiceReportService;
 use App\Services\Ascends\Ru\Sales\SuratJalanReportService;
+use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
+use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
+use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
+use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianGsuReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianUcReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiIndividuReportService;
+use App\Services\Ascends\Shared\Hrm\CustomReports\DiagramLemburTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\KaryawanKeluarReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\KaryawanKeluarTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\KaryawanMasukReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\LemburBulananReportService as CustomLemburBulananReportService;
+use App\Services\Ascends\Shared\Hrm\CustomReports\SuratPeringatanReportService as SuratPeringatanCustomReportService;
 use App\Services\Ascends\Shared\Hrm\CustomReports\VerifikasiLemburReportService;
 use App\Services\Ascends\Shared\Hrm\DaftarKaryawanBerdasarkanAbjadReportService;
 use App\Services\Ascends\Shared\Hrm\DaftarKaryawanReportService;
@@ -59,14 +65,8 @@ use App\Services\Ascends\Shared\Hrm\RekapitulasiAbsensiBriefingHarianReportServi
 use App\Services\Ascends\Shared\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
 use App\Services\Ascends\Shared\Hrm\RekapitulasiPengabaianKeterlambatanTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\SuratPeringatanReportService;
-use App\Services\Ascends\Shared\Hrm\CustomReports\SuratPeringatanReportService as SuratPeringatanCustomReportService;
-use App\Services\Ascends\Shared\Hrm\CustomReports\DiagramLemburTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\ThrReportService;
 use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
-use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
-use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
-use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
-use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
@@ -94,6 +94,7 @@ use App\Services\Ascends\Shared\Production\HasilProduksiPerMesinReportService;
 use App\Services\Ascends\Shared\ProductionByItem\ProduksiPerMingguReportService;
 use App\Services\Ascends\Shared\ProductionByItem\ProduksiReportService;
 use App\Services\PdfGenerator;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
 
@@ -1348,7 +1349,7 @@ class AscendXmlTestController extends Controller
             $reportData = $this->applyAscendSystemFields($request, $reportData);
 
             if ($report === 'usia-generasi-tahun-kelahiran-masa-kerja') {
-                $reportData['per_date'] = \Carbon\Carbon::parse(
+                $reportData['per_date'] = Carbon::parse(
                     trim((string) ($request->all()['PerDate'] ?? ''))
                 )->locale('id')->translatedFormat('d-M-y');
             }
@@ -2361,17 +2362,23 @@ class AscendXmlTestController extends Controller
         PdfGenerator $pdfGenerator,
     ) {
         try {
-            $file = $request->file('xml_file');
-            if ($file === null || ! $file->isValid()) {
-                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            $fileSt = $request->file('xml_file_st');
+            $fileKkKt = $request->file('xml_file_kk_kt');
+
+            if (($fileSt === null || ! $fileSt->isValid()) && ($fileKkKt === null || ! $fileKkKt->isValid())) {
+                throw new RuntimeException('Minimal satu file XML (xml_file_st atau xml_file_kk_kt) wajib dikirim.');
             }
 
-            $xmlPayload = file_get_contents((string) $file->getRealPath());
-            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
-                throw new RuntimeException('File XML (xml_file) tidak valid atau kosong.');
-            }
+            $xmlSt = ($fileSt !== null && $fileSt->isValid()) ? file_get_contents((string) $fileSt->getRealPath()) : null;
+            $xmlKkKt = ($fileKkKt !== null && $fileKkKt->isValid()) ? file_get_contents((string) $fileKkKt->getRealPath()) : null;
 
-            $sourceLabel = 'request upload: '.$file->getClientOriginalName();
+            $sourceLabel = 'request upload';
+            if ($fileSt !== null) {
+                $sourceLabel .= ' ST:'.$fileSt->getClientOriginalName();
+            }
+            if ($fileKkKt !== null) {
+                $sourceLabel .= ' KK/KT:'.$fileKkKt->getClientOriginalName();
+            }
 
             $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
             if ($dbCompanyName === '') {
@@ -2381,21 +2388,19 @@ class AscendXmlTestController extends Controller
             $company = $this->normalizeSharedHrmCompany($dbCompanyName);
 
             $reportData = $reportService->buildReportDataFromXml(
-                $xmlPayload,
+                $xmlSt,
+                $xmlKkKt,
                 $sourceLabel,
                 ['company' => $company]
                 + $this->diagramLemburTahunanFilters($request)
             );
 
             $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Diagram Persentase Jam Lembur Tahunan Per Departemen';
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
-
-        $typeLabel = trim((string) ($reportData['type_label'] ?? ''));
-        $typeSuffix = $typeLabel !== '' ? ' ('.$typeLabel.')' : '';
-        $reportData['title'] = 'Laporan Diagram Persentase Jam Lembur Tahunan Per Departemen'.$typeSuffix;
 
         $pdf = $pdfGenerator->render('ascends.shared.hrm.custom_reports.diagram_lembur_tahunan.pdf', [
             'company' => $company,
@@ -2409,7 +2414,7 @@ class AscendXmlTestController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Custom Reports - Laporan Diagram Lembur Tahunan Per Departemen'.$typeSuffix.' '.$company.'.pdf"',
+            'Content-Disposition' => 'inline; filename="Custom Reports - Laporan Diagram Lembur Tahunan Per Departemen '.$company.'.pdf"',
         ]);
     }
 
@@ -2671,7 +2676,7 @@ class AscendXmlTestController extends Controller
             $all = $request->all();
             $perDateRaw = trim((string) ($all['PerDate'] ?? ''));
             $reportData['per_date'] = $perDateRaw !== ''
-                ? 'Per Tanggal : '.\Carbon\Carbon::parse($perDateRaw)->locale('id')->translatedFormat('d-M-y')
+                ? 'Per Tanggal : '.Carbon::parse($perDateRaw)->locale('id')->translatedFormat('d-M-y')
                 : '';
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);

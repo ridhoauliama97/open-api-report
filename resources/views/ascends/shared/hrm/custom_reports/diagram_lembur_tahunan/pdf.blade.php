@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta charset="utf-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
@@ -54,22 +53,61 @@
             margin: 0 auto;
         }
 
-        .chart-legend {
+        .chart-title {
             text-align: center;
-            margin-top: 8px;
-            font-size: 9px;
+            margin: 8px 0 2px 0;
+            font-size: 11px;
+            font-weight: bold;
         }
 
-        .chart-legend-item {
-            display: inline;
-            margin: 0 8px;
+        .cost-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-top: 10px;
+            border: 1px solid #000;
+        }
+
+        .cost-table th,
+        .cost-table td {
+            padding: 3px 5px;
+            vertical-align: middle;
+        }
+
+        .cost-table th {
+            font-weight: bold;
+            font-size: 11px;
+            text-align: center;
+            border: 1px solid #000;
+        }
+
+        .cost-table td {
+            font-size: 10px;
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .cost-table .color-swatch {
+            display: inline-block;
+            width: 16px;
+            height: 14px;
+            margin-right: 6px;
+            vertical-align: middle;
+            border: 1px solid #000;
         }
     </style>
 </head>
 
 <body>
     @php
-        $monthlyData = $reportData['monthly_chart_data'] ?? [];
+        $monthlyDataSt = $reportData['monthly_chart_data_st'] ?? [];
+        $monthlyDataKkKt = $reportData['monthly_chart_data_kk_kt'] ?? [];
+        $costTable = $reportData['cost_table'] ?? [];
+        $hasSt = $reportData['has_st'] ?? false;
+        $hasKkKt = $reportData['has_kk_kt'] ?? false;
         $periodLabel = (string) ($reportData['period']['label'] ?? '');
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
             ->locale('id')
@@ -81,17 +119,25 @@
                     '#FF5722', '#607D8B', '#CDDC39',
                     '#795548', '#03A9F4', '#8BC34A'];
 
-        $deptColor = static function (string $dept) use ($barColors): string {
-            static $assigned = [];
-            static $idx = 0;
-            if (!isset($assigned[$dept])) {
-                $assigned[$dept] = $barColors[$idx % count($barColors)];
-                $idx++;
-            }
-            return $assigned[$dept];
+        $allDeptNames = [];
+        foreach ($monthlyDataSt as $m) {
+            foreach ($m['departments'] as $d) { $allDeptNames[$d['name']] = true; }
+        }
+        foreach ($monthlyDataKkKt as $m) {
+            foreach ($m['departments'] as $d) { $allDeptNames[$d['name']] = true; }
+        }
+
+        $assigned = [];
+        $idx = 0;
+        foreach (array_keys($allDeptNames) as $dept) {
+            $assigned[$dept] = $barColors[$idx % count($barColors)];
+            $idx++;
+        }
+
+        $deptColor = static function (string $dept) use ($assigned): string {
+            return $assigned[$dept] ?? '#CCCCCC';
         };
 
-        $monthCount = count($monthlyData);
         $barGap = 2;
         $groupGap = 8;
         $marginLeft = 50;
@@ -103,121 +149,72 @@
         $chartRight = $svgWidth - $marginRight;
         $chartWidth = $chartRight - $chartLeft;
         $chartTop = $marginTop;
-        $chartBottom = 300;
+        $chartBottom = 140;
         $chartHeight = $chartBottom - $chartTop;
-
         $barWidth = 30;
-        $barHeightFactor = $chartHeight / 100;
     @endphp
 
     @include('ascends.shared.partials.report-header', ['subtitle' => $periodLabel])
 
-    @if ($monthlyData === [])
-        <div style="text-align: center; font-style: italic; font-weight: bold; padding: 40px 0;">Tidak Ada Data</div>
-    @else
-        <div class="chart-container">
-            <svg width="{{ $svgWidth }}" height="360" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Noto Serif', serif; font-size: 9px;">
-                {{-- Y-axis gridlines + labels per 10% --}}
-                @for ($i = 0; $i <= 10; $i++)
-                    @php
-                        $y = $chartBottom - ($i / 10) * $chartHeight;
-                        $isZero = $i === 0;
-                    @endphp
-                    <line x1="{{ $chartLeft }}" y1="{{ $y }}" x2="{{ $chartRight }}" y2="{{ $y }}"
-                        stroke="#000" stroke-width="{{ $isZero ? 1 : 0.5 }}" stroke-dasharray="{{ $isZero ? 'none' : '3,3' }}" />
-                    <text x="{{ $chartLeft - 6 }}" y="{{ $y + 3 }}" text-anchor="end" font-size="9">{{ $i * 10 }}%</text>
-                @endfor
+    @if ($hasSt)
+        @include('ascends.shared.hrm.custom_reports.diagram_lembur_tahunan._chart', [
+            'chartTitle' => 'ST',
+            'chartData' => $monthlyDataSt,
+            'deptColor' => $deptColor,
+            'svgWidth' => $svgWidth,
+            'chartLeft' => $chartLeft,
+            'chartRight' => $chartRight,
+            'chartTop' => $chartTop,
+            'chartBottom' => $chartBottom,
+            'chartHeight' => $chartHeight,
+            'barWidth' => $barWidth,
+            'barGap' => $barGap,
+            'groupGap' => $groupGap,
+        ])
+    @endif
 
-                {{-- Y-axis line --}}
-                <line x1="{{ $chartLeft }}" y1="{{ $chartTop }}" x2="{{ $chartLeft }}" y2="{{ $chartBottom }}"
-                    stroke="#000" stroke-width="1" />
+    @if ($hasKkKt)
+        @include('ascends.shared.hrm.custom_reports.diagram_lembur_tahunan._chart', [
+            'chartTitle' => 'KK/KT',
+            'chartData' => $monthlyDataKkKt,
+            'deptColor' => $deptColor,
+            'svgWidth' => $svgWidth,
+            'chartLeft' => $chartLeft,
+            'chartRight' => $chartRight,
+            'chartTop' => $chartTop,
+            'chartBottom' => $chartBottom,
+            'chartHeight' => $chartHeight,
+            'barWidth' => $barWidth,
+            'barGap' => $barGap,
+            'groupGap' => $groupGap,
+        ])
+    @endif
 
-                {{-- X-axis line --}}
-                <line x1="{{ $chartLeft }}" y1="{{ $chartBottom }}" x2="{{ $chartRight }}" y2="{{ $chartBottom }}"
-                    stroke="#000" stroke-width="1" />
-
-                {{-- Bars + month labels --}}
-                @php
-                    $currentX = $chartLeft;
-                @endphp
-                @foreach ($monthlyData as $monthIdx => $month)
-                    @php
-                        $groupStartX = $currentX;
-                        $groupWidth = 0;
-                        $deptBars = $month['departments'];
-                    @endphp
-                    @foreach ($deptBars as $barIdx => $dept)
-                        @php
-                            $pct = (float) ($dept['percentage'] ?? 0);
-                            $barHeight = $chartHeight * ($pct / 100);
-                            $barY = $chartBottom - $barHeight;
-                            $color = $deptColor($dept['name']);
-                        @endphp
-                        <rect x="{{ $currentX }}" y="{{ $barY }}" width="{{ $barWidth }}" height="{{ $barHeight }}"
-                            fill="{{ $color }}" stroke="#000" stroke-width="0.5" />
-                        @php
-                            $currentX += $barWidth + $barGap;
-                            $groupWidth += $barWidth + $barGap;
-                        @endphp
+    @if ($costTable !== [])
+        <div style="margin-top: 8px; text-align: center;">
+            <table class="cost-table" style="margin: 0 auto;">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 45%;">Departemen</th>
+                        <th style="width: 25%;">Staff</th>
+                        <th style="width: 25%;">KK/KT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($costTable as $row)
+                        <tr>
+                            <td class="center">{{ $loop->iteration }}</td>
+                            <td>
+                                <span class="color-swatch" style="background: {{ $deptColor($row['department']) }};">&nbsp;</span>
+                                {{ $row['department'] }}
+                            </td>
+                            <td style="text-align: right;">{{ $row['staff_cost'] > 0 ? 'Rp '.number_format($row['staff_cost'], 0, ',', '.') : '-' }}</td>
+                            <td style="text-align: right;">{{ $row['kk_kt_cost'] > 0 ? 'Rp '.number_format($row['kk_kt_cost'], 0, ',', '.') : '-' }}</td>
+                        </tr>
                     @endforeach
-
-                    {{-- Month label --}}
-                    @php
-                        $groupCenterX = $groupStartX + ($groupWidth / 2) - ($barGap / 2);
-                        $monthLabelFull = explode(' ', $month['month_label'] ?? '');
-                        $monthMap = ['Januari'=>'Jan','Februari'=>'Feb','Maret'=>'Mar','April'=>'Apr','Mei'=>'Mei','Juni'=>'Jun',
-                            'Juli'=>'Jul','Agustus'=>'Agu','September'=>'Sep','Oktober'=>'Okt','November'=>'Nov','Desember'=>'Des'];
-                        $monthShort = $monthMap[$monthLabelFull[0] ?? ''] ?? ($monthLabelFull[0] ?? '');
-                        $yearShort = $monthLabelFull[1] ?? '';
-                    @endphp
-                    <text x="{{ $groupCenterX }}" y="{{ $chartBottom + 18 }}" text-anchor="middle" font-size="9" font-weight="bold">{{ $monthShort }} {{ $yearShort }}</text>
-
-                    {{-- Total hours below month label --}}
-                    <text x="{{ $groupCenterX }}" y="{{ $chartBottom + 30 }}" text-anchor="middle" font-size="8" fill="#636466">{{ number_format((float) $month['total_hours'], 1) }} Jam</text>
-
-                    @php
-                        $currentX += $groupGap;
-                    @endphp
-                @endforeach
-            </svg>
-
-            {{-- Legend --}}
-            <div class="chart-legend">
-                @php
-                    $legendDepts = [];
-                    foreach ($monthlyData as $month) {
-                        foreach ($month['departments'] as $dept) {
-                            $legendDepts[$dept['name']] = $deptColor($dept['name']);
-                        }
-                    }
-                @endphp
-                @foreach ($legendDepts as $name => $color)
-                    <span class="chart-legend-item">
-                        <svg width="12" height="12" style="vertical-align: middle;">
-                            <rect x="0" y="0" width="12" height="12" fill="{{ $color }}" stroke="#000" stroke-width="0.5" />
-                        </svg>
-                        {{ $name }}
-                    </span>
-                @endforeach
-            </div>
-
-            {{-- Cost summary card --}}
-            @php
-                $deptCosts = $reportData['department_costs'] ?? [];
-            @endphp
-            @if (!empty($deptCosts))
-                <div style="margin-top: 14px; border: 1px solid #000; padding: 0;">
-                    <div style="font-weight: bold; font-size: 12px; padding: 5px 6px; background: #eef2f8; border-bottom: 1px solid #000;">Rekapitulasi Biaya Lembur</div>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        @foreach ($deptCosts as $dept => $cost)
-                            <tr>
-                                <td style="width: 50%; padding: 4px 6px; border-bottom: 1px solid #000;">{{ $dept }}</td>
-                                <td style="width: 50%; padding: 4px 6px; border-bottom: 1px solid #000; text-align: right;">Rp {{ number_format((float) $cost, 0, ',', '.') }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
-                </div>
-            @endif
+                </tbody>
+            </table>
         </div>
     @endif
 

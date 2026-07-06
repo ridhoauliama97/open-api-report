@@ -9,41 +9,70 @@ use XMLReader;
 
 class DiagramLemburTahunanReportService
 {
-    public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
-    {
-        $parsed = $this->parseRows($xmlContents, $sourceLabel);
-        $allRows = $parsed['data_rows'];
-
-        if ($allRows === []) {
-            throw new RuntimeException('Data lembur tidak ditemukan pada XML.');
+    public function buildReportDataFromXml(
+        ?string $xmlContentsSt = null,
+        ?string $xmlContentsKkKt = null,
+        string $sourceLabel = 'request xml payload',
+        array $filters = [],
+    ): array {
+        if ($xmlContentsSt === null && $xmlContentsKkKt === null) {
+            throw new RuntimeException('File XML (xml_file_st atau xml_file_kk_kt) wajib dikirim.');
         }
 
-        $filteredRows = $this->filterByDateRange($allRows, $filters);
+        $stRows = $xmlContentsSt !== null ? $this->parseRows($xmlContentsSt, $sourceLabel)['data_rows'] : [];
+        $kkKtRows = $xmlContentsKkKt !== null ? $this->parseRows($xmlContentsKkKt, $sourceLabel)['data_rows'] : [];
 
-        if ($filteredRows === []) {
-            throw new RuntimeException('Tidak ada data lembur dalam rentang tanggal yang dipilih.');
-        }
+        $stRowsFiltered = $this->filterByDateRange($stRows, $filters);
+        $kkKtRowsFiltered = $this->filterByDateRange($kkKtRows, $filters);
 
-        $typeLabel = $this->resolveType($filteredRows);
-        $period = $this->resolvePeriod($filteredRows, $filters);
+        $monthlyDataSt = $stRowsFiltered !== [] ? $this->groupByMonthAndDepartment($stRowsFiltered) : [];
+        $monthlyDataKkKt = $kkKtRowsFiltered !== [] ? $this->groupByMonthAndDepartment($kkKtRowsFiltered) : [];
 
-        $monthlyData = $this->groupByMonthAndDepartment($filteredRows);
-        $deptCosts = $this->calculateDepartmentCosts($filteredRows, array_column($monthlyData, 'departments')[0] ?? []);
+        $costTable = $this->buildCombinedCostTable($stRowsFiltered, $kkKtRowsFiltered, $monthlyDataSt, $monthlyDataKkKt);
+
+        $period = $this->resolvePeriod(array_merge($stRowsFiltered, $kkKtRowsFiltered), $filters);
 
         return [
             'title' => 'Laporan Diagram Lembur Tahunan Per Departemen',
             'headerTitle' => 'Laporan Diagram Lembur Tahunan Per Departemen',
-            'type_label' => $typeLabel,
+            'has_st' => $stRowsFiltered !== [],
+            'has_kk_kt' => $kkKtRowsFiltered !== [],
+            'type_label_st' => 'ST',
+            'type_label_kk_kt' => 'KK/KT',
             'subtitle' => 'Dari '.$period['start'].' s/d '.$period['end'],
-            'monthly_chart_data' => $monthlyData,
-            'department_costs' => $deptCosts,
+            'monthly_chart_data_st' => $monthlyDataSt,
+            'monthly_chart_data_kk_kt' => $monthlyDataKkKt,
+            'cost_table' => $costTable,
             'period' => $period,
             'printed_at' => Carbon::now()->locale('id')->translatedFormat('d F Y H:i'),
             'printed_by' => '',
         ];
     }
 
-    private function calculateDepartmentCosts(array $rows, array $orderedDepts): array
+    private function buildCombinedCostTable(array $stRows, array $kkKtRows, array $stChartData, array $kkKtChartData): array
+    {
+        $stCosts = $this->calculateDepartmentCostsArray($stRows);
+        $kkKtCosts = $this->calculateDepartmentCostsArray($kkKtRows);
+
+        $orderedDepts = $this->getOrderedDepartmentList($stChartData, $kkKtChartData);
+
+        $table = [];
+        foreach ($orderedDepts as $dept) {
+            $stVal = isset($stCosts[$dept]) ? round($stCosts[$dept]) : 0;
+            $kkKtVal = isset($kkKtCosts[$dept]) ? round($kkKtCosts[$dept]) : 0;
+            if ($stVal > 0 || $kkKtVal > 0) {
+                $table[] = [
+                    'department' => $dept,
+                    'staff_cost' => $stVal,
+                    'kk_kt_cost' => $kkKtVal,
+                ];
+            }
+        }
+
+        return $table;
+    }
+
+    private function calculateDepartmentCostsArray(array $rows): array
     {
         $costs = [];
         foreach ($rows as $row) {
@@ -55,20 +84,36 @@ class DiagramLemburTahunanReportService
             $costs[$dept] += $cost;
         }
 
-        $result = [];
-        foreach ($orderedDepts as $dept) {
-            $name = $dept['name'] ?? $dept;
-            if (isset($costs[$name])) {
-                $result[$name] = round($costs[$name]);
-            }
-        }
-        foreach ($costs as $name => $cost) {
-            if (! isset($result[$name])) {
-                $result[$name] = round($cost);
+        return $costs;
+    }
+
+    private function getOrderedDepartmentList(array $stChartData, array $kkKtChartData): array
+    {
+        $deptGrandTotal = [];
+
+        foreach ($stChartData as $month) {
+            foreach ($month['departments'] as $dept) {
+                $name = $dept['name'];
+                if (! isset($deptGrandTotal[$name])) {
+                    $deptGrandTotal[$name] = 0;
+                }
+                $deptGrandTotal[$name] += $dept['total_hours'];
             }
         }
 
-        return $result;
+        foreach ($kkKtChartData as $month) {
+            foreach ($month['departments'] as $dept) {
+                $name = $dept['name'];
+                if (! isset($deptGrandTotal[$name])) {
+                    $deptGrandTotal[$name] = 0;
+                }
+                $deptGrandTotal[$name] += $dept['total_hours'];
+            }
+        }
+
+        arsort($deptGrandTotal);
+
+        return array_keys($deptGrandTotal);
     }
 
     private function parseRows(string $xmlContents, string $sourceLabel): array
@@ -150,22 +195,6 @@ class DiagramLemburTahunanReportService
 
             return true;
         }));
-    }
-
-    private function resolveType(array $rows): string
-    {
-        $types = array_unique(array_map(
-            static fn (array $row): string => strtoupper(trim((string) ($row['DailyWorkerTypeCode'] ?? ''))),
-            $rows
-        ));
-
-        $types = array_values(array_filter($types, static fn (string $v): bool => $v !== ''));
-
-        if (count($types) === 0) {
-            return '';
-        }
-
-        return implode('/', $types);
     }
 
     private function resolvePeriod(array $rows, array $filters): array
