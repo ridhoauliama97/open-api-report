@@ -126,7 +126,7 @@ class SuratPeringatanReportService
             7 => 'SP 1',
             8 => 'SP 2',
             9 => 'SP 3',
-            default => 'SP ' . $value,
+            default => 'SP '.$value,
         };
     }
 

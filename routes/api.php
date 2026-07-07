@@ -774,6 +774,21 @@ Route::post(
     [AscendXmlTestController::class, 'apiProduksiPerMingguPdf']
 )->name('api.internal.ascends.shared.inventory_analysis.production_by_item.produksi-per-minggu.pdf');
 
+Route::post(
+    '/internal/ascends/shared/fixed_asset/asset_summary/penyusutan_aktiva/pdf',
+    [AscendXmlTestController::class, 'apiSharedFixedAssetPenyusutanAktivaPdf']
+)->name('api.internal.ascends.shared.fixed_asset.asset_summary.penyusutan_aktiva.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laporan-laba-rugi-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLaporanLabaRugiRuPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laporan-laba-rugi-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laporan-laba-rugi-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLaporanLabaRugiUcPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laporan-laba-rugi-uc.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

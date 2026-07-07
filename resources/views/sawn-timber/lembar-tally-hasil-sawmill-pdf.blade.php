@@ -374,6 +374,7 @@
         $idUOMPanjangCol = $findColumn($availableColumns, ['IdUOMPanjang', 'IdUomPanjang']);
         $ketCol = $findColumn($availableColumns, ['Ket', 'Keterangan']);
         $noCol = $findColumn($availableColumns, ['No', 'Nomor', 'Urut']);
+        $conditionCol = $findColumn($availableColumns, ['Condition']);
 
         $computeBeratRow = static function (array $row) use ($toFloat, $truncate4, $beratCol, $tebalCol, $lebarCol, $panjangCol, $jmlhBatangCol, $idUOMTblLebarCol, $idUOMPanjangCol, ): float {
             $beratValue = $beratCol !== null ? $toFloat($row[$beratCol] ?? null) : null;
@@ -568,6 +569,14 @@
                                 <td class="meta-value" colspan="4">
                                     {{ $formatOperatorText($operatorCol !== null ? $headRow[$operatorCol] ?? '-' : '-') }}
                                 </td>
+                            </tr>
+
+                            <tr>
+                                @if ($conditionCol !== null && strtoupper(trim((string) ($headRow[$conditionCol] ?? ''))) !== 'Normal')
+                                    <td colspan="3" style="margin-top:4px; font-size: 12px; font-weight: bold;">
+                                        {{ (string) $headRow[$conditionCol] }}
+                                    </td>
+                                @endif
                             </tr>
                         </tbody>
                     </table>

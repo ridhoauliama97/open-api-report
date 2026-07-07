@@ -1,6 +1,6 @@
 <div class="chart-title">Kategori : {{ $chartTitle }}</div>
 <div class="chart-container">
-    <svg width="{{ $svgWidth }}" height="190" xmlns="http://www.w3.org/2000/svg"
+    <svg width="100%" viewBox="0 0 {{ $svgWidth }} 190" xmlns="http://www.w3.org/2000/svg"
         style="font-family: 'Noto Serif', serif; font-size: 9px;">
         @for ($i = 0; $i <= 5; $i++)
             @php

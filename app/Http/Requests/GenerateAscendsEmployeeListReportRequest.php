@@ -27,6 +27,8 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             'year' => ['nullable', 'integer', 'between:1900,2100'],
             'bulan' => ['nullable', 'integer', 'between:1,12'],
             'tahun' => ['nullable', 'integer', 'between:1900,2100'],
+            'Date.StartDate' => ['nullable', 'date'],
+            'Date.EndDate' => ['nullable', 'date'],
             'AttendanceDate.StartDate' => ['nullable', 'date'],
             'AttendanceDate.EndDate' => ['nullable', 'date'],
             'report_date' => ['nullable', 'date'],

@@ -55,7 +55,7 @@
 
         .chart-title {
             text-align: center;
-            margin: 8px 0 2px 0;
+            margin: 10px 0 2px 0;
             font-size: 11px;
             font-weight: bold;
         }
@@ -144,14 +144,29 @@
         $marginRight = 20;
         $marginTop = 15;
         $marginBottom = 45;
-        $svgWidth = 1100;
         $chartLeft = $marginLeft;
-        $chartRight = $svgWidth - $marginRight;
-        $chartWidth = $chartRight - $chartLeft;
         $chartTop = $marginTop;
         $chartBottom = 140;
         $chartHeight = $chartBottom - $chartTop;
         $barWidth = 30;
+
+        $calcChartWidth = static function (array $chartData) use ($barWidth, $barGap, $groupGap, $marginLeft, $marginRight): float {
+            if ($chartData === []) return 0;
+            $total = $marginLeft;
+            $monthCount = count($chartData);
+            foreach ($chartData as $i => $month) {
+                $deptCount = is_array($month['departments'] ?? null) ? count($month['departments']) : 0;
+                $total += $deptCount * ($barWidth + $barGap);
+                if ($i < $monthCount - 1) $total += $groupGap;
+            }
+            return $total + $marginRight;
+        };
+
+        $requiredWidthSt = $calcChartWidth($monthlyDataSt);
+        $requiredWidthKkKt = $calcChartWidth($monthlyDataKkKt);
+        $svgWidth = (int) max(1100, $requiredWidthSt, $requiredWidthKkKt);
+        $chartRight = $svgWidth - $marginRight;
+        $chartWidth = $chartRight - $chartLeft;
     @endphp
 
     @include('ascends.shared.partials.report-header', ['subtitle' => $periodLabel])
