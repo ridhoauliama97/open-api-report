@@ -10,8 +10,11 @@ use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
 use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
 use App\Services\Ascends\Shared\FixedAsset\AssetSummary\PenyusutanAktivaReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanUmumRuReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanUmumUcReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiUcReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PendapatanDanBiayaLainReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianGsuReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianUcReportService;
@@ -5032,6 +5035,175 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Journal Details - Laporan Laba Rugi ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedGeneralLedgerPendapatanDanBiayaLainPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PendapatanDanBiayaLainReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                ]
+            );
+
+            $reportData['period_label'] = 'Dari '.Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY').' s/d '.Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.pendapatan_dan_biaya_lain.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Pendapatan Dan Biaya Lain-Lain ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedGeneralLedgerBebanUmumUcPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        BebanUmumUcReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                ]
+            );
+
+            $reportData['period_label'] = 'Dari '.Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY').' s/d '.Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.beban_umum_uc.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Beban Umum ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedGeneralLedgerBebanUmumRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        BebanUmumRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                ]
+            );
+
+            $reportData['period_label'] = 'Dari '.Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY').' s/d '.Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.beban_umum_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Beban Umum ('.$company.').pdf"',
         ]);
     }
 

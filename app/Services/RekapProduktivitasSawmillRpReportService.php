@@ -33,7 +33,7 @@ class RekapProduktivitasSawmillRpReportService
     /**
      * @return array<string, mixed>
      */
-    public function buildReportData(string $startDate, string $endDate, ?float $upahRacip = null): array
+    public function buildReportData(string $startDate, string $endDate, ?float $upahRacip = null, ?string $supplierFilter = null): array
     {
         $mainRows = $this->fetchMain($startDate, $endDate);
         $subRows = $this->fetchSub($startDate, $endDate);
@@ -369,6 +369,78 @@ class RekapProduktivitasSawmillRpReportService
             $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['kb'] += $kb;
             $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['st'] += $st;
 
+        }
+
+        if ($supplierFilter !== null && $supplierFilter !== '') {
+            $filterLower = strtolower(trim($supplierFilter));
+            foreach ($byDate as $dateKey => $dateGroup) {
+                foreach ($dateGroup['receipts'] as $receiptKey => $receipt) {
+                    $receiptSupplier = strtolower(trim((string) ($receipt['meta']['supplier'] ?? '')));
+                    if (! str_contains($receiptSupplier, $filterLower)) {
+                        unset($byDate[$dateKey]['receipts'][$receiptKey]);
+                    }
+                }
+                if (empty($byDate[$dateKey]['receipts'])) {
+                    unset($byDate[$dateKey]);
+                }
+            }
+
+            $grandKb = 0.0;
+            $grandSt = 0.0;
+            $grandByGrade = ['input' => [], 'output' => []];
+            $grandByGradeByGroup = [
+                'bansaw' => ['input' => [], 'output' => []],
+                'slp' => ['input' => [], 'output' => []],
+                'mixed' => ['input' => [], 'output' => []],
+                'unknown' => ['input' => [], 'output' => []],
+            ];
+            $grandMoneyByGroup = [
+                'bansaw' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+                'slp' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+                'mixed' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+                'unknown' => ['st' => 0.0, 'kb' => 0.0, 'upah' => 0.0, 'hasil' => 0.0],
+            ];
+
+            foreach ($byDate as $dateGroup) {
+                foreach ($dateGroup['receipts'] as $receiptKey => $receipt) {
+                    foreach (['input', 'output'] as $kategori) {
+                        foreach ($receipt['rows'][$kategori] ?? [] as $line) {
+                            $kb = (float) ($line['kb'] ?? 0.0);
+                            $st = (float) ($line['st'] ?? 0.0);
+                            $gradeKey = (string) ($line['grade'] ?? 'Tanpa Grade');
+                            $grandKb += $kb;
+                            $grandSt += $st;
+
+                            if (! isset($grandByGrade[$kategori][$gradeKey])) {
+                                $grandByGrade[$kategori][$gradeKey] = [
+                                    'kategori' => $kategori,
+                                    'grade' => $gradeKey,
+                                    'jmlh_truk' => $kategori === 'input' ? '1' : '0',
+                                    'kb' => 0.0,
+                                    'st' => 0.0,
+                                    'percent' => 0.0,
+                                ];
+                            }
+                            $grandByGrade[$kategori][$gradeKey]['kb'] += $kb;
+                            $grandByGrade[$kategori][$gradeKey]['st'] += $st;
+
+                            $receiptGroup = $receiptGroupMap[$receiptKey] ?? 'unknown';
+                            if (! isset($grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey])) {
+                                $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey] = [
+                                    'kategori' => $kategori,
+                                    'grade' => $gradeKey,
+                                    'jmlh_truk' => $kategori === 'input' ? '1' : '0',
+                                    'kb' => 0.0,
+                                    'st' => 0.0,
+                                    'percent' => 0.0,
+                                ];
+                            }
+                            $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['kb'] += $kb;
+                            $grandByGradeByGroup[$receiptGroup][$kategori][$gradeKey]['st'] += $st;
+                        }
+                    }
+                }
+            }
         }
 
         foreach ($byDate as $dateKey => $dateGroup) {

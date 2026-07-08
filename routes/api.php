@@ -789,6 +789,21 @@ Route::post(
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerLaporanLabaRugiUcPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.laporan-laba-rugi-uc.pdf');
 
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/pendapatan-dan-biaya-lain/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerPendapatanDanBiayaLainPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.pendapatan-dan-biaya-lain.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/beban-umum-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBebanUmumUcPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.beban-umum-uc.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/beban-umum-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBebanUmumRuPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.beban-umum-ru.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

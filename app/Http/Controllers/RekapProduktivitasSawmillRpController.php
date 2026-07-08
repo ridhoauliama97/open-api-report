@@ -38,9 +38,10 @@ class RekapProduktivitasSawmillRpController extends Controller
     ): JsonResponse {
         [$startDate, $endDate] = $this->extractDates($request);
         $upahRacip = $request->upahRacip();
+        $supplier = $request->supplier();
 
         try {
-            $reportData = $reportService->buildReportData($startDate, $endDate, $upahRacip);
+            $reportData = $reportService->buildReportData($startDate, $endDate, $upahRacip, $supplier);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
@@ -51,6 +52,7 @@ class RekapProduktivitasSawmillRpController extends Controller
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'upah_racip' => $upahRacip,
+                'supplier' => $supplier,
                 'TglAwal' => $startDate,
                 'TglAkhir' => $endDate,
                 'total_rows' => count($reportData['rows'] ?? []),
@@ -125,9 +127,10 @@ class RekapProduktivitasSawmillRpController extends Controller
 
         [$startDate, $endDate] = $this->extractDates($request);
         $upahRacip = $request->upahRacip();
+        $supplier = $request->supplier();
 
         try {
-            $reportData = $reportService->buildReportData($startDate, $endDate, $upahRacip);
+            $reportData = $reportService->buildReportData($startDate, $endDate, $upahRacip, $supplier);
         } catch (RuntimeException $exception) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
@@ -143,6 +146,7 @@ class RekapProduktivitasSawmillRpController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate,
             'upahRacip' => $upahRacip,
+            'supplier' => $supplier,
             'generatedBy' => $generatedBy,
             'pdf_orientation' => 'portrait',
             'generatedAt' => now(),

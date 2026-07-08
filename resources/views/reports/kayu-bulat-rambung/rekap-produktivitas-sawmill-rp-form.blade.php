@@ -57,6 +57,12 @@
                         <input type="number" step="0.01" min="0" id="UpahRacip" name="UpahRacip"
                             class="form-control" value="{{ old('UpahRacip', old('upah_racip', config('reports.rekap_produktivitas_sawmill_rp.upah_per_ton', 450000))) }}">
                     </div>
+                    <div class="col-md-6">
+                        <label for="supplier" class="form-label">Supplier (filter)</label>
+                        <input type="text" id="supplier" name="supplier" class="form-control"
+                            placeholder="Kosongkan untuk semua supplier"
+                            value="{{ old('supplier') }}">
+                    </div>
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
@@ -107,6 +113,7 @@
                                 TglAwal: startDateInput.value,
                                 TglAkhir: endDateInput.value,
                                 UpahRacip: document.getElementById('UpahRacip')?.value ?? null,
+                                supplier: document.getElementById('supplier')?.value ?? null,
                             }),
                         });
 

@@ -573,7 +573,7 @@
     @endphp
 
     <h1 class="report-title">Laporan Rekap Penerimaan ST Dari Sawmill + Costing (Rambung)</h1>
-    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}</p>
+    <p class="report-subtitle">Periode {{ $start }} s/d {{ $end }}@isset($supplier) | Supplier: {{ $supplier }}@endisset</p>
 
     @forelse ($dateGroups as $group)
         @if (!$loop->first)

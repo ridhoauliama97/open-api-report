@@ -26,6 +26,7 @@ class GenerateRekapProduktivitasSawmillRpReportRequest extends BaseReportRequest
             'TglAkhir' => ['nullable', 'date', ...($requiresDateRange ? ['required_without:end_date'] : [])],
             'upah_racip' => ['nullable', 'numeric', 'min:0'],
             'UpahRacip' => ['nullable', 'numeric', 'min:0'],
+            'supplier' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -48,6 +49,17 @@ class GenerateRekapProduktivitasSawmillRpReportRequest extends BaseReportRequest
         }
 
         return is_numeric($value) ? (float) $value : null;
+    }
+
+    public function supplier(): ?string
+    {
+        $value = $this->input('supplier');
+
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return trim((string) $value);
     }
 
     public function withValidator(Validator $validator): void
