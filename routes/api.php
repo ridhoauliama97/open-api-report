@@ -820,6 +820,26 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.journal_details.beban-penjualan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/biaya-upah-langsung-detail/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBiayaUpahLangsungDetailPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.biaya-upah-langsung-detail.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/beban-umum-baru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBebanUmumBaruPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.beban-umum-baru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/biaya-produksi-tidak-langsung/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBiayaProduksiTidakLangsungPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.biaya-produksi-tidak-langsung.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/biaya-produksi/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBiayaProduksiPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.biaya-produksi.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/ringkasan-aktiva/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerRingkasanAktivaPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.ringkasan-aktiva.pdf');
@@ -833,6 +853,16 @@ Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/perhitungan-bunga-gsu/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerPerhitunganBungaGsuPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.perhitungan-bunga-gsu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laba-kotor-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaKotorRuPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laba-kotor-per-kategori/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaKotorPerKategoriPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-per-kategori.pdf');
 
 /**
  * Group route autentikasi API publik.

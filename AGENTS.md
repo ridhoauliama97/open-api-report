@@ -18,6 +18,7 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - Controller methods: `preview()`, `download()`, `health()`; some also have `index()` for web form views
 - ALL FormRequests extend `BaseReportRequest` — `failedValidation()` auto-returns JSON 422 on `api/*`, don't override
 - ALL PDF via `App\Services\PdfGenerator` — **never `new Mpdf()`**; methods: `render()` (string) / `renderToFile()` (file, memory-efficient). Supports `pdf_orientation` and `pdf_format` (default A4) in view data
+- Subtitle (period label) format: `'Dari '.$date->locale('id')->isoFormat('DD-MMM-YY').' s/d '.$date->locale('id')->isoFormat('DD-MMM-YY')` — always lowercase `s/d`, Indonesian month names via `locale('id')`
 - PDF render cache via `pdf_render_cache_store` + `pdf_render_cache_ttl_seconds`; auto-bypassed in `local`/`debug` mode
 - ALL DB queries use parameterized `DB::select('EXEC SP_... ?, ?', [...])` — **no string interpolation**; `call_syntax=query` supports raw SQL for non-SQL Server testing
 - Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add one entry to 1 of 4 groups: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`
