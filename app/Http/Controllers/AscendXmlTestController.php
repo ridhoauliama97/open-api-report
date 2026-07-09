@@ -18,6 +18,9 @@ use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanUmumUcReportSe
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiUcReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PendapatanDanBiayaLainReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PerhitunganBungaGsuReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PerhitunganBungaRuReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\RingkasanAktivaReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianGsuReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianUcReportService;
@@ -5377,6 +5380,187 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="Journal Details - Laporan Beban Penjualan ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedGeneralLedgerRingkasanAktivaPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        RingkasanAktivaReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+            $viewMode = $allInput['view_mode'] ?? $allInput['viewMode'] ?? 'detail';
+
+            if (! in_array($viewMode, ['detail', 'summary'], true)) {
+                $viewMode = 'detail';
+            }
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $dbCompanyName,
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                ]
+            );
+
+            $reportData['view_mode'] = $viewMode;
+            $reportData['period_label'] = $reportData['period_label'] ?? 'Dari '.Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY').' s/d '.Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $columnCount = $viewMode === 'summary' ? 3 : 7;
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.ringkasan_aktiva.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => $columnCount,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Ringkasan Aktiva Dalam Proses ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedGeneralLedgerPerhitunganBungaRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PerhitunganBungaRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+            $saldoAwal = (float) ($allInput['SaldoAwal'] ?? $allInput['saldo_awal'] ?? 0);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                    'SaldoAwal' => $saldoAwal,
+                ]
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.perhitungan_bunga_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Piutang & Perhitungan Bunga RU ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedGeneralLedgerPerhitunganBungaGsuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PerhitunganBungaGsuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+            $saldoAwal = (float) ($allInput['SaldoAwal'] ?? $allInput['saldo_awal'] ?? 0);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                    'SaldoAwal' => $saldoAwal,
+                ]
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.perhitungan_bunga_gsu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Piutang & Perhitungan Bunga GSU ('.$company.').pdf"',
         ]);
     }
 
