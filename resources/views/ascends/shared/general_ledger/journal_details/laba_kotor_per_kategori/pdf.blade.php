@@ -165,26 +165,27 @@
         $previousMonth = $reportData['previous_month'] ?? '';
         $grandCurrent = (float) ($reportData['grand_current'] ?? 0);
         $grandPrevious = (float) ($reportData['grand_previous'] ?? 0);
-        $headerCompany = trim((string) ($company ?? $reportData['company'] ?? ''));
-        $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
+        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
+        $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
-            ->locale('id')->translatedFormat('d-M-y H:i');
+            ->locale('id')
+            ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
         function formatAmount($value)
         {
             $value = (float) $value;
             if ($value < 0) {
-                return '(' . number_format(abs($value), 2, ',', '.') . ')';
+                return '(' . number_format(abs($value), 0, '.', ',') . ')';
             }
-            return number_format($value, 2, ',', '.');
+            return number_format($value, 0, '.', ',');
         }
 
         function formatRasio($value)
         {
             $v = (float) $value;
-            $formatted = number_format(abs($v), 2, ',', '.') . '%';
+            $formatted = number_format(abs($v), 2, '.', ',') . '%';
             if ($v < 0) {
                 return '(' . $formatted . ')';
             }
@@ -194,7 +195,7 @@
         function formatBeda($value)
         {
             $v = (float) $value;
-            $formatted = number_format(abs($v), 2, ',', '.') . '%';
+            $formatted = number_format(abs($v), 2, '.', ',') . '%';
             if ($v < 0) {
                 return '(' . $formatted . ')';
             }
@@ -208,21 +209,13 @@
 
     @if (count($groups) > 0)
         <table class="data-table">
-            <colgroup>
-                <col style="width: 28%;">
-                <col style="width: 16%;">
-                <col style="width: 12%;">
-                <col style="width: 16%;">
-                <col style="width: 12%;">
-                <col style="width: 16%;">
-            </colgroup>
             <thead>
                 <tr>
                     <th style="width: 28%;">PENJUALAN</th>
-                    <th style="width: 16%;">{{ $currentMonth }}</th>
-                    <th style="width: 12%;">RASIO %</th>
-                    <th style="width: 16%;">{{ $previousMonth }}</th>
-                    <th style="width: 12%;">RASIO %</th>
+                    <th style="width: 18%;">{{ $currentMonth }}</th>
+                    <th style="width: 10%;">RASIO %</th>
+                    <th style="width: 18%;">{{ $previousMonth }}</th>
+                    <th style="width: 10%;">RASIO %</th>
                     <th style="width: 16%;">Beda</th>
                 </tr>
             </thead>
@@ -243,11 +236,11 @@
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} subsection-row">
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
                             <td class="number nowrap {{ $currAmt < 0 ? 'number-negative' : '' }}">
-                                {{ $currAmt != 0 ? formatAmount($currAmt) : '-' }}
+                                {{ formatAmount($currAmt) }}
                             </td>
                             <td class="number nowrap">-</td>
                             <td class="number nowrap {{ $prevAmt < 0 ? 'number-negative' : '' }}">
-                                {{ $prevAmt != 0 ? formatAmount($prevAmt) : '-' }}
+                                {{ formatAmount($prevAmt) }}
                             </td>
                             <td class="number nowrap">-</td>
                             <td></td>
@@ -264,13 +257,13 @@
                     <tr class="group-total-row">
                         <td>LABA (RUGI) KOTOR PENJUALAN {{ $groupName }}</td>
                         <td class="number nowrap {{ $currTotal < 0 ? 'number-negative' : '' }}">
-                            {{ $currTotal != 0 ? formatAmount($currTotal) : '-' }}
+                            {{ formatAmount($currTotal) }}
                         </td>
                         <td class="number nowrap {{ $currRasio < 0 ? 'number-negative' : '' }}">
                             {{ $currRasio != 0 ? formatRasio($currRasio) : '0.00%' }}
                         </td>
                         <td class="number nowrap {{ $prevTotal < 0 ? 'number-negative' : '' }}">
-                            {{ $prevTotal != 0 ? formatAmount($prevTotal) : '-' }}
+                            {{ formatAmount($prevTotal) }}
                         </td>
                         <td class="number nowrap {{ $prevRasio < 0 ? 'number-negative' : '' }}">
                             {{ $prevRasio != 0 ? formatRasio($prevRasio) : '0.00%' }}
@@ -284,11 +277,11 @@
                 <tr class="grand-row">
                     <td>TOTAL LABA (RUGI) KOTOR</td>
                     <td class="number nowrap {{ $grandCurrent < 0 ? 'number-negative' : '' }}">
-                        {{ $grandCurrent != 0 ? formatAmount($grandCurrent) : '-' }}
+                        {{ formatAmount($grandCurrent) }}
                     </td>
                     <td></td>
                     <td class="number nowrap {{ $grandPrevious < 0 ? 'number-negative' : '' }}">
-                        {{ $grandPrevious != 0 ? formatAmount($grandPrevious) : '-' }}
+                        {{ formatAmount($grandPrevious) }}
                     </td>
                     <td></td>
                     <td></td>

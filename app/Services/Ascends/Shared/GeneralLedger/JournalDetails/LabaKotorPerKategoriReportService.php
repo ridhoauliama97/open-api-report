@@ -48,8 +48,9 @@ class LabaKotorPerKategoriReportService
             throw new RuntimeException('Tidak ada data yang memenuhi kriteria.');
         }
 
-        $currentMonth = $this->resolveMonthKey($startDate);
-        $previousMonth = $this->resolvePreviousMonthKey($startDate);
+        $comparisonDate = $endDate !== '' ? $endDate : $startDate;
+        $currentMonth = $this->resolveMonthKey($comparisonDate);
+        $previousMonth = $this->resolvePreviousMonthKey($comparisonDate);
 
         $groups = $this->aggregateGroups($filtered, $currentMonth, $previousMonth);
 
@@ -194,7 +195,7 @@ class LabaKotorPerKategoriReportService
         try {
             $dt = Carbon::createFromFormat('Y-m', $monthKey);
 
-            return $dt->locale('id')->isoFormat('MMM - YYYY');
+            return $dt->locale('en')->isoFormat('MMM - YYYY');
         } catch (Throwable) {
             return $monthKey;
         }
@@ -343,7 +344,7 @@ class LabaKotorPerKategoriReportService
 
         if ($startDate !== '') {
             try {
-                $startLabel = Carbon::parse($startDate)->locale('id')->isoFormat('DD-MMM-YY');
+                $startLabel = $this->formatPeriodDate(Carbon::parse($startDate));
             } catch (Throwable) {
                 $startLabel = $startDate;
             }
@@ -351,7 +352,7 @@ class LabaKotorPerKategoriReportService
 
         if ($endDate !== '') {
             try {
-                $endLabel = Carbon::parse($endDate)->locale('id')->isoFormat('DD-MMM-YY');
+                $endLabel = $this->formatPeriodDate(Carbon::parse($endDate));
             } catch (Throwable) {
                 $endLabel = $endDate;
             }
@@ -360,7 +361,27 @@ class LabaKotorPerKategoriReportService
         return [
             'start' => $startLabel,
             'end' => $endLabel,
-            'label' => 'Dari '.$startLabel.' Sampai '.$endLabel,
+            'label' => 'Dari '.$startLabel.' s/d '.$endLabel,
         ];
+    }
+
+    private function formatPeriodDate(Carbon $date): string
+    {
+        $months = [
+            1 => 'Jan',
+            2 => 'Feb',
+            3 => 'Mar',
+            4 => 'Apr',
+            5 => 'Mei',
+            6 => 'Jun',
+            7 => 'Jul',
+            8 => 'Agu',
+            9 => 'Sep',
+            10 => 'Okt',
+            11 => 'Nov',
+            12 => 'Des',
+        ];
+
+        return $date->format('d').'-'.$months[(int) $date->format('n')].'-'.$date->format('y');
     }
 }

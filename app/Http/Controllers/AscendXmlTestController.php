@@ -11,6 +11,7 @@ use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
 use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
 use App\Services\Ascends\Shared\FixedAsset\AssetSummary\PenyusutanAktivaReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanSummaryReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanUmumBaruReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanUmumGsuReportService;
@@ -27,6 +28,7 @@ use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PendapatanDanBiayaL
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PerhitunganBungaGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\PerhitunganBungaRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\RingkasanAktivaReportService;
+use App\Services\Ascends\Shared\GeneralLedger\TrialBalanceMonthly\LabaRugiMultiPeriodeReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianGsuReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianReportService;
 use App\Services\Ascends\Shared\Hrm\AbsensiBriefingHarianUcReportService;
@@ -5445,6 +5447,62 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedGeneralLedgerBebanPenjualanSummaryPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        BebanPenjualanSummaryReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $allInput = $request->all();
+            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
+            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $dbCompanyName,
+                    'Date.StartDate' => $rawStartDate,
+                    'Date.EndDate' => $rawEndDate,
+                ]
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.beban_penjualan_summary.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Journal Details - Laporan Beban Penjualan Summary ('.$company.').pdf"',
+        ]);
+    }
+
     public function apiSharedGeneralLedgerBiayaUpahLangsungDetailPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         BiayaUpahLangsungDetailReportService $reportService,
@@ -5931,6 +5989,55 @@ class AscendXmlTestController extends Controller
         }
 
         throw new RuntimeException('Field DB_CompanyName atau company wajib dikirim.');
+    }
+
+    public function apiSharedGeneralLedgerLabaRugiMultiPeriodePdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        LabaRugiMultiPeriodeReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $periodCount = $reportData['period_count'] ?? 6;
+        $totalColumns = 2 + $periodCount;
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.trial_balance_monthly.laba_rugi_multi_periode.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => $totalColumns,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Laporan Laba Rugi Multi Periode ('.$company.').pdf"',
+        ]);
     }
 
     private function normalizeSharedHrmCompany(string $company): string

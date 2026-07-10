@@ -820,6 +820,11 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.journal_details.beban-penjualan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/beban-penjualan-summary/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBebanPenjualanSummaryPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.beban-penjualan-summary.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/biaya-upah-langsung-detail/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerBiayaUpahLangsungDetailPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.biaya-upah-langsung-detail.pdf');
@@ -863,6 +868,11 @@ Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/laba-kotor-per-kategori/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaKotorPerKategoriPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-per-kategori.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/laba-rugi-multi-periode/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaRugiMultiPeriodePdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.laba-rugi-multi-periode.pdf');
 
 /**
  * Group route autentikasi API publik.
