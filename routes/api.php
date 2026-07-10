@@ -795,6 +795,11 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.journal_details.pendapatan-dan-biaya-lain.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/pendapatan-dan-biaya-lain-baru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerPendapatanDanBiayaLainBaruPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.pendapatan-dan-biaya-lain-baru.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/beban-umum-uc/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerBebanUmumUcPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.beban-umum-uc.pdf');
@@ -868,6 +873,11 @@ Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/laba-kotor-per-kategori/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaKotorPerKategoriPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-per-kategori.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laba-kotor-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaKotorGsuPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-gsu.pdf');
 
 Route::post(
     '/internal/ascends/shared/general_ledger/trial_balance_monthly/laba-rugi-multi-periode/pdf',
