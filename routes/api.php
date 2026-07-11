@@ -884,6 +884,46 @@ Route::post(
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaRugiMultiPeriodePdf']
 )->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.laba-rugi-multi-periode.pdf');
 
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/laba-rugi-multi-periode-tahunan/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaRugiMultiPeriodeTahunanPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.laba-rugi-multi-periode-tahunan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/pendukung-arus-kas/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerPendukungArusKasPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.pendukung-arus-kas.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance/saldo-bank/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerSaldoBankPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance.saldo-bank.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance/neraca-per-bulan/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerNeracaPerBulanPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance.neraca-per-bulan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance/hutang-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerHutangUCPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance.hutang-uc.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance/hutang-lain-lain/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerHutangLainnyaPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance.hutang-lain-lain.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance/biaya-bayar-dimuka/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerBiayaBayarDimukaPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance.biaya-bayar-dimuka.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance/ringkasan-hutang-bank/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerRingkasanHutangBankPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance.ringkasan-hutang-bank.pdf');
+
 /**
  * Group route autentikasi API publik.
  */
