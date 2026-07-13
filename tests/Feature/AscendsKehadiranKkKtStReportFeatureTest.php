@@ -33,9 +33,9 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.kehadiran_kk_kt_st.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Kehadiran KK/KT/ST')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Kehadiran KK/KT/ST')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -49,7 +49,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Kehadiran KK KT ST (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan Kehadiran KK KT ST (RU)');
     }
 
     public function test_shared_hrm_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -89,7 +89,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Kehadiran KK KT ST (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan Kehadiran KK KT ST (UC)');
     }
 
     public function test_shared_hrm_api_rejects_request_without_xml_payload(): void

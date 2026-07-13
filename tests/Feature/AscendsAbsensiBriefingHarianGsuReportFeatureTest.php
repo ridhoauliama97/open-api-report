@@ -26,8 +26,8 @@ class AscendsAbsensiBriefingHarianGsuReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['Pilih Group'] ?? null) === 'Sales'
-                    && ($filters['report_date'] ?? null) === '2026-06-04'
+                static fn(array $filters): bool => ($filters['Pilih Group'] ?? null) === 'Sales'
+                && ($filters['report_date'] ?? null) === '2026-06-04'
             ))
             ->andReturn($this->reportData());
 
@@ -36,11 +36,11 @@ class AscendsAbsensiBriefingHarianGsuReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.absensi_briefing_harian_gsu.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Briefing Harian')
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Sales')
-                    && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Briefing Harian')
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Sales')
+                && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsAbsensiBriefingHarianGsuReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Absensi Briefing Harian (GSU) Sales');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Absensi Briefing Harian (GSU) Sales');
     }
 
     public function test_shared_attendance_full_gsu_api_rejects_request_without_xml_payload(): void

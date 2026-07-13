@@ -33,8 +33,8 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_etnis.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Etnis');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_etnis_pdf(): void
@@ -66,8 +66,8 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_etnis.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Etnis'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Etnis'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -81,7 +81,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Etnis');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Etnis');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Etnis');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -225,18 +225,8 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
                 'Umur',
                 'Agama',
             ],
-            'rows' => [[
-                'NIK' => '132200',
-                'Nama' => 'Aferlius Gulo',
-                'L/P' => 'L',
-                'Jabatan' => 'Kru Grader Sawmill',
-                'Umur' => '31 Tahun',
-                'Agama' => 'Kristen',
-                'Etnis' => 'Nias',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'Etnis : Nias',
-                'rows' => [[
+            'rows' => [
+                [
                     'NIK' => '132200',
                     'Nama' => 'Aferlius Gulo',
                     'L/P' => 'L',
@@ -244,9 +234,25 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
                     'Umur' => '31 Tahun',
                     'Agama' => 'Kristen',
                     'Etnis' => 'Nias',
-                ]],
-                'summary' => ['subtotal' => 1],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'Etnis : Nias',
+                    'rows' => [
+                        [
+                            'NIK' => '132200',
+                            'Nama' => 'Aferlius Gulo',
+                            'L/P' => 'L',
+                            'Jabatan' => 'Kru Grader Sawmill',
+                            'Umur' => '31 Tahun',
+                            'Agama' => 'Kristen',
+                            'Etnis' => 'Nias',
+                        ]
+                    ],
+                    'summary' => ['subtotal' => 1],
+                ]
+            ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,
         ];

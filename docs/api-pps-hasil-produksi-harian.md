@@ -261,7 +261,7 @@ curl -X POST "http://localhost:8000/api/reports/pps/broker/broker-produksi/pdf" 
 ```
 
 Catatan:
-- `preview_pdf=true` akan mengubah `Content-Disposition` menjadi `inline`
+- `preview_pdf=true` akan mengubah `Content-Disposition` menjadi `attachment`
 - tanpa `preview_pdf`, respons PDF akan dikirim sebagai `attachment`
 
 ### C. Health Check

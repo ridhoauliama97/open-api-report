@@ -90,7 +90,7 @@ class TotalBagusKulitRambungController extends Controller
         GenerateTotalBagusKulitRambungReportRequest $request,
         TotalBagusKulitRambungReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -131,7 +131,7 @@ class TotalBagusKulitRambungController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $inline ? 'inline' : 'attachment', $filename),
+            'Content-Disposition' => sprintf('%s; filename="%s"', $attachment ? 'attachment' : 'attachment', $filename),
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }

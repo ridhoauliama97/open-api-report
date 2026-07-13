@@ -33,9 +33,9 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.sales.sales_invoice.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                    && ($data['reportData']['printed_by'] ?? null) === 'indah'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                && ($data['reportData']['printed_by'] ?? null) === 'indah'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -48,7 +48,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoice (RU)');
     }
 
     public function test_ascend_test_upload_form_can_preview_sales_invoice_pdf(): void
@@ -67,8 +67,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.sales.sales_invoice.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Sales Invoice (RU)'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Sales Invoice (RU)'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -83,7 +83,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoice (RU) - Panjang');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -122,7 +122,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoice (RU)');
     }
 
     public function test_internal_ascend_api_can_render_normal_sales_invoice_pdf(): void
@@ -141,8 +141,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.sales.sales_invoice.normal-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -155,7 +155,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoice (RU) - Normal');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoice (RU) - Normal');
     }
 
     public function test_internal_ascend_api_can_render_gsu_panjang_sales_invoice_pdf(): void
@@ -174,8 +174,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.sales.sales_invoice.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -188,7 +188,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoices (GSU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoices (GSU) - Panjang');
     }
 
     public function test_internal_ascend_api_can_render_gsu_normal_sales_invoice_pdf(): void
@@ -207,8 +207,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.sales.sales_invoice.normal-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -221,7 +221,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoices (GSU) - Normal');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoices (GSU) - Normal');
     }
 
     public function test_ascend_test_upload_form_can_preview_gsu_sales_invoice_pdf(): void
@@ -240,8 +240,8 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.sales.sales_invoice.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_invoices'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -257,7 +257,7 @@ class AscendsSalesInvoiceReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Sales Invoices (GSU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Sales Invoices (GSU) - Panjang');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void

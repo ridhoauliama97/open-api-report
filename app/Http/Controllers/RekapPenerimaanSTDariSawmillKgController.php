@@ -105,7 +105,7 @@ class RekapPenerimaanSTDariSawmillKgController extends Controller
         GenerateRekapPenerimaanSTDariSawmillKgReportRequest $request,
         RekapPenerimaanSTDariSawmillKgReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -145,7 +145,7 @@ class RekapPenerimaanSTDariSawmillKgController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Penerimaan-ST-Dari-Sawmill-Timbang-KG-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

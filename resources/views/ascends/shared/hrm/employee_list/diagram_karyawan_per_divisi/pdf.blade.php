@@ -71,7 +71,7 @@
         }
 
         .dept-label-checkbox {
-            display: inline-block;
+            display: attachment-block;
             width: 45px;
             height: 45px;
             margin-right: 4px;
@@ -169,7 +169,8 @@
                 <td>
                     @foreach ($leftDepts as $i => $dept)
                         @php
-                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService::CHART_COLORS[$i % 12] ?? [0, 0, 0];
+                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService
+                                ::CHART_COLORS[$i % 12] ?? [0, 0, 0];
                         @endphp
                         <div>
                             <span class="dept-label-checkbox"
@@ -181,7 +182,8 @@
                 <td>
                     @foreach ($rightDepts as $i => $dept)
                         @php
-                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
+                            $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService
+                                ::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
                         @endphp
                         <div>
                             <span class="dept-label-checkbox"

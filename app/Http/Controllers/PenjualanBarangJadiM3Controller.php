@@ -81,7 +81,7 @@ class PenjualanBarangJadiM3Controller extends Controller
         $filename = sprintf('Laporan-Penjualan-Barang-Jadi-M3-%s.pdf', str_replace(['/', '\\'], '-', $noJual));
         $dispositionType = $request->routeIs('reports.penjualan.penjualan-barang-jadi-m3.preview-pdf')
             || $request->expectsJson()
-            ? 'inline'
+            ? 'attachment'
             : 'attachment';
 
         return response($pdf, 200, [

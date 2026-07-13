@@ -34,8 +34,8 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 2
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 2
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -48,7 +48,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_karyawan_masuk_pdf(): void
@@ -67,8 +67,8 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -84,7 +84,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)');
     }
 
     public function test_shared_hrm_test_route_can_render_selected_company_pdf_without_jwt(): void
@@ -103,10 +103,10 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && ($data['reportData']['company'] ?? null) === 'GSU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -120,7 +120,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)');
     }
 
     public function test_shared_hrm_generic_route_can_render_daftar_karyawan_for_selected_company(): void
@@ -139,10 +139,10 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.daftar_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
-                    && ($data['reportData']['company'] ?? null) === 'UC'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan (UC)'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'UC'
+                && ($data['reportData']['company'] ?? null) === 'UC'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan (UC)'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -156,7 +156,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Daftar Karyawan (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan Daftar Karyawan (UC)');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -188,8 +188,8 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -212,7 +212,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (UC)');
     }
 
     public function test_karyawan_masuk_parser_groups_by_department_and_join_date(): void
@@ -299,19 +299,8 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
                 'Pendidikan Terakhir',
                 'Tanggal Masuk',
             ],
-            'rows' => [[
-                'Nama' => 'Ferra Novita',
-                'L/P' => 'P',
-                'Jabatan' => 'Staff Kasir',
-                'Status' => 'ST',
-                'Level' => '2',
-                'Pendidikan Terakhir' => 'S1',
-                'Tanggal Masuk' => '04-Agt-2017',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'Departemen : Finance & Accounting',
-                'subtotal' => 2,
-                'rows' => [[
+            'rows' => [
+                [
                     'Nama' => 'Ferra Novita',
                     'L/P' => 'P',
                     'Jabatan' => 'Staff Kasir',
@@ -319,8 +308,25 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
                     'Level' => '2',
                     'Pendidikan Terakhir' => 'S1',
                     'Tanggal Masuk' => '04-Agt-2017',
-                ]],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'Departemen : Finance & Accounting',
+                    'subtotal' => 2,
+                    'rows' => [
+                        [
+                            'Nama' => 'Ferra Novita',
+                            'L/P' => 'P',
+                            'Jabatan' => 'Staff Kasir',
+                            'Status' => 'ST',
+                            'Level' => '2',
+                            'Pendidikan Terakhir' => 'S1',
+                            'Tanggal Masuk' => '04-Agt-2017',
+                        ]
+                    ],
+                ]
+            ],
             'total_rows' => 2,
         ];
     }

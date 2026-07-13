@@ -26,10 +26,10 @@ class AscendsLemburBulananReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: overtime.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
-                    && ($filters['Pilih Tipe'] ?? null) === 'Staff'
-                    && ($filters['start_date'] ?? null) === '2026-05-01'
-                    && ($filters['end_date'] ?? null) === '2026-05-31'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                && ($filters['Pilih Tipe'] ?? null) === 'Staff'
+                && ($filters['start_date'] ?? null) === '2026-05-01'
+                && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
             ->andReturn($this->reportData('RU', 'ST'));
 
@@ -38,10 +38,10 @@ class AscendsLemburBulananReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.overtime.lembur_bulanan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Lembur Bulanan (ST) Per Departemen'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Lembur Bulanan (ST) Per Departemen'
+                && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -59,7 +59,7 @@ class AscendsLemburBulananReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Overtime - Laporan Lembur Bulanan ST Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Overtime - Laporan Lembur Bulanan ST Per Departemen (RU)');
     }
 
     public function test_parser_filters_staff_overtime_and_summarizes_employee_rows(): void

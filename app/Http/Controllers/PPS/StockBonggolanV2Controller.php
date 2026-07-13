@@ -50,7 +50,7 @@ class StockBonggolanV2Controller extends Controller
         ]);
 
         $filename = sprintf('Laporan-Stock-Bonggolan-V2-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

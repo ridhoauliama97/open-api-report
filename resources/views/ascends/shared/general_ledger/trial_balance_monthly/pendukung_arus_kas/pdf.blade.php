@@ -22,7 +22,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.15;
             color: #000;
         }
@@ -67,28 +67,28 @@
 
         .data-table th {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
         }
 
         .data-table td {
-            font-size: 9px;
+            font-size: 10px;
             border-top: none;
             border-bottom: none;
         }
 
         .section-header td {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
             padding: 2px 3px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
         .item-row td {
-            font-size: 9px;
+            font-size: 10px;
             padding: 1px 2px;
         }
 
@@ -98,7 +98,7 @@
 
         .subtotal-row td {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 2px 3px;
@@ -184,7 +184,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '(' . number_format(abs($v), 2, ',', '.') . ')';
+                return '- ' . number_format(abs($v), 2, ',', '.');
             }
             if ($v == 0.0) {
                 return '-';
@@ -199,13 +199,6 @@
 
     @if (count($sections) > 0)
         <table class="data-table">
-            <colgroup>
-                <col style="width: 15%;">
-                <col style="width: 27%;">
-                <col style="width: 20%;">
-                <col style="width: 20%;">
-                <col style="width: 18%;">
-            </colgroup>
             <thead>
                 <tr>
                     <th class="col-code">Kode Akun</th>
@@ -247,7 +240,7 @@
                         $subSelisih = $subStart - $subEnd;
                     @endphp
                     <tr class="subtotal-row">
-                        <td colspan="2">TOTAL {{ $section['section_name'] }}</td>
+                        <td colspan="2">Total {{ $section['section_name'] }}</td>
                         <td class="number nowrap {{ $subStart < 0 ? 'number-negative' : '' }}">
                             {{ fmtAmount($subStart) }}</td>
                         <td class="number nowrap {{ $subEnd < 0 ? 'number-negative' : '' }}">

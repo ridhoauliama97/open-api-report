@@ -539,7 +539,7 @@ xml_file=AnlReports.HRM.LossTime.xml
 ## Response Sukses
 
 - `200 application/pdf`
-- `Content-Disposition: inline`
+- `Content-Disposition: attachment`
 
 Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori. Nilai `{company}` berasal dari parameter `DB_CompanyName`, atau fallback field form `company` jika parameter tersebut tidak ada:
 

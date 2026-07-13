@@ -139,7 +139,7 @@ class DashboardS4SV2Controller extends Controller
             $endDate,
             now()->format('YmdHis')
         );
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

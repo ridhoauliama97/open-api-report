@@ -115,7 +115,7 @@
         }
 
         .trend-arrow {
-            display: inline-block;
+            display: attachment-block;
             margin-left: 3px;
             font-weight: bold;
             font-family: "DejaVu Sans", "Noto Serif", serif;

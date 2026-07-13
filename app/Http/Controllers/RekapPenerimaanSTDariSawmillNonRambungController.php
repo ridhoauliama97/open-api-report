@@ -99,7 +99,7 @@ class RekapPenerimaanSTDariSawmillNonRambungController extends Controller
         GenerateRekapPenerimaanSTDariSawmillNonRambungReportRequest $request,
         RekapPenerimaanSTDariSawmillNonRambungReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -138,7 +138,7 @@ class RekapPenerimaanSTDariSawmillNonRambungController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Penerimaan-ST-Dari-Sawmill-Non-Rambung-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

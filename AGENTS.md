@@ -89,3 +89,29 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 | App bootstrap (exec time, auth providers) | `app/Providers/AppServiceProvider.php` |
 | Base request (all report requests extend) | `app/Http/Requests/BaseReportRequest.php` |
 | Full code patterns reference | `AGENT_INSTRUCTIONS.md` |
+
+## UC Shared Report Design Conventions
+
+Semua Blade view di `resources/views/ascends/shared/` harus konsisten:
+
+| Elemen | CSS Class | Style |
+|---|---|---|
+| **Font** | `body` | `"Noto Serif", serif; 10px` |
+| **Company** | `.report-companyTitle` | `18px bold; text-align: center; margin: 0 0 4px` |
+| **Title** | `.report-title` | `16px bold; text-align: center; margin: 0` |
+| **Subtitle** | `.report-subtitle` | `12px; color: #636466; text-align: center; margin: 2px 0 20px` |
+| **Page** | `@page` | `margin: 14mm 10mm 14mm 10mm; footer: html_reportFooter` |
+| **Table** | `.data-table` | `1px solid #000` outer; `collapse; fixed` |
+| **Cell** | `th, td` | `border-left/right: 1px solid #000; padding: 1px 2px` |
+| **Section header** | `.section-header td` | **bold italic**; `color: #9c111d`; border top/bottom |
+| **Sub-section header** | `.sub-section-header td` | **bold**; `color: #9c111d`; border top/bottom |
+| **Item row** | `.item-row td` | `padding-left: 4px` |
+| **Striping** | `.row-odd td` / `.row-even td` | `#c9d1df` / `#eef2f8` |
+| **Subtotal** | `.subtotal-row td` | **bold**; border top/bottom |
+| **Grand total** | `.grand-total-row td` | **bold**; border top/bottom |
+| **Empty state** | `.empty-row td` | `italic bold; color #9c111d; bg #c9d1df` |
+| **Number align** | `.number` | `text-align: right` |
+| **Number wrap** | `.nowrap` | `white-space: nowrap` |
+| **Number negative** | `.number-negative` | `color: #9c111d` |
+| **Number format** | `fmtAmount()` | `number_format($v, 2, ',', '.')`; zero → `-`; negatif → `'- '` prefix |
+| **Footer** | — | `@include('ascends.shared.partials.report-footer')` |

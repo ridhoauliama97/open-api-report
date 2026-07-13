@@ -33,8 +33,8 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_aktif_per_departemen_pdf(): void
@@ -66,8 +66,8 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -81,7 +81,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen');
     }
 
     public function test_internal_ascend_api_can_render_uc_karyawan_aktif_per_departemen_pdf_without_jwt(): void
@@ -100,8 +100,8 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -114,7 +114,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen (UC)');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_karyawan_aktif_per_departemen_pdf(): void
@@ -133,8 +133,8 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen (UC)'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen (UC)'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -150,7 +150,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen (UC)');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -189,7 +189,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Aktif Per Departemen');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -313,18 +313,8 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
                 'Strata Pend',
                 'Tanggal Masuk',
             ],
-            'rows' => [[
-                'Nama' => 'Ferra Novita',
-                'Status' => 'ST',
-                'L/P' => 'P',
-                'Jabatan' => 'Staff Kasir RU',
-                'Level' => '2',
-                'Strata Pend' => 'S1',
-                'Tanggal Masuk' => '04/08/2017',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'Departemen : Finance & Accounting',
-                'rows' => [[
+            'rows' => [
+                [
                     'Nama' => 'Ferra Novita',
                     'Status' => 'ST',
                     'L/P' => 'P',
@@ -332,9 +322,25 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
                     'Level' => '2',
                     'Strata Pend' => 'S1',
                     'Tanggal Masuk' => '04/08/2017',
-                ]],
-                'summary' => ['subtotal' => 1],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'Departemen : Finance & Accounting',
+                    'rows' => [
+                        [
+                            'Nama' => 'Ferra Novita',
+                            'Status' => 'ST',
+                            'L/P' => 'P',
+                            'Jabatan' => 'Staff Kasir RU',
+                            'Level' => '2',
+                            'Strata Pend' => 'S1',
+                            'Tanggal Masuk' => '04/08/2017',
+                        ]
+                    ],
+                    'summary' => ['subtotal' => 1],
+                ]
+            ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,
         ];

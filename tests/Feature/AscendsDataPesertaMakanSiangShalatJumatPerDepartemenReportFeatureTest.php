@@ -26,9 +26,9 @@ class AscendsDataPesertaMakanSiangShalatJumatPerDepartemenReportFeatureTest exte
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
-                    && ($filters['month'] ?? null) === '5'
-                    && ($filters['year'] ?? null) === '2026'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+                && ($filters['month'] ?? null) === '5'
+                && ($filters['year'] ?? null) === '2026'
             ))
             ->andReturn($this->reportData());
 
@@ -37,10 +37,10 @@ class AscendsDataPesertaMakanSiangShalatJumatPerDepartemenReportFeatureTest exte
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.data_peserta_makan_siang_shalat_jumat_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen'
+                && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsDataPesertaMakanSiangShalatJumatPerDepartemenReportFeatureTest exte
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen (GSU)');
     }
 
     public function test_parser_uses_gsu_shalat_jumat_formula(): void

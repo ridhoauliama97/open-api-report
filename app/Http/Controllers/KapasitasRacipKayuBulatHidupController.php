@@ -59,7 +59,7 @@ class KapasitasRacipKayuBulatHidupController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Kapasitas-Racip-Kayu-Bulat-Hidup-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

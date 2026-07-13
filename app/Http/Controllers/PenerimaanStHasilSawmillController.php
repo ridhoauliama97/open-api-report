@@ -84,7 +84,7 @@ class PenerimaanStHasilSawmillController extends Controller
 
         $dispositionType = $request->routeIs('reports.sawn-timber.penerimaan-st-hasil-sawmill.preview-pdf')
             || $request->expectsJson()
-            ? 'inline'
+            ? 'attachment'
             : 'attachment';
 
         return response($pdf, 200, [

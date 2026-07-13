@@ -26,8 +26,8 @@ class AscendsRekapitulasiAbsensiBriefingHarianGsuReportFeatureTest extends TestC
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance-gsu.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
-                    && ($filters['end_date'] ?? null) === '2026-05-31'
+                static fn(array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
+                && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
             ->andReturn($this->reportData());
 
@@ -36,9 +36,9 @@ class AscendsRekapitulasiAbsensiBriefingHarianGsuReportFeatureTest extends TestC
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.rekapitulasi_absensi_briefing_harian_gsu.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Rekapitulasi Absensi Briefing Harian')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Rekapitulasi Absensi Briefing Harian')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -54,7 +54,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianGsuReportFeatureTest extends TestC
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU)');
     }
 
     public function test_shared_attendance_full_rekap_gsu_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -94,7 +94,7 @@ class AscendsRekapitulasiAbsensiBriefingHarianGsuReportFeatureTest extends TestC
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (GSU)');
     }
 
     public function test_shared_attendance_full_rekap_gsu_api_rejects_request_without_xml_payload(): void

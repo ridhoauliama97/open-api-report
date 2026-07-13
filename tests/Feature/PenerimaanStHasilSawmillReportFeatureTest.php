@@ -90,7 +90,7 @@ class PenerimaanStHasilSawmillReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Penerimaan ST Hasil Sawmill B.162085');
     }
 
-    public function test_pdf_preview_endpoint_returns_inline_pdf(): void
+    public function test_pdf_preview_endpoint_returns_attachment_pdf(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
@@ -117,7 +117,7 @@ class PenerimaanStHasilSawmillReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Penerimaan ST Hasil Sawmill B.162085');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Penerimaan ST Hasil Sawmill B.162085');
     }
 
     public function test_health_endpoint_returns_structure_status(): void
@@ -196,7 +196,7 @@ class PenerimaanStHasilSawmillReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
+            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ];
     }

@@ -89,7 +89,7 @@ class MutasiBarangJadiPerJenisPerUkuranController extends Controller
         GenerateMutasiBarangJadiPerJenisPerUkuranReportRequest $request,
         MutasiBarangJadiPerJenisPerUkuranReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -133,7 +133,7 @@ class MutasiBarangJadiPerJenisPerUkuranController extends Controller
             $startDate,
             $endDate,
         );
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

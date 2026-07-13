@@ -33,9 +33,9 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.sales.surat_jalan.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
-                    && ($data['reportData']['printed_by'] ?? null) === 'indah'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                && ($data['reportData']['printed_by'] ?? null) === 'indah'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -48,7 +48,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (RU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (RU) - Panjang');
     }
 
     public function test_ascend_test_upload_form_can_preview_surat_jalan_pdf(): void
@@ -67,8 +67,8 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.sales.surat_jalan.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Surat Jalan (RU)'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Surat Jalan (RU)'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -83,7 +83,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (RU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (RU) - Panjang');
     }
 
     public function test_internal_ascend_api_can_render_normal_surat_jalan_pdf(): void
@@ -102,8 +102,8 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.sales.surat_jalan.normal-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -116,7 +116,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (RU) - Normal');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (RU) - Normal');
     }
 
     public function test_internal_ascend_api_can_render_gsu_panjang_surat_jalan_pdf(): void
@@ -135,8 +135,8 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.sales.surat_jalan.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -149,7 +149,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (GSU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (GSU) - Panjang');
     }
 
     public function test_internal_ascend_api_can_render_gsu_normal_surat_jalan_pdf(): void
@@ -168,8 +168,8 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.sales.surat_jalan.normal-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -182,7 +182,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (GSU) - Normal');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (GSU) - Normal');
     }
 
     public function test_ascend_test_upload_form_can_preview_gsu_surat_jalan_pdf(): void
@@ -201,8 +201,8 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.sales.surat_jalan.panjang-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_documents'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -218,7 +218,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (GSU) - Panjang');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (GSU) - Panjang');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -257,7 +257,7 @@ class AscendsSuratJalanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Surat Jalan (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan (RU)');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void

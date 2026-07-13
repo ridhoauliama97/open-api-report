@@ -55,7 +55,7 @@ class RekapProduksiPasangKunciFwipController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Pasang-Kunci-FWIP-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -83,7 +83,7 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'attachment', 'Dashboard Sawn Timber');
     }
 
-    public function test_dashboard_pdf_preview_returns_inline_disposition(): void
+    public function test_dashboard_pdf_preview_returns_attachment_disposition(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
@@ -119,7 +119,7 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Dashboard Sawn Timber');
+        $this->assertPdfDisposition($response, 'attachment', 'Dashboard Sawn Timber');
     }
 
     public function test_api_dashboard_sawn_timber_pdf_endpoint_returns_attachment(): void
@@ -138,9 +138,9 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('dashboard.sawn-timber-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['startDate'] ?? null) === '2026-05-01'
-                    && ($data['endDate'] ?? null) === '2026-05-15'
-                    && ($data['pdf_simple_tables'] ?? null) === false
+                static fn(array $data): bool => ($data['startDate'] ?? null) === '2026-05-01'
+                && ($data['endDate'] ?? null) === '2026-05-15'
+                && ($data['pdf_simple_tables'] ?? null) === false
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -184,7 +184,7 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
     private function authHeaders(User $user, string $accept = 'application/json'): array
     {
         return [
-            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
+            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
             'Accept' => $accept,
         ];
     }

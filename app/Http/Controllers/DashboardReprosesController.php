@@ -133,7 +133,7 @@ class DashboardReprosesController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Dashboard-Reproses-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

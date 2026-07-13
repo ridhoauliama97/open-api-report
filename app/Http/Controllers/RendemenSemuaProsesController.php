@@ -92,7 +92,7 @@ class RendemenSemuaProsesController extends Controller
         GenerateRendemenSemuaProsesReportRequest $request,
         RendemenSemuaProsesReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -127,7 +127,7 @@ class RendemenSemuaProsesController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rendemen-Semua-Proses-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

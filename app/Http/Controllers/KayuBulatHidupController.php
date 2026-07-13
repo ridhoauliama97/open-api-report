@@ -46,7 +46,7 @@ class KayuBulatHidupController extends Controller
         GenerateKayuBulatHidupReportRequest $request,
         KayuBulatHidupReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -90,7 +90,7 @@ class KayuBulatHidupController extends Controller
         $endLabel = Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $filename = sprintf('Laporan Kayu Bulat Hidup - Periode %s s/d %s.pdf', $startLabel, $endLabel);
 
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

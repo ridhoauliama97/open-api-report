@@ -46,7 +46,7 @@ class HasilProduksiHarianPackingProduksiController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Harian-Hasil-Packing-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noPacking));
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

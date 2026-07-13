@@ -33,8 +33,8 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ! array_key_exists('pdf_orientation', $data)
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && !array_key_exists('pdf_orientation', $data)
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
     }
 
     public function test_ascend_test_upload_form_can_preview_daftar_karyawan_berdasarkan_abjad_pdf(): void
@@ -67,8 +67,8 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -82,7 +82,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
     }
 
     public function test_internal_ascend_api_can_render_uc_daftar_karyawan_berdasarkan_abjad_pdf_without_jwt(): void
@@ -101,8 +101,8 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -115,7 +115,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_daftar_karyawan_berdasarkan_abjad_pdf(): void
@@ -135,8 +135,8 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -152,7 +152,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -191,7 +191,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -274,21 +274,27 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
                 'Posisi',
                 'Paraf',
             ],
-            'rows' => [[
-                'Nama' => 'Ade Yulinda Sari',
-                'No ID' => '131465',
-                'Posisi' => 'Kru Table Saw',
-                'Paraf' => '',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'A - D',
-                'rows' => [[
+            'rows' => [
+                [
                     'Nama' => 'Ade Yulinda Sari',
                     'No ID' => '131465',
                     'Posisi' => 'Kru Table Saw',
                     'Paraf' => '',
-                ]],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'A - D',
+                    'rows' => [
+                        [
+                            'Nama' => 'Ade Yulinda Sari',
+                            'No ID' => '131465',
+                            'Posisi' => 'Kru Table Saw',
+                            'Paraf' => '',
+                        ]
+                    ],
+                ]
+            ],
             'total_rows' => 1,
         ];
     }

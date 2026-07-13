@@ -33,9 +33,9 @@ class AscendsUsiaGenerasiTahunKelahiranMasaKerjaReportFeatureTest extends TestCa
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.usia_generasi_tahun_kelahiran_masa_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'UC'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -49,7 +49,7 @@ class AscendsUsiaGenerasiTahunKelahiranMasaKerjaReportFeatureTest extends TestCa
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)');
     }
 
     public function test_parser_groups_rows_by_generation_birth_year_and_builds_summary(): void

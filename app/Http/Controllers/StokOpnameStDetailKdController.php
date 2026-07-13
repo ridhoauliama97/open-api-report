@@ -88,7 +88,7 @@ class StokOpnameStDetailKdController extends Controller
         GenerateStokOpnameStDetailKdReportRequest $request,
         StokOpnameStDetailKdReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -127,7 +127,7 @@ class StokOpnameStDetailKdController extends Controller
         ]);
 
         $filename = sprintf('Laporan Stok Opname ST Detail Pada KD %s.pdf', $noProcKd);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

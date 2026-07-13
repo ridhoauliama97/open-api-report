@@ -90,7 +90,7 @@ class SpkSawmillController extends Controller
         GenerateSpkSawmillReportRequest $request,
         SpkSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -129,7 +129,7 @@ class SpkSawmillController extends Controller
         ]);
 
         $filename = sprintf('Laporan-SPK-Sawmill-%s-%s.pdf', preg_replace('/[^A-Za-z0-9._-]+/', '-', $noSpk), $idProduk);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

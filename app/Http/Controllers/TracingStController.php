@@ -86,7 +86,7 @@ class TracingStController extends Controller
         GenerateTracingStReportRequest $request,
         TracingStReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -129,7 +129,7 @@ class TracingStController extends Controller
             'pdf_title' => $filename,
         ]);
 
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
         $disposition = sprintf(
             '%s; filename="%s"; filename*=UTF-8\'\'%s',
             $dispositionType,

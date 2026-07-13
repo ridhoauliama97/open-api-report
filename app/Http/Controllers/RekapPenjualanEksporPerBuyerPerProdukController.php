@@ -91,7 +91,7 @@ class RekapPenjualanEksporPerBuyerPerProdukController extends Controller
         GenerateRekapPenjualanPerProdukReportRequest $request,
         RekapPenjualanEksporPerBuyerPerProdukReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -135,7 +135,7 @@ class RekapPenjualanEksporPerBuyerPerProdukController extends Controller
             $startDate,
             $endDate
         );
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

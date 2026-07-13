@@ -43,7 +43,7 @@ class ProduksiSandingPerNomorProduksiController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Produksi-Sanding-Per-Nomor-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

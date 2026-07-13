@@ -26,8 +26,8 @@ class AscendsEmployeeTerminationReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: retirement.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
-                    && ($filters['end_date'] ?? null) === '2026-05-31'
+                static fn(array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
+                && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
             ->andReturn($this->reportData());
 
@@ -36,11 +36,11 @@ class AscendsEmployeeTerminationReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_termination.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['total_rows'] ?? null) === 3
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU)'
-                    && ($data['subtitle'] ?? null) === 'Periode : 01-Mei-26 s/d 31-Mei-26'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && ($data['reportData']['total_rows'] ?? null) === 3
+                && ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU)'
+                && ($data['subtitle'] ?? null) === 'Periode : 01-Mei-26 s/d 31-Mei-26'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsEmployeeTerminationReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee Termination - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee Termination - Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar (RU)');
     }
 
     public function test_parser_builds_correct_employee_termination_data(): void
@@ -76,7 +76,7 @@ class AscendsEmployeeTerminationReportFeatureTest extends TestCase
 
         $this->assertCount(3, $reportData['grouped_rows']);
 
-        $groupLabels = array_map(static fn (array $g): string => $g['label'], $reportData['grouped_rows']);
+        $groupLabels = array_map(static fn(array $g): string => $g['label'], $reportData['grouped_rows']);
         sort($groupLabels);
         $this->assertSame(['Departemen : Produksi FJLB', 'Departemen : Sawmill', 'Departemen : Vacuum & K/D'], $groupLabels);
 
@@ -146,8 +146,8 @@ class AscendsEmployeeTerminationReportFeatureTest extends TestCase
                     ['label' => 'KT', 'count' => 0, 'percent' => 0],
                     ['label' => 'ST', 'count' => 0, 'percent' => 0],
                 ],
-                'level' => array_map(static fn (int $i): array => [
-                    'label' => 'Level '.$i,
+                'level' => array_map(static fn(int $i): array => [
+                    'label' => 'Level ' . $i,
                     'count' => $i === 1 ? 3 : 0,
                     'percent' => $i === 1 ? 100 : 0,
                 ], range(1, 7)),

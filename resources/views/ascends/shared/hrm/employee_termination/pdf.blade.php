@@ -146,23 +146,23 @@
             ->locale('id')
             ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-        $formatInlineGender = static function (array $items): string {
-            return implode(' ', array_map(
-                static function (array $item): string {
+        $formatattachmentGender = static function (array $items): string {
+            return implode(
+                ' ',
+                array_map(static function (array $item): string {
                     $part = '• ' . $item['label'] . ' = ' . $item['count'] . ' (' . $item['percent'] . '%)';
                     return $item['count'] > 0 ? '<strong>' . $part . '</strong>' : $part;
-                },
-                $items,
-            ));
+                }, $items),
+            );
         };
-        $formatInlinePlain = static function (array $items): string {
-            return implode(' ', array_map(
-                static function (array $item): string {
+        $formatattachmentPlain = static function (array $items): string {
+            return implode(
+                ' ',
+                array_map(static function (array $item): string {
                     $part = $item['label'] . ' = ' . $item['count'] . ' (' . $item['percent'] . '%)';
                     return $item['count'] > 0 ? '<strong>' . $part . '</strong>' : $part;
-                },
-                $items,
-            ));
+                }, $items),
+            );
         };
     @endphp
 
@@ -215,13 +215,13 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="3">Akumulasi L/P : {!! $formatInlineGender($summary['gender'] ?? []) !!}</td>
+                                <td colspan="3">Akumulasi L/P : {!! $formatattachmentGender($summary['gender'] ?? []) !!}</td>
                             </tr>
                             <tr>
-                                <td colspan="3">Akumulasi Status : {!! $formatInlinePlain($summary['status'] ?? []) !!}</td>
+                                <td colspan="3">Akumulasi Status : {!! $formatattachmentPlain($summary['status'] ?? []) !!}</td>
                             </tr>
                             <tr>
-                                <td colspan="3">Akumulasi Level : {!! $formatInlinePlain($summary['level'] ?? []) !!}</td>
+                                <td colspan="3">Akumulasi Level : {!! $formatattachmentPlain($summary['level'] ?? []) !!}</td>
                             </tr>
                         </table>
                     </td>
@@ -244,15 +244,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">Akumulasi L/P : {!! $formatInlineGender($grandSummary['gender'] ?? []) !!}
+                            <td colspan="3">Akumulasi L/P : {!! $formatattachmentGender($grandSummary['gender'] ?? []) !!}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">Akumulasi Status : {!! $formatInlinePlain($grandSummary['status'] ?? []) !!}
+                            <td colspan="3">Akumulasi Status : {!! $formatattachmentPlain($grandSummary['status'] ?? []) !!}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">Akumulasi Level : {!! $formatInlinePlain($grandSummary['level'] ?? []) !!}
+                            <td colspan="3">Akumulasi Level : {!! $formatattachmentPlain($grandSummary['level'] ?? []) !!}
                             </td>
                         </tr>
                     </table>

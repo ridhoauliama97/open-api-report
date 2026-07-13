@@ -26,9 +26,9 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['employee_code'] ?? null) === '130016'
-                    && ($filters['start_date'] ?? null) === '2026-05-05'
-                    && ($filters['end_date'] ?? null) === '2026-06-04'
+                static fn(array $filters): bool => ($filters['employee_code'] ?? null) === '130016'
+                && ($filters['start_date'] ?? null) === '2026-05-05'
+                && ($filters['end_date'] ?? null) === '2026-06-04'
             ))
             ->andReturn($this->reportData());
 
@@ -37,9 +37,9 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.absensi_individu.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Individu')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Individu')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -56,7 +56,7 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Absensi Individu');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Absensi Individu');
     }
 
     public function test_shared_attendance_full_absensi_individu_api_can_render_raw_xml_body_without_jwt(): void
@@ -96,7 +96,7 @@ class AscendsAbsensiIndividuReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Absensi Individu (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Absensi Individu (GSU)');
     }
 
     public function test_shared_attendance_full_absensi_individu_api_rejects_request_without_xml_payload(): void

@@ -33,8 +33,8 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ! array_key_exists('pdf_orientation', $data)
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && !array_key_exists('pdf_orientation', $data)
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Data Karyawan (RU) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (RU) - Status Kerja');
     }
 
     public function test_ascend_test_upload_form_can_preview_data_karyawan_status_kerja_pdf(): void
@@ -67,8 +67,8 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -82,7 +82,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Data Karyawan (RU) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (RU) - Status Kerja');
     }
 
     public function test_internal_ascend_api_can_render_uc_data_karyawan_status_kerja_pdf_without_jwt(): void
@@ -101,8 +101,8 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -115,7 +115,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Data Karyawan (UC) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (UC) - Status Kerja');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_data_karyawan_status_kerja_pdf(): void
@@ -135,8 +135,8 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -152,7 +152,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Data Karyawan (UC) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (UC) - Status Kerja');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -191,7 +191,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Data Karyawan (RU) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (RU) - Status Kerja');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -284,16 +284,18 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
                 'Jabatan',
                 'HK',
             ],
-            'rows' => [[
-                'NIK' => '132101',
-                'Nama' => 'Bela Kontrak',
-                'Tempat' => 'Medan',
-                'Tgl Lahir' => '06-May-96',
-                'Umur' => '33',
-                'Pendidikan' => 'SMA',
-                'Jabatan' => 'Kru Cross Cut Awal',
-                'HK' => 'KARYAWAN KONTRAK',
-            ]],
+            'rows' => [
+                [
+                    'NIK' => '132101',
+                    'Nama' => 'Bela Kontrak',
+                    'Tempat' => 'Medan',
+                    'Tgl Lahir' => '06-May-96',
+                    'Umur' => '33',
+                    'Pendidikan' => 'SMA',
+                    'Jabatan' => 'Kru Cross Cut Awal',
+                    'HK' => 'KARYAWAN KONTRAK',
+                ]
+            ],
             'total_rows' => 1,
         ];
     }

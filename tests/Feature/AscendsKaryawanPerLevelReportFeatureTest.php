@@ -33,8 +33,8 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_level.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Level');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Level');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_level_pdf(): void
@@ -66,8 +66,8 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_level.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Level'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Level'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -81,7 +81,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Level');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Level');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Level');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Level');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -229,26 +229,32 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
                 'Status',
                 'Tanggal Masuk',
             ],
-            'rows' => [[
-                'Nama' => 'Mulyadi',
-                'L/P' => 'L',
-                'Jabatan' => 'Kru Sanding',
-                'Status' => 'KT',
-                'Tanggal Masuk' => '16-Jun-07',
-                'Level' => '1',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'Level : 1',
-                'rows' => [[
+            'rows' => [
+                [
                     'Nama' => 'Mulyadi',
                     'L/P' => 'L',
                     'Jabatan' => 'Kru Sanding',
                     'Status' => 'KT',
                     'Tanggal Masuk' => '16-Jun-07',
                     'Level' => '1',
-                ]],
-                'summary' => ['subtotal' => 1],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'Level : 1',
+                    'rows' => [
+                        [
+                            'Nama' => 'Mulyadi',
+                            'L/P' => 'L',
+                            'Jabatan' => 'Kru Sanding',
+                            'Status' => 'KT',
+                            'Tanggal Masuk' => '16-Jun-07',
+                            'Level' => '1',
+                        ]
+                    ],
+                    'summary' => ['subtotal' => 1],
+                ]
+            ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,
         ];

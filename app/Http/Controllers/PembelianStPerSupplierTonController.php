@@ -36,7 +36,7 @@ class PembelianStPerSupplierTonController extends Controller
         GenerateDateRangeReportRequest $request,
         PembelianStPerSupplierTonReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -83,7 +83,7 @@ class PembelianStPerSupplierTonController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $inline ? 'inline' : 'attachment', $filename),
+            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $attachment ? 'attachment' : 'attachment', $filename),
         ]);
     }
 

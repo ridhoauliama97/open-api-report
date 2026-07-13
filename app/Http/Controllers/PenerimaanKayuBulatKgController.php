@@ -81,7 +81,7 @@ class PenerimaanKayuBulatKgController extends Controller
         GeneratePenerimaanKayuBulatKgReportRequest $request,
         PenerimaanKayuBulatKgReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -115,7 +115,7 @@ class PenerimaanKayuBulatKgController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Penerimaan-Kayu-Bulat-Int-KG-%s.pdf', $request->noKayuBulat());
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

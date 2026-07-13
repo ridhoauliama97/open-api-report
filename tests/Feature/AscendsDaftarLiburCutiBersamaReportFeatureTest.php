@@ -33,10 +33,10 @@ class AscendsDaftarLiburCutiBersamaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.holiday.daftar_libur_cuti_bersama.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['title'] ?? null) === 'Daftar Libur Dan Cuti Bersama'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && ($data['reportData']['title'] ?? null) === 'Daftar Libur Dan Cuti Bersama'
+                && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -51,7 +51,7 @@ class AscendsDaftarLiburCutiBersamaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Holiday - Daftar Libur Dan Cuti Bersama (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Holiday - Daftar Libur Dan Cuti Bersama (GSU)');
     }
 
     public function test_parser_sorts_holiday_rows_and_formats_dates(): void

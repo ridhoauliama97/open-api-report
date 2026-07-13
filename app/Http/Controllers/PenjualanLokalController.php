@@ -93,7 +93,7 @@ class PenjualanLokalController extends Controller
         GenerateBalokSudahSemprotReportRequest $request,
         PenjualanLokalReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -137,7 +137,7 @@ class PenjualanLokalController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Penjualan-Lokal-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -173,7 +173,7 @@ class PenjualanLokalController extends Controller
             }
 
             $sectionKey = $proses !== '' ? $proses : 'LAINNYA';
-            if (! isset($sections[$sectionKey])) {
+            if (!isset($sections[$sectionKey])) {
                 $sections[$sectionKey] = [
                     'proses' => $sectionKey,
                     'rows' => [],
@@ -189,8 +189,8 @@ class PenjualanLokalController extends Controller
             ];
             $sections[$sectionKey]['subtotal_ton'] += $ton;
 
-            $groupKey = $jenisLabel.'|'.$namaGrade;
-            if (! isset($grouped[$groupKey])) {
+            $groupKey = $jenisLabel . '|' . $namaGrade;
+            if (!isset($grouped[$groupKey])) {
                 $grouped[$groupKey] = [
                     'jenis' => $jenisLabel,
                     'nama_grade' => $namaGrade,
@@ -242,7 +242,7 @@ class PenjualanLokalController extends Controller
             return (float) $value;
         }
 
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             return null;
         }
 

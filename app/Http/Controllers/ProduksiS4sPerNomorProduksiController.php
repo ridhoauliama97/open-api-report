@@ -43,7 +43,7 @@ class ProduksiS4sPerNomorProduksiController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Produksi-S4S-Per-Nomor-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

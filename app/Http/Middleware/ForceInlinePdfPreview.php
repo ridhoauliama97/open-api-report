@@ -6,13 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ForceInlinePdfPreview
+class ForceattachmentPdfPreview
 {
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
 
-        if (! $request->boolean('preview_pdf')) {
+        if (!$request->boolean('preview_pdf')) {
             return $response;
         }
 
@@ -30,7 +30,7 @@ class ForceInlinePdfPreview
 
         $response->headers->set(
             'Content-Disposition',
-            preg_replace('/^attachment;/i', 'inline;', $disposition, 1) ?? $disposition
+            preg_replace('/^attachment;/i', 'attachment;', $disposition, 1) ?? $disposition
         );
 
         return $response;

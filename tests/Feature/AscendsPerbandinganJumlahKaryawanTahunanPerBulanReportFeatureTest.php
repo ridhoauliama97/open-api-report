@@ -35,9 +35,9 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'UC'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -51,7 +51,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan');
     }
 
     public function test_parser_builds_yearly_monthly_comparison_from_xml_year_month_fields(): void

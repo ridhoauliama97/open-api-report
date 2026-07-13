@@ -137,7 +137,7 @@
 
         /* Nudge page text to align with table's right outer border. */
         .footer-page {
-            display: inline-block;
+            display: attachment-block;
             position: relative;
             right: -4px;
         }

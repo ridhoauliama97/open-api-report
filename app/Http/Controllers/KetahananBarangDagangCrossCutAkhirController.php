@@ -36,7 +36,7 @@ class KetahananBarangDagangCrossCutAkhirController extends Controller
         GenerateDateRangeReportRequest $request,
         KetahananBarangDagangCrossCutAkhirReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -80,7 +80,7 @@ class KetahananBarangDagangCrossCutAkhirController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $inline ? 'inline' : 'attachment', $filename),
+            'Content-Disposition' => sprintf('%s; filename="%s"', $attachment ? 'attachment' : 'attachment', $filename),
         ]);
     }
 

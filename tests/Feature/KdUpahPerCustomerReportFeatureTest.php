@@ -82,7 +82,7 @@ class KdUpahPerCustomerReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'attachment', 'Laporan KD Upah Per Cutomer');
     }
 
-    public function test_pdf_preview_endpoint_returns_inline_pdf(): void
+    public function test_pdf_preview_endpoint_returns_attachment_pdf(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
@@ -106,7 +106,7 @@ class KdUpahPerCustomerReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan KD Upah Per Cutomer');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan KD Upah Per Cutomer');
     }
 
     public function test_health_endpoint_returns_structure_status(): void
@@ -182,7 +182,7 @@ class KdUpahPerCustomerReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
+            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ];
     }

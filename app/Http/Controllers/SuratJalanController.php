@@ -83,7 +83,7 @@ class SuratJalanController extends Controller
         $filename = sprintf('Surat-Jalan-%s.pdf', str_replace(['/', '\\'], '-', $noJual));
         $dispositionType = $request->routeIs('reports.penjualan.surat-jalan.preview-pdf')
             || $request->expectsJson()
-            ? 'inline'
+            ? 'attachment'
             : 'attachment';
 
         return response($pdf, 200, [

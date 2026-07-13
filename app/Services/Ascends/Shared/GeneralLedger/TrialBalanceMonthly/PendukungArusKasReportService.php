@@ -40,14 +40,16 @@ class PendukungArusKasReportService
         $periodStart = trim((string) ($filters['PeriodStart'] ?? ''));
         $periodEnd = trim((string) ($filters['PeriodEnd'] ?? ''));
 
-        $startLabel = $this->resolvePeriodLabel($periodStart);
-        $endLabel = $this->resolvePeriodLabel($periodEnd);
-
         $filtered = $this->applySelectionFormula($allRows);
 
         if ($filtered === []) {
             throw new RuntimeException('Tidak ada data yang memenuhi kriteria.');
         }
+
+        [$periodStart, $periodEnd] = $this->resolvePeriodRange($filtered, $periodStart, $periodEnd);
+
+        $startLabel = $this->resolvePeriodLabel($periodStart);
+        $endLabel = $this->resolvePeriodLabel($periodEnd);
 
         $grouped = $this->groupBySection($filtered, $periodStart, $periodEnd);
 
@@ -88,7 +90,9 @@ class PendukungArusKasReportService
         return [
             'title' => self::TITLE,
             'company' => '',
-            'period_label' => $startLabel.' s/d '.$endLabel,
+            'period_label' => ($startLabel !== '' && $endLabel !== '')
+                ? 'Periode : '.$startLabel.' s.d '.$endLabel
+                : '',
             'period_start_label' => $startLabel,
             'period_end_label' => $endLabel,
             'sections' => $sections,
@@ -234,6 +238,44 @@ class PendukungArusKasReportService
         return 'z';
     }
 
+    private function resolvePeriodRange(array $rows, string $periodStart, string $periodEnd): array
+    {
+        if ($periodStart !== '' && $periodEnd !== '') {
+            return [$periodStart, $periodEnd];
+        }
+
+        $months = [];
+        foreach ($rows as $row) {
+            $pd = trim((string) ($row['PeriodDate'] ?? ''));
+            if ($pd === '') {
+                continue;
+            }
+
+            try {
+                $months[] = Carbon::parse($pd)->format('Y-m');
+            } catch (Throwable) {
+                continue;
+            }
+        }
+
+        if ($months === []) {
+            return [$periodStart, $periodEnd];
+        }
+
+        $months = array_unique($months);
+        sort($months);
+
+        if ($periodStart === '') {
+            $periodStart = $months[0];
+        }
+
+        if ($periodEnd === '') {
+            $periodEnd = $months[count($months) - 1];
+        }
+
+        return [$periodStart, $periodEnd];
+    }
+
     private function resolvePeriodLabel(string $period): string
     {
         if ($period === '') {
@@ -243,7 +285,7 @@ class PendukungArusKasReportService
         try {
             $date = Carbon::parse($period.'-01');
 
-            return $date->locale('id')->isoFormat('MMMM-YYYY');
+            return $date->locale('id')->isoFormat('MMM-YY');
         } catch (Throwable) {
             return $period;
         }

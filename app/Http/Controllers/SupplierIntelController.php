@@ -36,7 +36,7 @@ class SupplierIntelController extends Controller
         GenerateSupplierIntelReportRequest $request,
         SupplierIntelReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -75,7 +75,7 @@ class SupplierIntelController extends Controller
         ]);
 
         $filename = sprintf('Laporan-supplier-intel-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

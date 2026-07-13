@@ -50,7 +50,7 @@ class SaldoBarangJadiHidupPerJenisPerProdukController extends Controller
         ]);
 
         $filename = 'Laporan-Saldo-Barang-Jadi-Hidup-Per-Jenis-Per-Produk.pdf';
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

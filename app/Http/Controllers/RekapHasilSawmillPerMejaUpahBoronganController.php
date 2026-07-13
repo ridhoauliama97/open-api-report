@@ -95,7 +95,7 @@ class RekapHasilSawmillPerMejaUpahBoronganController extends Controller
         GenerateRekapHasilSawmillPerMejaUpahBoronganReportRequest $request,
         RekapHasilSawmillPerMejaUpahBoronganReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -139,7 +139,7 @@ class RekapHasilSawmillPerMejaUpahBoronganController extends Controller
         ]);
 
         $filename = sprintf('Laporan Rekap Hasil Sawmill Per Meja (Upah Borongan) - %s s-d %s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -26,11 +26,11 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: late.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
-                    && ($filters['Pilih Type'] ?? null) === 'Staff'
-                    && ($filters['DateInput'] ?? null) === '2026-05-01'
-                    && ($filters['start_date'] ?? null) === '2026-06-01'
-                    && ($filters['end_date'] ?? null) === '2026-06-30'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                && ($filters['Pilih Type'] ?? null) === 'Staff'
+                && ($filters['DateInput'] ?? null) === '2026-05-01'
+                && ($filters['start_date'] ?? null) === '2026-06-01'
+                && ($filters['end_date'] ?? null) === '2026-06-30'
             ))
             ->andReturn($this->reportData('RU', 'Staff'));
 
@@ -39,9 +39,9 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.late_sign_in.durasi_denda_keterlambatan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Durasi & Denda Keterlambatan (Staff) Per Departemen (RU)'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Durasi & Denda Keterlambatan (Staff) Per Departemen (RU)'
+                && ($data['reportData']['printed_by'] ?? null) === 'Windi'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -60,7 +60,7 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Late Sign In - Laporan Durasi & Denda Keterlambatan Staff Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Late Sign In - Laporan Durasi & Denda Keterlambatan Staff Per Departemen (RU)');
     }
 
     public function test_parser_filters_staff_late_sign_in_and_calculates_nominal(): void

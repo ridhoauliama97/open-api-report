@@ -83,7 +83,7 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Rekap Pembelian Kayu Bulat');
     }
 
-    public function test_pdf_preview_endpoint_returns_inline_disposition(): void
+    public function test_pdf_preview_endpoint_returns_attachment_disposition(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
@@ -116,6 +116,6 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Rekap Pembelian Kayu Bulat');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Rekap Pembelian Kayu Bulat');
     }
 }

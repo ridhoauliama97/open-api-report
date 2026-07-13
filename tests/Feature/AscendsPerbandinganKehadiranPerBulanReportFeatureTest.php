@@ -26,9 +26,9 @@ class AscendsPerbandinganKehadiranPerBulanReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
-                    && ($filters['start_date'] ?? null) === '2026-01-01'
-                    && ($filters['end_date'] ?? null) === '2026-02-28'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                && ($filters['start_date'] ?? null) === '2026-01-01'
+                && ($filters['end_date'] ?? null) === '2026-02-28'
             ))
             ->andReturn($this->reportData('RU'));
 
@@ -37,10 +37,10 @@ class AscendsPerbandinganKehadiranPerBulanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance.perbandingan_kehadiran_per_bulan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Perbandingan Kehadiran Per Bulan'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Perbandingan Kehadiran Per Bulan'
+                && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsPerbandinganKehadiranPerBulanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance - Laporan Perbandingan Kehadiran Per Bulan (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance - Laporan Perbandingan Kehadiran Per Bulan (RU)');
     }
 
     public function test_parser_builds_staff_and_kk_kt_monthly_sections(): void

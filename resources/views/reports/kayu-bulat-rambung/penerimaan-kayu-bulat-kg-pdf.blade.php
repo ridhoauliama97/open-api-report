@@ -67,7 +67,7 @@
         }
 
         .summary-row span {
-            display: inline-block;
+            display: attachment-block;
             margin-right: 12px;
         }
 

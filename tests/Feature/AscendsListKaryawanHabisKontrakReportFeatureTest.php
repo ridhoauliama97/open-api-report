@@ -26,8 +26,8 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: employee-list.xml', Mockery::on(
-                static fn (array $filters): bool => (string) ($filters['month'] ?? '') === '6'
-                    && (string) ($filters['year'] ?? '') === '2026'
+                static fn(array $filters): bool => (string) ($filters['month'] ?? '') === '6'
+                && (string) ($filters['year'] ?? '') === '2026'
             ))
             ->andReturn($this->reportData());
 
@@ -36,9 +36,9 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.list_karyawan_habis_kontrak.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan List Karyawan Habis Kontrak')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan List Karyawan Habis Kontrak')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -54,7 +54,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan List Karyawan Habis Kontrak');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan List Karyawan Habis Kontrak');
     }
 
     public function test_shared_hrm_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -66,8 +66,8 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request raw xml body', Mockery::on(
-                static fn (array $filters): bool => (string) ($filters['month'] ?? '') === '7'
-                    && (string) ($filters['year'] ?? '') === '2026'
+                static fn(array $filters): bool => (string) ($filters['month'] ?? '') === '7'
+                && (string) ($filters['year'] ?? '') === '2026'
             ))
             ->andReturn($this->reportData());
 
@@ -97,7 +97,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Employee List - Laporan List Karyawan Habis Kontrak (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Employee List - Laporan List Karyawan Habis Kontrak (UC)');
     }
 
     public function test_shared_hrm_api_rejects_request_without_xml_payload(): void

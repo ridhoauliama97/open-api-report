@@ -36,7 +36,7 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
         GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest $request,
         PerbandinganKbMasukPeriode1Dan2ReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -88,7 +88,7 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
             $period2StartDate,
             $period2EndDate,
         );
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

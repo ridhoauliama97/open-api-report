@@ -154,7 +154,7 @@
         }
 
         .meta-label {
-            display: inline-block;
+            display: attachment-block;
             min-width: 120px;
             font-weight: bold;
         }

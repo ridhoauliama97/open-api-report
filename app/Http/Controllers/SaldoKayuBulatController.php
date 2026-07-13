@@ -36,7 +36,7 @@ class SaldoKayuBulatController extends Controller
         GenerateSaldoKayuBulatReportRequest $request,
         SaldoKayuBulatReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -76,7 +76,7 @@ class SaldoKayuBulatController extends Controller
 
         $filename = sprintf('Laporan-Saldo-Kayu-Bulat-%s-sd-%s.pdf', $startDate, $endDate);
 
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

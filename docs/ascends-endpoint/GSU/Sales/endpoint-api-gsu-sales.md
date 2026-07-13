@@ -12,4 +12,4 @@ Input XML sama seperti report Ascends XML lain:
 
 Response sukses:
 - `200 application/pdf`
-- `Content-Disposition: inline`
+- `Content-Disposition: attachment`

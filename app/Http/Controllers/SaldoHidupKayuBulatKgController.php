@@ -78,7 +78,7 @@ class SaldoHidupKayuBulatKgController extends Controller
         GenerateNoParameterReportRequest $request,
         SaldoHidupKayuBulatKgReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -112,7 +112,7 @@ class SaldoHidupKayuBulatKgController extends Controller
         ]);
 
         $filename = 'Laporan-Saldo-Hidup-Kayu-Bulat-Timbang-KG.pdf';
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

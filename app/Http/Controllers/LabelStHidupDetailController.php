@@ -74,7 +74,7 @@ class LabelStHidupDetailController extends Controller
         }
 
         $requestedBy = (string) ($generatedBy->username ?? $generatedBy->Username ?? $generatedBy->name ?? 'unknown');
-        if (! $request->boolean('force')) {
+        if (!$request->boolean('force')) {
             $cachedJob = $this->findReusablePdfJob($jobStore, $requestedBy);
             if ($cachedJob !== null) {
                 return response()->json([
@@ -206,7 +206,7 @@ class LabelStHidupDetailController extends Controller
         }
 
         $requestedBy = (string) ($generatedBy->username ?? $generatedBy->Username ?? $generatedBy->name ?? 'unknown');
-        if (! $request->boolean('force')) {
+        if (!$request->boolean('force')) {
             $cachedJob = $this->findReusablePdfJob($jobStore, $requestedBy);
             if ($cachedJob !== null) {
                 return $this->downloadFilePdfJob((string) $cachedJob['job_id'], $jobStore, true);
@@ -262,7 +262,7 @@ class LabelStHidupDetailController extends Controller
             ?? $jobStore->findLatestDone(self::REPORT_TYPE, $requestedBy);
     }
 
-    private function downloadFilePdfJob(string $jobId, FilePdfJobStore $jobStore, bool $inline): Response|JsonResponse
+    private function downloadFilePdfJob(string $jobId, FilePdfJobStore $jobStore, bool $attachment): Response|JsonResponse
     {
         $job = $jobStore->find($jobId);
 
@@ -272,20 +272,20 @@ class LabelStHidupDetailController extends Controller
 
         if (($job['status'] ?? null) !== FilePdfJobStore::STATUS_DONE) {
             return response()->json([
-                'message' => 'PDF belum siap. Status saat ini: '.($job['status'] ?? 'unknown'),
+                'message' => 'PDF belum siap. Status saat ini: ' . ($job['status'] ?? 'unknown'),
                 'status' => $job['status'] ?? 'unknown',
             ], 409);
         }
 
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
 
-        if (! is_string($job['file_path'] ?? null) || ! $disk->exists((string) $job['file_path'])) {
+        if (!is_string($job['file_path'] ?? null) || !$disk->exists((string) $job['file_path'])) {
             return response()->json(['message' => 'File PDF tidak ditemukan. Mungkin sudah kadaluarsa.'], 410);
         }
 
         $filename = basename((string) $job['file_path']);
         $content = $disk->get((string) $job['file_path']);
-        $disposition = $inline ? 'inline' : 'attachment';
+        $disposition = $attachment ? 'attachment' : 'attachment';
 
         return response($content, 200, [
             'Content-Type' => 'application/pdf',
@@ -306,18 +306,18 @@ class LabelStHidupDetailController extends Controller
             $artisan,
             'reports:generate-label-st-hidup-detail-pdf',
             $jobId,
-            '--requested-by='.$requestedBy,
+            '--requested-by=' . $requestedBy,
         ];
 
         if (PHP_OS_FAMILY === 'Windows') {
             $escaped = array_map('escapeshellarg', $command);
-            pclose(popen('start /B "" '.implode(' ', $escaped).' > NUL 2>&1', 'r'));
+            pclose(popen('start /B "" ' . implode(' ', $escaped) . ' > NUL 2>&1', 'r'));
 
             return;
         }
 
         $escaped = implode(' ', array_map('escapeshellarg', $command));
-        exec($escaped.' > /dev/null 2>&1 &');
+        exec($escaped . ' > /dev/null 2>&1 &');
     }
 
     private function renderPdf(
@@ -325,7 +325,7 @@ class LabelStHidupDetailController extends Controller
         LabelStHidupDetailReportService $reportService,
         PdfGenerator $pdfGenerator,
         FilePdfJobStore $jobStore,
-        bool $inline,
+        bool $attachment,
     ) {
         $existingJobId = $request->query('job_id') ?? $request->input('job_id');
         if (is_string($existingJobId) && trim($existingJobId) !== '') {
@@ -333,7 +333,7 @@ class LabelStHidupDetailController extends Controller
         }
 
         // This report can be extremely large (10k+ rows). mPDF keeps page buffers in memory
-        // until final output, so raise memory/time limits for both inline preview and download.
+        // until final output, so raise memory/time limits for both attachment preview and download.
         @ini_set('memory_limit', (string) env('LABEL_ST_HIDUP_DETAIL_PDF_MEMORY_LIMIT', '2048M'));
         @set_time_limit(0);
 
@@ -374,14 +374,14 @@ class LabelStHidupDetailController extends Controller
         $filename = 'Laporan-Label-ST-Hidup-Detail.pdf';
 
         $dir = storage_path('app/pdf-temp');
-        if (! is_dir($dir)) {
+        if (!is_dir($dir)) {
             @mkdir($dir, 0777, true);
         }
-        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('label-st-hidup-detail-', true).'.pdf';
+        $tmpPath = $dir . DIRECTORY_SEPARATOR . uniqid('label-st-hidup-detail-', true) . '.pdf';
 
         $pdfGenerator->renderToFile('reports.sawn-timber.label-st-hidup-detail-pdf', $payload, $tmpPath);
 
-        $disposition = $inline ? 'inline' : 'attachment';
+        $disposition = $attachment ? 'attachment' : 'attachment';
 
         return response()
             ->file($tmpPath, [
@@ -442,7 +442,7 @@ class LabelStHidupDetailController extends Controller
     private function limitPreviewRows(array $reportData): array
     {
         $rows = $reportData['rows'] ?? null;
-        if (! is_array($rows) || $rows === []) {
+        if (!is_array($rows) || $rows === []) {
             return $reportData;
         }
 

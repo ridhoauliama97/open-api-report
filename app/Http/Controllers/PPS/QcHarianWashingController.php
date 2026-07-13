@@ -44,7 +44,7 @@ class QcHarianWashingController extends Controller
         ]);
 
         $filename = sprintf('Laporan-QC-Harian-Washing-%s.pdf', $reportDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

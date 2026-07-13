@@ -157,7 +157,7 @@
         }
 
         .count-badge {
-            display: inline-flex;
+            display: attachment-flex;
             min-width: 2rem;
             align-items: center;
             justify-content: center;
@@ -242,7 +242,7 @@
         }
 
         .user-pill {
-            display: inline-flex;
+            display: attachment-flex;
             max-width: 18rem;
             align-items: center;
             gap: .45rem;
@@ -317,7 +317,7 @@
         }
 
         .dashboard-button {
-            display: inline-flex;
+            display: attachment-flex;
             min-height: 2.5rem;
             align-items: center;
             justify-content: center;
@@ -486,7 +486,7 @@
         }
 
         .tab-button {
-            display: inline-flex;
+            display: attachment-flex;
             align-items: center;
             gap: .45rem;
             border: 1px solid transparent;
@@ -554,7 +554,7 @@
         }
 
         .category-chip {
-            display: inline-flex;
+            display: attachment-flex;
             border: 1px solid var(--dash-line);
             border-radius: 999px;
             padding: .18rem .5rem;
@@ -620,7 +620,7 @@
             }
 
             .mobile-menu-button {
-                display: inline-flex;
+                display: attachment-flex;
             }
 
             .topbar {
@@ -661,11 +661,14 @@
 
 <body>
     @php
-        $viewErrors = ($errors ?? null) instanceof \Illuminate\Support\ViewErrorBag
-            ? $errors
-            : new \Illuminate\Support\ViewErrorBag;
+        $viewErrors =
+            ($errors ?? null) instanceof \Illuminate\Support\ViewErrorBag
+                ? $errors
+                : new \Illuminate\Support\ViewErrorBag();
 
-        $ascendsSharedReportTotal = collect(\Illuminate\Support\Facades\File::allFiles(resource_path('views/ascends/shared')))
+        $ascendsSharedReportTotal = collect(
+            \Illuminate\Support\Facades\File::allFiles(resource_path('views/ascends/shared')),
+        )
             ->filter(fn($file) => $file->getFilename() === 'pdf.blade.php')
             ->count();
     @endphp
@@ -724,8 +727,8 @@
                             @csrf
                             <div>
                                 <label for="dashboard-username" class="field-label">Username</label>
-                                <input type="text" id="dashboard-username" name="username" class="dashboard-input" required
-                                    value="{{ old('username') }}">
+                                <input type="text" id="dashboard-username" name="username" class="dashboard-input"
+                                    required value="{{ old('username') }}">
                             </div>
                             <div>
                                 <label for="dashboard-password" class="field-label">Password</label>
@@ -1878,7 +1881,8 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <a href="{{ route('reports.s4s.label-s4s-hidup-per-jenis-kayu.index') }}"
-                                    class="btn btn-outline-primary w-100 text-start">Laporan Label S4S (Hidup) Per-Jenis
+                                    class="btn btn-outline-primary w-100 text-start">Laporan Label S4S (Hidup)
+                                    Per-Jenis
                                     Kayu</a>
                             </div>
                             <div class="col-12 col-md-6">
@@ -2650,7 +2654,8 @@
 
                 while (current && !current.id?.endsWith('-reports')) {
                     const title = current.querySelector('.card-body > h2')?.textContent.trim();
-                    const links = Array.from(current.querySelectorAll('a.btn.btn-outline-primary.w-100.text-start'));
+                    const links = Array.from(current.querySelectorAll(
+                        'a.btn.btn-outline-primary.w-100.text-start'));
 
                     if (title && links.length > 0) {
                         const reports = links.map((link) => ({
@@ -2661,7 +2666,10 @@
                         if (reports.length > 0) {
                             if (!categoryMap.has(title)) {
                                 categoryMap.set(title, []);
-                                categories.push({ name: title, reports: categoryMap.get(title) });
+                                categories.push({
+                                    name: title,
+                                    reports: categoryMap.get(title)
+                                });
                             }
 
                             categoryMap.get(title).push(...reports);
@@ -2672,7 +2680,8 @@
                 }
 
                 categories.forEach((category) => {
-                    category.reports.sort((a, b) => normalize(a.label).localeCompare(normalize(b.label)));
+                    category.reports.sort((a, b) => normalize(a.label).localeCompare(normalize(b
+                        .label)));
                 });
                 categories.sort((a, b) => normalize(a.name).localeCompare(normalize(b.name)));
 
@@ -2706,7 +2715,8 @@
                     button.className = `sidebar-link ${menu.key === activeMenuKey ? 'is-active' : ''}`;
                     button.dataset.menuTarget = menu.key;
                     button.disabled = isDisabled;
-                    button.title = isDisabled ? 'Menu Ascends sementara dinonaktifkan' : `Buka menu ${menu.label}`;
+                    button.title = isDisabled ? 'Menu Ascends sementara dinonaktifkan' :
+                        `Buka menu ${menu.label}`;
                     button.innerHTML = `
                         <span class="sidebar-icon">${menu.label.charAt(0)}</span>
                         <span class="sidebar-text">${menu.label}</span>
@@ -2766,8 +2776,12 @@
                     }
 
                     return category.reports
-                        .filter((report) => !needle || normalize(`${report.label} ${category.name}`).includes(needle))
-                        .map((report) => ({ ...report, category: category.name }));
+                        .filter((report) => !needle || normalize(`${report.label} ${category.name}`)
+                            .includes(needle))
+                        .map((report) => ({
+                            ...report,
+                            category: category.name
+                        }));
                 });
             };
 
@@ -2810,7 +2824,9 @@
 
                 const doc = printWindow.document;
                 doc.open();
-                doc.write('\x3c!doctype html>\x3chtml lang="id">\x3chead>\x3cmeta charset="utf-8">\x3ctitle>\x3c/title>\x3c/head>\x3cbody>\x3c/body>\x3c/html>');
+                doc.write(
+                    '\x3c!doctype html>\x3chtml lang="id">\x3chead>\x3cmeta charset="utf-8">\x3ctitle>\x3c/title>\x3c/head>\x3cbody>\x3c/body>\x3c/html>'
+                    );
                 doc.close();
                 doc.title = pageTitle;
 
@@ -3006,9 +3022,12 @@
 
                 addSectionTitle(main, 'Ringkasan Data');
                 const summaryGrid = append(main, 'section', 'summary-grid');
-                const summaryCards = statCards.length > 0
-                    ? statCards
-                    : [{ label: 'Total Tampil', value: formatNumber(reports.length) }];
+                const summaryCards = statCards.length > 0 ?
+                    statCards :
+                    [{
+                        label: 'Total Tampil',
+                        value: formatNumber(reports.length)
+                    }];
                 summaryCards.forEach((stat, index) => {
                     const card = append(summaryGrid, 'article', 'summary-card');
                     card.style.setProperty('--summary-color', statColors[index % statColors.length]);
@@ -3037,11 +3056,14 @@
                         }
                     });
                 } else {
-                    append(main, 'div', 'empty-message', 'Tidak ada laporan yang cocok dengan filter saat ini.');
+                    append(main, 'div', 'empty-message',
+                    'Tidak ada laporan yang cocok dengan filter saat ini.');
                 }
 
                 const footer = append(page, 'footer', 'print-footer');
-                append(footer, 'div', '', 'Catatan: Laporan ini dihasilkan otomatis dari sistem. Untuk data real-time, lakukan refresh melalui dashboard.');
+                append(footer, 'div', '',
+                    'Catatan: Laporan ini dihasilkan otomatis dari sistem. Untuk data real-time, lakukan refresh melalui dashboard.'
+                    );
                 append(footer, 'div', '', `ReportAPI Platform · ${generatedAt}`);
 
                 printWindow.focus();
@@ -3050,8 +3072,11 @@
 
             const renderReports = (menu) => {
                 const reports = visibleReports(menu);
-                const tabs = [
-                    { name: 'all', label: 'All', count: menu.total },
+                const tabs = [{
+                        name: 'all',
+                        label: 'All',
+                        count: menu.total
+                    },
                     ...menu.categories.map((category) => ({
                         name: category.name,
                         label: category.name,
@@ -3076,10 +3101,10 @@
                     <div class="tabs-scroll">
                         <div class="report-tabs" role="tablist">
                             ${tabs.map((tab) => `
-                                <button type="button" class="tab-button ${tab.name === activeTab ? 'is-active' : ''}" data-tab-target="${tab.name}">
-                                    ${tab.label} <span class="count-badge">${formatNumber(tab.count)}</span>
-                                </button>
-                            `).join('')}
+                                    <button type="button" class="tab-button ${tab.name === activeTab ? 'is-active' : ''}" data-tab-target="${tab.name}">
+                                        ${tab.label} <span class="count-badge">${formatNumber(tab.count)}</span>
+                                    </button>
+                                `).join('')}
                         </div>
                     </div>
                     <div class="table-wrap">
@@ -3094,15 +3119,15 @@
                             </thead>
                             <tbody>
                                 ${reports.map((report, index) => `
-                                    <tr>
-                                        <td class="row-number">${index + 1}</td>
-                                        <td><div class="report-title">${report.label}</div></td>
-                                        <td><span class="category-chip">${report.category}</span></td>
-                                        <td class="table-action">
-                                            <a href="${report.href}" class="dashboard-button secondary">Buka Form</a>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                                        <tr>
+                                            <td class="row-number">${index + 1}</td>
+                                            <td><div class="report-title">${report.label}</div></td>
+                                            <td><span class="category-chip">${report.category}</span></td>
+                                            <td class="table-action">
+                                                <a href="${report.href}" class="dashboard-button secondary">Buka Form</a>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -3138,8 +3163,10 @@
                 renderReports(menu);
             };
 
-            document.querySelector('[data-sidebar-toggle]')?.addEventListener('click', () => body.classList.add('sidebar-open'));
-            document.querySelector('[data-sidebar-close]')?.addEventListener('click', () => body.classList.remove('sidebar-open'));
+            document.querySelector('[data-sidebar-toggle]')?.addEventListener('click', () => body.classList.add(
+                'sidebar-open'));
+            document.querySelector('[data-sidebar-close]')?.addEventListener('click', () => body.classList.remove(
+                'sidebar-open'));
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape') {
                     body.classList.remove('sidebar-open');

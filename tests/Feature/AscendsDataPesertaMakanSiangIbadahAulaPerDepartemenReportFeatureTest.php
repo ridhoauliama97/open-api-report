@@ -26,9 +26,9 @@ class AscendsDataPesertaMakanSiangIbadahAulaPerDepartemenReportFeatureTest exten
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
-                    && ($filters['month'] ?? null) === '5'
-                    && ($filters['year'] ?? null) === '2026'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                && ($filters['month'] ?? null) === '5'
+                && ($filters['year'] ?? null) === '2026'
             ))
             ->andReturn($this->reportData());
 
@@ -37,10 +37,10 @@ class AscendsDataPesertaMakanSiangIbadahAulaPerDepartemenReportFeatureTest exten
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.data_peserta_makan_siang_ibadah_aula_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && ($data['reportData']['title'] ?? null) === 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen'
+                && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsDataPesertaMakanSiangIbadahAulaPerDepartemenReportFeatureTest exten
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen (RU)');
     }
 
     public function test_parser_groups_participants_by_department_page_and_friday_columns(): void

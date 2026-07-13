@@ -36,7 +36,7 @@ class KbKhususBangkangController extends Controller
         GenerateKbKhususBangkangReportRequest $request,
         KbKhususBangkangReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -74,7 +74,7 @@ class KbKhususBangkangController extends Controller
         ]);
 
         $filename = sprintf('Laporan-KB-Khusus-Bangkang-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -58,7 +58,7 @@ class StockHidupPerNoSpkController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Stock-Hidup-Per-NoSPK-%s.pdf', $tanggalAkhir);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

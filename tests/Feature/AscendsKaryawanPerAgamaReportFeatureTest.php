@@ -33,8 +33,8 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_agama.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Agama');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Agama');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_agama_pdf(): void
@@ -66,8 +66,8 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_agama.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Agama'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Agama'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -81,7 +81,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Agama');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Agama');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Agama');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Agama');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -221,26 +221,32 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
                 'Umur',
                 'THR',
             ],
-            'rows' => [[
-                'Nama' => 'Ganda P',
-                'L/P' => 'L',
-                'Jabatan' => 'Asisten Direktur Korporat Sales',
-                'Umur' => '45 Tahun',
-                'THR' => 'THR IMLEK',
-                'Agama' => 'Buddha',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'Agama : Buddha',
-                'rows' => [[
+            'rows' => [
+                [
                     'Nama' => 'Ganda P',
                     'L/P' => 'L',
                     'Jabatan' => 'Asisten Direktur Korporat Sales',
                     'Umur' => '45 Tahun',
                     'THR' => 'THR IMLEK',
                     'Agama' => 'Buddha',
-                ]],
-                'summary' => ['subtotal' => 1],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'Agama : Buddha',
+                    'rows' => [
+                        [
+                            'Nama' => 'Ganda P',
+                            'L/P' => 'L',
+                            'Jabatan' => 'Asisten Direktur Korporat Sales',
+                            'Umur' => '45 Tahun',
+                            'THR' => 'THR IMLEK',
+                            'Agama' => 'Buddha',
+                        ]
+                    ],
+                    'summary' => ['subtotal' => 1],
+                ]
+            ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,
         ];

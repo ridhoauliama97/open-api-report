@@ -75,7 +75,7 @@ class KdUpahPerNoProcKdPerCustomerDetailController extends Controller
 
         $dispositionType = $request->routeIs('reports.sawn-timber.kd-upah-per-no-proc-kd-per-customer-detail.preview-pdf')
             || $request->expectsJson()
-            ? 'inline'
+            ? 'attachment'
             : 'attachment';
 
         return response($pdf, 200, [

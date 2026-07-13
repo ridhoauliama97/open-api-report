@@ -244,7 +244,7 @@
                         <td class="number data-cell">{{ $formatNumber($ton2) }}</td>
                         <td class="number data-cell {{ $trendClass }}">
                             @if ($percentText !== '')
-                                <span style="display:inline-block; width:10px; text-align:center;">
+                                <span style="display:attachment-block; width:10px; text-align:center;">
                                     {!! $percent > 0 ? '&uarr;' : ($percent < 0 ? '&darr;' : '&#61;') !!}
                                 </span>
                                 {{ $percentText . '%' }}
@@ -266,7 +266,7 @@
                     class="number {{ $grandPercent > 0 ? 'trend-up' : ($grandPercent < 0 ? 'trend-down' : 'trend-flat') }}">
                     @php $grandPercentText = $formatPercent($grandPercent); @endphp
                     @if ($grandPercentText !== '')
-                        <span style="display:inline-block; width:10px; text-align:center;">
+                        <span style="display:attachment-block; width:10px; text-align:center;">
                             {!! $grandPercent > 0 ? '&uarr;' : ($grandPercent < 0 ? '&darr;' : '&#61;') !!}
                         </span>
                         {{ $grandPercentText . '%' }}

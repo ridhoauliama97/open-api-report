@@ -91,7 +91,7 @@ class QcSawmillDiscrepancyController extends Controller
         GenerateQcSawmillDiscrepancyReportRequest $request,
         QcSawmillDiscrepancyReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -133,7 +133,7 @@ class QcSawmillDiscrepancyController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $inline ? 'inline' : 'attachment', $filename),
+            'Content-Disposition' => sprintf('%s; filename="%s"', $attachment ? 'attachment' : 'attachment', $filename),
         ]);
     }
 

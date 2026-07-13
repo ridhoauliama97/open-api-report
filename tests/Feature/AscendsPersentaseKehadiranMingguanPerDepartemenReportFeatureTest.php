@@ -26,8 +26,8 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
-                    && ($filters['end_date'] ?? null) === '2026-05-31'
+                static fn(array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
+                && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
             ->andReturn($this->reportData());
 
@@ -36,9 +36,9 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Persentase Kehadiran Mingguan Per Departemen')
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Persentase Kehadiran Mingguan Per Departemen')
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -54,7 +54,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen');
     }
 
     public function test_shared_attendance_full_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -94,7 +94,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (UC)');
     }
 
     public function test_shared_attendance_full_api_uses_db_company_name_parameter(): void
@@ -106,7 +106,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'GSU'
             ))
             ->andReturn($this->reportData('GSU'));
 
@@ -115,9 +115,9 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)'
+                && ($data['reportData']['printed_by'] ?? null) === 'Windi'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -135,7 +135,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)');
     }
 
     public function test_shared_attendance_full_api_rejects_request_without_xml_payload(): void

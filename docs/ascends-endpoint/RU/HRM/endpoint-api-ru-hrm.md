@@ -30,7 +30,7 @@ Input yang didukung:
 Response sukses:
 
 - `200 application/pdf`
-- `Content-Disposition: inline; filename="List-Karyawan-RU.pdf"`
+- `Content-Disposition: attachment; filename="List-Karyawan-RU.pdf"`
 
 Filename mengikuti laporan yang dipanggil, contoh:
 

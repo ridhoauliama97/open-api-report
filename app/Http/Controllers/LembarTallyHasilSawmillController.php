@@ -86,7 +86,7 @@ class LembarTallyHasilSawmillController extends Controller
         GenerateLembarTallyHasilSawmillReportRequest $request,
         LembarTallyHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -124,7 +124,7 @@ class LembarTallyHasilSawmillController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Lembar-Tally-Hasil-Sawmill-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

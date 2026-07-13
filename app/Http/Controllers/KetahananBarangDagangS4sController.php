@@ -36,7 +36,7 @@ class KetahananBarangDagangS4sController extends Controller
         GenerateDateRangeReportRequest $request,
         KetahananBarangDagangS4sReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -81,7 +81,7 @@ class KetahananBarangDagangS4sController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $inline ? 'inline' : 'attachment', $filename),
+            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $attachment ? 'attachment' : 'attachment', $filename),
         ]);
     }
 

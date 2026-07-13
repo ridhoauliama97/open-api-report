@@ -128,7 +128,7 @@ xml_file=AnlReports.Inventory.AdjustmentByItem.xml
 ## Response Sukses
 
 - `200 application/pdf`
-- `Content-Disposition: inline` (semua endpoint kecuali production)
+- `Content-Disposition: attachment` (semua endpoint kecuali production)
 - `Content-Disposition: attachment` (khusus `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, `hasil-produksi-per-mesin`, `produksi`, `saldo-stok-barang-per-gudang-uc`, `saldo-stok-barang-per-gudang-ru`, dan `saldo-stok-barang-per-gudang-gsu`)
 
 Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori. Nilai `{company}` berasal dari parameter `DB_CompanyName`, atau fallback field form `company` jika parameter tersebut tidak ada:

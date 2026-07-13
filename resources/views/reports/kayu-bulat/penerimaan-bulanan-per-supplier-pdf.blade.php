@@ -105,18 +105,18 @@
             background: #eef2f8;
         }
 
-        .summary-inline {
+        .summary-attachment {
             margin: 2px 0 8px;
             font-size: 10px;
         }
 
-        .summary-inline table {
+        .summary-attachment table {
             border: none;
             width: 100%;
             margin: 0;
         }
 
-        .summary-inline td {
+        .summary-attachment td {
             border: none;
             padding: 0 6px;
         }

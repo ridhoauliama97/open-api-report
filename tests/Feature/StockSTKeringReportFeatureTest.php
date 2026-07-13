@@ -82,7 +82,7 @@ class StockSTKeringReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Stock ST Kering');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Stock ST Kering');
     }
 
     public function test_web_async_creates_file_based_job_for_stock_st_kering(): void
@@ -116,13 +116,13 @@ class StockSTKeringReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user, ['username' => 'tester', 'name' => 'Tester']);
         $jobStore = app(FilePdfJobStore::class);
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
-        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/').'/stock-st-kering-cached.pdf';
+        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/') . '/stock-st-kering-cached.pdf';
 
         $disk->put($storagePath, '%PDF-1.4 cached stock st kering');
         $job = $jobStore->create('sawn-timber/stock-st-kering', ['end_date' => '2026-05-12'], 'tester');
         $jobStore->markDone((string) $job['job_id'], $storagePath);
 
-        $this->withHeader('Authorization', 'Bearer '.$token)
+        $this->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson('/api/reports/sawn-timber/stock-st-kering/pdf/async', [
                 'end_date' => '2026-05-12',
             ])
@@ -141,13 +141,13 @@ class StockSTKeringReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user, ['username' => 'frontend-user', 'name' => 'Frontend User']);
         $jobStore = app(FilePdfJobStore::class);
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
-        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/').'/stock-st-kering-system.pdf';
+        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/') . '/stock-st-kering-system.pdf';
 
         $disk->put($storagePath, '%PDF-1.4 shared stock st kering');
         $job = $jobStore->create('sawn-timber/stock-st-kering', ['end_date' => '2026-05-12'], 'system');
         $jobStore->markDone((string) $job['job_id'], $storagePath);
 
-        $this->withHeader('Authorization', 'Bearer '.$token)
+        $this->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson('/api/reports/sawn-timber/stock-st-kering/pdf/async', [
                 'end_date' => '2026-05-12',
             ])
@@ -166,13 +166,13 @@ class StockSTKeringReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user, ['username' => 'frontend-user', 'name' => 'Frontend User']);
         $jobStore = app(FilePdfJobStore::class);
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
-        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/').'/stock-st-kering-system.pdf';
+        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/') . '/stock-st-kering-system.pdf';
 
         $disk->put($storagePath, '%PDF-1.4 shared stock st kering');
         $job = $jobStore->create('sawn-timber/stock-st-kering', ['end_date' => '2026-05-12'], 'system');
         $jobStore->markDone((string) $job['job_id'], $storagePath);
 
-        $this->withHeader('Authorization', 'Bearer '.$token)
+        $this->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson('/api/reports/sawn-timber/stock-st-kering/pdf/async', [
                 'end_date' => '2026-05-13',
             ])
@@ -189,7 +189,7 @@ class StockSTKeringReportFeatureTest extends TestCase
         $token = $this->issueJwtForUser($user, ['username' => 'tester', 'name' => 'Tester']);
         $jobStore = app(FilePdfJobStore::class);
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
-        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/').'/stock-st-kering-ready.pdf';
+        $storagePath = trim((string) config('app.pdf_storage_path', 'pdf_reports'), '/') . '/stock-st-kering-ready.pdf';
 
         $disk->put($storagePath, '%PDF-1.4 ready stock st kering');
         $job = $jobStore->create('sawn-timber/stock-st-kering', ['end_date' => '2026-05-12'], 'tester');
@@ -199,11 +199,11 @@ class StockSTKeringReportFeatureTest extends TestCase
         $service->shouldNotReceive('fetch');
         $this->app->instance(StockSTKeringReportService::class, $service);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$token)
-            ->get('/api/reports/sawn-timber/stock-st-kering/pdf?job_id='.$job['job_id'])
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->get('/api/reports/sawn-timber/stock-st-kering/pdf?job_id=' . $job['job_id'])
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'stock st kering ready');
+        $this->assertPdfDisposition($response, 'attachment', 'stock st kering ready');
     }
 }

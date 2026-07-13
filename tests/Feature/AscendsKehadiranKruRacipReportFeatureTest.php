@@ -26,8 +26,8 @@ class AscendsKehadiranKruRacipReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-05'
-                    && ($filters['end_date'] ?? null) === '2026-05-06'
+                static fn(array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-05'
+                && ($filters['end_date'] ?? null) === '2026-05-06'
             ))
             ->andReturn($this->reportData());
 
@@ -36,10 +36,10 @@ class AscendsKehadiranKruRacipReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.kehadiran_kru_racip.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU)'
-                    && ($data['pdf_format'] ?? null) === 'A4'
-                    && ($data['pdf_orientation'] ?? null) === 'landscape'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU)'
+                && ($data['pdf_format'] ?? null) === 'A4'
+                && ($data['pdf_orientation'] ?? null) === 'landscape'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsKehadiranKruRacipReportFeatureTest extends TestCase
 
         $this->assertPdfDisposition(
             $response,
-            'inline',
+            'attachment',
             'Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (RU)'
         );
     }
@@ -101,7 +101,7 @@ class AscendsKehadiranKruRacipReportFeatureTest extends TestCase
 
         $this->assertPdfDisposition(
             $response,
-            'inline',
+            'attachment',
             'Attendance Full - Laporan Kehadiran Kru Racip Dorong Dan Kru Racip Sambut (GSU)'
         );
     }
@@ -192,21 +192,23 @@ class AscendsKehadiranKruRacipReportFeatureTest extends TestCase
         $reportData['date_totals'] = [];
         for ($day = 5; $day <= 12; $day++) {
             $date = "2026-05-{$day}";
-            $label = str_pad((string) $day, 2, '0', STR_PAD_LEFT).'-Mei-26';
+            $label = str_pad((string) $day, 2, '0', STR_PAD_LEFT) . '-Mei-26';
             $reportData['date_columns'][] = ['date' => $date, 'label' => $label];
             $reportData['date_totals'][$date] = 1;
         }
-        $reportData['rows'] = [[
-            'employee' => [
-                'employee_code' => '131356',
-                'name' => 'Roma Hutabarat',
-                'join_date' => '01-Jun-21',
-                'year_of_service' => '5 Thn 0 Bln 3 Hr',
-                'job_title' => 'Operator Borongan Sawmill',
-            ],
-            'attendance' => [],
-            'hk' => '8',
-        ]];
+        $reportData['rows'] = [
+            [
+                'employee' => [
+                    'employee_code' => '131356',
+                    'name' => 'Roma Hutabarat',
+                    'join_date' => '01-Jun-21',
+                    'year_of_service' => '5 Thn 0 Bln 3 Hr',
+                    'job_title' => 'Operator Borongan Sawmill',
+                ],
+                'attendance' => [],
+                'hk' => '8',
+            ]
+        ];
         $reportData['total_employees'] = 1;
 
         $html = view('ascends.shared.hrm.attendance_full.kehadiran_kru_racip.pdf', [

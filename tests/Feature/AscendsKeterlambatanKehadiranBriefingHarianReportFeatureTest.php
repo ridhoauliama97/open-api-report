@@ -26,9 +26,9 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
-                    && ($filters['start_date'] ?? null) === '2026-04-01'
-                    && ($filters['end_date'] ?? null) === '2026-05-31'
+                static fn(array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+                && ($filters['start_date'] ?? null) === '2026-04-01'
+                && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
             ->andReturn($this->reportData('GSU'));
 
@@ -37,10 +37,10 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance.keterlambatan_kehadiran_briefing_harian.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Keterlambatan Kehadiran Briefing Harian'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Keterlambatan Kehadiran Briefing Harian'
+                && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -57,7 +57,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Attendance - Laporan Keterlambatan Kehadiran Briefing Harian (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Attendance - Laporan Keterlambatan Kehadiran Briefing Harian (GSU)');
     }
 
     public function test_parser_builds_late_briefing_counts_by_employee_and_month(): void
@@ -96,7 +96,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
 
         $this->assertCount(2, $reportData['rows']);
 
-        $names = array_map(static fn (array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
+        $names = array_map(static fn(array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
         $this->assertContains('Staff RU A', $names);
         $this->assertContains('Worker RU B', $names);
 
@@ -144,7 +144,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
 
         $this->assertCount(2, $reportData['rows']);
 
-        $names = array_map(static fn (array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
+        $names = array_map(static fn(array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
 
         $this->assertContains('Custom Shift Worker', $names);
         $this->assertContains('Hour Only Worker', $names);

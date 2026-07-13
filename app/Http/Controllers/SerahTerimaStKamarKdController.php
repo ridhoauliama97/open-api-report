@@ -76,7 +76,7 @@ class SerahTerimaStKamarKdController extends Controller
 
         $dispositionType = $request->routeIs('reports.sawn-timber.serah-terima-st-kamar-kd.preview-pdf')
             || $request->expectsJson()
-            ? 'inline'
+            ? 'attachment'
             : 'attachment';
 
         return response($pdf, 200, [

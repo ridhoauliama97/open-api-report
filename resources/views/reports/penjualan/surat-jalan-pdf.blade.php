@@ -201,7 +201,7 @@
         }
 
         .signature-line {
-            display: inline-block;
+            display: attachment-block;
             width: 112px;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
             font-size: 10px;

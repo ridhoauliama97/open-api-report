@@ -77,7 +77,7 @@ class RekapPembelianKayuBulatKgController extends Controller
         GenerateNoParameterReportRequest $request,
         RekapPembelianKayuBulatKgReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -113,7 +113,7 @@ class RekapPembelianKayuBulatKgController extends Controller
         ]);
 
         $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton-Timbang-KG.pdf';
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -53,7 +53,7 @@ class SaldoStHidupPerProdukController extends Controller
         ]);
 
         $filename = 'Laporan-Saldo-ST-Hidup-Per-Jenis-Per-Tebal-Per-Group-Jenis-Kayu.pdf';
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

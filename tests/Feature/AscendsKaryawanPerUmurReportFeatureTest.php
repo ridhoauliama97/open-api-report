@@ -33,8 +33,8 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_umur.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +47,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Umur');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_umur_pdf(): void
@@ -66,8 +66,8 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_umur.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Umur'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Umur'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -81,7 +81,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Umur');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -120,7 +120,7 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Laporan Karyawan Per Umur');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Umur');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -241,18 +241,8 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
                 'Masa Kerja',
                 'Level',
             ],
-            'rows' => [[
-                'Nama' => 'Alfian',
-                'Jabatan' => 'Kru Rotary',
-                'L/P' => 'L',
-                'Status' => 'KK',
-                'Umur' => '17',
-                'Masa Kerja' => '0 Thn 5 Bln 10 Hari',
-                'Level' => '1',
-            ]],
-            'grouped_rows' => [[
-                'label' => 'Umur : 17 - 20 Tahun',
-                'rows' => [[
+            'rows' => [
+                [
                     'Nama' => 'Alfian',
                     'Jabatan' => 'Kru Rotary',
                     'L/P' => 'L',
@@ -260,9 +250,25 @@ class AscendsKaryawanPerUmurReportFeatureTest extends TestCase
                     'Umur' => '17',
                     'Masa Kerja' => '0 Thn 5 Bln 10 Hari',
                     'Level' => '1',
-                ]],
-                'summary' => ['subtotal' => 1],
-            ]],
+                ]
+            ],
+            'grouped_rows' => [
+                [
+                    'label' => 'Umur : 17 - 20 Tahun',
+                    'rows' => [
+                        [
+                            'Nama' => 'Alfian',
+                            'Jabatan' => 'Kru Rotary',
+                            'L/P' => 'L',
+                            'Status' => 'KK',
+                            'Umur' => '17',
+                            'Masa Kerja' => '0 Thn 5 Bln 10 Hari',
+                            'Level' => '1',
+                        ]
+                    ],
+                    'summary' => ['subtotal' => 1],
+                ]
+            ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,
         ];

@@ -103,7 +103,7 @@
         }
 
         .summary-row td {
-            text-align:right;
+            text-align: right;
             font-weight: bold;
             border-top: 1px solid #000;
         }
@@ -163,7 +163,9 @@
                     $rows = $group['rows'] ?? [];
                     $summary = $group['summary'] ?? [];
                     $departmentCode = trim((string) ($group['department_code'] ?? ''));
-                    $departmentTitle = trim((string) ($group['department'] ?? '') . ($departmentCode !== '' ? ' ' . $departmentCode : ''));
+                    $departmentTitle = trim(
+                        (string) ($group['department'] ?? '') . ($departmentCode !== '' ? ' ' . $departmentCode : ''),
+                    );
                 @endphp
                 <tr class="group-row">
                     <td colspan="7">Departemen : {{ $departmentTitle }}</td>
@@ -188,9 +190,11 @@
                 <tr class="summary-note">
                     <td colspan="7">
                         Akumulasi L/P :
-                        Laki-Laki = {{ (int) ($summary['male_count'] ?? 0) }} ({{ (int) ($summary['male_percent'] ?? 0) }}%)
+                        Laki-Laki = {{ (int) ($summary['male_count'] ?? 0) }}
+                        ({{ (int) ($summary['male_percent'] ?? 0) }}%)
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        Perempuan = {{ (int) ($summary['female_count'] ?? 0) }} ({{ (int) ($summary['female_percent'] ?? 0) }}%)
+                        Perempuan = {{ (int) ($summary['female_count'] ?? 0) }}
+                        ({{ (int) ($summary['female_percent'] ?? 0) }}%)
                     </td>
                 </tr>
                 <tr class="summary-note">
@@ -229,9 +233,12 @@
                 @foreach ($departmentTotals as $department)
                     <tr class="department-total-row">
                         <td colspan="7">
-                            <span style="display: inline-block; width: 45%;">{{ (string) ($department['department'] ?? '') }}</span>
-                            <span style="display: inline-block; width: 12%; text-align: center;">{{ (string) ($department['total_lembur'] ?? '0') }}</span>
-                            <span style="display: inline-block; width: 12%; text-align: center;">{{ (string) ($department['percentage'] ?? '0.0%') }}</span>
+                            <span
+                                style="display: attachment-block; width: 45%;">{{ (string) ($department['department'] ?? '') }}</span>
+                            <span
+                                style="display: attachment-block; width: 12%; text-align: center;">{{ (string) ($department['total_lembur'] ?? '0') }}</span>
+                            <span
+                                style="display: attachment-block; width: 12%; text-align: center;">{{ (string) ($department['percentage'] ?? '0.0%') }}</span>
                         </td>
                     </tr>
                 @endforeach

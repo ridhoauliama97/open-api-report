@@ -50,8 +50,8 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['source_file'] ?? null) === 'request field: xml'
-                    && ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['source_file'] ?? null) === 'request field: xml'
+                && ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -100,7 +100,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -113,7 +113,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan RU');
     }
 
     public function test_internal_ascend_api_can_render_uploaded_xml_as_pdf_without_jwt(): void
@@ -132,7 +132,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -145,7 +145,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan RU');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -164,7 +164,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -187,7 +187,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan RU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan RU');
     }
 
     public function test_internal_ascend_api_can_render_uc_list_karyawan_pdf_without_jwt(): void
@@ -206,7 +206,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -219,7 +219,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan UC');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan UC');
     }
 
     public function test_internal_ascend_api_can_render_gsu_list_karyawan_pdf_without_jwt(): void
@@ -238,7 +238,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -251,7 +251,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan GSU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan GSU');
     }
 
     public function test_ascend_test_upload_form_can_preview_gsu_list_karyawan_pdf(): void
@@ -270,7 +270,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -286,7 +286,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan GSU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan GSU');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_list_karyawan_pdf(): void
@@ -305,7 +305,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -321,7 +321,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'List Karyawan UC');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan UC');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -378,7 +378,7 @@ XML;
     private function authHeaders(User $user, string $accept = 'application/json'): array
     {
         return [
-            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
+            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
             'Accept' => $accept,
         ];
     }
@@ -406,19 +406,8 @@ XML;
                 'Nama Tempat Ibadah',
                 'Lemari',
             ],
-            'rows' => [[
-                'Nama' => 'Budi Santoso',
-                'Jenis Kelamin' => 'Wanita',
-                'Usia' => '30 Thn',
-                'Jabatan' => 'Staff',
-                'Lama Bekerja' => '1 Thn 2 Bln',
-                'Keterangan' => '',
-                'Nama Tempat Ibadah' => '',
-                'Lemari' => '',
-                'Departemen' => 'HRM',
-            ]],
-            'grouped_rows' => [
-                'HRM' => [[
+            'rows' => [
+                [
                     'Nama' => 'Budi Santoso',
                     'Jenis Kelamin' => 'Wanita',
                     'Usia' => '30 Thn',
@@ -428,7 +417,22 @@ XML;
                     'Nama Tempat Ibadah' => '',
                     'Lemari' => '',
                     'Departemen' => 'HRM',
-                ]],
+                ]
+            ],
+            'grouped_rows' => [
+                'HRM' => [
+                    [
+                        'Nama' => 'Budi Santoso',
+                        'Jenis Kelamin' => 'Wanita',
+                        'Usia' => '30 Thn',
+                        'Jabatan' => 'Staff',
+                        'Lama Bekerja' => '1 Thn 2 Bln',
+                        'Keterangan' => '',
+                        'Nama Tempat Ibadah' => '',
+                        'Lemari' => '',
+                        'Departemen' => 'HRM',
+                    ]
+                ],
             ],
             'total_rows' => 1,
             'summary' => [

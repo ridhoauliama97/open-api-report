@@ -895,6 +895,21 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.pendukung-arus-kas.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/arus-kas-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerArusKasUcPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.arus-kas-uc.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/arus-kas-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerArusKasRuPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.arus-kas-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/arus-kas-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerArusKasGsuPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.arus-kas-gsu.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/trial_balance/saldo-bank/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerSaldoBankPdf']
 )->name('api.internal.ascends.shared.general_ledger.trial_balance.saldo-bank.pdf');

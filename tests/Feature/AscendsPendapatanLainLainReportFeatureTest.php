@@ -33,10 +33,10 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.other_income_deduction.pendapatan_lain_lain.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                    && ($data['reportData']['title'] ?? null) === 'Laporan Pendapatan Lain-Lain'
-                    && ($data['reportData']['printed_by'] ?? null) === 'Windi'
-                    && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                && ($data['reportData']['title'] ?? null) === 'Laporan Pendapatan Lain-Lain'
+                && ($data['reportData']['printed_by'] ?? null) === 'Windi'
+                && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -51,7 +51,7 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'inline', 'Other Income Deduction - Laporan Pendapatan Lain Lain (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Other Income Deduction - Laporan Pendapatan Lain Lain (GSU)');
     }
 
     public function test_parser_excludes_employeeother_and_sorts_by_full_name(): void

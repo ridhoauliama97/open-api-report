@@ -149,7 +149,7 @@
         }
 
         .request-value {
-            display: inline-block;
+            display: attachment-block;
             margin-left: 8px;
             font-size: 18px;
             font-weight: bold;

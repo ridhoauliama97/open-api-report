@@ -57,7 +57,7 @@ class PenerimaanKayuBulatPerSupplierBulananGrafikController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Penerimaan-Kayu-Bulat-Per-Supplier-Bulanan-Grafik-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

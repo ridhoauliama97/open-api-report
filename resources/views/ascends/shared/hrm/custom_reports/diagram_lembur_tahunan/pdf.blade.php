@@ -91,7 +91,7 @@
         }
 
         .cost-table .color-swatch {
-            display: inline-block;
+            display: attachment-block;
             width: 16px;
             height: 14px;
             margin-right: 6px;
@@ -114,17 +114,31 @@
             ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        $barColors = ['#2196F3', '#FF9800', '#4CAF50',
-                    '#E91E63', '#9C27B0', '#00BCD4',
-                    '#FF5722', '#607D8B', '#CDDC39',
-                    '#795548', '#03A9F4', '#8BC34A'];
+        $barColors = [
+            '#2196F3',
+            '#FF9800',
+            '#4CAF50',
+            '#E91E63',
+            '#9C27B0',
+            '#00BCD4',
+            '#FF5722',
+            '#607D8B',
+            '#CDDC39',
+            '#795548',
+            '#03A9F4',
+            '#8BC34A',
+        ];
 
         $allDeptNames = [];
         foreach ($monthlyDataSt as $m) {
-            foreach ($m['departments'] as $d) { $allDeptNames[$d['name']] = true; }
+            foreach ($m['departments'] as $d) {
+                $allDeptNames[$d['name']] = true;
+            }
         }
         foreach ($monthlyDataKkKt as $m) {
-            foreach ($m['departments'] as $d) { $allDeptNames[$d['name']] = true; }
+            foreach ($m['departments'] as $d) {
+                $allDeptNames[$d['name']] = true;
+            }
         }
 
         $assigned = [];
@@ -150,14 +164,24 @@
         $chartHeight = $chartBottom - $chartTop;
         $barWidth = 30;
 
-        $calcChartWidth = static function (array $chartData) use ($barWidth, $barGap, $groupGap, $marginLeft, $marginRight): float {
-            if ($chartData === []) return 0;
+        $calcChartWidth = static function (array $chartData) use (
+            $barWidth,
+            $barGap,
+            $groupGap,
+            $marginLeft,
+            $marginRight,
+        ): float {
+            if ($chartData === []) {
+                return 0;
+            }
             $total = $marginLeft;
             $monthCount = count($chartData);
             foreach ($chartData as $i => $month) {
                 $deptCount = is_array($month['departments'] ?? null) ? count($month['departments']) : 0;
                 $total += $deptCount * ($barWidth + $barGap);
-                if ($i < $monthCount - 1) $total += $groupGap;
+                if ($i < $monthCount - 1) {
+                    $total += $groupGap;
+                }
             }
             return $total + $marginRight;
         };
@@ -221,11 +245,16 @@
                         <tr>
                             <td class="center">{{ $loop->iteration }}</td>
                             <td>
-                                <span class="color-swatch" style="background: {{ $deptColor($row['department']) }};">&nbsp;</span>
+                                <span class="color-swatch"
+                                    style="background: {{ $deptColor($row['department']) }};">&nbsp;</span>
                                 {{ $row['department'] }}
                             </td>
-                            <td style="text-align: right;">{{ $row['staff_cost'] > 0 ? 'Rp '.number_format($row['staff_cost'], 0, ',', '.') : '-' }}</td>
-                            <td style="text-align: right;">{{ $row['kk_kt_cost'] > 0 ? 'Rp '.number_format($row['kk_kt_cost'], 0, ',', '.') : '-' }}</td>
+                            <td style="text-align: right;">
+                                {{ $row['staff_cost'] > 0 ? 'Rp ' . number_format($row['staff_cost'], 0, ',', '.') : '-' }}
+                            </td>
+                            <td style="text-align: right;">
+                                {{ $row['kk_kt_cost'] > 0 ? 'Rp ' . number_format($row['kk_kt_cost'], 0, ',', '.') : '-' }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

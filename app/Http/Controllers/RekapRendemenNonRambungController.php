@@ -94,7 +94,7 @@ class RekapRendemenNonRambungController extends Controller
         GenerateRekapRendemenNonRambungReportRequest $request,
         RekapRendemenNonRambungReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $inline,
+        bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -135,7 +135,7 @@ class RekapRendemenNonRambungController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Rendemen-Non-Rambung-%s-%02d.pdf', $year, (int) $month);
-        $dispositionType = $inline ? 'inline' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
