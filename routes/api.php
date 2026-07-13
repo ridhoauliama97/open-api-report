@@ -790,6 +790,21 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.journal_details.laporan-laba-rugi-uc.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laporan-laba-rugi-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLaporanLabaRugiGsuPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laporan-laba-rugi-gsu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/rekap-biaya-laba-rugi/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerRekapBiayaLabaRugiPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.rekap-biaya-laba-rugi.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/pinjaman-karyawan/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerPinjamanKaryawanPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.pinjaman-karyawan.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/journal_details/pendapatan-dan-biaya-lain/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerPendapatanDanBiayaLainPdf']
 )->name('api.internal.ascends.shared.general_ledger.journal_details.pendapatan-dan-biaya-lain.pdf');

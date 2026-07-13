@@ -81,9 +81,8 @@
 
         .grand-row td {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
             padding: 3px 4px;
         }
 
@@ -117,16 +116,20 @@
             padding: 8px 4px;
         }
 
+        .col-no {
+            width: 5%;
+        }
+
         .col-kode {
-            width: 20%;
+            width: 18%;
         }
 
         .col-nama {
-            width: 55%;
+            width: 50%;
         }
 
         .col-jumlah {
-            width: 25%;
+            width: 22%;
         }
     </style>
 </head>
@@ -145,7 +148,7 @@
 
         function formatAmount($value)
         {
-            return number_format((float) $value, 0, '.', ',');
+            return number_format((float) $value, 2, '.', ',');
         }
     @endphp
 
@@ -157,6 +160,7 @@
         <table class="data-table">
             <thead>
                 <tr>
+                    <th class="col-no">No</th>
                     <th class="col-kode">Kode Perkiraan</th>
                     <th class="col-nama">Nama Perkiraan</th>
                     <th class="col-jumlah">Jumlah</th>
@@ -164,17 +168,17 @@
             </thead>
             <tbody>
                 @php $globalRow = 0; @endphp
-                @foreach ($rows as $item)
+                @foreach ($rows as $row)
                     @php $globalRow++; @endphp
                     <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                        <td>{{ (string) ($item['account_code'] ?? '') }}</td>
-                        <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                        <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
+                        <td class="center">{{ $row['no'] }}</td>
+                        <td>{{ (string) ($row['account_code'] ?? '') }}</td>
+                        <td>{{ (string) ($row['account_name'] ?? '') }}</td>
+                        <td class="number nowrap">{{ formatAmount($row['total'] ?? 0) }}</td>
                     </tr>
                 @endforeach
-
                 <tr class="grand-row">
-                    <td colspan="2" class="center">Grand Total :</td>
+                    <td colspan="3" class="center">Total :</td>
                     <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
                 </tr>
             </tbody>
@@ -183,7 +187,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="3">Tidak ada data.</td>
+                    <td colspan="4">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

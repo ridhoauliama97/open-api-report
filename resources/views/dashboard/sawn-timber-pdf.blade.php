@@ -110,7 +110,7 @@
         }
 
         .summary-label {
-            display: inline-block;
+            display: attachment-block;
             min-width: 190px;
             font-weight: bold;
         }

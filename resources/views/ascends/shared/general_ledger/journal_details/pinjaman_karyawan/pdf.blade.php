@@ -69,7 +69,6 @@
             font-weight: bold;
             font-size: 10px;
             border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
             text-align: center;
         }
 
@@ -79,9 +78,27 @@
             border-bottom: none;
         }
 
+        .account-header td {
+            font-weight: bold;
+            font-size: 10px;
+            font-style: italic;
+            padding: 4px 4px;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .account-subtotal td {
+            font-weight: bold;
+            font-size: 10px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 3px 4px;
+        }
+
         .grand-row td {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 3px 4px;
@@ -117,24 +134,33 @@
             padding: 8px 4px;
         }
 
-        .col-kode {
-            width: 20%;
+        .col-tanggal {
+            width: 12%;
         }
 
-        .col-nama {
-            width: 55%;
+        .col-keterangan {
+            width: 50%;
+        }
+
+        .col-debet {
+            width: 13%;
+        }
+
+        .col-kredit {
+            width: 13%;
         }
 
         .col-jumlah {
-            width: 25%;
+            width: 12%;
         }
     </style>
 </head>
 
 <body>
     @php
-        $rows = $reportData['rows'] ?? [];
-        $grandTotal = (float) ($reportData['grand_total'] ?? 0);
+        $accounts = $reportData['accounts'] ?? [];
+        $grandTotalDb = (float) ($reportData['grand_total_db'] ?? 0);
+        $grandTotalCr = (float) ($reportData['grand_total_cr'] ?? 0);
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
             ->locale('id')
             ->translatedFormat('d-M-y H:i');
@@ -145,7 +171,7 @@
 
         function formatAmount($value)
         {
-            return number_format((float) $value, 0, '.', ',');
+            return number_format((float) $value, 2, '.', ',');
         }
     @endphp
 
@@ -153,29 +179,57 @@
     <h1 class="report-title">{{ $headerTitle }}</h1>
     <p class="report-subtitle">{{ $headerSubtitle }}</p>
 
-    @if (count($rows) > 0)
+    @if (count($accounts) > 0)
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="col-kode">Kode Perkiraan</th>
-                    <th class="col-nama">Nama Perkiraan</th>
+                    <th class="col-tanggal">Tanggal</th>
+                    <th class="col-keterangan">Keterangan</th>
+                    <th class="col-debet">Debet</th>
+                    <th class="col-kredit">Kredit</th>
                     <th class="col-jumlah">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
                 @php $globalRow = 0; @endphp
-                @foreach ($rows as $item)
-                    @php $globalRow++; @endphp
-                    <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                        <td>{{ (string) ($item['account_code'] ?? '') }}</td>
-                        <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                        <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
+                @foreach ($accounts as $account)
+                    <tr class="account-header">
+                        <td colspan="5">{{ (string) ($account['account_code'] ?? '') }} -
+                            {{ (string) ($account['account_name'] ?? '') }}</td>
+                    </tr>
+
+                    @php $itemIndex = 0; @endphp
+                    @foreach ($account['items'] as $item)
+                        @php
+                            $globalRow++;
+                            $itemIndex++;
+                        @endphp
+                        <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                            <td class="center nowrap">
+                                {{ \Carbon\Carbon::parse($item['voucher_date'])->locale('id')->isoFormat('DD-MMM-YY') }}
+                            </td>
+                            <td>{{ (string) ($item['description'] ?? '') }}</td>
+                            <td class="number nowrap">
+                                {{ $item['amount_db'] > 0 ? formatAmount($item['amount_db']) : '-' }}</td>
+                            <td class="number nowrap">
+                                {{ $item['amount_cr'] > 0 ? formatAmount($item['amount_cr']) : '-' }}</td>
+                            <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
+                        </tr>
+                    @endforeach
+
+                    <tr class="account-subtotal">
+                        <td colspan="2" class="center">Total {{ (string) ($account['account_name'] ?? '') }} :</td>
+                        <td class="number nowrap">{{ formatAmount($account['subtotal_db'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount($account['subtotal_cr'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount($account['subtotal'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
-                    <td colspan="2" class="center">Grand Total :</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                    <td colspan="2" class="center" style="font-size: 11px;">Grand Total</td>
+                    <td class="number nowrap">{{ formatAmount($grandTotalDb) }}</td>
+                    <td class="number nowrap">{{ formatAmount($grandTotalCr) }}</td>
+                    <td class="number nowrap">{{ formatAmount($grandTotalDb - $grandTotalCr) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -183,7 +237,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="3">Tidak ada data.</td>
+                    <td colspan="5">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>
