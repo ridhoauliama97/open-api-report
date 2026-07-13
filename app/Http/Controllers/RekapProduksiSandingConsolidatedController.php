@@ -194,7 +194,7 @@ class RekapProduksiSandingConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }

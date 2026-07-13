@@ -33,8 +33,8 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                && !array_key_exists('pdf_orientation', $data)
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ! array_key_exists('pdf_orientation', $data)
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -67,7 +67,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -101,7 +101,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -135,7 +135,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -280,7 +280,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
                     'No ID' => '131465',
                     'Posisi' => 'Kru Table Saw',
                     'Paraf' => '',
-                ]
+                ],
             ],
             'grouped_rows' => [
                 [
@@ -291,9 +291,9 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
                             'No ID' => '131465',
                             'Posisi' => 'Kru Table Saw',
                             'Paraf' => '',
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
             'total_rows' => 1,
         ];

@@ -33,7 +33,7 @@ class AscendsKehadiranKkKtStReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.kehadiran_kk_kt_st.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Kehadiran KK/KT/ST')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))

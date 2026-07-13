@@ -173,7 +173,7 @@ class PenjualanLokalController extends Controller
             }
 
             $sectionKey = $proses !== '' ? $proses : 'LAINNYA';
-            if (!isset($sections[$sectionKey])) {
+            if (! isset($sections[$sectionKey])) {
                 $sections[$sectionKey] = [
                     'proses' => $sectionKey,
                     'rows' => [],
@@ -189,8 +189,8 @@ class PenjualanLokalController extends Controller
             ];
             $sections[$sectionKey]['subtotal_ton'] += $ton;
 
-            $groupKey = $jenisLabel . '|' . $namaGrade;
-            if (!isset($grouped[$groupKey])) {
+            $groupKey = $jenisLabel.'|'.$namaGrade;
+            if (! isset($grouped[$groupKey])) {
                 $grouped[$groupKey] = [
                     'jenis' => $jenisLabel,
                     'nama_grade' => $namaGrade,
@@ -242,7 +242,7 @@ class PenjualanLokalController extends Controller
             return (float) $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

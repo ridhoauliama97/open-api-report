@@ -176,7 +176,7 @@ xml_file=AnlReports.GeneralLedger.JournalDetails.xml
 ## Response Sukses
 
 - `200 application/pdf`
-- `Content-Disposition: attachment`
+- `Content-Disposition: inline`
 
 Title yang tampil di halaman PDF tetap memakai nama laporan tanpa prefix kategori. Nilai `{company}` berasal dari parameter `DB_CompanyName`, atau fallback field form `company` jika parameter tersebut tidak ada:
 

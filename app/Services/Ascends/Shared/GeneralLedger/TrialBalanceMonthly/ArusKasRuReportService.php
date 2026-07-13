@@ -518,7 +518,7 @@ class ArusKasRuReportService
                 continue;
             }
 
-            if (!in_array($ac1, $processed, true)) {
+            if (! in_array($ac1, $processed, true)) {
                 $total += $this->getEndingForPeriod($rows, $ac1, $period);
                 $processed[] = $ac1;
             }

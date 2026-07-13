@@ -26,7 +26,7 @@ class AscendsDataPesertaMakanSiangIbadahAulaPerDepartemenReportFeatureTest exten
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
                 && ($filters['month'] ?? null) === '5'
                 && ($filters['year'] ?? null) === '2026'
             ))
@@ -37,7 +37,7 @@ class AscendsDataPesertaMakanSiangIbadahAulaPerDepartemenReportFeatureTest exten
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.data_peserta_makan_siang_ibadah_aula_per_departemen.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && ($data['reportData']['title'] ?? null) === 'Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'

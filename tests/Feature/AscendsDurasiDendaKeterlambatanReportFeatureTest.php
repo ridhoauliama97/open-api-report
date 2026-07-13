@@ -26,7 +26,7 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: late.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
                 && ($filters['Pilih Type'] ?? null) === 'Staff'
                 && ($filters['DateInput'] ?? null) === '2026-05-01'
                 && ($filters['start_date'] ?? null) === '2026-06-01'
@@ -39,7 +39,7 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.late_sign_in.durasi_denda_keterlambatan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Durasi & Denda Keterlambatan (Staff) Per Departemen (RU)'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
             ))

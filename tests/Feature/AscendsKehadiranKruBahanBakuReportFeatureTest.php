@@ -26,7 +26,7 @@ class AscendsKehadiranKruBahanBakuReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-05'
+                static fn (array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-05'
                 && ($filters['end_date'] ?? null) === '2026-05-06'
             ))
             ->andReturn($this->reportData());
@@ -36,7 +36,7 @@ class AscendsKehadiranKruBahanBakuReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.kehadiran_kru_bahan_baku.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Kehadiran Kru Bahan Baku (RU)'
                 && ($data['pdf_format'] ?? null) === 'A4'
                 && ($data['pdf_orientation'] ?? null) === 'landscape'

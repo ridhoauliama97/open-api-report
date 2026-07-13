@@ -26,7 +26,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: employee-list.xml', Mockery::on(
-                static fn(array $filters): bool => (string) ($filters['month'] ?? '') === '6'
+                static fn (array $filters): bool => (string) ($filters['month'] ?? '') === '6'
                 && (string) ($filters['year'] ?? '') === '2026'
             ))
             ->andReturn($this->reportData());
@@ -36,7 +36,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.list_karyawan_habis_kontrak.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan List Karyawan Habis Kontrak')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -66,7 +66,7 @@ class AscendsListKaryawanHabisKontrakReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request raw xml body', Mockery::on(
-                static fn(array $filters): bool => (string) ($filters['month'] ?? '') === '7'
+                static fn (array $filters): bool => (string) ($filters['month'] ?? '') === '7'
                 && (string) ($filters['year'] ?? '') === '2026'
             ))
             ->andReturn($this->reportData());

@@ -33,7 +33,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_agama.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -66,7 +66,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_agama.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Agama'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Agama'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -229,7 +229,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
                     'Umur' => '45 Tahun',
                     'THR' => 'THR IMLEK',
                     'Agama' => 'Buddha',
-                ]
+                ],
             ],
             'grouped_rows' => [
                 [
@@ -242,10 +242,10 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
                             'Umur' => '45 Tahun',
                             'THR' => 'THR IMLEK',
                             'Agama' => 'Buddha',
-                        ]
+                        ],
                     ],
                     'summary' => ['subtotal' => 1],
-                ]
+                ],
             ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,

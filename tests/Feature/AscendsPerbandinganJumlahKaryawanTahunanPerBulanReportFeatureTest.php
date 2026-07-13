@@ -35,7 +35,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.perbandingan_jumlah_karyawan_tahunan_per_bulan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'UC'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
                 && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Perbandingan Jumlah Karyawan Tahunan Per Bulan')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))

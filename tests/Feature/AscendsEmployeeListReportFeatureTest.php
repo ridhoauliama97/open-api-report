@@ -50,7 +50,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['source_file'] ?? null) === 'request field: xml'
+                static fn (array $data): bool => ($data['reportData']['source_file'] ?? null) === 'request field: xml'
                 && ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -100,7 +100,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -132,7 +132,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -164,7 +164,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -206,7 +206,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -238,7 +238,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -270,7 +270,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -305,7 +305,7 @@ XML;
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -378,7 +378,7 @@ XML;
     private function authHeaders(User $user, string $accept = 'application/json'): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => $accept,
         ];
     }
@@ -417,7 +417,7 @@ XML;
                     'Nama Tempat Ibadah' => '',
                     'Lemari' => '',
                     'Departemen' => 'HRM',
-                ]
+                ],
             ],
             'grouped_rows' => [
                 'HRM' => [
@@ -431,7 +431,7 @@ XML;
                         'Nama Tempat Ibadah' => '',
                         'Lemari' => '',
                         'Departemen' => 'HRM',
-                    ]
+                    ],
                 ],
             ],
             'total_rows' => 1,

@@ -63,7 +63,7 @@ class LabelStHidupDetailAsyncReportFeatureTest extends TestCase
         ]);
 
         $response = $this
-            ->withHeader('Authorization', 'Bearer ' . $this->issueJwtForUser($user))
+            ->withHeader('Authorization', 'Bearer '.$this->issueJwtForUser($user))
             ->postJson('/api/reports/sawn-timber/label-st-hidup-detail/pdf/async')
             ->assertAccepted()
             ->assertJsonPath('status', 'queued')
@@ -88,8 +88,8 @@ class LabelStHidupDetailAsyncReportFeatureTest extends TestCase
         $jobStore->markDone((string) $job['job_id'], 'pdf_reports/test-label-st-hidup-detail.pdf');
 
         $response = $this
-            ->withHeader('Authorization', 'Bearer ' . $this->issueJwtForUser($user))
-            ->get('/api/reports/sawn-timber/label-st-hidup-detail/pdf?job_id=' . $job['job_id'])
+            ->withHeader('Authorization', 'Bearer '.$this->issueJwtForUser($user))
+            ->get('/api/reports/sawn-timber/label-st-hidup-detail/pdf?job_id='.$job['job_id'])
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
@@ -110,7 +110,7 @@ class LabelStHidupDetailAsyncReportFeatureTest extends TestCase
         $jobStore->markDone((string) $job['job_id'], 'pdf_reports/test-label-st-hidup-detail.pdf');
 
         $response = $this
-            ->withHeader('Authorization', 'Bearer ' . $this->issueJwtForUser($user))
+            ->withHeader('Authorization', 'Bearer '.$this->issueJwtForUser($user))
             ->postJson('/api/reports/sawn-timber/label-st-hidup-detail/pdf/async')
             ->assertOk()
             ->assertJsonPath('job_id', $job['job_id'])
@@ -134,13 +134,13 @@ class LabelStHidupDetailAsyncReportFeatureTest extends TestCase
         $jobStore->markDone((string) $job['job_id'], 'pdf_reports/shared-label-st-hidup-detail.pdf');
 
         $response = $this
-            ->withHeader('Authorization', 'Bearer ' . $this->issueJwtForUser($user, ['username' => 'different-user']))
+            ->withHeader('Authorization', 'Bearer '.$this->issueJwtForUser($user, ['username' => 'different-user']))
             ->postJson('/api/reports/sawn-timber/label-st-hidup-detail/pdf/async')
             ->assertOk()
             ->assertJsonPath('job_id', $job['job_id'])
             ->assertJsonPath('status', 'done')
             ->assertJsonPath('message', 'PDF sudah tersedia.');
 
-        $this->assertStringContainsString('job_id=' . $job['job_id'], (string) $response->json('pdf_url'));
+        $this->assertStringContainsString('job_id='.$job['job_id'], (string) $response->json('pdf_url'));
     }
 }

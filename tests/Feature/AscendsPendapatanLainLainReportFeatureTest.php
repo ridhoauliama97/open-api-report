@@ -33,7 +33,7 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.other_income_deduction.pendapatan_lain_lain.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Pendapatan Lain-Lain'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'

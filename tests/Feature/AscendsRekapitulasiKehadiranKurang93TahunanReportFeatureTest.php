@@ -26,7 +26,7 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
                 && ($filters['Pilih Status'] ?? null) === 'Staff'
             ))
             ->andReturn($this->reportData('GSU', 'Staff'));
@@ -36,7 +36,7 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.rekapitulasi_kehadiran_kurang_93_tahunan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (Staff) (GSU)'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'

@@ -33,8 +33,8 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                && !array_key_exists('pdf_orientation', $data)
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                && ! array_key_exists('pdf_orientation', $data)
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -67,7 +67,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -101,7 +101,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -135,7 +135,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.data_karyawan_status_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === $title
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === $title
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -294,7 +294,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
                     'Pendidikan' => 'SMA',
                     'Jabatan' => 'Kru Cross Cut Awal',
                     'HK' => 'KARYAWAN KONTRAK',
-                ]
+                ],
             ],
             'total_rows' => 1,
         ];

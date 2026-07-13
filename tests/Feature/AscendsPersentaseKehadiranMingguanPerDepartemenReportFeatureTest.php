@@ -26,7 +26,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
+                static fn (array $filters): bool => ($filters['start_date'] ?? null) === '2026-05-01'
                 && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
             ->andReturn($this->reportData());
@@ -36,7 +36,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Persentase Kehadiran Mingguan Per Departemen')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -106,7 +106,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
             ))
             ->andReturn($this->reportData('GSU'));
 
@@ -115,7 +115,7 @@ class AscendsPersentaseKehadiranMingguanPerDepartemenReportFeatureTest extends T
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.persentase_kehadiran_mingguan_per_departemen.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Persentase Kehadiran Mingguan Per Departemen (GSU)'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
             ))

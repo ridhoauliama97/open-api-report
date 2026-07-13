@@ -26,7 +26,7 @@ class AscendsAbsensiBriefingHarianGsuReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['Pilih Group'] ?? null) === 'Sales'
+                static fn (array $filters): bool => ($filters['Pilih Group'] ?? null) === 'Sales'
                 && ($filters['report_date'] ?? null) === '2026-06-04'
             ))
             ->andReturn($this->reportData());
@@ -36,7 +36,7 @@ class AscendsAbsensiBriefingHarianGsuReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance_full.absensi_briefing_harian_gsu.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Absensi Briefing Harian')
                 && str_contains((string) ($data['reportData']['title'] ?? ''), 'Sales')
                 && ($data['reportData']['printed_by'] ?? null) === 'Ridho'

@@ -379,9 +379,9 @@ class ArusKasGsuReportService
             $ac1 = (string) ($row['AccountCode1'] ?? '');
             $prefix7 = substr($ac1, 0, 7);
 
-            if ($prefix7 === '131.100' && !in_array($ac1, $processed, true)) {
+            if ($prefix7 === '131.100' && ! in_array($ac1, $processed, true)) {
                 $total += $this->getEndingForPeriod($rows, $ac1, $periodEnd)
-                       - $this->getEndingForPeriod($rows, $ac1, $periodStart);
+                    - $this->getEndingForPeriod($rows, $ac1, $periodStart);
                 $processed[] = $ac1;
             }
         }
@@ -576,7 +576,7 @@ class ArusKasGsuReportService
                 continue;
             }
 
-            if (!in_array($ac1, $processed, true)) {
+            if (! in_array($ac1, $processed, true)) {
                 $total += $this->getEndingForPeriod($rows, $ac1, $period);
                 $processed[] = $ac1;
             }

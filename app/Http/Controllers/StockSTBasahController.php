@@ -105,7 +105,7 @@ class StockSTBasahController extends Controller
         $dispositionType = $attachment ? 'attachment' : 'attachment';
         $cacheKey = $this->pdfCacheKey($endDate, $generatedBy);
 
-        if (!$request->boolean('pdf_disable_cache')) {
+        if (! $request->boolean('pdf_disable_cache')) {
             $cachedPdf = $this->getCachedPdf($cacheKey);
             if (is_string($cachedPdf) && $cachedPdf !== '') {
                 return response($cachedPdf, 200, [
@@ -137,7 +137,7 @@ class StockSTBasahController extends Controller
             'pdf_simple_tables' => false,
         ]);
 
-        if (!$request->boolean('pdf_disable_cache')) {
+        if (! $request->boolean('pdf_disable_cache')) {
             $this->putCachedPdf($cacheKey, $pdf);
         }
 
@@ -158,7 +158,7 @@ class StockSTBasahController extends Controller
             ?? $generatedBy->Nama
             ?? 'unknown');
 
-        return 'report-pdf:stock-st-basah:' . hash('sha256', $endDate . '|' . $userKey);
+        return 'report-pdf:stock-st-basah:'.hash('sha256', $endDate.'|'.$userKey);
     }
 
     private function getCachedPdf(string $cacheKey): ?string

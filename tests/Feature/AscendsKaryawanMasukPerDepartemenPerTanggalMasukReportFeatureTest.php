@@ -34,7 +34,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 2
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 2
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -67,7 +67,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn(array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
+                static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -103,7 +103,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && ($data['reportData']['company'] ?? null) === 'GSU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (GSU)'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
@@ -139,7 +139,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.daftar_karyawan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'UC'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
                 && ($data['reportData']['company'] ?? null) === 'UC'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Daftar Karyawan (UC)'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
@@ -188,7 +188,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
-                static fn(array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
+                static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -308,7 +308,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
                     'Level' => '2',
                     'Pendidikan Terakhir' => 'S1',
                     'Tanggal Masuk' => '04-Agt-2017',
-                ]
+                ],
             ],
             'grouped_rows' => [
                 [
@@ -323,9 +323,9 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
                             'Level' => '2',
                             'Pendidikan Terakhir' => 'S1',
                             'Tanggal Masuk' => '04-Agt-2017',
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
             'total_rows' => 2,
         ];

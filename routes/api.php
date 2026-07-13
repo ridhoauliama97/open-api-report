@@ -910,6 +910,21 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.arus-kas-gsu.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/financial-rasio-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerFinancialRasioUcPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.financial-rasio-uc.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/financial-rasio-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerFinancialRasioRuPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.financial-rasio-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general_ledger/trial_balance_monthly/financial-rasio-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerFinancialRasioGsuPdf']
+)->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.financial-rasio-gsu.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/trial_balance/saldo-bank/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerSaldoBankPdf']
 )->name('api.internal.ascends.shared.general_ledger.trial_balance.saldo-bank.pdf');

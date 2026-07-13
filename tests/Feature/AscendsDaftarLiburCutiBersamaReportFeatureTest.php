@@ -33,7 +33,7 @@ class AscendsDaftarLiburCutiBersamaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.holiday.daftar_libur_cuti_bersama.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && ($data['reportData']['title'] ?? null) === 'Daftar Libur Dan Cuti Bersama'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'

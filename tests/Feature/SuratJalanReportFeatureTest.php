@@ -76,7 +76,7 @@ class SuratJalanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('reports.penjualan.surat-jalan-pdf', Mockery::on(
-                static fn(array $data): bool => ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn (array $data): bool => ($data['pdf_orientation'] ?? null) === 'portrait'
                 && ($data['pdf_title'] ?? null) === 'Surat Jalan'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -203,7 +203,7 @@ class SuratJalanReportFeatureTest extends TestCase
     private function authJsonHeaders(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => 'application/json',
         ];
     }

@@ -26,7 +26,7 @@ class AscendsPerbandinganKehadiranPerBulanReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
                 && ($filters['start_date'] ?? null) === '2026-01-01'
                 && ($filters['end_date'] ?? null) === '2026-02-28'
             ))
@@ -37,7 +37,7 @@ class AscendsPerbandinganKehadiranPerBulanReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance.perbandingan_kehadiran_per_bulan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Perbandingan Kehadiran Per Bulan'
                 && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'

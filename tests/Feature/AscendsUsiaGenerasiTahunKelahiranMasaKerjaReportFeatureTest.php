@@ -33,7 +33,7 @@ class AscendsUsiaGenerasiTahunKelahiranMasaKerjaReportFeatureTest extends TestCa
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.usia_generasi_tahun_kelahiran_masa_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'UC'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'UC'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Usia Generasi Berdasakan Tahun Kelahiran dan Masa Kerja (UC)'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))

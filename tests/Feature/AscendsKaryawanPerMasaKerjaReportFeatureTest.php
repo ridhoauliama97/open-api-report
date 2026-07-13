@@ -36,7 +36,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -68,7 +68,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (RU)'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -101,7 +101,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (RU)'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -244,7 +244,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
                     'Level' => '2',
                     'Tanggal Masuk' => '20/02/2016',
                     'Masa Kerja' => '10 Thn 3 Bln',
-                ]
+                ],
             ],
             'total_rows' => 1,
         ];

@@ -12,7 +12,7 @@ class ForceattachmentPdfPreview
     {
         $response = $next($request);
 
-        if (!$request->boolean('preview_pdf')) {
+        if (! $request->boolean('preview_pdf')) {
             return $response;
         }
 

@@ -26,7 +26,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: attendance.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'GSU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'GSU'
                 && ($filters['start_date'] ?? null) === '2026-04-01'
                 && ($filters['end_date'] ?? null) === '2026-05-31'
             ))
@@ -37,7 +37,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.attendance.keterlambatan_kehadiran_briefing_harian.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'GSU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Keterlambatan Kehadiran Briefing Harian'
                 && ($data['reportData']['printed_by'] ?? null) === 'Ridho'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
@@ -96,7 +96,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
 
         $this->assertCount(2, $reportData['rows']);
 
-        $names = array_map(static fn(array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
+        $names = array_map(static fn (array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
         $this->assertContains('Staff RU A', $names);
         $this->assertContains('Worker RU B', $names);
 
@@ -144,7 +144,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
 
         $this->assertCount(2, $reportData['rows']);
 
-        $names = array_map(static fn(array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
+        $names = array_map(static fn (array $row): string => (string) ($row['Nama'] ?? ''), $reportData['rows']);
 
         $this->assertContains('Custom Shift Worker', $names);
         $this->assertContains('Hour Only Worker', $names);

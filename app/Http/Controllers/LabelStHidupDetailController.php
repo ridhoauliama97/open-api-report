@@ -74,7 +74,7 @@ class LabelStHidupDetailController extends Controller
         }
 
         $requestedBy = (string) ($generatedBy->username ?? $generatedBy->Username ?? $generatedBy->name ?? 'unknown');
-        if (!$request->boolean('force')) {
+        if (! $request->boolean('force')) {
             $cachedJob = $this->findReusablePdfJob($jobStore, $requestedBy);
             if ($cachedJob !== null) {
                 return response()->json([
@@ -206,7 +206,7 @@ class LabelStHidupDetailController extends Controller
         }
 
         $requestedBy = (string) ($generatedBy->username ?? $generatedBy->Username ?? $generatedBy->name ?? 'unknown');
-        if (!$request->boolean('force')) {
+        if (! $request->boolean('force')) {
             $cachedJob = $this->findReusablePdfJob($jobStore, $requestedBy);
             if ($cachedJob !== null) {
                 return $this->downloadFilePdfJob((string) $cachedJob['job_id'], $jobStore, true);
@@ -272,14 +272,14 @@ class LabelStHidupDetailController extends Controller
 
         if (($job['status'] ?? null) !== FilePdfJobStore::STATUS_DONE) {
             return response()->json([
-                'message' => 'PDF belum siap. Status saat ini: ' . ($job['status'] ?? 'unknown'),
+                'message' => 'PDF belum siap. Status saat ini: '.($job['status'] ?? 'unknown'),
                 'status' => $job['status'] ?? 'unknown',
             ], 409);
         }
 
         $disk = Storage::disk((string) config('app.pdf_storage_disk', 'local'));
 
-        if (!is_string($job['file_path'] ?? null) || !$disk->exists((string) $job['file_path'])) {
+        if (! is_string($job['file_path'] ?? null) || ! $disk->exists((string) $job['file_path'])) {
             return response()->json(['message' => 'File PDF tidak ditemukan. Mungkin sudah kadaluarsa.'], 410);
         }
 
@@ -306,18 +306,18 @@ class LabelStHidupDetailController extends Controller
             $artisan,
             'reports:generate-label-st-hidup-detail-pdf',
             $jobId,
-            '--requested-by=' . $requestedBy,
+            '--requested-by='.$requestedBy,
         ];
 
         if (PHP_OS_FAMILY === 'Windows') {
             $escaped = array_map('escapeshellarg', $command);
-            pclose(popen('start /B "" ' . implode(' ', $escaped) . ' > NUL 2>&1', 'r'));
+            pclose(popen('start /B "" '.implode(' ', $escaped).' > NUL 2>&1', 'r'));
 
             return;
         }
 
         $escaped = implode(' ', array_map('escapeshellarg', $command));
-        exec($escaped . ' > /dev/null 2>&1 &');
+        exec($escaped.' > /dev/null 2>&1 &');
     }
 
     private function renderPdf(
@@ -374,10 +374,10 @@ class LabelStHidupDetailController extends Controller
         $filename = 'Laporan-Label-ST-Hidup-Detail.pdf';
 
         $dir = storage_path('app/pdf-temp');
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             @mkdir($dir, 0777, true);
         }
-        $tmpPath = $dir . DIRECTORY_SEPARATOR . uniqid('label-st-hidup-detail-', true) . '.pdf';
+        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('label-st-hidup-detail-', true).'.pdf';
 
         $pdfGenerator->renderToFile('reports.sawn-timber.label-st-hidup-detail-pdf', $payload, $tmpPath);
 
@@ -442,7 +442,7 @@ class LabelStHidupDetailController extends Controller
     private function limitPreviewRows(array $reportData): array
     {
         $rows = $reportData['rows'] ?? null;
-        if (!is_array($rows) || $rows === []) {
+        if (! is_array($rows) || $rows === []) {
             return $reportData;
         }
 

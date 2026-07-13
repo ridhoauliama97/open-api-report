@@ -138,7 +138,7 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('dashboard.sawn-timber-pdf', Mockery::on(
-                static fn(array $data): bool => ($data['startDate'] ?? null) === '2026-05-01'
+                static fn (array $data): bool => ($data['startDate'] ?? null) === '2026-05-01'
                 && ($data['endDate'] ?? null) === '2026-05-15'
                 && ($data['pdf_simple_tables'] ?? null) === false
             ))
@@ -184,7 +184,7 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
     private function authHeaders(User $user, string $accept = 'application/json'): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->issueJwtForUser($user),
+            'Authorization' => 'Bearer '.$this->issueJwtForUser($user),
             'Accept' => $accept,
         ];
     }

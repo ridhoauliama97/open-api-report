@@ -33,7 +33,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_etnis.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
+                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -66,7 +66,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_etnis.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Etnis'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Etnis'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -234,7 +234,7 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
                     'Umur' => '31 Tahun',
                     'Agama' => 'Kristen',
                     'Etnis' => 'Nias',
-                ]
+                ],
             ],
             'grouped_rows' => [
                 [
@@ -248,10 +248,10 @@ class AscendsKaryawanPerEtnisReportFeatureTest extends TestCase
                             'Umur' => '31 Tahun',
                             'Agama' => 'Kristen',
                             'Etnis' => 'Nias',
-                        ]
+                        ],
                     ],
                     'summary' => ['subtotal' => 1],
-                ]
+                ],
             ],
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,

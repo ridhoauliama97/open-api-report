@@ -26,7 +26,7 @@ class AscendsLemburBulananReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: overtime.xml', Mockery::on(
-                static fn(array $filters): bool => ($filters['company'] ?? null) === 'RU'
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'RU'
                 && ($filters['Pilih Tipe'] ?? null) === 'Staff'
                 && ($filters['start_date'] ?? null) === '2026-05-01'
                 && ($filters['end_date'] ?? null) === '2026-05-31'
@@ -38,7 +38,7 @@ class AscendsLemburBulananReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.overtime.lembur_bulanan.pdf', Mockery::on(
-                static fn(array $data): bool => ($data['company'] ?? null) === 'RU'
+                static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
                 && ($data['reportData']['title'] ?? null) === 'Laporan Lembur Bulanan (ST) Per Departemen'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
