@@ -79,7 +79,8 @@
             border-bottom: none;
         }
 
-        .section-header td {
+        .section-header td,
+        .akm-header td {
             font-weight: bold;
             font-size: 10px;
             font-style: italic;
@@ -182,14 +183,6 @@
 
         $deductionSections = ['HARGA POKOK PENJUALAN', 'BEBAN USAHA'];
 
-        $akmNoRasio = ['POTONGAN PENJUALAN', 'RETUR PENJUALAN',
-            'HPP PENJUALAN', 'PEMBELIAN BARANG DAGANG', 'BEBAN PEMBELIAN',
-            'BEBAN PENJUALAN', 'BEBAN UMUM',
-            'PENDAPATAN LAINNYA (PL)', 'BEBAN LAINNYA (BL)',
-            'PENDAPATAN JASA TENAGA AHLI', 'PENDAPATAN JASA SEWA',
-            'PENDAPATAN JASA PRODUKSI', 'PENDAPATAN JASA PEMBELIAN',
-        ];
-
         function fmtAmount($value)
         {
             $value = (float) $value;
@@ -236,6 +229,10 @@
                     </tr>
 
                     @foreach ($section['akm_groups'] as $akmGroup)
+                        <tr class="akm-header">
+                            <td colspan="6">{{ $akmGroup['akm'] }}</td>
+                        </tr>
+
                         @foreach ($akmGroup['items'] as $item)
                             @php $globalRow++; @endphp
                             <tr class="indent-item {{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
@@ -251,21 +248,9 @@
                         <tr class="akm-subtotal indent-akm">
                             <td>TOTAL {{ $akmGroup['akm'] }}</td>
                             <td class="number nowrap">{{ fmtAmount($akmGroup['subtotal_b'] ?? 0) }}</td>
-                            <td class="number nowrap">
-                                @if (in_array($akmGroup['akm'], $akmNoRasio))
-                                    -
-                                @else
-                                    {{ fmtRasio($akmGroup['rasio_b'] ?? 0) }}
-                                @endif
-                            </td>
+                            <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_b'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtAmount($akmGroup['subtotal_a'] ?? 0) }}</td>
-                            <td class="number nowrap">
-                                @if (in_array($akmGroup['akm'], $akmNoRasio))
-                                    -
-                                @else
-                                    {{ fmtRasio($akmGroup['rasio_a'] ?? 0) }}
-                                @endif
-                            </td>
+                            <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_a'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtRasio($akmGroup['selisih'] ?? 0) }}</td>
                         </tr>
                     @endforeach

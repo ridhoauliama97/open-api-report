@@ -22,6 +22,12 @@ use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BiayaProduksiTidakL
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BiayaUpahLangsungDetailReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorPerKategoriReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas45HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas120HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangSemuaReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangCash14HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangTakTertagih90HariReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiRuReportService;
@@ -7062,6 +7068,318 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Laporan Financial Ratio ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceivableDetailsPiutangDiatas60HariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PiutangDiatas60HariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $perDate = trim((string) $request->input('PerDate', ''));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PerDate' => $perDate,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_details.piutang_diatas_60_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 7,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Umur Piutang Di Atas 60 Hari - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceivableDetailsPiutangDiatas45HariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PiutangDiatas45HariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $perDate = trim((string) $request->input('PerDate', ''));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PerDate' => $perDate,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_details.piutang_diatas_45_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 8,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Umur Piutang Diatas 45 Hari - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceivableDetailsPiutangDiatas120HariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PiutangDiatas120HariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $perDate = trim((string) $request->input('PerDate', ''));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PerDate' => $perDate,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_details.piutang_diatas_120_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 9,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Umur Piutang Diatas 120 Hari - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceivableDetailsPiutangSemuaPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PiutangSemuaReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $perDate = trim((string) $request->input('PerDate', ''));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PerDate' => $perDate,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_details.piutang_semua.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 9,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Umur Piutang Semua - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceivableDetailsPiutangCash14HariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PiutangCash14HariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $perDate = trim((string) $request->input('PerDate', ''));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PerDate' => $perDate,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_details.piutang_cash_14_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 8,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Umur Piutang Cash 14 Hari - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceivableDetailsPiutangTakTertagih90HariPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PiutangTakTertagih90HariReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $perDate = trim((string) $request->input('PerDate', ''));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PerDate' => $perDate,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_details.piutang_tak_tertagih_90_hari.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Piutang Tak Tertagih Di Atas 90 Hari - '.$company.'.pdf"',
         ]);
     }
 

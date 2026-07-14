@@ -15,13 +15,15 @@ class LaporanLabaRugiGsuReportService
         '411.000' => 'PENJUALAN',
         '412.000' => 'PENJUALAN',
         '451.000' => 'RETUR PENJUALAN',
-        '452.000' => 'RETUR PENJUALAN',
         '431.000' => 'POTONGAN PENJUALAN',
         '516.000' => 'HPP PENJUALAN',
+        '611.000' => 'PEMBELIAN BARANG DAGANG',
         '621.000' => 'PEMBELIAN BARANG DAGANG',
+        '622.000' => 'PEMBELIAN BARANG DAGANG',
         '641.000' => 'BEBAN PEMBELIAN',
         '642.000' => 'BEBAN PEMBELIAN',
         '711.000' => 'BEBAN PENJUALAN',
+        '712.000' => 'BEBAN MARKETING',
         '721.000' => 'BEBAN UMUM',
         '800.000' => 'PENDAPATAN LAINNYA (PL)',
         '900.000' => 'BEBAN LAINNYA (BL)',
@@ -41,6 +43,7 @@ class LaporanLabaRugiGsuReportService
         'PEMBELIAN BARANG DAGANG',
         'BEBAN PEMBELIAN',
         'BEBAN PENJUALAN',
+        'BEBAN MARKETING',
         'BEBAN UMUM',
     ];
 
@@ -64,6 +67,7 @@ class LaporanLabaRugiGsuReportService
         'PEMBELIAN BARANG DAGANG',
         'BEBAN PEMBELIAN',
         'BEBAN PENJUALAN',
+        'BEBAN MARKETING',
         'BEBAN UMUM',
     ];
 
@@ -80,15 +84,16 @@ class LaporanLabaRugiGsuReportService
         'HARGA POKOK PENJUALAN' => [
             'PEMBELIAN BARANG DAGANG',
             'HPP PENJUALAN',
-            'BEBAN PEMBELIAN',
         ],
         'BEBAN USAHA' => [
+            'BEBAN MARKETING',
+            'BEBAN PEMBELIAN',
             'BEBAN PENJUALAN',
             'BEBAN UMUM',
         ],
         'PENDAPATAN DAN BEBAN LAINNYA' => [
-            'PENDAPATAN LAINNYA (PL)',
             'BEBAN LAINNYA (BL)',
+            'PENDAPATAN LAINNYA (PL)',
         ],
     ];
 
@@ -151,8 +156,15 @@ class LaporanLabaRugiGsuReportService
         $labaKotorA = $pendapatan['subtotal_a'] + $hpp['subtotal_a'];
         $labaUsahaB = $labaKotorB + $bebanUsaha['subtotal_b'];
         $labaUsahaA = $labaKotorA + $bebanUsaha['subtotal_a'];
-        $labaBersihB = $labaUsahaB + $lainnya['subtotal_b'];
-        $labaBersihA = $labaUsahaA + $lainnya['subtotal_a'];
+        $labaSebelumPajakB = $labaUsahaB + $lainnya['subtotal_b'];
+        $labaSebelumPajakA = $labaUsahaA + $lainnya['subtotal_a'];
+
+        $pajakB = $this->sumAccountTotal($dataB, '721.000.171');
+        $pajakA = $this->sumAccountTotal($dataA, '721.000.171');
+        $signedPajakB = -1 * $pajakB;
+        $signedPajakA = -1 * $pajakA;
+        $labaBersihB = $labaSebelumPajakB + $signedPajakB;
+        $labaBersihA = $labaSebelumPajakA + $signedPajakA;
 
         $period = $this->resolvePeriod($bulanB);
 
@@ -186,11 +198,19 @@ class LaporanLabaRugiGsuReportService
                 ],
                 [
                     'label' => 'LABA (RUGI) BERSIH SEBELUM PAJAK',
-                    'amount_b' => $labaBersihB,
-                    'amount_a' => $labaBersihA,
+                    'amount_b' => $labaSebelumPajakB,
+                    'amount_a' => $labaSebelumPajakA,
                     'rasio_b' => 0,
                     'rasio_a' => 0,
-                    'selisih' => $this->computeSelisih($labaBersihB, $labaBersihA),
+                    'selisih' => $this->computeSelisih($labaSebelumPajakB, $labaSebelumPajakA),
+                ],
+                [
+                    'label' => 'PAJAK',
+                    'amount_b' => $signedPajakB,
+                    'amount_a' => $signedPajakA,
+                    'rasio_b' => $totalPendapatanB['abs_b'] > 0 ? round(-1 * abs($pajakB) / $totalPendapatanB['abs_b'] * 100, 2) : 0,
+                    'rasio_a' => $totalPendapatanA['abs_a'] > 0 ? round(-1 * abs($pajakA) / $totalPendapatanA['abs_a'] * 100, 2) : 0,
+                    'selisih' => $this->computeSelisih($signedPajakB, $signedPajakA),
                 ],
                 [
                     'label' => 'LABA (RUGI) BERSIH SETELAH PAJAK',
@@ -278,8 +298,8 @@ class LaporanLabaRugiGsuReportService
 
     private function resolveAkm(string $accountCode): string
     {
-        if ($accountCode === '711.000.091') {
-            return 'BEBAN UMUM';
+        if ($accountCode === '900.000.006') {
+            return 'POTONGAN PENJUALAN';
         }
 
         $prefix = substr($accountCode, 0, 7);
@@ -314,6 +334,7 @@ class LaporanLabaRugiGsuReportService
 
         foreach ($rows as $row) {
             $akm = (string) ($row['_akm'] ?? '');
+            $accountCode = (string) ($row['Account Code'] ?? '');
             $accountName = (string) ($row['Account Name'] ?? '');
             $amountDb = (float) ($row['Amount DB'] ?? 0);
             $amountCr = (float) ($row['Amount CR'] ?? 0);
@@ -322,6 +343,7 @@ class LaporanLabaRugiGsuReportService
 
             $items[] = [
                 'akm' => $akm,
+                'account_code' => $accountCode,
                 'account_name' => $accountName,
                 'amount' => $raw,
             ];
@@ -335,11 +357,12 @@ class LaporanLabaRugiGsuReportService
         $grouped = [];
 
         foreach ($items as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'].'|||'.$item['account_name'];
 
             if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'akm' => $item['akm'],
+                    'account_code' => $item['account_code'],
                     'account_name' => $item['account_name'],
                     'amount' => 0,
                 ];
@@ -357,31 +380,33 @@ class LaporanLabaRugiGsuReportService
 
         $allKeys = [];
         foreach ($groupedB as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'].'|||'.$item['account_name'];
             $allKeys[$key] = true;
         }
         foreach ($groupedA as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'].'|||'.$item['account_name'];
             $allKeys[$key] = true;
         }
 
         $byKey = [];
         foreach ($groupedB as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'].'|||'.$item['account_name'];
             $byKey[$key] = [
                 'akm' => $item['akm'],
+                'account_code' => $item['account_code'],
                 'account_name' => $item['account_name'],
                 'amount_b' => $item['amount'],
                 'amount_a' => 0,
             ];
         }
         foreach ($groupedA as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'].'|||'.$item['account_name'];
             if (isset($byKey[$key])) {
                 $byKey[$key]['amount_a'] = $item['amount'];
             } else {
                 $byKey[$key] = [
                     'akm' => $item['akm'],
+                    'account_code' => $item['account_code'],
                     'account_name' => $item['account_name'],
                     'amount_b' => 0,
                     'amount_a' => $item['amount'],
@@ -452,8 +477,12 @@ class LaporanLabaRugiGsuReportService
                     $rasioBaseB = $forcePosRas ? abs($rawB) : ($forceNegRas ? -1 * abs($rawB) : $rawB);
                     $rasioBaseA = $forcePosRas ? abs($rawA) : ($forceNegRas ? -1 * abs($rawA) : $rawA);
 
-                    $subtotalB += $rasioBaseB;
-                    $subtotalA += $rasioBaseA;
+                    $isPajakAccount = $akm === 'BEBAN UMUM' && ($item['account_code'] ?? '') === '721.000.171';
+
+                    if (! $isPajakAccount) {
+                        $subtotalB += $rasioBaseB;
+                        $subtotalA += $rasioBaseA;
+                    }
 
                     $items[] = [
                         'account_name' => $item['account_name'],
@@ -523,6 +552,24 @@ class LaporanLabaRugiGsuReportService
         }
 
         return ['subtotal_b' => 0, 'subtotal_a' => 0];
+    }
+
+    private function sumAccountTotal(array $rows, string $targetCode): float
+    {
+        $total = 0;
+
+        foreach ($rows as $row) {
+            $code = (string) ($row['Account Code'] ?? '');
+            if ($code !== $targetCode) {
+                continue;
+            }
+
+            $amountDb = (float) ($row['Amount DB'] ?? 0);
+            $amountCr = (float) ($row['Amount CR'] ?? 0);
+            $total += $amountCr - $amountDb;
+        }
+
+        return abs($total);
     }
 
     private function resolvePeriod(Carbon $bulanB): array

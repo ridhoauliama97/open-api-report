@@ -969,6 +969,36 @@ Route::post(
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerRingkasanHutangBankPdf']
 )->name('api.internal.ascends.shared.general_ledger.trial_balance.ringkasan-hutang-bank.pdf');
 
+Route::post(
+    '/internal/ascends/shared/finance/receivable_details/piutang-diatas-60-hari/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangDiatas60HariPdf']
+)->name('api.internal.ascends.shared.finance.receivable_details.piutang-diatas-60-hari.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receivable_details/piutang-diatas-45-hari/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangDiatas45HariPdf']
+)->name('api.internal.ascends.shared.finance.receivable_details.piutang-diatas-45-hari.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receivable_details/piutang-diatas-120-hari/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangDiatas120HariPdf']
+)->name('api.internal.ascends.shared.finance.receivable_details.piutang-diatas-120-hari.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receivable_details/piutang-semua/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangSemuaPdf']
+)->name('api.internal.ascends.shared.finance.receivable_details.piutang-semua.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receivable_details/piutang-cash-14-hari/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangCash14HariPdf']
+)->name('api.internal.ascends.shared.finance.receivable_details.piutang-cash-14-hari.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receivable_details/piutang-tak-tertagih-90-hari/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangTakTertagih90HariPdf']
+)->name('api.internal.ascends.shared.finance.receivable_details.piutang-tak-tertagih-90-hari.pdf');
+
 /**
  * Group route autentikasi API publik.
  */

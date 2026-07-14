@@ -25,6 +25,7 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add one entry to 1 of 4 groups: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`. Two special-case groups registered outside the loop: `RekapHasilSawmillPerMejaUpahBoronganV2` and PPS Inject alias at `routes/api.php:1286-1299`
 - **3 async PDF implementations**: (1) generic `PdfJobController` + `GenerateReportPdfJob` route group, (2) `LabelStHidupDetailController` custom endpoints, (3) `StockSTKeringController` custom endpoints
 - Non-standard **`AscendXmlTestController`** (~60+ `internal/ascends/*` routes, single 8117-line controller with many individual methods). `EmployeeListController` (web-only under `reports/ascends/ru/hrm/employee-list/`)
+- **End of report**: setiap selesai membuat laporan Ascends shared, buat/tambah dokumentasi endpoint di `docs/ascends-endpoint/` sesuai folder kategorinya. Contoh format: `docs/ascends-endpoint/Shared/Finance/endpoint-api-shared-finance-receivable-details.md`
 - Middleware stack (`bootstrap/app.php`): `LogUserActivity` + `NormalizePdfDownloadFilename` on all API/web routes; `ForceattachmentPdfPreview` on web routes only
   - Note: `ForceattachmentPdfPreview` class lives in file `ForceInlinePdfPreview.php` — class name and filename differ intentionally
 
