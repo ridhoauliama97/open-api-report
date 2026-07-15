@@ -9,6 +9,16 @@ use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
 use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
 use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PenerimaanPiutangReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PelunasanReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\GiroCashTransferReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PenerimaanVoucherReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangCash14HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas120HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas45HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangSemuaReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangTakTertagih90HariReportService;
 use App\Services\Ascends\Shared\FixedAsset\AssetSummary\PenyusutanAktivaReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanSummaryReportService;
@@ -22,12 +32,6 @@ use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BiayaProduksiTidakL
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BiayaUpahLangsungDetailReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorPerKategoriReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas45HariReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas120HariReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangSemuaReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangCash14HariReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangTakTertagih90HariReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiRuReportService;
@@ -7380,6 +7384,273 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Laporan Piutang Tak Tertagih Di Atas 90 Hari - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceiptVoucherDetailsPenerimaanVoucherPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PenerimaanVoucherReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $flatInput = $request->all();
+            $dateStart = trim((string) (
+                $flatInput['ReceiptVoucherDate.StartDate']
+                ?? $flatInput['ReceiptVoucherDate_StartDate']
+                ?? $flatInput['StartDate']
+                ?? ''
+            ));
+            $dateEnd = trim((string) (
+                $flatInput['ReceiptVoucherDate.EndDate']
+                ?? $flatInput['ReceiptVoucherDate_EndDate']
+                ?? $flatInput['EndDate']
+                ?? ''
+            ));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'ReceiptVoucherDate.StartDate' => $dateStart,
+                    'ReceiptVoucherDate.EndDate' => $dateEnd,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receipt_voucher_details.penerimaan_voucher.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 4,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Penerimaan Voucher (Intensif Penagihan) - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceiptVoucherDetailsPenerimaanPiutangPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PenerimaanPiutangReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $flatInput = $request->all();
+            $dateStart = trim((string) (
+                $flatInput['ReceiptVoucherDate.StartDate']
+                ?? $flatInput['ReceiptVoucherDate_StartDate']
+                ?? $flatInput['StartDate']
+                ?? ''
+            ));
+            $dateEnd = trim((string) (
+                $flatInput['ReceiptVoucherDate.EndDate']
+                ?? $flatInput['ReceiptVoucherDate_EndDate']
+                ?? $flatInput['EndDate']
+                ?? ''
+            ));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'ReceiptVoucherDate.StartDate' => $dateStart,
+                    'ReceiptVoucherDate.EndDate' => $dateEnd,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receipt_voucher_details.penerimaan_piutang.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 10,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Penerimaan Piutang - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceiptVoucherDetailsPelunasanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PelunasanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $flatInput = $request->all();
+            $dateStart = trim((string) (
+                $flatInput['ItemDate.StartDate']
+                ?? $flatInput['ItemDate_StartDate']
+                ?? $flatInput['StartDate']
+                ?? ''
+            ));
+            $dateEnd = trim((string) (
+                $flatInput['ItemDate.EndDate']
+                ?? $flatInput['ItemDate_EndDate']
+                ?? $flatInput['EndDate']
+                ?? ''
+            ));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'ItemDate.StartDate' => $dateStart,
+                    'ItemDate.EndDate' => $dateEnd,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receipt_voucher_details.pelunasan.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 9,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Pelunasan - '.$company.'.pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceReceiptVoucherDetailsGiroCashTransferPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        GiroCashTransferReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $paymentMethod = trim((string) $request->input('PymentMethod', ''));
+            if (! in_array(strtolower($paymentMethod), ['cash', 'giro', 'transfer'], true)) {
+                throw new RuntimeException('Field PymentMethod wajib dikirim dengan nilai Cash, Giro, atau Transfer.');
+            }
+
+            $flatInput = $request->all();
+            $dateStart = trim((string) (
+                $flatInput['ReceiptVoucherDate.StartDate']
+                ?? $flatInput['ReceiptVoucherDate_StartDate']
+                ?? $flatInput['StartDate']
+                ?? ''
+            ));
+            $dateEnd = trim((string) (
+                $flatInput['ReceiptVoucherDate.EndDate']
+                ?? $flatInput['ReceiptVoucherDate_EndDate']
+                ?? $flatInput['EndDate']
+                ?? ''
+            ));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'PaymentMethod' => $paymentMethod,
+                    'ReceiptVoucherDate.StartDate' => $dateStart,
+                    'ReceiptVoucherDate.EndDate' => $dateEnd,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $capitalized = ucfirst(strtolower($paymentMethod));
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receipt_voucher_details.giro_cash_transfer.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Pembayaran '.$capitalized.' - '.$company.'.pdf"',
         ]);
     }
 

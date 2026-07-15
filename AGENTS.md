@@ -22,7 +22,7 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - Date convention: ALL date displays in PDF views must use `->locale('id')->isoFormat('DD-MMM-YY')` → e.g. `01-Mei-26`. No `/`, no `YYYY`, no `d/m/Y`.
 - PDF render cache via `pdf_render_cache_store` + `pdf_render_cache_ttl_seconds`; auto-bypassed in `local`/`debug` mode
 - ALL DB queries use parameterized `DB::select('EXEC SP_... ?, ?', [...])` — **no string interpolation**; `call_syntax=query` supports raw SQL for non-SQL Server testing
-- Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add one entry to 1 of 4 groups: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`. Two special-case groups registered outside the loop: `RekapHasilSawmillPerMejaUpahBoronganV2` and PPS Inject alias at `routes/api.php:1286-1299`
+- Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add one entry to 1 of 4 groups: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`. Two special-case groups registered outside the loop: `RekapHasilSawmillPerMejaUpahBoronganV2` and PPS Inject alias (search `api.php` for `->group` after the main loop)
 - **3 async PDF implementations**: (1) generic `PdfJobController` + `GenerateReportPdfJob` route group, (2) `LabelStHidupDetailController` custom endpoints, (3) `StockSTKeringController` custom endpoints
 - Non-standard **`AscendXmlTestController`** (~60+ `internal/ascends/*` routes, single 8117-line controller with many individual methods). `EmployeeListController` (web-only under `reports/ascends/ru/hrm/employee-list/`)
 - **End of report**: setiap selesai membuat laporan Ascends shared, buat/tambah dokumentasi endpoint di `docs/ascends-endpoint/` sesuai folder kategorinya. Contoh format: `docs/ascends-endpoint/Shared/Finance/endpoint-api-shared-finance-receivable-details.md`
@@ -63,6 +63,12 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 | `reports:audit-api` | Audits routes vs OpenAPI spec |
 | `pdf:clean-expired` | Deletes expired PDFs (scheduled hourly via `routes/console.php`) |
 | `reports:refresh-shared-pdfs-if-changed` | Refreshes cached shared PDFs (every 5min, no overlap) |
+| `reports:refresh-label-st-hidup-detail-pdf-if-changed` | Refresh Label ST Hidup Detail PDF only when data changes |
+| `reports:refresh-stock-st-kering-pdf-if-changed` | Refresh Stock ST Kering PDF only when data changes |
+| `reports:generate-label-st-hidup-detail-pdf` | DB-free background Label ST Hidup Detail PDF generation |
+| `reports:generate-stock-st-kering-pdf` | DB-free background Stock ST Kering PDF generation |
+| `reports:warm-label-st-hidup-detail-pdf` | Pre-generate shared Label ST Hidup Detail PDF for all users |
+| `reports:warm-stock-st-kering-pdf` | Pre-generate shared Stock ST Kering PDF for all users |
 | `db:export-structure {connection}` | Exports SQL Server schema to JSON (`sqlsrv`/`sqlsrv_pps`); add `--with-definitions` for SP body |
 | `generate:swagger-spec` | Generates OpenAPI spec JSON |
 
@@ -76,7 +82,8 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 - `APP_TIMEZONE=Asia/Jakarta` default
 - `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (not in `AscendXmlTestController`)
 - `config/reports.php` (2746 lines) is the single source of truth for SP names, DB connections, expected columns, and `report_auth` config
-- `boost.json` registers `codex` agent + `laravel-best-practices` skill; no `opencode.json` exists
+- `boost.json` registers `codex` agent + `laravel-best-practices` skill; no `opencode.json` exists, but `.opencode/plans/` stores planning docs
+- `skills-lock.json` registers additional engineering skills (ask-matt, codebase-design, decision-mapping, diagnosing-bugs, etc.)
 - DB default in `config/database.php` points to `WPS_TEST3` — set env vars for target DB
 - Detailed full reference: `AGENT_INSTRUCTIONS.md` (463 lines with code patterns)
 

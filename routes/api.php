@@ -999,6 +999,26 @@ Route::post(
     [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangTakTertagih90HariPdf']
 )->name('api.internal.ascends.shared.finance.receivable_details.piutang-tak-tertagih-90-hari.pdf');
 
+Route::post(
+    '/internal/ascends/shared/finance/receipt_voucher_details/penerimaan-voucher/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceiptVoucherDetailsPenerimaanVoucherPdf']
+)->name('api.internal.ascends.shared.finance.receipt_voucher_details.penerimaan-voucher.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receipt_voucher_details/penerimaan-piutang/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceiptVoucherDetailsPenerimaanPiutangPdf']
+)->name('api.internal.ascends.shared.finance.receipt_voucher_details.penerimaan-piutang.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receipt_voucher_details/pelunasan/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceiptVoucherDetailsPelunasanPdf']
+)->name('api.internal.ascends.shared.finance.receipt_voucher_details.pelunasan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receipt_voucher_details/giro-cash-transfer/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceiptVoucherDetailsGiroCashTransferPdf']
+)->name('api.internal.ascends.shared.finance.receipt_voucher_details.giro-cash-transfer.pdf');
+
 /**
  * Group route autentikasi API publik.
  */
