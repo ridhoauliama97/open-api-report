@@ -9,9 +9,9 @@ use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
 use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
 use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
-use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PenerimaanPiutangReportService;
-use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PelunasanReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\GiroCashTransferReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PelunasanReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PenerimaanPiutangReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PenerimaanVoucherReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangCash14HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas120HariReportService;
@@ -33,6 +33,7 @@ use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BiayaUpahLangsungDe
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorPerKategoriReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorRuReportService;
+use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaRugiUCReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiGsuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LaporanLabaRugiUcReportService;
@@ -122,6 +123,9 @@ use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService
 use App\Services\Ascends\Shared\InventoryAnalysis\DOCustomerBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOLemariBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOPerKategoriBelumTerkirimReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\HistoryHargaPoReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\JangkaWaktuApprovePrPoDetailReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\JangkaWaktuPoPiReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\KhususPlastikKabinetReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\KursiAdjustmentReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\LaporanHppDanStockReportService;
@@ -3573,6 +3577,126 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Outstanding Undelivery Goods - Laporan DO Per Kategori Belum Terkirim ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedAnalysisJangkaWaktuApprovePrPoDetailPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        JangkaWaktuApprovePrPoDetailReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->jangkaWaktuApprovePrPoDetailFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Jangka Waktu Approved P.Request Dan P.Order';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.purchase_request_by_item.jangka_waktu_approve_pr_po_detail.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Purchase Request By Item - Laporan Jangka Waktu Approved P.Request Dan P.Order ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedAnalysisJangkaWaktuPoPiPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        JangkaWaktuPoPiReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->jangkaWaktuPoPiFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'UC'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Jangka Waktu P.Order Ke P.Invoice';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.purchase_order_by_item.jangka_waktu_po_pi.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Purchase Order By Item - Laporan Jangka Waktu P.Order Ke P.Invoice ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedAnalysisHistoryHargaPoPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        HistoryHargaPoReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->historyHargaPoFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'UC'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan History Harga Purchase Order';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.purchase_order_by_item.history_harga_po.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Purchase Order By Item - Laporan History Harga Purchase Order ('.$company.').pdf"',
         ]);
     }
 
@@ -7654,6 +7778,71 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedGeneralLedgerJournalDetailsLabaRugiUCPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        LabaRugiUCReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $flatInput = $request->all();
+            $dateStart = trim((string) (
+                $flatInput['Date.StartDate']
+                ?? $flatInput['Date_StartDate']
+                ?? $flatInput['StartDate']
+                ?? ''
+            ));
+            $dateEnd = trim((string) (
+                $flatInput['Date.EndDate']
+                ?? $flatInput['Date_EndDate']
+                ?? $flatInput['EndDate']
+                ?? ''
+            ));
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'Date.StartDate' => $dateStart,
+                    'Date.EndDate' => $dateEnd,
+                ],
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laporan_laba_rugi_uc.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 6,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Laba Rugi - '.$company.'.pdf"',
+        ]);
+    }
+
     private function normalizeSharedHrmCompany(string $company): string
     {
         $company = trim($company);
@@ -8422,6 +8611,91 @@ class AscendXmlTestController extends Controller
                 'report_date',
                 'ReportDate',
                 'Report Date',
+            ]),
+        ];
+    }
+
+    private function jangkaWaktuApprovePrPoDetailFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'PurchaseOrderDate.StartDate',
+                'PurchaseOrderDate.StartDatee',
+                'TglAwal',
+                'tgl_awal',
+                'date_start',
+                'DateStart',
+                'dari_tanggal',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'PurchaseOrderDate.EndDate',
+                'TglAkhir',
+                'tgl_akhir',
+                'date_end',
+                'DateEnd',
+                'sampai_tanggal',
+            ]),
+        ];
+    }
+
+    private function jangkaWaktuPoPiFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'PurchaseOrderDate.StartDate',
+                'PurchaseOrderDate_StartDate',
+                'PurchaseOrderDate.StartDatee',
+                'TglAwal',
+                'tgl_awal',
+                'date_start',
+                'DateStart',
+                'dari_tanggal',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'PurchaseOrderDate.EndDate',
+                'PurchaseOrderDate_EndDate',
+                'TglAkhir',
+                'tgl_akhir',
+                'date_end',
+                'DateEnd',
+                'sampai_tanggal',
+            ]),
+        ];
+    }
+
+    private function historyHargaPoFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'PurchaseOrderDate.StartDate',
+                'PurchaseOrderDate_StartDate',
+                'PurchaseOrderDate.StartDatee',
+                'TglAwal',
+                'tgl_awal',
+                'date_start',
+                'DateStart',
+                'dari_tanggal',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'PurchaseOrderDate.EndDate',
+                'PurchaseOrderDate_EndDate',
+                'TglAkhir',
+                'tgl_akhir',
+                'date_end',
+                'DateEnd',
+                'sampai_tanggal',
             ]),
         ];
     }

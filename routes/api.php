@@ -775,6 +775,21 @@ Route::post(
 )->name('api.internal.ascends.shared.inventory_analysis.production_by_item.produksi-per-minggu.pdf');
 
 Route::post(
+    '/internal/ascends/shared/inventory_analysis/purchase-request-by-item/jangka-waktu-approve-pr-po-detail/pdf',
+    [AscendXmlTestController::class, 'apiSharedAnalysisJangkaWaktuApprovePrPoDetailPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.purchase-request-by-item.jangka-waktu-approve-pr-po-detail.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/purchase-order-by-item/jangka-waktu-po-pi/pdf',
+    [AscendXmlTestController::class, 'apiSharedAnalysisJangkaWaktuPoPiPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.purchase-order-by-item.jangka-waktu-po-pi.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/purchase-order-by-item/history-harga-po/pdf',
+    [AscendXmlTestController::class, 'apiSharedAnalysisHistoryHargaPoPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.purchase-order-by-item.history-harga-po.pdf');
+
+Route::post(
     '/internal/ascends/shared/fixed_asset/asset_summary/penyusutan_aktiva/pdf',
     [AscendXmlTestController::class, 'apiSharedFixedAssetPenyusutanAktivaPdf']
 )->name('api.internal.ascends.shared.fixed_asset.asset_summary.penyusutan_aktiva.pdf');
@@ -1018,6 +1033,11 @@ Route::post(
     '/internal/ascends/shared/finance/receipt_voucher_details/giro-cash-transfer/pdf',
     [AscendXmlTestController::class, 'apiSharedFinanceReceiptVoucherDetailsGiroCashTransferPdf']
 )->name('api.internal.ascends.shared.finance.receipt_voucher_details.giro-cash-transfer.pdf');
+
+Route::post(
+    '/internal/ascends/shared/general-ledger/journal-details/laba-rugi-uc/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerJournalDetailsLabaRugiUCPdf']
+)->name('api.internal.ascends.shared.general-ledger.journal-details.laba-rugi-uc.pdf');
 
 /**
  * Group route autentikasi API publik.

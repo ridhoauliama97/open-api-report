@@ -59,6 +59,10 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Production - Laporan Hasil Cuci Per Supplier: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/production/hasil-cuci-per-supplier/pdf`
 - Production - Laporan Hasil Produksi Per Mesin: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/production/hasil-produksi-per-mesin/pdf`
 
+## Endpoint Shared Purchase Request By Item
+
+- Purchase Request By Item - Laporan Jangka Waktu Approved P.Request Dan P.Order: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/purchase-request-by-item/jangka-waktu-approve-pr-po-detail/pdf`
+
 ## Endpoint Shared Production By Item
 
 - Production By Item - Laporan Produksi: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/production_by_item/produksi/pdf`
@@ -84,11 +88,12 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, `khusus-plastik-kabinet`, `aktifitas-stock-gsu`, `aktifitas-stock-gsu-per-gudang`, `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, dan `hasil-produksi-per-mesin` (dan Stock Activities Summary lainnya):
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, `khusus-plastik-kabinet`, `aktifitas-stock-gsu`, `aktifitas-stock-gsu-per-gudang`, `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, `hasil-produksi-per-mesin`, `jangka-waktu-approve-pr-po-detail` (dan Stock Activities Summary lainnya):
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
 - `DateRange.StartDate` + `DateRange.EndDate`: tanggal range label untuk laporan Stock Activities Summary (HPP Dan Stock, Khusus Plastik Kabinet, Ringkasan Valuasi Persediaan, Ringkasan Valuasi Persediaan Per Gudang), contoh `2026-06-01` sampai `2026-06-23`.
 - `ProductionDate.StartDate` + `ProductionDate.EndDate`: periode filter data production broker, contoh `2026-05-10` sampai `2026-05-31`.
+- `PurchaseOrderDate.StartDate` + `PurchaseOrderDate.EndDate`: periode filter PR Date untuk laporan Purchase Request By Item, contoh `2026-06-01` sampai `2026-06-30`.
 - Alias tanggal yang diterima: `start_date` + `end_date`, `StartDate` + `EndDate`, `TglAwal` + `TglAkhir`, `date_start` + `date_end`, `dari_tanggal` + `sampai_tanggal`, dan `AdjustmentDate.StartDatee` (typo variant).
 - Jika periode tidak dikirim, sistem memakai tanggal paling awal sampai paling akhir yang tersedia di data XML.
 
@@ -207,5 +212,6 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `stock_blanace/saldo_stok_barang_per_gudang_uc`
 - `stock_blanace/saldo_stok_barang_per_gudang_ru`
 - `stock_blanace/saldo_stok_barang_per_gudang_gsu`
+- `purchase_request_by_item/jangka_waktu_approve_pr_po_detail`
 
 Catatan: semua endpoint di atas memakai pola shared yang sama. XML menjadi sumber data laporan, sedangkan parameter `DB_CompanyName` menjadi sumber label perusahaan pada title dan filename. Field form `company` hanya fallback jika `DB_CompanyName` belum dikirim.
