@@ -233,7 +233,7 @@
                 {{ fmtAmount($record['nilai_bayar']) }}
             </td>
             <td class="number nowrap {{ ($record['total_nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($record['total_nilai_bayar']) }}
+                {{-- {{ fmtAmount($record['total_nilai_bayar']) }} --}}
             </td>
             <td>{{ $record['payment_method'] ?: '' }}</td>
             <td class="nowrap">{{ $record['gab_ket'] ?: '' }}</td>
@@ -259,7 +259,7 @@
                 {{ fmtAmount($grandTotalBayar) }}
             </td>
             <td class="number nowrap {{ $grandTotalNilaiBayar < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($grandTotalNilaiBayar) }}
+
             </td>
             <td colspan="2"></td>
         </tr>
@@ -281,17 +281,23 @@
         <tr>
             <td>
                 <table class="signature-line">
-                    <tr><td>&nbsp;</td></tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
                 </table>
             </td>
             <td>
                 <table class="signature-line">
-                    <tr><td>&nbsp;</td></tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
                 </table>
             </td>
             <td>
                 <table class="signature-line">
-                    <tr><td>&nbsp;</td></tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
                 </table>
             </td>
         </tr>

@@ -38,6 +38,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Laporan Laba Kotor (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/general_ledger/journal_details/laba-kotor-ru/pdf`
 - Laporan Laba Kotor Per Kategori: `POST http://192.168.10.100:5006/api/internal/ascends/shared/general_ledger/journal_details/laba-kotor-per-kategori/pdf`
 - Laporan Laba Kotor Tahunan (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/general_ledger/journal_details/laba-kotor-gsu/pdf`
+- Laporan Laba Kotor (Periode 12 Bulan/Tahunan) (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/general_ledger/journal_details/laba-kotor-ru-12-bulan/pdf`
 
 ## Endpoint Shared Trial Balance Monthly
 

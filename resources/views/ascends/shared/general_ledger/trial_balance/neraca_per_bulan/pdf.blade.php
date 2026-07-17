@@ -5,157 +5,62 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        @page { margin: 14mm 10mm 14mm 10mm; footer: html_reportFooter; }
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 9px;
-            line-height: 1.15;
+            font-size: 10px;
+            line-height: 1.3;
             color: #000;
         }
+        .report-companyTitle { text-align: center; margin: 0 0 4px; font-size: 18px; font-weight: bold; }
+        .report-title { text-align: center; margin: 0; font-size: 16px; font-weight: bold; }
+        .report-subtitle { text-align: center; margin: 2px 0 14px; font-size: 12px; color: #636466; }
 
-        .report-companyTitle {
-            text-align: center;
-            margin: 0 0 4px 0;
-            font-size: 18px;
-            font-weight: bold;
+        .report-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #000; }
+        .report-table th {
+            font-weight: bold; font-size: 11px; text-align: center;
+            border: 1px solid #000; padding: 4px 3px; background: #fff;
         }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 6px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .column-header {
-            font-weight: bold;
-            font-size: 11px;
-            text-align: center;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding: 3px;
-        }
-
-        .wrapper-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .wrapper-table td {
-            vertical-align: top;
-            padding: 0;
-        }
-
-        .wrapper-table td.left-cell {
-            width: 48%;
-            padding-right: 3px;
-        }
-
-        .wrapper-table td.gap-cell {
-            width: 4%;
-        }
-
-        .wrapper-table td.right-cell {
-            width: 48%;
-            padding-left: 3px;
-        }
-
-        .side-table {
-            width: 100%;
-            border-collapse: collapse;
-            page-break-inside: auto;
-            border: 1px solid #000;
-        }
-
-        .side-table th,
-        .side-table td {
+        .report-table td {
             border-left: 1px solid #000;
             border-right: 1px solid #000;
-            padding: 1px 2px;
+            border-top: none;
+            border-bottom: none;
             vertical-align: middle;
             word-wrap: break-word;
         }
 
-        .side-table td {
-            border-top: none;
-            border-bottom: none;
-            font-size: 8px;
-        }
+        .col-name { width: 36%; }
+        .col-ref { width: 14%; }
 
-        .section-header td {
-            font-weight: bold;
-            font-size: 9px;
-            padding: 2px 3px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
+        .section-label { padding: 3px 4px; }
+        .sub-section-label { padding: 2px 4px 2px 14px; }
+        .ref-cell { text-align: center; color: #999; font-size: 9px; }
 
-        .sub-section-header td {
-            font-weight: bold;
-            font-size: 8px;
-            padding: 1px 2px;
-        }
+        .section-row td { border-top: 1px solid #000; border-bottom: 1px solid #000; }
+        .subtotal-row td { border-bottom: 1px solid #000; }
+        .section-total-row td { border-top: 1px solid #000; border-bottom: 1px solid #000; }
+        .grand-total-row td { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 3px 4px; }
 
-        .subtotal-row td {
-            font-weight: bold;
-            font-size: 8px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding: 2px 3px;
-        }
+        .row-odd td { background: #c9d1df; }
+        .row-even td { background: #eef2f8; }
 
-        .grand-total-row td {
-            font-weight: bold;
-            font-size: 10px;
-            border-top: 2px solid #000;
-            border-bottom: 2px solid #000;
-            padding: 3px 4px;
-        }
+        .nt { border: none; border-collapse: collapse; width: 100%; table-layout: fixed; }
+        .nt td { border: none !important; padding: 0; }
+        .ntl { text-align: left; word-wrap: break-word; overflow: hidden; }
+        .ntr { text-align: right; white-space: nowrap; width: 45%; }
 
-        .number {
-            text-align: right;
-        }
-
-        .nowrap {
-            white-space: nowrap;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .col-desc {
-            width: 70%;
-        }
-
-        .col-amount {
-            width: 30%;
-        }
+        .b { font-weight: bold; }
+        .fs10 { font-size: 10px; }
+        .fs11 { font-size: 11px; }
+        .p1 { padding: 1px 4px; }
+        .p2 { padding: 2px 4px; }
+        .p3 { padding: 3px 4px; }
     </style>
 </head>
 
@@ -181,171 +86,146 @@
             }
             return number_format($v, 0, ',', '.');
         }
+
+        function buildSideRows($sections)
+        {
+            $rows = [];
+            foreach ($sections as $section) {
+                $hasItems = false;
+                foreach ($section['sub_sections'] as $sub) {
+                    if (count($sub['items']) > 0) { $hasItems = true; break; }
+                }
+                if (!$hasItems) continue;
+
+                $rows[] = ['type' => 'section', 'name' => $section['name']];
+
+                foreach ($section['sub_sections'] as $sub) {
+                    if (count($sub['items']) === 0) continue;
+
+                    $rows[] = ['type' => 'sub_section', 'name' => $sub['name']];
+
+                    foreach ($sub['items'] as $item) {
+                        $rows[] = [
+                            'type' => 'item',
+                            'name' => (string) ($item['account_name'] ?? ''),
+                            'amount' => fmtAmount($item['balance'] ?? 0),
+                        ];
+                    }
+
+                    $rows[] = ['type' => 'subtotal', 'name' => 'TOTAL ' . $sub['name'], 'amount' => fmtAmount($sub['total'] ?? 0)];
+                }
+
+                $rows[] = ['type' => 'section_total', 'name' => 'TOTAL ' . $section['name'], 'amount' => fmtAmount($section['total'] ?? 0)];
+            }
+            return $rows;
+        }
+
+        function nmCell($name, $amount, $padLeft, $isBold)
+        {
+            $pad = $padLeft > 0 ? 'padding-left:' . $padLeft . 'px;' : '';
+            $bold = $isBold ? 'font-weight:bold;' : '';
+            $sName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+            $sAmount = htmlspecialchars($amount, ENT_QUOTES, 'UTF-8');
+            $sty = $bold . $pad;
+            $attr = $sty !== '' ? ' style="' . $sty . '"' : '';
+            return '<table class="nt"><tr>'
+                . '<td class="ntl"' . $attr . '>' . $sName . '</td>'
+                . '<td class="ntr" style="' . $bold . '">' . $sAmount . '</td>'
+                . '</tr></table>';
+        }
+
+        $leftRows = buildSideRows($leftSections);
+        $rightRows = buildSideRows($rightSections);
+        $maxRows = max(count($leftRows), count($rightRows));
+        $itemIdx = 0;
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
     <h1 class="report-title">{{ $headerTitle }}</h1>
     <p class="report-subtitle">{{ $headerSubtitle }}</p>
 
-    <table class="wrapper-table">
+    <table class="report-table">
         <colgroup>
-            <col style="width: 48%;">
-            <col style="width: 4%;">
-            <col style="width: 48%;">
+            <col class="col-name">
+            <col class="col-ref">
+            <col class="col-name">
+            <col class="col-ref">
         </colgroup>
-        <tr>
-            <td class="column-header">AKTIVA</td>
-            <td class="column-header"></td>
-            <td class="column-header">KEWAJIBAN &amp; EKUITAS</td>
-        </tr>
-    </table>
+        <thead>
+            <tr>
+                <th>AKTIVA</th>
+                <th>REF</th>
+                <th>KEWAJIBAN &amp; EKUITAS</th>
+                <th>REF</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for ($i = 0; $i < $maxRows; $i++)
+                @php
+                    $lr = $leftRows[$i] ?? null;
+                    $rr = $rightRows[$i] ?? null;
+                    $lt = $lr['type'] ?? null;
+                    $rt = $rr['type'] ?? null;
+                    $isSection = $lt === 'section' || $rt === 'section';
+                    $isSubtotal = $lt === 'subtotal' || $rt === 'subtotal';
+                    $isSectionTotal = $lt === 'section_total' || $rt === 'section_total';
+                    $isItem = $lt === 'item' || $rt === 'item';
+                    if ($isItem) $itemIdx++;
+                @endphp
+                <tr class="@if($isSection) section-row @endif @if($isSubtotal) subtotal-row @endif @if($isSectionTotal) section-total-row @endif @if($isItem) {{ $itemIdx % 2 === 0 ? 'row-even' : 'row-odd' }} @endif">
 
-    <table class="wrapper-table">
-        <colgroup>
-            <col style="width: 48%;">
-            <col style="width: 4%;">
-            <col style="width: 48%;">
-        </colgroup>
-        <tr>
-            <td class="left-cell">
-                @if (count($leftSections) > 0)
-                    <table class="side-table">
-                        <colgroup>
-                            <col class="col-desc">
-                            <col class="col-amount">
-                        </colgroup>
-                        @php $leftGlobalRow = 0; @endphp
-                        @foreach ($leftSections as $section)
-                            @php
-                                $hasItems = false;
-                                foreach ($section['sub_sections'] as $sub) {
-                                    if (count($sub['items']) > 0) {
-                                        $hasItems = true;
-                                        break;
-                                    }
-                                }
-                            @endphp
+                    {{-- LEFT --}}
+                    @if ($lt === 'section')
+                        <td class="section-label b fs11">{{ $lr['name'] }}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($lt === 'sub_section')
+                        <td class="sub-section-label b fs10">{{ $lr['name'] }}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($lt === 'item')
+                        <td class="p1">{!! nmCell($lr['name'], $lr['amount'], 28, false) !!}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($lt === 'subtotal')
+                        <td class="p2">{!! nmCell($lr['name'], $lr['amount'], 14, true) !!}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($lt === 'section_total')
+                        <td class="p3">{!! nmCell($lr['name'], $lr['amount'], 0, true) !!}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @else
+                        <td>&nbsp;</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @endif
 
-                            @if (!$hasItems)
-                                @continue
-                            @endif
+                    {{-- RIGHT --}}
+                    @if ($rt === 'section')
+                        <td class="section-label b fs11">{{ $rr['name'] }}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($rt === 'sub_section')
+                        <td class="sub-section-label b fs10">{{ $rr['name'] }}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($rt === 'item')
+                        <td class="p1">{!! nmCell($rr['name'], $rr['amount'], 28, false) !!}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($rt === 'subtotal')
+                        <td class="p2">{!! nmCell($rr['name'], $rr['amount'], 14, true) !!}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @elseif ($rt === 'section_total')
+                        <td class="p3">{!! nmCell($rr['name'], $rr['amount'], 0, true) !!}</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @else
+                        <td>&nbsp;</td>
+                        <td class="ref-cell">&nbsp;</td>
+                    @endif
 
-                            <tr class="section-header">
-                                <td colspan="2">{{ $section['name'] }}</td>
-                            </tr>
-
-                            @foreach ($section['sub_sections'] as $sub)
-                                @if (count($sub['items']) === 0)
-                                    @continue
-                                @endif
-
-                                <tr class="sub-section-header">
-                                    <td colspan="2">{{ $sub['name'] }}</td>
-                                </tr>
-
-                                @foreach ($sub['items'] as $item)
-                                    @php $leftGlobalRow++; @endphp
-                                    @php $bal = (float) ($item['balance'] ?? 0); @endphp
-                                    <tr class="{{ $leftGlobalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                                        <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                        <td class="number nowrap">{{ fmtAmount($bal) }}</td>
-                                    </tr>
-                                @endforeach
-
-                                @php $subTotal = (float) ($sub['total'] ?? 0); @endphp
-                                <tr class="subtotal-row">
-                                    <td>TOTAL {{ $sub['name'] }}</td>
-                                    <td class="number nowrap">{{ fmtAmount($subTotal) }}</td>
-                                </tr>
-                            @endforeach
-
-                            @php $secTotal = (float) ($section['total'] ?? 0); @endphp
-                            <tr class="subtotal-row">
-                                <td></td>
-                                <td class="number nowrap">{{ fmtAmount($secTotal) }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
-                @endif
-            </td>
-
-            <td class="gap-cell"></td>
-
-            <td class="right-cell">
-                @if (count($rightSections) > 0)
-                    <table class="side-table">
-                        <colgroup>
-                            <col class="col-desc">
-                            <col class="col-amount">
-                        </colgroup>
-                        @php $rightGlobalRow = 0; @endphp
-                        @foreach ($rightSections as $section)
-                            @php
-                                $hasItems = false;
-                                foreach ($section['sub_sections'] as $sub) {
-                                    if (count($sub['items']) > 0) {
-                                        $hasItems = true;
-                                        break;
-                                    }
-                                }
-                            @endphp
-
-                            @if (!$hasItems)
-                                @continue
-                            @endif
-
-                            <tr class="section-header">
-                                <td colspan="2">{{ $section['name'] }}</td>
-                            </tr>
-
-                            @foreach ($section['sub_sections'] as $sub)
-                                @if (count($sub['items']) === 0)
-                                    @continue
-                                @endif
-
-                                <tr class="sub-section-header">
-                                    <td colspan="2">{{ $sub['name'] }}</td>
-                                </tr>
-
-                                @foreach ($sub['items'] as $item)
-                                    @php $rightGlobalRow++; @endphp
-                                    @php $bal = (float) ($item['balance'] ?? 0); @endphp
-                                    <tr class="{{ $rightGlobalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                                        <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                        <td class="number nowrap">{{ fmtAmount($bal) }}</td>
-                                    </tr>
-                                @endforeach
-
-                                @php $subTotal = (float) ($sub['total'] ?? 0); @endphp
-                                <tr class="subtotal-row">
-                                    <td>TOTAL {{ $sub['name'] }}</td>
-                                    <td class="number nowrap">{{ fmtAmount($subTotal) }}</td>
-                                </tr>
-                            @endforeach
-
-                            @php $secTotal = (float) ($section['total'] ?? 0); @endphp
-                            <tr class="subtotal-row">
-                                <td></td>
-                                <td class="number nowrap">{{ fmtAmount($secTotal) }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
-                @endif
-            </td>
-        </tr>
-    </table>
-
-    <table class="wrapper-table" style="margin-top: 4px;">
-        <colgroup>
-            <col style="width: 48%;">
-            <col style="width: 4%;">
-            <col style="width: 48%;">
-        </colgroup>
-        <tr class="grand-total-row">
-            <td class="number nowrap" style="padding-right: 10px;">TOTAL AKTIVA {{ fmtAmount($leftGrandTotal) }}</td>
-            <td></td>
-            <td class="number nowrap" style="padding-right: 10px;">TOTAL KEWAJIBAN &amp; EKUITAS {{ fmtAmount($rightGrandTotal) }}</td>
-        </tr>
+                </tr>
+            @endfor
+            {{-- Grand Total --}}
+            <tr class="grand-total-row">
+                <td class="b fs11">{!! nmCell('TOTAL AKTIVA', fmtAmount($leftGrandTotal), 0, true) !!}</td>
+                <td class="ref-cell">&nbsp;</td>
+                <td class="b fs11">{!! nmCell('TOTAL PASSIVA & MODAL', fmtAmount($rightGrandTotal), 0, true) !!}</td>
+                <td class="ref-cell">&nbsp;</td>
+            </tr>
+        </tbody>
     </table>
 
     @include('ascends.shared.partials.report-footer')

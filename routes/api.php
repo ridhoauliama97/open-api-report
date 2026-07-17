@@ -910,6 +910,11 @@ Route::post(
 )->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-gsu.pdf');
 
 Route::post(
+    '/internal/ascends/shared/general_ledger/journal_details/laba-kotor-ru-12-bulan/pdf',
+    [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaKotorRu12BulanPdf']
+)->name('api.internal.ascends.shared.general_ledger.journal_details.laba-kotor-ru-12-bulan.pdf');
+
+Route::post(
     '/internal/ascends/shared/general_ledger/trial_balance_monthly/laba-rugi-multi-periode/pdf',
     [AscendXmlTestController::class, 'apiSharedGeneralLedgerLabaRugiMultiPeriodePdf']
 )->name('api.internal.ascends.shared.general_ledger.trial_balance_monthly.laba-rugi-multi-periode.pdf');
