@@ -202,7 +202,11 @@
                 </tr>
             </thead>
             <tbody>
-                @php $globalRow = 0; @endphp
+                @php
+                    $globalRow = 0;
+                    $calcIndex = 0;
+                    $CALC_SECTIONS = ['HARGA POKOK PENJUALAN', 'BEBAN USAHA'];
+                @endphp
                 @foreach ($sections as $section)
                     <tr class="section-header">
                         <td colspan="6">{{ $section['akl'] }}</td>
@@ -214,69 +218,103 @@
                             <tr class="indent-item {{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
                                 <td class="number nowrap">
-                                    {{ number_format(abs((float) ($item['amount_b'] ?? 0)), 2, ',', '.') }}</td>
+                                    {{ number_format(round(abs((float) ($item['amount_b'] ?? 0))), 0, '.', ',') }}</td>
                                 <td class="number nowrap">
-                                    {{ $item['rasio_b'] != 0 ? number_format((float) ($item['rasio_b'] ?? 0), 2, ',', '.') : '0,00' }}
+                                    {{ $item['rasio_b'] != 0 ? number_format((float) ($item['rasio_b'] ?? 0), 2, '.', ',') : '0.00' }}
                                     %</td>
                                 <td class="number nowrap">
-                                    {{ number_format(abs((float) ($item['amount_a'] ?? 0)), 2, ',', '.') }}</td>
+                                    {{ number_format(round(abs((float) ($item['amount_a'] ?? 0))), 0, '.', ',') }}</td>
                                 <td class="number nowrap">
-                                    {{ $item['rasio_a'] != 0 ? number_format((float) ($item['rasio_a'] ?? 0), 2, ',', '.') : '0,00' }}
+                                    {{ $item['rasio_a'] != 0 ? number_format((float) ($item['rasio_a'] ?? 0), 2, '.', ',') : '0.00' }}
                                     %</td>
                                 <td class="number nowrap">
-                                    {{ number_format((float) ($item['selisih'] ?? 0), 2, ',', '.') }} %</td>
+                                    {{ number_format((float) ($item['selisih'] ?? 0), 2, '.', ',') }} %</td>
                             </tr>
                         @endforeach
 
                         <tr class="akm-subtotal indent-akm">
                             <td>TOTAL {{ $akmGroup['akm'] }}</td>
                             <td class="number nowrap">
-                                {{ number_format(abs((float) ($akmGroup['subtotal_b'] ?? 0)), 2, ',', '.') }}</td>
+                                {{ number_format(round(abs((float) ($akmGroup['subtotal_b'] ?? 0))), 0, '.', ',') }}</td>
                             <td class="number nowrap">
-                                {{ $akmGroup['rasio_b'] != 0 ? number_format((float) ($akmGroup['rasio_b'] ?? 0), 2, ',', '.') : '0,00' }}
+                                {{ $akmGroup['rasio_b'] != 0 ? number_format((float) ($akmGroup['rasio_b'] ?? 0), 2, '.', ',') : '0.00' }}
                                 %</td>
                             <td class="number nowrap">
-                                {{ number_format(abs((float) ($akmGroup['subtotal_a'] ?? 0)), 2, ',', '.') }}</td>
+                                {{ number_format(round(abs((float) ($akmGroup['subtotal_a'] ?? 0))), 0, '.', ',') }}</td>
                             <td class="number nowrap">
-                                {{ $akmGroup['rasio_a'] != 0 ? number_format((float) ($akmGroup['rasio_a'] ?? 0), 2, ',', '.') : '0,00' }}
+                                {{ $akmGroup['rasio_a'] != 0 ? number_format((float) ($akmGroup['rasio_a'] ?? 0), 2, '.', ',') : '0.00' }}
                                 %</td>
                             <td class="number nowrap">
-                                {{ number_format((float) ($akmGroup['selisih'] ?? 0), 2, ',', '.') }} %</td>
+                                {{ number_format((float) ($akmGroup['selisih'] ?? 0), 2, '.', ',') }} %</td>
                         </tr>
                     @endforeach
 
                     <tr class="section-subtotal">
                         <td>TOTAL {{ $section['akl'] }}</td>
                         <td class="number nowrap">
-                            {{ number_format(abs((float) ($section['subtotal_b'] ?? 0)), 2, ',', '.') }}</td>
+                            {{ number_format(round(abs((float) ($section['subtotal_b'] ?? 0))), 0, '.', ',') }}</td>
                         <td class="number nowrap">
-                            {{ $section['rasio_b'] != 0 ? number_format((float) ($section['rasio_b'] ?? 0), 2, ',', '.') : '0,00' }}
+                            {{ $section['rasio_b'] != 0 ? number_format((float) ($section['rasio_b'] ?? 0), 2, '.', ',') : '0.00' }}
                             %</td>
                         <td class="number nowrap">
-                            {{ number_format(abs((float) ($section['subtotal_a'] ?? 0)), 2, ',', '.') }}</td>
+                            {{ number_format(round(abs((float) ($section['subtotal_a'] ?? 0))), 0, '.', ',') }}</td>
                         <td class="number nowrap">
-                            {{ $section['rasio_a'] != 0 ? number_format((float) ($section['rasio_a'] ?? 0), 2, ',', '.') : '0,00' }}
+                            {{ $section['rasio_a'] != 0 ? number_format((float) ($section['rasio_a'] ?? 0), 2, '.', ',') : '0.00' }}
                             %</td>
-                        <td class="number nowrap">{{ number_format((float) ($section['selisih'] ?? 0), 2, ',', '.') }}
+                        <td class="number nowrap">{{ number_format((float) ($section['selisih'] ?? 0), 2, '.', ',') }}
                             %</td>
                     </tr>
+
+                    @if (in_array($section['akl'], $CALC_SECTIONS) && isset($calculations[$calcIndex]))
+                        @php $calc = $calculations[$calcIndex++]; @endphp
+                        <tr class="calculation-row">
+                            <td>{{ $calc['label'] }}</td>
+                            @if ($calc['show_data'] ?? true)
+                                <td class="number nowrap">
+                                    {{ number_format(round(abs((float) ($calc['amount_b'] ?? 0))), 0, '.', ',') }}</td>
+                                <td class="number nowrap">{{ number_format((float) ($calc['rasio_b'] ?? 0), 2, '.', ',') }}
+                                    %</td>
+                                <td class="number nowrap">
+                                    {{ number_format(round(abs((float) ($calc['amount_a'] ?? 0))), 0, '.', ',') }}</td>
+                                <td class="number nowrap">{{ number_format((float) ($calc['rasio_a'] ?? 0), 2, '.', ',') }}
+                                    %</td>
+                                <td class="number nowrap">{{ number_format((float) ($calc['selisih'] ?? 0), 2, '.', ',') }}
+                                    %</td>
+                            @else
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            @endif
+                        </tr>
+                    @endif
                 @endforeach
 
-                @foreach ($calculations as $calc)
+                @for ($i = $calcIndex; $i < count($calculations); $i++)
+                    @php $calc = $calculations[$i]; @endphp
                     <tr class="calculation-row">
                         <td>{{ $calc['label'] }}</td>
-                        <td class="number nowrap">
-                            {{ number_format(abs((float) ($calc['amount_b'] ?? 0)), 2, ',', '.') }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($calc['rasio_b'] ?? 0), 2, ',', '.') }} %
-                        </td>
-                        <td class="number nowrap">
-                            {{ number_format(abs((float) ($calc['amount_a'] ?? 0)), 2, ',', '.') }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($calc['rasio_a'] ?? 0), 2, ',', '.') }} %
-                        </td>
-                        <td class="number nowrap">{{ number_format((float) ($calc['selisih'] ?? 0), 2, ',', '.') }} %
-                        </td>
+                        @if ($calc['show_data'] ?? true)
+                            <td class="number nowrap">
+                                {{ number_format(round(abs((float) ($calc['amount_b'] ?? 0))), 0, '.', ',') }}</td>
+                            <td class="number nowrap">{{ number_format((float) ($calc['rasio_b'] ?? 0), 2, '.', ',') }} %
+                            </td>
+                            <td class="number nowrap">
+                                {{ number_format(round(abs((float) ($calc['amount_a'] ?? 0))), 0, '.', ',') }}</td>
+                            <td class="number nowrap">{{ number_format((float) ($calc['rasio_a'] ?? 0), 2, '.', ',') }} %
+                            </td>
+                            <td class="number nowrap">{{ number_format((float) ($calc['selisih'] ?? 0), 2, '.', ',') }} %
+                            </td>
+                        @else
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        @endif
                     </tr>
-                @endforeach
+                @endfor
             </tbody>
         </table>
     @else

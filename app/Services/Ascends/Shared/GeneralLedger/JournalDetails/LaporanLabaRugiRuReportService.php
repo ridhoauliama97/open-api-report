@@ -40,7 +40,7 @@ class LaporanLabaRugiRuReportService
         'PENDAPATAN JASA PRODUKSI' => 1,
         'PENDAPATAN JASA PEMBELIAN' => 1,
         'HPP PENJUALAN' => -1,
-        'PEMBELIAN BARANG DAGANG' => -1,
+        'PEMBELIAN BARANG DAGANG' => 1,
         'BEBAN PEMBELIAN' => -1,
         'BEBAN PENJUALAN' => -1,
         'BEBAN UMUM' => -1,
@@ -59,8 +59,8 @@ class LaporanLabaRugiRuReportService
             'PENDAPATAN JASA PEMBELIAN',
         ],
         'HARGA POKOK PENJUALAN' => [
-            'PEMBELIAN BARANG DAGANG',
             'HPP PENJUALAN',
+            'PEMBELIAN BARANG DAGANG',
             'BEBAN PEMBELIAN',
         ],
         'BEBAN USAHA' => [
@@ -68,8 +68,8 @@ class LaporanLabaRugiRuReportService
             'BEBAN UMUM',
         ],
         'PENDAPATAN DAN BEBAN LAINNYA' => [
-            'PENDAPATAN LAINNYA (PL)',
             'BEBAN LAINNYA (BL)',
+            'PENDAPATAN LAINNYA (PL)',
         ],
     ];
 
@@ -83,21 +83,12 @@ class LaporanLabaRugiRuReportService
             throw new RuntimeException('Data jurnal tidak ditemukan pada XML.');
         }
 
-        $startDate = trim((string) ($filters['Date.StartDate'] ?? $filters['Date_StartDate'] ?? $filters['StartDate'] ?? $filters['start_date'] ?? ''));
         $endDate = trim((string) ($filters['Date.EndDate'] ?? $filters['Date_EndDate'] ?? $filters['EndDate'] ?? $filters['end_date'] ?? ''));
 
         $bulanB = Carbon::parse($endDate)->startOfMonth();
         $bulanA = $bulanB->copy()->subMonth()->startOfMonth();
 
-        $lastDayOfStartMonth = null;
-        if ($startDate !== '') {
-            try {
-                $lastDayOfStartMonth = Carbon::parse($startDate)->endOfMonth();
-            } catch (Throwable) {
-            }
-        }
-
-        $filtered = $this->applyFilters($allRows, $lastDayOfStartMonth);
+        $filtered = $this->applyFilters($allRows);
 
         if ($filtered === []) {
             throw new RuntimeException('Tidak ada data yang memenuhi kriteria.');
@@ -118,8 +109,9 @@ class LaporanLabaRugiRuReportService
 
         $merged = $this->mergeMonths($groupedB, $groupedA);
 
-        $totalPendapatanB = $this->computeTotalPendapatan($merged);
-        $totalPendapatanA = $this->computeTotalPendapatan($merged);
+        $totalPendapatan = $this->computeTotalPendapatan($merged);
+        $totalPendapatanB = $totalPendapatan;
+        $totalPendapatanA = $totalPendapatan;
 
         $sections = $this->buildSections($merged, $totalPendapatanB, $totalPendapatanA);
 
@@ -128,10 +120,10 @@ class LaporanLabaRugiRuReportService
         $bebanUsaha = $this->findSectionTotal($sections, 'BEBAN USAHA');
         $lainnya = $this->findSectionTotal($sections, 'PENDAPATAN DAN BEBAN LAINNYA');
 
-        $labaKotorB = $pendapatan['subtotal_b'] - $hpp['subtotal_b'];
-        $labaKotorA = $pendapatan['subtotal_a'] - $hpp['subtotal_a'];
-        $labaUsahaB = $labaKotorB - $bebanUsaha['subtotal_b'];
-        $labaUsahaA = $labaKotorA - $bebanUsaha['subtotal_a'];
+        $labaKotorB = $pendapatan['subtotal_b'] + $hpp['subtotal_b'];
+        $labaKotorA = $pendapatan['subtotal_a'] + $hpp['subtotal_a'];
+        $labaUsahaB = $labaKotorB + $bebanUsaha['subtotal_b'];
+        $labaUsahaA = $labaKotorA + $bebanUsaha['subtotal_a'];
         $labaBersihB = $labaUsahaB + $lainnya['subtotal_b'];
         $labaBersihA = $labaUsahaA + $lainnya['subtotal_a'];
 
@@ -167,11 +159,12 @@ class LaporanLabaRugiRuReportService
                 ],
                 [
                     'label' => 'LABA (RUGI) BERSIH SEBELUM PAJAK',
-                    'amount_b' => $labaBersihB,
-                    'amount_a' => $labaBersihA,
+                    'amount_b' => 0,
+                    'amount_a' => 0,
                     'rasio_b' => 0,
                     'rasio_a' => 0,
-                    'selisih' => $this->computeSelisih($labaBersihB, $labaBersihA),
+                    'selisih' => 0,
+                    'show_data' => false,
                 ],
                 [
                     'label' => 'LABA (RUGI) BERSIH SETELAH PAJAK',
@@ -237,7 +230,7 @@ class LaporanLabaRugiRuReportService
         return str_replace('_x002F_', '/', $key);
     }
 
-    private function applyFilters(array $rows, ?Carbon $lastDayOfStartMonth): array
+    private function applyFilters(array $rows): array
     {
         $result = [];
 
@@ -248,20 +241,6 @@ class LaporanLabaRugiRuReportService
 
             if ($akm === 'A') {
                 continue;
-            }
-
-            if ($accountCode === '721.000.171' && $lastDayOfStartMonth !== null) {
-                $voucherDate = trim((string) ($row['Voucher Date'] ?? ''));
-                if ($voucherDate !== '') {
-                    try {
-                        $vd = Carbon::parse($voucherDate);
-                        if (! $vd->greaterThan($lastDayOfStartMonth)) {
-                            continue;
-                        }
-                    } catch (Throwable) {
-                        continue;
-                    }
-                }
             }
 
             $row['_akm'] = $akm;
@@ -309,6 +288,7 @@ class LaporanLabaRugiRuReportService
 
         foreach ($rows as $row) {
             $akm = (string) ($row['_akm'] ?? '');
+            $accountCode = (string) ($row['Account Code'] ?? '');
             $accountName = (string) ($row['Account Name'] ?? '');
             $amountDb = (float) ($row['Amount DB'] ?? 0);
             $amountCr = (float) ($row['Amount CR'] ?? 0);
@@ -317,6 +297,7 @@ class LaporanLabaRugiRuReportService
 
             $items[] = [
                 'akm' => $akm,
+                'account_code' => $accountCode,
                 'account_name' => $accountName,
                 'amount' => $raw,
             ];
@@ -330,11 +311,12 @@ class LaporanLabaRugiRuReportService
         $grouped = [];
 
         foreach ($items as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'];
 
             if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'akm' => $item['akm'],
+                    'account_code' => $item['account_code'],
                     'account_name' => $item['account_name'],
                     'amount' => 0,
                 ];
@@ -352,31 +334,33 @@ class LaporanLabaRugiRuReportService
 
         $allKeys = [];
         foreach ($groupedB as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'];
             $allKeys[$key] = true;
         }
         foreach ($groupedA as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'];
             $allKeys[$key] = true;
         }
 
         $byKey = [];
         foreach ($groupedB as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'];
             $byKey[$key] = [
                 'akm' => $item['akm'],
+                'account_code' => $item['account_code'],
                 'account_name' => $item['account_name'],
                 'amount_b' => $item['amount'],
                 'amount_a' => 0,
             ];
         }
         foreach ($groupedA as $item) {
-            $key = $item['akm'].'|||'.$item['account_name'];
+            $key = $item['akm'].'|||'.$item['account_code'];
             if (isset($byKey[$key])) {
                 $byKey[$key]['amount_a'] = $item['amount'];
             } else {
                 $byKey[$key] = [
                     'akm' => $item['akm'],
+                    'account_code' => $item['account_code'],
                     'account_name' => $item['account_name'],
                     'amount_b' => 0,
                     'amount_a' => $item['amount'],
@@ -389,11 +373,17 @@ class LaporanLabaRugiRuReportService
 
     private function computeTotalPendapatan(array $merged): array
     {
+        $pendapatanAkms = self::AKL_GROUPS['PENDAPATAN'];
         $totalB = 0;
         $totalA = 0;
 
         foreach ($merged as $item) {
             $akm = $item['akm'];
+
+            if (! in_array($akm, $pendapatanAkms, true)) {
+                continue;
+            }
+
             $sign = self::RASIO_SIGN[$akm] ?? 1;
 
             $totalB += $sign * abs($item['amount_b']);
@@ -424,6 +414,8 @@ class LaporanLabaRugiRuReportService
                     continue;
                 }
 
+                usort($akmItems, static fn (array $a, array $b): int => strcmp($a['account_code'], $b['account_code']));
+
                 $items = [];
                 $subtotalB = 0;
                 $subtotalA = 0;
@@ -437,6 +429,7 @@ class LaporanLabaRugiRuReportService
                     $subtotalA += $sign * $absA;
 
                     $items[] = [
+                        'account_code' => $item['account_code'],
                         'account_name' => $item['account_name'],
                         'amount_b' => $item['amount_b'],
                         'amount_a' => $item['amount_a'],

@@ -170,7 +170,7 @@ class DOCustomerBelumTerkirimReportService
             return 'FL';
         }
 
-        if (str_contains($itemCode, '2.1.3.4.')) {
+        if (str_contains($itemCode, '2.1.3.4.') || str_contains($itemCode, '2.1.3.5.')) {
             return 'PKAB';
         }
 

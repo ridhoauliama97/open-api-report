@@ -220,7 +220,7 @@
                 <tr>
                     <th style="width: {{ $namePct }}%;">PENJUALAN</th>
                     @foreach ($months as $mk => $ml)
-                        <th style="width: {{ $monthPct }}%;">{{ $ml }}</th>
+                        <th style="width: {{ $monthPct }}%;">%<br>{{ $ml }}</th>
                     @endforeach
                     <th style="width: {{ $statPct }}%;">Rata - Rata</th>
                     <th style="width: {{ $statPct }}%;">Terendah</th>
@@ -228,26 +228,24 @@
                 </tr>
             </thead>
             <tbody>
-                @php $globalRow = 0; @endphp
+                @php $rowNum = 0; @endphp
                 @foreach ($groups as $group)
                     @php
                         $groupDisplay = trim(stripSortPrefix($group['name']));
+                        $descNames = collect($group['description_names'])->pluck('account_name')->map(fn($n) => e($n))->implode('<br>');
                     @endphp
 
-                    @foreach ($group['description_names'] as $desc)
-                        @php $globalRow++; @endphp
-                        <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} desc-row">
-                            <td>{{ $desc['account_name'] }}</td>
-                            @foreach ($months as $mk => $ml)
-                                <td></td>
-                            @endforeach
+                    <tr class="desc-row {{ ++$rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                        <td>{!! $descNames !!}</td>
+                        @foreach ($months as $mk => $ml)
                             <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    @endforeach
+                        @endforeach
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
 
-                    <tr class="margin-row">
+                    <tr class="margin-row {{ ++$rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td>LABA (RUGI) KOTOR {{ $groupDisplay }}</td>
                         @foreach ($months as $mk => $ml)
                             @php $margin = $group['monthly_margin'][$mk] ?? null; @endphp
@@ -268,31 +266,11 @@
                 <tr class="grand-row">
                     <td>TOTAL LABA (RUGI) KOTOR</td>
                     @foreach ($months as $mk => $ml)
-                        @php
-                            $ts = $totalMonthlySales[$mk] ?? 0;
-                            $th = $totalMonthlyHpp[$mk] ?? 0;
-                            $totalMargin = $ts != 0 ? ($ts - $th) / $ts * 100 : null;
-                        @endphp
-                        <td class="number nowrap {{ $totalMargin !== null && $totalMargin < 0 ? 'number-negative' : '' }}">
-                            {{ $totalMargin !== null ? fmtPct(round($totalMargin, 2)) : '- %' }}
-                        </td>
+                        <td></td>
                     @endforeach
-                    @php
-                        $allMargins = [];
-                        foreach ($months as $mk => $ml) {
-                            $ts = $totalMonthlySales[$mk] ?? 0;
-                            $th = $totalMonthlyHpp[$mk] ?? 0;
-                            $m = $ts != 0 ? ($ts - $th) / $ts * 100 : null;
-                            if ($m !== null) $allMargins[$mk] = $m;
-                        }
-                        $marginValues = array_values($allMargins);
-                        $avgMargin = count($marginValues) > 0 ? round(array_sum($marginValues) / count($marginValues), 2) : null;
-                        $minMargin = count($marginValues) > 0 ? round(min($marginValues), 2) : null;
-                        $maxMargin = count($marginValues) > 0 ? round(max($marginValues), 2) : null;
-                    @endphp
-                    <td class="number nowrap {{ $avgMargin !== null && $avgMargin < 0 ? 'number-negative' : '' }}">{{ fmtPct($avgMargin) }}</td>
-                    <td class="number nowrap {{ $minMargin !== null && $minMargin < 0 ? 'number-negative' : '' }}">{{ fmtPct($minMargin) }}</td>
-                    <td class="number nowrap">{{ fmtPct($maxMargin) }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
 
                 <tr class="hpp-global-row">
@@ -303,15 +281,9 @@
                             {{ $hpp !== null ? fmtPct(-$hpp) : '- %' }}
                         </td>
                     @endforeach
-                    @php
-                        $hppValues = array_values(array_filter($hppGlobal, fn ($v) => $v !== null));
-                        $avgHpp = count($hppValues) > 0 ? round(array_sum($hppValues) / count($hppValues), 2) : null;
-                        $minHpp = count($hppValues) > 0 ? round(min($hppValues), 2) : null;
-                        $maxHpp = count($hppValues) > 0 ? round(max($hppValues), 2) : null;
-                    @endphp
-                    <td class="number nowrap {{ $avgHpp !== null ? 'number-negative' : '' }}">{{ $avgHpp !== null ? fmtPct(-$avgHpp) : '- %' }}</td>
-                    <td class="number nowrap {{ $maxHpp !== null ? 'number-negative' : '' }}">{{ $maxHpp !== null ? fmtPct(-$maxHpp) : '- %' }}</td>
-                    <td class="number nowrap {{ $minHpp !== null ? 'number-negative' : '' }}">{{ $minHpp !== null ? fmtPct(-$minHpp) : '- %' }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>

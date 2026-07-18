@@ -200,13 +200,19 @@ class NeracaPerBulanReportService
 
         uasort($groups, function ($a, $b) {
             $cmp = $a['section_sort'] <=> $b['section_sort'];
-            if ($cmp !== 0) return $cmp;
+            if ($cmp !== 0) {
+                return $cmp;
+            }
 
             $cmp = strcmp((string) $a['sub_sort_key'], (string) $b['sub_sort_key']);
-            if ($cmp !== 0) return $cmp;
+            if ($cmp !== 0) {
+                return $cmp;
+            }
 
             $cmp = $a['item_sort'] <=> $b['item_sort'];
-            if ($cmp !== 0) return $cmp;
+            if ($cmp !== 0) {
+                return $cmp;
+            }
 
             return strcmp($a['account_code'], $b['account_code']);
         });
@@ -392,6 +398,7 @@ class NeracaPerBulanReportService
             if ($prefix7 === '121.103' || $prefix7 === '131.100') {
                 return $ending * -1;
             }
+
             return $ending;
         }
 
@@ -434,16 +441,25 @@ class NeracaPerBulanReportService
     {
         $upper = strtoupper($name);
 
-        if (str_contains($upper, 'KAS KECIL')) return 1;
-        if (str_contains($upper, 'KAS BESAR')) return 2;
-        if (str_contains($upper, 'KAS GANTUNG')) return 3;
+        if (str_contains($upper, 'KAS KECIL')) {
+            return 1;
+        }
+        if (str_contains($upper, 'KAS BESAR')) {
+            return 2;
+        }
+        if (str_contains($upper, 'KAS GANTUNG')) {
+            return 3;
+        }
         if (str_contains($upper, 'KAS')) {
             $suffix = substr($code, -5);
             $num = is_numeric($suffix) ? (int) $suffix : 0;
+
             return max(4, $num);
         }
 
-        if (stripos($displayName, 'bank garansi') !== false) return 7;
+        if (stripos($displayName, 'bank garansi') !== false) {
+            return 7;
+        }
 
         return 6;
     }

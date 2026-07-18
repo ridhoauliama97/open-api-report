@@ -223,12 +223,24 @@ class LabaKotorRu12BulanReportService
     {
         $nameUpper = strtoupper($accountName);
 
-        if (str_contains($nameUpper, 'HOUSEWARE')) return 'A';
-        if (str_contains($nameUpper, 'FURNITURE')) return 'B';
-        if (str_contains($nameUpper, 'ENAMEL')) return 'C';
-        if (str_contains($nameUpper, 'STAINLESS')) return 'D';
-        if (str_contains($nameUpper, 'SAPU')) return 'E';
-        if (str_contains($nameUpper, 'LEMARI')) return 'F';
+        if (str_contains($nameUpper, 'HOUSEWARE')) {
+            return 'A';
+        }
+        if (str_contains($nameUpper, 'FURNITURE')) {
+            return 'B';
+        }
+        if (str_contains($nameUpper, 'ENAMEL')) {
+            return 'C';
+        }
+        if (str_contains($nameUpper, 'STAINLESS')) {
+            return 'D';
+        }
+        if (str_contains($nameUpper, 'SAPU')) {
+            return 'E';
+        }
+        if (str_contains($nameUpper, 'LEMARI')) {
+            return 'F';
+        }
 
         return ' ';
     }
@@ -251,19 +263,33 @@ class LabaKotorRu12BulanReportService
         $nameUpper = strtoupper($accountName);
         $descUpper = strtoupper($description);
 
-        if (str_contains($nameUpper, 'JABON')) return '01JABON BJ';
-        if (str_contains($nameUpper, 'RAMBUNG')) return '02RAMBUNG BJ';
-        if (str_contains($nameUpper, 'PULAI')) return '03PULAI BJ';
-        if (str_contains($nameUpper, 'DADAP')) return '03DADAP BJ';
+        if (str_contains($nameUpper, 'JABON')) {
+            return '01JABON BJ';
+        }
+        if (str_contains($nameUpper, 'RAMBUNG')) {
+            return '02RAMBUNG BJ';
+        }
+        if (str_contains($nameUpper, 'PULAI')) {
+            return '03PULAI BJ';
+        }
+        if (str_contains($nameUpper, 'DADAP')) {
+            return '03DADAP BJ';
+        }
 
-        if (str_contains($nameUpper, 'RETUR PENJ. KAYU LAT')) return '05RETUR KAYU LAT';
+        if (str_contains($nameUpper, 'RETUR PENJ. KAYU LAT')) {
+            return '05RETUR KAYU LAT';
+        }
 
         if (str_contains($nameUpper, 'HARGA POKOK') && str_contains($voucherNumber, 'SR-')) {
             return '05RETUR KAYU LAT';
         }
 
-        if (str_contains($nameUpper, 'KAYU LAT')) return '04KAYU LAT';
-        if (str_contains($nameUpper, 'SAWN TIMBER')) return '04KAYU LAT';
+        if (str_contains($nameUpper, 'KAYU LAT')) {
+            return '04KAYU LAT';
+        }
+        if (str_contains($nameUpper, 'SAWN TIMBER')) {
+            return '04KAYU LAT';
+        }
 
         if ($accountCode === '111.400.202' && str_contains($descUpper, 'SALES')) {
             return '04KAYU LAT';
@@ -286,7 +312,9 @@ class LabaKotorRu12BulanReportService
             return '21LEM';
         }
 
-        if (str_contains($nameUpper, 'POTONGAN PEMBELIAN')) return '22POTONGAN';
+        if (str_contains($nameUpper, 'POTONGAN PEMBELIAN')) {
+            return '22POTONGAN';
+        }
 
         if (str_contains($descUpper, 'SALES 3.1.6.16.0071: TAL') && $accountCode === '111.400.407') {
             return '23sTRAPT';
@@ -383,7 +411,7 @@ class LabaKotorRu12BulanReportService
                 $groupKeys[] = $nameGroupKayu;
             }
 
-            $descKey = $accountCode . '|||' . $accountName;
+            $descKey = $accountCode.'|||'.$accountName;
             if (! isset($groups[$nameGroupKayu]['description_names'][$descKey])) {
                 $groups[$nameGroupKayu]['description_names'][$descKey] = [
                     'account_code' => $accountCode,
@@ -411,8 +439,7 @@ class LabaKotorRu12BulanReportService
             if (isset($groups[$key])) {
                 $hasSales = array_sum($groups[$key]['monthly_sales']) > 0;
                 $hasHpp = array_sum($groups[$key]['monthly_hpp']) > 0;
-                $hasDesc = count($groups[$key]['description_names']) > 0;
-                if (! $hasSales && ! $hasHpp && ! $hasDesc) {
+                if (! $hasSales && ! $hasHpp) {
                     continue;
                 }
                 $descriptions = array_values($groups[$key]['description_names']);
@@ -434,6 +461,23 @@ class LabaKotorRu12BulanReportService
     {
         foreach ($groups as &$group) {
             $group['monthly_margin'] = [];
+
+            $hasPenjualanAccount = ! empty(array_filter(
+                $group['description_names'] ?? [],
+                fn ($d) => ($d['no_urut'] ?? 2) === 1
+            ));
+
+            if (! $hasPenjualanAccount) {
+                foreach ($months as $mk => $ml) {
+                    $group['monthly_margin'][$mk] = null;
+                }
+                $group['rata_rata'] = null;
+                $group['terendah'] = null;
+                $group['tertinggi'] = null;
+
+                continue;
+            }
+
             foreach ($months as $mk => $ml) {
                 $sales = $group['monthly_sales'][$mk] ?? 0;
                 $hpp = $group['monthly_hpp'][$mk] ?? 0;
@@ -519,7 +563,7 @@ class LabaKotorRu12BulanReportService
         return [
             'start' => $startLabel,
             'end' => $endLabel,
-            'label' => 'Dari ' . $startLabel . ' s/d ' . $endLabel,
+            'label' => 'Dari '.$startLabel.' s/d '.$endLabel,
         ];
     }
 }

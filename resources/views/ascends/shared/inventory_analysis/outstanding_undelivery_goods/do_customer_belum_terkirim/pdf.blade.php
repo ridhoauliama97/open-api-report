@@ -151,10 +151,11 @@
         $grandTotals = $reportData['grand_totals'] ?? [];
         $printedAt = $reportData['printed_at'] ?? '';
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
-            ->locale('id')->translatedFormat('d-M-y H:i');
+            ->locale('id')
+            ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-        $headerCompany = trim((string) ($company ?? $reportData['company'] ?? ''));
-        $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
+        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
+        $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
     @endphp
 
@@ -172,60 +173,78 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 4%">No</th>
-                    <th style="width: 16%">Customer</th>
-                    <th style="width: 20%">Nama Barang</th>
+                    <th style="width: 18%">Customer</th>
+                    <th style="width: 22%">Nama Barang</th>
                     <th style="width: 7%">Bln</th>
                     <th style="width: 9%">Thn</th>
                     <th style="width: 6%">Hari</th>
                     <th style="width: 12%">Total Pembelian</th>
-                    <th style="width: 12%">Belum Terkirim</th>
                     <th style="width: 14%">Terkirim</th>
+                    <th style="width: 12%">Belum Terkirim</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="group-row">
-                    <td colspan="9">Sales : {{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
+                    <td colspan="8">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
                 </tr>
 
                 @foreach ($salesGroup['customers'] as $customerGroup)
                     @foreach ($customerGroup['rows'] as $detail)
                         @php $rowNumber++; @endphp
                         <tr class="{{ $rowNumber % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                            <td class="center">{{ $rowNumber }}</td>
-                            <td>{{ $customerGroup['customer'] }}</td>
+                            <td>{{ $loop->first ? $customerGroup['customer'] : '' }}</td>
                             <td>{{ $detail['item_name'] ?? '' }}</td>
-                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->format('m') : '' }}</td>
-                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->format('Y') : '' }}</td>
-                            @php $daysVal = (int) ($detail['days'] ?? 0); $dayClass = $daysVal > 90 ? 'day-danger' : ($daysVal > 60 ? 'day-warning' : ''); @endphp
+                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->format('m') : '' }}
+                            </td>
+                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->format('Y') : '' }}
+                            </td>
+                            @php
+                                $daysVal = (int) ($detail['days'] ?? 0);
+                                $dayClass = $daysVal > 90 ? 'day-danger' : ($daysVal > 60 ? 'day-warning' : '');
+                            @endphp
                             <td class="center {{ $dayClass }}">{{ $daysVal ?: '' }}</td>
-                            <td class="number nowrap">{{ number_format((float) ($detail['qty_purchased'] ?? 0), 0, '.', ',') }} {{ $detail['uom'] ?? '' }}</td>
-                            <td class="number nowrap">{{ number_format((float) ($detail['qty_outstanding'] ?? 0), 0, '.', ',') }} {{ $detail['uom'] ?? '' }}</td>
-                            <td class="number nowrap">{{ number_format((float) ($detail['qty_delivered'] ?? 0), 0, '.', ',') }} {{ $detail['uom'] ?? '' }}</td>
+                            <td class="number nowrap">
+                                {{ number_format((float) ($detail['qty_purchased'] ?? 0), 0, '.', ',') }}</td>
+                            <td class="number nowrap">
+                                {{ number_format((float) ($detail['qty_delivered'] ?? 0), 0, '.', ',') }}</td>
+                            <td class="number nowrap">
+                                {{ number_format((float) ($detail['qty_outstanding'] ?? 0), 0, '.', ',') }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="subtotal-row">
-                        <td colspan="6" class="center">Subtotal {{ $customerGroup['customer'] }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($customerGroup['customer_total_purchased'] ?? 0), 0, '.', ',') }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($customerGroup['customer_total_outstanding'] ?? 0), 0, '.', ',') }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($customerGroup['customer_total_delivered'] ?? 0), 0, '.', ',') }}</td>
+                        <td colspan="5" class="center">{{ $customerGroup['customer'] }}</td>
+                        <td class="number nowrap">
+                            {{ number_format((float) ($customerGroup['customer_total_purchased'] ?? 0), 0, '.', ',') }}
+                        </td>
+                        <td class="number nowrap">
+                            {{ number_format((float) ($customerGroup['customer_total_delivered'] ?? 0), 0, '.', ',') }}
+                        </td>
+                        <td class="number nowrap">
+                            {{ number_format((float) ($customerGroup['customer_total_outstanding'] ?? 0), 0, '.', ',') }}
+                        </td>
                     </tr>
                 @endforeach
 
                 <tr class="total-sales-row">
-                    <td colspan="6" class="center">Total {{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
-                    <td class="number nowrap">{{ number_format((float) ($salesGroup['sales_total_purchased'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number nowrap">{{ number_format((float) ($salesGroup['sales_total_outstanding'] ?? 0), 0, '.', ',') }}</td>
-                    <td class="number nowrap">{{ number_format((float) ($salesGroup['sales_total_delivered'] ?? 0), 0, '.', ',') }}</td>
+                    <td colspan="5" class="center">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
+                    <td class="number nowrap">
+                        {{ number_format((float) ($salesGroup['sales_total_purchased'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number nowrap">
+                        {{ number_format((float) ($salesGroup['sales_total_delivered'] ?? 0), 0, '.', ',') }}</td>
+                    <td class="number nowrap">
+                        {{ number_format((float) ($salesGroup['sales_total_outstanding'] ?? 0), 0, '.', ',') }}</td>
                 </tr>
 
                 @if ($loop->last && !empty($grandTotals))
                     <tr class="grand-total-row">
-                        <td colspan="6" class="center">Grand Total</td>
-                        <td class="number nowrap">{{ number_format((float) ($grandTotals['qty_purchased'] ?? 0), 0, '.', ',') }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($grandTotals['qty_outstanding'] ?? 0), 0, '.', ',') }}</td>
-                        <td class="number nowrap">{{ number_format((float) ($grandTotals['qty_delivered'] ?? 0), 0, '.', ',') }}</td>
+                        <td colspan="5" class="center">Grand Total</td>
+                        <td class="number nowrap">
+                            {{ number_format((float) ($grandTotals['qty_purchased'] ?? 0), 0, '.', ',') }}</td>
+                        <td class="number nowrap">
+                            {{ number_format((float) ($grandTotals['qty_delivered'] ?? 0), 0, '.', ',') }}</td>
+                        <td class="number nowrap">
+                            {{ number_format((float) ($grandTotals['qty_outstanding'] ?? 0), 0, '.', ',') }}</td>
                     </tr>
                 @endif
             </tbody>
@@ -234,7 +253,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="9">Tidak ada data.</td>
+                    <td colspan="8">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>
