@@ -233,7 +233,7 @@ class PendapatanDanBiayaLainBaruReportService
                 ];
             }
 
-            $saldo = $row['amount_db'] - $row['amount_cr'];
+            $saldo = $row['amount_cr'] - $row['amount_db'];
 
             $grouped[$codeLftPrefix]['accounts'][$accountKey]['items'][] = [
                 'voucher_date' => $row['voucher_date'],

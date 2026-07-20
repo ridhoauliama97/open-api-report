@@ -75,6 +75,11 @@ class LaporanLabaRugiRuReportService
 
     private const AKL_ORDER = ['PENDAPATAN', 'HARGA POKOK PENJUALAN', 'BEBAN USAHA', 'PENDAPATAN DAN BEBAN LAINNYA'];
 
+    private const NEGATIVE_DISPLAY_AKMS = [
+        'PEMBELIAN BARANG DAGANG',
+        'BEBAN LAINNYA (BL)',
+    ];
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $allRows = $this->parseXml($xmlContents, $sourceLabel);
@@ -419,25 +424,44 @@ class LaporanLabaRugiRuReportService
                 $items = [];
                 $subtotalB = 0;
                 $subtotalA = 0;
+                $negativeDisplay = in_array($akm, self::NEGATIVE_DISPLAY_AKMS, true);
 
                 foreach ($akmItems as $item) {
-                    $absB = abs($item['amount_b']);
-                    $absA = abs($item['amount_a']);
+                    $rawB = $item['amount_b'];
+                    $rawA = $item['amount_a'];
+                    $absB = abs($rawB);
+                    $absA = abs($rawA);
                     $sign = self::RASIO_SIGN[$akm] ?? 1;
 
-                    $subtotalB += $sign * $absB;
-                    $subtotalA += $sign * $absA;
+                    $contributionB = $sign * $absB;
+                    $contributionA = $sign * $absA;
+
+                    if ($akm === 'PEMBELIAN BARANG DAGANG') {
+                        $contributionB = $sign * $rawB;
+                        $contributionA = $sign * $rawA;
+                    }
+
+                    $subtotalB += $contributionB;
+                    $subtotalA += $contributionA;
+
+                    $displayB = $negativeDisplay ? $contributionB : $absB;
+                    $displayA = $negativeDisplay ? $contributionA : $absA;
 
                     $items[] = [
                         'account_code' => $item['account_code'],
                         'account_name' => $item['account_name'],
-                        'amount_b' => $item['amount_b'],
-                        'amount_a' => $item['amount_a'],
-                        'rasio_b' => $totalPendapatanB['abs_b'] > 0 ? round($sign * $absB / $totalPendapatanB['abs_b'] * 100, 2) : 0,
-                        'rasio_a' => $totalPendapatanA['abs_a'] > 0 ? round($sign * $absA / $totalPendapatanA['abs_a'] * 100, 2) : 0,
-                        'selisih' => $this->computeSelisih($sign * $absB, $sign * $absA),
+                        'amount_b' => $rawB,
+                        'amount_a' => $rawA,
+                        'display_amount_b' => $displayB,
+                        'display_amount_a' => $displayA,
+                        'rasio_b' => $totalPendapatanB['abs_b'] > 0 ? round($contributionB / $totalPendapatanB['abs_b'] * 100, 2) : 0,
+                        'rasio_a' => $totalPendapatanA['abs_a'] > 0 ? round($contributionA / $totalPendapatanA['abs_a'] * 100, 2) : 0,
+                        'selisih' => $this->computeSelisih($contributionB, $contributionA),
                     ];
                 }
+
+                $displaySubtotalB = $negativeDisplay ? $subtotalB : abs($subtotalB);
+                $displaySubtotalA = $negativeDisplay ? $subtotalA : abs($subtotalA);
 
                 $rasioB = $totalPendapatanB['abs_b'] > 0 ? round($subtotalB / $totalPendapatanB['abs_b'] * 100, 2) : 0;
                 $rasioA = $totalPendapatanA['abs_a'] > 0 ? round($subtotalA / $totalPendapatanA['abs_a'] * 100, 2) : 0;
@@ -447,6 +471,8 @@ class LaporanLabaRugiRuReportService
                     'items' => $items,
                     'subtotal_b' => $subtotalB,
                     'subtotal_a' => $subtotalA,
+                    'display_subtotal_b' => $displaySubtotalB,
+                    'display_subtotal_a' => $displaySubtotalA,
                     'rasio_b' => $rasioB,
                     'rasio_a' => $rasioA,
                     'selisih' => $this->computeSelisih($subtotalB, $subtotalA),

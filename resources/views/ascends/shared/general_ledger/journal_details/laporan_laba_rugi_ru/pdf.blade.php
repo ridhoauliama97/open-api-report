@@ -23,7 +23,7 @@
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.1;
             color: #000;
         }
 
@@ -85,7 +85,6 @@
             font-style: italic;
             padding: 4px 4px;
             color: #9c111d;
-            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
@@ -106,7 +105,6 @@
         .calculation-row td {
             font-weight: bold;
             font-size: 10px;
-            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
@@ -179,6 +177,23 @@
         $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
+
+        function fmtAmount($value)
+        {
+            $value = (float) $value;
+            if ($value == 0) {
+                return '0';
+            }
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 0, '.', ',') . ')';
+            }
+            return number_format($value, 0, '.', ',');
+        }
+
+        function fmtRasio($value)
+        {
+            return number_format((float) $value, 2, '.', ',') . ' %';
+        }
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
@@ -192,7 +207,7 @@
                     <th class="col-desc" rowspan="2">Keterangan</th>
                     <th class="col-amount" colspan="2">{{ $bulanB }}</th>
                     <th class="col-amount" colspan="2">{{ $bulanA }}</th>
-                    <th class="col-selisih" rowspan="2">Selisih (%)</th>
+                    <th class="col-selisih" rowspan="2">% Beda</th>
                 </tr>
                 <tr>
                     <th class="col-amount">Jumlah</th>
@@ -217,52 +232,31 @@
                             @php $globalRow++; @endphp
                             <tr class="indent-item {{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                <td class="number nowrap">
-                                    {{ number_format(round(abs((float) ($item['amount_b'] ?? 0))), 0, '.', ',') }}</td>
-                                <td class="number nowrap">
-                                    {{ $item['rasio_b'] != 0 ? number_format((float) ($item['rasio_b'] ?? 0), 2, '.', ',') : '0.00' }}
-                                    %</td>
-                                <td class="number nowrap">
-                                    {{ number_format(round(abs((float) ($item['amount_a'] ?? 0))), 0, '.', ',') }}</td>
-                                <td class="number nowrap">
-                                    {{ $item['rasio_a'] != 0 ? number_format((float) ($item['rasio_a'] ?? 0), 2, '.', ',') : '0.00' }}
-                                    %</td>
-                                <td class="number nowrap">
-                                    {{ number_format((float) ($item['selisih'] ?? 0), 2, '.', ',') }} %</td>
+                                <td class="number nowrap">{{ fmtAmount($item['display_amount_b'] ?? $item['amount_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio($item['rasio_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount($item['display_amount_a'] ?? $item['amount_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio($item['rasio_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio($item['selisih'] ?? 0) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="akm-subtotal indent-akm">
                             <td>TOTAL {{ $akmGroup['akm'] }}</td>
-                            <td class="number nowrap">
-                                {{ number_format(round(abs((float) ($akmGroup['subtotal_b'] ?? 0))), 0, '.', ',') }}</td>
-                            <td class="number nowrap">
-                                {{ $akmGroup['rasio_b'] != 0 ? number_format((float) ($akmGroup['rasio_b'] ?? 0), 2, '.', ',') : '0.00' }}
-                                %</td>
-                            <td class="number nowrap">
-                                {{ number_format(round(abs((float) ($akmGroup['subtotal_a'] ?? 0))), 0, '.', ',') }}</td>
-                            <td class="number nowrap">
-                                {{ $akmGroup['rasio_a'] != 0 ? number_format((float) ($akmGroup['rasio_a'] ?? 0), 2, '.', ',') : '0.00' }}
-                                %</td>
-                            <td class="number nowrap">
-                                {{ number_format((float) ($akmGroup['selisih'] ?? 0), 2, '.', ',') }} %</td>
+                            <td class="number nowrap">{{ fmtAmount($akmGroup['display_subtotal_b'] ?? $akmGroup['subtotal_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount($akmGroup['display_subtotal_a'] ?? $akmGroup['subtotal_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio($akmGroup['selisih'] ?? 0) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="section-subtotal">
                         <td>TOTAL {{ $section['akl'] }}</td>
-                        <td class="number nowrap">
-                            {{ number_format(round(abs((float) ($section['subtotal_b'] ?? 0))), 0, '.', ',') }}</td>
-                        <td class="number nowrap">
-                            {{ $section['rasio_b'] != 0 ? number_format((float) ($section['rasio_b'] ?? 0), 2, '.', ',') : '0.00' }}
-                            %</td>
-                        <td class="number nowrap">
-                            {{ number_format(round(abs((float) ($section['subtotal_a'] ?? 0))), 0, '.', ',') }}</td>
-                        <td class="number nowrap">
-                            {{ $section['rasio_a'] != 0 ? number_format((float) ($section['rasio_a'] ?? 0), 2, '.', ',') : '0.00' }}
-                            %</td>
-                        <td class="number nowrap">{{ number_format((float) ($section['selisih'] ?? 0), 2, '.', ',') }}
-                            %</td>
+                        <td class="number nowrap">{{ fmtAmount(abs((float) ($section['subtotal_b'] ?? 0))) }}</td>
+                        <td class="number nowrap">{{ fmtRasio($section['rasio_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount(abs((float) ($section['subtotal_a'] ?? 0))) }}</td>
+                        <td class="number nowrap">{{ fmtRasio($section['rasio_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio($section['selisih'] ?? 0) }}</td>
                     </tr>
 
                     @if (in_array($section['akl'], $CALC_SECTIONS) && isset($calculations[$calcIndex]))
@@ -270,16 +264,11 @@
                         <tr class="calculation-row">
                             <td>{{ $calc['label'] }}</td>
                             @if ($calc['show_data'] ?? true)
-                                <td class="number nowrap">
-                                    {{ number_format(round(abs((float) ($calc['amount_b'] ?? 0))), 0, '.', ',') }}</td>
-                                <td class="number nowrap">{{ number_format((float) ($calc['rasio_b'] ?? 0), 2, '.', ',') }}
-                                    %</td>
-                                <td class="number nowrap">
-                                    {{ number_format(round(abs((float) ($calc['amount_a'] ?? 0))), 0, '.', ',') }}</td>
-                                <td class="number nowrap">{{ number_format((float) ($calc['rasio_a'] ?? 0), 2, '.', ',') }}
-                                    %</td>
-                                <td class="number nowrap">{{ number_format((float) ($calc['selisih'] ?? 0), 2, '.', ',') }}
-                                    %</td>
+                                <td class="number nowrap">{{ fmtAmount($calc['amount_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio($calc['rasio_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount($calc['amount_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio($calc['rasio_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio($calc['selisih'] ?? 0) }}</td>
                             @else
                                 <td></td>
                                 <td></td>
@@ -296,16 +285,11 @@
                     <tr class="calculation-row">
                         <td>{{ $calc['label'] }}</td>
                         @if ($calc['show_data'] ?? true)
-                            <td class="number nowrap">
-                                {{ number_format(round(abs((float) ($calc['amount_b'] ?? 0))), 0, '.', ',') }}</td>
-                            <td class="number nowrap">{{ number_format((float) ($calc['rasio_b'] ?? 0), 2, '.', ',') }} %
-                            </td>
-                            <td class="number nowrap">
-                                {{ number_format(round(abs((float) ($calc['amount_a'] ?? 0))), 0, '.', ',') }}</td>
-                            <td class="number nowrap">{{ number_format((float) ($calc['rasio_a'] ?? 0), 2, '.', ',') }} %
-                            </td>
-                            <td class="number nowrap">{{ number_format((float) ($calc['selisih'] ?? 0), 2, '.', ',') }} %
-                            </td>
+                            <td class="number nowrap">{{ fmtAmount($calc['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio($calc['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount($calc['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio($calc['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio($calc['selisih'] ?? 0) }}</td>
                         @else
                             <td></td>
                             <td></td>
