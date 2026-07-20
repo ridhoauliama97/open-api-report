@@ -22,7 +22,7 @@
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 10px;
+            font-size: 9px;
             line-height: 1.1;
             color: #000;
         }
@@ -67,30 +67,30 @@
 
         .data-table th {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             text-align: center;
         }
 
         .data-table td {
-            font-size: 10px;
+            font-size: 9px;
             border-top: none;
             border-bottom: none;
         }
 
         .category-header td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9px;
             font-style: italic;
             padding: 3px 3px;
             color: #9c111d;
-            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
         .category-subtotal td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 2px 3px;
@@ -98,7 +98,7 @@
 
         .grand-row td {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 9px;
             border-bottom: 1px solid #000;
             padding: 2px 3px;
         }
@@ -251,7 +251,7 @@
                 @endforeach
 
                 <tr class="grand-row">
-                    <td>Grand Total :</td>
+                    <td class="center">Grand Total</td>
                     @foreach ($months as $mk => $ml)
                         <td class="number nowrap">{{ formatAmount($grandTotalMonthly[$mk] ?? 0) }}</td>
                         <td></td>
