@@ -133,7 +133,7 @@ class DashboardFingerJointController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Dashboard-Finger-Joint-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

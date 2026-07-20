@@ -145,7 +145,7 @@
             : number_format((float) $v, 0, '.', ',');
         $fmtKubik = static fn(mixed $v): string => $v === null || $v === '' || abs((float) $v) < 0.0000001
             ? ''
-            : number_format((float) $v, 3, '.', ',');
+            : number_format((float) $v, 4, '.', ',');
     @endphp
 
     <h1 class="report-title">Laporan Laminating (Hidup) Detail</h1>
@@ -163,7 +163,7 @@
                 <th style="width: 50px;">Lebar (mm)</th>
                 <th style="width: 56px;">Panjang (ft)</th>
                 <th style="width: 80px;">Jmlh Batang</th>
-                <th style="width: 56px;">Kubik</th>
+                <th style="width: 56px;">M3</th>
                 <th style="width: 54px;">Lokasi</th>
             </tr>
         </thead>

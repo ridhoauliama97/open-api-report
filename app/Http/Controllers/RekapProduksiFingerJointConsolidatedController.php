@@ -75,7 +75,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
     }
 
@@ -144,7 +144,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
     }
 
@@ -201,7 +201,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
             ];
         }
 
-        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }

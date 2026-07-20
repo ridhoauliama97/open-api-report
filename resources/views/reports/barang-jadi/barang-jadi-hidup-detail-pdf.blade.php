@@ -139,13 +139,13 @@
             : \Carbon\Carbon::parse($v)->format('d-M-y');
         $fmtInt = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((int) $v, 0, '.', ',');
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
-        $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');
+        $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 4, '.', ',');
 
         $generatedDate = \Carbon\Carbon::now()->locale('id')->translatedFormat('d-M-y');
     @endphp
 
     <h1 class="report-title">Laporan Barang Jadi (Hidup) Detail</h1>
-    <p class="report-subtitle">Per {{ $generatedDate }}</p>
+    <p class="report-subtitle"></p>
 
     <table>
         <thead>
@@ -160,7 +160,7 @@
                 <th style="width: 58px;">Panjang</th>
                 <th style="width: 70px;">Jumlah Batang</th>
                 <th style="width: 54px;">Lokasi</th>
-                <th style="width: 56px;">m3</th>
+                <th style="width: 56px;">M3</th>
             </tr>
         </thead>
         <tbody>

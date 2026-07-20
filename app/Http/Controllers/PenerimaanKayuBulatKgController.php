@@ -115,7 +115,7 @@ class PenerimaanKayuBulatKgController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Penerimaan-Kayu-Bulat-Int-KG-%s.pdf', $request->noKayuBulat());
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

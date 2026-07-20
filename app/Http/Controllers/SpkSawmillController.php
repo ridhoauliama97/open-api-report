@@ -129,7 +129,7 @@ class SpkSawmillController extends Controller
         ]);
 
         $filename = sprintf('Laporan-SPK-Sawmill-%s-%s.pdf', preg_replace('/[^A-Za-z0-9._-]+/', '-', $noSpk), $idProduk);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

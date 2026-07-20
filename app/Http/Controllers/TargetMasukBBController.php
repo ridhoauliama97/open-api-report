@@ -88,7 +88,7 @@ class TargetMasukBBController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
     }
 
@@ -115,7 +115,7 @@ class TargetMasukBBController extends Controller
                 'column_order' => array_keys($reportData['rows'][0] ?? []),
                 'group_column' => $reportData['group_column'] ?? null,
                 'day_columns' => array_map(
-                    static fn (array $item): string => (string) ($item['label'] ?? ''),
+                    static fn(array $item): string => (string) ($item['label'] ?? ''),
                     $reportData['day_columns'] ?? []
                 ),
                 'lb_columns' => $reportData['lb_columns'] ?? [],

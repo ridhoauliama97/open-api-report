@@ -61,7 +61,7 @@ class DashboardRuController extends Controller
 
         $periodLabel = $reportData['period_label'] ?? $reportDate;
         $filename = sprintf('Laporan-Dashboard-RU-%s.pdf', str_replace(' ', '-', (string) $periodLabel));
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

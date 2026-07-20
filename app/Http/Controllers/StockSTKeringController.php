@@ -270,7 +270,7 @@ class StockSTKeringController extends Controller
 
         if (($job['status'] ?? null) !== FilePdfJobStore::STATUS_DONE) {
             return response()->json([
-                'message' => 'PDF belum siap. Status saat ini: '.($job['status'] ?? 'unknown'),
+                'message' => 'PDF belum siap. Status saat ini: ' . ($job['status'] ?? 'unknown'),
                 'status' => $job['status'] ?? 'unknown',
             ], 409);
         }
@@ -283,7 +283,7 @@ class StockSTKeringController extends Controller
 
         $filename = basename((string) $job['file_path']);
         $content = $disk->get((string) $job['file_path']);
-        $disposition = $attachment ? 'attachment' : 'attachment';
+        $disposition = $attachment ? 'attachment' : 'inline';
 
         return response($content, 200, [
             'Content-Type' => 'application/pdf',
@@ -304,18 +304,18 @@ class StockSTKeringController extends Controller
             $artisan,
             'reports:generate-stock-st-kering-pdf',
             $jobId,
-            '--requested-by='.$requestedBy,
+            '--requested-by=' . $requestedBy,
         ];
 
         if (PHP_OS_FAMILY === 'Windows') {
             $escaped = array_map('escapeshellarg', $command);
-            pclose(popen('start /B "" '.implode(' ', $escaped).' > NUL 2>&1', 'r'));
+            pclose(popen('start /B "" ' . implode(' ', $escaped) . ' > NUL 2>&1', 'r'));
 
             return;
         }
 
         $escaped = implode(' ', array_map('escapeshellarg', $command));
-        exec($escaped.' > /dev/null 2>&1 &');
+        exec($escaped . ' > /dev/null 2>&1 &');
     }
 
     private function downloadRouteNameForStatusRoute(string $statusRouteName): string
@@ -395,14 +395,14 @@ class StockSTKeringController extends Controller
         ];
 
         $filename = sprintf('Laporan-Stock-ST-Kering-%s.pdf', $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         $dir = storage_path('app/pdf-temp');
         if (! is_dir($dir)) {
             @mkdir($dir, 0777, true);
         }
 
-        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('stock-st-kering-', true).'.pdf';
+        $tmpPath = $dir . DIRECTORY_SEPARATOR . uniqid('stock-st-kering-', true) . '.pdf';
 
         $pdfGenerator->renderToFile('reports.sawn-timber.stock-st-kering-pdf', $payload, $tmpPath);
 
@@ -496,7 +496,7 @@ class StockSTKeringController extends Controller
             $produk = $produk !== '' ? $produk : 'Tanpa Produk';
 
             $jenisSet[$jenis] = true;
-            $produkPairSet[$jenis.'||'.$produk] = true;
+            $produkPairSet[$jenis . '||' . $produk] = true;
             $produkSet[$produk] = true;
 
             $totalPcs += $pcsColumn !== null ? ($toFloat($row[$pcsColumn] ?? null) ?? 0.0) : 0.0;

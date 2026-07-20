@@ -55,7 +55,7 @@ class RekapProduksiBrokerController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Broker-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

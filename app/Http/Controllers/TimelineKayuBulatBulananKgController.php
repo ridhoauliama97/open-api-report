@@ -78,7 +78,7 @@ class TimelineKayuBulatBulananKgController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Bulanan-KG-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

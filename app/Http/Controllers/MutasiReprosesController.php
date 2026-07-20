@@ -61,7 +61,7 @@ class MutasiReprosesController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
     }
 

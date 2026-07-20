@@ -64,7 +64,7 @@ class RekapMutasiCrossTabController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Mutasi-Cross-Tab-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

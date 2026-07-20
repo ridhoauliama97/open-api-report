@@ -139,7 +139,7 @@
             : \Carbon\Carbon::parse($v)->locale('id')->translatedFormat('d-M-y');
         $fmtInt = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((int) $v, 0, '.', ',');
         $fmtDim = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 0, '.', ',');
-        $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 3, '.', ',');
+        $fmtM3 = static fn(mixed $v): string => $v === null || $v === '' ? '' : number_format((float) $v, 4, '.', ',');
         $totalJmlhBatang = array_sum(
             array_map(static fn($row): int => (int) (is_array($row) ? $row['JmlhBatang'] ?? 0 : 0), $rows),
         );
@@ -164,7 +164,7 @@
                 <th style="width: 50px;">Lebar (mm)</th>
                 <th style="width: 56px;">Panjang (ft)</th>
                 <th style="width: 80px;">Jmlh Batang</th>
-                <th style="width: 56px;">Kubik</th>
+                <th style="width: 56px;">M3</th>
                 <th style="width: 54px;">Lokasi</th>
             </tr>
         </thead>

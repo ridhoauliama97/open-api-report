@@ -122,7 +122,7 @@ class ProduksiPerSpkController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Produksi-Per-SPK-%s.pdf', preg_replace('/[^A-Za-z0-9._-]+/', '-', $noSpk));
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

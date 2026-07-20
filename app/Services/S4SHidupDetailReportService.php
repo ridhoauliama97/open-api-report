@@ -26,7 +26,7 @@ class S4SHidupDetailReportService
 
             // Match reference: "JENIS - GRADE" when grade exists.
             $jenisDisplay = $jenis !== ''
-                ? trim($jenis.($grade !== '' ? ' - '.$grade : ''))
+                ? trim($jenis . ($grade !== '' ? ' - ' . $grade : ''))
                 : $grade;
 
             $tebal = $this->toFloat($item['Tebal'] ?? null);
@@ -110,7 +110,7 @@ class S4SHidupDetailReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan S4S (Hidup) detail dikonfigurasi untuk SQL Server. '
-                .'Set S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                    . 'Set S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -119,7 +119,7 @@ class S4SHidupDetailReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'S4S_HIDUP_DETAIL_REPORT_QUERY belum diisi. '
-                    .'Isi query manual jika menggunakan S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
+                        . 'Isi query manual jika menggunakan S4S_HIDUP_DETAIL_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);

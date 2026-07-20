@@ -137,7 +137,7 @@ class PenjualanLokalController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Penjualan-Lokal-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -189,7 +189,7 @@ class PenjualanLokalController extends Controller
             ];
             $sections[$sectionKey]['subtotal_ton'] += $ton;
 
-            $groupKey = $jenisLabel.'|'.$namaGrade;
+            $groupKey = $jenisLabel . '|' . $namaGrade;
             if (! isset($grouped[$groupKey])) {
                 $grouped[$groupKey] = [
                     'jenis' => $jenisLabel,

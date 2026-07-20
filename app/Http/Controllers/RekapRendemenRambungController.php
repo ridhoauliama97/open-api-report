@@ -135,7 +135,7 @@ class RekapRendemenRambungController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Rendemen-Rambung-%s-%02d.pdf', $year, (int) $month);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

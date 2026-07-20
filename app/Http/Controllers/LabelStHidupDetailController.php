@@ -272,7 +272,7 @@ class LabelStHidupDetailController extends Controller
 
         if (($job['status'] ?? null) !== FilePdfJobStore::STATUS_DONE) {
             return response()->json([
-                'message' => 'PDF belum siap. Status saat ini: '.($job['status'] ?? 'unknown'),
+                'message' => 'PDF belum siap. Status saat ini: ' . ($job['status'] ?? 'unknown'),
                 'status' => $job['status'] ?? 'unknown',
             ], 409);
         }
@@ -285,7 +285,7 @@ class LabelStHidupDetailController extends Controller
 
         $filename = basename((string) $job['file_path']);
         $content = $disk->get((string) $job['file_path']);
-        $disposition = $attachment ? 'attachment' : 'attachment';
+        $disposition = $attachment ? 'attachment' : 'inline';
 
         return response($content, 200, [
             'Content-Type' => 'application/pdf',
@@ -306,18 +306,18 @@ class LabelStHidupDetailController extends Controller
             $artisan,
             'reports:generate-label-st-hidup-detail-pdf',
             $jobId,
-            '--requested-by='.$requestedBy,
+            '--requested-by=' . $requestedBy,
         ];
 
         if (PHP_OS_FAMILY === 'Windows') {
             $escaped = array_map('escapeshellarg', $command);
-            pclose(popen('start /B "" '.implode(' ', $escaped).' > NUL 2>&1', 'r'));
+            pclose(popen('start /B "" ' . implode(' ', $escaped) . ' > NUL 2>&1', 'r'));
 
             return;
         }
 
         $escaped = implode(' ', array_map('escapeshellarg', $command));
-        exec($escaped.' > /dev/null 2>&1 &');
+        exec($escaped . ' > /dev/null 2>&1 &');
     }
 
     private function renderPdf(
@@ -377,11 +377,11 @@ class LabelStHidupDetailController extends Controller
         if (! is_dir($dir)) {
             @mkdir($dir, 0777, true);
         }
-        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('label-st-hidup-detail-', true).'.pdf';
+        $tmpPath = $dir . DIRECTORY_SEPARATOR . uniqid('label-st-hidup-detail-', true) . '.pdf';
 
         $pdfGenerator->renderToFile('reports.sawn-timber.label-st-hidup-detail-pdf', $payload, $tmpPath);
 
-        $disposition = $attachment ? 'attachment' : 'attachment';
+        $disposition = $attachment ? 'attachment' : 'inline';
 
         return response()
             ->file($tmpPath, [

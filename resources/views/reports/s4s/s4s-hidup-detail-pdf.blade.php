@@ -151,7 +151,7 @@
         };
 
         $fmtInt = static fn(?int $v): string => $v === null ? '' : number_format($v, 0, '.', ',');
-        $fmtFloat = static fn(?float $v, int $dec = 3): string => $v === null ? '' : number_format($v, $dec, '.', '');
+        $fmtFloat = static fn(?float $v, int $dec = 4): string => $v === null ? '' : number_format($v, $dec, '.', '');
     @endphp
 
     <h1 class="report-title">Laporan Label S4S (Hidup)</h1>
@@ -190,8 +190,9 @@
                     <td class="center">{{ $fmtFloat($row['Lebar'] ?? null, 0) }}</td>
                     <td class="center">{{ $fmtFloat($row['Panjang'] ?? null, 0) }}</td>
                     <td class="number" style="font-weight: bold;">
-                        {{ $fmtInt(is_numeric($row['JmlhBatang'] ?? null) ? (int) $row['JmlhBatang'] : null) }}</td>
-                    <td class="number" style="font-weight: bold;"> {{ $fmtFloat($row['Kubik'] ?? null, 3) }}</td>
+                        {{ $fmtInt(is_numeric($row['JmlhBatang'] ?? null) ? (int) $row['JmlhBatang'] : null) }}
+                    </td>
+                    <td class="number" style="font-weight: bold;"> {{ $fmtFloat($row['Kubik'] ?? null, 4) }}</td>
                     <td class="center">{{ (string) ($row['Lokasi'] ?? '') }}</td>
                 </tr>
             @empty

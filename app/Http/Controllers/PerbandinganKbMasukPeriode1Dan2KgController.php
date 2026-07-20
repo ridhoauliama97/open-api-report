@@ -87,7 +87,7 @@ class PerbandinganKbMasukPeriode1Dan2KgController extends Controller
             $period2StartDate,
             $period2EndDate,
         );
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -87,7 +87,7 @@ class UmurFingerJointDetailController extends Controller
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
     }
 
@@ -163,7 +163,7 @@ class UmurFingerJointDetailController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             // Ensure browser uses a friendly filename (instead of "preview-pdf").
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
     }
 

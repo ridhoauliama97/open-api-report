@@ -62,7 +62,7 @@ class NormalizePdfDownloadFilename
             return strtolower($matches[1]);
         }
 
-        return 'attachment';
+        return 'inline';
     }
 
     private function extractFilename(string $contentDisposition): ?string

@@ -129,7 +129,7 @@ class DetailLembarTallyHasilSawmillController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Tally-Hasil-Sawmill-Detail-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

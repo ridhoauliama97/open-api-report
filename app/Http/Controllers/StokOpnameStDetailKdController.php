@@ -127,7 +127,7 @@ class StokOpnameStDetailKdController extends Controller
         ]);
 
         $filename = sprintf('Laporan Stok Opname ST Detail Pada KD %s.pdf', $noProcKd);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

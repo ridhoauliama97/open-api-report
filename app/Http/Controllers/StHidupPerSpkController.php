@@ -53,7 +53,7 @@ class StHidupPerSpkController extends Controller
         ]);
 
         $filename = 'Laporan-ST-Hidup-per-SPK-per-Jenis-per-Tebal-per-Group-Jenis-Kayu.pdf';
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

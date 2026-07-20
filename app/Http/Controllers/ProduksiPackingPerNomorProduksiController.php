@@ -43,7 +43,7 @@ class ProduksiPackingPerNomorProduksiController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Produksi-Packing-Per-Nomor-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

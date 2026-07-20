@@ -60,7 +60,7 @@ class BahanYangDihasilkanController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Bahan-Yang-Dihasilkan-%s.pdf', $reportDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

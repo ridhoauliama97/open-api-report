@@ -50,7 +50,7 @@ class StockBahanBakuV2Controller extends Controller
         ]);
 
         $filename = sprintf('Laporan-Stock-Bahan-Baku-V2-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

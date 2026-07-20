@@ -124,7 +124,7 @@ class LembarTallyHasilSawmillController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Lembar-Tally-Hasil-Sawmill-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -129,7 +129,7 @@ class TracingStController extends Controller
             'pdf_title' => $filename,
         ]);
 
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
         $disposition = sprintf(
             '%s; filename="%s"; filename*=UTF-8\'\'%s',
             $dispositionType,

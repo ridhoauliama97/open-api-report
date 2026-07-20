@@ -55,12 +55,12 @@ class SemuaLabelController extends Controller
         if (! is_dir($dir)) {
             @mkdir($dir, 0777, true);
         }
-        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('semua-label-', true).'.pdf';
+        $tmpPath = $dir . DIRECTORY_SEPARATOR . uniqid('semua-label-', true) . '.pdf';
 
         $pdfGenerator->renderToFile('pps.semua_label.pdf', $payload, $tmpPath);
 
         $filename = sprintf('Laporan-Semua-Label-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response()
             ->file($tmpPath, [

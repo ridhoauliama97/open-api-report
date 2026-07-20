@@ -82,7 +82,7 @@ class PenjualanBarangJadiM3Controller extends Controller
         $dispositionType = $request->routeIs('reports.penjualan.penjualan-barang-jadi-m3.preview-pdf')
             || $request->expectsJson()
             ? 'attachment'
-            : 'attachment';
+            : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

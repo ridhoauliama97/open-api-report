@@ -102,7 +102,7 @@ class StockSTBasahController extends Controller
 
         $endDate = $request->endDate();
         $filename = sprintf('Laporan-Stock-ST-Basah-%s.pdf', $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
         $cacheKey = $this->pdfCacheKey($endDate, $generatedBy);
 
         if (! $request->boolean('pdf_disable_cache')) {
@@ -158,7 +158,7 @@ class StockSTBasahController extends Controller
             ?? $generatedBy->Nama
             ?? 'unknown');
 
-        return 'report-pdf:stock-st-basah:'.hash('sha256', $endDate.'|'.$userKey);
+        return 'report-pdf:stock-st-basah:' . hash('sha256', $endDate . '|' . $userKey);
     }
 
     private function getCachedPdf(string $cacheKey): ?string

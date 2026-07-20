@@ -68,7 +68,7 @@ class RekapStockOnHandController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Stock-On-Hand-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

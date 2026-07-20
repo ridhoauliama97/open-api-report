@@ -47,7 +47,7 @@ class EmployeeListController extends Controller
             'pdf_column_count' => count($reportData['headers'] ?? []),
         ]);
 
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'attachment';
+        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

@@ -112,7 +112,7 @@ class SaldoHidupKayuBulatKgController extends Controller
         ]);
 
         $filename = 'Laporan-Saldo-Hidup-Kayu-Bulat-Timbang-KG.pdf';
-        $dispositionType = $attachment ? 'attachment' : 'attachment';
+        $dispositionType = $attachment ? 'attachment' : 'inline';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
