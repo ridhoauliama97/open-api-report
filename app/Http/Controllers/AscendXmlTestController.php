@@ -18,6 +18,9 @@ use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas120HariRe
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas45HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangSemuaReportService;
+use App\Services\Ascends\Shared\Finance\OutstandingPayableCheck\HutangGiroRuReportService;
+use App\Services\Ascends\Shared\Finance\PayableSummary\SaldoHutangRuReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableSummary\UmurPiutangRuReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangTakTertagih90HariReportService;
 use App\Services\Ascends\Shared\FixedAsset\AssetSummary\PenyusutanAktivaReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanReportService;
@@ -121,6 +124,8 @@ use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportSer
 use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockRuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\PurchaseByItem\RingkasanPembelianRuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOCustomerBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOLemariBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOPerKategoriBelumTerkirimReportService;
@@ -3821,6 +3826,46 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiAktifitasStockRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        AktifitasStockRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->aktifitasStockRuFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'RU'));
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Ringkasan Valuasi Persediaan';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.stock_activities_summary.aktifitas_stock_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Stock Activities Summary - Ringkasan Valuasi Persediaan (' . $company . ').pdf"',
+        ]);
+    }
+
     public function apiAktifitasStockGsuPerGudangPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         AktifitasStockGsuPerGudangReportService $reportService,
@@ -3858,6 +3903,45 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Stock Activities Summary - Ringkasan Valuasi Persediaan Per Gudang (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiRingkasanPembelianRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        RingkasanPembelianRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->purchaseByItemFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'RU'));
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.purchase_by_item.ringkasan_pembelian_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Purchase By Item - Laporan Ringkasan Pembelian (' . $company . ').pdf"',
         ]);
     }
 
@@ -7517,6 +7601,153 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedFinanceReceivableSummaryUmurPiutangRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        UmurPiutangRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $filters = $this->receivableSummaryFilters($request);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $filters,
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.receivable_summary.umur_piutang_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Receivable Summary - Laporan Umur Piutang Dagang (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiSharedFinancePayableSummarySaldoHutangRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        SaldoHutangRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $filters = $this->payableSummaryFilters($request);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $filters,
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.payable_summary.saldo_hutang_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Payable Summary - Laporan Saldo Hutang (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceOutstandingPayableCheckHutangGiroRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        HutangGiroRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $filters = $this->outstandingPayableCheckFilters($request);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $filters,
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.outstanding_payable_check.hutang_giro_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Outstanding Payable Check - Laporan Hutang Giro (' . $company . ').pdf"',
+        ]);
+    }
+
     public function apiSharedFinanceReceivableDetailsPiutangTakTertagih90HariPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         PiutangTakTertagih90HariReportService $reportService,
@@ -8594,6 +8825,50 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function aktifitasStockRuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'DateRange.StartDate',
+                'DateRange_StartDate',
+                'DateRange_x0020_StartDate',
+                'DateRange.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'DateRange.EndDate',
+                'DateRange_EndDate',
+                'DateRange_x0020_EndDate',
+                'DateRange.End Date',
+            ]),
+        ];
+    }
+
+    private function purchaseByItemFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'PurchaseDate.StartDate',
+                'PurchaseDate_StartDate',
+                'PurchaseDate_x0020_StartDate',
+                'PurchaseDate.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'PurchaseDate.EndDate',
+                'PurchaseDate_EndDate',
+                'PurchaseDate_x0020_EndDate',
+                'PurchaseDate.End Date',
+            ]),
+        ];
+    }
+
     private function aktifitasStockGsuPerGudangFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
@@ -8754,6 +9029,69 @@ class AscendXmlTestController extends Controller
                 'date_end',
                 'DateEnd',
                 'sampai_tanggal',
+            ]),
+        ];
+    }
+
+    private function receivableSummaryFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'ReceivableSummaryDate.StartDate',
+                'ReceivableSummaryDate_StartDate',
+                'ReceivableSummaryDate_x0020_StartDate',
+                'ReceivableSummaryDate.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'ReceivableSummaryDate.EndDate',
+                'ReceivableSummaryDate_EndDate',
+                'ReceivableSummaryDate_x0020_EndDate',
+                'ReceivableSummaryDate.End Date',
+            ]),
+        ];
+    }
+
+    private function payableSummaryFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'PayableSummaryDate.StartDate',
+                'PayableSummaryDate_StartDate',
+                'PayableSummaryDate_x0020_StartDate',
+                'PayableSummaryDate.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'PayableSummaryDate.EndDate',
+                'PayableSummaryDate_EndDate',
+                'PayableSummaryDate_x0020_EndDate',
+                'PayableSummaryDate.End Date',
+            ]),
+        ];
+    }
+
+    private function outstandingPayableCheckFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'per_date' => $this->requestInputByAliases($request, [
+                'per_date',
+                'PerDate',
+                'Per Date',
+                'Per_x0020_Date',
+                'tanggal',
+                'Tanggal',
+                'date',
+                'Date',
+                'report_date',
+                'ReportDate',
+                'Report Date',
             ]),
         ];
     }

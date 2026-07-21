@@ -710,9 +710,19 @@ Route::post(
 )->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.aktifitas-stock-gsu.pdf');
 
 Route::post(
+    '/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-ru/pdf',
+    [AscendXmlTestController::class, 'apiAktifitasStockRuPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.aktifitas-stock-ru.pdf');
+
+Route::post(
     '/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-gsu-per-gudang/pdf',
     [AscendXmlTestController::class, 'apiAktifitasStockGsuPerGudangPdf']
 )->name('api.internal.ascends.shared.inventory_analysis.stock-activities-summary.aktifitas-stock-gsu-per-gudang.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/purchase-by-item/ringkasan-pembelian-ru/pdf',
+    [AscendXmlTestController::class, 'apiRingkasanPembelianRuPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.purchase-by-item.ringkasan-pembelian-ru.pdf');
 
 Route::post(
     '/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-uc/pdf',
@@ -1018,6 +1028,21 @@ Route::post(
     '/internal/ascends/shared/finance/receivable_details/piutang-tak-tertagih-90-hari/pdf',
     [AscendXmlTestController::class, 'apiSharedFinanceReceivableDetailsPiutangTakTertagih90HariPdf']
 )->name('api.internal.ascends.shared.finance.receivable_details.piutang-tak-tertagih-90-hari.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/receivable-summary/umur-piutang-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceReceivableSummaryUmurPiutangRuPdf']
+)->name('api.internal.ascends.shared.finance.receivable-summary.umur-piutang-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/payable-summary/saldo-hutang-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinancePayableSummarySaldoHutangRuPdf']
+)->name('api.internal.ascends.shared.finance.payable-summary.saldo-hutang-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/outstanding-payable-check/hutang-giro-ru/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceOutstandingPayableCheckHutangGiroRuPdf']
+)->name('api.internal.ascends.shared.finance.outstanding-payable-check.hutang-giro-ru.pdf');
 
 Route::post(
     '/internal/ascends/shared/finance/receipt_voucher_details/penerimaan-voucher/pdf',

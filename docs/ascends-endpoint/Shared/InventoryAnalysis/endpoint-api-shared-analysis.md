@@ -41,6 +41,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Stock Activities Summary - Laporan HPP Dan Stock: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-activities-summary/laporan-hpp-dan-stock/pdf`
 - Stock Activities Summary - Laporan Khusus Plastik Kabinet: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-activities-summary/khusus-plastik-kabinet/pdf`
 - Stock Activities Summary - Ringkasan Valuasi Persediaan (Aktifitas Stock GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-gsu/pdf`
+- Stock Activities Summary - Laporan Ringkasan Valuasi Persediaan (Aktifitas Stock RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-ru/pdf`
 - Stock Activities Summary - Ringkasan Valuasi Persediaan Per Gudang (Aktifitas Stock GSU Per Gudang): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-activities-summary/aktifitas-stock-gsu-per-gudang/pdf`
 
 ## Endpoint Shared Stock Balance
@@ -48,6 +49,10 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 - Stock Balance - Laporan Pendukung Stock Opname (UC): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-uc/pdf`
 - Stock Balance - Laporan Pendukung Stock Opname (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-ru/pdf`
 - Stock Balance - Laporan Pendukung Stock Opname (GSU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-gsu/pdf`
+
+## Endpoint Shared Purchase By Item
+
+- Purchase By Item - Laporan Ringkasan Pembelian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/purchase-by-item/ringkasan-pembelian-ru/pdf`
 
 ## Endpoint Shared Production
 
@@ -88,10 +93,11 @@ Fallback kompatibilitas lama:
 
 Catatan: `DB_CompanyName` dipakai lebih dulu dibanding field form `company`.
 
-Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, `khusus-plastik-kabinet`, `aktifitas-stock-gsu`, `aktifitas-stock-gsu-per-gudang`, `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, `hasil-produksi-per-mesin`, `jangka-waktu-approve-pr-po-detail` (dan Stock Activities Summary lainnya):
+Input tambahan khusus `penyesuaian-persediaan`, `khusus-kursi`, `khusus-lemari`, `adjustment-lemari`, `rekapan-value-surat-jalan`, `pengiriman-lemari`, `list-do-belum-terkirim`, `do-customer-belum-terkirim`, `do-lemari-belum-terkirim`, `do-per-kategori-belum-terkirim`, `laporan-hpp-dan-stock`, `khusus-plastik-kabinet`, `aktifitas-stock-gsu`, `aktifitas-stock-ru`, `aktifitas-stock-gsu-per-gudang`, `ringkasan-pembelian-ru`, `hasil-broker-per-hari`, `hasil-broker-per-kategori`, `hasil-broker-per-mesin`, `hasil-cuci-per-hari`, `hasil-cuci-per-mesin`, `hasil-cuci-per-supplier`, `hasil-produksi-per-mesin`, `jangka-waktu-approve-pr-po-detail` (dan Stock Activities Summary lainnya):
 
 - `AdjustmentDate.StartDate` + `AdjustmentDate.EndDate`: periode filter data adjustment, contoh `2026-05-10` sampai `2026-05-31`.
-- `DateRange.StartDate` + `DateRange.EndDate`: tanggal range label untuk laporan Stock Activities Summary (HPP Dan Stock, Khusus Plastik Kabinet, Ringkasan Valuasi Persediaan, Ringkasan Valuasi Persediaan Per Gudang), contoh `2026-06-01` sampai `2026-06-23`.
+- `DateRange.StartDate` + `DateRange.EndDate`: tanggal range label untuk laporan Stock Activities Summary (HPP Dan Stock, Khusus Plastik Kabinet, Ringkasan Valuasi Persediaan, Laporan Ringkasan Valuasi Persediaan, Ringkasan Valuasi Persediaan Per Gudang), contoh `2026-06-01` sampai `2026-06-23`.
+- `PurchaseDate.StartDate` + `PurchaseDate.EndDate`: periode filter untuk laporan Purchase By Item (Ringkasan Pembelian RU), contoh `2026-06-01` sampai `2026-06-30`.
 - `ProductionDate.StartDate` + `ProductionDate.EndDate`: periode filter data production broker, contoh `2026-05-10` sampai `2026-05-31`.
 - `PurchaseOrderDate.StartDate` + `PurchaseOrderDate.EndDate`: periode filter PR Date untuk laporan Purchase Request By Item, contoh `2026-06-01` sampai `2026-06-30`.
 - Alias tanggal yang diterima: `start_date` + `end_date`, `StartDate` + `EndDate`, `TglAwal` + `TglAkhir`, `date_start` + `date_end`, `dari_tanggal` + `sampai_tanggal`, dan `AdjustmentDate.StartDatee` (typo variant).
@@ -164,7 +170,9 @@ Contoh:
 - `Stock Activities Summary - Laporan HPP Dan Stock (GSU).pdf`
 - `Stock Activities Summary - Laporan Khusus Plastik Kabinet (GSU).pdf`
 - `Stock Activities Summary - Ringkasan Valuasi Persediaan (GSU).pdf`
+- `Stock Activities Summary - Laporan Ringkasan Valuasi Persediaan (RU).pdf`
 - `Stock Activities Summary - Ringkasan Valuasi Persediaan Per Gudang (GSU).pdf`
+- `Purchase By Item - Laporan Ringkasan Pembelian (RU).pdf`
 - `Production - Laporan Harian Hasil Broker (GSU).pdf`
 - `Production - Laporan Hasil Broker Per Kategori (GSU).pdf`
 - `Production - Laporan Hasil Broker Per Mesin (GSU).pdf`
@@ -199,7 +207,9 @@ Template Blade shared Adjustment By Item berada di `resources/views/ascends/shar
 - `stock_activities_summary/laporan_hpp_dan_stock`
 - `stock_activities_summary/khusus_plastik_kabinet`
 - `stock_activities_summary/aktifitas_stock_gsu`
+- `stock_activities_summary/aktifitas_stock_ru`
 - `stock_activities_summary/aktifitas_stock_gsu_per_gudang`
+- `purchase_by_item/ringkasan_pembelian_ru`
 - `production/hasil_broker_per_hari`
 - `production/hasil_broker_per_kategori`
 - `production/hasil_broker_per_mesin`
