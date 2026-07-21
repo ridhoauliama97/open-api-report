@@ -31,6 +31,8 @@ class PiutangDiatas60HariReportService
 
         $salesmenGroups = $this->groupBySalesman($filtered);
 
+        usort($salesmenGroups, static fn (array $a, array $b): int => strcasecmp($a['salesman_name'], $b['salesman_name']));
+
         $grand60_75 = 0.0;
         $grand76_90 = 0.0;
         $grand91_120 = 0.0;
@@ -39,6 +41,8 @@ class PiutangDiatas60HariReportService
         foreach ($salesmenGroups as &$salesmanGroup) {
             $salesmanGroup['customer_groups'] = $this->groupByCustomer($salesmanGroup['items']);
             unset($salesmanGroup['items']);
+
+            usort($salesmanGroup['customer_groups'], static fn (array $a, array $b): int => strcasecmp($a['customer_name'], $b['customer_name']));
 
             $salesmanSubtotal60_75 = 0.0;
             $salesmanSubtotal76_90 = 0.0;
@@ -50,6 +54,8 @@ class PiutangDiatas60HariReportService
                 $customerTotal76_90 = 0.0;
                 $customerTotal91_120 = 0.0;
                 $customerTotal120 = 0.0;
+
+                usort($customerGroup['items'], static fn (array $a, array $b): int => Carbon::parse($b['Item Date'] ?? '1970-01-01') <=> Carbon::parse($a['Item Date'] ?? '1970-01-01'));
 
                 foreach ($customerGroup['items'] as &$item) {
                     $ageDays = (int) ($item['Age (Days)'] ?? 0);

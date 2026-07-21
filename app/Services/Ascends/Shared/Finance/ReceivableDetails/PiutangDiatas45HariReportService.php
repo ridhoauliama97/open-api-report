@@ -31,6 +31,8 @@ class PiutangDiatas45HariReportService
 
         $salesmenGroups = $this->groupBySalesman($filtered);
 
+        usort($salesmenGroups, static fn (array $a, array $b): int => strcasecmp($a['salesman_name'], $b['salesman_name']));
+
         $grand045_060 = 0.0;
         $grand061_090 = 0.0;
         $grand091_120 = 0.0;
@@ -39,6 +41,8 @@ class PiutangDiatas45HariReportService
         foreach ($salesmenGroups as &$salesmanGroup) {
             $salesmanGroup['customer_groups'] = $this->groupByCustomer($salesmanGroup['items']);
             unset($salesmanGroup['items']);
+
+            usort($salesmanGroup['customer_groups'], static fn (array $a, array $b): int => strcasecmp($a['customer_name'], $b['customer_name']));
 
             $salesman045_060 = 0.0;
             $salesman061_090 = 0.0;
@@ -50,6 +54,8 @@ class PiutangDiatas45HariReportService
                 $customer061_090 = 0.0;
                 $customer091_120 = 0.0;
                 $customerOver120 = 0.0;
+
+                usort($customerGroup['items'], static fn (array $a, array $b): int => ((int) ($a['Age (Days)'] ?? 0)) <=> ((int) ($b['Age (Days)'] ?? 0)) ?: strcmp($a['Item Ref'] ?? '', $b['Item Ref'] ?? ''));
 
                 foreach ($customerGroup['items'] as &$item) {
                     $ageDays = (int) ($item['Age (Days)'] ?? 0);

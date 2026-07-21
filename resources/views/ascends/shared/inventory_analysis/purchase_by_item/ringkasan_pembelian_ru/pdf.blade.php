@@ -257,7 +257,7 @@
                                     @php
                                         $qtyParts = [];
                                         if ($group['total_ton'] > 0) {
-                                            $qtyParts[] = number_format($group['total_ton'], 1, ',', '.') . ' TON';
+                                            $qtyParts[] = number_format($group['total_ton'], 4, ',', '.') . ' TON';
                                         }
                                         if ($group['total_qty'] > 0) {
                                             $qtyParts[] = number_format($group['total_qty'], 1, ',', '.') . ' KG';

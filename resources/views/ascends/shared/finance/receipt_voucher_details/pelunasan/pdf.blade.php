@@ -179,47 +179,48 @@
                 <tbody>
         @endif
 
-        <tr class="{{ $index % 2 === 0 ? 'row-odd' : 'row-even' }}">
-            <td>{{ $record['customer_name'] }}</td>
-            <td>{{ $record['item_ref'] }}</td>
-            <td style="text-align: center;">{{ fmtDate($record['item_date']) }}</td>
-            <td style="text-align: center;">{{ fmtDate($record['voucher_date']) }}</td>
-            <td class="number nowrap {{ ($record['line_total'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($record['line_total']) }}
-            </td>
-            <td class="number nowrap {{ ($record['total_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($record['total_voucher']) }}
-            </td>
-            <td class="number">{{ (int) ($record['age'] ?? 0) }}</td>
-            <td style="text-align: center;">{{ $record['ket_hari'] ?: '' }}</td>
-            <td style="text-align: center; {{ $record['status'] === 'Belum Lunas' ? 'color: #9c111d; font-weight: bold;' : '' }}">
-                {{ $record['status'] }}
-            </td>
-        </tr>
-    @empty
-        <table class="data-table">
-            <tbody>
-                <tr class="empty-row">
-                    <td colspan="9">Tidak ada data.</td>
+                <tr class="{{ $index % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                    <td>{{ $record['customer_name'] }}</td>
+                    <td>{{ $record['item_ref'] }}</td>
+                    <td style="text-align: center;">{{ fmtDate($record['item_date']) }}</td>
+                    <td style="text-align: center;">{{ fmtDate($record['voucher_date']) }}</td>
+                    <td class="number nowrap {{ ($record['line_total'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($record['line_total']) }}
+                    </td>
+                    <td class="number nowrap {{ ($record['total_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($record['total_voucher']) }}
+                    </td>
+                    <td class="number">{{ (int) ($record['age'] ?? 0) }}</td>
+                    <td style="text-align: center;">{{ $record['ket_hari'] ?: '' }}</td>
+                    <td
+                        style="text-align: center; {{ $record['status'] === 'Belum Lunas' ? 'color: #9c111d; font-weight: bold;' : '' }}">
+                        {{ $record['status'] }}
+                    </td>
                 </tr>
-            </tbody>
-        </table>
-    @endforelse
+    @empty
+                <table class="data-table">
+                    <tbody>
+                        <tr class="empty-row">
+                            <td colspan="9">Tidak ada data.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endforelse
 
-    @if (count($records) > 0)
-        <tr class="grand-total-row">
-            <td colspan="4" style="text-align: center;">Total</td>
-            <td class="number nowrap {{ $grandTotalLine < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($grandTotalLine) }}
-            </td>
-            <td class="number nowrap {{ $grandTotalVoucher < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($grandTotalVoucher) }}
-            </td>
-            <td colspan="3"></td>
-        </tr>
-        </tbody>
-        </table>
-    @endif
+            @if (count($records) > 0)
+                        <tr class="grand-total-row">
+                            <td colspan="4" style="text-align: center;">Total</td>
+                            <td class="number nowrap {{ $grandTotalLine < 0 ? 'number-negative' : '' }}">
+                                {{ fmtAmount($grandTotalLine) }}
+                            </td>
+                            <td class="number nowrap {{ $grandTotalVoucher < 0 ? 'number-negative' : '' }}">
+                                {{ fmtAmount($grandTotalVoucher) }}
+                            </td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
 
     <htmlpagefooter name="reportFooter">
         <table style="width: 100%; border-collapse: collapse; border: 0; margin: 0; padding: 0;">

@@ -114,7 +114,6 @@
         .grand-total td {
             font-weight: bold;
             font-size: 10px;
-            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 3px 4px;
         }
@@ -265,11 +264,11 @@
                     <th>Nama Pelanggan</th>
                     <th>No. Invoice</th>
                     <th>Umur</th>
-                    <th>120-240 Hari</th>
-                    <th>241-360 Hari</th>
-                    <th>361-480 Hari</th>
-                    <th>481-600 Hari</th>
-                    <th>&gt; 600 Hari</th>
+                    <th>120 - 240 <br> Hari</th>
+                    <th>241 - 360 <br>Hari</th>
+                    <th>361 - 480 <br>Hari</th>
+                    <th>481 - 600 <br>Hari</th>
+                    <th>&gt; 600 <br>Hari</th>
                     <th>Saldo Piutang</th>
                 </tr>
             </thead>
@@ -287,7 +286,7 @@
                         @php $globalRow++; @endphp
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td>{{ $itemIndex === 0 ? $item['customer_name'] ?? '' : '' }}</td>
-                            <td>{{ $item['item_ref'] ?? '' }}</td>
+                            <td class="center">{{ $item['item_ref'] ?? '' }}</td>
                             <td class="center">{{ fmtUmur($item['umur'] ?? 0) }}</td>
                             <td class="number nowrap {{ ($item['bucket_120_240'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                 {{ fmtAmount($item['bucket_120_240'] ?? 0) }}</td>
@@ -327,7 +326,7 @@
 
                 {{-- Grand Total --}}
                 <tr class="grand-total">
-                    <td colspan="3" style="text-align: center;">GRAND TOTAL </td>
+                    <td colspan="3" class="center">GRAND TOTAL </td>
                     <td class="number nowrap {{ $grand120_240 < 0 ? 'number-negative' : '' }}">
                         {{ fmtAmount($grand120_240) }}</td>
                     <td class="number nowrap {{ $grand241_360 < 0 ? 'number-negative' : '' }}">

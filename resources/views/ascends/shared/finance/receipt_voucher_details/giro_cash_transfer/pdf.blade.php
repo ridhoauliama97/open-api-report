@@ -189,84 +189,84 @@
                 <tbody>
         @endif
 
-        @php
-            $prev = $records[$index - 1] ?? null;
-            $showGroup = $prev === null || $prev['group_key'] !== $record['group_key'];
-        @endphp
+                @php
+                    $prev = $records[$index - 1] ?? null;
+                    $showGroup = $prev === null || $prev['group_key'] !== $record['group_key'];
+                @endphp
 
-        @if ($showGroup)
-            @php
-                $subtotal = 0;
-                foreach ($records as $r) {
-                    if ($r['group_key'] === $record['group_key']) {
-                        $subtotal += (float) ($r['total'] ?? 0);
-                    }
-                }
-                $dataRowIndex = -1;
-            @endphp
-            <tr class="group-header">
-                <td colspan="6">
-                    {{ $record['sales_person'] !== '-' ? $record['sales_person'] : $record['group_key'] }}
-                </td>
-            </tr>
-        @endif
+                @if ($showGroup)
+                    @php
+                        $subtotal = 0;
+                        foreach ($records as $r) {
+                            if ($r['group_key'] === $record['group_key']) {
+                                $subtotal += (float) ($r['total'] ?? 0);
+                            }
+                        }
+                        $dataRowIndex = -1;
+                    @endphp
+                    <tr class="group-header">
+                        <td colspan="6">
+                            {{ $record['sales_person'] !== '-' ? $record['sales_person'] : $record['group_key'] }}
+                        </td>
+                    </tr>
+                @endif
 
-        @php $dataRowIndex++; @endphp
+                @php $dataRowIndex++; @endphp
 
-        <tr class="{{ $dataRowIndex % 2 === 0 ? 'row-odd' : 'row-even' }}">
-            <td>{{ $record['voucher_no'] }}</td>
-            <td>{{ $record['customer_name'] }}</td>
-            <td style="text-align: center;">{{ fmtDate($record['item_date']) }}</td>
-            <td style="text-align: center;">{{ fmtDate($record['voucher_date']) }}</td>
-            <td class="number">{{ (int) ($record['hari'] ?? 0) }}</td>
-            <td class="number nowrap {{ ($record['total'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($record['total']) }}
-            </td>
-        </tr>
+                <tr class="{{ $dataRowIndex % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                    <td>{{ $record['voucher_no'] }}</td>
+                    <td>{{ $record['customer_name'] }}</td>
+                    <td style="text-align: center;">{{ fmtDate($record['item_date']) }}</td>
+                    <td style="text-align: center;">{{ fmtDate($record['voucher_date']) }}</td>
+                    <td class="number">{{ (int) ($record['hari'] ?? 0) }}</td>
+                    <td class="number nowrap {{ ($record['total'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($record['total']) }}
+                    </td>
+                </tr>
 
-        @php
-            $next = $records[$index + 1] ?? null;
-            $isLastInGroup = $next === null || $next['group_key'] !== $record['group_key'];
-        @endphp
+                @php
+                    $next = $records[$index + 1] ?? null;
+                    $isLastInGroup = $next === null || $next['group_key'] !== $record['group_key'];
+                @endphp
 
-        @if ($isLastInGroup)
-            <tr class="subtotal-row">
-                <td colspan="5" class="center">Total</td>
-                <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
-            </tr>
-        @endif
+                @if ($isLastInGroup)
+                    <tr class="subtotal-row">
+                        <td colspan="5" class="center">Total</td>
+                        <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
+                    </tr>
+                @endif
     @empty
-        <table class="data-table">
-            <colgroup>
-                <col style="width:17%">
-                <col style="width:24%">
-                <col style="width:13%">
-                <col style="width:13%">
-                <col style="width:7%">
-                <col style="width:26%">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>No Voucher</th>
-                    <th>Nama Customer</th>
-                    <th>Tgl. Invoice</th>
-                    <th>Tgl. Voucher</th>
-                    <th>Hari</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="empty-row">
-                    <td colspan="6">Tidak ada data.</td>
-                </tr>
-            </tbody>
-        </table>
-    @endforelse
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width:17%">
+                        <col style="width:24%">
+                        <col style="width:13%">
+                        <col style="width:13%">
+                        <col style="width:7%">
+                        <col style="width:26%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>No Voucher</th>
+                            <th>Nama Customer</th>
+                            <th>Tgl. Invoice</th>
+                            <th>Tgl. Voucher</th>
+                            <th>Hari</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="empty-row">
+                            <td colspan="6">Tidak ada data.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endforelse
 
-    @if (count($records) > 0)
-        </tbody>
-        </table>
-    @endif
+            @if (count($records) > 0)
+                    </tbody>
+                </table>
+            @endif
 
     <htmlpagefooter name="reportFooter">
         <table style="width: 100%; border-collapse: collapse; border: 0; margin: 0; padding: 0;">

@@ -66,6 +66,7 @@ class PiutangDiatas120HariReportService
         ], $grandSaldo);
 
         $salesmanSummary = $this->calculateSalesmanSummary($detailItems);
+        usort($salesmanSummary, static fn (array $a, array $b): int => strcasecmp($a['salesman_name'], $b['salesman_name']));
         $grandSalesman120_240 = (float) array_sum(array_column($salesmanSummary, 'total_120_240'));
         $grandSalesman241_360 = (float) array_sum(array_column($salesmanSummary, 'total_241_360'));
         $grandSalesman361_480 = (float) array_sum(array_column($salesmanSummary, 'total_361_480'));

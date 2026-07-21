@@ -109,6 +109,10 @@
             text-align: right;
         }
 
+        .center {
+            text-align: center;
+        }
+
         .nowrap {
             white-space: nowrap;
         }
@@ -205,11 +209,11 @@
                     <tr>
                         <th style="width:8%">Nama Sales</th>
                         <th style="width:16%">Nama Customer</th>
-                        <th style="width:12%">No. Invoice</th>
-                        <th style="width:9%">Tgl Invoice</th>
+                        <th style="width:12%">No Sales Invoice</th>
+                        <th style="width:9%">Tgl Sales Invoice</th>
                         <th style="width:9%">Tgl Bayar</th>
-                        <th style="width:4%">Lama</th>
-                        <th style="width:9%">Nilai Invoice</th>
+                        <th style="width:4%">Lama Piutang</th>
+                        <th style="width:9%">Nilai Sales Invoice</th>
                         <th style="width:9%">Nilai Bayar</th>
                         <th style="width:9%">Total Nilai Bayar</th>
                         <th style="width:7%">Cara Bayar</th>
@@ -219,53 +223,53 @@
                 <tbody>
         @endif
 
-        <tr class="{{ $index % 2 === 0 ? 'row-odd' : 'row-even' }}">
-            <td>{{ $record['sales_person'] !== '-' ? $record['sales_person'] : '' }}</td>
-            <td>{{ $record['customer_name'] }}</td>
-            <td>{{ $record['item_ref'] }}</td>
-            <td>{{ fmtDate($record['item_date']) }}</td>
-            <td>{{ fmtDate($record['voucher_date']) }}</td>
-            <td class="number">{{ (int) ($record['lama_piutang'] ?? 0) }}</td>
-            <td class="number nowrap {{ ($record['item_amount'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($record['item_amount']) }}
-            </td>
-            <td class="number nowrap {{ ($record['nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($record['nilai_bayar']) }}
-            </td>
-            <td class="number nowrap {{ ($record['total_nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{-- {{ fmtAmount($record['total_nilai_bayar']) }} --}}
-            </td>
-            <td>{{ $record['payment_method'] ?: '' }}</td>
-            <td class="nowrap">{{ $record['gab_ket'] ?: '' }}</td>
-        </tr>
-    @empty
-        <table class="data-table">
-            <tbody>
-                <tr class="empty-row">
-                    <td colspan="11">Tidak ada data.</td>
+                <tr class="{{ $index % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                    <td>{{ $record['sales_person'] !== '-' ? $record['sales_person'] : '' }}</td>
+                    <td>{{ $record['customer_name'] }}</td>
+                    <td>{{ $record['item_ref'] }}</td>
+                    <td class="center">{{ fmtDate($record['item_date']) }}</td>
+                    <td class="center">{{ fmtDate($record['voucher_date']) }}</td>
+                    <td class="center">{{ (int) ($record['lama_piutang'] ?? 0) }}</td>
+                    <td class="number nowrap {{ ($record['item_amount'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($record['item_amount']) }}
+                    </td>
+                    <td class="number nowrap {{ ($record['nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($record['nilai_bayar']) }}
+                    </td>
+                    <td class="number nowrap {{ ($record['total_nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{-- {{ fmtAmount($record['total_nilai_bayar']) }} --}}
+                    </td>
+                    <td class="center">{{ $record['payment_method'] ?: '' }}</td>
+                    <td class="nowrap">{{ $record['gab_ket'] ?: '' }}</td>
                 </tr>
-            </tbody>
-        </table>
-    @endforelse
+    @empty
+                <table class="data-table">
+                    <tbody>
+                        <tr class="empty-row">
+                            <td colspan="11">Tidak ada data.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endforelse
 
-    @if (count($records) > 0)
-        <tr class="grand-total-row">
-            <td colspan="5" style="text-align: center;">Total</td>
-            <td class="number"></td>
-            <td class="number nowrap {{ $grandTotalInvoice < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($grandTotalInvoice) }}
-            </td>
-            <td class="number nowrap {{ $grandTotalBayar < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($grandTotalBayar) }}
-            </td>
-            <td class="number nowrap {{ $grandTotalNilaiBayar < 0 ? 'number-negative' : '' }}">
+            @if (count($records) > 0)
+                        <tr class="grand-total-row">
+                            <td colspan="5" style="text-align: center;">Total</td>
+                            <td class="number"></td>
+                            <td class="number nowrap {{ $grandTotalInvoice < 0 ? 'number-negative' : '' }}">
+                                {{ fmtAmount($grandTotalInvoice) }}
+                            </td>
+                            <td class="number nowrap {{ $grandTotalBayar < 0 ? 'number-negative' : '' }}">
+                                {{ fmtAmount($grandTotalBayar) }}
+                            </td>
+                            <td class="number nowrap {{ $grandTotalNilaiBayar < 0 ? 'number-negative' : '' }}">
 
-            </td>
-            <td colspan="2"></td>
-        </tr>
-        </tbody>
-        </table>
-    @endif
+                            </td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
 
     <table class="signature-table">
         <tr>

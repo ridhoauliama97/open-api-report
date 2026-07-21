@@ -211,7 +211,7 @@
                 <tr>
                     <th>Nama Pelanggan</th>
                     <th>No. Invoice</th>
-                    <th>Umur</th>
+                    <th>Umur Piutang</th>
                     <th>45-60 Hari</th>
                     <th>61-90 Hari</th>
                     <th>91-120 Hari</th>
@@ -230,26 +230,21 @@
                                 @php $globalRow++; @endphp
                                 <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                     <td>{{ $itemIndex === 0 ? $customer['customer_name'] ?? '' : '' }}</td>
-                                    <td>{{ $item['Item Ref'] ?? '' }}</td>
+                                    <td class="center">{{ $item['Item Ref'] ?? '' }}</td>
                                     <td class="center">{{ fmtUmur($item['umur'] ?? 0) }}</td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_045_060'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_061_090'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_091_120'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_over_120'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['Balance'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['Balance'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['Balance'] ?? 0) }}
                                     </td>
                                 </tr>
@@ -257,24 +252,19 @@
 
                             <tr class="customer-total">
                                 <td colspan="3">TOTAL</td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_045_060'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_061_090'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_091_120'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_over_120'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_saldo'] ?? 0) }}
                                 </td>
                             </tr>
@@ -292,8 +282,7 @@
                         <td class="number nowrap {{ ($salesman['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                             {{ fmtAmount($salesman['total_091_120'] ?? 0) }}
                         </td>
-                        <td
-                            class="number nowrap {{ ($salesman['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        <td class="number nowrap {{ ($salesman['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                             {{ fmtAmount($salesman['total_over_120'] ?? 0) }}
                         </td>
                         <td class="number nowrap {{ ($salesman['total_saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
