@@ -126,6 +126,8 @@ use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangRepo
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockRuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\PurchaseByItem\RingkasanPembelianRuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\PenjualanPerGroupBulananRuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\PersentaseHppPenjualanPerItemFamilyRuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOCustomerBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOLemariBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOPerKategoriBelumTerkirimReportService;
@@ -3942,6 +3944,86 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Purchase By Item - Laporan Ringkasan Pembelian (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiPenjualanPerGroupBulananRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PenjualanPerGroupBulananRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $filters = $this->salesByItemFilters($request);
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'RU'));
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.sales_by_item.penjualan_per_group_bulanan_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Sales By Item - Laporan Penjualan Per Item Family (' . $company . ').pdf"',
+        ]);
+    }
+
+    public function apiPersentaseHPPPenjualanPerItemFamilyRuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PersentaseHppPenjualanPerItemFamilyRuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'RU'));
+            $filters = $this->persentaseHppPenjualanPerItemFamilyRuFilters($request);
+            $filters['company'] = $company;
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.sales_by_item.persentase_hpp_pernjualan_per_item_family_ru.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Sales By Item - Laporan Persentase HPP Penjualan Per Item Family (' . $company . ').pdf"',
         ]);
     }
 
@@ -8865,6 +8947,50 @@ class AscendXmlTestController extends Controller
                 'PurchaseDate_EndDate',
                 'PurchaseDate_x0020_EndDate',
                 'PurchaseDate.End Date',
+            ]),
+        ];
+    }
+
+    private function salesByItemFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'SalesDate.StartDate',
+                'SalesDate_StartDate',
+                'SalesDate_x0020_StartDate',
+                'SalesDate.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'SalesDate.EndDate',
+                'SalesDate_EndDate',
+                'SalesDate_x0020_EndDate',
+                'SalesDate.End Date',
+            ]),
+        ];
+    }
+
+    private function persentaseHppPenjualanPerItemFamilyRuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'SalesDate.StartDate',
+                'SalesDate_StartDate',
+                'SalesDate_x0020_StartDate',
+                'SalesDate.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'SalesDate.EndDate',
+                'SalesDate_EndDate',
+                'SalesDate_x0020_EndDate',
+                'SalesDate.End Date',
             ]),
         ];
     }
