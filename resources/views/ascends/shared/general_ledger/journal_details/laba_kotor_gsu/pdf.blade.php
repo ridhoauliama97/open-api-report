@@ -115,9 +115,7 @@
             text-align: right;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .nowrap {
             white-space: nowrap;
@@ -216,7 +214,8 @@
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} item-row">
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
                             @foreach ($months as $monthKey => $monthLabel)
-                                <td class="number nowrap">{{ $formatAmount($item['monthly_amounts'][$monthKey] ?? 0) }}
+                                <td class="number nowrap">
+                                    {{ $formatAmount($item['monthly_amounts'][$monthKey] ?? 0) }}
                                 </td>
                             @endforeach
                             <td></td>
@@ -230,11 +229,13 @@
                         @foreach ($months as $monthKey => $monthLabel)
                             @php $margin = (float) ($group['monthly_margin'][$monthKey] ?? 0); @endphp
                             <td class="number nowrap {{ $margin < 0 ? 'number-negative' : '' }}">
-                                {{ $formatPct($margin) }}</td>
+                                {{ $formatPct($margin) }}
+                            </td>
                         @endforeach
                         <td class="number nowrap">{{ $formatPct($group['rata_rata'] ?? 0) }}</td>
                         <td class="number nowrap {{ ($group['terendah'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ $formatPct($group['terendah'] ?? 0) }}</td>
+                            {{ $formatPct($group['terendah'] ?? 0) }}
+                        </td>
                         <td class="number nowrap">{{ $formatPct($group['tertinggi'] ?? 0) }}</td>
                     </tr>
                 @endforeach
@@ -243,12 +244,14 @@
                     <td>TOTAL LABA (RUGI) KOTOR</td>
                     @foreach ($months as $monthKey => $monthLabel)
                         @php $margin = (float) ($totalMargins[$monthKey] ?? 0); @endphp
-                        <td class="number nowrap {{ $margin < 0 ? 'number-negative' : '' }}">{{ $formatPct($margin) }}
+                        <td class="number nowrap {{ $margin < 0 ? 'number-negative' : '' }}">
+                            {{ $formatPct($margin) }}
                         </td>
                     @endforeach
                     <td class="number nowrap">{{ $formatPct($reportData['total_rata_rata'] ?? 0) }}</td>
                     <td class="number nowrap {{ ($reportData['total_terendah'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ $formatPct($reportData['total_terendah'] ?? 0) }}</td>
+                        {{ $formatPct($reportData['total_terendah'] ?? 0) }}
+                    </td>
                     <td class="number nowrap">{{ $formatPct($reportData['total_tertinggi'] ?? 0) }}</td>
                 </tr>
 
@@ -256,14 +259,19 @@
                     <td>HPP GLOBAL</td>
                     @foreach ($months as $monthKey => $monthLabel)
                         @php $hpp = (float) ($hppGlobal[$monthKey] ?? 0); @endphp
-                        <td class="number nowrap {{ $hpp > 0 ? 'number-negative' : '' }}">{{ $formatPct(-$hpp) }}</td>
+                        <td class="number nowrap {{ $hpp > 0 ? 'number-negative' : '' }}">
+                            {{ $formatPct(-$hpp) }}
+                        </td>
                     @endforeach
-                    <td class="number nowrap number-negative">
-                        {{ $formatPct(-($reportData['hpp_global_rata_rata'] ?? 0)) }}</td>
-                    <td class="number nowrap number-negative">
-                        {{ $formatPct(-($reportData['hpp_global_tertinggi'] ?? 0)) }}</td>
-                    <td class="number nowrap number-negative">
-                        {{ $formatPct(-($reportData['hpp_global_terendah'] ?? 0)) }}</td>
+                    <td class="number nowrap">
+                        {{ $formatPct(-($reportData['hpp_global_rata_rata'] ?? 0)) }}
+                    </td>
+                    <td class="number nowrap">
+                        {{ $formatPct(-($reportData['hpp_global_tertinggi'] ?? 0)) }}
+                    </td>
+                    <td class="number nowrap">
+                        {{ $formatPct(-($reportData['hpp_global_terendah'] ?? 0)) }}
+                    </td>
                 </tr>
             </tbody>
         </table>

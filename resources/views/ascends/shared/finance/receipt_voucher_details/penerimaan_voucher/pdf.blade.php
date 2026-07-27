@@ -97,7 +97,6 @@
             font-weight: bold;
             font-size: 11px;
             padding: 3px 2px;
-            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
@@ -132,9 +131,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .col-voucher {
             width: 28%;
@@ -166,7 +163,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 0, '.', ',');
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
             if ($v == 0.0) {
                 return '0.00';
@@ -228,8 +225,7 @@
                                 <td>{{ $voucher['voucher_no'] ?? '' }}</td>
                                 <td>{{ fmtDate($voucher['voucher_date'] ?? '') }}</td>
                                 <td>{{ abs($voucher['beda_hari'] ?? 0) }} Hari</td>
-                                <td
-                                    class="number nowrap {{ ($voucher['payment'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($voucher['payment'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($voucher['payment'] ?? 0) }}
                                 </td>
                             </tr>
@@ -249,17 +245,17 @@
                 @endforeach
             </tbody>
         </table>
-        @empty
-            <table class="data-table">
-                <tbody>
-                    <tr class="empty-row">
-                        <td colspan="4">Tidak ada data.</td>
-                    </tr>
-                </tbody>
-            </table>
-        @endforelse
+    @empty
+        <table class="data-table">
+            <tbody>
+                <tr class="empty-row">
+                    <td colspan="4">Tidak ada data.</td>
+                </tr>
+            </tbody>
+        </table>
+    @endforelse
 
-        @include('ascends.shared.partials.report-footer')
-    </body>
+    @include('ascends.shared.partials.report-footer')
+</body>
 
-    </html>
+</html>

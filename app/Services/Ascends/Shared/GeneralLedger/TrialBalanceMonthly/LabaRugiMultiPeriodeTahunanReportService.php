@@ -11,35 +11,7 @@ class LabaRugiMultiPeriodeTahunanReportService
 {
     private const TITLE = 'Laporan Laba Rugi Multi Periode (Tahunan)';
 
-    private const SECTION_MAP = [
-        '400.000.000' => 'PENJUALAN DAN PENDAPATAN',
-        '500.000.000' => 'Harga Pokok Produksi',
-        '516.000.000' => 'Harga Pokok Penjualan',
-        '516.000.200' => 'HPP PL Furniture',
-        '516.000.400' => 'HPP Enamel',
-        '516.000.903' => 'HPP PL Lemari',
-        '516.000.904' => 'HPP Furniture Lipat',
-        '600.000.000' => 'Pembelian Barang Dagangan',
-        '700.000.000' => 'BEBAN USAHA',
-        '800.000.000' => 'PENDAPATAN LAINNYA',
-        '900.000.000' => 'BEBAN LAINNYA',
-    ];
-
     private const EXCLUDED_PREFIX = '399.999.999';
-
-    private const SECTION_SIGN = [
-        '400.000.000' => 1,
-        '500.000.000' => -1,
-        '516.000.000' => -1,
-        '516.000.200' => -1,
-        '516.000.400' => -1,
-        '516.000.903' => -1,
-        '516.000.904' => -1,
-        '600.000.000' => 1,
-        '700.000.000' => -1,
-        '800.000.000' => 1,
-        '900.000.000' => -1,
-    ];
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload'): array
     {
@@ -169,12 +141,10 @@ class LabaRugiMultiPeriodeTahunanReportService
         foreach ($rows as $row) {
             $ac1 = (string) ($row['AccountCode1'] ?? '');
             $an1 = (string) ($row['AccountName1'] ?? '');
-            $an2 = (string) ($row['AccountName2'] ?? '');
             $an5 = (string) ($row['AccountName5'] ?? '');
-            $sign = self::SECTION_SIGN[$ac1] ?? 1;
-            $balance = (float) ($row['Balance'] ?? 0) * $sign;
+            $balance = (float) ($row['Beginning'] ?? 0) + (float) ($row['Mutation Credit'] ?? 0) - (float) ($row['Mutation Debit'] ?? 0);
 
-            $displayName = $this->resolveDisplayName($ac1, $an1, $an2, $an5);
+            $displayName = $this->resolveDisplayName($an1, $an5);
 
             $key = "{$ac1}|||{$displayName}";
             if (! isset($groups[$key])) {
@@ -192,64 +162,88 @@ class LabaRugiMultiPeriodeTahunanReportService
         return array_values($groups);
     }
 
-    private function resolveDisplayName(string $ac1, string $an1, string $an2, string $an5): string
+    private function resolveDisplayName(string $an1, string $an5): string
     {
-        if (in_array($ac1, ['800.000.000', '900.000.000'], true)) {
-            return $an2 !== '' ? $an2 : ($an5 !== '' ? $an5 : $an1);
-        }
-
-        return $an5 !== '' ? $an5 : ($an2 !== '' ? $an2 : $an1);
+        return $an5 !== '' ? $an5 : $an1;
     }
 
     private function buildSections(array $grouped): array
     {
         $sections = [];
 
-        $prefixOrder = ['400', '500', '516', '600', '700', '800', '900'];
-        $allCodes = array_unique(array_map(fn ($g) => $g['section_code'], $grouped));
-        sort($allCodes);
-
-        $codeGroups = [];
-        foreach ($allCodes as $code) {
+        $prefixGroups = [];
+        foreach ($grouped as $g) {
+            $code = $g['section_code'];
             $prefix = substr($code, 0, 3);
-            $codeGroups[$prefix][] = $code;
+            $prefixGroups[$prefix][] = $g;
         }
 
-        $sectionOrder = [];
-        foreach ($prefixOrder as $prefix) {
-            if (isset($codeGroups[$prefix])) {
-                sort($codeGroups[$prefix]);
-                $sectionOrder = array_merge($sectionOrder, $codeGroups[$prefix]);
-            }
-        }
+        $sortedPrefixes = array_keys($prefixGroups);
+        sort($sortedPrefixes);
 
-        foreach ($sectionOrder as $code) {
-            $sectionName = self::SECTION_MAP[$code] ?? $code;
-            $sectionItems = array_values(array_filter($grouped, fn ($g) => $g['section_code'] === $code));
+        foreach ($sortedPrefixes as $prefix) {
+            $groups = $prefixGroups[$prefix];
 
-            if ($sectionItems === []) {
-                continue;
-            }
+            $codeLengths = array_map(fn ($g) => strlen($g['section_code']), $groups);
+            $uniqueLengths = array_unique($codeLengths);
 
-            $items = [];
-            $subtotal = 0.0;
+            if (count($uniqueLengths) === 1) {
+                $sectionCode = $groups[0]['section_code'];
+                $sectionName = $groups[0]['section_name'];
+                $subtotal = 0.0;
+                $items = [];
 
-            usort($sectionItems, fn ($a, $b) => strcmp($a['display_name'], $b['display_name']));
+                usort($groups, fn ($a, $b) => strcmp($a['display_name'], $b['display_name']));
 
-            foreach ($sectionItems as $item) {
-                $items[] = [
-                    'account_name' => $item['display_name'],
-                    'amount' => $item['total'],
+                foreach ($groups as $g) {
+                    $items[] = [
+                        'account_name' => $g['display_name'],
+                        'amount' => $g['total'],
+                    ];
+                    $subtotal += $g['total'];
+                }
+
+                $sections[] = [
+                    'section_code' => $sectionCode,
+                    'section_name' => $sectionName,
+                    'items' => $items,
+                    'subtotal' => $subtotal,
                 ];
-                $subtotal += $item['total'];
-            }
+            } else {
+                $header = null;
 
-            $sections[] = [
-                'section_code' => $code,
-                'section_name' => $sectionName,
-                'items' => $items,
-                'subtotal' => $subtotal,
-            ];
+                foreach ($groups as $g) {
+                    $codeLen = strlen($g['section_code']);
+                    if ($header === null || $codeLen < strlen($header['section_code'])) {
+                        $header = $g;
+                    }
+                }
+
+                $details = [];
+                foreach ($groups as $g) {
+                    if ($g['section_code'] === $header['section_code']) {
+                        continue;
+                    }
+                    $details[] = $g;
+                }
+
+                usort($details, fn ($a, $b) => strcmp($a['display_name'], $b['display_name']));
+
+                $items = [];
+                foreach ($details as $d) {
+                    $items[] = [
+                        'account_name' => $d['display_name'],
+                        'amount' => $d['total'],
+                    ];
+                }
+
+                $sections[] = [
+                    'section_code' => $header['section_code'],
+                    'section_name' => $header['section_name'],
+                    'items' => $items,
+                    'subtotal' => $header['total'],
+                ];
+            }
         }
 
         return $sections;

@@ -130,9 +130,7 @@
             text-align: right;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .nowrap {
             white-space: nowrap;

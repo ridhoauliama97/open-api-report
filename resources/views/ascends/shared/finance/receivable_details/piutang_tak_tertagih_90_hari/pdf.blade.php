@@ -53,11 +53,11 @@
             border-collapse: collapse;
             table-layout: fixed;
             page-break-inside: auto;
-            border: 1px solid #000;
         }
 
         .data-table th,
         .data-table td {
+            border-left: 1px solid #000;
             border-right: 1px solid #000;
             padding: 2px 2px;
             vertical-align: middle;
@@ -67,6 +67,7 @@
         .data-table th {
             font-weight: bold;
             font-size: 10px;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
         }
@@ -89,10 +90,6 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
-
         .row-odd td {
             background: #c9d1df;
         }
@@ -103,7 +100,7 @@
 
         .total-row td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 3px 4px;
@@ -134,7 +131,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 2, ',', '.');
+                return '(' . number_format(abs($v), 2, ',', '.') . ')';
             }
             if ($v == 0.0) {
                 return '-';
@@ -150,7 +147,11 @@
 
         function fmtPersen($value)
         {
-            return number_format((float) $value, 1, ',', '.') . '%';
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 1, ',', '.') . '%)';
+            }
+            return number_format($v, 1, ',', '.') . '%';
         }
 
         $globalRow = 0;

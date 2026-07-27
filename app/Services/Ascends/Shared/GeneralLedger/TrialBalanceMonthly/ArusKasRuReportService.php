@@ -120,6 +120,15 @@ class ArusKasRuReportService
     private function resolvePeriodRange(array $rows, string $periodStart, string $periodEnd): array
     {
         if ($periodStart !== '' && $periodEnd !== '') {
+            try {
+                $periodStart = Carbon::parse($periodStart)->format('Y-m');
+            } catch (Throwable) {
+            }
+            try {
+                $periodEnd = Carbon::parse($periodEnd)->format('Y-m');
+            } catch (Throwable) {
+            }
+
             return [$periodStart, $periodEnd];
         }
 

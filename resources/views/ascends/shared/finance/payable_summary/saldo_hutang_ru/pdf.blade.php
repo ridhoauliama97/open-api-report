@@ -66,7 +66,7 @@
 
         .data-table th {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
@@ -111,6 +111,11 @@
             border-bottom: 1px solid #000;
             font-size: 11px;
         }
+
+        .col-no {
+            width: 6%;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -124,6 +129,18 @@
         $headerCompany = trim((string) ($company ?? $reportData['company'] ?? ''));
         $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
+
+        function fmtAmount($value)
+        {
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
+            }
+            if ($v == 0.0) {
+                return '-';
+            }
+            return number_format($v, 0, '.', ',');
+        }
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
@@ -134,7 +151,8 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 30%">Supplier</th>
+                    <th class="col-no">No</th>
+                    <th style="width: 24%">Supplier</th>
                     <th style="width: 14%">Saldo Awal</th>
                     <th style="width: 14%">Faktur Pembelian</th>
                     <th style="width: 14%">AP Notes</th>
@@ -147,51 +165,42 @@
                 @foreach ($rows as $row)
                     @php $rowNum++; @endphp
                     <tr class="{{ $rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                        <td class="center">{{ $rowNum }}</td>
                         <td>{{ $row['supplier_name'] }}</td>
                         <td class="number nowrap">
-                            @php $v = (float) ($row['opening'] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                            {{ fmtAmount($row['opening'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            @php $v = (float) ($row['ap_purchase'] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                            {{ fmtAmount($row['ap_purchase'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            @php $v = (float) ($row['ap_note'] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                            {{ fmtAmount($row['ap_note'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            @php $v = (float) ($row['payment'] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                            {{ fmtAmount($row['payment'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            @php $v = (float) ($row['ending'] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                            {{ fmtAmount($row['ending'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total">
-                    <td class="center">Total</td>
+                    <td class="center" colspan="2">Total</td>
                     <td class="number nowrap">
-                        @php $v = (float) ($grandTotals['opening'] ?? 0); @endphp
-                        {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                        {{ fmtAmount($grandTotals['opening'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        @php $v = (float) ($grandTotals['ap_purchase'] ?? 0); @endphp
-                        {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                        {{ fmtAmount($grandTotals['ap_purchase'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        @php $v = (float) ($grandTotals['ap_note'] ?? 0); @endphp
-                        {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                        {{ fmtAmount($grandTotals['ap_note'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        @php $v = (float) ($grandTotals['payment'] ?? 0); @endphp
-                        {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                        {{ fmtAmount($grandTotals['payment'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        @php $v = (float) ($grandTotals['ending'] ?? 0); @endphp
-                        {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                        {{ fmtAmount($grandTotals['ending'] ?? 0) }}
                     </td>
                 </tr>
             </tbody>
@@ -200,7 +209,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="6">Tidak ada data.</td>
+                    <td colspan="7">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

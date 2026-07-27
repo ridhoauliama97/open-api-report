@@ -8,7 +8,7 @@ use XMLReader;
 
 class PiutangSemuaReportService
 {
-    private const TITLE = 'Laporan Umur Piutang Semua';
+    private const TITLE = 'Laporan Umur Piutang Dagang Semua Detail';
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
@@ -55,9 +55,21 @@ class PiutangSemuaReportService
         $grandOver120 = (float) array_sum(array_column($customerTotals, 'total_over_120'));
         $grandSaldo = $grand001_044 + $grand045_060 + $grand061_090 + $grand091_120 + $grandOver120;
 
+        $baseRasio = 0.0;
+        foreach ($detailItems as $item) {
+            if ($item['umur'] >= 1 && $item['umur'] <= 44) {
+                $baseRasio += $item['saldo'];
+            }
+        }
+        $baseRasio = abs($baseRasio);
+
         $rasio = $this->calculateRasio([
-            $grand001_044, $grand045_060, $grand061_090, $grand091_120, $grandOver120,
-        ], $grandSaldo);
+            $grand001_044,
+            $grand045_060,
+            $grand061_090,
+            $grand091_120,
+            $grandOver120,
+        ], $grandSaldo, $baseRasio);
 
         $salesmanSummary = $this->calculateSalesmanSummary($detailItems);
         $grandS001_044 = (float) array_sum(array_column($salesmanSummary, 'total_001_044'));
@@ -190,19 +202,14 @@ class PiutangSemuaReportService
         return $result;
     }
 
-    private function calculateRasio(array $bucketTotals, float $grandSaldo): array
+    private function calculateRasio(array $bucketTotals, float $grandSaldo, float $baseRasio = 0.0): array
     {
-        $sumAging = 0.0;
-        for ($i = 1; $i < 5; $i++) {
-            $sumAging += abs($bucketTotals[$i] ?? 0);
-        }
-
         $rasio = [];
         foreach ($bucketTotals as $i => $total) {
             if ($i === 0) {
                 $rasio[] = null;
-            } elseif ($sumAging > 0) {
-                $pct = (abs($total) / $sumAging) * 100;
+            } elseif ($baseRasio > 0) {
+                $pct = (abs($total) / $baseRasio) * 100;
                 $rasio[] = round($pct, 1);
             } else {
                 $rasio[] = null;

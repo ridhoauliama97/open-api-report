@@ -53,13 +53,15 @@
             border-collapse: collapse;
             table-layout: fixed;
             page-break-inside: auto;
+            border-spacing: 0;
             border: 1px solid #000;
         }
 
         .data-table th,
         .data-table td {
+            border-left: 1px solid #000;
             border-right: 1px solid #000;
-            padding: 2px 2px;
+            padding: 3px 4px;
             vertical-align: middle;
             word-wrap: break-word;
         }
@@ -69,12 +71,6 @@
             font-size: 10px;
             border-bottom: 1px solid #000;
             text-align: center;
-        }
-
-        .data-table td {
-            font-size: 10px;
-            border-top: none;
-            border-bottom: none;
         }
 
         .center {
@@ -87,10 +83,6 @@
 
         .nowrap {
             white-space: nowrap;
-        }
-
-        .number-negative {
-            color: #9c111d;
         }
 
         .row-odd td {
@@ -110,7 +102,6 @@
             font-size: 11px;
             padding: 8px 4px;
         }
-
     </style>
 </head>
 
@@ -126,12 +117,12 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 0, ',', '.');
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
             if ($v == 0.0) {
                 return '-';
             }
-            return number_format($v, 0, ',', '.');
+            return number_format($v, 0, '.', ',');
         }
 
         function fmtDate($value)

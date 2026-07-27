@@ -24,10 +24,10 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - ALL DB queries: `DB::select('EXEC SP_... ?, ?', [...])` — **no string interpolation**; `call_syntax=query` for non-SQL Server
 - Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add entry to 1 of 4 arrays: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`. Two special groups registered outside the loop: `RekapHasilSawmillPerMejaUpahBoronganV2` and PPS Inject alias
 - **3 async PDF patterns**: (1) generic `PdfJobController` + `GenerateReportPdfJob`, (2) `LabelStHidupDetailController` custom endpoints, (3) `StockSTKeringController` custom endpoints
-- Non-standard **`AscendXmlTestController`** (~9210 lines, ~60+ `internal/ascends/*` routes in `routes/api.php`, one method per route). `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (separate, web-only)
+- Non-standard **`AscendXmlTestController`** (~9860 lines, ~168 `internal/ascends/*` routes in `routes/api.php`, one method per route). These routes are registered OUTSIDE the `report.jwt.claims` middleware group (no JWT auth). `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (separate, web-only)
 - Middleware stack (`bootstrap/app.php`): `LogUserActivity` + `NormalizePdfDownloadFilename` on all API/web routes; `ForceattachmentPdfPreview` on web routes only
   - Note: `ForceattachmentPdfPreview` class is in file `ForceInlinePdfPreview.php` (intentional mismatch)
-- **End of report**: setiap selesai membuat Ascends shared report, tambah dokumentasi endpoint di `docs/ascends-endpoint/` sesuai kategorinya
+- Setelah selesai membuat Ascends shared report, tambah dokumentasi endpoint di `docs/ascends-endpoint/` sesuai kategorinya
 
 ## Auth
 - Custom `AuthenticateReportJwtClaims` middleware (HS256/HS384/HS512) with Sanctum personal-access-token fallback

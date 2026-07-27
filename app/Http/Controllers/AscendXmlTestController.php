@@ -9,6 +9,10 @@ use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
 use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\Associate\CustomerModifikasiReportService;
 use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
+use App\Services\Ascends\Shared\CustomReport\PenjualanPerItemAnalisaSkuDetailReportService;
+use App\Services\Ascends\Shared\CustomReport\PenjualanPerItemAnalisaSkuReportService;
+use App\Services\Ascends\Shared\Finance\OutstandingPayableCheck\HutangGiroRuReportService;
+use App\Services\Ascends\Shared\Finance\PayableSummary\SaldoHutangRuReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\GiroCashTransferReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PelunasanReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\PenerimaanPiutangReportService;
@@ -18,10 +22,8 @@ use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas120HariRe
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas45HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangSemuaReportService;
-use App\Services\Ascends\Shared\Finance\OutstandingPayableCheck\HutangGiroRuReportService;
-use App\Services\Ascends\Shared\Finance\PayableSummary\SaldoHutangRuReportService;
-use App\Services\Ascends\Shared\Finance\ReceivableSummary\UmurPiutangRuReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangTakTertagih90HariReportService;
+use App\Services\Ascends\Shared\Finance\ReceivableSummary\UmurPiutangRuReportService;
 use App\Services\Ascends\Shared\FixedAsset\AssetSummary\PenyusutanAktivaReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\BebanPenjualanSummaryReportService;
@@ -125,9 +127,6 @@ use App\Services\Ascends\Shared\InventoryAnalysis\AdjustmentLemariReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuPerGudangReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockGsuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\AktifitasStockRuReportService;
-use App\Services\Ascends\Shared\InventoryAnalysis\PurchaseByItem\RingkasanPembelianRuReportService;
-use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\PenjualanPerGroupBulananRuReportService;
-use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\PersentaseHppPenjualanPerItemFamilyRuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOCustomerBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOLemariBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\DOPerKategoriBelumTerkirimReportService;
@@ -141,10 +140,14 @@ use App\Services\Ascends\Shared\InventoryAnalysis\LemariAdjustmentReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\ListDOBelumTerkirimReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\PengirimanLemariReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\PenyesuaianPersediaanReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\PurchaseByItem\RingkasanPembelianRuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\RekapanValueSuratJalanReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\SaldoStokBarangPerGudangGsuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\SaldoStokBarangPerGudangRuReportService;
 use App\Services\Ascends\Shared\InventoryAnalysis\SaldoStokBarangPerGudangUcReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\PenjualanPerGroupBulananRuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\PersentaseHppPenjualanPerItemFamilyRuReportService;
+use App\Services\Ascends\Shared\InventoryAnalysis\SalesByItem\TargetSalesPerMingguReportService;
 use App\Services\Ascends\Shared\Production\HasilBrokerPerHariReportService;
 use App\Services\Ascends\Shared\Production\HasilBrokerPerKategoriReportService;
 use App\Services\Ascends\Shared\Production\HasilBrokerPerMesinReportService;
@@ -158,6 +161,7 @@ use App\Services\PdfGenerator;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use RuntimeException;
+use Throwable;
 
 class AscendXmlTestController extends Controller
 {
@@ -2480,6 +2484,126 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedCustomReportPenjualanPerItemAnalisaSkuPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PenjualanPerItemAnalisaSkuReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: ' . $file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = strtoupper($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+                    + $this->penjualanPerItemAnalisaSkuFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Penjualan Per Item Barang & Analisa SKU';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $monthCount = count($reportData['months'] ?? []);
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.penjualan_per_item_analisa_sku.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 2 + ($monthCount * 3),
+        ]);
+
+        $companySuffix = $company !== '' ? ' ' . $company : '';
+        $filename = 'Laporan Penjualan Per Item Barang & Analisa SKU' . $companySuffix . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    public function apiSharedCustomReportPenjualanPerItemAnalisaSkuDetailPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PenjualanPerItemAnalisaSkuDetailReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $file = $request->file('xml_file');
+            if ($file === null || ! $file->isValid()) {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $xmlPayload = file_get_contents((string) $file->getRealPath());
+            if (! is_string($xmlPayload) || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML tidak valid atau kosong.');
+            }
+
+            $sourceLabel = 'request upload: ' . $file->getClientOriginalName();
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = strtoupper($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                ['company' => $company]
+                    + $this->penjualanPerItemAnalisaSkuFilters($request)
+            );
+
+            $reportData['company'] = $company;
+            $reportData['title'] = 'Laporan Penjualan Per Item Barang';
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $monthCount = count($reportData['months'] ?? []);
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.penjualan_per_item_analisa_sku_detail.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => $monthCount,
+        ]);
+
+        $companySuffix = $company !== '' ? ' ' . $company : '';
+        $filename = 'Laporan Penjualan Per Item Barang' . $companySuffix . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     public function apiSharedHrmPerbandinganKehadiranPerBulanPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         PerbandinganKehadiranPerBulanReportService $reportService,
@@ -4027,6 +4151,47 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiTargetSalesPerMingguPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        TargetSalesPerMingguReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null) {
+                throw new RuntimeException('Data XML wajib dikirim dari Ascend saat request print PDF.');
+            }
+
+            $company = trim((string) ($request->input('DB_CompanyName') ?? 'GSU'));
+            $filters = $this->targetSalesPerMingguFilters($request);
+            $filters['company'] = $company;
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $filters,
+            );
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.inventory_analysis.sales_by_item.target_sales_per_minggu.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4-L',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Sales By Item - Laporan Sales Mingguan dan Target (' . $company . ').pdf"',
+        ]);
+    }
+
     public function apiSaldoStokBarangPerGudangUcPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         SaldoStokBarangPerGudangUcReportService $reportService,
@@ -5448,9 +5613,8 @@ class AscendXmlTestController extends Controller
 
             $company = $this->normalizeSharedHrmCompany($dbCompanyName);
 
-            $allInput = $request->all();
-            $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
-            $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
+            $rawStartDate = $request->input('Date.StartDate') ?? $request->input('Date_StartDate') ?? $request->input('StartDate') ?? '';
+            $rawEndDate = $request->input('Date.EndDate') ?? $request->input('Date_EndDate') ?? $request->input('EndDate') ?? '';
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
@@ -6239,11 +6403,6 @@ class AscendXmlTestController extends Controller
             $allInput = $request->all();
             $rawStartDate = $allInput['Date.StartDate'] ?? $allInput['Date_StartDate'] ?? $allInput['StartDate'] ?? '';
             $rawEndDate = $allInput['Date.EndDate'] ?? $allInput['Date_EndDate'] ?? $allInput['EndDate'] ?? '';
-            $viewMode = $allInput['view_mode'] ?? $allInput['viewMode'] ?? 'detail';
-
-            if (! in_array($viewMode, ['detail', 'summary'], true)) {
-                $viewMode = 'detail';
-            }
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
@@ -6255,15 +6414,12 @@ class AscendXmlTestController extends Controller
                 ]
             );
 
-            $reportData['view_mode'] = $viewMode;
             $reportData['period_label'] = $reportData['period_label'] ?? 'Dari ' . Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY') . ' s/d ' . Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
             $reportData['company'] = $company;
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
-
-        $columnCount = $viewMode === 'summary' ? 3 : 7;
 
         $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.ringkasan_aktiva.pdf', [
             'company' => $company,
@@ -6272,7 +6428,6 @@ class AscendXmlTestController extends Controller
             'pdf_format' => 'A4',
             'pdf_orientation' => 'portrait',
             'pdf_simple_tables' => false,
-            'pdf_column_count' => $columnCount,
         ]);
 
         return response($pdf, 200, [
@@ -6402,6 +6557,7 @@ class AscendXmlTestController extends Controller
         LabaKotorRuReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        @ini_set('memory_limit', '2048M');
         try {
             $xmlPayload = $request->xmlPayload();
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
@@ -6433,19 +6589,23 @@ class AscendXmlTestController extends Controller
 
             $reportData['company'] = $company;
             $reportData = $this->applyAscendSystemFields($request, $reportData);
-        } catch (RuntimeException $exception) {
+        } catch (Throwable $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_ru.pdf', [
-            'company' => $company,
-            'reportData' => $reportData,
-            'generatedAt' => now(),
-            'pdf_format' => 'A4',
-            'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
-            'pdf_column_count' => 1 + count($reportData['months'] ?? []) + 3,
-        ]);
+        try {
+            $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_ru.pdf', [
+                'company' => $company,
+                'reportData' => $reportData,
+                'generatedAt' => now(),
+                'pdf_format' => 'A4',
+                'pdf_orientation' => 'portrait',
+                'pdf_simple_tables' => false,
+                'pdf_column_count' => 6,
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -6458,6 +6618,7 @@ class AscendXmlTestController extends Controller
         LabaKotorPerKategoriReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        @ini_set('memory_limit', '2048M');
         try {
             $xmlPayload = $request->xmlPayload();
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
@@ -6489,19 +6650,23 @@ class AscendXmlTestController extends Controller
 
             $reportData['company'] = $company;
             $reportData = $this->applyAscendSystemFields($request, $reportData);
-        } catch (RuntimeException $exception) {
+        } catch (Throwable $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_per_kategori.pdf', [
-            'company' => $company,
-            'reportData' => $reportData,
-            'generatedAt' => now(),
-            'pdf_format' => 'A4',
-            'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
-            'pdf_column_count' => 6,
-        ]);
+        try {
+            $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_per_kategori.pdf', [
+                'company' => $company,
+                'reportData' => $reportData,
+                'generatedAt' => now(),
+                'pdf_format' => 'A4',
+                'pdf_orientation' => 'portrait',
+                'pdf_simple_tables' => false,
+                'pdf_column_count' => 6,
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -6514,6 +6679,7 @@ class AscendXmlTestController extends Controller
         LabaKotorGsuReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        @ini_set('memory_limit', '2048M');
         try {
             $xmlPayload = $request->xmlPayload();
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
@@ -6545,19 +6711,23 @@ class AscendXmlTestController extends Controller
 
             $reportData['company'] = $company;
             $reportData = $this->applyAscendSystemFields($request, $reportData);
-        } catch (RuntimeException $exception) {
+        } catch (Throwable $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_gsu.pdf', [
-            'company' => $company,
-            'reportData' => $reportData,
-            'generatedAt' => now(),
-            'pdf_format' => 'A4',
-            'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
-            'pdf_column_count' => 16,
-        ]);
+        try {
+            $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_gsu.pdf', [
+                'company' => $company,
+                'reportData' => $reportData,
+                'generatedAt' => now(),
+                'pdf_format' => 'A4',
+                'pdf_orientation' => 'landscape',
+                'pdf_simple_tables' => false,
+                'pdf_column_count' => 16,
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -6570,6 +6740,7 @@ class AscendXmlTestController extends Controller
         LabaKotorRu12BulanReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
+        @ini_set('memory_limit', '2048M');
         try {
             $xmlPayload = $request->xmlPayload();
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
@@ -6601,20 +6772,24 @@ class AscendXmlTestController extends Controller
 
             $reportData['company'] = $company;
             $reportData = $this->applyAscendSystemFields($request, $reportData);
-        } catch (RuntimeException $exception) {
+        } catch (Throwable $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $numMonths = count($reportData['months'] ?? []);
-        $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_ru_12_bulan.pdf', [
-            'company' => $company,
-            'reportData' => $reportData,
-            'generatedAt' => now(),
-            'pdf_format' => 'A4',
-            'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
-            'pdf_column_count' => 1 + $numMonths + 3,
-        ]);
+        try {
+            $numMonths = count($reportData['months'] ?? []);
+            $pdf = $pdfGenerator->render('ascends.shared.general_ledger.journal_details.laba_kotor_ru_12_bulan.pdf', [
+                'company' => $company,
+                'reportData' => $reportData,
+                'generatedAt' => now(),
+                'pdf_format' => 'A4',
+                'pdf_orientation' => 'landscape',
+                'pdf_simple_tables' => false,
+                'pdf_column_count' => 1 + $numMonths + 3,
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -7722,7 +7897,7 @@ class AscendXmlTestController extends Controller
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
-            'pdf_orientation' => 'portrait',
+            'pdf_orientation' => 'landscape',
             'pdf_simple_tables' => false,
         ]);
 
@@ -8995,6 +9170,28 @@ class AscendXmlTestController extends Controller
         ];
     }
 
+    private function targetSalesPerMingguFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        return [
+            'start_date' => $this->requestInputByAliases($request, [
+                'start_date',
+                'StartDate',
+                'SalesDate.StartDate',
+                'SalesDate_StartDate',
+                'SalesDate_x0020_StartDate',
+                'SalesDate.Start Date',
+            ]),
+            'end_date' => $this->requestInputByAliases($request, [
+                'end_date',
+                'EndDate',
+                'SalesDate.EndDate',
+                'SalesDate_EndDate',
+                'SalesDate_x0020_EndDate',
+                'SalesDate.End Date',
+            ]),
+        ];
+    }
+
     private function aktifitasStockGsuPerGudangFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
@@ -9163,20 +9360,20 @@ class AscendXmlTestController extends Controller
     {
         return [
             'start_date' => $this->requestInputByAliases($request, [
-                'start_date',
-                'StartDate',
                 'ReceivableSummaryDate.StartDate',
                 'ReceivableSummaryDate_StartDate',
                 'ReceivableSummaryDate_x0020_StartDate',
                 'ReceivableSummaryDate.Start Date',
+                'start_date',
+                'StartDate',
             ]),
             'end_date' => $this->requestInputByAliases($request, [
-                'end_date',
-                'EndDate',
                 'ReceivableSummaryDate.EndDate',
                 'ReceivableSummaryDate_EndDate',
                 'ReceivableSummaryDate_x0020_EndDate',
                 'ReceivableSummaryDate.End Date',
+                'end_date',
+                'EndDate',
             ]),
         ];
     }
@@ -9335,6 +9532,18 @@ class AscendXmlTestController extends Controller
         return [
             'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
             'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
+        ];
+    }
+
+    private function penjualanPerItemAnalisaSkuFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    {
+        $all = $request->all();
+
+        return [
+            'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
+            'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
+            'Sys_Username' => $all['Sys_Username'] ?? $all['sys_username'] ?? null,
+            'DB_CompanyName' => $all['DB_CompanyName'] ?? $all['company'] ?? null,
         ];
     }
 

@@ -158,7 +158,7 @@ class StockSTBasahController extends Controller
             ?? $generatedBy->Nama
             ?? 'unknown');
 
-        return 'report-pdf:stock-st-basah:' . hash('sha256', $endDate . '|' . $userKey);
+        return 'report-pdf:stock-st-basah:'.hash('sha256', $endDate.'|'.$userKey);
     }
 
     private function getCachedPdf(string $cacheKey): ?string

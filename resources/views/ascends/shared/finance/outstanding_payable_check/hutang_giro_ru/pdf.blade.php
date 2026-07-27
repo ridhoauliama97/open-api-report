@@ -111,6 +111,11 @@
             border-bottom: 1px solid #000;
             font-size: 11px;
         }
+
+        .col-no {
+            width: 6%;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -119,11 +124,24 @@
         $rows = $reportData['rows'] ?? [];
         $grandTotals = $reportData['grand_totals'] ?? [];
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
-            ->locale('id')->translatedFormat('d-M-y H:i');
+            ->locale('id')
+            ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-        $headerCompany = trim((string) ($company ?? $reportData['company'] ?? ''));
-        $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
+        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
+        $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
+
+        function fmtAmount($value)
+        {
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 2, '.', ',') . ')';
+            }
+            if ($v == 0.0) {
+                return '-';
+            }
+            return number_format($v, 2, '.', ',');
+        }
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
@@ -134,9 +152,10 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 30%">Nama Supplier</th>
+                    <th class="col-no">No</th>
+                    <th style="width: 24%">Nama Supplier</th>
                     <th style="width: 15%">Tanggal</th>
-                    <th style="width: 15%">Tgl. Jatuh Tempo</th>
+                    <th style="width: 15%">Jatuh Tempo</th>
                     <th style="width: 20%">No. Giro</th>
                     <th style="width: 20%">Nilai</th>
                 </tr>
@@ -146,6 +165,7 @@
                 @foreach ($rows as $row)
                     @php $rowNum++; @endphp
                     <tr class="{{ $rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                        <td class="center">{{ $rowNum }}</td>
                         <td>{{ $row['supplier_name'] }}</td>
                         <td class="center nowrap">
                             {{ $row['date'] ? $row['date']->locale('id')->isoFormat('DD-MMM-YY') : '-' }}
@@ -155,17 +175,15 @@
                         </td>
                         <td class="center nowrap">{{ $row['check_number'] ?: '-' }}</td>
                         <td class="number nowrap">
-                            @php $v = (float) ($row['net_total'] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 2, ',', '.') : '-' }}
+                            {{ fmtAmount($row['net_total'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total">
-                    <td class="center" colspan="4">Total</td>
+                    <td class="center" colspan="5">Total</td>
                     <td class="number nowrap">
-                        @php $v = (float) ($grandTotals['net_total'] ?? 0); @endphp
-                        {{ $v != 0 ? number_format($v, 2, ',', '.') : '-' }}
+                        {{ fmtAmount($grandTotals['net_total'] ?? 0) }}
                     </td>
                 </tr>
             </tbody>
@@ -174,7 +192,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="5">Tidak ada data.</td>
+                    <td colspan="6">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

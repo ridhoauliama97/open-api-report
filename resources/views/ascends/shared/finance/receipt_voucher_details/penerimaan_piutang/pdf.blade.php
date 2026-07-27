@@ -89,7 +89,7 @@
 
         .grand-total-row td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             padding: 3px 2px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
@@ -117,9 +117,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .signature-table {
             width: 100%;
@@ -137,8 +135,8 @@
         }
 
         .signature-space td {
-            height: 46px;
-            line-height: 46px;
+            height: 60px;
+            line-height: 60px;
             font-size: 1px;
         }
 
@@ -171,7 +169,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '-' . number_format(abs($v), 0, '.', ',');
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
             return number_format($v, 0, '.', ',');
         }
@@ -220,9 +218,8 @@
                         <th style="width:8%">Nama Akun Bank Penerima</th>
                     </tr>
                 </thead>
-                <tbody>
         @endif
-
+            <tbody>
                 <tr class="{{ $index % 2 === 0 ? 'row-odd' : 'row-even' }}">
                     <td>{{ $record['sales_person'] !== '-' ? $record['sales_person'] : '' }}</td>
                     <td>{{ $record['customer_name'] }}</td>
@@ -254,18 +251,14 @@
 
             @if (count($records) > 0)
                         <tr class="grand-total-row">
-                            <td colspan="5" style="text-align: center;">Total</td>
-                            <td class="number"></td>
+                            <td colspan="6" class="center">Total</td>
                             <td class="number nowrap {{ $grandTotalInvoice < 0 ? 'number-negative' : '' }}">
                                 {{ fmtAmount($grandTotalInvoice) }}
                             </td>
                             <td class="number nowrap {{ $grandTotalBayar < 0 ? 'number-negative' : '' }}">
                                 {{ fmtAmount($grandTotalBayar) }}
                             </td>
-                            <td class="number nowrap {{ $grandTotalNilaiBayar < 0 ? 'number-negative' : '' }}">
-
-                            </td>
-                            <td colspan="2"></td>
+                            <td colspan="3"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -307,21 +300,7 @@
         </tr>
     </table>
 
-    <htmlpagefooter name="reportFooter">
-        <table style="width: 100%; border-collapse: collapse; border: 0; margin: 0; padding: 0;">
-            <tr>
-                <td
-                    style="border: 0; padding: 0; text-align: left; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic;">
-                    Print by {{ $generatedByName ?: 'sistem' }} on {{ now()->format('d/m/Y H:i:s') }}
-                </td>
-                <td
-                    style="border: 0; padding: 0; text-align: right; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic;">
-                    Page {PAGENO} of {nbpg}
-                </td>
-            </tr>
-        </table>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('ascends.shared.partials.report-footer')
 </body>
 
 </html>

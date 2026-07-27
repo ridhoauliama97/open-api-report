@@ -190,17 +190,26 @@
 
         function formatAmount($value)
         {
-            $value = (float) $value;
-            if ($value < 0) {
-                return '-' . number_format(abs($value), 0, '.', ',');
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
-            return number_format($value, 0, '.', ',');
+            if ($v == 0) {
+                return '-';
+            }
+            return number_format($v, 0, '.', ',');
         }
 
         function formatRasio($value)
         {
-            $value = (float) $value;
-            return number_format($value, 2, '.', ',') . '%';
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 2, '.', ',') . '%)';
+            }
+            if ($v == 0) {
+                return '- %';
+            }
+            return number_format($v, 2, '.', ',') . '%';
         }
     @endphp
 
@@ -233,7 +242,14 @@
                 </tr>
             </thead>
             <tbody>
-                @php $globalRow = 0; @endphp
+                @php
+                    $calcKotor = $calculations[0] ?? [];
+                    $calcUsaha = $calculations[1] ?? [];
+                    $calcBersihSblm = $calculations[2] ?? [];
+                    $calcPajak = $calculations[3] ?? [];
+                    $calcBersihStlh = $calculations[4] ?? [];
+                    $globalRow = 0;
+                @endphp
                 @foreach ($sections as $section)
                     <tr class="section-header">
                         <td colspan="6">{{ $section['section'] }}</td>
@@ -258,9 +274,11 @@
 
                         <tr class="category-subtotal indent-category">
                             <td>TOTAL {{ $categoryGroup['category'] }}</td>
-                            <td class="number nowrap">{{ formatAmount($categoryGroup['display_subtotal_b'] ?? $categoryGroup['subtotal_b'] ?? 0) }}</td>
+                            <td class="number nowrap">
+                                {{ formatAmount($categoryGroup['display_subtotal_b'] ?? $categoryGroup['subtotal_b'] ?? 0) }}</td>
                             <td class="number nowrap">{{ formatRasio($categoryGroup['rasio_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($categoryGroup['display_subtotal_a'] ?? $categoryGroup['subtotal_a'] ?? 0) }}</td>
+                            <td class="number nowrap">
+                                {{ formatAmount($categoryGroup['display_subtotal_a'] ?? $categoryGroup['subtotal_a'] ?? 0) }}</td>
                             <td class="number nowrap">{{ formatRasio($categoryGroup['rasio_a'] ?? 0) }}</td>
                             <td class="number nowrap">{{ formatRasio($categoryGroup['selisih'] ?? 0) }}</td>
                         </tr>
@@ -268,23 +286,59 @@
 
                     <tr class="section-subtotal">
                         <td>TOTAL {{ $section['section'] }}</td>
-                        <td class="number nowrap">{{ formatAmount($section['display_subtotal_b'] ?? $section['subtotal_b'] ?? 0) }}</td>
+                        <td class="number nowrap">
+                            {{ formatAmount($section['display_subtotal_b'] ?? $section['subtotal_b'] ?? 0) }}</td>
                         <td class="number nowrap">{{ formatRasio($section['rasio_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($section['display_subtotal_a'] ?? $section['subtotal_a'] ?? 0) }}</td>
+                        <td class="number nowrap">
+                            {{ formatAmount($section['display_subtotal_a'] ?? $section['subtotal_a'] ?? 0) }}</td>
                         <td class="number nowrap">{{ formatRasio($section['rasio_a'] ?? 0) }}</td>
                         <td class="number nowrap">{{ formatRasio($section['selisih'] ?? 0) }}</td>
                     </tr>
-                @endforeach
 
-                @foreach ($calculations as $calc)
-                    <tr class="calculation-row">
-                        <td>{{ $calc['label'] }}</td>
-                        <td class="number nowrap">{{ formatAmount($calc['amount_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatRasio($calc['rasio_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($calc['amount_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatRasio($calc['rasio_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatRasio($calc['selisih'] ?? 0) }}</td>
-                    </tr>
+                    @if ($section['section'] === 'PENDAPATAN')
+                        <tr class="calculation-row">
+                            <td>{{ $calcKotor['label'] ?? '' }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcKotor['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio($calcKotor['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcKotor['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio($calcKotor['rasio_a'] ?? 0) }}</td>
+                            <td></td>
+                        </tr>
+                    @elseif ($section['section'] === 'BEBAN USAHA')
+                        <tr class="calculation-row">
+                            <td>{{ $calcUsaha['label'] ?? '' }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcUsaha['amount_b'] ?? 0) }}</td>
+                            <td></td>
+                            <td class="number nowrap">{{ formatAmount($calcUsaha['amount_a'] ?? 0) }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    @elseif ($section['section'] === 'PENDAPATAN DAN BEBAN LAINNYA')
+                        <tr class="calculation-row">
+                            <td>{{ $calcBersihSblm['label'] ?? '' }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcBersihSblm['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio($calcBersihSblm['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcBersihSblm['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio($calcBersihSblm['rasio_a'] ?? 0) }}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="calculation-row">
+                            <td>{{ $calcPajak['label'] ?? '' }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcPajak['amount_b'] ?? 0) }}</td>
+                            <td></td>
+                            <td class="number nowrap">{{ formatAmount($calcPajak['amount_a'] ?? 0) }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="calculation-row">
+                            <td>{{ $calcBersihStlh['label'] ?? '' }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcBersihStlh['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio($calcBersihStlh['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount($calcBersihStlh['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio($calcBersihStlh['rasio_a'] ?? 0) }}</td>
+                            <td></td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

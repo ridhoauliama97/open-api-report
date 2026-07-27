@@ -136,16 +136,8 @@
             padding: 8px 4px;
         }
 
-        .col-no {
-            width: 5%;
-        }
-
-        .col-kode {
-            width: 12%;
-        }
-
-        .col-nama {
-            width: 18%;
+        .col-account {
+            width: 30%;
         }
 
         .col-keterangan {
@@ -180,7 +172,6 @@
 
 <body>
     @php
-        $viewMode = $reportData['view_mode'] ?? 'detail';
         $groups = $reportData['groups'] ?? [];
         $summary = $reportData['summary'] ?? [];
         $grandTotalDb = (float) ($reportData['grand_total_db'] ?? 0);
@@ -195,7 +186,11 @@
 
         function formatAmount($value)
         {
-            return number_format((float) $value, 2, ',', '.');
+            $value = (float) $value;
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 2, '.', ',') . ')';
+            }
+            return number_format($value, 2, '.', ',');
         }
     @endphp
 
@@ -203,13 +198,13 @@
     <h1 class="report-title">{{ $headerTitle }}</h1>
     <p class="report-subtitle">{{ $headerSubtitle }}</p>
 
-    @if ($viewMode === 'detail' && count($groups) > 0)
+    @if (count($groups) > 0)
+        {{-- PAGE 1: DETAIL --}}
+        <p style="font-size: 12px; font-weight: bold; margin: 0 0 4px 0;">Detail</p>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="col-no">No</th>
-                    <th class="col-kode">Kode Akun</th>
-                    <th class="col-nama">Nama Akun</th>
+                    <th class="col-account">Akun</th>
                     <th class="col-keterangan">Keterangan</th>
                     <th class="col-debet">Debet</th>
                     <th class="col-kredit">Kredit</th>
@@ -226,9 +221,8 @@
                             $itemIndex++;
                         @endphp
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                            <td class="center">{{ $itemIndex }}</td>
-                            <td>{{ $itemIndex === 1 ? (string) ($group['account_code'] ?? '') : '' }}</td>
-                            <td>{{ $itemIndex === 1 ? (string) ($group['account_name'] ?? '') : '' }}</td>
+                            <td>{{ $itemIndex === 1 ? (string) ($group['account_code'] ?? '') . ' ' . (string) ($group['account_name'] ?? '') : '' }}
+                            </td>
                             <td>{{ (string) ($item['description'] ?? '') }}</td>
                             <td class="number nowrap">{{ $item['amount_db'] > 0 ? formatAmount($item['amount_db'] ?? 0) : '-' }}
                             </td>
@@ -238,7 +232,7 @@
                         </tr>
                     @endforeach
                     <tr class="account-subtotal">
-                        <td colspan="4" class="center">Sub Total {{ (string) ($group['account_name'] ?? '') }} : </td>
+                        <td colspan="2" class="center">Sub Total {{ (string) ($group['account_name'] ?? '') }} : </td>
                         <td class="number nowrap">{{ formatAmount($group['subtotal_db'] ?? 0) }}</td>
                         <td class="number nowrap">{{ formatAmount($group['subtotal_cr'] ?? 0) }}</td>
                         <td class="number nowrap">{{ formatAmount($group['subtotal'] ?? 0) }}</td>
@@ -246,44 +240,50 @@
                 @endforeach
 
                 <tr class="grand-row">
-                    <td colspan="4" class="center">Grand Total :</td>
+                    <td colspan="2" class="center">Grand Total :</td>
                     <td class="number nowrap">{{ formatAmount($grandTotalDb) }}</td>
                     <td class="number nowrap">{{ formatAmount($grandTotalCr) }}</td>
                     <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>
-    @elseif ($viewMode === 'summary' && count($summary) > 0)
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th class="col-sum-kode">Kode Akun</th>
-                    <th class="col-sum-nama">Nama Akun</th>
-                    <th class="col-sum-jumlah">Jumlah</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $globalRow = 0; @endphp
-                @foreach ($summary as $item)
-                    @php $globalRow++; @endphp
-                    <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                        <td>{{ (string) ($item['account_code'] ?? '') }}</td>
-                        <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                        <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
-                    </tr>
-                @endforeach
 
-                <tr class="grand-row">
-                    <td colspan="2" class="center">Total</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
-                </tr>
-            </tbody>
-        </table>
+        @if (count($summary) > 0)
+            <div style="page-break-before: always;"></div>
+
+            {{-- PAGE 2+: RINGKASAN --}}
+            <p style="font-size: 12px; font-weight: bold; margin: 0 0 4px 0;">Rangkuman</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="col-sum-kode">Kode Akun</th>
+                        <th class="col-sum-nama">Nama Akun</th>
+                        <th class="col-sum-jumlah">Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $globalRow = 0; @endphp
+                    @foreach ($summary as $item)
+                        @php $globalRow++; @endphp
+                        <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                            <td>{{ (string) ($item['account_code'] ?? '') }}</td>
+                            <td>{{ (string) ($item['account_name'] ?? '') }}</td>
+                            <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
+                        </tr>
+                    @endforeach
+
+                    <tr class="grand-row">
+                        <td colspan="2" class="center">Total</td>
+                        <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        @endif
     @else
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="7" class="center">Tidak ada data.</td>
+                    <td colspan="5" class="center">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

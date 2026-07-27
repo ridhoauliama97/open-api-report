@@ -91,9 +91,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .row-odd td {
             background: #c9d1df;
@@ -134,26 +132,6 @@
             font-size: 11px;
             padding: 8px 4px;
         }
-
-        .col-customer {
-            width: 18%;
-        }
-
-        .col-invoice {
-            width: 14%;
-        }
-
-        .col-umur {
-            width: 7%;
-        }
-
-        .col-amount {
-            width: 10.2%;
-        }
-
-        .col-saldo {
-            width: 12%;
-        }
     </style>
 </head>
 
@@ -174,7 +152,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 0, '.', ',');
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
             if ($v == 0.0) {
                 return '-';
@@ -185,7 +163,7 @@
         function fmtUmur($value)
         {
             $v = (int) $value;
-            return number_format($v, 0, ',', '.');
+            return number_format($v, 0, '.', ',') . ' Hari';
         }
 
         $globalRow = 0;
@@ -197,26 +175,16 @@
 
     @if (count($salesmenGroups) > 0)
         <table class="data-table">
-            <colgroup>
-                <col class="col-customer">
-                <col class="col-invoice">
-                <col class="col-umur">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-saldo">
-            </colgroup>
             <thead>
                 <tr>
-                    <th>Nama Pelanggan</th>
-                    <th>No. Invoice</th>
-                    <th>Umur Piutang</th>
-                    <th>45-60 Hari</th>
-                    <th>61-90 Hari</th>
-                    <th>91-120 Hari</th>
-                    <th>&gt; 120 Hari</th>
-                    <th>Saldo Piutang</th>
+                    <th style="width: 18%;">Nama Pelanggan</th>
+                    <th style="width: 14%;">No. Invoice</th>
+                    <th style="width: 7%;">Umur Piutang</th>
+                    <th style="width: 10.2%;">45-60 Hari</th>
+                    <th style="width: 10.2%;">61-90 Hari</th>
+                    <th style="width: 10.2%;">91-120 Hari</th>
+                    <th style="width: 10.2%;">&gt; 120 Hari</th>
+                    <th style="width: 12%;">Saldo Piutang</th>
                 </tr>
             </thead>
             <tbody>
@@ -251,7 +219,7 @@
                             @endforeach
 
                             <tr class="customer-total">
-                                <td colspan="3">TOTAL</td>
+                                <td colspan="3">SUBTOTAL</td>
                                 <td class="number nowrap {{ ($customer['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_045_060'] ?? 0) }}
                                 </td>
@@ -292,7 +260,7 @@
                 @endforeach
 
                 <tr class="grand-total">
-                    <td colspan="3" style="text-align: center;">GRAND TOTAL</td>
+                    <td colspan="3" class="center">GRAND TOTAL</td>
                     <td class="number nowrap {{ $grand045_060 < 0 ? 'number-negative' : '' }}">
                         {{ fmtAmount($grand045_060) }}
                     </td>

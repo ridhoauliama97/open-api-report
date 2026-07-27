@@ -20,7 +20,7 @@ class PiutangDiatas45HariReportService
 
         $perDate = trim((string) ($filters['PerDate'] ?? ''));
         $periodLabel = $perDate !== ''
-            ? 'Per Tgl : '.Carbon::parse($perDate)->locale('id')->isoFormat('DD-MMM-YY')
+            ? 'Per Tanggal : '.Carbon::parse($perDate)->locale('id')->isoFormat('DD-MMM-YY')
             : '';
 
         $filtered = $this->applySelectionFormula($allRows);

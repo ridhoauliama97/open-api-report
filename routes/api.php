@@ -336,6 +336,16 @@ Route::post(
 )->name('api.internal.ascends.shared.hrm.custom-reports.diagram-lembur-tahunan.pdf');
 
 Route::post(
+    '/internal/ascends/shared/custom-report/penjualan-per-item-analisa-sku/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportPenjualanPerItemAnalisaSkuPdf']
+)->name('api.internal.ascends.shared.custom-report.penjualan-per-item-analisa-sku.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/penjualan-per-item-analisa-sku-detail/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportPenjualanPerItemAnalisaSkuDetailPdf']
+)->name('api.internal.ascends.shared.custom-report.penjualan-per-item-analisa-sku-detail.pdf');
+
+Route::post(
     '/internal/ascends/shared/associate/customer-modifikasi-6-bulan/pdf',
     [AscendXmlTestController::class, 'apiSharedAssociateCustomerModifikasi6BulanPdf']
 )->name('api.internal.ascends.shared.associate.customer-modifikasi-6-bulan.pdf');
@@ -733,6 +743,11 @@ Route::post(
     '/internal/ascends/shared/inventory_analysis/sales-by-item/persentase-hpp-penjualan-per-item-family-ru/pdf',
     [AscendXmlTestController::class, 'apiPersentaseHPPPenjualanPerItemFamilyRuPdf']
 )->name('api.internal.ascends.shared.inventory_analysis.sales-by-item.persentase-hpp-penjualan-per-item-family-ru.pdf');
+
+Route::post(
+    '/internal/ascends/shared/inventory_analysis/sales-by-item/target-sales-per-minggu/pdf',
+    [AscendXmlTestController::class, 'apiTargetSalesPerMingguPdf']
+)->name('api.internal.ascends.shared.inventory_analysis.sales-by-item.target-sales-per-minggu.pdf');
 
 Route::post(
     '/internal/ascends/shared/inventory_analysis/stock-blanace/saldo-stok-barang-per-gudang-uc/pdf',

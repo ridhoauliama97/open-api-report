@@ -53,7 +53,7 @@ class LabaKotorGsuReportService
 
         $groups = $this->computeGroupMargins($groups, $months);
         $totals = $this->computeTotals($groups, $months);
-        $totalMargins = $this->computeMargins($totals['total'], $totals['sales'], $months);
+        $totalMargins = $this->computeMargins($totals['sales'], $totals['hpp'], $months);
         $hppGlobal = $this->computeHppGlobal($totals, $months);
         $period = $this->resolvePeriod($startDate, $endDate);
 
@@ -253,8 +253,8 @@ class LabaKotorGsuReportService
                 ];
             }
 
-            $netAmount = $amountCr - $amountDb;
             $itemKey = $accountCode.'|||'.$accountName;
+            $netAmount = $amountCr - $amountDb;
 
             if (! isset($groups[$groupName]['items'][$itemKey])) {
                 $groups[$groupName]['items'][$itemKey] = [
@@ -269,12 +269,12 @@ class LabaKotorGsuReportService
             $groups[$groupName]['items'][$itemKey]['total_amount'] += $netAmount;
             $groups[$groupName]['monthly_total'][$monthKey] += $netAmount;
 
-            if (str_starts_with($accountCode, '411.') && $netAmount > 0) {
-                $groups[$groupName]['monthly_sales'][$monthKey] += $netAmount;
+            if (str_starts_with($accountCode, '411.')) {
+                $groups[$groupName]['monthly_sales'][$monthKey] += $amountCr;
             }
 
             if (str_starts_with($accountCode, '516.')) {
-                $groups[$groupName]['monthly_hpp'][$monthKey] += $netAmount;
+                $groups[$groupName]['monthly_hpp'][$monthKey] += $amountDb;
             }
         }
 
@@ -337,7 +337,7 @@ class LabaKotorGsuReportService
     private function computeGroupMargins(array $groups, array $months): array
     {
         foreach ($groups as &$group) {
-            $margins = $this->computeMargins($group['monthly_total'], $group['monthly_sales'], $months);
+            $margins = $this->computeMargins($group['monthly_sales'], $group['monthly_hpp'], $months);
             $group['monthly_margin'] = $margins['monthly'];
             $group['rata_rata'] = $margins['rata_rata'];
             $group['terendah'] = $margins['terendah'];
@@ -348,14 +348,14 @@ class LabaKotorGsuReportService
         return $groups;
     }
 
-    private function computeMargins(array $monthlyTotal, array $monthlySales, array $months): array
+    private function computeMargins(array $monthlySales, array $monthlyHpp, array $months): array
     {
         $monthly = [];
 
         foreach ($months as $monthKey) {
             $sales = (float) ($monthlySales[$monthKey] ?? 0);
-            $total = (float) ($monthlyTotal[$monthKey] ?? 0);
-            $monthly[$monthKey] = $sales != 0.0 ? round($total / $sales * 100, 2) : 0.0;
+            $hpp = (float) ($monthlyHpp[$monthKey] ?? 0);
+            $monthly[$monthKey] = $sales != 0.0 ? round(($sales - $hpp) / $sales * 100, 2) : 0.0;
         }
 
         $nonZero = array_values(array_filter($monthly, static fn (float $value): bool => $value != 0.0));
@@ -370,20 +370,17 @@ class LabaKotorGsuReportService
 
     private function computeTotals(array $groups, array $months): array
     {
-        $total = array_fill_keys($months, 0.0);
         $sales = array_fill_keys($months, 0.0);
         $hpp = array_fill_keys($months, 0.0);
 
         foreach ($groups as $group) {
             foreach ($months as $monthKey) {
-                $total[$monthKey] += (float) ($group['monthly_total'][$monthKey] ?? 0);
                 $sales[$monthKey] += (float) ($group['monthly_sales'][$monthKey] ?? 0);
                 $hpp[$monthKey] += (float) ($group['monthly_hpp'][$monthKey] ?? 0);
             }
         }
 
         return [
-            'total' => $total,
             'sales' => $sales,
             'hpp' => $hpp,
         ];

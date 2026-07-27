@@ -136,9 +136,7 @@
             text-align: right;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .nowrap {
             white-space: nowrap;
@@ -185,12 +183,14 @@
 
         function fmtPct($value)
         {
-            if ($value === null) return '- %';
+            if ($value === null)
+                return '- %';
             $v = (float) $value;
-            if ($v == 0.0) return '0.00%';
-            $formatted = number_format(abs($v), 2, ',', '.') . '%';
+            if ($v == 0.0)
+                return '0.00%';
+            $formatted = number_format(abs($v), 2, '.', ',') . '%';
             if ($v < 0) {
-                return '-' . $formatted;
+                return '(' . $formatted . ')';
             }
             return $formatted;
         }

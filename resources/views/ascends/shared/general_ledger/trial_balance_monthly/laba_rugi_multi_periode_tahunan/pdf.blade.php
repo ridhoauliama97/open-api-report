@@ -124,9 +124,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .row-odd td {
             background: #c9d1df;
@@ -147,15 +145,11 @@
         }
 
         .col-code {
-            width: 15%;
+            width: 20%;
         }
 
         .col-name {
-            width: 25%;
-        }
-
-        .col-detail {
-            width: 35%;
+            width: 55%;
         }
 
         .col-total {
@@ -180,9 +174,9 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '(' . number_format(abs($v), 2, ',', '.') . ')';
+                return '(' . number_format(abs($v), 2, '.', ',') . ')';
             }
-            return number_format($v, 2, ',', '.');
+            return number_format($v, 2, '.', ',');
         }
     @endphp
 
@@ -196,7 +190,6 @@
                 <tr>
                     <th class="col-code">Kode Akun</th>
                     <th class="col-name">Nama Perkiraan</th>
-                    <th class="col-detail">Detail</th>
                     <th class="col-total">Total</th>
                 </tr>
             </thead>
@@ -208,12 +201,14 @@
                         $sectionName = (string) ($section['section_name'] ?? '');
                         $items = $section['items'] ?? [];
                         $subtotal = (float) ($section['subtotal'] ?? 0);
-                        $showDetail = ! in_array($sectionCode, ['800.000.000', '900.000.000']);
+                        $showDetail = !in_array($sectionCode, ['800.000.000', '900.000.000']);
                     @endphp
 
                     @if ($showDetail && count($items) > 0)
                         <tr class="section-header">
-                            <td colspan="4">{{ $sectionCode }} {{ $sectionName }}</td>
+                            <td>{{ $sectionCode }}</td>
+                            <td>{{ $sectionName }}</td>
+                            <td class="number"></td>
                         </tr>
 
                         @foreach ($items as $item)
@@ -223,41 +218,31 @@
                             @endphp
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} item-row">
                                 <td></td>
-                                <td></td>
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                <td class="number nowrap {{ $itemAmount < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($itemAmount) }}</td>
+                                <td class="number nowrap">{{ fmtAmount($itemAmount) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="subtotal-row">
                             <td colspan="2">Total</td>
-                            <td></td>
-                            <td class="number nowrap {{ $subtotal < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($subtotal) }}</td>
+                            <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
                         </tr>
                     @else
                         <tr class="section-header">
                             <td>{{ $sectionCode }}</td>
                             <td>{{ $sectionName }}</td>
-                            <td></td>
-                            <td class="number nowrap {{ $subtotal < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($subtotal) }}</td>
+                            <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
                         </tr>
                         <tr class="subtotal-row">
                             <td colspan="2">Total</td>
-                            <td></td>
-                            <td class="number nowrap {{ $subtotal < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($subtotal) }}</td>
+                            <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
                         </tr>
                     @endif
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td colspan="2">Total</td>
-                    <td></td>
-                    <td class="number nowrap {{ $grandTotal < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ fmtAmount($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -265,7 +250,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="4">Tidak ada data.</td>
+                    <td colspan="3">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

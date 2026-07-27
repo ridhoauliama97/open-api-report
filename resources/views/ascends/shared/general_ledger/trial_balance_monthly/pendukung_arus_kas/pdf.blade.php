@@ -106,7 +106,7 @@
 
         .grand-total-row td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             padding: 3px 4px;
@@ -124,9 +124,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .row-odd td {
             background: #c9d1df;
@@ -184,12 +182,12 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 2, ',', '.');
+                return '(' . number_format(abs($v), 2, '.', ',') . ')';
             }
             if ($v == 0.0) {
                 return '-';
             }
-            return number_format($v, 2, ',', '.');
+            return number_format($v, 2, '.', ',');
         }
     @endphp
 
@@ -251,7 +249,7 @@
                 @endforeach
 
                 <tr class="grand-total-row">
-                    <td colspan="2">Grand Total</td>
+                    <td colspan="2" class="center">Grand Total</td>
                     <td class="number nowrap {{ $grandStart < 0 ? 'number-negative' : '' }}">
                         {{ fmtAmount($grandStart) }}</td>
                     <td class="number nowrap {{ $grandEnd < 0 ? 'number-negative' : '' }}">

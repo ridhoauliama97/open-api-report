@@ -29,12 +29,10 @@ class PiutangCash14HariReportService
             throw new RuntimeException('Tidak ada data dengan TOP 1 s/d 15.');
         }
 
-        $perDateCarbon = $perDate !== '' ? Carbon::parse($perDate) : Carbon::today();
-
         $items = [];
         foreach ($filtered as $row) {
             $itemDate = $row['Item Date'] ?? '';
-            $umur = $itemDate !== '' ? $perDateCarbon->diffInDays(Carbon::parse($itemDate)) : 0;
+            $umur = $itemDate !== '' ? (int) round(abs(Carbon::today()->startOfDay()->diffInDays(Carbon::parse($itemDate)->startOfDay()))) : 0;
 
             $items[] = [
                 'item_ref' => trim((string) ($row['Item Ref'] ?? '')),

@@ -41,8 +41,8 @@ class ArusKasGsuReportService
 
         $openingBalance = $this->calculateCashBalance($allRows, $periodStart);
         $closingBalance = $this->calculateCashBalance($allRows, $periodEnd);
-        $crossCek = $closingBalance;
-        $selisih = $closingBalance - $totalKeseluruhan - $openingBalance;
+        $crossCek = $openingBalance + $totalKeseluruhan;
+        $selisih = $closingBalance - $crossCek;
 
         return [
             'title' => self::TITLE,
@@ -120,6 +120,15 @@ class ArusKasGsuReportService
     private function resolvePeriodRange(array $rows, string $periodStart, string $periodEnd): array
     {
         if ($periodStart !== '' && $periodEnd !== '') {
+            try {
+                $periodStart = Carbon::parse($periodStart)->format('Y-m');
+            } catch (Throwable) {
+            }
+            try {
+                $periodEnd = Carbon::parse($periodEnd)->format('Y-m');
+            } catch (Throwable) {
+            }
+
             return [$periodStart, $periodEnd];
         }
 
@@ -355,6 +364,8 @@ class ArusKasGsuReportService
                     ];
                 }
             }
+
+            usort($items, static fn (array $a, array $b): int => strcmp($a['account_code'], $b['account_code']));
 
             $total = array_sum(array_column($items, 'amount'));
 

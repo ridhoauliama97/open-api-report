@@ -175,7 +175,11 @@
 
         function formatAmount($value)
         {
-            return number_format((float) $value, 1, ',', '.');
+            $value = (float) $value;
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 1, '.', ',') . ')';
+            }
+            return number_format($value, 1, '.', ',');
         }
     @endphp
 

@@ -29,13 +29,15 @@ class PelunasanReportService
             throw new RuntimeException('Tidak ada data untuk periode yang dipilih.');
         }
 
-        $records = $this->buildRecords($filtered);
+        $result = $this->buildRecords($filtered);
 
         return [
             'title' => self::TITLE,
             'company' => '',
             'period_label' => $periodLabel,
-            'records' => $records,
+            'salesmen_groups' => $result['salesmen_groups'],
+            'grand_total_line' => $result['grand_total_line'],
+            'grand_total_voucher' => $result['grand_total_voucher'],
             'printed_by' => '',
         ];
     }
@@ -152,6 +154,14 @@ class PelunasanReportService
             $itemDate = trim((string) ($first['Item Date'] ?? ''));
             $itemAmount = (float) ($first['Item Amount'] ?? 0);
 
+            $salesPerson = trim((string) ($first["Customer's Sales Person Name"] ?? ''));
+            if ($salesPerson === '') {
+                $salesPerson = trim((string) ($first["Invoice's Sales Person Name"] ?? ''));
+            }
+            if ($salesPerson === '') {
+                $salesPerson = trim((string) ($first['Sales Person Name'] ?? 'TANPA SALESMAN'));
+            }
+
             $maxVoucherDate = '';
             $voucherDates = [];
             $sumGab = 0.0;
@@ -201,6 +211,7 @@ class PelunasanReportService
 
             $records[] = [
                 'customer_name' => $customerName,
+                'sales_person' => $salesPerson,
                 'item_ref' => $ref,
                 'item_date' => $itemDate,
                 'voucher_date' => $maxVoucherDate,
@@ -213,6 +224,10 @@ class PelunasanReportService
         }
 
         usort($records, function (array $a, array $b): int {
+            $cmp = strcasecmp($a['sales_person'], $b['sales_person']);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
             $cmp = strcmp($a['customer_name'], $b['customer_name']);
             if ($cmp !== 0) {
                 return $cmp;
@@ -221,7 +236,32 @@ class PelunasanReportService
             return strcmp($a['item_date'], $b['item_date']);
         });
 
-        return $records;
+        $salesmenGroups = [];
+        $grandTotalLine = 0.0;
+        $grandTotalVoucher = 0.0;
+
+        foreach ($records as $record) {
+            $sp = $record['sales_person'];
+            if (! isset($salesmenGroups[$sp])) {
+                $salesmenGroups[$sp] = [
+                    'salesman_name' => $sp,
+                    'records' => [],
+                    'subtotal_line' => 0.0,
+                    'subtotal_voucher' => 0.0,
+                ];
+            }
+            $salesmenGroups[$sp]['records'][] = $record;
+            $salesmenGroups[$sp]['subtotal_line'] += $record['line_total'];
+            $salesmenGroups[$sp]['subtotal_voucher'] += $record['total_voucher'];
+            $grandTotalLine += $record['line_total'];
+            $grandTotalVoucher += $record['total_voucher'];
+        }
+
+        return [
+            'salesmen_groups' => array_values($salesmenGroups),
+            'grand_total_line' => $grandTotalLine,
+            'grand_total_voucher' => $grandTotalVoucher,
+        ];
     }
 
     private function buildPeriodLabel(string $dateStart, string $dateEnd, array $allRows): string

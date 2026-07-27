@@ -134,12 +134,12 @@
             padding: 8px 4px;
         }
 
-        .col-account {
-            width: 22%;
+        .col-date {
+            width: 12%;
         }
 
         .col-desc {
-            width: 33%;
+            width: 43%;
         }
 
         .col-debit {
@@ -152,10 +152,6 @@
 
         .col-saldo {
             width: 15%;
-        }
-
-        .col-grand-label {
-            width: 55%;
         }
     </style>
 </head>
@@ -176,14 +172,14 @@
 
         function fmtAmount($value)
         {
-            $value = (float) $value;
-            if ($value == 0) {
-                return '0,0';
+            $v = (float) $value;
+            if ($v == 0) {
+                return '0';
             }
-            if ($value < 0) {
-                return '-' . number_format(abs($value), 1, ',', '.');
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
-            return number_format($value, 1, ',', '.');
+            return number_format($v, 0, '.', ',');
         }
     @endphp
 
@@ -195,7 +191,7 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="col-account">Nama Akun</th>
+                    <th class="col-date">Tanggal</th>
                     <th class="col-desc">Keterangan</th>
                     <th class="col-debit">Debit</th>
                     <th class="col-kredit">Kredit</th>
@@ -206,22 +202,28 @@
                 @php $globalRow = 0; @endphp
                 @foreach ($groups as $prefixGroup)
                     @foreach ($prefixGroup['accounts'] as $account)
-                        @php $displayAccount = $account['account_name']; @endphp
+                        @php
+                            $accountCode = $account['account_code'];
+                            $accountName = $account['account_name'];
+                        @endphp
+
+                        <tr class="group-header">
+                            <td colspan="5">{{ $accountCode }} : {{ $accountName }} (Rp)</td>
+                        </tr>
 
                         @foreach ($account['items'] as $item)
                             @php $globalRow++; @endphp
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                                <td>{{ $displayAccount }}</td>
+                                <td>{{ \Carbon\Carbon::parse($item['voucher_date'])->locale('id')->isoFormat('DD-MMM-YY') }}</td>
                                 <td>{{ (string) ($item['description'] ?? '') }}</td>
                                 <td class="number nowrap">{{ fmtAmount($item['amount_db'] ?? 0) }}</td>
                                 <td class="number nowrap">{{ fmtAmount($item['amount_cr'] ?? 0) }}</td>
                                 <td class="number nowrap">{{ fmtAmount($item['saldo'] ?? 0) }}</td>
                             </tr>
-                            @php $displayAccount = ''; @endphp
                         @endforeach
 
                         <tr class="account-subtotal">
-                            <td colspan="2">Total :</td>
+                            <td colspan="2">Sub Total</td>
                             <td class="number nowrap">{{ fmtAmount($account['subtotal_db'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtAmount($account['subtotal_cr'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtAmount($account['subtotal'] ?? 0) }}</td>
@@ -230,7 +232,7 @@
                 @endforeach
 
                 <tr class="grand-row">
-                    <td colspan="2" style="font-size: 11px;">Grand Total :</td>
+                    <td colspan="2" style="font-size: 11px;">Grand Total</td>
                     <td class="number nowrap">{{ fmtAmount($grandTotalDb) }}</td>
                     <td class="number nowrap">{{ fmtAmount($grandTotalCr) }}</td>
                     <td class="number nowrap">{{ fmtAmount($grandTotal) }}</td>

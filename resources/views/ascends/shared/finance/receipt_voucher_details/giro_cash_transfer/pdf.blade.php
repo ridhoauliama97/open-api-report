@@ -96,7 +96,7 @@
 
         .subtotal-row td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             padding: 2px 3px 2px 3px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
@@ -111,10 +111,6 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
-
         .empty-row td {
             text-align: center;
             font-style: italic;
@@ -122,7 +118,7 @@
             font-weight: bold;
             color: #9c111d;
             font-size: 11px;
-            padding: 4px 4px;
+            padding: 2px 4px;
         }
 
         .center {
@@ -143,7 +139,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '-' . number_format(abs($v), 0, '.', ',');
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
             return number_format($v, 0, '.', ',');
         }
@@ -168,27 +164,18 @@
     @forelse ($records as $index => $record)
         @if ($index === 0)
             <table class="data-table">
-                <colgroup>
-                    <col style="width:17%">
-                    <col style="width:24%">
-                    <col style="width:13%">
-                    <col style="width:13%">
-                    <col style="width:7%">
-                    <col style="width:26%">
-                </colgroup>
                 <thead>
                     <tr>
-                        <th>No Voucher</th>
-                        <th>Nama Customer</th>
-                        <th>Tgl. Invoice</th>
-                        <th>Tgl. Voucher</th>
-                        <th>Hari</th>
-                        <th>Total</th>
+                        <th style="width: 15%;">No Voucher</th>
+                        <th style="width: 40%;">Nama Customer</th>
+                        <th style="width: 10%;">Tgl. Invoice</th>
+                        <th style="width: 10%;">Tgl. Voucher</th>
+                        <th style="width: 5%;">Hari</th>
+                        <th style="width: 20%;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
         @endif
-
                 @php
                     $prev = $records[$index - 1] ?? null;
                     $showGroup = $prev === null || $prev['group_key'] !== $record['group_key'];
@@ -231,28 +218,22 @@
 
                 @if ($isLastInGroup)
                     <tr class="subtotal-row">
-                        <td colspan="5" class="center">Total</td>
+                        <td colspan="5" class="center">Total
+                            {{ $record['sales_person'] !== '-' ? $record['sales_person'] : $record['group_key'] }}
+                        </td>
                         <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
                     </tr>
                 @endif
     @empty
                 <table class="data-table">
-                    <colgroup>
-                        <col style="width:17%">
-                        <col style="width:24%">
-                        <col style="width:13%">
-                        <col style="width:13%">
-                        <col style="width:7%">
-                        <col style="width:26%">
-                    </colgroup>
                     <thead>
                         <tr>
-                            <th>No Voucher</th>
-                            <th>Nama Customer</th>
-                            <th>Tgl. Invoice</th>
-                            <th>Tgl. Voucher</th>
-                            <th>Hari</th>
-                            <th>Total</th>
+                            <th style="width: 15%;">No Voucher</th>
+                            <th style="width: 40%;">Nama Customer</th>
+                            <th style="width: 10%;">Tgl. Invoice</th>
+                            <th style="width: 10%;">Tgl. Voucher</th>
+                            <th style="width: 5%;">Hari</th>
+                            <th style="width: 20%;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -268,21 +249,7 @@
                 </table>
             @endif
 
-    <htmlpagefooter name="reportFooter">
-        <table style="width: 100%; border-collapse: collapse; border: 0; margin: 0; padding: 0;">
-            <tr>
-                <td
-                    style="border: 0; padding: 0; text-align: left; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic;">
-                    Print by {{ $generatedByName ?: 'sistem' }} on {{ now()->format('d/m/Y H:i:s') }}
-                </td>
-                <td
-                    style="border: 0; padding: 0; text-align: right; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic;">
-                    Page {PAGENO} of {nbpg}
-                </td>
-            </tr>
-        </table>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @include('ascends.shared.partials.report-footer')
 </body>
 
 </html>

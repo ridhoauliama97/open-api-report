@@ -16,6 +16,10 @@ class LaporanLabaRugiUcReportService
         '412' => 'PENDAPATAN JASA PRODUKSI',
         '413' => 'PENDAPATAN JASA SEWA',
         '421' => 'PENDAPATAN JASA TENAGA AHLI',
+        '421.001' => 'PENDAPATAN JASA TENAGA AHLI',
+        '421.002' => 'PENDAPATAN JASA SEWA',
+        '421.003' => 'PENDAPATAN JASA PRODUKSI',
+        '421.004' => 'PENDAPATAN JASA PEMBELIAN',
         '711' => 'BEBAN UMUM',
         '721' => 'BEBAN_721',
         '800' => 'PENDAPATAN LAINNYA (PL)',
@@ -60,6 +64,25 @@ class LaporanLabaRugiUcReportService
 
     private const SECTION_ORDER = ['PENDAPATAN', 'BEBAN USAHA', 'PENDAPATAN DAN BEBAN LAINNYA'];
 
+    private const SECTION_RASIO_SIGN = [
+        'PENDAPATAN' => 1,
+        'BEBAN USAHA' => -1,
+        'PENDAPATAN DAN BEBAN LAINNYA' => null,
+    ];
+
+    private const CATEGORY_SIGN = [
+        'PENDAPATAN JASA PEMBELIAN' => 1,
+        'PENDAPATAN JASA PRODUKSI' => 1,
+        'PENDAPATAN JASA SEWA' => 1,
+        'PENDAPATAN JASA TENAGA AHLI' => 1,
+        'BEBAN UMUM' => -1,
+        'BEBAN DIREKSI' => -1,
+        'BEBAN LAINNYA (BL)' => -1,
+        'PENDAPATAN LAINNYA (PL)' => 1,
+    ];
+
+    private const AMOUNT_FLIP_CATEGORIES = ['BEBAN DIREKSI', 'BEBAN LAINNYA (BL)'];
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $allRows = $this->parseXml($xmlContents, $sourceLabel);
@@ -74,15 +97,7 @@ class LaporanLabaRugiUcReportService
         $bulanB = Carbon::parse($endDate)->startOfMonth();
         $bulanA = $bulanB->copy()->subMonth()->startOfMonth();
 
-        $lastDayOfStartMonth = null;
-        if ($startDate !== '') {
-            try {
-                $lastDayOfStartMonth = Carbon::parse($startDate)->endOfMonth();
-            } catch (Throwable) {
-            }
-        }
-
-        $filtered = $this->applyFilters($allRows, $lastDayOfStartMonth);
+        $filtered = $this->applyFilters($allRows, $bulanA);
 
         if ($filtered === []) {
             throw new RuntimeException('Tidak ada data yang memenuhi kriteria.');
@@ -105,12 +120,26 @@ class LaporanLabaRugiUcReportService
 
         $sections = $this->buildSections($merged, $totalPendapatanB, $totalPendapatanA);
 
+        foreach ($sections as &$sec) {
+            if ($sec['section'] === 'PENDAPATAN DAN BEBAN LAINNYA') {
+                $sec['rasio_b'] = $totalPendapatanB['b'] > 0 ? round($sec['subtotal_b'] / $totalPendapatanB['b'] * 100, 2) : 0;
+                $sec['rasio_a'] = $totalPendapatanA['a'] > 0 ? -round(abs($sec['subtotal_a']) / $totalPendapatanA['a'] * 100, 2) : 0;
+            }
+            if ($sec['section'] === 'BEBAN USAHA') {
+                $sec['rasio_b'] = $totalPendapatanB['b'] > 0 ? -round(abs($sec['subtotal_b']) / $totalPendapatanB['b'] * 100, 2) : 0;
+                $sec['rasio_a'] = $totalPendapatanA['a'] > 0 ? -round(abs($sec['subtotal_a']) / $totalPendapatanA['a'] * 100, 2) : 0;
+            }
+        }
+        unset($sec);
+
         $pendapatan = $this->findSectionTotal($sections, 'PENDAPATAN');
         $bebanUsaha = $this->findSectionTotal($sections, 'BEBAN USAHA');
         $lainnya = $this->findSectionTotal($sections, 'PENDAPATAN DAN BEBAN LAINNYA');
 
-        $labaUsahaB = $pendapatan['subtotal_b'] - $bebanUsaha['subtotal_b'];
-        $labaUsahaA = $pendapatan['subtotal_a'] - $bebanUsaha['subtotal_a'];
+        $labaKotorB = $pendapatan['subtotal_b'];
+        $labaKotorA = $pendapatan['subtotal_a'];
+        $labaUsahaB = $labaKotorB - $bebanUsaha['subtotal_b'];
+        $labaUsahaA = $labaKotorA - $bebanUsaha['subtotal_a'];
         $labaBersihB = $labaUsahaB + $lainnya['subtotal_b'];
         $labaBersihA = $labaUsahaA + $lainnya['subtotal_a'];
 
@@ -129,6 +158,14 @@ class LaporanLabaRugiUcReportService
             'sections' => $sections,
             'calculations' => [
                 [
+                    'label' => 'LABA (RUGI) KOTOR',
+                    'amount_b' => $labaKotorB,
+                    'amount_a' => $labaKotorA,
+                    'rasio_b' => $totalPendapatanB['b'] > 0 ? 100 : 0,
+                    'rasio_a' => $totalPendapatanA['a'] > 0 ? -100 : 0,
+                    'selisih' => $this->computeSelisih($labaKotorB, $labaKotorA),
+                ],
+                [
                     'label' => 'LABA (RUGI) USAHA / OPERASIONAL',
                     'amount_b' => $labaUsahaB,
                     'amount_a' => $labaUsahaA,
@@ -138,6 +175,8 @@ class LaporanLabaRugiUcReportService
                     'label' => 'LABA (RUGI) BERSIH SEBELUM PAJAK',
                     'amount_b' => $labaBersihB,
                     'amount_a' => $labaBersihA,
+                    'rasio_b' => $totalPendapatanB['b'] > 0 ? round($labaBersihB / $totalPendapatanB['b'] * 100, 2) : 0,
+                    'rasio_a' => $totalPendapatanA['a'] > 0 ? -round(abs($labaBersihA) / $totalPendapatanA['a'] * 100, 2) : 0,
                     'selisih' => $this->computeSelisih($labaBersihB, $labaBersihA),
                 ],
                 [
@@ -150,6 +189,8 @@ class LaporanLabaRugiUcReportService
                     'label' => 'LABA (RUGI) BERSIH SETELAH PAJAK',
                     'amount_b' => $labaBersihB,
                     'amount_a' => $labaBersihA,
+                    'rasio_b' => $totalPendapatanB['b'] > 0 ? round($labaBersihB / $totalPendapatanB['b'] * 100, 2) : 0,
+                    'rasio_a' => $totalPendapatanA['a'] > 0 ? -round(abs($labaBersihA) / $totalPendapatanA['a'] * 100, 2) : 0,
                     'selisih' => $this->computeSelisih($labaBersihB, $labaBersihA),
                 ],
             ],
@@ -208,9 +249,10 @@ class LaporanLabaRugiUcReportService
         return str_replace('_x002F_', '/', $key);
     }
 
-    private function applyFilters(array $rows, ?Carbon $lastDayOfStartMonth): array
+    private function applyFilters(array $rows, ?Carbon $bulanAwal): array
     {
         $result = [];
+        $startYm = $bulanAwal !== null ? $bulanAwal->format('Y-m') : '';
 
         foreach ($rows as $row) {
             $accountCode = (string) ($row['Account Code'] ?? '');
@@ -220,12 +262,12 @@ class LaporanLabaRugiUcReportService
                 continue;
             }
 
-            if ($accountCode === '721.000.171' && $lastDayOfStartMonth !== null) {
+            if ($accountCode === '721.000.171' && $startYm !== '') {
                 $voucherDate = trim((string) ($row['Voucher Date'] ?? ''));
                 if ($voucherDate !== '') {
                     try {
-                        $vd = Carbon::parse($voucherDate);
-                        if (! $vd->greaterThan($lastDayOfStartMonth)) {
+                        $voucherYm = Carbon::parse($voucherDate)->format('Y-m');
+                        if ($voucherYm < $startYm) {
                             continue;
                         }
                     } catch (Throwable) {
@@ -247,6 +289,11 @@ class LaporanLabaRugiUcReportService
             return 'BEBAN DIREKSI';
         }
 
+        $prefix7 = substr($accountCode, 0, 7);
+        if (isset(self::ACCOUNT_CATEGORIES[$prefix7])) {
+            return self::ACCOUNT_CATEGORIES[$prefix7];
+        }
+
         $prefix3 = substr($accountCode, 0, 3);
 
         if (! isset(self::ACCOUNT_CATEGORIES[$prefix3])) {
@@ -264,19 +311,18 @@ class LaporanLabaRugiUcReportService
 
     private function filterByMonth(array $rows, Carbon $month): array
     {
-        $start = $month->copy()->startOfMonth();
-        $end = $month->copy()->endOfMonth();
+        $targetYm = $month->format('Y-m');
 
-        return array_values(array_filter($rows, static function (array $row) use ($start, $end): bool {
+        return array_values(array_filter($rows, static function (array $row) use ($targetYm): bool {
             $dateStr = trim((string) ($row['Voucher Date'] ?? ''));
             if ($dateStr === '') {
                 return false;
             }
 
             try {
-                $date = Carbon::parse($dateStr);
+                $dateYm = Carbon::parse($dateStr)->format('Y-m');
 
-                return $date->greaterThanOrEqualTo($start) && $date->lessThanOrEqualTo($end);
+                return $dateYm === $targetYm;
             } catch (Throwable) {
                 return false;
             }
@@ -290,10 +336,13 @@ class LaporanLabaRugiUcReportService
         foreach ($rows as $row) {
             $category = (string) ($row['_category'] ?? '');
             $accountName = (string) ($row['Account Name'] ?? '');
+            $accountCode = (string) ($row['Account Code'] ?? '');
             $amountDb = (float) ($row['Amount DB'] ?? 0);
             $amountCr = (float) ($row['Amount CR'] ?? 0);
 
-            $amount = $amountDb - $amountCr;
+            $prefix3 = substr($accountCode, 0, 3);
+            $isRevenue = in_array($prefix3, ['411', '412', '413', '421', '800'], true);
+            $amount = $isRevenue ? $amountCr - $amountDb : $amountDb - $amountCr;
 
             $key = $category.'|||'.$accountName;
 
@@ -378,19 +427,21 @@ class LaporanLabaRugiUcReportService
                     continue;
                 }
 
+                $sign = self::CATEGORY_SIGN[$category] ?? 1;
+                $flipAmount = in_array($category, self::AMOUNT_FLIP_CATEGORIES, true);
                 $items = [];
                 $subtotalB = 0;
                 $subtotalA = 0;
 
                 foreach ($categoryItems as $item) {
-                    $amountB = $item['amount_b'];
-                    $amountA = $item['amount_a'];
+                    $amountB = $item['amount_b'] * ($flipAmount ? -1 : 1);
+                    $amountA = $item['amount_a'] * ($flipAmount ? -1 : 1);
 
                     $subtotalB += $amountB;
                     $subtotalA += $amountA;
 
-                    $rasioB = $totalPendapatanB['b'] > 0 ? round($amountB / $totalPendapatanB['b'] * 100, 2) : 0;
-                    $rasioA = $totalPendapatanA['a'] > 0 ? round($amountA / $totalPendapatanA['a'] * 100, 2) : 0;
+                    $rasioB = $totalPendapatanB['b'] > 0 ? $sign * round(abs($amountB) / $totalPendapatanB['b'] * 100, 2) : 0;
+                    $rasioA = $totalPendapatanA['a'] > 0 ? $sign * round(abs($amountA) / $totalPendapatanA['a'] * 100, 2) : 0;
 
                     $items[] = [
                         'account_name' => $item['account_name'],
@@ -402,8 +453,8 @@ class LaporanLabaRugiUcReportService
                     ];
                 }
 
-                $rasioB = $totalPendapatanB['b'] > 0 ? round($subtotalB / $totalPendapatanB['b'] * 100, 2) : 0;
-                $rasioA = $totalPendapatanA['a'] > 0 ? round($subtotalA / $totalPendapatanA['a'] * 100, 2) : 0;
+                $rasioB = $totalPendapatanB['b'] > 0 ? $sign * round(abs($subtotalB) / $totalPendapatanB['b'] * 100, 2) : 0;
+                $rasioA = $totalPendapatanA['a'] > 0 ? $sign * round(abs($subtotalA) / $totalPendapatanA['a'] * 100, 2) : 0;
 
                 $categoryGroups[] = [
                     'category' => $category,
@@ -422,8 +473,14 @@ class LaporanLabaRugiUcReportService
 
             $sectionB = array_sum(array_map(static fn (array $g): float => $g['subtotal_b'], $categoryGroups));
             $sectionA = array_sum(array_map(static fn (array $g): float => $g['subtotal_a'], $categoryGroups));
-            $rasioB = $totalPendapatanB['b'] > 0 ? round($sectionB / $totalPendapatanB['b'] * 100, 2) : 0;
-            $rasioA = $totalPendapatanA['a'] > 0 ? round($sectionA / $totalPendapatanA['a'] * 100, 2) : 0;
+            $sectionSign = self::SECTION_RASIO_SIGN[$sectionName] ?? 1;
+            if ($sectionSign === null) {
+                $sectionSign = $sectionA >= 0 ? 1 : -1;
+            }
+            $absB = round(abs($sectionB) / $totalPendapatanB['b'] * 100, 2);
+            $absA = round(abs($sectionA) / $totalPendapatanA['a'] * 100, 2);
+            $rasioB = $totalPendapatanB['b'] > 0 ? ($sectionSign >= 0 ? $absB : 0.0 - $absB) : 0;
+            $rasioA = $totalPendapatanA['a'] > 0 ? ($sectionSign >= 0 ? $absA : 0.0 - $absA) : 0;
 
             $sections[] = [
                 'section' => $sectionName,

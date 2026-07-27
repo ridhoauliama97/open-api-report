@@ -48,8 +48,8 @@ class RekapBiayaLabaRugiReportService
             throw new RuntimeException('Parameter Date.StartDate dan Date.EndDate wajib dikirim.');
         }
 
-        $startDate = Carbon::parse($rawStartDate);
-        $endDate = Carbon::parse($rawEndDate);
+        $startDate = Carbon::parse($rawStartDate)->startOfDay();
+        $endDate = Carbon::parse($rawEndDate)->endOfDay();
 
         $filtered = $this->filterRows($allRows, $startDate, $endDate);
 
@@ -176,13 +176,9 @@ class RekapBiayaLabaRugiReportService
         foreach ($rows as $row) {
             $code = (string) ($row['Account Code'] ?? '');
             $name = (string) ($row['Account Name'] ?? '');
-            $amountDb = (float) ($row['Amount DB'] ?? 0);
-            $amountCr = (float) ($row['Amount CR'] ?? 0);
+            $amount = (float) ($row['Amount'] ?? 0);
 
-            $raw = $amountCr - $amountDb;
-            $amount = abs($raw);
-
-            if ($amount < 0.01) {
+            if (abs($amount) < 0.01) {
                 continue;
             }
 

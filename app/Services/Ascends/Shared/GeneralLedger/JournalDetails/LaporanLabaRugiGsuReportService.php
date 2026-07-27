@@ -39,9 +39,6 @@ class LaporanLabaRugiGsuReportService
         'PENDAPATAN JASA SEWA',
         'PENDAPATAN JASA PRODUKSI',
         'PENDAPATAN JASA PEMBELIAN',
-        'HPP PENJUALAN',
-        'PEMBELIAN BARANG DAGANG',
-        'BEBAN PEMBELIAN',
         'BEBAN PENJUALAN',
         'BEBAN MARKETING',
         'BEBAN UMUM',
@@ -50,6 +47,12 @@ class LaporanLabaRugiGsuReportService
     private const FORCE_NEGATIVE_AMOUNT = [
         'POTONGAN PENJUALAN',
         'RETUR PENJUALAN',
+    ];
+
+    private const FORCE_NEGATE_AMOUNT = [
+        'HPP PENJUALAN',
+        'PEMBELIAN BARANG DAGANG',
+        'BEBAN PEMBELIAN',
     ];
 
     private const FORCE_POSITIVE_RASIO = [
@@ -63,9 +66,6 @@ class LaporanLabaRugiGsuReportService
     private const FORCE_NEGATIVE_RASIO = [
         'POTONGAN PENJUALAN',
         'RETUR PENJUALAN',
-        'HPP PENJUALAN',
-        'PEMBELIAN BARANG DAGANG',
-        'BEBAN PEMBELIAN',
         'BEBAN PENJUALAN',
         'BEBAN MARKETING',
         'BEBAN UMUM',
@@ -82,8 +82,8 @@ class LaporanLabaRugiGsuReportService
             'PENDAPATAN JASA PEMBELIAN',
         ],
         'HARGA POKOK PENJUALAN' => [
-            'PEMBELIAN BARANG DAGANG',
             'HPP PENJUALAN',
+            'PEMBELIAN BARANG DAGANG',
         ],
         'BEBAN USAHA' => [
             'BEBAN MARKETING',
@@ -152,12 +152,12 @@ class LaporanLabaRugiGsuReportService
         $bebanUsaha = $this->findSectionTotal($sections, 'BEBAN USAHA');
         $lainnya = $this->findSectionTotal($sections, 'PENDAPATAN DAN BEBAN LAINNYA');
 
-        $labaKotorB = $pendapatan['subtotal_b'] + $hpp['subtotal_b'];
-        $labaKotorA = $pendapatan['subtotal_a'] + $hpp['subtotal_a'];
-        $labaUsahaB = $labaKotorB + $bebanUsaha['subtotal_b'];
-        $labaUsahaA = $labaKotorA + $bebanUsaha['subtotal_a'];
-        $labaSebelumPajakB = $labaUsahaB + $lainnya['subtotal_b'];
-        $labaSebelumPajakA = $labaUsahaA + $lainnya['subtotal_a'];
+        $labaKotorB = $pendapatan['display_subtotal_b'] + $hpp['display_subtotal_b'];
+        $labaKotorA = $pendapatan['display_subtotal_a'] + $hpp['display_subtotal_a'];
+        $labaUsahaB = $labaKotorB + $bebanUsaha['display_subtotal_b'];
+        $labaUsahaA = $labaKotorA + $bebanUsaha['display_subtotal_a'];
+        $labaSebelumPajakB = $labaUsahaB + $lainnya['display_subtotal_b'];
+        $labaSebelumPajakA = $labaUsahaA + $lainnya['display_subtotal_a'];
 
         $pajakB = $this->sumAccountTotal($dataB, '721.000.171');
         $pajakA = $this->sumAccountTotal($dataA, '721.000.171');
@@ -455,15 +455,18 @@ class LaporanLabaRugiGsuReportService
                     continue;
                 }
 
-                usort($akmItems, static fn (array $a, array $b): int => strcasecmp($a['account_name'], $b['account_name']));
+                usort($akmItems, static fn (array $a, array $b): int => strcmp($a['account_code'], $b['account_code']));
 
                 $items = [];
                 $subtotalB = 0;
                 $subtotalA = 0;
+                $displaySubtotalB = 0;
+                $displaySubtotalA = 0;
 
                 $isPendapatan = $akl === 'PENDAPATAN';
                 $forcePosAmt = in_array($akm, self::FORCE_POSITIVE_AMOUNT);
                 $forceNegAmt = in_array($akm, self::FORCE_NEGATIVE_AMOUNT) && $isPendapatan;
+                $forceNegateAmt = in_array($akm, self::FORCE_NEGATE_AMOUNT);
                 $forcePosRas = in_array($akm, self::FORCE_POSITIVE_RASIO);
                 $forceNegRas = in_array($akm, self::FORCE_NEGATIVE_RASIO);
 
@@ -471,17 +474,19 @@ class LaporanLabaRugiGsuReportService
                     $rawB = (float) $item['amount_b'];
                     $rawA = (float) $item['amount_a'];
 
-                    $amountB = $forcePosAmt ? abs($rawB) : ($forceNegAmt ? -1 * abs($rawB) : $rawB);
-                    $amountA = $forcePosAmt ? abs($rawA) : ($forceNegAmt ? -1 * abs($rawA) : $rawA);
+                    $amountB = $forceNegateAmt ? -$rawB : ($forcePosAmt ? abs($rawB) : ($forceNegAmt ? -1 * abs($rawB) : $rawB));
+                    $amountA = $forceNegateAmt ? -$rawA : ($forcePosAmt ? abs($rawA) : ($forceNegAmt ? -1 * abs($rawA) : $rawA));
 
-                    $rasioBaseB = $forcePosRas ? abs($rawB) : ($forceNegRas ? -1 * abs($rawB) : $rawB);
-                    $rasioBaseA = $forcePosRas ? abs($rawA) : ($forceNegRas ? -1 * abs($rawA) : $rawA);
+                    $rasioBaseB = $forceNegateAmt ? $rawB : ($forcePosRas ? abs($rawB) : ($forceNegRas ? -1 * abs($rawB) : $rawB));
+                    $rasioBaseA = $forceNegateAmt ? $rawA : ($forcePosRas ? abs($rawA) : ($forceNegRas ? -1 * abs($rawA) : $rawA));
 
                     $isPajakAccount = $akm === 'BEBAN UMUM' && ($item['account_code'] ?? '') === '721.000.171';
 
                     if (! $isPajakAccount) {
                         $subtotalB += $rasioBaseB;
                         $subtotalA += $rasioBaseA;
+                        $displaySubtotalB += $amountB;
+                        $displaySubtotalA += $amountA;
                     }
 
                     $items[] = [
@@ -502,6 +507,8 @@ class LaporanLabaRugiGsuReportService
                     'items' => $items,
                     'subtotal_b' => $subtotalB,
                     'subtotal_a' => $subtotalA,
+                    'display_subtotal_b' => $displaySubtotalB,
+                    'display_subtotal_a' => $displaySubtotalA,
                     'rasio_b' => $rasioB,
                     'rasio_a' => $rasioA,
                     'selisih' => $this->computeSelisih($subtotalB, $subtotalA),
@@ -514,6 +521,8 @@ class LaporanLabaRugiGsuReportService
 
             $sectionB = array_sum(array_map(static fn (array $g): float => $g['subtotal_b'], $akmGroups));
             $sectionA = array_sum(array_map(static fn (array $g): float => $g['subtotal_a'], $akmGroups));
+            $sectionDisplayB = array_sum(array_map(static fn (array $g): float => $g['display_subtotal_b'], $akmGroups));
+            $sectionDisplayA = array_sum(array_map(static fn (array $g): float => $g['display_subtotal_a'], $akmGroups));
             $rasioB = $totalPendapatanB['abs_b'] > 0 ? round($sectionB / $totalPendapatanB['abs_b'] * 100, 2) : 0;
             $rasioA = $totalPendapatanA['abs_a'] > 0 ? round($sectionA / $totalPendapatanA['abs_a'] * 100, 2) : 0;
 
@@ -522,6 +531,8 @@ class LaporanLabaRugiGsuReportService
                 'akm_groups' => $akmGroups,
                 'subtotal_b' => $sectionB,
                 'subtotal_a' => $sectionA,
+                'display_subtotal_b' => $sectionDisplayB,
+                'display_subtotal_a' => $sectionDisplayA,
                 'rasio_b' => $rasioB,
                 'rasio_a' => $rasioA,
                 'selisih' => $this->computeSelisih($sectionB, $sectionA),
@@ -537,7 +548,7 @@ class LaporanLabaRugiGsuReportService
             return $b >= 0 ? 100 : -100;
         }
 
-        return round(($b - $a) / abs($a) * 100, 2);
+        return round(($b - $a) / $a * 100, 2);
     }
 
     private function findSectionTotal(array $sections, string $akl): array
@@ -547,11 +558,18 @@ class LaporanLabaRugiGsuReportService
                 return [
                     'subtotal_b' => $section['subtotal_b'],
                     'subtotal_a' => $section['subtotal_a'],
+                    'display_subtotal_b' => $section['display_subtotal_b'] ?? $section['subtotal_b'],
+                    'display_subtotal_a' => $section['display_subtotal_a'] ?? $section['subtotal_a'],
                 ];
             }
         }
 
-        return ['subtotal_b' => 0, 'subtotal_a' => 0];
+        return [
+            'subtotal_b' => 0,
+            'subtotal_a' => 0,
+            'display_subtotal_b' => 0,
+            'display_subtotal_a' => 0,
+        ];
     }
 
     private function sumAccountTotal(array $rows, string $targetCode): float

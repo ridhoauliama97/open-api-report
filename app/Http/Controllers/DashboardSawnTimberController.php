@@ -202,17 +202,17 @@ class DashboardSawnTimberController extends Controller
             $prepared['types'] = $selectedTypes;
             $prepared['totals_by_type'] = array_filter(
                 $totalsByType,
-                static fn(string $type): bool => isset($selectedMap[$type]),
+                static fn (string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
             $prepared['series_by_type'] = array_filter(
                 $seriesByType,
-                static fn(string $type): bool => isset($selectedMap[$type]),
+                static fn (string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
             $prepared['stock_by_type'] = array_filter(
                 $stockByType,
-                static fn(string $type): bool => isset($selectedMap[$type]),
+                static fn (string $type): bool => isset($selectedMap[$type]),
                 ARRAY_FILTER_USE_KEY
             );
             $prepared['pdf_truncated_types'] = true;
@@ -288,7 +288,7 @@ class DashboardSawnTimberController extends Controller
     private function sumSeriesChunks(array $values, int $chunkSize): array
     {
         if ($chunkSize <= 1) {
-            return array_map(static fn($value): float => (float) ($value ?? 0), $values);
+            return array_map(static fn ($value): float => (float) ($value ?? 0), $values);
         }
 
         $chunks = [];

@@ -60,7 +60,7 @@
         .data-table td {
             border-left: 1px solid #000;
             border-right: 1px solid #000;
-            padding: 1px 2px;
+            padding: 2px 3px;
             vertical-align: middle;
             word-wrap: break-word;
         }
@@ -83,7 +83,7 @@
             font-weight: bold;
             font-size: 10px;
             font-style: italic;
-            padding: 3px 3px;
+            padding: 4px 4px;
             color: #9c111d;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
@@ -103,21 +103,14 @@
             font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
-            padding: 2px 3px;
+            padding: 3px 4px;
         }
 
         .grand-row td {
             font-weight: bold;
             font-size: 10px;
-            border-bottom: 1px solid #000;
-            padding: 2px 3px;
-        }
-
-        .hpp-global-row td {
-            font-weight: bold;
-            font-size: 10px;
-            border-bottom: 1px solid #000;
-            padding: 2px 3px;
+            border-top: 1px solid #000;
+            padding: 3px 4px;
         }
 
         .keterangan {
@@ -134,10 +127,6 @@
 
         .number {
             text-align: right;
-        }
-
-        .number-negative {
-            color: #9c111d;
         }
 
         .nowrap {
@@ -161,42 +150,56 @@
             font-size: 11px;
             padding: 8px 4px;
         }
+
+        .col-desc {
+            width: 32%;
+        }
+
+        .col-amount {
+            width: 18%;
+        }
+
+        .col-rasio {
+            width: 12%;
+        }
+
+        .col-selisih {
+            width: 12%;
+        }
     </style>
 </head>
 
 <body>
     @php
         $groups = $reportData['groups'] ?? [];
-        $months = $reportData['months'] ?? [];
-        $totalMonthlySales = $reportData['total_monthly_sales'] ?? [];
-        $totalMonthlyHpp = $reportData['total_monthly_hpp'] ?? [];
-        $hppGlobal = $reportData['hpp_global'] ?? [];
-        $numMonths = count($months);
-        $namePct = 22;
-        $statPct = 6;
-        $monthPct = $numMonths > 0 ? (100 - $namePct - ($statPct * 3)) / $numMonths : 0;
-
-        $headerCompany = trim((string) ($company ?? $reportData['company'] ?? ''));
-        $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
-        $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
+        $bulanB = $reportData['bulan_b_label'] ?? 'Jun-26';
+        $bulanA = $reportData['bulan_a_label'] ?? 'May-26';
+        $grandTotalB = (float) ($reportData['grand_total_b'] ?? 0);
+        $grandTotalA = (float) ($reportData['grand_total_a'] ?? 0);
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
-            ->locale('id')->translatedFormat('d-M-y H:i');
+            ->locale('id')
+            ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-        $negativeGroupStyle = 'color: #9c111d;';
+        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
+        $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
+        $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function formatAmount($value)
+        function fmtAmount($value)
         {
             $value = (float) $value;
-            if ($value < 0) {
-                return '(' . number_format(abs($value), 2, ',', '.') . ')';
+            if ($value == 0) {
+                return '-';
             }
-            return number_format($value, 2, ',', '.');
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 2, '.', ',') . ')';
+            }
+            return number_format($value, 2, '.', ',');
         }
 
-        function formatPct($value)
+        function fmtPct($value)
         {
             $v = (float) $value;
-            $formatted = number_format(abs($v), 2, ',', '.') . '%';
+            $formatted = number_format(abs($v), 2, '.', ',') . '%';
             if ($v < 0) {
                 return '(' . $formatted . ')';
             }
@@ -210,106 +213,68 @@
 
     @if (count($groups) > 0)
         <table class="data-table">
-            <colgroup>
-                <col style="width: {{ $namePct }}%;">
-                @foreach ($months as $mk => $ml)
-                    <col style="width: {{ $monthPct }}%;">
-                @endforeach
-                <col style="width: {{ $statPct }}%;">
-                <col style="width: {{ $statPct }}%;">
-                <col style="width: {{ $statPct }}%;">
-            </colgroup>
             <thead>
                 <tr>
-                    <th style="width: {{ $namePct }}%;">PENJUALAN</th>
-                    @foreach ($months as $mk => $ml)
-                        <th style="width: {{ $monthPct }}%;">{{ $ml }}</th>
-                    @endforeach
-                    <th style="width: {{ $statPct }}%;">Rata - Rata</th>
-                    <th style="width: {{ $statPct }}%;">Terendah</th>
-                    <th style="width: {{ $statPct }}%;">Tertinggi</th>
+                    <th class="col-desc" rowspan="2">PENJUALAN</th>
+                    <th class="col-amount" colspan="2">{{ $bulanB }}</th>
+                    <th class="col-amount" colspan="2">{{ $bulanA }}</th>
+                    <th class="col-selisih" rowspan="2">% BEDA</th>
+                </tr>
+                <tr>
+                    <th class="col-amount">Jumlah</th>
+                    <th class="col-rasio">% RASIO</th>
+                    <th class="col-amount">Jumlah</th>
+                    <th class="col-rasio">% RASIO</th>
                 </tr>
             </thead>
             <tbody>
                 @php $globalRow = 0; @endphp
                 @foreach ($groups as $group)
-                    @php $groupName = $group['name']; @endphp
                     <tr class="section-header">
-                        <td colspan="{{ 1 + $numMonths + 3 }}">{{ $groupName }}</td>
+                        <td colspan="6">{{ $group['name'] }}</td>
                     </tr>
 
                     @foreach ($group['penjualan_items'] as $item)
                         @php $globalRow++; @endphp
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} subsection-row">
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                            @foreach ($months as $mk => $ml)
-                                @php $amt = $item['monthly_amounts'][$mk] ?? 0; @endphp
-                                <td class="number nowrap">{{ $amt != 0 ? formatAmount($amt) : '-' }}</td>
-                            @endforeach
-                            <td class="number nowrap">{{ formatAmount($item['total_amount']) }}</td>
+                            <td class="number nowrap">{{ fmtAmount($item['amount_b'] ?? 0) }}</td>
+                            <td></td>
+                            <td class="number nowrap">{{ fmtAmount($item['amount_a'] ?? 0) }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    @endforeach
+
+                    @foreach ($group['hpp_items'] as $item)
+                        @php $globalRow++; @endphp
+                        <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} subsection-row">
+                            <td>{{ (string) ($item['account_name'] ?? '') }}</td>
+                            <td class="number nowrap">{{ fmtAmount(-(float) ($item['amount_b'] ?? 0)) }}</td>
+                            <td></td>
+                            <td class="number nowrap">{{ fmtAmount(-(float) ($item['amount_a'] ?? 0)) }}</td>
                             <td></td>
                             <td></td>
                         </tr>
                     @endforeach
 
                     <tr class="margin-row">
-                        <td>LABA (RUGI) KOTOR {{ $groupName }}</td>
-                        @foreach ($months as $mk => $ml)
-                            @php $margin = $group['monthly_margin'][$mk] ?? 0; @endphp
-                            <td class="number nowrap {{ $margin < 0 ? 'number-negative' : '' }}">{{ formatPct($margin) }}</td>
-                        @endforeach
-                        <td class="number nowrap">{{ formatPct($group['rata_rata'] ?? 0) }}</td>
-                        <td class="number nowrap {{ ($group['terendah'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ formatPct($group['terendah'] ?? 0) }}
-                        </td>
-                        <td class="number nowrap">{{ formatPct($group['tertinggi'] ?? 0) }}</td>
+                        <td>LABA (RUGI) KOTOR {{ $group['name'] }}</td>
+                        <td class="number nowrap">{{ fmtAmount($group['amount_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct($group['rasio_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount($group['amount_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct($group['rasio_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct($group['selisih'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
                     <td>TOTAL LABA (RUGI) KOTOR</td>
-                    @foreach ($months as $mk => $ml)
-                        @php
-                            $ts = $totalMonthlySales[$mk] ?? 0;
-                            $th = $totalMonthlyHpp[$mk] ?? 0;
-                            $totalMargin = $ts != 0 ? ($ts - $th) / $ts * 100 : 0;
-                        @endphp
-                        <td class="number nowrap {{ $totalMargin < 0 ? 'number-negative' : '' }}">
-                            {{ formatPct(round($totalMargin, 2)) }}
-                        </td>
-                    @endforeach
-                    @php
-                        $allMargins = [];
-                        foreach ($months as $mk => $ml) {
-                            $ts = $totalMonthlySales[$mk] ?? 0;
-                            $th = $totalMonthlyHpp[$mk] ?? 0;
-                            $allMargins[$mk] = $ts != 0 ? ($ts - $th) / $ts * 100 : 0;
-                        }
-                        $marginValues = array_values($allMargins);
-                        $avgMargin = count($marginValues) > 0 ? round(array_sum($marginValues) / count($marginValues), 2) : 0;
-                        $minMargin = count($marginValues) > 0 ? round(min($marginValues), 2) : 0;
-                        $maxMargin = count($marginValues) > 0 ? round(max($marginValues), 2) : 0;
-                    @endphp
-                    <td class="number nowrap {{ $avgMargin < 0 ? 'number-negative' : '' }}">{{ formatPct($avgMargin) }}</td>
-                    <td class="number nowrap {{ $minMargin < 0 ? 'number-negative' : '' }}">{{ formatPct($minMargin) }}</td>
-                    <td class="number nowrap">{{ formatPct($maxMargin) }}</td>
-                </tr>
-
-                <tr class="hpp-global-row">
-                    <td>HPP GLOBAL</td>
-                    @foreach ($months as $mk => $ml)
-                        @php $hpp = $hppGlobal[$mk] ?? 0; @endphp
-                        <td class="number nowrap number-negative">{{ formatPct(-$hpp) }}</td>
-                    @endforeach
-                    @php
-                        $hppValues = array_values($hppGlobal);
-                        $avgHpp = count($hppValues) > 0 ? round(array_sum($hppValues) / count($hppValues), 2) : 0;
-                        $minHpp = count($hppValues) > 0 ? round(min($hppValues), 2) : 0;
-                        $maxHpp = count($hppValues) > 0 ? round(max($hppValues), 2) : 0;
-                    @endphp
-                    <td class="number nowrap number-negative">{{ formatPct(-$avgHpp) }}</td>
-                    <td class="number nowrap number-negative">{{ formatPct(-$maxHpp) }}</td>
-                    <td class="number nowrap number-negative">{{ formatPct(-$minHpp) }}</td>
+                    <td class="number nowrap">{{ fmtAmount($grandTotalB) }}</td>
+                    <td></td>
+                    <td class="number nowrap">{{ fmtAmount($grandTotalA) }}</td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
@@ -321,7 +286,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="{{ 1 + $numMonths + 3 }}">Tidak ada data.</td>
+                    <td colspan="6">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

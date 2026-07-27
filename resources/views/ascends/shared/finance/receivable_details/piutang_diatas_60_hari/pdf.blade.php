@@ -91,10 +91,6 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
-
         .row-odd td {
             background: #c9d1df;
         }
@@ -120,8 +116,7 @@
 
         .grand-total td {
             font-weight: bold;
-            font-size: 10px;
-            border-top: 1px solid #000;
+            font-size: 11px;
             border-bottom: 1px solid #000;
             padding: 3px 4px;
         }
@@ -232,41 +227,33 @@
                                     <td>{{ $itemIndex === 0 ? $customer['customer_name'] ?? '' : '' }}</td>
                                     <td class="center">{{ fmtDate($item['Item Date'] ?? '') }}</td>
                                     <td>{{ $item['Item Ref'] ?? '' }}</td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_60_75'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_60_75'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_60_75'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_76_90'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_76_90'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_76_90'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_91_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_91_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_91_120'] ?? 0) }}
                                     </td>
-                                    <td
-                                        class="number nowrap {{ (float) ($item['bucket_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                    <td class="number nowrap {{ (float) ($item['bucket_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                         {{ fmtAmount($item['bucket_120'] ?? 0) }}
                                     </td>
                                 </tr>
                             @endforeach
 
                             <tr class="customer-total">
-                                <td colspan="3">TOTAL</td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_60_75'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td colspan="3">SUBTOTAL</td>
+                                <td class="number nowrap {{ ($customer['total_60_75'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_60_75'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_76_90'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_76_90'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_76_90'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_91_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_91_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_91_120'] ?? 0) }}
                                 </td>
-                                <td
-                                    class="number nowrap {{ ($customer['total_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                                <td class="number nowrap {{ ($customer['total_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($customer['total_120'] ?? 0) }}
                                 </td>
                             </tr>
@@ -291,7 +278,7 @@
                 @endforeach
 
                 <tr class="grand-total">
-                    <td colspan="3" style="text-align: center;">GRAND TOTAL</td>
+                    <td colspan="3" class="center">GRAND TOTAL</td>
                     <td class="number nowrap {{ $grandTotal60_75 < 0 ? 'number-negative' : '' }}">
                         {{ fmtAmount($grandTotal60_75) }}
                     </td>

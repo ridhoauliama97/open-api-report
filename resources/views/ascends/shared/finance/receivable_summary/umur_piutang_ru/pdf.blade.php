@@ -53,27 +53,23 @@
             border-collapse: collapse;
             table-layout: fixed;
             page-break-inside: auto;
-            border: 1px solid #000;
         }
 
         .data-table th,
         .data-table td {
             border-left: 1px solid #000;
             border-right: 1px solid #000;
-            padding: 2px 3px;
+            font-size: 10px;
+            padding: 2px 2px;
             vertical-align: middle;
+            word-wrap: break-word;
         }
 
         .data-table th {
             font-weight: bold;
-            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
-        }
-
-        .data-table td {
-            font-size: 10px;
         }
 
         .center {
@@ -134,6 +130,18 @@
             '25-28 days',
             'Over 28 days',
         ];
+
+        function fmtAmount($value)
+        {
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
+            }
+            if ($v == 0.0) {
+                return '-';
+            }
+            return number_format($v, 0, '.', ',');
+        }
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
@@ -144,41 +152,41 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 20%">Nama Pelanggan</th>
-                    <th style="width: 11%">0 - 4 Hari</th>
-                    <th style="width: 11%">5 - 8 Hari</th>
-                    <th style="width: 11%">9 - 12 Hari</th>
-                    <th style="width: 11%">13 - 16 Hari</th>
-                    <th style="width: 11%">17 - 20 Hari</th>
-                    <th style="width: 11%">21 - 24 Hari</th>
-                    <th style="width: 11%">25 - 28 Hari</th>
-                    <th style="width: 11%">&gt; 28 Hari</th>
-                    <th style="width: 12%">Akhir</th>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 15%">Nama Pelanggan</th>
+                    <th style="width: 10%">0 - 4 Hari</th>
+                    <th style="width: 10%">5 - 8 Hari</th>
+                    <th style="width: 10%">9 - 12 Hari</th>
+                    <th style="width: 10%">13 - 16 Hari</th>
+                    <th style="width: 10%">17 - 20 Hari</th>
+                    <th style="width: 10%">21 - 24 Hari</th>
+                    <th style="width: 10%">25 - 28 Hari</th>
+                    <th style="width: 10%">&gt; 28 Hari</th>
+                    <th style="width: 10%">Akhir</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($rows as $idx => $row)
                     <tr class="{{ $idx % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                        <td class="center">{{ $idx + 1 }}</td>
                         <td>{{ $row['customer_name'] }}</td>
                         @foreach ($bucketFields as $bucket)
                             <td class="number nowrap">
-                                @php $v = (float) ($row['buckets'][$bucket] ?? 0); @endphp
-                                {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                                {{ fmtAmount($row['buckets'][$bucket] ?? 0) }}
                             </td>
                         @endforeach
-                        <td class="number nowrap">{{ number_format((float) ($row['total_akhir'] ?? 0), 0, '.', ',') }}</td>
+                        <td class="number nowrap">{{ fmtAmount($row['total_akhir'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total">
-                    <td class="center">Total</td>
+                    <td class="center" colspan="2">GRAND TOTAL</td>
                     @foreach ($bucketFields as $bucket)
                         <td class="number nowrap">
-                            @php $v = (float) ($grandTotals[$bucket] ?? 0); @endphp
-                            {{ $v != 0 ? number_format($v, 0, '.', ',') : '-' }}
+                            {{ fmtAmount($grandTotals[$bucket] ?? 0) }}
                         </td>
                     @endforeach
-                    <td class="number nowrap">{{ number_format((float) ($grandTotals['total_akhir'] ?? 0), 0, '.', ',') }}
+                    <td class="number nowrap">{{ fmtAmount($grandTotals['total_akhir'] ?? 0) }}
                     </td>
                 </tr>
             </tbody>
@@ -187,7 +195,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="10">Tidak ada data.</td>
+                    <td colspan="11">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>

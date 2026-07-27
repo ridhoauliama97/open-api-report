@@ -134,6 +134,9 @@
 <body>
     @php
         $rows = $reportData['rows'] ?? [];
+        usort($rows, function ($a, $b) {
+            return ((float) ($b['amount'] ?? 0)) <=> ((float) ($a['amount'] ?? 0));
+        });
         $grandTotal = (float) ($reportData['grand_total'] ?? 0);
         $generatedAtText = \Carbon\Carbon::parse($generatedAt ?? now())
             ->locale('id')
@@ -145,7 +148,11 @@
 
         function formatAmount($value)
         {
-            return number_format((float) $value, 0, '.', ',');
+            $value = (float) $value;
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 0, '.', ',') . ')';
+            }
+            return number_format($value, 0, '.', ',');
         }
     @endphp
 

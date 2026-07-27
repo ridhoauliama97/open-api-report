@@ -89,9 +89,8 @@
 
         .grand-total-row td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             padding: 3px 2px;
-            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
 
@@ -113,15 +112,33 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
+        .center {
+            text-align: center;
+        }
+
+        .salesman-header td {
+            font-weight: bold;
+            font-style: italic;
+            font-size: 11px;
+            padding: 4px 3px;
+            border-bottom: 1px solid #000;
+        }
+
+        .salesman-subtotal td {
+            font-weight: bold;
+            font-size: 10px;
+            padding: 3px 2px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
     </style>
 </head>
 
 <body>
     @php
-        $records = $reportData['records'] ?? [];
+        $salesmenGroups = $reportData['salesmen_groups'] ?? [];
+        $grandTotalLine = (float) ($reportData['grand_total_line'] ?? 0);
+        $grandTotalVoucher = (float) ($reportData['grand_total_voucher'] ?? 0);
         $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
@@ -131,7 +148,7 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '-' . number_format(abs($v), 0, '.', ',');
+                return '(' . number_format(abs($v), 0, '.', ',') . ')';
             }
             return number_format($v, 0, '.', ',');
         }
@@ -147,96 +164,92 @@
                 return $value;
             }
         }
-
-        $grandTotalLine = 0;
-        $grandTotalVoucher = 0;
-        foreach ($records as $r) {
-            $grandTotalLine += (float) ($r['line_total'] ?? 0);
-            $grandTotalVoucher += (float) ($r['total_voucher'] ?? 0);
-        }
     @endphp
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
     <h1 class="report-title">{{ $headerTitle }}</h1>
     <p class="report-subtitle">{{ $headerSubtitle }}</p>
 
-    @forelse ($records as $index => $record)
-        @if ($index === 0)
+    @forelse ($salesmenGroups as $salesmanIdx => $salesman)
+        @if ($loop->first)
             <table class="data-table">
                 <thead>
                     <tr>
                         <th style="width:14%">Pelanggan</th>
                         <th style="width:12%">No. Invoice</th>
-                        <th style="width:9%">Tgl. Invoice</th>
-                        <th style="width:9%">Tgl. Voucher</th>
-                        <th style="width:11%">Nilai Invoice</th>
-                        <th style="width:11%">Total Bayar</th>
+                        <th style="width:12%">Tgl. Invoice</th>
+                        <th style="width:12%">Tgl. Voucher</th>
+                        <th style="width:13%">Nilai Invoice</th>
+                        <th style="width:13%">Total Bayar</th>
                         <th style="width:5%">Umur</th>
-                        <th style="width:14%">Ket. Hari</th>
-                        <th style="width:15%">Status</th>
+                        <th style="width:10%">Ket. Hari</th>
+                        <th style="width:12%">Status</th>
                     </tr>
                 </thead>
                 <tbody>
         @endif
 
-                <tr class="{{ $index % 2 === 0 ? 'row-odd' : 'row-even' }}">
-                    <td>{{ $record['customer_name'] }}</td>
-                    <td>{{ $record['item_ref'] }}</td>
-                    <td style="text-align: center;">{{ fmtDate($record['item_date']) }}</td>
-                    <td style="text-align: center;">{{ fmtDate($record['voucher_date']) }}</td>
-                    <td class="number nowrap {{ ($record['line_total'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($record['line_total']) }}
-                    </td>
-                    <td class="number nowrap {{ ($record['total_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($record['total_voucher']) }}
-                    </td>
-                    <td class="number">{{ (int) ($record['age'] ?? 0) }}</td>
-                    <td style="text-align: center;">{{ $record['ket_hari'] ?: '' }}</td>
-                    <td
-                        style="text-align: center; {{ $record['status'] === 'Belum Lunas' ? 'color: #9c111d; font-weight: bold;' : '' }}">
-                        {{ $record['status'] }}
-                    </td>
+                <tr class="salesman-header">
+                    <td colspan="9">Salesman : {{ $salesman['salesman_name'] }}</td>
                 </tr>
+
+                @foreach ($salesman['records'] as $idx => $record)
+                    <tr class="{{ ($salesmanIdx + $idx) % 2 === 0 ? 'row-odd' : 'row-even' }}">
+                        <td>{{ $record['customer_name'] }}</td>
+                        <td>{{ $record['item_ref'] }}</td>
+                        <td class="center">{{ fmtDate($record['item_date']) }}</td>
+                        <td class="center">{{ fmtDate($record['voucher_date']) }}</td>
+                        <td class="number nowrap {{ ($record['line_total'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                            {{ fmtAmount($record['line_total']) }}
+                        </td>
+                        <td class="number nowrap {{ ($record['total_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                            {{ fmtAmount($record['total_voucher']) }}
+                        </td>
+                        <td class="number">{{ (int) ($record['age'] ?? 0) }}</td>
+                        <td class="center">{{ $record['ket_hari'] ?: '' }}</td>
+                        <td class="center"
+                            style=" {{ $record['status'] === 'Belum Lunas' ? 'color: #9c111d; font-weight: bold;' : '' }}">
+                            {{ $record['status'] }}
+                        </td>
+                    </tr>
+                @endforeach
+
+                <tr class="salesman-subtotal">
+                    <td colspan="4" class="center">Sub Total {{ $salesman['salesman_name'] }}</td>
+                    <td class="number nowrap {{ ($salesman['subtotal_line'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($salesman['subtotal_line']) }}
+                    </td>
+                    <td class="number nowrap {{ ($salesman['subtotal_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
+                        {{ fmtAmount($salesman['subtotal_voucher']) }}
+                    </td>
+                    <td colspan="3"></td>
+                </tr>
+
+                @if ($loop->last)
+                            <tr class="grand-total-row">
+                                <td colspan="4" class="center">Grand Total</td>
+                                <td class="number nowrap {{ $grandTotalLine < 0 ? 'number-negative' : '' }}">
+                                    {{ fmtAmount($grandTotalLine) }}
+                                </td>
+                                <td class="number nowrap {{ $grandTotalVoucher < 0 ? 'number-negative' : '' }}">
+                                    {{ fmtAmount($grandTotalVoucher) }}
+                                </td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                @endif
     @empty
-                <table class="data-table">
-                    <tbody>
-                        <tr class="empty-row">
-                            <td colspan="9">Tidak ada data.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            @endforelse
-
-            @if (count($records) > 0)
-                        <tr class="grand-total-row">
-                            <td colspan="4" style="text-align: center;">Total</td>
-                            <td class="number nowrap {{ $grandTotalLine < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($grandTotalLine) }}
-                            </td>
-                            <td class="number nowrap {{ $grandTotalVoucher < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($grandTotalVoucher) }}
-                            </td>
-                            <td colspan="3"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            @endif
-
-    <htmlpagefooter name="reportFooter">
-        <table style="width: 100%; border-collapse: collapse; border: 0; margin: 0; padding: 0;">
-            <tr>
-                <td
-                    style="border: 0; padding: 0; text-align: left; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic;">
-                    Print by {{ $generatedByName ?: 'sistem' }} on {{ now()->format('d/m/Y H:i:s') }}
-                </td>
-                <td
-                    style="border: 0; padding: 0; text-align: right; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic;">
-                    Page {PAGENO} of {nbpg}
-                </td>
-            </tr>
+        <table class="data-table">
+            <tbody>
+                <tr class="empty-row">
+                    <td colspan="9">Tidak ada data.</td>
+                </tr>
+            </tbody>
         </table>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
+    @endforelse
+
+    @include('ascends.shared.partials.report-footer')
 </body>
 
 </html>

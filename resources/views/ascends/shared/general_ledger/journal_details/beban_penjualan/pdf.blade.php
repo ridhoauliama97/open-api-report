@@ -225,7 +225,11 @@
 
         function formatAmount($value)
         {
-            return number_format((float) $value, 0, ',', '.');
+            $value = (float) $value;
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 0, '.', ',') . ')';
+            }
+            return number_format($value, 0, '.', ',');
         }
     @endphp
 

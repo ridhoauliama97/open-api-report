@@ -189,7 +189,7 @@ class PenjualanLokalController extends Controller
             ];
             $sections[$sectionKey]['subtotal_ton'] += $ton;
 
-            $groupKey = $jenisLabel . '|' . $namaGrade;
+            $groupKey = $jenisLabel.'|'.$namaGrade;
             if (! isset($grouped[$groupKey])) {
                 $grouped[$groupKey] = [
                     'jenis' => $jenisLabel,

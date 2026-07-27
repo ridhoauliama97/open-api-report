@@ -53,6 +53,8 @@ class DiagramLemburTahunanReportService
     {
         $stCosts = $this->calculateDepartmentCostsArray($stRows);
         $kkKtCosts = $this->calculateDepartmentCostsArray($kkKtRows);
+        $stAverages = $this->calculateDepartmentMonthlyAverages($stRows);
+        $kkKtAverages = $this->calculateDepartmentMonthlyAverages($kkKtRows);
 
         $orderedDepts = $this->getOrderedDepartmentList($stChartData, $kkKtChartData);
 
@@ -65,6 +67,8 @@ class DiagramLemburTahunanReportService
                     'department' => $dept,
                     'staff_cost' => $stVal,
                     'kk_kt_cost' => $kkKtVal,
+                    'staff_avg' => isset($stAverages[$dept]) ? round($stAverages[$dept]['average']) : 0,
+                    'kk_kt_avg' => isset($kkKtAverages[$dept]) ? round($kkKtAverages[$dept]['average']) : 0,
                 ];
             }
         }
@@ -85,6 +89,50 @@ class DiagramLemburTahunanReportService
         }
 
         return $costs;
+    }
+
+    private function calculateDepartmentMonthlyAverages(array $rows): array
+    {
+        $deptMonths = [];
+        $deptTotals = [];
+
+        foreach ($rows as $row) {
+            $dept = trim((string) ($row['DepartmentName'] ?? 'Tanpa Departemen'));
+            $dateStr = (string) ($row['Date'] ?? '');
+            if ($dateStr === '') {
+                continue;
+            }
+
+            try {
+                $monthKey = Carbon::parse($dateStr)->format('Y-m');
+            } catch (Throwable) {
+                continue;
+            }
+
+            $total = (float) ($row['Total'] ?? 0);
+
+            if (! isset($deptMonths[$dept])) {
+                $deptMonths[$dept] = [];
+            }
+            $deptMonths[$dept][$monthKey] = true;
+
+            if (! isset($deptTotals[$dept])) {
+                $deptTotals[$dept] = 0;
+            }
+            $deptTotals[$dept] += $total;
+        }
+
+        $result = [];
+        foreach ($deptTotals as $dept => $total) {
+            $monthCount = count($deptMonths[$dept] ?? []);
+            $result[$dept] = [
+                'total' => $total,
+                'month_count' => $monthCount,
+                'average' => $monthCount > 0 ? $total / $monthCount : 0,
+            ];
+        }
+
+        return $result;
     }
 
     private function getOrderedDepartmentList(array $stChartData, array $kkKtChartData): array

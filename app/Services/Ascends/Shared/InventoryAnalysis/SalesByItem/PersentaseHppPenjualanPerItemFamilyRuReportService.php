@@ -149,7 +149,7 @@ class PersentaseHppPenjualanPerItemFamilyRuReportService
             $lineGrossProfit = (float) ($node->Line_x0020_Gross_x0020_Profit ?? 0);
             $penjualan = $lineCOGS + $lineGrossProfit;
 
-            $nameItem = $itemName . ' (' . $itemCode . ')';
+            $nameItem = $itemName.' ('.$itemCode.')';
 
             $rows[] = [
                 'family_name' => $itemFamilyName,

@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $request = request();
 
-        if (! $request->is('reports/*') && ! $request->is('api/reports/*') && ! $request->is('dashboard/*')) {
+        if (! $request->is('reports/*') && ! $request->is('api/reports/*') && ! $request->is('dashboard/*') && ! $request->is('api/internal/ascends/*')) {
             return;
         }
 

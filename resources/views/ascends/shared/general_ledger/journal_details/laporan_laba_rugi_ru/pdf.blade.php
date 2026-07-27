@@ -192,7 +192,11 @@
 
         function fmtRasio($value)
         {
-            return number_format((float) $value, 2, '.', ',') . ' %';
+            $value = (float) $value;
+            if ($value < 0) {
+                return '(' . number_format(abs($value), 2, '.', ',') . ' %' . ')';
+            }
+            return number_format($value, 2, '.', ',') . ' %';
         }
     @endphp
 
@@ -242,9 +246,11 @@
 
                         <tr class="akm-subtotal indent-akm">
                             <td>TOTAL {{ $akmGroup['akm'] }}</td>
-                            <td class="number nowrap">{{ fmtAmount($akmGroup['display_subtotal_b'] ?? $akmGroup['subtotal_b'] ?? 0) }}</td>
+                            <td class="number nowrap">
+                                {{ fmtAmount($akmGroup['display_subtotal_b'] ?? $akmGroup['subtotal_b'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($akmGroup['display_subtotal_a'] ?? $akmGroup['subtotal_a'] ?? 0) }}</td>
+                            <td class="number nowrap">
+                                {{ fmtAmount($akmGroup['display_subtotal_a'] ?? $akmGroup['subtotal_a'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_a'] ?? 0) }}</td>
                             <td class="number nowrap">{{ fmtRasio($akmGroup['selisih'] ?? 0) }}</td>
                         </tr>

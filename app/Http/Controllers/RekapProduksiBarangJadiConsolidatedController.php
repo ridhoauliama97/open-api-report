@@ -149,7 +149,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
         foreach ($groups as $namaMesin => $machineRows) {
             $result[] = ['nama_mesin' => $namaMesin, 'rows' => $machineRows, 'totals' => $this->computeTotals($machineRows), 'hk' => count($machineRows)];
         }
-        usort($result, static fn(array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
+        usort($result, static fn (array $a, array $b): int => strcmp($a['nama_mesin'], $b['nama_mesin']));
 
         return $result;
     }

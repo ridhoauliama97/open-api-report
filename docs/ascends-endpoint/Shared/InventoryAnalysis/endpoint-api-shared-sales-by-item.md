@@ -20,6 +20,7 @@ Nama user print pada footer dibaca dari parameter field `Sys_Username`.
 
 - Sales By Item - Laporan Penjualan Per Item Family: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/sales-by-item/penjualan-per-group-bulanan-ru/pdf`
 - Sales By Item - Laporan Persentase HPP Penjualan Per Item Family: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/sales-by-item/persentase-hpp-penjualan-per-item-family-ru/pdf`
+- Sales By Item - Laporan Sales Mingguan dan Target: `POST http://192.168.10.100:5006/api/internal/ascends/shared/inventory_analysis/sales-by-item/target-sales-per-minggu/pdf`
 
 ## Input
 
@@ -78,6 +79,7 @@ Contoh:
 
 - `Sales By Item - Laporan Penjualan Per Item Family (RU).pdf`
 - `Sales By Item - Laporan Persentase HPP Penjualan Per Item Family (RU).pdf`
+- `Sales By Item - Laporan Sales Mingguan dan Target (GSU).pdf`
 
 ## Response Gagal
 
@@ -129,4 +131,5 @@ Template Blade berada di:
 ```
 resources/views/ascends/shared/inventory_analysis/sales_by_item/penjualan_per_group_bulanan_ru/pdf.blade.php
 resources/views/ascends/shared/inventory_analysis/sales_by_item/persentase_hpp_pernjualan_per_item_family_ru/pdf.blade.php
+resources/views/ascends/shared/inventory_analysis/sales_by_item/target_sales_per_minggu/pdf.blade.php
 ```

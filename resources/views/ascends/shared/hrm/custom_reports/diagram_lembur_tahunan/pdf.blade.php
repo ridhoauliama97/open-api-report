@@ -43,7 +43,7 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 12px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
@@ -234,10 +234,12 @@
             <table class="cost-table" style="margin: 0 auto;">
                 <thead>
                     <tr>
-                        <th style="width: 5%;">No</th>
-                        <th style="width: 45%;">Departemen</th>
-                        <th style="width: 25%;">Staff</th>
-                        <th style="width: 25%;">KK/KT</th>
+                        <th style="width: 4%;">No</th>
+                        <th style="width: 28%;">Departemen</th>
+                        <th style="width: 17%;">Staff</th>
+                        <th style="width: 17%;">KK/KT</th>
+                        <th style="width: 17%;">Rata-rata (Staff)</th>
+                        <th style="width: 17%;">Rata-rata (KK/KT)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -254,6 +256,12 @@
                             </td>
                             <td style="text-align: right;">
                                 {{ $row['kk_kt_cost'] > 0 ? 'Rp ' . number_format($row['kk_kt_cost'], 0, ',', '.') : '-' }}
+                            </td>
+                            <td style="text-align: right;">
+                                {{ ($row['staff_avg'] ?? 0) > 0 ? 'Rp ' . number_format((float) ($row['staff_avg'] ?? 0), 0, ',', '.') : '-' }}
+                            </td>
+                            <td style="text-align: right;">
+                                {{ ($row['kk_kt_avg'] ?? 0) > 0 ? 'Rp ' . number_format((float) ($row['kk_kt_avg'] ?? 0), 0, ',', '.') : '-' }}
                             </td>
                         </tr>
                     @endforeach

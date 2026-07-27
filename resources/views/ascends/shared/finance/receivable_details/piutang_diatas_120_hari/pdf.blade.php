@@ -91,9 +91,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .row-odd td {
             background: #c9d1df;
@@ -113,13 +111,14 @@
 
         .grand-total td {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             border-bottom: 1px solid #000;
             padding: 3px 4px;
         }
 
         .rasio-row td {
-            font-size: 10px;
+            font-weight: bold;
+            font-size: 11px;
             border-top: none;
             border-bottom: 1px solid #000;
             padding: 2px 4px;
@@ -149,42 +148,6 @@
             color: #9c111d;
             font-size: 11px;
             padding: 8px 4px;
-        }
-
-        .col-customer {
-            width: 17%;
-        }
-
-        .col-invoice {
-            width: 13%;
-        }
-
-        .col-umur {
-            width: 6%;
-        }
-
-        .col-amount {
-            width: 10%;
-        }
-
-        .col-saldo {
-            width: 14%;
-        }
-
-        .col-salesman {
-            width: 20%;
-        }
-
-        .col-totalcust {
-            width: 7%;
-        }
-
-        .col-samount {
-            width: 11%;
-        }
-
-        .col-stotal {
-            width: 18%;
         }
     </style>
 </head>
@@ -216,18 +179,18 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 0, ',', '.');
+                return '(' . number_format(abs($v), 0, '.',',') . ')';
             }
             if ($v == 0.0) {
                 return '-';
             }
-            return number_format($v, 0, ',', '.');
+            return number_format($v, 0, '.',',');
         }
 
         function fmtUmur($value)
         {
             $v = (int) $value;
-            return number_format($v, 0, ',', '.');
+            return number_format($v, 0, '.',',') . ' Hari';
         }
 
         function fmtRasio($value)
@@ -235,7 +198,11 @@
             if ($value === null) {
                 return '-';
             }
-            return '(' . number_format($value, 1, ',', '.') . '%)';
+            $v = (float) $value;
+            if ($v < 0) {
+                return '(' . number_format(abs($v), 1, '.',',') . '%)';
+            }
+            return number_format($v, 1, '.',',') . '%';
         }
 
         $globalRow = 0;
@@ -248,28 +215,17 @@
     @if (count($detailItems) > 0)
         {{-- Table 1: Detail per Customer --}}
         <table class="data-table">
-            <colgroup>
-                <col class="col-customer">
-                <col class="col-invoice">
-                <col class="col-umur">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-amount">
-                <col class="col-saldo">
-            </colgroup>
             <thead>
                 <tr>
-                    <th>Nama Pelanggan</th>
-                    <th>No. Invoice</th>
-                    <th>Umur</th>
-                    <th>120 - 240 <br> Hari</th>
-                    <th>241 - 360 <br>Hari</th>
-                    <th>361 - 480 <br>Hari</th>
-                    <th>481 - 600 <br>Hari</th>
-                    <th>&gt; 600 <br>Hari</th>
-                    <th>Saldo Piutang</th>
+                    <th style="width: 17%;">Nama Pelanggan</th>
+                    <th style="width: 10%;">No. Invoice</th>
+                    <th style="width: 8%;">Umur</th>
+                    <th style="width: 10%;">120-240 Hari</th>
+                    <th style="width: 10%;">241-360 Hari</th>
+                    <th style="width: 10%;">361-480 Hari</th>
+                    <th style="width: 10%;">481-600 Hari</th>
+                    <th style="width: 10%;">&gt; 600 Hari</th>
+                    <th style="width: 15%;">Saldo Piutang</th>
                 </tr>
             </thead>
             <tbody>
@@ -307,7 +263,7 @@
                     @endforeach
 
                     <tr class="customer-total">
-                        <td colspan="3">TOTAL</td>
+                        <td colspan="3">SUBTOTAL</td>
                         <td class="number nowrap {{ ($customer['total_120_240'] ?? 0) < 0 ? 'number-negative' : '' }}">
                             {{ fmtAmount($customer['total_120_240'] ?? 0) }}</td>
                         <td class="number nowrap {{ ($customer['total_241_360'] ?? 0) < 0 ? 'number-negative' : '' }}">
@@ -343,7 +299,7 @@
 
                 {{-- Rasio --}}
                 <tr class="rasio-row">
-                    <td colspan="3" style="text-align: center;">Rasio :</td>
+                    <td colspan="3" class="center">Rasio :</td>
                     <td class="number nowrap">{{ fmtRasio($rasio[0] ?? null) }}</td>
                     <td class="number nowrap">{{ fmtRasio($rasio[1] ?? null) }}</td>
                     <td class="number nowrap">{{ fmtRasio($rasio[2] ?? null) }}</td>
@@ -358,26 +314,16 @@
         <div class="section-title">Rincian Umur Piutang Per Salesman</div>
 
         <table class="data-table salesman-table">
-            <colgroup>
-                <col class="col-salesman">
-                <col class="col-totalcust">
-                <col class="col-samount">
-                <col class="col-samount">
-                <col class="col-samount">
-                <col class="col-samount">
-                <col class="col-samount">
-                <col class="col-stotal">
-            </colgroup>
             <thead>
                 <tr>
-                    <th>Nama Salesman</th>
-                    <th>Total Customer</th>
-                    <th>120-240 Hari</th>
-                    <th>241-360 Hari</th>
-                    <th>361-480 Hari</th>
-                    <th>481-600 Hari</th>
-                    <th>&gt; 600 Hari</th>
-                    <th>Total</th>
+                    <th style="width: 15%;">Nama Salesman</th>
+                    <th style="width: 10%;">Total Customer</th>
+                    <th style="width: 10%;">120-240 Hari</th>
+                    <th style="width: 10%;">241-360 Hari</th>
+                    <th style="width: 10%;">361-480 Hari</th>
+                    <th style="width: 10%;">481-600 Hari</th>
+                    <th style="width: 10%;">&gt; 600 Hari</th>
+                    <th style="width: 15%;">Total</th>
                 </tr>
             </thead>
             <tbody>

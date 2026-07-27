@@ -154,9 +154,7 @@
             white-space: nowrap;
         }
 
-        .number-negative {
-            color: #9c111d;
-        }
+
 
         .center {
             text-align: center;
@@ -205,12 +203,12 @@
         {
             $v = (float) $value;
             if ($v < 0) {
-                return '- ' . number_format(abs($v), 2, ',', '.');
+                return '(' . number_format(abs($v), 2, '.', ',') . ')';
             }
             if ($v == 0.0) {
                 return '-';
             }
-            return number_format($v, 2, ',', '.');
+            return number_format($v, 2, '.', ',');
         }
     @endphp
 

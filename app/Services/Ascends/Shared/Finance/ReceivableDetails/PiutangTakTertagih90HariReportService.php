@@ -54,7 +54,7 @@ class PiutangTakTertagih90HariReportService
                 return $cmp;
             }
 
-            return $b['umur'] - $a['umur'];
+            return $a['umur'] - $b['umur'];
         });
 
         return [
