@@ -34,7 +34,7 @@ class UmurPiutangRuReportService
             throw new RuntimeException('Data tidak ditemukan pada XML.');
         }
 
-        usort($rows, static fn(array $a, array $b): int => strcasecmp($a['customer_name'], $b['customer_name']));
+        usort($rows, static fn (array $a, array $b): int => strcasecmp($a['customer_name'], $b['customer_name']));
 
         $grandTotals = $this->calculateGrandTotals($rows);
 
@@ -150,7 +150,7 @@ class UmurPiutangRuReportService
             return '';
         }
 
-        return 'Dari ' . $start->locale('id')->translatedFormat('d-M-y') . ' s/d ' . $end->locale('id')->translatedFormat('d-M-y');
+        return 'Dari '.$start->locale('id')->translatedFormat('d-M-y').' s/d '.$end->locale('id')->translatedFormat('d-M-y');
     }
 
     private static function parseDate(string $value): ?Carbon

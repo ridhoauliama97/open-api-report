@@ -9,6 +9,8 @@ use XMLReader;
 
 class PenjualanPerItemAnalisaSkuDetailReportService
 {
+    private const TITLE = 'Laporan Penjualan Per Item Barang';
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel, array $filters = []): array
     {
         $rows = $this->parseRows($xmlContents, $sourceLabel);
@@ -28,6 +30,9 @@ class PenjualanPerItemAnalisaSkuDetailReportService
         $tableSections = $this->buildTableSections($grouped, $months);
         $grandTotals = $this->buildGrandTotals($tableSections, $months);
 
+        $grandTotalQty = array_sum(array_map(fn (array $gt): float => $gt['qty'], $grandTotals));
+        $grandTotalPenjualan = array_sum(array_map(fn (array $gt): float => $gt['penjualan'], $grandTotals));
+
         $startDate = $this->resolveDateFilter($filters, 'StartDate');
         $endDate = $this->resolveDateFilter($filters, 'EndDate');
 
@@ -35,18 +40,20 @@ class PenjualanPerItemAnalisaSkuDetailReportService
         $company = trim((string) ($filters['DB_CompanyName'] ?? $filters['company'] ?? ''));
 
         return [
-            'title' => 'Laporan Penjualan Per Item Barang',
+            'title' => self::TITLE,
             'source_file' => $sourceLabel,
             'printed_by' => $printedBy,
             'company' => $company,
             'headerCompany' => $company,
-            'headerTitle' => 'Laporan Penjualan Per Item Barang',
+            'headerTitle' => self::TITLE,
             'start_date' => $startDate?->locale('id')->isoFormat('DD-MMM-YY') ?? '',
             'end_date' => $endDate?->locale('id')->isoFormat('DD-MMM-YY') ?? '',
             'months' => array_map(fn (Carbon $m) => $m->locale('id')->isoFormat('MMM-YYYY'), $months),
             'months_raw' => $months,
             'sections' => $tableSections,
             'grand_totals' => $grandTotals,
+            'grand_total_qty' => $grandTotalQty,
+            'grand_total_penjualan' => $grandTotalPenjualan,
             'total_items' => count($filteredRows),
         ];
     }
@@ -191,65 +198,60 @@ class PenjualanPerItemAnalisaSkuDetailReportService
 
     private function buildTableSections(array $grouped, array $months): array
     {
-        $sections = [];
+        $monthKeys = array_map(fn (Carbon $m) => $m->format('Y-m'), $months);
 
+        $sections = [];
         foreach ($grouped as $family => $items) {
-            $itemRows = [];
+            $itemGroups = [];
             $familyTotals = $this->emptyMonthCells($months);
 
             foreach ($items as $item) {
                 $itemName = (string) ($item['ItemName'] ?? '');
-                $invoiceDate = $this->parseDate((string) ($item['InvoiceDate'] ?? ''));
+                $monthKey = $this->parseDate((string) ($item['InvoiceDate'] ?? ''))
+                    ?->format('Y-m');
                 $qty = (float) ($item['Qty'] ?? 0);
                 $penjualan = (float) ($item['Penjualan'] ?? 0);
 
-                $monthKey = $invoiceDate !== null ? $invoiceDate->format('Y-m') : null;
-
-                $found = false;
-                foreach ($itemRows as &$existingRow) {
-                    if ($existingRow['item'] === $itemName) {
-                        foreach ($months as $i => $month) {
-                            if ($month->format('Y-m') === $monthKey) {
-                                $existingRow['cells'][$i]['qty'] += $qty;
-                                $existingRow['cells'][$i]['penjualan'] += $penjualan;
-                                break;
-                            }
-                        }
-                        $found = true;
-                        break;
-                    }
-                }
-                unset($existingRow);
-
-                if (! $found) {
-                    $cells = $this->emptyMonthCells($months);
-                    foreach ($months as $i => $month) {
-                        if ($month->format('Y-m') === $monthKey) {
-                            $cells[$i]['qty'] = $qty;
-                            $cells[$i]['penjualan'] = $penjualan;
-                            break;
-                        }
-                    }
-                    $itemRows[] = [
-                        'item' => $itemName,
-                        'cells' => $cells,
-                    ];
+                if ($monthKey === null) {
+                    continue;
                 }
 
-                foreach ($months as $i => $month) {
-                    if ($month->format('Y-m') === $monthKey) {
-                        $familyTotals[$i]['qty'] += $qty;
-                        $familyTotals[$i]['penjualan'] += $penjualan;
-                        break;
-                    }
+                $monthIdx = array_search($monthKey, $monthKeys, true);
+                if ($monthIdx === false) {
+                    continue;
                 }
+
+                if (! isset($itemGroups[$itemName])) {
+                    $itemGroups[$itemName] = $this->emptyMonthCells($months);
+                }
+
+                $itemGroups[$itemName][$monthIdx]['qty'] += $qty;
+                $itemGroups[$itemName][$monthIdx]['penjualan'] += $penjualan;
+
+                $familyTotals[$monthIdx]['qty'] += $qty;
+                $familyTotals[$monthIdx]['penjualan'] += $penjualan;
             }
 
-            usort($itemRows, fn (array $a, array $b): int => strcasecmp($a['item'], $b['item']));
+            $itemNames = array_keys($itemGroups);
+            sort($itemNames, SORT_NATURAL | SORT_FLAG_CASE);
+
+            $rows = [];
+            foreach ($itemNames as $itemName) {
+                $cells = $itemGroups[$itemName];
+                $rowTotalQty = array_sum(array_map(fn (array $c): float => $c['qty'], $cells));
+                $rowTotalPenjualan = array_sum(array_map(fn (array $c): float => $c['penjualan'], $cells));
+
+                $rows[] = [
+                    'item' => $itemName,
+                    'cells' => $cells,
+                    'row_total_qty' => $rowTotalQty,
+                    'row_total_penjualan' => $rowTotalPenjualan,
+                ];
+            }
 
             $sections[] = [
                 'family' => $family,
-                'rows' => $itemRows,
+                'rows' => $rows,
                 'totals' => $familyTotals,
             ];
         }

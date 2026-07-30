@@ -9,6 +9,8 @@ use XMLReader;
 
 class PenjualanPerItemAnalisaSkuReportService
 {
+    private const TITLE = 'Laporan Penjualan Per Item Barang & Analisa SKU';
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel, array $filters = []): array
     {
         $rows = $this->parseRows($xmlContents, $sourceLabel);
@@ -23,9 +25,10 @@ class PenjualanPerItemAnalisaSkuReportService
             throw new RuntimeException('Tidak ada data dalam rentang tanggal yang dipilih.');
         }
 
-        $grouped = $this->groupByFamily($filteredRows);
         $months = $this->collectMonths($filteredRows);
-        $tableRows = $this->buildTableRows($grouped, $months);
+        $grouped = $this->groupByFamily($filteredRows);
+        $indexed = $this->indexItemsByMonth($grouped);
+        $tableRows = $this->buildTableRows($indexed, $months);
         $totalsRow = $this->buildTotalsRow($tableRows, $months);
 
         $startDate = $this->resolveDateFilter($filters, 'StartDate');
@@ -35,15 +38,15 @@ class PenjualanPerItemAnalisaSkuReportService
         $company = trim((string) ($filters['DB_CompanyName'] ?? $filters['company'] ?? ''));
 
         return [
-            'title' => 'Laporan Penjualan Per Item Barang & Analisa SKU',
+            'title' => self::TITLE,
             'source_file' => $sourceLabel,
             'printed_by' => $printedBy,
             'company' => $company,
             'headerCompany' => $company,
-            'headerTitle' => 'Laporan Penjualan Per Item Barang & Analisa SKU',
+            'headerTitle' => self::TITLE,
             'start_date' => $startDate?->locale('id')->isoFormat('DD-MMM-YY') ?? '',
             'end_date' => $endDate?->locale('id')->isoFormat('DD-MMM-YY') ?? '',
-            'months' => array_map(fn (Carbon $m) => $m->locale('id')->isoFormat('MMM-YY'), $months),
+            'months' => array_map(fn (Carbon $m) => $m->locale('id')->isoFormat('MMM-YYYY'), $months),
             'months_raw' => $months,
             'rows' => $tableRows,
             'totals' => $totalsRow,
@@ -178,7 +181,9 @@ class PenjualanPerItemAnalisaSkuReportService
             $date = $this->parseDate((string) ($row['Mnth'] ?? ''));
             if ($date !== null) {
                 $key = $date->format('Y-m');
-                $months[$key] = $date;
+                if (! isset($months[$key])) {
+                    $months[$key] = $date->copy()->startOfMonth();
+                }
             }
         }
 
@@ -187,47 +192,50 @@ class PenjualanPerItemAnalisaSkuReportService
         return array_values($months);
     }
 
-    private function buildTableRows(array $grouped, array $months): array
+    /**
+     * @param  array<string, list<array<string, mixed>>>  $grouped
+     * @return array<string, array<string, array<string, mixed>>>
+     */
+    private function indexItemsByMonth(array $grouped): array
     {
-        $tableRows = [];
-
+        $indexed = [];
         foreach ($grouped as $family => $items) {
-            $row = [
-                'family' => $family,
-                'cells' => [],
-            ];
-
-            foreach ($months as $month) {
-                $monthKey = $month->format('Y-m');
-                $match = null;
-                foreach ($items as $item) {
-                    $itemDate = $this->parseDate((string) ($item['Mnth'] ?? ''));
-                    if ($itemDate !== null && $itemDate->format('Y-m') === $monthKey) {
-                        $match = $item;
-                        break;
-                    }
-                }
-
-                if ($match !== null) {
-                    $sku = (int) ($match['SKU'] ?? 0);
-                    $hasil = (int) ($match['Hasil'] ?? 0);
-                    $percent = $sku > 0 ? round(($hasil / $sku) * 100, 1) : 0;
-
-                    $row['cells'][] = [
-                        'sku' => $sku,
-                        'hasil' => $hasil,
-                        'percent' => $percent,
-                    ];
-                } else {
-                    $row['cells'][] = [
-                        'sku' => 0,
-                        'hasil' => 0,
-                        'percent' => 0,
-                    ];
+            foreach ($items as $item) {
+                $monthKey = $this->parseDate((string) ($item['Mnth'] ?? ''))?->format('Y-m');
+                if ($monthKey !== null) {
+                    $indexed[$family][$monthKey] = $item;
                 }
             }
+        }
 
-            $tableRows[] = $row;
+        return $indexed;
+    }
+
+    private function buildTableRows(array $indexed, array $months): array
+    {
+        $monthKeys = array_map(fn (Carbon $m) => $m->format('Y-m'), $months);
+        $tableRows = [];
+
+        foreach ($indexed as $family => $itemsByMonth) {
+            $cells = [];
+
+            foreach ($monthKeys as $monthKey) {
+                $item = $itemsByMonth[$monthKey] ?? null;
+                $sku = $item !== null ? (int) ($item['SKU'] ?? 0) : 0;
+                $hasil = $item !== null ? (int) ($item['Hasil'] ?? 0) : 0;
+                $percent = $sku > 0 ? round(($hasil / $sku) * 100, 1) : 0;
+
+                $cells[] = [
+                    'sku' => $sku,
+                    'hasil' => $hasil,
+                    'percent' => $percent,
+                ];
+            }
+
+            $tableRows[] = [
+                'family' => $family,
+                'cells' => $cells,
+            ];
         }
 
         return $tableRows;

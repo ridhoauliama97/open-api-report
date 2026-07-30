@@ -62,21 +62,16 @@
             padding: 2px 2px;
             vertical-align: middle;
             word-wrap: break-word;
+            font-size: 10px;
         }
 
         .data-table th {
             font-weight: bold;
-            font-size: 10px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
         }
 
-        .data-table td {
-            font-size: 10px;
-            border-top: none;
-            border-bottom: none;
-        }
 
         .center {
             text-align: center;

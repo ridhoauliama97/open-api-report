@@ -93,17 +93,24 @@
             background: #eef2f8;
         }
 
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-
         .section-header td {
             font-size: 11px;
             font-weight: bold;
             font-style: italic;
             color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .subtotal-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .grand-total-row td {
+            font-size: 11px;
+            font-weight: bold;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
@@ -123,38 +130,26 @@
 <body>
     @php
         $sections = $reportData['sections'] ?? [];
-        $months = $reportData['months'] ?? [];
         $grandTotals = $reportData['grand_totals'] ?? [];
+        $months = $reportData['months'] ?? [];
         $monthCount = count($months);
 
         $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
-        $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
-        $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-
-        $colspanHeader = 2 + $monthCount * 2 + 2;
-
-        $colNoWidth = 3;
-        $colNameWidth = $monthCount > 6 ? 16 : 18;
-        $colTotalQtyWidth = 4;
-        $colTotalPenjualanWidth = 5;
-        $remainingPerMonth = $monthCount > 0
-            ? round((100 - $colNoWidth - $colNameWidth - $colTotalQtyWidth - $colTotalPenjualanWidth) / ($monthCount * 2), 1)
-            : 0;
+        $startDate = trim((string) ($reportData['start_date'] ?? ''));
+        $endDate = trim((string) ($reportData['end_date'] ?? ''));
+        $headerSubtitle = '';
+        if ($startDate !== '' && $endDate !== '') {
+            $headerSubtitle = 'Dari ' . $startDate . ' s/d ' . $endDate;
+        }
 
         function fmtNum($value)
         {
             $v = (float) $value;
             if ($v == 0.0) {
-                return '-';
+                return '0';
             }
             return number_format($v, 0, '.', ',');
-        }
-
-        $startDate = trim((string) ($reportData['start_date'] ?? ''));
-        $endDate = trim((string) ($reportData['end_date'] ?? ''));
-        if ($startDate !== '' && $endDate !== '') {
-            $headerSubtitle = 'Dari ' . $startDate . ' s/d ' . $endDate;
         }
 
         $globalRow = 0;
@@ -162,57 +157,66 @@
 
     <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
     <h1 class="report-title">{{ $headerTitle }}</h1>
-    <p class="report-subtitle">{{ $headerSubtitle }}</p>
+    @if ($headerSubtitle !== '')
+        <p class="report-subtitle">{{ $headerSubtitle }}</p>
+    @endif
 
     @if (count($sections) > 0)
         <table class="data-table">
             <thead>
                 <tr>
-                    <th rowspan="2" style="width: {{ $colNoWidth }}%;">No</th>
-                    <th rowspan="2" style="width: {{ $colNameWidth }}%;">Nama Barang</th>
+                    <th style="width: 22%;">Akun</th>
                     @foreach ($months as $month)
-                        <th colspan="2" style="width: {{ $remainingPerMonth * 2 }}%;">{{ $month }}</th>
+                        <th style="width: 7.5%;">{{ $month }}</th>
                     @endforeach
-                    <th colspan="2" style="width: {{ $colTotalQtyWidth + $colTotalPenjualanWidth }}%;">Total</th>
-                </tr>
-                <tr>
-                    @foreach ($months as $month)
-                        <th style="width: {{ $remainingPerMonth }}%;">Qty</th>
-                        <th style="width: {{ $remainingPerMonth }}%;">Penjualan</th>
-                    @endforeach
-                    <th style="width: {{ $colTotalQtyWidth }}%;">Qty</th>
-                    <th style="width: {{ $colTotalPenjualanWidth }}%;">Penjualan</th>
+                    <th style="width: 9.5%;">Total</th>
+                    <th style="width: 8.5%;">Rata - Rata</th>
+                    <th style="width: 8.5%;">Terendah</th>
+                    <th style="width: 8.5%;">Tertinggi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($sections as $section)
                     <tr class="section-header">
-                        <td colspan="{{ $colspanHeader }}">{{ $section['family'] ?? '' }}</td>
+                        <td colspan="{{ 2 + $monthCount + 3 }}">{{ $section['lowest_description'] ?? '' }}</td>
                     </tr>
-                    @foreach ($section['rows'] ?? [] as $row)
+
+                    @foreach ($section['rows'] as $row)
                         @php $globalRow++; @endphp
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                            <td class="center">{{ $globalRow }}</td>
-                            <td>{{ $row['item'] ?? '' }}</td>
-                            @foreach ($row['cells'] ?? [] as $cell)
-                                <td class="number">{{ fmtNum($cell['qty'] ?? 0) }}</td>
-                                <td class="number">{{ fmtNum($cell['penjualan'] ?? 0) }}</td>
+                            <td>{{ $row['account_name'] ?? '' }}</td>
+                            @foreach ($row['values'] as $val)
+                                <td class="number">{{ fmtNum($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($row['row_total_qty'] ?? 0) }}</td>
-                            <td class="number">{{ fmtNum($row['row_total_penjualan'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum($row['total']) }}</td>
+                            <td class="number">{{ fmtNum($row['rata2']) }}</td>
+                            <td class="number">{{ fmtNum($row['terendah']) }}</td>
+                            <td class="number">{{ fmtNum($row['tertinggi']) }}</td>
                         </tr>
                     @endforeach
+
+                    <tr class="subtotal-row">
+                        <td>SUBTOTAL</td>
+                        @foreach ($section['subtotal']['values'] as $val)
+                            <td class="number">{{ fmtNum($val) }}</td>
+                        @endforeach
+                        <td class="number">{{ fmtNum($section['subtotal']['total']) }}</td>
+                        <td class="number">{{ fmtNum($section['subtotal']['rata2']) }}</td>
+                        <td class="number">{{ fmtNum($section['subtotal']['terendah']) }}</td>
+                        <td class="number">{{ fmtNum($section['subtotal']['tertinggi']) }}</td>
+                    </tr>
                 @endforeach
 
                 @if (count($grandTotals) > 0)
                     <tr class="grand-total-row">
-                        <td class="center" colspan="2">TOTAL</td>
-                        @foreach ($grandTotals as $gt)
-                            <td class="number">{{ fmtNum($gt['qty'] ?? 0) }}</td>
-                            <td class="number">{{ fmtNum($gt['penjualan'] ?? 0) }}</td>
+                        <td class="center">GRAND TOTAL</td>
+                        @foreach ($grandTotals['values'] as $val)
+                            <td class="number">{{ fmtNum($val) }}</td>
                         @endforeach
-                        <td class="number">{{ fmtNum($reportData['grand_total_qty'] ?? 0) }}</td>
-                        <td class="number">{{ fmtNum($reportData['grand_total_penjualan'] ?? 0) }}</td>
+                        <td class="number">{{ fmtNum($grandTotals['total']) }}</td>
+                        <td class="number">{{ fmtNum($grandTotals['rata2']) }}</td>
+                        <td class="number">{{ fmtNum($grandTotals['terendah']) }}</td>
+                        <td class="number">{{ fmtNum($grandTotals['tertinggi']) }}</td>
                     </tr>
                 @endif
             </tbody>
@@ -221,7 +225,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="{{ $colspanHeader }}">Tidak ada data.</td>
+                    <td>Tidak ada data laporan biaya mobil / truk.</td>
                 </tr>
             </tbody>
         </table>

@@ -520,7 +520,7 @@
 
         .reports-table th,
         .reports-table td {
-            border-bottom: 1px solid var(--dash-line);
+            border-bottom: 1.5px solid var(--dash-line-strong);
             padding: .78rem 1rem;
             vertical-align: middle;
         }
@@ -536,7 +536,7 @@
 
         .reports-table td {
             color: var(--dash-text);
-            font-size: .88rem;
+            font-size: .82rem;
         }
 
         .reports-table tbody tr:hover {
@@ -561,7 +561,6 @@
             background: rgba(255, 255, 255, .04);
             color: var(--dash-muted);
             font-size: .76rem;
-            font-weight: 750;
             white-space: nowrap;
         }
 
@@ -2876,7 +2875,7 @@
                     }
                     .meta-label,
                     .summary-label {
-                        color: #64748b;
+                        color: #111827;
                         font-weight: 800;
                         text-transform: uppercase;
                     }
@@ -2925,35 +2924,35 @@
                     }
                     .report-table th,
                     .report-table td {
-                        border: 1px solid #dbe3ec;
+                        border: 1px solid #94a3b8;
                         padding: 5px 7px;
                         vertical-align: middle;
                     }
                     .report-table th {
                         background: #f1f5f9;
-                        color: #64748b;
+                        color: #111827;
                         font-size: 12px;
                         text-align: left;
                         text-transform: uppercase;
                     }
                     .report-table .unit-level {
                         width: 112px;
-                        color: #64748b;
+                        color: #111827;
                         font-size: 11px;
-                        font-weight: 800;
                         text-align: center;
                         text-transform: uppercase;
                         overflow-wrap: anywhere;
                     }
+                    .report-table td.unit-level { text-align: left; }
                     .unit-name { width: calc((100% - 224px) / 2); overflow-wrap: break-word; }
-                    .unit-prefix { color: #64748b; font-weight: 800; }
+                    .unit-prefix { color: #111827; }
                     .row-even td { background: #ffffff; }
                     .row-odd td { background: #edf1f6; }
                     .empty-message {
                         border: 1px solid #dbe3ec;
                         padding: 12mm;
                         background: #edf1f6;
-                        color: #64748b;
+                        color: #111827;
                         font-weight: 800;
                         text-align: center;
                     }
@@ -2964,7 +2963,7 @@
                         margin: 12mm 14mm 0;
                         border-top: 2px solid #e2e8f0;
                         padding-top: 6px;
-                        color: #64748b;
+                        color: #111827;
                         font-size: 11px;
                     }
                 `;
@@ -3041,9 +3040,9 @@
                     const thead = append(table, 'thead');
                     const headerRow = append(thead, 'tr');
                     append(headerRow, 'th', 'unit-name', 'Nama Unit');
-                    append(headerRow, 'th', 'unit-level', 'Level');
+                    append(headerRow, 'th', 'unit-level', 'Divisi');
                     append(headerRow, 'th', 'unit-name', 'Nama Unit');
-                    append(headerRow, 'th', 'unit-level', 'Level');
+                    append(headerRow, 'th', 'unit-level', 'Divisi');
                     const tbody = append(table, 'tbody');
                     pairedRows.forEach((pair, index) => {
                         const row = append(tbody, 'tr', index % 2 === 0 ? 'row-even' : 'row-odd');
