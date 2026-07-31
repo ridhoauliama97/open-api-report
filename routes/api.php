@@ -381,6 +381,21 @@ Route::post(
 )->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-enamel-all.pdf');
 
 Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-enamel-semi-grosir/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaEnamelSemiGrosirPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-enamel-semi-grosir.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-enamel-retail/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaEnamelRetailPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-enamel-retail.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-enamel-grosir/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaEnamelGrosirPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-enamel-grosir.pdf');
+
+Route::post(
     '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-furniture-semi-grosir/pdf',
     [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaFurnitureSemiGrosirPdf']
 )->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-furniture-semi-grosir.pdf');
@@ -389,6 +404,18 @@ Route::post(
     '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-furniture-sales-project/pdf',
     [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaFurnitureSalesProjectPdf']
 )->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-furniture-sales-project.pdf');
+Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-furniture-retail/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaFurnitureRetailPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-furniture-retail.pdf');
+Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-furniture-grosir/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaFurnitureGrosirPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-furniture-grosir.pdf');
+Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-furniture-akun-spesial/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaFurnitureAkunSpesialPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-furniture-akun-spesial.pdf');
 
 Route::post(
     '/internal/ascends/shared/custom-report/penjualan-per-kategori-barang-bulanan/pdf',

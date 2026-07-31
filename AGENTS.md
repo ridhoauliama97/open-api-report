@@ -14,7 +14,7 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 ```
 
 ## Architecture
-- **~200+ reports** in 4 groups: Mutasi (~20), Kayu Bulat (~32), Sawn Timber (~42), Standalone (~100+ including PPS)
+- **~230 reports** in 4 groups: Mutasi (19), Kayu Bulat (31), Sawn Timber (41), Standalone (141 including PPS)
 - Standard report = Controller + Service + FormRequest + Blade view, with methods `preview()`, `download()`, `health()`; some also have `index()` for web form views
 - ALL FormRequests extend `BaseReportRequest` — `failedValidation()` auto-returns JSON 422 on `api/*`; **never override**
 - ALL PDF via `App\Services\PdfGenerator` — **never `new Mpdf()`**; methods: `render()` (string) / `renderToFile()` (file, memory-efficient). Supports `pdf_orientation` and `pdf_format` (default A4) in view data
@@ -24,9 +24,9 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - ALL DB queries: `DB::select('EXEC SP_... ?, ?', [...])` — **no string interpolation**; `call_syntax=query` for non-SQL Server
 - Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add entry to 1 of 4 arrays: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`. Two special groups registered outside the loop: `RekapHasilSawmillPerMejaUpahBoronganV2` and PPS Inject alias
 - **3 async PDF patterns**: (1) generic `PdfJobController` + `GenerateReportPdfJob`, (2) `LabelStHidupDetailController` custom endpoints, (3) `StockSTKeringController` custom endpoints
-- Non-standard **`AscendXmlTestController`** (~9860 lines, ~168 `internal/ascends/*` routes in `routes/api.php`, one method per route). These routes are registered OUTSIDE the `report.jwt.claims` middleware group (no JWT auth). `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (separate, web-only)
+- Non-standard **`AscendXmlTestController`** (~10600 lines, ~181 `internal/ascends/*` routes in `routes/api.php`, one method per route). These routes are registered OUTSIDE the `report.jwt.claims` middleware group (no JWT auth). `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (separate, web-only)
 - Middleware stack (`bootstrap/app.php`): `LogUserActivity` + `NormalizePdfDownloadFilename` on all API/web routes; `ForceattachmentPdfPreview` on web routes only
-  - Note: `ForceattachmentPdfPreview` class is in file `ForceInlinePdfPreview.php` (intentional mismatch)
+  - Note: `ForceattachmentPdfPreview` extends `ForceInlinePdfPreview` (logic lives in `ForceInlinePdfPreview.php`) — class/file name mismatch is intentional
 - Setelah selesai membuat Ascends shared report, tambah dokumentasi endpoint di `docs/ascends-endpoint/` sesuai kategorinya
 
 ## Auth
@@ -78,7 +78,7 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 - PDF retention: env `PDF_RETENTION_HOURS` (NOT `REPORT_PDF_JOB_RETENTION_HOURS`); config in `config/app.php:130`
 - Memory limit per report via env e.g. `LABEL_ST_HIDUP_DETAIL_PDF_MEMORY_LIMIT=2048M`, `STOCK_ST_KERING_PDF_MEMORY_LIMIT=1024M`, `SEMUA_LABEL_PDF_MEMORY_LIMIT=2048M`
 - PDF orientation auto-detects landscape when >10 columns; override via `pdf_orientation` in view data; format via `pdf_format` (default A4)
-- `REPORT_MAX_EXECUTION_TIME` (default 300s) extends PHP timeout for `/reports/*`, `/api/reports/*`, `/dashboard/*` routes (see `AppServiceProvider.php:47`)
+- `REPORT_MAX_EXECUTION_TIME` (default 300s) extends PHP timeout for `/reports/*`, `/api/reports/*`, `/dashboard/*`, AND `/api/internal/ascends/*` routes (see `AppServiceProvider.php:47`)
 - `QUEUE_CONNECTION=redis` in `.env.example` (uses `database` in local `.env`, `sync` in testing)
 - `CACHE_STORE=database` in `.env.example` (uses `file` in local `.env`, `array` in testing)
 - `APP_TIMEZONE=Asia/Jakarta` default

@@ -12,7 +12,13 @@ use App\Services\Ascends\Shared\Associate\ListCustomerPerKotaReportService;
 use App\Services\Ascends\Shared\CustomReport\BiayaMobilTrukReportService;
 use App\Services\Ascends\Shared\CustomReport\BudgetingRealisasiBiayaPromosiPenjualanReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaEnamelAllReportService;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaEnamelGrosirReportService;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaEnamelRetailReportService;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaEnamelSemiGrosirReportService;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureAkunSpesialReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureAllReportService;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureGrosirReportService;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureRetailReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureSalesProjectReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureSemiGrosirReportService;
 use App\Services\Ascends\Shared\CustomReport\PengirimanPerKategoriHarianReportService;
@@ -1104,6 +1110,174 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedCustomReportDaftarHargaEnamelSemiGrosirPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarHargaEnamelSemiGrosirReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_semi_grosir.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
+        $filename = 'Daftar Harga Enamel Semi Grosir'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedCustomReportDaftarHargaEnamelRetailPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarHargaEnamelRetailReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_retail.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
+        $filename = 'Daftar Harga Enamel Retail'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedCustomReportDaftarHargaEnamelGrosirPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarHargaEnamelGrosirReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_grosir.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
+        $filename = 'Daftar Harga Enamel Grosir'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
     public function apiSharedCustomReportDaftarHargaFurnitureSemiGrosirPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         DaftarHargaFurnitureSemiGrosirReportService $reportService,
@@ -1188,6 +1362,174 @@ class AscendXmlTestController extends Controller
             'pdf_simple_tables' => false,
             'pdf_column_count' => count($reportData['headers'] ?? []),
         ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedCustomReportDaftarHargaFurnitureGrosirPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarHargaFurnitureGrosirReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_grosir.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
+        $filename = 'Daftar Harga Furniture'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedCustomReportDaftarHargaFurnitureAkunSpesialPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarHargaFurnitureAkunSpesialReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_akun_spesial.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
+        $filename = 'Daftar Harga Furniture Akun Spesial'.$companySuffix.'.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    public function apiSharedCustomReportDaftarHargaFurnitureRetailPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        DaftarHargaFurnitureRetailReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_retail.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 5,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
+        $filename = 'Daftar Harga Furniture Retail'.$companySuffix.'.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
