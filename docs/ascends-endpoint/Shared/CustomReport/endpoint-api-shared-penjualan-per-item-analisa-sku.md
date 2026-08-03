@@ -99,11 +99,11 @@ Laporan Penjualan Per Item Barang ({company}).pdf
 
 Laporan menampilkan data per **Family Name** dengan 3 kolom per bulan:
 
-| Kolom | Deskripsi |
-|---|---|
-| **SKU** | Jumlah SKU (Item) yang terjual |
-| **Capai** | Jumlah capaian |
-| **%** | Persentase capaian terhadap SKU |
+| Kolom     | Deskripsi                       |
+| --------- | ------------------------------- |
+| **SKU**   | Jumlah SKU (Item) yang terjual  |
+| **Capai** | Jumlah capaian                  |
+| **%**     | Persentase capaian terhadap SKU |
 
 Baris total di bagian bawah menjumlahkan seluruh family.
 

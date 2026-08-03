@@ -1,8 +1,5 @@
 {
-    "agents": [
-        "codex"
-    ],
-    "skills": [
-        "laravel-best-practices"
-    ]
+    "agents": ["opencode"],
+    "cloud": false,
+    "skills": ["laravel-best-practices"]
 }

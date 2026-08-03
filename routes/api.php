@@ -361,12 +361,22 @@ Route::post(
 )->name('api.internal.ascends.shared.custom-report.biaya-mobil-truk.pdf');
 
 Route::post(
-    '/internal/ascends/shared/custom-report/pengiriman-per-kategori-harian/pdf',
-    [AscendXmlTestController::class, 'apiSharedCustomReportPengirimanPerKategoriHarianPdf']
-)->name('api.internal.ascends.shared.custom-report.pengiriman-per-kategori-harian.pdf');
+     '/internal/ascends/shared/custom-report/pengiriman-per-kategori-harian/pdf',
+     [AscendXmlTestController::class, 'apiSharedCustomReportPengirimanPerKategoriHarianPdf']
+ )->name('api.internal.ascends.shared.custom-report.pengiriman-per-kategori-harian.pdf');
 
-Route::post(
-    '/internal/ascends/shared/custom-report/pengiriman-per-kategori-tahunan/pdf',
+ Route::post(
+     '/internal/ascends/shared/custom-report/pengiriman-lemari-harian/pdf',
+     [AscendXmlTestController::class, 'apiSharedCustomReportPengirimanLemariHarianPdf']
+ )->name('api.internal.ascends.shared.custom-report.pengiriman-lemari-harian.pdf');
+
+ Route::post(
+     '/internal/ascends/shared/custom-report/pengiriman-lemari-tahunan/pdf',
+     [AscendXmlTestController::class, 'apiSharedCustomReportPengirimanLemariTahunanPdf']
+ )->name('api.internal.ascends.shared.custom-report.pengiriman-lemari-tahunan.pdf');
+
+ Route::post(
+     '/internal/ascends/shared/custom-report/pengiriman-per-kategori-tahunan/pdf',
     [AscendXmlTestController::class, 'apiSharedCustomReportPengirimanPerKategoriTahunanPdf']
 )->name('api.internal.ascends.shared.custom-report.pengiriman-per-kategori-tahunan.pdf');
 
@@ -396,6 +406,11 @@ Route::post(
 )->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-enamel-grosir.pdf');
 
 Route::post(
+    '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-enamel-akun-spesial/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaEnamelAkunSpesialPdf']
+)->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-enamel-akun-spesial.pdf');
+
+Route::post(
     '/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-furniture-semi-grosir/pdf',
     [AscendXmlTestController::class, 'apiSharedCustomReportDaftarHargaFurnitureSemiGrosirPdf']
 )->name('api.internal.ascends.shared.custom-report.check-price-group-a.daftar-harga-furniture-semi-grosir.pdf');
@@ -421,6 +436,16 @@ Route::post(
     '/internal/ascends/shared/custom-report/penjualan-per-kategori-barang-bulanan/pdf',
     [AscendXmlTestController::class, 'apiSharedCustomReportPenjualanPerKategoriBarangBulananPdf']
 )->name('api.internal.ascends.shared.custom-report.penjualan-per-kategori-barang-bulanan.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/cek-produksi-gsu/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportCekProduksiGsuPdf']
+)->name('api.internal.ascends.shared.custom-report.cek-produksi-gsu.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/sales-summary-per-customer-per-period/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportSalesSummaryPerCustomerPerPeriodPdf']
+)->name('api.internal.ascends.shared.custom-report.sales-summary-per-customer-per-period.pdf');
 
 Route::post(
     '/internal/ascends/shared/associate/customer-modifikasi-6-bulan/pdf',
