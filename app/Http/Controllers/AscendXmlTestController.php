@@ -23,9 +23,12 @@ use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitu
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureRetailReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureSalesProjectReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureSemiGrosirReportService;
-use App\Services\Ascends\Shared\CustomReport\PengirimanPerKategoriHarianReportService;
+use App\Services\Ascends\Shared\CustomReport\CustomerOverLimitReportService;
+use App\Services\Ascends\Shared\CustomReport\MonitoringSoSiTagihanReportService;
+use App\Services\Ascends\Shared\CustomReport\PengirimanKursiDanMejaHarianReportService;
 use App\Services\Ascends\Shared\CustomReport\PengirimanLemariHarianReportService;
 use App\Services\Ascends\Shared\CustomReport\PengirimanLemariTahunanReportService;
+use App\Services\Ascends\Shared\CustomReport\PengirimanPerKategoriHarianReportService;
 use App\Services\Ascends\Shared\CustomReport\PengirimanPerKategoriTahunanReportService;
 use App\Services\Ascends\Shared\CustomReport\PenjualanPerItemAnalisaSkuDetailReportService;
 use App\Services\Ascends\Shared\CustomReport\PenjualanPerItemAnalisaSkuReportService;
@@ -783,6 +786,122 @@ class AscendXmlTestController extends Controller
         ]);
     }
 
+    public function apiSharedCustomReportMonitoringSoSiTagihanPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        MonitoringSoSiTagihanReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
+                    'EndDate' => $request->input('EndDate', $request->input('end_date')),
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.monitoring_so_si_tagihan.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'generatedByName' => $reportData['printed_by'] ?? 'sistem',
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 9,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
+        $filename = 'Laporan Monitoring SO - SI - Tagihan' . $companySuffix . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    public function apiSharedCustomReportCustomerOverLimitPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        CustomerOverLimitReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.customer_over_limit.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'generatedByName' => $reportData['printed_by'] ?? 'sistem',
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 7,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
+        $filename = 'Laporan Customer Over Limit' . $companySuffix . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     public function apiSharedCustomReportPengirimanPerKategoriHarianPdf(
         GenerateAscendsEmployeeListReportRequest $request,
         PengirimanPerKategoriHarianReportService $reportService,
@@ -951,6 +1070,66 @@ class AscendXmlTestController extends Controller
 
         $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
         $filename = 'Laporan Pengiriman Lemari (Harian)' . $companySuffix . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    public function apiSharedCustomReportPengirimanKursiDanMejaHarianPdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        PengirimanKursiDanMejaHarianReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                [
+                    'company' => $company,
+                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
+                    'EndDate' => $request->input('EndDate', $request->input('end_date')),
+                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'DB_CompanyName' => $company,
+                ],
+            );
+
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $companyShort = $reportData['company'] ?? '';
+
+        $dayCount = count($reportData['day_numbers'] ?? []);
+        $pdf = $pdfGenerator->render('ascends.shared.custom_report.pengiriman_kursi_dan_meja_harian.pdf', [
+            'company' => $companyShort,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'generatedByName' => $reportData['printed_by'] ?? 'sistem',
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'landscape',
+            'pdf_simple_tables' => false,
+            'pdf_column_count' => 2 + $dayCount,
+        ]);
+
+        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
+        $filename = 'Laporan Pengiriman Kursi Makan, Kursi Santai, Kursi Cafe Dan Meja Santai(Harian)' . $companySuffix . '.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

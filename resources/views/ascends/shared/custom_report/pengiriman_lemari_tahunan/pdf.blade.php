@@ -68,7 +68,7 @@
 
         .data-table th {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
@@ -95,7 +95,7 @@
         }
 
         .subtotal-row td {
-            font-size: 9px;
+            font-size: 9.5px;
             font-weight: bold;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
@@ -107,7 +107,7 @@
             background: #c9d1df;
             color: #9c111d;
             font-weight: bold;
-            font-size: 9px;
+            font-size: 11px;
             padding: 4px;
         }
 
@@ -198,7 +198,9 @@
                                 @foreach ($months as $mNum => $mLabel)
                                     <td class="number nowrap">{{ fmtNum_pengiriman_lemari_tahunan($item['monthly'][$mNum] ?? 0) }}</td>
                                 @endforeach
-                                <td class="number nowrap">{{ fmtNum_pengiriman_lemari_tahunan($item['total_qty']) }}</td>
+                                <td class="number nowrap" style="font-weight: bold;">
+                                    {{ fmtNum_pengiriman_lemari_tahunan($item['total_qty']) }}
+                                </td>
                             </tr>
                         @endforeach
                         <tr class="subtotal-row">
