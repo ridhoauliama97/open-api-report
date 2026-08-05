@@ -199,41 +199,53 @@
             'fl' => 'Furniture Lipat',
         ];
 
-        function fmtNum($value, $decimals = 0)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '0';
+        if (! function_exists('fmtNum')) {
+            function fmtNum($value, $decimals = 0)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '0';
+                }
+                return number_format($v, $decimals, ',', '.');
             }
-            return number_format($v, $decimals, ',', '.');
         }
 
-        function fmtPct($value)
-        {
-            return number_format((float) $value, 2, ',', '.') . '%';
-        }
-
-        function devClass($value)
-        {
-            return (float) $value < 0 ? 'number-negative' : '';
-        }
-
-        function getQty($r, $k)
-        {
-            return $k === 'total' ? $r['total_qty'] : $r[$k]['qty'];
-        }
-
-        function getRp($r, $k)
-        {
-            return $k === 'total' ? $r['total_rp'] : $r[$k]['rp'];
-        }
-
-        function getDev($r, $k)
-        {
-            if ($k === 'total') {
-                return $r['total_dev'];
+        if (! function_exists('fmtPct')) {
+            function fmtPct($value)
+            {
+                return number_format((float) $value, 2, ',', '.') . '%';
             }
-            return $r[$k . '_dev'];
+        }
+
+        if (! function_exists('devClass')) {
+            function devClass($value)
+            {
+                return (float) $value < 0 ? 'number-negative' : '';
+            }
+        }
+
+        if (! function_exists('getQty')) {
+            function getQty($r, $k)
+            {
+                return $k === 'total' ? $r['total_qty'] : $r[$k]['qty'];
+            }
+        }
+
+        if (! function_exists('getRp')) {
+            function getRp($r, $k)
+            {
+                return $k === 'total' ? $r['total_rp'] : $r[$k]['rp'];
+            }
+        }
+
+        if (! function_exists('getDev')) {
+            function getDev($r, $k)
+            {
+                if ($k === 'total') {
+                    return $r['total_dev'];
+                }
+                return $r[$k . '_dev'];
+            }
         }
     @endphp
 
@@ -248,17 +260,16 @@
         @foreach ($sections as $section)
             @php
                 $sectionIndex++;
-                $lastRecord = $section['daily_records'][count($section['daily_records']) - 1] ?? null;
                 $subtotals = [];
                 foreach ($displayOrder as $k) {
                     if ($k === 'total') {
                         $subtotals[$k . '_qty'] = $section['total_qty_all'];
                         $subtotals[$k . '_rp'] = $section['total_rp_all'];
-                        $subtotals[$k . '_dev'] = $lastRecord ? $lastRecord['total_dev'] : 0;
+                        $subtotals[$k . '_dev'] = $section['total_dev'] ?? 0;
                     } else {
                         $subtotals[$k . '_qty'] = $section['cat_totals'][$k]['qty'];
                         $subtotals[$k . '_rp'] = $section['cat_totals'][$k]['rp'];
-                        $subtotals[$k . '_dev'] = $lastRecord ? $lastRecord[$k . '_dev'] : 0;
+                        $subtotals[$k . '_dev'] = $section['cat_totals'][$k]['dev'] ?? 0;
                     }
                 }
             @endphp
@@ -272,11 +283,11 @@
             {{-- Main Data Table with 4-row header (value, target, label, sub-header) --}}
             <table class="data-table">
                 <thead>
-                    {{-- Row 1: Category total values --}}
+                    {{-- Row 1: Category monthly target values --}}
                     <tr>
                         <th rowspan="4" style="width: 3%;">Tgl</th>
                         @foreach ($displayOrder as $k)
-                            @php $headerRp = $k === 'total' ? $grandTotalAllRp : ($grandTotals[$k]['rp'] ?? 0); @endphp
+                            @php $headerRp = $k === 'total' ? ($section['monthly_target_total'] ?? 0) : ($section['monthly_target'][$k] ?? 0); @endphp
                             <th colspan="3" class="header-value">{{ fmtNum($headerRp) }}</th>
                         @endforeach
                     </tr>
@@ -358,11 +369,11 @@
                                 foreach ($weeks as $w) {
                                     $weekSum += $waRow['weeks'][$w]['penjualan'];
                                 }
-                                $totalPct = $waRow['total'] > 0 ? ($weekSum / $waRow['total'] * 100) : 0;
+                                $totalPct = ($waRow['target'] ?? 0) > 0 ? ($weekSum / $waRow['target'] * 100) : 0;
                             @endphp
                             <tr class="{{ $isTotal ? 'subtotal-row' : '' }}">
                                 <td>{{ $isTotal ? 'Total' : ($colLabels[$waRow['category']] ?? $waRow['category']) }}</td>
-                                <td class="number">{{ fmtNum($waRow['total']) }}</td>
+                                <td class="number">{{ fmtNum($waRow['target']) }}</td>
                                 @foreach ($weeks as $w)
                                     <td class="number">{{ fmtNum($waRow['weeks'][$w]['penjualan']) }}</td>
                                     <td class="number">{{ fmtPct($waRow['weeks'][$w]['pct']) }}</td>
@@ -411,17 +422,16 @@
         @if ($grandTotalSection !== null)
             @php
                 $gt = $grandTotalSection;
-                $gtLastRecord = $gt['daily_records'][count($gt['daily_records']) - 1] ?? null;
                 $gtSubtotals = [];
                 foreach ($displayOrder as $k) {
                     if ($k === 'total') {
                         $gtSubtotals[$k . '_qty'] = $gt['total_qty_all'];
                         $gtSubtotals[$k . '_rp'] = $gt['total_rp_all'];
-                        $gtSubtotals[$k . '_dev'] = $gtLastRecord ? $gtLastRecord['total_dev'] : 0;
+                        $gtSubtotals[$k . '_dev'] = $gt['total_dev'] ?? 0;
                     } else {
                         $gtSubtotals[$k . '_qty'] = $gt['cat_totals'][$k]['qty'];
                         $gtSubtotals[$k . '_rp'] = $gt['cat_totals'][$k]['rp'];
-                        $gtSubtotals[$k . '_dev'] = $gtLastRecord ? $gtLastRecord[$k . '_dev'] : 0;
+                        $gtSubtotals[$k . '_dev'] = $gt['cat_totals'][$k]['dev'] ?? 0;
                     }
                 }
             @endphp
@@ -435,7 +445,8 @@
                     <tr>
                         <th rowspan="4" style="width: 3%;">Tgl</th>
                         @foreach ($displayOrder as $k)
-                            <th colspan="3" class="header-value">{{ fmtNum($gtSubtotals[$k . '_rp']) }}</th>
+                            @php $headerRp = $k === 'total' ? ($gt['monthly_target_total'] ?? 0) : ($gt['monthly_target'][$k] ?? 0); @endphp
+                            <th colspan="3" class="header-value">{{ fmtNum($headerRp) }}</th>
                         @endforeach
                     </tr>
                     <tr>
@@ -513,11 +524,11 @@
                                 foreach ($weeks as $w) {
                                     $weekSum += $waRow['weeks'][$w]['penjualan'];
                                 }
-                                $totalPct = $waRow['total'] > 0 ? ($weekSum / $waRow['total'] * 100) : 0;
+                                $totalPct = ($waRow['target'] ?? 0) > 0 ? ($weekSum / $waRow['target'] * 100) : 0;
                             @endphp
                             <tr class="{{ $isTotal ? 'subtotal-row' : '' }}">
                                 <td>{{ $isTotal ? 'Total' : ($colLabels[$waRow['category']] ?? $waRow['category']) }}</td>
-                                <td class="number">{{ fmtNum($waRow['total']) }}</td>
+                                <td class="number">{{ fmtNum($waRow['target']) }}</td>
                                 @foreach ($weeks as $w)
                                     <td class="number">{{ fmtNum($waRow['weeks'][$w]['penjualan']) }}</td>
                                     <td class="number">{{ fmtPct($waRow['weeks'][$w]['pct']) }}</td>

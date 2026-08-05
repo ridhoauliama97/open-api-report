@@ -150,7 +150,7 @@
         $generatedAtText = $reportData['printed_at'] ?? '';
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
         $title = $reportData['headerTitle'] ?? 'Laporan Lembur Bulanan Per Departemen (KK-KT)';
-        $numberFormat = static fn (int $n): string => number_format($n, 0, ',', '.');
+        $numberFormat = static fn(int $n): string => number_format($n, 0, ',', '.');
     @endphp
 
     @include('ascends.shared.partials.report-header', ['subtitle' => $periodLabel, 'title' => $title])
@@ -196,9 +196,11 @@
                 <tr class="summary-note">
                     <td colspan="8">
                         Akumulasi L/P :
-                        Laki-Laki = {{ (int) ($group['akumulasi_lp']['L'] ?? 0) }} ({{ (int) ($group['akumulasi_lp']['L_persen'] ?? 0) }}%)
+                        Laki-Laki = {{ (int) ($group['akumulasi_lp']['L'] ?? 0) }}
+                        ({{ (int) ($group['akumulasi_lp']['L_persen'] ?? 0) }}%)
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        Perempuan = {{ (int) ($group['akumulasi_lp']['P'] ?? 0) }} ({{ (int) ($group['akumulasi_lp']['P_persen'] ?? 0) }}%)
+                        Perempuan = {{ (int) ($group['akumulasi_lp']['P'] ?? 0) }}
+                        ({{ (int) ($group['akumulasi_lp']['P_persen'] ?? 0) }}%)
                     </td>
                 </tr>
                 <tr class="summary-note">
@@ -242,7 +244,8 @@
                 @endforeach
                 <tr class="department-total-row dept-separator dept-footer">
                     <td colspan="4">Total</td>
-                    <td class="center" colspan="4">{{ $numberFormat((int) ($grandSummary['grand_total_lembur'] ?? 0)) }}</td>
+                    <td class="center" colspan="4">{{ $numberFormat((int) ($grandSummary['grand_total_lembur'] ?? 0)) }}
+                    </td>
                 </tr>
                 @foreach ($departmentLegends as $dept => $legend)
                     <tr class="summary-note">

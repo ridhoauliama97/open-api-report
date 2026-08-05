@@ -1205,6 +1205,7 @@ class AscendXmlTestController extends Controller
                     'JumlahHariKerja' => $request->input('JumlahHariKerja', $request->input('jumlah_hari_kerja')),
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
                     'DB_CompanyName' => $company,
+                    'Target' => $request->input('Target'),
                 ],
             );
 
@@ -1384,20 +1385,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1406,10 +1398,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_all.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1418,8 +1407,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 8,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Furniture' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Furniture.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

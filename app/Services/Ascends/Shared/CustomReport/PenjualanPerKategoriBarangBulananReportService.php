@@ -11,6 +11,23 @@ class PenjualanPerKategoriBarangBulananReportService
 {
     private const TITLE = 'Laporan Penjualan Per Kategori Barang Bulanan (Breakdown Perhari)';
 
+    private const CATEGORIES = ['pf', 'pk1', 'pk2', 'enamel', 'fl'];
+
+    private const FAMILY_TO_CATEGORY = [
+        'PLASTIK FURNITURE 1' => 'pf',
+        'PLASTIK FURNITURE 2' => 'pf',
+        'PLASTIK KABINET 1' => 'pk1',
+        'PLASTIK KABINET 2' => 'pk2',
+        'ENAMEL' => 'enamel',
+        'FURNITURE LIPAT' => 'fl',
+    ];
+
+    private const PK2_FACTOR = 7 / 13;
+
+    private const ENAMEL_FACTOR = 18 / 91;
+
+    private const FL_FACTOR = 2 / 91;
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel, array $filters = []): array
     {
         $rows = $this->parseRows($xmlContents, $sourceLabel);
@@ -32,37 +49,33 @@ class PenjualanPerKategoriBarangBulananReportService
             throw new RuntimeException('Tidak ada data dalam rentang tanggal yang dipilih.');
         }
 
-        $sections = $this->buildSections($filteredRows, $jumlahHariKerja);
+        [$dayNumbers, $weekByDay] = $this->resolvePeriod($filteredRows, $startDate, $endDate);
 
-        // Add weekly analysis and daily analysis to each section
-        foreach ($sections as &$section) {
-            $section['weekly_analysis'] = $this->buildWeeklyAnalysis($section['daily_records'], $section['cat_totals']);
-            $section['daily_analysis'] = $this->buildDailyAnalysis($section['daily_records']);
-        }
-        unset($section);
+        $targetMap = $this->resolveTargetMap($filters);
 
-        // Calculate grand totals across all sections
+        $sections = $this->buildSections($filteredRows, $dayNumbers, $weekByDay, $jumlahHariKerja, $targetMap);
+
         $grandTotals = [];
-        foreach (['pf', 'pk1', 'pk2', 'enamel', 'fl'] as $cat) {
+        $monthlyTargetGrand = [];
+        foreach (self::CATEGORIES as $cat) {
             $grandTotals[$cat] = ['qty' => 0.0, 'rp' => 0.0];
+            $monthlyTargetGrand[$cat] = 0.0;
         }
-        $grandTotalAllQty = 0;
-        $grandTotalAllRp = 0;
+        $grandTotalAllQty = 0.0;
+        $grandTotalAllRp = 0.0;
+
         foreach ($sections as $section) {
-            foreach (['pf', 'pk1', 'pk2', 'enamel', 'fl'] as $cat) {
+            foreach (self::CATEGORIES as $cat) {
                 $grandTotals[$cat]['qty'] += $section['cat_totals'][$cat]['qty'];
                 $grandTotals[$cat]['rp'] += $section['cat_totals'][$cat]['rp'];
+                $monthlyTargetGrand[$cat] += $section['monthly_target'][$cat];
             }
             $grandTotalAllQty += $section['total_qty_all'];
             $grandTotalAllRp += $section['total_rp_all'];
         }
 
-        // Recalculate section targets and daily deviations using grand totals
-        $this->recalculateSectionTargets($sections, $grandTotals, $jumlahHariKerja);
-
-        // Build grand total if multiple sections
         $grandTotalSection = count($sections) > 1
-            ? $this->buildGrandTotalSection($sections, $jumlahHariKerja)
+            ? $this->buildGrandTotalSection($sections, $dayNumbers, $jumlahHariKerja, $monthlyTargetGrand)
             : null;
 
         $printedBy = trim((string) ($filters['Sys_Username'] ?? $filters['sys_username'] ?? ''));
@@ -193,12 +206,134 @@ class PenjualanPerKategoriBarangBulananReportService
         return $filtered;
     }
 
-    private function buildSections(array $rows, int $jumlahHariKerja): array
+    /**
+     * @return array{0: int[], 1: array<int, int>} [dayNumbers, weekByDay]
+     */
+    private function resolvePeriod(array $rows, ?Carbon $startDate, ?Carbon $endDate): array
     {
-        // Group by Salesperson (SP Name)
+        $min = null;
+        $max = null;
+        $weekByDay = [];
+
+        foreach ($rows as $row) {
+            $date = $this->parseDate((string) ($row['Date'] ?? ''));
+            if ($date === null) {
+                continue;
+            }
+
+            $dayNum = (int) $date->format('j');
+            $week = (int) ($row['Week'] ?? 0);
+            if ($week >= 1 && $week <= 5) {
+                $weekByDay[$dayNum] = $week;
+            }
+
+            if ($min === null || $date->lt($min)) {
+                $min = $date->copy();
+            }
+            if ($max === null || $date->gt($max)) {
+                $max = $date->copy();
+            }
+        }
+
+        $from = ($startDate ?? $min)->copy()->startOfDay();
+        $to = ($endDate ?? $max)->copy()->endOfDay();
+
+        $dayNumbers = [];
+        while ($from->lessThanOrEqualTo($to)) {
+            if ($from->dayOfWeek !== Carbon::SUNDAY) {
+                $dayNumbers[] = (int) $from->format('j');
+            }
+            $from->addDay();
+        }
+
+        return [$dayNumbers, $weekByDay];
+    }
+
+    private function resolveTargetMap(array $filters): array
+    {
+        $raw = $filters['Target'] ?? $filters['target'] ?? null;
+
+        if (is_array($raw)) {
+            return $this->normalizeTargetMap($raw);
+        }
+
+        if (is_string($raw) && trim($raw) !== '') {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                return $this->normalizeTargetMap($decoded);
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array<string, array<string, float>>
+     */
+    private function normalizeTargetMap(array $map): array
+    {
+        $normalized = [];
+        foreach ($map as $sp => $cats) {
+            if (! is_array($cats)) {
+                $normalized[(string) $sp] = $this->expandTargetFromPk1((float) $cats);
+
+                continue;
+            }
+
+            $row = [];
+            foreach (self::CATEGORIES as $cat) {
+                $row[$cat] = (float) ($cats[$cat] ?? $cats[strtoupper($cat)] ?? 0);
+            }
+            $normalized[(string) $sp] = $row;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Menghitung target per kategori dari quota pk1 saja, mengikuti pola
+     * PDF referensi: pk2 = 7/13 x pk1, enamel = 18/91 x pk1, fl = 2/91 x pk1, pf = 0.
+     *
+     * @return array<string, float>
+     */
+    private function expandTargetFromPk1(float $pk1): array
+    {
+        return [
+            'pf' => 0.0,
+            'pk1' => $pk1,
+            'pk2' => round($pk1 * self::PK2_FACTOR),
+            'enamel' => round($pk1 * self::ENAMEL_FACTOR),
+            'fl' => round($pk1 * self::FL_FACTOR),
+        ];
+    }
+
+    private function emptyCatTotals(): array
+    {
+        $totals = [];
+        foreach (self::CATEGORIES as $cat) {
+            $totals[$cat] = ['qty' => 0.0, 'rp' => 0.0, 'gross' => 0.0];
+        }
+
+        return $totals;
+    }
+
+    private function categorizeRow(array $row): ?string
+    {
+        $itemName = trim((string) ($row['Item Name'] ?? ''));
+        if (str_starts_with(strtoupper($itemName), 'PROMO')) {
+            return null;
+        }
+
+        $familyName = trim((string) ($row['Family Name'] ?? ''));
+
+        return self::FAMILY_TO_CATEGORY[$familyName] ?? null;
+    }
+
+    private function buildSections(array $rows, array $dayNumbers, array $weekByDay, int $jumlahHariKerja, array $targetMap): array
+    {
         $groupedBySales = [];
         foreach ($rows as $row) {
-            $spName = trim((string) ($row['SP Name'] ?? $row['SP_x0020_Name'] ?? ''));
+            $spName = trim((string) ($row['SP Name'] ?? ''));
             if ($spName === '') {
                 $spName = 'Tanpa Sales';
             }
@@ -208,246 +343,315 @@ class PenjualanPerKategoriBarangBulananReportService
         ksort($groupedBySales);
 
         $sections = [];
-
         foreach ($groupedBySales as $salesName => $salesRows) {
-            // Collect all unique days present for this salesperson
-            $days = [];
-            foreach ($salesRows as $row) {
-                $date = $this->parseDate((string) ($row['Date'] ?? ''));
-                if ($date !== null) {
-                    $dayNum = (int) $date->format('j');
-                    $days[$dayNum] = true;
-                }
-            }
-
-            ksort($days);
-            $dayNumbers = array_keys($days);
-
-            // Calculate totals per category for the salesperson
-            $catTotals = [
-                'pf' => ['qty' => 0.0, 'rp' => 0.0],   // Plastik Furniture 1 & 2
-                'pk1' => ['qty' => 0.0, 'rp' => 0.0],  // Plastik Kabinet 1
-                'pk2' => ['qty' => 0.0, 'rp' => 0.0],  // Plastik Kabinet 2 (Sapu)
-                'enamel' => ['qty' => 0.0, 'rp' => 0.0], // Enamel
-                'fl' => ['qty' => 0.0, 'rp' => 0.0],   // Furniture Lipat
-            ];
-
-            // Daily records breakdown
-            $dailyRecords = [];
-            $runningRp = [
-                'pf' => 0.0,
-                'pk1' => 0.0,
-                'pk2' => 0.0,
-                'enamel' => 0.0,
-                'fl' => 0.0,
-                'total' => 0.0,
-            ];
-
-            // Target per hari per category (Total / jumlahHariKerja)
-            // Let's first accumulate total per category across all days
-            $catSales = [
-                'pf' => 0.0,
-                'pk1' => 0.0,
-                'pk2' => 0.0,
-                'enamel' => 0.0,
-                'fl' => 0.0,
-            ];
-
-            // Map rows by day number
-            $rowsByDay = [];
-            foreach ($salesRows as $row) {
-                $date = $this->parseDate((string) ($row['Date'] ?? ''));
-                if ($date === null) {
-                    continue;
-                }
-                $dayNum = (int) $date->format('j');
-                $rowsByDay[$dayNum][] = $row;
-            }
-
-            // Calculate overall category totals for target calculation
-            foreach ($salesRows as $row) {
-                $itemName = trim((string) ($row['Item Name'] ?? ''));
-                $isPromo = str_starts_with(strtoupper($itemName), 'PROMO');
-                $familyName = trim((string) ($row['Family Name'] ?? ''));
-                $qty = (float) ($row['Quantity'] ?? 0);
-                $rp = (float) ($row['LineTotal'] ?? 0);
-
-                if (! $isPromo) {
-                    if ($familyName === 'PLASTIK FURNITURE 1' || $familyName === 'PLASTIK FURNITURE 2') {
-                        $catSales['pf'] += $rp;
-                    } elseif ($familyName === 'PLASTIK KABINET 1') {
-                        $catSales['pk1'] += $rp;
-                    } elseif ($familyName === 'PLASTIK KABINET 2') {
-                        $catSales['pk2'] += $rp;
-                    } elseif ($familyName === 'ENAMEL') {
-                        $catSales['enamel'] += $rp;
-                    } elseif ($familyName === 'FURNITURE LIPAT') {
-                        $catSales['fl'] += $rp;
-                    }
-                }
-            }
-
-            $targetPerHari = [
-                'pf' => $catSales['pf'] / $jumlahHariKerja,
-                'pk1' => $catSales['pk1'] / $jumlahHariKerja,
-                'pk2' => $catSales['pk2'] / $jumlahHariKerja,
-                'enamel' => $catSales['enamel'] / $jumlahHariKerja,
-                'fl' => $catSales['fl'] / $jumlahHariKerja,
-            ];
-            $targetTotalPerHari = array_sum($targetPerHari);
-
-            foreach ($dayNumbers as $dayNum) {
-                $dayRows = $rowsByDay[$dayNum] ?? [];
-                $dayCat = [
-                    'pf' => ['qty' => 0.0, 'rp' => 0.0],
-                    'pk1' => ['qty' => 0.0, 'rp' => 0.0],
-                    'pk2' => ['qty' => 0.0, 'rp' => 0.0],
-                    'enamel' => ['qty' => 0.0, 'rp' => 0.0],
-                    'fl' => ['qty' => 0.0, 'rp' => 0.0],
-                ];
-
-                foreach ($dayRows as $row) {
-                    $itemName = trim((string) ($row['Item Name'] ?? ''));
-                    $isPromo = str_starts_with(strtoupper($itemName), 'PROMO');
-                    $familyName = trim((string) ($row['Family Name'] ?? ''));
-                    $qty = (float) ($row['Quantity'] ?? 0);
-                    $rp = (float) ($row['LineTotal'] ?? 0);
-
-                    if (! $isPromo) {
-                        if ($familyName === 'PLASTIK FURNITURE 1' || $familyName === 'PLASTIK FURNITURE 2') {
-                            $dayCat['pf']['qty'] += $qty;
-                            $dayCat['pf']['rp'] += $rp;
-                        } elseif ($familyName === 'PLASTIK KABINET 1') {
-                            $dayCat['pk1']['qty'] += $qty;
-                            $dayCat['pk1']['rp'] += $rp;
-                        } elseif ($familyName === 'PLASTIK KABINET 2') {
-                            $dayCat['pk2']['qty'] += $qty;
-                            $dayCat['pk2']['rp'] += $rp;
-                        } elseif ($familyName === 'ENAMEL') {
-                            $dayCat['enamel']['qty'] += $qty;
-                            $dayCat['enamel']['rp'] += $rp;
-                        } elseif ($familyName === 'FURNITURE LIPAT') {
-                            $dayCat['fl']['qty'] += $qty;
-                            $dayCat['fl']['rp'] += $rp;
-                        }
-                    }
-                }
-
-                // Update running totals
-                $runningRp['pf'] += $dayCat['pf']['rp'];
-                $runningRp['pk1'] += $dayCat['pk1']['rp'];
-                $runningRp['pk2'] += $dayCat['pk2']['rp'];
-                $runningRp['enamel'] += $dayCat['enamel']['rp'];
-                $runningRp['fl'] += $dayCat['fl']['rp'];
-
-                $dayTotalRp = $dayCat['pf']['rp'] + $dayCat['pk1']['rp'] + $dayCat['pk2']['rp'] + $dayCat['enamel']['rp'] + $dayCat['fl']['rp'];
-                $dayTotalQty = $dayCat['pf']['qty'] + $dayCat['pk1']['qty'] + $dayCat['pk2']['qty'] + $dayCat['enamel']['qty'] + $dayCat['fl']['qty'];
-                $runningRp['total'] += $dayTotalRp;
-
-                // Lebih (Kurang) = Running Rp - (Target Perhari * dayIndex or cumulative target)
-                // In Crystal Reports formula: xLebihKurangPEnamel = RpEnamel - (TargetPerhariEnamel * TotalHari)
-                $lebihKurangPf = $runningRp['pf'] - ($targetPerHari['pf'] * $dayNum);
-                $lebihKurangPk1 = $runningRp['pk1'] - ($targetPerHari['pk1'] * $dayNum);
-                $lebihKurangPk2 = $runningRp['pk2'] - ($targetPerHari['pk2'] * $dayNum);
-                $lebihKurangEnamel = $runningRp['enamel'] - ($targetPerHari['enamel'] * $dayNum);
-                $lebihKurangFl = $runningRp['fl'] - ($targetPerHari['fl'] * $dayNum);
-                $lebihKurangTotal = $runningRp['total'] - ($targetTotalPerHari * $dayNum);
-
-                // Accumulate category totals
-                $catTotals['pf']['qty'] += $dayCat['pf']['qty'];
-                $catTotals['pf']['rp'] += $dayCat['pf']['rp'];
-                $catTotals['pk1']['qty'] += $dayCat['pk1']['qty'];
-                $catTotals['pk1']['rp'] += $dayCat['pk1']['rp'];
-                $catTotals['pk2']['qty'] += $dayCat['pk2']['qty'];
-                $catTotals['pk2']['rp'] += $dayCat['pk2']['rp'];
-                $catTotals['enamel']['qty'] += $dayCat['enamel']['qty'];
-                $catTotals['enamel']['rp'] += $dayCat['enamel']['rp'];
-                $catTotals['fl']['qty'] += $dayCat['fl']['qty'];
-                $catTotals['fl']['rp'] += $dayCat['fl']['rp'];
-
-                $dailyRecords[] = [
-                    'day' => $dayNum,
-                    'pf' => $dayCat['pf'],
-                    'pf_running' => $runningRp['pf'],
-                    'pf_dev' => $lebihKurangPf,
-                    'pk1' => $dayCat['pk1'],
-                    'pk1_running' => $runningRp['pk1'],
-                    'pk1_dev' => $lebihKurangPk1,
-                    'pk2' => $dayCat['pk2'],
-                    'pk2_running' => $runningRp['pk2'],
-                    'pk2_dev' => $lebihKurangPk2,
-                    'enamel' => $dayCat['enamel'],
-                    'enamel_running' => $runningRp['enamel'],
-                    'enamel_dev' => $lebihKurangEnamel,
-                    'fl' => $dayCat['fl'],
-                    'fl_running' => $runningRp['fl'],
-                    'fl_dev' => $lebihKurangFl,
-                    'total_qty' => $dayTotalQty,
-                    'total_rp' => $dayTotalRp,
-                    'total_running' => $runningRp['total'],
-                    'total_dev' => $lebihKurangTotal,
-                ];
-            }
-
-            $totalQtyAll = $catTotals['pf']['qty'] + $catTotals['pk1']['qty'] + $catTotals['pk2']['qty'] + $catTotals['enamel']['qty'] + $catTotals['fl']['qty'];
-            $totalRpAll = $catTotals['pf']['rp'] + $catTotals['pk1']['rp'] + $catTotals['pk2']['rp'] + $catTotals['enamel']['rp'] + $catTotals['fl']['rp'];
-
-            $sections[] = [
-                'sales_name' => $salesName,
-                'cat_totals' => $catTotals,
-                'total_qty_all' => $totalQtyAll,
-                'total_rp_all' => $totalRpAll,
-                'target_per_hari' => $targetPerHari,
-                'target_total_per_hari' => $targetTotalPerHari,
-                'daily_records' => $dailyRecords,
-            ];
+            $sections[] = $this->buildSection($salesName, $salesRows, $dayNumbers, $weekByDay, $jumlahHariKerja, $targetMap[$salesName] ?? null);
         }
 
         return $sections;
     }
 
-    private function recalculateSectionTargets(array &$sections, array $grandTotals, int $jumlahHariKerja): void
+    private function buildSection(string $salesName, array $rows, array $dayNumbers, array $weekByDay, int $jumlahHariKerja, ?array $targetByCat): array
     {
-        $grandTargetPerHari = [];
-        foreach (['pf', 'pk1', 'pk2', 'enamel', 'fl'] as $cat) {
-            $grandTargetPerHari[$cat] = $grandTotals[$cat]['rp'] / $jumlahHariKerja;
-        }
-        $grandTargetTotalPerHari = array_sum($grandTargetPerHari);
+        $catTotals = $this->emptyCatTotals();
+        $rowsByDay = [];
+        $dayHasData = [];
 
-        foreach ($sections as &$section) {
-            $section['target_per_hari'] = $grandTargetPerHari;
-            $section['target_total_per_hari'] = $grandTargetTotalPerHari;
+        foreach ($rows as $row) {
+            $date = $this->parseDate((string) ($row['Date'] ?? ''));
+            if ($date === null) {
+                continue;
+            }
 
-            $runningRp = [
-                'pf' => 0.0, 'pk1' => 0.0, 'pk2' => 0.0,
-                'enamel' => 0.0, 'fl' => 0.0, 'total' => 0.0,
+            $dayNum = (int) $date->format('j');
+            $cat = $this->categorizeRow($row);
+            if ($cat === null) {
+                continue;
+            }
+
+            $item = [
+                'cat' => $cat,
+                'qty' => (float) ($row['Quantity'] ?? 0),
+                'rp' => (float) ($row['LineTotal'] ?? 0),
+                'gross' => (float) ($row['LineGrossTotal'] ?? 0),
             ];
 
-            foreach ($section['daily_records'] as &$rec) {
-                $runningRp['pf'] += $rec['pf']['rp'];
-                $runningRp['pk1'] += $rec['pk1']['rp'];
-                $runningRp['pk2'] += $rec['pk2']['rp'];
-                $runningRp['enamel'] += $rec['enamel']['rp'];
-                $runningRp['fl'] += $rec['fl']['rp'];
-                $runningRp['total'] += $rec['total_rp'];
-
-                $rec['pf_dev'] = $runningRp['pf'] - ($grandTargetPerHari['pf'] * $rec['day']);
-                $rec['pk1_dev'] = $runningRp['pk1'] - ($grandTargetPerHari['pk1'] * $rec['day']);
-                $rec['pk2_dev'] = $runningRp['pk2'] - ($grandTargetPerHari['pk2'] * $rec['day']);
-                $rec['enamel_dev'] = $runningRp['enamel'] - ($grandTargetPerHari['enamel'] * $rec['day']);
-                $rec['fl_dev'] = $runningRp['fl'] - ($grandTargetPerHari['fl'] * $rec['day']);
-                $rec['total_dev'] = $runningRp['total'] - ($grandTargetTotalPerHari * $rec['day']);
-
-                $rec['pf_running'] = $runningRp['pf'];
-                $rec['pk1_running'] = $runningRp['pk1'];
-                $rec['pk2_running'] = $runningRp['pk2'];
-                $rec['enamel_running'] = $runningRp['enamel'];
-                $rec['fl_running'] = $runningRp['fl'];
-                $rec['total_running'] = $runningRp['total'];
-            }
-            unset($rec);
+            $rowsByDay[$dayNum][] = $item;
+            $dayHasData[$dayNum][$cat] = true;
+            $catTotals[$cat]['qty'] += $item['qty'];
+            $catTotals[$cat]['rp'] += $item['rp'];
         }
-        unset($section);
+
+        $totalQtyAll = 0.0;
+        $totalRpAll = 0.0;
+        foreach (self::CATEGORIES as $cat) {
+            $totalQtyAll += $catTotals[$cat]['qty'];
+            $totalRpAll += $catTotals[$cat]['rp'];
+        }
+
+        $monthlyTarget = [];
+        foreach (self::CATEGORIES as $cat) {
+            $monthlyTarget[$cat] = $targetByCat !== null
+                ? (float) ($targetByCat[$cat] ?? 0)
+                : $catTotals[$cat]['rp'];
+        }
+        $monthlyTargetTotal = array_sum($monthlyTarget);
+
+        $targetPerHari = [];
+        foreach (self::CATEGORIES as $cat) {
+            $targetPerHari[$cat] = round($monthlyTarget[$cat] / $jumlahHariKerja);
+        }
+        $targetTotalPerHari = round($monthlyTargetTotal / $jumlahHariKerja);
+
+        $dailyRecords = $this->buildDailyRecords($rowsByDay, $dayNumbers, $weekByDay, $targetPerHari, $targetTotalPerHari);
+
+        $subtotalDev = [];
+        foreach (self::CATEGORIES as $cat) {
+            $subtotalDev[$cat] = $cat === 'pk1'
+                ? $monthlyTarget[$cat] - $totalRpAll
+                : $monthlyTarget[$cat] - $catTotals[$cat]['rp'];
+        }
+        $totalDev = $monthlyTargetTotal - $totalRpAll;
+
+        foreach (self::CATEGORIES as $cat) {
+            $catTotals[$cat]['dev'] = $subtotalDev[$cat];
+        }
+
+        $weeklyAnalysis = $this->buildWeeklyAnalysis($dailyRecords, $monthlyTarget, $monthlyTargetTotal);
+        $dailyAnalysis = $this->buildDailyAnalysis($dailyRecords, $dayHasData, count($dayNumbers));
+
+        return [
+            'sales_name' => $salesName,
+            'cat_totals' => $catTotals,
+            'total_qty_all' => $totalQtyAll,
+            'total_rp_all' => $totalRpAll,
+            'monthly_target' => $monthlyTarget,
+            'monthly_target_total' => $monthlyTargetTotal,
+            'target_per_hari' => $targetPerHari,
+            'target_total_per_hari' => $targetTotalPerHari,
+            'daily_records' => $dailyRecords,
+            'day_has_data' => $dayHasData,
+            'weekly_analysis' => $weeklyAnalysis,
+            'daily_analysis' => $dailyAnalysis,
+            'total_dev' => $totalDev,
+        ];
+    }
+
+    private function buildDailyRecords(array $rowsByDay, array $dayNumbers, array $weekByDay, array $targetPerHari, float $targetTotalPerHari): array
+    {
+        $running = array_combine(self::CATEGORIES, array_fill(0, count(self::CATEGORIES), 0.0));
+        $running['total'] = 0.0;
+        $rowIndex = 0;
+        $dailyRecords = [];
+
+        foreach ($dayNumbers as $dayNum) {
+            $rowIndex++;
+
+            $dayCat = $this->emptyCatTotals();
+            foreach (($rowsByDay[$dayNum] ?? []) as $item) {
+                $dayCat[$item['cat']]['qty'] += $item['qty'];
+                $dayCat[$item['cat']]['rp'] += $item['rp'];
+                $dayCat[$item['cat']]['gross'] += $item['gross'];
+            }
+
+            $dayTotalQty = 0.0;
+            $dayTotalRp = 0.0;
+            foreach (self::CATEGORIES as $cat) {
+                $dayTotalQty += $dayCat[$cat]['qty'];
+                $dayTotalRp += $dayCat[$cat]['rp'];
+                $running[$cat] += $dayCat[$cat]['rp'];
+            }
+            $running['total'] += $dayTotalRp;
+
+            $record = [
+                'day' => $dayNum,
+                'week' => $weekByDay[$dayNum] ?? null,
+                'total_qty' => $dayTotalQty,
+                'total_rp' => $dayTotalRp,
+                'total_running' => $running['total'],
+                'total_dev' => $running['total'] - ($targetTotalPerHari * $rowIndex),
+            ];
+
+            foreach (self::CATEGORIES as $cat) {
+                $record[$cat] = $dayCat[$cat];
+                $record[$cat.'_running'] = $running[$cat];
+                $record[$cat.'_dev'] = $running[$cat] - ($targetPerHari[$cat] * $rowIndex);
+            }
+
+            $dailyRecords[] = $record;
+        }
+
+        return $dailyRecords;
+    }
+
+    private function buildWeeklyAnalysis(array $dailyRecords, array $monthlyTarget, float $monthlyTargetTotal): array
+    {
+        $weeklyData = [];
+        for ($w = 1; $w <= 5; $w++) {
+            $weeklyData[$w] = array_combine(self::CATEGORIES, array_fill(0, count(self::CATEGORIES), 0.0));
+        }
+
+        foreach ($dailyRecords as $record) {
+            $week = $record['week'] ?? null;
+            if ($week === null || $week < 1 || $week > 5) {
+                continue;
+            }
+            foreach (self::CATEGORIES as $cat) {
+                $weeklyData[$week][$cat] += $record[$cat]['rp'];
+            }
+        }
+
+        $analysis = [];
+        foreach (self::CATEGORIES as $cat) {
+            $target = $monthlyTarget[$cat];
+            $row = ['category' => $cat, 'target' => $target, 'weeks' => []];
+            for ($w = 1; $w <= 5; $w++) {
+                $weekTotal = $weeklyData[$w][$cat];
+                $row['weeks'][$w] = [
+                    'penjualan' => $weekTotal,
+                    'pct' => $target > 0 ? ($weekTotal / $target * 100) : 0.0,
+                ];
+            }
+            $analysis[] = $row;
+        }
+
+        $totalRow = ['category' => 'total', 'target' => $monthlyTargetTotal, 'weeks' => []];
+        for ($w = 1; $w <= 5; $w++) {
+            $weekTotal = array_sum($weeklyData[$w]);
+            $totalRow['weeks'][$w] = [
+                'penjualan' => $weekTotal,
+                'pct' => $monthlyTargetTotal > 0 ? ($weekTotal / $monthlyTargetTotal * 100) : 0.0,
+            ];
+        }
+        $analysis[] = $totalRow;
+
+        return $analysis;
+    }
+
+    private function buildDailyAnalysis(array $dailyRecords, array $dayHasData, int $workingDayCount, bool $fromLineTotal = false): array
+    {
+        $analysis = [];
+        foreach (self::CATEGORIES as $cat) {
+            $total = 0.0;
+            $lineTotals = [];
+            $grosses = [];
+            foreach ($dailyRecords as $record) {
+                $total += $record[$cat]['rp'];
+                if (($dayHasData[$record['day']][$cat] ?? false)) {
+                    $lineTotals[] = $record[$cat]['rp'];
+                    $grosses[] = $record[$cat]['gross'];
+                }
+            }
+
+            if ($fromLineTotal) {
+                $terendah = $lineTotals !== [] ? min($lineTotals) : 0.0;
+                $tertinggi = $lineTotals !== [] ? max($lineTotals) : 0.0;
+            } else {
+                $terendah = $grosses !== [] ? min($grosses) : 0.0;
+                $tertinggi = $cat === 'pf'
+                    ? ($lineTotals !== [] ? max($lineTotals) : 0.0)
+                    : ($grosses !== [] ? max($grosses) : 0.0);
+            }
+
+            $analysis[] = [
+                'category' => $cat,
+                'rata_rata' => $workingDayCount > 0 ? $total / $workingDayCount : 0.0,
+                'terendah' => $terendah,
+                'tertinggi' => $tertinggi,
+            ];
+        }
+
+        return $analysis;
+    }
+
+    private function buildGrandTotalSection(array $sections, array $dayNumbers, int $jumlahHariKerja, array $monthlyTargetGrand): array
+    {
+        $catTotals = $this->emptyCatTotals();
+        $dayHasData = [];
+
+        foreach ($sections as $section) {
+            foreach (self::CATEGORIES as $cat) {
+                $catTotals[$cat]['qty'] += $section['cat_totals'][$cat]['qty'];
+                $catTotals[$cat]['rp'] += $section['cat_totals'][$cat]['rp'];
+            }
+            foreach ($section['day_has_data'] as $day => $cats) {
+                foreach (array_keys($cats) as $cat) {
+                    $dayHasData[(int) $day][$cat] = true;
+                }
+            }
+        }
+
+        $aggregatedDaily = [];
+        foreach ($sections as $section) {
+            foreach ($section['daily_records'] as $record) {
+                $day = $record['day'];
+                if (! isset($aggregatedDaily[$day])) {
+                    $aggregatedDaily[$day] = $this->emptyCatTotals();
+                    $aggregatedDaily[$day]['week'] = $record['week'] ?? null;
+                }
+                foreach (self::CATEGORIES as $cat) {
+                    $aggregatedDaily[$day][$cat]['qty'] += $record[$cat]['qty'];
+                    $aggregatedDaily[$day][$cat]['rp'] += $record[$cat]['rp'];
+                    $aggregatedDaily[$day][$cat]['gross'] += $record[$cat]['gross'];
+                }
+            }
+        }
+
+        $totalQtyAll = 0.0;
+        $totalRpAll = 0.0;
+        foreach (self::CATEGORIES as $cat) {
+            $totalQtyAll += $catTotals[$cat]['qty'];
+            $totalRpAll += $catTotals[$cat]['rp'];
+        }
+
+        $monthlyTargetTotal = array_sum($monthlyTargetGrand);
+        $targetPerHari = [];
+        foreach (self::CATEGORIES as $cat) {
+            $targetPerHari[$cat] = round($monthlyTargetGrand[$cat] / $jumlahHariKerja);
+        }
+        $targetTotalPerHari = round($monthlyTargetTotal / $jumlahHariKerja);
+
+        $rowsByDay = [];
+        $weekByDay = [];
+        foreach ($aggregatedDaily as $day => $dayCat) {
+            $rowsByDay[$day] = [];
+            if (isset($dayCat['week'])) {
+                $weekByDay[$day] = $dayCat['week'];
+            }
+            foreach (self::CATEGORIES as $cat) {
+                $rowsByDay[$day][] = [
+                    'cat' => $cat,
+                    'qty' => $dayCat[$cat]['qty'],
+                    'rp' => $dayCat[$cat]['rp'],
+                    'gross' => $dayCat[$cat]['gross'],
+                ];
+            }
+        }
+
+        $dailyRecords = $this->buildDailyRecords($rowsByDay, $dayNumbers, $weekByDay, $targetPerHari, $targetTotalPerHari);
+
+        foreach (self::CATEGORIES as $cat) {
+            $catTotals[$cat]['dev'] = $monthlyTargetGrand[$cat] - $catTotals[$cat]['rp'];
+        }
+        $totalDev = $monthlyTargetTotal - $totalRpAll;
+
+        $weeklyAnalysis = $this->buildWeeklyAnalysis($dailyRecords, $monthlyTargetGrand, $monthlyTargetTotal);
+        $dailyAnalysis = $this->buildDailyAnalysis($dailyRecords, $dayHasData, count($dayNumbers), true);
+
+        return [
+            'sales_name' => 'Grand Total :',
+            'cat_totals' => $catTotals,
+            'total_qty_all' => $totalQtyAll,
+            'total_rp_all' => $totalRpAll,
+            'monthly_target' => $monthlyTargetGrand,
+            'monthly_target_total' => $monthlyTargetTotal,
+            'target_per_hari' => $targetPerHari,
+            'target_total_per_hari' => $targetTotalPerHari,
+            'daily_records' => $dailyRecords,
+            'weekly_analysis' => $weeklyAnalysis,
+            'daily_analysis' => $dailyAnalysis,
+            'total_dev' => $totalDev,
+            'is_grand_total' => true,
+        ];
     }
 
     private function countWorkingDays(?Carbon $startDate, ?Carbon $endDate): int
@@ -468,209 +672,5 @@ class PenjualanPerKategoriBarangBulananReportService
         }
 
         return $count;
-    }
-
-    private function getWeekNumber(int $day): int
-    {
-        if ($day <= 6) {
-            return 1;
-        }
-        if ($day <= 13) {
-            return 2;
-        }
-        if ($day <= 20) {
-            return 3;
-        }
-        if ($day <= 27) {
-            return 4;
-        }
-
-        return 5;
-    }
-
-    private function buildWeeklyAnalysis(array $dailyRecords, array $catTotals): array
-    {
-        $categories = ['enamel', 'fl', 'pf', 'pk1', 'pk2'];
-        $weeklyData = [];
-
-        for ($w = 1; $w <= 5; $w++) {
-            $weeklyData[$w] = array_combine($categories, array_fill(0, 5, 0.0));
-        }
-
-        foreach ($dailyRecords as $rec) {
-            $weekNum = $this->getWeekNumber((int) $rec['day']);
-            foreach ($categories as $cat) {
-                $weeklyData[$weekNum][$cat] += $rec[$cat]['rp'];
-            }
-        }
-
-        $analysis = [];
-        foreach ($categories as $cat) {
-            $catTotal = $catTotals[$cat]['rp'];
-            $row = ['category' => $cat, 'total' => $catTotal, 'weeks' => []];
-            for ($w = 1; $w <= 5; $w++) {
-                $weekTotal = $weeklyData[$w][$cat];
-                $pct = $catTotal > 0 ? ($weekTotal / $catTotal * 100) : 0;
-                $row['weeks'][$w] = ['penjualan' => $weekTotal, 'pct' => $pct];
-            }
-            $analysis[] = $row;
-        }
-
-        // Total row
-        $grandTotal = 0.0;
-        foreach ($categories as $cat) {
-            $grandTotal += $catTotals[$cat]['rp'];
-        }
-        $totalRow = ['category' => 'total', 'total' => $grandTotal, 'weeks' => []];
-        for ($w = 1; $w <= 5; $w++) {
-            $weekTotal = array_sum($weeklyData[$w]);
-            $pct = $grandTotal > 0 ? ($weekTotal / $grandTotal * 100) : 0;
-            $totalRow['weeks'][$w] = ['penjualan' => $weekTotal, 'pct' => $pct];
-        }
-        $analysis[] = $totalRow;
-
-        return $analysis;
-    }
-
-    private function buildDailyAnalysis(array $dailyRecords): array
-    {
-        $categories = ['enamel', 'fl', 'pf', 'pk1', 'pk2'];
-        $analysis = [];
-
-        foreach ($categories as $cat) {
-            $values = array_map(fn ($r) => $r[$cat]['rp'], $dailyRecords);
-            $nonZero = array_values(array_filter($values, fn ($v) => $v > 0));
-            $total = array_sum($values);
-            $count = count($values);
-
-            $analysis[] = [
-                'category' => $cat,
-                'rata_rata' => $count > 0 ? $total / $count : 0,
-                'terendah' => $nonZero !== [] ? min($nonZero) : 0,
-                'tertinggi' => $count > 0 ? max($values) : 0,
-            ];
-        }
-
-        // Total row
-        $totalValues = array_map(fn ($r) => $r['total_rp'], $dailyRecords);
-        $nonZeroTotal = array_values(array_filter($totalValues, fn ($v) => $v > 0));
-        $grandTotal = array_sum($totalValues);
-        $count = count($totalValues);
-
-        $analysis[] = [
-            'category' => 'total',
-            'rata_rata' => $count > 0 ? $grandTotal / $count : 0,
-            'terendah' => $nonZeroTotal !== [] ? min($nonZeroTotal) : 0,
-            'tertinggi' => $count > 0 ? max($totalValues) : 0,
-        ];
-
-        return $analysis;
-    }
-
-    private function buildGrandTotalSection(array $sections, int $jumlahHariKerja): array
-    {
-        $categories = ['enamel', 'fl', 'pf', 'pk1', 'pk2'];
-
-        $catTotals = [];
-        $targetPerHari = [];
-        foreach ($categories as $cat) {
-            $catTotals[$cat] = ['qty' => 0.0, 'rp' => 0.0];
-            $targetPerHari[$cat] = 0.0;
-        }
-
-        $aggregatedDaily = [];
-
-        foreach ($sections as $section) {
-            foreach ($categories as $cat) {
-                $catTotals[$cat]['qty'] += $section['cat_totals'][$cat]['qty'];
-                $catTotals[$cat]['rp'] += $section['cat_totals'][$cat]['rp'];
-            }
-            foreach ($section['daily_records'] as $rec) {
-                $day = $rec['day'];
-                if (! isset($aggregatedDaily[$day])) {
-                    $aggregatedDaily[$day] = [];
-                    foreach ($categories as $cat) {
-                        $aggregatedDaily[$day][$cat] = ['qty' => 0.0, 'rp' => 0.0];
-                    }
-                }
-                foreach ($categories as $cat) {
-                    $aggregatedDaily[$day][$cat]['qty'] += $rec[$cat]['qty'];
-                    $aggregatedDaily[$day][$cat]['rp'] += $rec[$cat]['rp'];
-                }
-            }
-        }
-
-        foreach ($categories as $cat) {
-            $targetPerHari[$cat] = $catTotals[$cat]['rp'] / $jumlahHariKerja;
-        }
-        $targetTotalPerHari = array_sum($targetPerHari);
-
-        ksort($aggregatedDaily);
-
-        $dailyRecords = [];
-        $runningRp = array_merge(array_combine($categories, array_fill(0, 5, 0.0)), ['total' => 0.0]);
-
-        foreach ($aggregatedDaily as $dayNum => $dayCat) {
-            foreach ($categories as $cat) {
-                $runningRp[$cat] += $dayCat[$cat]['rp'];
-            }
-
-            $dayTotalRp = 0.0;
-            $dayTotalQty = 0.0;
-            foreach ($categories as $cat) {
-                $dayTotalRp += $dayCat[$cat]['rp'];
-                $dayTotalQty += $dayCat[$cat]['qty'];
-            }
-            $runningRp['total'] += $dayTotalRp;
-
-            $lebihKurangPf = $runningRp['pf'] - ($targetPerHari['pf'] * $dayNum);
-            $lebihKurangPk1 = $runningRp['pk1'] - ($targetPerHari['pk1'] * $dayNum);
-            $lebihKurangPk2 = $runningRp['pk2'] - ($targetPerHari['pk2'] * $dayNum);
-            $lebihKurangEnamel = $runningRp['enamel'] - ($targetPerHari['enamel'] * $dayNum);
-            $lebihKurangFl = $runningRp['fl'] - ($targetPerHari['fl'] * $dayNum);
-            $lebihKurangTotal = $runningRp['total'] - ($targetTotalPerHari * $dayNum);
-
-            $dailyRecords[] = [
-                'day' => $dayNum,
-                'pf' => $dayCat['pf'],
-                'pf_running' => $runningRp['pf'],
-                'pf_dev' => $lebihKurangPf,
-                'pk1' => $dayCat['pk1'],
-                'pk1_running' => $runningRp['pk1'],
-                'pk1_dev' => $lebihKurangPk1,
-                'pk2' => $dayCat['pk2'],
-                'pk2_running' => $runningRp['pk2'],
-                'pk2_dev' => $lebihKurangPk2,
-                'enamel' => $dayCat['enamel'],
-                'enamel_running' => $runningRp['enamel'],
-                'enamel_dev' => $lebihKurangEnamel,
-                'fl' => $dayCat['fl'],
-                'fl_running' => $runningRp['fl'],
-                'fl_dev' => $lebihKurangFl,
-                'total_qty' => $dayTotalQty,
-                'total_rp' => $dayTotalRp,
-                'total_running' => $runningRp['total'],
-                'total_dev' => $lebihKurangTotal,
-            ];
-        }
-
-        $totalQtyAll = array_sum(array_map(fn ($d) => $d['total_qty'], $dailyRecords));
-        $totalRpAll = array_sum(array_map(fn ($d) => $d['total_rp'], $dailyRecords));
-
-        $weeklyAnalysis = $this->buildWeeklyAnalysis($dailyRecords, $catTotals);
-        $dailyAnalysis = $this->buildDailyAnalysis($dailyRecords);
-
-        return [
-            'sales_name' => 'Grand Total :',
-            'cat_totals' => $catTotals,
-            'total_qty_all' => $totalQtyAll,
-            'total_rp_all' => $totalRpAll,
-            'target_per_hari' => $targetPerHari,
-            'target_total_per_hari' => $targetTotalPerHari,
-            'daily_records' => $dailyRecords,
-            'weekly_analysis' => $weeklyAnalysis,
-            'daily_analysis' => $dailyAnalysis,
-            'is_grand_total' => true,
-        ];
     }
 }

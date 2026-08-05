@@ -35,9 +35,34 @@ Parameter field utama:
 - `xml_file`: file XML dari Ascend (contoh `Custom23.xml`).
 - `DB_CompanyName`: nama/kode perusahaan, contoh `RU`, `GSU`, atau `UC`.
 - `Sys_Username`: nama user print, contoh `Ridho`.
-- `StartDate`: tanggal awal periode (contoh `2026-06-01`).
-- `EndDate`: tanggal akhir periode (contoh `2026-06-30`).
-- `JumlahHariKerja`: jumlah hari kerja dalam sebulan (contoh `25`).
+- `StartDate`: tanggal awal periode (contoh `2026-07-01`).
+- `EndDate`: tanggal akhir periode (contoh `2026-07-31`).
+- `JumlahHariKerja`: jumlah hari kerja dalam sebulan (contoh `26`).
+- `Target`: JSON string berisi **target bulanan per kategori per salesperson** (opsional). Jika tidak dikirim, target memakai nilai aktual penjualan kategori masing-masing.
+
+### Parameter `Target`
+
+Diterima dua format (JSON string, opsional). Jika tidak dikirim, target memakai nilai aktual penjualan kategori masing-masing.
+
+**Format A — Map penuh per kategori (per `SP Name`):**
+
+Key kategori: `pf` (Plastik Furniture 1 & 2), `pk1` (Plastik Kabinet 1), `pk2` (Plastik Kabinet 2), `enamel`, `fl`. Contoh:
+
+```text
+Target={"FENDY":{"pf":0,"pk1":2076540375,"pk2":1118137125,"enamel":410744250,"fl":45638250},"GSU":{"pf":0,"pk1":0,"pk2":0,"enamel":0,"fl":0}}
+```
+
+**Format B — Cukup quota `pk1` per SP (disarankan):**
+
+Cukup kirim satu angka `pk1` per SP; kategori lain dihitung otomatis oleh service mengikuti pola PDF referensi:
+
+```text
+Target={"FENDY":2076540375,"GSU":0}
+```
+
+Rumus yang dipakai: `pk2 = round(pk1 × 7/13)`, `enamel = round(pk1 × 18/91)`, `fl = round(pk1 × 2/91)`, `pf = 0`.
+
+Target per hari dihitung dari `round(target bulanan / JumlahHariKerja)`. Kolom **Lebih (Kurang)** harian memakai akumulasi penjualan dikurangi `target per hari × urutan baris` (urutan hari non-Minggu).
 
 Input XML alternatif yang tetap diterima:
 
@@ -55,9 +80,9 @@ Contoh `multipart/form-data`:
 ```text
 DB_CompanyName=GSU
 Sys_Username=Ridho
-StartDate=2026-06-01
-EndDate=2026-06-30
-JumlahHariKerja=25
+StartDate=2026-07-01
+EndDate=2026-07-31
+JumlahHariKerja=26
 xml_file=Custom23.xml
 ```
 
@@ -90,7 +115,7 @@ Laporan dikelompokkan berdasarkan **Salesperson** (`SP Name`) dengan rincian:
 
 1. **Salesperson Header** — Nama salesperson (bold italic, warna `#9c111d`)
 2. **Summary Rows** — Dua baris di atas tabel:
-   - Baris 1: Total penjualan Rp per kategori dan kolom Total
+   - Baris 1: Target bulanan Rp per kategori dan kolom Total (dari parameter `Target`)
    - Baris 2: Target per hari per kategori dan kolom Total
 3. **Daily Breakdown Table** — Per baris tanggal (Tgl), dengan 6 grup kolom:
    - Plastik Furniture 1 & 2 (Qty, Rp, Lebih (Kurang))

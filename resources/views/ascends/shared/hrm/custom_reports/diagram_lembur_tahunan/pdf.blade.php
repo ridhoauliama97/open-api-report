@@ -164,13 +164,7 @@
         $chartHeight = $chartBottom - $chartTop;
         $barWidth = 30;
 
-        $calcChartWidth = static function (array $chartData) use (
-            $barWidth,
-            $barGap,
-            $groupGap,
-            $marginLeft,
-            $marginRight,
-        ): float {
+        $calcChartWidth = static function (array $chartData) use ($barWidth, $barGap, $groupGap, $marginLeft, $marginRight, ): float {
             if ($chartData === []) {
                 return 0;
             }
