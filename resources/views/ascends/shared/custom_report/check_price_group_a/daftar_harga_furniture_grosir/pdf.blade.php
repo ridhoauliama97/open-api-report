@@ -16,45 +16,38 @@
 
         @page {
             margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 10px;
+            font-size: 9px;
             line-height: 1.15;
             color: #000;
         }
 
-        .report-companyTitle {
-            text-align: center;
-            margin: 0 0 4px 0;
-            font-size: 18px;
+        .page-title {
+            width: 135px;
+            text-align: left;
+            font-size: 21px;
             font-weight: bold;
+            background: rgb(83, 143, 231);
+            border: 1.5px solid #000;
+            border-radius: 6px;
+            padding: 3px 14px;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
         }
 
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
+        .price-code {
+            text-align: right;
+            font-size: 9px;
+            margin: 0 0 8px 0;
         }
 
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .category-header {
-            font-size: 11px;
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            margin-top: 12px;
-            margin-bottom: 3px;
+        .group-separator {
+            height: 4mm;
+            background: #000;
         }
 
         .data-table {
@@ -63,7 +56,6 @@
             table-layout: fixed;
             page-break-inside: auto;
             border-spacing: 0;
-            margin-bottom: 8px;
             border-bottom: 1px solid #000;
         }
 
@@ -85,8 +77,9 @@
             background: transparent;
         }
 
-        .data-table td {
-            padding: 1px 4px;
+        .brand-logo {
+            width: 110px;
+            height: auto;
         }
 
         .center {
@@ -120,57 +113,72 @@
 <body>
     @php
         $items = $reportData['items'] ?? [];
-        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
-        $headerTitle = trim((string) ($reportData['title'] ?? 'DAFTAR HARGA FURNITURE'));
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum')) {
+            function fmtNum($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
+
+        $groupLogos = [
+            'MERONA' => public_path('storage/images/Merona.png'),
+            'MO.RE' => public_path('storage/images/More.png'),
+            'MODELUX' => public_path('storage/images/Modelux.png'),
+            'GRANDE' => public_path('storage/images/Grande.png'),
+            '' => public_path('storage/images/Panen Hana.png'),
+        ];
     @endphp
 
-    @if ($headerCompany !== '')
-        <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
-    @endif
-    <h1 class="report-title">FURNITURE</h1>
-    <p class="report-subtitle">04/PRICELIST-PANEN/IX/25</p>
+    <h1 class="page-title">FURNITURE</h1>
+    <p class="price-code">04/PRICELIST-PANEN/IX/25</p>
 
     @if (count($items) > 0)
         @php
-            $currentGroup = null;
+            $currentGroup = '';
             $rowNo = 0;
         @endphp
 
         @foreach ($items as $item)
             @if ($currentGroup !== $item['group'])
-                @if ($currentGroup !== null)
+                @if ($currentGroup !== '')
                     </tbody>
                     </table>
+                    <div class="group-separator"></div>
                 @endif
                 @php
                     $currentGroup = $item['group'];
                     $rowNo = 0;
+
+                    if (preg_match('/^(.*?)\s*\(([^)]+)\)/', $item['ket'], $m)) {
+                        $ketLabel = trim($m[1]);
+                        $ketUnit = trim($m[2]);
+                    } else {
+                        $ketLabel = $item['ket'];
+                        $ketUnit = '';
+                    }
+                    $logo = $groupLogos[$currentGroup] ?? null;
                 @endphp
-                @if ($currentGroup !== '')
-                    <div class="category-header">{{ $currentGroup }}</div>
-                @endif
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th style="width: 5%;">No</th>
-                            <th style="width: 50%;">Nama Barang</th>
-                            <th style="width: 15%;">{{ $item['ket'] }}</th>
-                            <th style="width: 15%;">Harga<br>Konsumen</th>
-                            <th style="width: 15%;">Grosir<br>Diskon 9%</th>
+                            <th style="width: 45%;">
+                                @if ($logo)
+                                    <img src="{{ $logo }}" class="brand-logo" alt="">
+                                @endif
+                            </th>
+                            <th style="width: 10%;">{{ $ketLabel }} <br> ({{ $ketUnit }})</th>
+                            <th style="width: 20%;">Harga Konsumen</th>
+                            <th style="width: 20%;">Grosir<br>Diskon 9%</th>
                         </tr>
                     </thead>
                     <tbody>
             @endif
-
                     @php $rowNo++; @endphp
                     <tr class="{{ $rowNo % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td class="center">{{ $rowNo }}</td>
@@ -182,12 +190,13 @@
         @endforeach
             </tbody>
         </table>
+        <div class="group-separator"></div>
     @else
         <table class="data-table">
             <tbody>
                 <tr>
                     <td class="center" style="font-style: italic; padding: 10px;">
-                        Tidak ada data daftar harga furniture grosir.
+                        Tidak ada data daftar harga furniture.
                     </td>
                 </tr>
             </tbody>
@@ -199,12 +208,12 @@
             <li>Daftar harga berlaku per Tgl 1 Mei 2026</li>
             <li>Franco Medan</li>
             <li>Harga sewaktu waktu bisa berubah / tanpa pemberitahuan terlebih dahulu</li>
-            <li>Dengan berlakunya Price List ini maka pricelist sebelumnya dinyatakan TIDAK BERLAKU</li>
-            <li>harga berdasarkan Level Toko</li>
+            <li>Dengan berlakunya Price List ini maka pricelist sebelumnya dinyatakan
+                <strong style="text-decoration: underline;">TIDAK BERLAKU</strong>
+            </li>
+            <li>Harga berdasarkan Level Toko</li>
         </ol>
     </div>
-
-    @include('ascends.shared.partials.report-footer')
 </body>
 
 </html>

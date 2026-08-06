@@ -16,36 +16,32 @@
 
         @page {
             margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: 10px;
+            font-size: 9px;
             line-height: 1.15;
             color: #000;
         }
 
-        .report-companyTitle {
-            text-align: center;
-            margin: 0 0 4px 0;
-            font-size: 18px;
+        .page-title {
+            width: 96px;
+            text-align: left;
+            font-size: 21px;
             font-weight: bold;
+            background: rgb(83, 143, 231);
+            border: 1.5px solid #000;
+            border-radius: 6px;
+            padding: 3px 14px;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
         }
 
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
+        .group-separator {
+            height: 4mm;
+            background: #000;
         }
 
         .data-table {
@@ -54,7 +50,6 @@
             table-layout: fixed;
             page-break-inside: auto;
             border-spacing: 0;
-            margin-bottom: 8px;
             border-bottom: 1px solid #000;
         }
 
@@ -76,8 +71,9 @@
             background: transparent;
         }
 
-        .data-table td {
-            padding: 1px 4px;
+        .brand-logo {
+            width: 110px;
+            height: auto;
         }
 
         .center {
@@ -101,7 +97,7 @@
         }
 
         .notes-section {
-            margin-top: 15px;
+            margin-top: 5px;
             font-size: 10px;
             line-height: 1.3;
         }
@@ -115,54 +111,87 @@
 <body>
     @php
         $items = $reportData['items'] ?? [];
-        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
+        $effectiveDate = $reportData['effective_date'] ?? '...';
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum')) {
+            function fmtNum($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
+
+        $groupLogos = [
+            'Sekar1' => public_path('storage/images/Sekar.png'),
+        ];
     @endphp
 
-    @if ($headerCompany !== '')
-        <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
-    @endif
-    <h1 class="report-title">ENAMEL</h1>
-    <p class="report-subtitle">Harga Akun Spesial</p>
+    <h1 class="page-title">ENAMEL</h1>
 
     @if (count($items) > 0)
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 50%;">&nbsp;</th>
-                    <th style="width: 12%;">Isi/Dus</th>
-                    <th style="width: 17%;">Harga<br>Konsumen</th>
-                    <th style="width: 16%;">AK Spesial<br>9 %</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($items as $idx => $item)
-                    @php $rowNo = $idx + 1; @endphp
+        @php
+            $currentGroup = '';
+            $rowNo = 0;
+        @endphp
+
+        @foreach ($items as $item)
+            @if ($currentGroup !== $item['group'])
+                @if ($currentGroup !== '')
+                    </tbody>
+                    </table>
+                    <div class="group-separator"></div>
+                @endif
+                @php
+                    $currentGroup = $item['group'];
+                    $rowNo = 0;
+
+                    $rawKet = $item['ket'] ?? 'Isi/Dus (Lusin)';
+                    if (preg_match('/^(.*?)\s*\(([^)]+)\)/', $rawKet, $m)) {
+                        $ketLabel = trim($m[1]);
+                        $ketUnit = trim($m[2]);
+                    } else {
+                        $ketLabel = $rawKet;
+                        $ketUnit = '';
+                    }
+                    $logo = $groupLogos[$currentGroup] ?? null;
+                @endphp
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 45%;">
+                                @if ($logo)
+                                    <img src="{{ $logo }}" class="brand-logo" alt="">
+                                @endif
+                            </th>
+                            <th style="width: 10%;">{{ $ketLabel }} <br> ({{ $ketUnit }})</th>
+                            <th style="width: 20%;">Harga Konsumen</th>
+                            <th style="width: 20%;">Akun Spesial<br>Diskon 9%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            @endif
+                    @php $rowNo++; @endphp
                     <tr class="{{ $rowNo % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td class="center nowrap">{{ $rowNo }}{{ ($item['bnt'] ?? 0) === 1 ? '*' : '' }}</td>
                         <td>{{ $item['description'] }}</td>
-                        <td class="center">{{ number_format((float) ($item['per_dus'] ?? 0), 0, '.', ',') }}</td>
-                        <td class="number">{{ fmtNum($item['harga_konsumen'] ?? 0) }}</td>
-                        <td class="number">{{ fmtNum($item['akun_spesial'] ?? 0) }}</td>
+                        <td class="center">{{ rtrim(rtrim(number_format($item['per_dus'], 2, '.', ''), '0'), '.') }}</td>
+                        <td class="number">{{ fmtNum($item['harga_konsumen']) }}</td>
+                        <td class="number">{{ fmtNum($item['akun_spesial']) }}</td>
                     </tr>
-                @endforeach
+        @endforeach
             </tbody>
         </table>
+        {{-- <div class="group-separator"></div> --}}
     @else
         <table class="data-table">
             <tbody>
                 <tr>
                     <td class="center" style="font-style: italic; padding: 10px;">
-                        Tidak ada data daftar harga enamel akun spesial.
+                        Tidak ada data daftar harga enamel.
                     </td>
                 </tr>
             </tbody>
@@ -171,16 +200,16 @@
 
     <div class="notes-section">
         <ol>
-            <li>Daftar harga berlaku per Tgl 6 April 2026</li>
+            <li>Daftar harga berlaku per Tgl {{ $effectiveDate }}</li>
             <li>Franco Medan</li>
             <li>Harga sewaktu waktu bisa berubah / tanpa pemberitahuan terlebih dahulu</li>
-            <li>Dengan berlaku nya Price List ini maka Price List sebelumnya tidak berlaku lagi</li>
+            <li>Dengan berlakunya Price List ini maka pricelist sebelumnya dinyatakan
+                <strong style="text-decoration: underline;">TIDAK BERLAKU</strong>
+            </li>
             <li>Harga berdasarkan Level Toko</li>
             <li>Produk GSU tidak bisa diretur (tanda * di nomor)</li>
         </ol>
     </div>
-
-    @include('ascends.shared.partials.report-footer')
 </body>
 
 </html>

@@ -167,6 +167,7 @@ class DaftarHargaEnamelAllReportService
                     'group' => $group,
                     'description' => $desc,
                     'per_dus' => $perDus,
+                    'ket' => 'Isi/Dus (Lusin)',
                     'bnt' => $bnt,
                     'harga_konsumen' => 0.0,
                     'retail' => 0.0,

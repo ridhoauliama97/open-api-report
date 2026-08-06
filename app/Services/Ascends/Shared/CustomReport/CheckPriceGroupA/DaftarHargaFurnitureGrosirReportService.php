@@ -19,6 +19,8 @@ class DaftarHargaFurnitureGrosirReportService
 
     private const AKUN_SPECIAL_LEVEL = '04. Harga Akun Special';
 
+    private const GROSIR_LEVEL = '03. Harga Grosir';
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel, array $filters = []): array
     {
         $rows = $this->parseRows($xmlContents, $sourceLabel);
@@ -87,6 +89,19 @@ class DaftarHargaFurnitureGrosirReportService
     {
         $upper = strtoupper($priceGroupName);
 
+        // HANA / RAK SUSUN (Unnamed group at the bottom)
+        if (
+            str_contains($upper, '3101') ||
+            str_contains($upper, '3102') ||
+            str_contains($upper, '3103') ||
+            str_contains($upper, '3104') ||
+            str_contains($upper, '3105') ||
+            str_contains($upper, '2204')
+        ) {
+            return '';
+        }
+
+        // MERONA
         if (
             str_contains($upper, '2401') ||
             str_contains($upper, '2402') ||
@@ -218,6 +233,7 @@ class DaftarHargaFurnitureGrosirReportService
                     'ket' => $this->determineKet($group),
                     'per_dus' => 0.0,
                     'harga_konsumen' => 0.0,
+                    'grosir_diskon_9' => null,
                     'akun_spesial' => null,
                 ];
             }
@@ -234,6 +250,11 @@ class DaftarHargaFurnitureGrosirReportService
                 $afterDisc = (float) ($row['PriceAfterDisc'] ?? 0);
                 if ($afterDisc > (float) ($groupedItems[$key]['akun_spesial'] ?? 0.0)) {
                     $groupedItems[$key]['akun_spesial'] = $afterDisc;
+                }
+            } elseif (str_starts_with($priceLevel, self::GROSIR_LEVEL)) {
+                $afterDisc = (float) ($row['PriceAfterDisc'] ?? 0);
+                if ($afterDisc > (float) ($groupedItems[$key]['grosir_diskon_9'] ?? 0.0)) {
+                    $groupedItems[$key]['grosir_diskon_9'] = $afterDisc;
                 }
             }
         }

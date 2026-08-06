@@ -3,38 +3,50 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tests\TestCase;
 
-#[RunTestsInSeparateProcesses]
 class DaftarHargaEnamelSemiGrosirReportFeatureTest extends TestCase
 {
-    public function test_daftar_harga_enamel_semi_grosir_pdf_endpoint_returns_pdf(): void
+    public function test_daftar_harga_enamel_semi_grosir_pdf_download_works_without_db_company_name(): void
     {
         $user = User::factory()->make(['id' => 1]);
         $token = $this->issueJwtForUser($user);
 
-        $xmlPath = 'C:\\Users\\ridho\\AppData\\Local\\Temp\\Custom2084.xml';
-        if (! file_exists($xmlPath)) {
-            $this->markTestSkipped('Custom2084.xml not found.');
-        }
-
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->post('/api/internal/ascends/shared/custom-report/check-price-group-a/daftar-harga-enamel-semi-grosir/pdf', [
-            'DB_CompanyName' => 'GSU',
             'Sys_Username' => 'Ridho',
-            'xml_file' => new UploadedFile(
-                $xmlPath,
-                'Custom2084.xml',
-                'text/xml',
-                null,
-                true
-            ),
+            'xml' => $this->sampleXml(),
         ]);
 
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/pdf');
+    }
+
+    private function sampleXml(): string
+    {
+        $rows = [
+            $this->table('ENAMEL', 'SEKAR PIRING SOUP', '12', '1', '01. Harga Retail', '50000', '48500'),
+            $this->table('ENAMEL', 'SEKAR PIRING SOUP', '12', '1', '02. Harga Semi Grosir', '50000', '47500'),
+            $this->table('ENAMEL', 'BASKOM DALAM 24 CM', '6', '1', '01. Harga Retail', '50000', '48500'),
+            $this->table('ENAMEL', 'BASKOM DALAM 24 CM', '6', '1', '02. Harga Semi Grosir', '50000', '47500'),
+        ];
+
+        return '<NewDataSet>'.implode('', $rows).'</NewDataSet>';
+    }
+
+    private function table(string $family, string $group, string $perDus, string $conversion, string $priceLevel, string $price, string $afterDisc): string
+    {
+        return '<Table>'
+            ."<FamilyName>{$family}</FamilyName>"
+            ."<PriceGroupName>{$group}</PriceGroupName>"
+            ."<PriceGroupDescription>{$group}</PriceGroupDescription>"
+            ."<PerDus>{$perDus}</PerDus>"
+            ."<Conversion>{$conversion}</Conversion>"
+            ."<PriceLevelName>{$priceLevel}</PriceLevelName>"
+            ."<Price>{$price}</Price>"
+            ."<PriceBeforeDisc>{$price}</PriceBeforeDisc>"
+            ."<PriceAfterDisc>{$afterDisc}</PriceAfterDisc>"
+            .'</Table>';
     }
 }

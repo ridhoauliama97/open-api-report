@@ -16,7 +16,6 @@
 
         @page {
             margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
         }
 
         body {
@@ -27,34 +26,28 @@
             color: #000;
         }
 
-        .report-companyTitle {
-            text-align: center;
-            margin: 0 0 4px 0;
-            font-size: 18px;
+        .page-title {
+            width: 135px;
+            text-align: left;
+            font-size: 21px;
             font-weight: bold;
+            background: rgb(83, 143, 231);
+            border: 1.5px solid #000;
+            border-radius: 6px;
+            padding: 3px 14px;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
         }
 
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
+        .price-code {
+            text-align: right;
+            font-size: 9px;
+            margin: 0 0 8px 0;
         }
 
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 15px 0;
-            font-size: 11px;
-            color: #636466;
-        }
-
-        .category-header {
-            font-size: 11px;
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            margin-top: 10px;
-            margin-bottom: 2px;
+        .group-separator {
+            height: 4mm;
+            background: #000;
         }
 
         .data-table {
@@ -63,7 +56,6 @@
             table-layout: fixed;
             page-break-inside: auto;
             border-spacing: 0;
-            margin-bottom: 8px;
             border-bottom: 1px solid #000;
         }
 
@@ -78,16 +70,16 @@
 
         .data-table th {
             font-weight: bold;
-            font-size: 8px;
+            font-size: 9px;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
             text-align: center;
             background: transparent;
         }
 
-        .data-table td {
-            padding: 1px 4px;
-            font-size: 9px;
+        .brand-logo {
+            width: 110px;
+            height: auto;
         }
 
         .center {
@@ -107,7 +99,7 @@
         }
 
         .notes-section {
-            margin-top: 12px;
+            margin-top: 15px;
             font-size: 10px;
             line-height: 1.3;
         }
@@ -121,39 +113,50 @@
 <body>
     @php
         $groups = $reportData['groups'] ?? [];
-        $headerCompany = trim((string) ($company ?? ($reportData['company'] ?? '')));
-        $headerTitle = trim((string) ($reportData['title'] ?? 'DAFTAR HARGA FURNITURE'));
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum')) {
+            function fmtNum($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
+
+        $groupLogos = [
+            'MERONA' => public_path('storage/images/Merona.png'),
+            'MERONA 2' => public_path('storage/images/Merona.png'),
+            'MORE 1' => public_path('storage/images/More.png'),
+            'MORE 2' => public_path('storage/images/More.png'),
+            'MODELUX' => public_path('storage/images/Modelux.png'),
+            'GRANDE' => public_path('storage/images/Grande.png'),
+        ];
     @endphp
 
-    @if ($headerCompany !== '')
-        <h1 class="report-companyTitle">{{ $headerCompany }}</h1>
-    @endif
-    <h1 class="report-title">FURNITURE</h1>
-    <p class="report-subtitle"></p>
+    <h1 class="page-title">FURNITURE</h1>
+    <p class="price-code">04/PRICELIST-PANEN/IX/25</p>
 
     @if (count($groups) > 0)
+        @php $gIdx = 0; @endphp
         @foreach ($groups as $group)
             @php
+                $gIdx++;
                 $qty = $group['qty_labels'] ?? ['', '', '', ''];
                 $disc = $group['disc_labels'] ?? ['', '', '', ''];
                 $has4 = $group['has_4_tiers'] ?? false;
+                $logo = $groupLogos[$group['name']] ?? null;
             @endphp
-
-            <div class="category-header">{{ $group['name'] }}</div>
             <table class="data-table">
                 <thead>
                     <tr>
                         <th style="width: 5%;">No</th>
-                        <th style="width: @if($has4) 35% @else 40% @endif;">Nama Barang</th>
+                        <th style="width: @if($has4) 35% @else 40% @endif;">
+                            @if ($logo)
+                                <img src="{{ $logo }}" class="brand-logo" alt="">
+                            @endif
+                        </th>
                         <th style="width: 15%;">{{ $qty[0] !== '' ? $qty[0] : 'Qty 1' }}<br>{{ $disc[0] }}</th>
                         <th style="width: 15%;">{{ $qty[1] !== '' ? $qty[1] : 'Qty 2' }}<br>{{ $disc[1] }}</th>
                         <th style="width: 15%;">{{ $qty[2] !== '' ? $qty[2] : 'Qty 3' }}<br>{{ $disc[2] }}</th>
@@ -181,7 +184,11 @@
                     @endforeach
                 </tbody>
             </table>
+            @if ($gIdx < count($groups))
+                <div class="group-separator"></div>
+            @endif
         @endforeach
+        <div class="group-separator"></div>
     @else
         <table class="data-table">
             <tbody>
@@ -199,12 +206,12 @@
             <li>Daftar harga berlaku per Tgl 1 Mei 2026</li>
             <li>Franco Medan</li>
             <li>Harga sewaktu waktu bisa berubah / tanpa pemberitahuan terlebih dahulu</li>
-            <li>Dengan berlakunya Price List ini maka pricelist sebelumnya dinyatakan TIDAK BERLAKU</li>
-            <li>harga berdasarkan Level Toko</li>
+            <li>Dengan berlakunya Price List ini maka pricelist sebelumnya dinyatakan
+                <strong style="text-decoration: underline;">TIDAK BERLAKU</strong>
+            </li>
+            <li>Harga berdasarkan Level Toko</li>
         </ol>
     </div>
-
-    @include('ascends.shared.partials.report-footer')
 </body>
 
 </html>

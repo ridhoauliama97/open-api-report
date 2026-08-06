@@ -1428,20 +1428,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1450,10 +1441,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_all.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1462,8 +1450,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 8,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Enamel' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Enamel.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1484,20 +1471,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1506,10 +1484,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_semi_grosir.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1518,8 +1493,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Enamel Semi Grosir' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Enamel Semi Grosir.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1540,20 +1514,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1562,10 +1527,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_retail.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1574,8 +1536,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Enamel Retail' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Enamel Retail.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1596,20 +1557,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1618,10 +1570,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_grosir.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1630,8 +1579,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Enamel Grosir' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Enamel Grosir.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1652,20 +1600,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1674,10 +1613,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_enamel_akun_spesial.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1686,8 +1622,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Enamel Akun Spesial' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Enamel Akun Spesial.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1708,20 +1643,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1730,10 +1656,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_semi_grosir.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1742,8 +1665,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Furniture Semi Grosir' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Furniture Semi Grosir.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1803,20 +1725,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1825,10 +1738,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_grosir.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1837,8 +1747,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Furniture' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Furniture Grosir.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1859,20 +1768,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1881,10 +1781,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_akun_spesial.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1893,8 +1790,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Furniture Akun Spesial' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Furniture Akun Spesial.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1913,22 +1809,13 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('File XML (xml_file) wajib dikirim.');
             }
 
-            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
-
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+$sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1937,10 +1824,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_retail.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -1949,8 +1833,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 5,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Furniture Retail' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Furniture Retail.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
@@ -1971,20 +1854,11 @@ class AscendXmlTestController extends Controller
 
             $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
-
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
                 $sourceLabel,
                 [
-                    'company' => $company,
                     'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
-                    'DB_CompanyName' => $company,
                 ],
             );
 
@@ -1993,10 +1867,7 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.check_price_group_a.daftar_harga_furniture_sales_project.pdf', [
-            'company' => $companyShort,
             'reportData' => $reportData,
             'generatedAt' => now(),
             'pdf_format' => 'A4',
@@ -2005,8 +1876,7 @@ class AscendXmlTestController extends Controller
             'pdf_column_count' => 6,
         ]);
 
-        $companySuffix = $companyShort !== '' ? ' ' . $companyShort : '';
-        $filename = 'Daftar Harga Furniture Sales Project' . $companySuffix . '.pdf';
+        $filename = 'Daftar Harga Furniture Sales Project.pdf';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
