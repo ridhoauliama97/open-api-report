@@ -85,14 +85,13 @@ class DaftarHargaFurnitureAllReportService
     {
         $upper = strtoupper($priceGroupName);
 
-        // HANA / RAK SUSUN (Unnamed group at the bottom)
+        // HANA (Unnamed group at the bottom)
         if (
             str_contains($upper, '3101') ||
             str_contains($upper, '3102') ||
             str_contains($upper, '3103') ||
             str_contains($upper, '3104') ||
-            str_contains($upper, '3105') ||
-            str_contains($upper, '2204')
+            str_contains($upper, '3105')
         ) {
             return '';
         }
@@ -118,7 +117,8 @@ class DaftarHargaFurnitureAllReportService
             str_contains($upper, '2814') ||
             str_contains($upper, '2816') ||
             str_contains($upper, '2832') ||
-            str_contains($upper, '2870')
+            str_contains($upper, '2870') ||
+            str_contains($upper, '2204')
         ) {
             return 'MO.RE';
         }
@@ -236,34 +236,55 @@ class DaftarHargaFurnitureAllReportService
                     'gr_urut' => $this->determineGRUrut($group),
                     'urut' => $this->determineUrut($desc),
                     'description' => $desc,
-                    'per_dus' => (float) ($row['PerDus'] ?? 1),
+                    'per_dus' => 0.0,
                     'ket' => $this->determineKet($group),
                     'base_price' => 0.0,
                     'retail_disc_5' => 0.0,
                     'semi_grosir' => 0.0,
                     'grosir' => 0.0,
                     'akun_spesial' => 0.0,
+                    'variants' => [],
                 ];
             }
 
-            $priceLevel = trim((string) ($row['PriceLevelName'] ?? ''));
-            $price = (float) ($row['Price'] ?? 0);
-            $afterDisc = (float) ($row['PriceAfterDisc'] ?? 0);
+            $groupedItems[$key]['variants'][] = [
+                'price' => (float) ($row['Price'] ?? 0),
+                'per_dus' => (float) ($row['PerDus'] ?? 1),
+                'level' => trim((string) ($row['PriceLevelName'] ?? '')),
+                'after_disc' => (float) ($row['PriceAfterDisc'] ?? 0),
+            ];
+        }
 
-            // Track max base price
-            if ($price > $groupedItems[$key]['base_price']) {
-                $groupedItems[$key]['base_price'] = $price;
+        foreach ($groupedItems as $key => $data) {
+            $maxPrice = 0.0;
+            foreach ($data['variants'] as $variant) {
+                if ($variant['price'] > $maxPrice) {
+                    $maxPrice = $variant['price'];
+                }
             }
 
-            if (str_contains($priceLevel, '01. Harga Retail')) {
-                $groupedItems[$key]['retail_disc_5'] = $afterDisc;
-            } elseif (str_contains($priceLevel, '02. Harga Semi Grosir')) {
-                $groupedItems[$key]['semi_grosir'] = $afterDisc;
-            } elseif (str_contains($priceLevel, '03. Harga Grosir')) {
-                $groupedItems[$key]['grosir'] = $afterDisc;
-            } elseif (str_contains($priceLevel, '04. Harga Akun Special')) {
-                $groupedItems[$key]['akun_spesial'] = $afterDisc;
+            $perDus = 0.0;
+            foreach ($data['variants'] as $variant) {
+                if ($variant['price'] === $maxPrice) {
+                    if ($perDus == 0.0) {
+                        $perDus = $variant['per_dus'];
+                    }
+                    $level = $variant['level'];
+                    if (str_contains($level, '01. Harga Retail')) {
+                        $groupedItems[$key]['retail_disc_5'] = $variant['after_disc'];
+                    } elseif (str_contains($level, '02. Harga Semi Grosir')) {
+                        $groupedItems[$key]['semi_grosir'] = $variant['after_disc'];
+                    } elseif (str_contains($level, '03. Harga Grosir')) {
+                        $groupedItems[$key]['grosir'] = $variant['after_disc'];
+                    } elseif (str_contains($level, '04. Harga Akun Special')) {
+                        $groupedItems[$key]['akun_spesial'] = $variant['after_disc'];
+                    }
+                }
             }
+
+            $groupedItems[$key]['per_dus'] = $perDus;
+            $groupedItems[$key]['base_price'] = $maxPrice;
+            unset($groupedItems[$key]['variants']);
         }
 
         // Sort items by gr_urut asc, then urut asc, then description asc

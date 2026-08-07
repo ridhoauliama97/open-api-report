@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureAllReportService;
 use Tests\TestCase;
 
 class DaftarHargaFurnitureAllReportFeatureTest extends TestCase
@@ -21,6 +22,33 @@ class DaftarHargaFurnitureAllReportFeatureTest extends TestCase
 
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/pdf');
+    }
+
+    public function test_uses_max_price_variant_and_maps_rs_2204_to_more(): void
+    {
+        $service = new DaftarHargaFurnitureAllReportService;
+
+        $xml = '<NewDataSet>'
+            .$this->table('PLASTIK FURNITURE 1', 'MERONA KURSI BAKSO KT 2303', '12', '01. Harga Retail', '38000', '36100')
+            .$this->table('PLASTIK FURNITURE 1', 'MERONA KURSI BAKSO KT 2303', '24', '01. Harga Retail', '41000', '38950')
+            .$this->table('PLASTIK FURNITURE 1', 'MERONA KURSI BAKSO KT 2303', '24', '02. Harga Semi Grosir', '41000', '38130')
+            .$this->table('PLASTIK FURNITURE 1', 'MERONA KURSI BAKSO KT 2303', '24', '03. Harga Grosir', '41000', '37310')
+            .$this->table('PLASTIK FURNITURE 1', 'MERONA KURSI BAKSO KT 2303', '24', '04. Harga Akun Special', '41000', '36490')
+            .$this->table('PLASTIK FURNITURE 2', 'MORE RAK SUSUN RS 2204 4TX4R', '1', '01. Harga Retail', '298000', '283100')
+            .$this->table('PLASTIK FURNITURE 2', 'MORE RAK SUSUN RS 2204 4TX4R', '1', '02. Harga Semi Grosir', '298000', '277140')
+            .$this->table('PLASTIK FURNITURE 2', 'MORE RAK SUSUN RS 2204 4TX4R', '1', '03. Harga Grosir', '298000', '271180')
+            .$this->table('PLASTIK FURNITURE 2', 'MORE RAK SUSUN RS 2204 4TX4R', '1', '04. Harga Akun Special', '298000', '265220')
+            .'</NewDataSet>';
+
+        $data = $service->buildReportDataFromXml($xml, 'test');
+
+        $kt = collect($data['items'])->firstWhere('description', 'MERONA KURSI BAKSO KT 2303');
+        $this->assertSame('MERONA', $kt['group']);
+        $this->assertSame(24.0, $kt['per_dus']);
+        $this->assertSame(41000.0, $kt['base_price']);
+
+        $rs = collect($data['items'])->firstWhere('description', 'MORE RAK SUSUN RS 2204 4TX4R');
+        $this->assertSame('MO.RE', $rs['group']);
     }
 
     private function sampleXml(): string

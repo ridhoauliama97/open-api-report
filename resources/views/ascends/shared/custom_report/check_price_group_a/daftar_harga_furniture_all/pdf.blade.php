@@ -119,7 +119,7 @@
             {
                 $v = (float) $value;
                 if ($v == 0.0) {
-                    return '-';
+                    return '';
                 }
                 return number_format($v, 0, '.', ',');
             }
