@@ -376,6 +376,21 @@ Route::post(
 )->name('api.internal.ascends.shared.custom-report.pengiriman-kursi-dan-meja-harian.pdf');
 
 Route::post(
+    '/internal/ascends/shared/custom-report/pembelian-kayu-per-periode/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportPembelianKayuPerPeriodePdf']
+)->name('api.internal.ascends.shared.custom-report.pembelian-kayu-per-periode.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/item-discontinue/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportItemDiscontinuePdf']
+)->name('api.internal.ascends.shared.custom-report.item-discontinue.pdf');
+
+Route::post(
+    '/internal/ascends/shared/custom-report/bank-account-daily-cash/pdf',
+    [AscendXmlTestController::class, 'apiBankAccountDailyCashPdf']
+)->name('api.internal.ascends.shared.custom-report.bank-account-daily-cash.pdf');
+
+Route::post(
     '/internal/ascends/shared/custom-report/pengiriman-lemari-tahunan/pdf',
     [AscendXmlTestController::class, 'apiSharedCustomReportPengirimanLemariTahunanPdf']
 )->name('api.internal.ascends.shared.custom-report.pengiriman-lemari-tahunan.pdf');

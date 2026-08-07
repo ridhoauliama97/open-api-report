@@ -70,12 +70,13 @@
             font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             text-align: center;
         }
 
         .group-row td {
             font-weight: bold;
-            text-align: center;
+            text-align: left;
             font-size: 10px;
             font-style: italic;
             padding: 3px 4px;
@@ -174,18 +175,17 @@
             <thead>
                 <tr>
                     <th style="width: 18%">Customer</th>
-                    <th style="width: 22%">Nama Barang</th>
-                    <th style="width: 7%">Bln</th>
-                    <th style="width: 9%">Thn</th>
+                    <th style="width: 30%">Nama Barang</th>
+                    <th style="width: 10%">Tanggal Invoice</th>
                     <th style="width: 6%">Hari</th>
                     <th style="width: 12%">Total Pembelian</th>
-                    <th style="width: 14%">Terkirim</th>
+                    <th style="width: 12%">Terkirim</th>
                     <th style="width: 12%">Belum Terkirim</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="group-row">
-                    <td colspan="8">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
+                    <td colspan="7">Nama Sales : {{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
                 </tr>
 
                 @foreach ($salesGroup['customers'] as $customerGroup)
@@ -194,10 +194,7 @@
                         <tr class="{{ $rowNumber % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td>{{ $loop->first ? $customerGroup['customer'] : '' }}</td>
                             <td>{{ $detail['item_name'] ?? '' }}</td>
-                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->format('m') : '' }}
-                            </td>
-                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->format('Y') : '' }}
-                            </td>
+                            <td class="center">{{ $detail['invoice_date'] ? $detail['invoice_date']->locale('id')->isoFormat('DD-MMM-YY') : '' }}</td>
                             @php
                                 $daysVal = (int) ($detail['days'] ?? 0);
                                 $dayClass = $daysVal > 90 ? 'day-danger' : ($daysVal > 60 ? 'day-warning' : '');
@@ -213,7 +210,7 @@
                     @endforeach
 
                     <tr class="subtotal-row">
-                        <td colspan="5" class="center">{{ $customerGroup['customer'] }}</td>
+                        <td colspan="4" class="center">{{ $customerGroup['customer'] }}</td>
                         <td class="number nowrap">
                             {{ number_format((float) ($customerGroup['customer_total_purchased'] ?? 0), 0, '.', ',') }}
                         </td>
@@ -227,7 +224,7 @@
                 @endforeach
 
                 <tr class="total-sales-row">
-                    <td colspan="5" class="center">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
+                    <td colspan="4" class="center">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
                     <td class="number nowrap">
                         {{ number_format((float) ($salesGroup['sales_total_purchased'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number nowrap">
@@ -238,7 +235,7 @@
 
                 @if ($loop->last && !empty($grandTotals))
                     <tr class="grand-total-row">
-                        <td colspan="5" class="center">Grand Total</td>
+                        <td colspan="4" class="center">Grand Total</td>
                         <td class="number nowrap">
                             {{ number_format((float) ($grandTotals['qty_purchased'] ?? 0), 0, '.', ',') }}</td>
                         <td class="number nowrap">
@@ -253,7 +250,7 @@
         <table class="data-table">
             <tbody>
                 <tr class="empty-row">
-                    <td colspan="8">Tidak ada data.</td>
+                    <td colspan="7">Tidak ada data.</td>
                 </tr>
             </tbody>
         </table>
