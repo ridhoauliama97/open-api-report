@@ -239,6 +239,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
             || str_starts_with(strtoupper($employeeCode), 'SPECIAL')
             || $this->hasExcludedEmployeeCodePrefix($employeeCode)
             || ! $this->matchesStatus($row, $status)
+            || trim((string) ($row['Last_x0020_Modified_x0020_By'] ?? '')) === ''
         ) {
             return;
         }
