@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class PersentaseKehadiranBulananReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Persentase Kehadiran Bulanan';
 
     /**
@@ -229,42 +232,9 @@ class PersentaseKehadiranBulananReportService
      */
     private static function resolveType(array $filters): string
     {
-        $value = self::filterValue($filters, ['Pilih Type', 'Pilih_x0020_Type', 'pilih_type', 'pilihType', 'type', 'Type']);
+        $value = self::resolveFilterValue($filters, ['Pilih Type', 'Pilih_x0020_Type', 'pilih_type', 'pilihType', 'type', 'Type']);
 
         return str_contains(strtoupper($value), 'STAFF') ? 'Staff' : 'KK/KT';
-    }
-
-    /**
-     * @param  array<string, mixed>  $filters
-     * @param  array<int, string>  $aliases
-     */
-    private static function filterValue(array $filters, array $aliases): string
-    {
-        foreach ($aliases as $alias) {
-            if (array_key_exists($alias, $filters)) {
-                $value = trim((string) $filters[$alias]);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
-        foreach ($filters as $key => $value) {
-            if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
-                $value = trim((string) $value);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    private static function normalizeKey(string $key): string
-    {
-        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
     }
 
     /**

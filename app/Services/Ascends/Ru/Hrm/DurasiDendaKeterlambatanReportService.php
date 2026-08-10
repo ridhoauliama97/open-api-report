@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class DurasiDendaKeterlambatanReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Durasi & Denda Keterlambatan';
 
     private const START_DATE_ALIASES = [
@@ -133,8 +136,8 @@ class DurasiDendaKeterlambatanReportService
      */
     private static function resolvePeriod(array $rows, array $filters): array
     {
-        $startDate = self::filterValue($filters, self::START_DATE_ALIASES);
-        $endDate = self::filterValue($filters, self::END_DATE_ALIASES);
+        $startDate = self::resolveFilterValue($filters, self::START_DATE_ALIASES);
+        $endDate = self::resolveFilterValue($filters, self::END_DATE_ALIASES);
 
         if ($startDate !== '' || $endDate !== '') {
             $start = self::parseDate($startDate) ?? self::parseDate($endDate);
@@ -174,7 +177,7 @@ class DurasiDendaKeterlambatanReportService
      */
     private static function resolveDateInput(array $filters, array $period): Carbon
     {
-        $value = self::filterValue($filters, ['DateInput', 'date_input', 'TglInput', 'tanggal_input', 'effective_date']);
+        $value = self::resolveFilterValue($filters, ['DateInput', 'date_input', 'TglInput', 'tanggal_input', 'effective_date']);
 
         return self::parseDate($value) ?? $period['start']->copy()->subDay()->startOfDay();
     }
@@ -184,42 +187,9 @@ class DurasiDendaKeterlambatanReportService
      */
     private static function resolveType(array $filters): string
     {
-        $value = self::filterValue($filters, ['Pilih Type', 'Pilih_x0020_Type', 'pilih_type', 'pilihType', 'type', 'Type']);
+        $value = self::resolveFilterValue($filters, ['Pilih Type', 'Pilih_x0020_Type', 'pilih_type', 'pilihType', 'type', 'Type']);
 
         return str_contains(strtoupper($value), 'STAFF') ? 'Staff' : 'KK/KT';
-    }
-
-    /**
-     * @param  array<string, mixed>  $filters
-     * @param  array<int, string>  $aliases
-     */
-    private static function filterValue(array $filters, array $aliases): string
-    {
-        foreach ($aliases as $alias) {
-            if (array_key_exists($alias, $filters)) {
-                $value = trim((string) $filters[$alias]);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
-        foreach ($filters as $key => $value) {
-            if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
-                $value = trim((string) $value);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    private static function normalizeKey(string $key): string
-    {
-        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
     }
 
     /**

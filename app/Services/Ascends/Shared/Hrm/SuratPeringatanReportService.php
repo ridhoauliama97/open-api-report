@@ -2,12 +2,15 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use XMLReader;
 
 class SuratPeringatanReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Surat Peringatan';
 
     /**
@@ -216,7 +219,7 @@ class SuratPeringatanReportService
      */
     private static function resolveReportDate(array $filters): Carbon
     {
-        $date = self::filterValue($filters, ['report_date', 'tanggal', 'date', 'Tanggal', 'print_date']);
+        $date = self::resolveFilterValue($filters, ['report_date', 'tanggal', 'date', 'Tanggal', 'print_date']);
 
         return self::parseDate($date) ?? Carbon::now();
     }
@@ -269,22 +272,6 @@ class SuratPeringatanReportService
     private static function toInt(mixed $value): int
     {
         return (int) preg_replace('/\D+/', '', (string) $value);
-    }
-
-    /**
-     * @param  array<string, mixed>  $filters
-     * @param  array<int, string>  $aliases
-     */
-    private static function filterValue(array $filters, array $aliases): string
-    {
-        foreach ($aliases as $alias) {
-            $value = trim((string) ($filters[$alias] ?? ''));
-            if ($value !== '') {
-                return $value;
-            }
-        }
-
-        return '';
     }
 
     /**

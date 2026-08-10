@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class ThrReportService
 {
+    use ResolvesFilterAliases;
+
     private const THR_ALIASES = [
         'Pilih THR',
         'Pilih_x0020_THR',
@@ -44,7 +47,7 @@ class ThrReportService
         $rawRows = $this->parseXml($xmlContents, $sourceLabel);
         $thr = self::resolveThr($filters);
         $perDate = self::resolvePerDate($filters);
-        $company = strtoupper(trim(self::filterValue($filters, self::COMPANY_ALIASES)));
+        $company = strtoupper(trim(self::resolveFilterValue($filters, self::COMPANY_ALIASES)));
         $filteredByThr = self::filterByThr($rawRows, $thr);
         $filteredByActive = self::filterActiveWithTenure($filteredByThr, $perDate, $company);
         $mappedRows = array_map(fn (array $row): array => self::mapRow($row), $filteredByActive);
@@ -108,7 +111,7 @@ class ThrReportService
 
     private static function resolveThr(array $filters): string
     {
-        $value = self::filterValue($filters, self::THR_ALIASES);
+        $value = self::resolveFilterValue($filters, self::THR_ALIASES);
 
         if ($value === '') {
             return 'Idul Fitri';
@@ -130,7 +133,7 @@ class ThrReportService
 
     private static function resolvePerDate(array $filters): Carbon
     {
-        $value = self::filterValue($filters, self::PER_DATE_ALIASES);
+        $value = self::resolveFilterValue($filters, self::PER_DATE_ALIASES);
 
         return $value !== '' ? (self::parseDate($value) ?? Carbon::now()) : Carbon::now();
     }
@@ -261,35 +264,6 @@ class ThrReportService
         }
 
         return '';
-    }
-
-    private static function filterValue(array $filters, array $aliases): string
-    {
-        foreach ($aliases as $alias) {
-            if (array_key_exists($alias, $filters)) {
-                $value = trim((string) $filters[$alias]);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
-        foreach ($filters as $key => $value) {
-            if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
-                $value = trim((string) $value);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    private static function normalizeKey(string $key): string
-    {
-        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
     }
 
     private static function parseDate(string $value): ?Carbon

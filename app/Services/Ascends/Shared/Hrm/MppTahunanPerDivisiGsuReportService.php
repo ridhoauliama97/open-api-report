@@ -2,12 +2,15 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use XMLReader;
 
 class MppTahunanPerDivisiGsuReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Tahunan Per Divisi';
 
     private const DEFAULT_MPP = 80;
@@ -150,7 +153,7 @@ class MppTahunanPerDivisiGsuReportService
 
     private static function resolveDivisi(array $filters): string
     {
-        return self::filterValue($filters, self::DIVISI_ALIASES);
+        return self::resolveFilterValue($filters, self::DIVISI_ALIASES);
     }
 
     private static function filterByDivision(array $rows, string $divisi): array
@@ -313,34 +316,5 @@ class MppTahunanPerDivisiGsuReportService
         }
 
         return '';
-    }
-
-    private static function filterValue(array $filters, array $aliases): string
-    {
-        foreach ($aliases as $alias) {
-            if (array_key_exists($alias, $filters)) {
-                $value = trim((string) $filters[$alias]);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeKey($alias), $aliases);
-        foreach ($filters as $key => $value) {
-            if (in_array(self::normalizeKey((string) $key), $normalizedAliases, true)) {
-                $value = trim((string) $value);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    private static function normalizeKey(string $key): string
-    {
-        return strtolower(str_replace([' ', '_x0020_', '_', '-'], '', $key));
     }
 }

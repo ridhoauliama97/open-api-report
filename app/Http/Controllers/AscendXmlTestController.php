@@ -184,6 +184,7 @@ use App\Services\Ascends\Shared\Production\HasilCuciPerSupplierReportService;
 use App\Services\Ascends\Shared\Production\HasilProduksiPerMesinReportService;
 use App\Services\Ascends\Shared\ProductionByItem\ProduksiPerMingguReportService;
 use App\Services\Ascends\Shared\ProductionByItem\ProduksiReportService;
+use App\Services\Concerns\ResolvesFilterAliases;
 use App\Services\PdfGenerator;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -192,6 +193,8 @@ use Throwable;
 
 class AscendXmlTestController extends Controller
 {
+    use ResolvesFilterAliases;
+
     public function index(): View
     {
         return view('ascends.test-upload');
@@ -10876,29 +10879,9 @@ class AscendXmlTestController extends Controller
 
     private function requestInputByAliases(GenerateAscendsEmployeeListReportRequest $request, array $aliases): ?string
     {
-        foreach ($aliases as $alias) {
-            $value = trim((string) $request->input($alias, ''));
-            if ($value !== '') {
-                return $value;
-            }
-        }
+        $value = self::resolveFilterValue($request->all(), $aliases);
 
-        $normalizedAliases = array_map(static fn (string $alias): string => self::normalizeRequestKey($alias), $aliases);
-        foreach ($request->all() as $key => $value) {
-            if (in_array(self::normalizeRequestKey((string) $key), $normalizedAliases, true)) {
-                $value = trim((string) $value);
-                if ($value !== '') {
-                    return $value;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private static function normalizeRequestKey(string $key): string
-    {
-        return strtolower(str_replace([' ', '_x0020_', '_x002e_', '_', '-', '.'], '', $key));
+        return $value !== '' ? $value : null;
     }
 
     private function attendanceFullCategory(GenerateAscendsEmployeeListReportRequest $request): string

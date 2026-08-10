@@ -168,7 +168,7 @@ class PersentaseKehadiranBulananReportService
         $end = $period['end']->copy()->startOfMonth();
 
         while ($cursor->lessThanOrEqualTo($end)) {
-            $labels[(int) $cursor->month] = (string) $cursor->month;
+            $labels[(int) $cursor->month] = $cursor->locale('id')->translatedFormat('M-y');
             $cursor->addMonthNoOverflow();
         }
 
