@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class AbsensiBriefingHarianGsuReportService
 {
+    use ResolvesFilterAliases;
+
     /**
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
@@ -126,7 +129,7 @@ class AbsensiBriefingHarianGsuReportService
      */
     private function resolveReportDate(array $filters, array $rows): Carbon
     {
-        $date = trim((string) ($filters['report_date'] ?? $filters['tanggal'] ?? $filters['date'] ?? ''));
+        $date = self::resolveFilterValue($filters, ['report_date', 'tanggal', 'date', 'reportDate', 'ReportDate']);
         if ($date !== '') {
             return $this->parseDate($date) ?? throw new RuntimeException("Format tanggal tidak valid: {$date}.");
         }
@@ -146,15 +149,7 @@ class AbsensiBriefingHarianGsuReportService
      */
     private function resolveGroup(array $filters): string
     {
-        $group = trim((string) (
-            $filters['Pilih Group']
-            ?? $filters['Pilih_Group']
-            ?? $filters['Pilih_x0020_Group']
-            ?? $filters['group']
-            ?? $filters['division']
-            ?? $filters['divisi']
-            ?? ''
-        ));
+        $group = self::resolveFilterValue($filters, ['Pilih Group', 'Pilih_Group', 'Pilih_x0020_Group', 'group', 'division', 'divisi']);
 
         return $group !== '' ? $group : 'Bahan Baku, Washing & Broker';
     }
@@ -166,8 +161,8 @@ class AbsensiBriefingHarianGsuReportService
      */
     private function resolveReportPeriod(array $filters, array $rows): array
     {
-        $startDate = trim((string) ($filters['start_date'] ?? $filters['TglAwal'] ?? ''));
-        $endDate = trim((string) ($filters['end_date'] ?? $filters['TglAkhir'] ?? ''));
+        $startDate = self::resolveFilterValue($filters, ['start_date', 'StartDate', 'TglAwal', 'AttendanceDate.StartDate', 'AttendanceDate_x0020_StartDate']);
+        $endDate = self::resolveFilterValue($filters, ['end_date', 'EndDate', 'TglAkhir', 'AttendanceDate.EndDate', 'AttendanceDate_x0020_EndDate']);
 
         if ($startDate !== '' || $endDate !== '') {
             $start = $this->parseDate($startDate) ?? $this->parseDate($endDate);

@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class RekapitulasiPengabaianKeterlambatanTahunanReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Rekapitulasi Pengabaian Keterlambatan Tahunan';
 
     private const MONTH_LABELS = [
@@ -173,8 +176,8 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
      */
     private function resolvePeriodFromFilters(array $filters): ?array
     {
-        $startDate = trim((string) ($filters['start_date'] ?? ''));
-        $endDate = trim((string) ($filters['end_date'] ?? ''));
+        $startDate = self::resolveFilterValue($filters, ['start_date', 'StartDate', 'TglAwal', 'AttendanceDate.StartDate', 'AttendanceDate_x0020_StartDate']);
+        $endDate = self::resolveFilterValue($filters, ['end_date', 'EndDate', 'TglAkhir', 'AttendanceDate.EndDate', 'AttendanceDate_x0020_EndDate']);
 
         if ($startDate !== '' || $endDate !== '') {
             $start = $this->parseDate($startDate) ?? $this->parseDate($endDate);
@@ -336,7 +339,7 @@ class RekapitulasiPengabaianKeterlambatanTahunanReportService
      */
     private function resolveStatus(array $filters): string
     {
-        $value = trim((string) ($filters['Pilih Status'] ?? ''));
+        $value = self::resolveFilterValue($filters, ['Pilih Status', 'Pilih_x0020_Status', 'pilih_status', 'pilihStatus', 'status', 'Status', 'category', 'Category', 'kategori', 'Kategori']);
 
         return str_contains(strtoupper($value), 'STAFF') ? 'Staff' : 'KK/KT';
     }

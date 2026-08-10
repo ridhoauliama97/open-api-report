@@ -100,8 +100,8 @@ class PengabaianKeterlambatanKehadiranManualReportService
      */
     private static function resolvePeriod(array $rows, array $filters): array
     {
-        $startDate = trim((string) ($filters['start_date'] ?? $filters['TglAwal'] ?? ''));
-        $endDate = trim((string) ($filters['end_date'] ?? $filters['TglAkhir'] ?? ''));
+        $startDate = self::resolveFilterValue($filters, ['start_date', 'StartDate', 'TglAwal', 'AttendanceDate.StartDate', 'AttendanceDate_x0020_StartDate']);
+        $endDate = self::resolveFilterValue($filters, ['end_date', 'EndDate', 'TglAkhir', 'AttendanceDate.EndDate', 'AttendanceDate_x0020_EndDate']);
 
         if ($startDate !== '' || $endDate !== '') {
             $start = self::parseDate($startDate) ?? self::parseDate($endDate);

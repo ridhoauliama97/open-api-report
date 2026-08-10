@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class KetidakhadiranBulananReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Ketidakhadiran Bulanan';
 
     /**
@@ -99,8 +102,8 @@ class KetidakhadiranBulananReportService
      */
     private static function resolvePeriod(array $rows, array $filters): array
     {
-        $startDate = trim((string) ($filters['start_date'] ?? $filters['TglAwal'] ?? ''));
-        $endDate = trim((string) ($filters['end_date'] ?? $filters['TglAkhir'] ?? ''));
+        $startDate = self::resolveFilterValue($filters, ['start_date', 'StartDate', 'TglAwal', 'AttendanceDate.StartDate', 'AttendanceDate_x0020_StartDate']);
+        $endDate = self::resolveFilterValue($filters, ['end_date', 'EndDate', 'TglAkhir', 'AttendanceDate.EndDate', 'AttendanceDate_x0020_EndDate']);
 
         if ($startDate !== '' || $endDate !== '') {
             $start = self::parseDate($startDate) ?? self::parseDate($endDate);
@@ -417,19 +420,7 @@ class KetidakhadiranBulananReportService
      */
     private static function resolveTipe(array $filters): string
     {
-        $tipe = trim((string) (
-            $filters['tipe']
-            ?? $filters['Tipe']
-            ?? $filters['kategori']
-            ?? $filters['Kategori']
-            ?? $filters['pilih_kategori']
-            ?? $filters['PilihKategori']
-            ?? $filters['Pilih Kategori']
-            ?? $filters['Pilih_x0020_Kategori']
-            ?? $filters['type']
-            ?? $filters['Type']
-            ?? ''
-        ));
+        $tipe = self::resolveFilterValue($filters, ['tipe', 'Tipe', 'kategori', 'Kategori', 'pilih_kategori', 'PilihKategori', 'Pilih Kategori', 'Pilih_x0020_Kategori', 'type', 'Type']);
 
         return $tipe !== '' ? $tipe : 'KK/KT';
     }
