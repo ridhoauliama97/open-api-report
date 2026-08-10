@@ -2,12 +2,15 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\GroupsRows;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 use Throwable;
 
 class DaftarKaryawanReportService
 {
+    use GroupsRows;
+
     private const TITLE = 'Laporan Daftar Karyawan (RU)';
 
     /**
@@ -163,26 +166,16 @@ class DaftarKaryawanReportService
      */
     private static function groupRows(array $rows): array
     {
-        $departmentRows = [];
+        $grouped = self::groupRowsByKey($rows, 'Department', 'Department', 'Tanpa Departemen');
 
-        foreach ($rows as $row) {
-            $department = trim((string) ($row['Department'] ?? ''));
-            $departmentKey = $department !== '' ? $department : 'Tanpa Departemen';
-            $departmentRows[$departmentKey][] = self::publicRow($row);
-        }
-
-        ksort($departmentRows, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $groupedRows = [];
-        foreach ($departmentRows as $department => $rowsInDepartment) {
-            $groupedRows[] = [
-                'label' => 'Department : '.$department,
-                'rows' => $rowsInDepartment,
-                'summary' => self::buildSummary($rowsInDepartment),
-            ];
-        }
-
-        return $groupedRows;
+        return array_map(
+            static fn (array $group): array => [
+                'label' => $group['label'],
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $group['rows']),
+                'summary' => self::buildSummary($group['rows']),
+            ],
+            $grouped
+        );
     }
 
     /**

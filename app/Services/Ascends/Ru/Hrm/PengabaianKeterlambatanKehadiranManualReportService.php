@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\GroupsRows;
 use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
@@ -10,6 +11,7 @@ use XMLReader;
 
 class PengabaianKeterlambatanKehadiranManualReportService
 {
+    use GroupsRows;
     use ResolvesFilterAliases;
 
     private const TITLE = 'Laporan Pengabaian Keterlambatan & Kehadiran Manual';
@@ -220,24 +222,16 @@ class PengabaianKeterlambatanKehadiranManualReportService
      */
     private static function groupRows(array $rows): array
     {
-        $grouped = [];
-        foreach ($rows as $row) {
-            $department = trim((string) ($row['Departemen'] ?? ''));
-            $grouped[$department][] = $row;
-        }
+        $grouped = self::groupRowsByKey($rows, 'Departemen', 'Departemen');
 
-        ksort($grouped, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = [];
-        foreach ($grouped as $department => $items) {
-            $result[] = [
-                'label' => 'Departemen : '.$department,
-                'rows' => array_values($items),
-                'summary' => self::summaryByCreator($items),
-            ];
-        }
-
-        return $result;
+        return array_map(
+            static fn (array $group): array => [
+                'label' => $group['label'],
+                'rows' => array_values($group['rows']),
+                'summary' => self::summaryByCreator($group['rows']),
+            ],
+            $grouped
+        );
     }
 
     /**

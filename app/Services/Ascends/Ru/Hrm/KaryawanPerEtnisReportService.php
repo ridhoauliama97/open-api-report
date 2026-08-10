@@ -2,10 +2,13 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\GroupsRows;
 use App\Services\XmlDataSourceService;
 
 class KaryawanPerEtnisReportService
 {
+    use GroupsRows;
+
     private const TITLE = 'Laporan Karyawan Per Etnis (RU)';
 
     /**
@@ -129,25 +132,16 @@ class KaryawanPerEtnisReportService
      */
     private static function groupRows(array $rows): array
     {
-        $ethnicityRows = [];
+        $grouped = self::groupRowsByKey($rows, 'Etnis', 'Etnis');
 
-        foreach ($rows as $row) {
-            $ethnicity = trim((string) ($row['Etnis'] ?? ''));
-            $ethnicityRows[$ethnicity][] = $row;
-        }
-
-        ksort($ethnicityRows, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $groupedRows = [];
-        foreach ($ethnicityRows as $ethnicity => $rowsInEthnicity) {
-            $groupedRows[] = [
-                'label' => 'Etnis : '.trim((string) $ethnicity),
-                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rowsInEthnicity),
-                'summary' => self::buildSummary($rowsInEthnicity),
-            ];
-        }
-
-        return $groupedRows;
+        return array_map(
+            static fn (array $group): array => [
+                'label' => $group['label'],
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $group['rows']),
+                'summary' => self::buildSummary($group['rows']),
+            ],
+            $grouped
+        );
     }
 
     /**

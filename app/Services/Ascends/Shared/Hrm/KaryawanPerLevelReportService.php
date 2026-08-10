@@ -2,12 +2,15 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\GroupsRows;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 use Throwable;
 
 class KaryawanPerLevelReportService
 {
+    use GroupsRows;
+
     private const TITLE = 'Laporan Karyawan Per Level (RU)';
 
     /**
@@ -158,25 +161,16 @@ class KaryawanPerLevelReportService
      */
     private static function groupRows(array $rows): array
     {
-        $levelRows = [];
+        $grouped = self::groupRowsByKey($rows, 'Level', 'Level', '', static fn (string $left, string $right): int => self::levelSortValue($left) <=> self::levelSortValue($right));
 
-        foreach ($rows as $row) {
-            $level = trim((string) ($row['Level'] ?? ''));
-            $levelRows[$level][] = $row;
-        }
-
-        uksort($levelRows, static fn (string $left, string $right): int => self::levelSortValue($left) <=> self::levelSortValue($right));
-
-        $groupedRows = [];
-        foreach ($levelRows as $level => $rowsInLevel) {
-            $groupedRows[] = [
-                'label' => 'Level : '.trim((string) $level),
-                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rowsInLevel),
-                'summary' => self::buildSummary($rowsInLevel),
-            ];
-        }
-
-        return $groupedRows;
+        return array_map(
+            static fn (array $group): array => [
+                'label' => $group['label'],
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $group['rows']),
+                'summary' => self::buildSummary($group['rows']),
+            ],
+            $grouped
+        );
     }
 
     /**

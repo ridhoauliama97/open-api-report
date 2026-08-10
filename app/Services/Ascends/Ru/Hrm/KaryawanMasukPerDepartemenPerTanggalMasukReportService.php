@@ -2,12 +2,15 @@
 
 namespace App\Services\Ascends\Ru\Hrm;
 
+use App\Services\Concerns\GroupsRows;
 use App\Services\XmlDataSourceService;
 use Carbon\Carbon;
 use Throwable;
 
 class KaryawanMasukPerDepartemenPerTanggalMasukReportService
 {
+    use GroupsRows;
+
     private const TITLE = 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk (RU)';
 
     /**
@@ -172,25 +175,17 @@ class KaryawanMasukPerDepartemenPerTanggalMasukReportService
      */
     private static function groupRows(array $rows): array
     {
-        $departmentRows = [];
+        $grouped = self::groupRowsByKey($rows, 'Departemen', 'Departemen');
 
-        foreach ($rows as $row) {
-            $departmentRows[(string) ($row['Departemen'] ?? '')][] = $row;
-        }
-
-        ksort($departmentRows, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $groupedRows = [];
-        foreach ($departmentRows as $department => $rowsInDepartment) {
-            $groupedRows[] = [
-                'label' => 'Departemen : '.$department,
-                'subtotal' => count($rowsInDepartment),
-                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rowsInDepartment),
-                'summary' => self::buildSummary($rowsInDepartment),
-            ];
-        }
-
-        return $groupedRows;
+        return array_map(
+            static fn (array $group): array => [
+                'label' => $group['label'],
+                'subtotal' => count($group['rows']),
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $group['rows']),
+                'summary' => self::buildSummary($group['rows']),
+            ],
+            $grouped
+        );
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\GroupsRows;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class EmployeeTerminationReportService
 {
+    use GroupsRows;
+
     private const TITLE = 'Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar';
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
@@ -155,25 +158,17 @@ class EmployeeTerminationReportService
      */
     private static function groupRows(array $rows): array
     {
-        $departmentRows = [];
+        $grouped = self::groupRowsByKey($rows, 'Departemen', 'Departemen');
 
-        foreach ($rows as $row) {
-            $departmentRows[(string) ($row['Departemen'] ?? '')][] = $row;
-        }
-
-        ksort($departmentRows, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $groupedRows = [];
-        foreach ($departmentRows as $department => $rowsInDepartment) {
-            $groupedRows[] = [
-                'label' => 'Departemen : '.$department,
-                'subtotal' => count($rowsInDepartment),
-                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $rowsInDepartment),
-                'summary' => self::buildSummary($rowsInDepartment),
-            ];
-        }
-
-        return $groupedRows;
+        return array_map(
+            static fn (array $group): array => [
+                'label' => $group['label'],
+                'subtotal' => count($group['rows']),
+                'rows' => array_map(static fn (array $row): array => self::publicRow($row), $group['rows']),
+                'summary' => self::buildSummary($group['rows']),
+            ],
+            $grouped
+        );
     }
 
     /**
