@@ -453,7 +453,7 @@ class AscendXmlTestController extends Controller
             }
             if ($selectedReport === 'absensi_briefing_harian_ru') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
-                $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'VKD')))));
+                $group = trim((string) ($reportData['group'] ?? $this->requestInputByAliases($request, ['Pilih Group', 'Pilih_Group', 'group']) ?: 'VKD'));
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
@@ -461,7 +461,7 @@ class AscendXmlTestController extends Controller
             }
             if ($selectedReport === 'absensi_briefing_harian_gsu') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
-                $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'Bahan Baku, Washing & Broker')))));
+                $group = trim((string) ($reportData['group'] ?? $this->requestInputByAliases($request, ['Pilih Group', 'Pilih_Group', 'group']) ?: 'Bahan Baku, Washing & Broker'));
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
@@ -469,7 +469,7 @@ class AscendXmlTestController extends Controller
             }
             if ($selectedReport === 'absensi_briefing_harian_uc') {
                 $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'UC');
-                $group = trim((string) ($reportData['group'] ?? $request->input('Pilih Group', $request->input('Pilih_Group', $request->input('group', 'Security Pagi')))));
+                $group = trim((string) ($reportData['group'] ?? $this->requestInputByAliases($request, ['Pilih Group', 'Pilih_Group', 'group']) ?: 'Security Pagi'));
 
                 $reportData['company'] = $company;
                 $reportData['title'] = "Laporan Absensi Briefing Harian ({$company}) - {$group}";
@@ -490,7 +490,7 @@ class AscendXmlTestController extends Controller
                 $reportDefinition['filename'] = "Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian ({$company}).pdf";
             }
             if ($selectedReport === 'karyawan_masuk') {
-                $company = trim((string) ($request->input('DB_CompanyName', $request->input('company', ''))));
+                $company = trim((string) ($this->requestInputByAliases($request, ['DB_CompanyName', 'company']) ?: ''));
                 $company = $company !== '' ? strtoupper($company) : $this->resolveSharedHrmCompany($request, $xmlPayload, '');
                 $titleCompany = $company !== '' ? ' ('.$company.')' : '';
 
@@ -499,7 +499,7 @@ class AscendXmlTestController extends Controller
                 $reportDefinition['filename'] = 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk'.$titleCompany.'.pdf';
             }
             if ($selectedReport === 'karyawan_keluar') {
-                $company = trim((string) ($request->input('DB_CompanyName', $request->input('company', ''))));
+                $company = trim((string) ($this->requestInputByAliases($request, ['DB_CompanyName', 'company']) ?: ''));
                 $company = $company !== '' ? strtoupper($company) : $this->resolveSharedHrmCompany($request, $xmlPayload, '');
                 $titleCompany = $company !== '' ? ' ('.$company.')' : '';
 
@@ -508,10 +508,10 @@ class AscendXmlTestController extends Controller
                 $reportDefinition['filename'] = 'Laporan Karyawan Keluar Per Departemen Per Tanggal Keluar'.$titleCompany.'.pdf';
             }
             if ($selectedReport === 'karyawan_keluar_tahunan') {
-                $company = trim((string) ($request->input('DB_CompanyName', $request->input('company', ''))));
+                $company = trim((string) ($this->requestInputByAliases($request, ['DB_CompanyName', 'company']) ?: ''));
                 $company = $company !== '' ? strtoupper($company) : $this->resolveSharedHrmCompany($request, $xmlPayload, '');
                 $titleCompany = $company !== '' ? ' ('.$company.')' : '';
-                $status = trim((string) ($request->input('Status', $request->input('status', ''))));
+                $status = trim((string) ($this->requestInputByAliases($request, ['Status', 'status']) ?: ''));
 
                 $reportData['headerCompany'] = $company;
                 $reportData['company'] = $company;
