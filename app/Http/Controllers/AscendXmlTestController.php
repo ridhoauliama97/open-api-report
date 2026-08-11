@@ -700,9 +700,9 @@ class AscendXmlTestController extends Controller
                 $sourceLabel,
                 [
                     'company' => $company,
-                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
-                    'EndDate' => $request->input('EndDate', $request->input('end_date')),
-                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+                    'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
+                    'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
                     'DB_CompanyName' => $company,
                 ],
             );
