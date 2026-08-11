@@ -184,9 +184,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="group-row">
+                {{-- <tr class="group-row">
                     <td colspan="7">Nama Sales : {{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
-                </tr>
+                </tr> --}}
 
                 @foreach ($salesGroup['customers'] as $customerGroup)
                     @foreach ($customerGroup['rows'] as $detail)
@@ -210,7 +210,7 @@
                     @endforeach
 
                     <tr class="subtotal-row">
-                        <td colspan="4" class="center">{{ $customerGroup['customer'] }}</td>
+                        <td colspan="4">{{ $customerGroup['customer'] }}</td>
                         <td class="number nowrap">
                             {{ number_format((float) ($customerGroup['customer_total_purchased'] ?? 0), 0, '.', ',') }}
                         </td>
@@ -224,7 +224,7 @@
                 @endforeach
 
                 <tr class="total-sales-row">
-                    <td colspan="4" class="center">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
+                    <td colspan="4">{{ $salesGroup['sales_person'] ?: '(tanpa nama)' }}</td>
                     <td class="number nowrap">
                         {{ number_format((float) ($salesGroup['sales_total_purchased'] ?? 0), 0, '.', ',') }}</td>
                     <td class="number nowrap">
@@ -235,7 +235,7 @@
 
                 @if ($loop->last && !empty($grandTotals))
                     <tr class="grand-total-row">
-                        <td colspan="4" class="center">Grand Total</td>
+                        <td colspan="4">GRAND TOTAL</td>
                         <td class="number nowrap">
                             {{ number_format((float) ($grandTotals['qty_purchased'] ?? 0), 0, '.', ',') }}</td>
                         <td class="number nowrap">

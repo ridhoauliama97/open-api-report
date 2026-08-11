@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Auth\DualLegacyPasswordUserProvider;
 use App\Auth\LegacyPasswordUserProvider;
 use App\Console\Commands\ExportDatabaseStructureCommand;
+use App\Database\CustomSqlServerConnector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
@@ -16,7 +17,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Fix: pdo_sqlsrv 5.13.0+ di PHP 8.5 tidak mendukung
+        // PDO::ATTR_STRINGIFY_FETCHES yang di-set default oleh Laravel,
+        // sehingga login (query ke SQL Server) gagal dengan
+        // SQLSTATE[IMSSP]: An invalid attribute was designated on the PDO object.
+        $this->app->bind('db.connector.sqlsrv', CustomSqlServerConnector::class);
     }
 
     /**

@@ -513,6 +513,315 @@
             font-size: 11px;
             background: transparent !important;
         }
+
+        /* --- DIAGRAM RENDMEN page --- */
+        .diagram-section {
+            margin-top: 10px;
+        }
+
+        .diagram-frame {
+            width: 100%;
+            border: 0;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0;
+        }
+
+        .diagram-frame td {
+            border: 0;
+            padding: 6px 10px;
+            vertical-align: top;
+            background: #ffffff;
+            font-size: 10px;
+        }
+
+        .diagram-frame td.frame-banner {
+            background: #1a3a5c;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .diagram-frame td.frame-meta {
+            padding: 6px 12px;
+        }
+
+        .diagram-frame td.frame-rendemen {
+            text-align: center;
+            padding: 10px 8px 14px 8px;
+        }
+
+        .diagram-frame td.frame-middle {
+            padding: 0 8px;
+        }
+
+        .diagram-frame td.frame-bottom {
+            padding: 6px 10px 10px 10px;
+        }
+
+        .diagram-frame td.frame-keterangan {
+            padding: 8px 12px;
+        }
+
+        .diagram-middle-left {
+            width: 48%;
+            vertical-align: middle;
+            padding: 10px 8px 10px 12px;
+            text-align: center;
+        }
+
+        .diagram-middle-right {
+            width: 52%;
+            vertical-align: top;
+            padding: 8px 12px 8px 8px;
+        }
+
+        .diagram-chart-wrap {
+            text-align: center;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        .diagram-chart-wrap svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .diagram-card-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 10px;
+            margin: 0 0 8px 0;
+        }
+
+        .diagram-card-table td {
+            border: 1px solid #000;
+            padding: 2px 8px;
+        }
+
+        .diagram-card-table td.diagram-card-head {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            padding: 5px 8px;
+            border: 1px solid #000;
+        }
+
+        .diagram-card-table td.diagram-card-label {
+            width: 50%;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .diagram-card-table td.diagram-card-value {
+            width: 50%;
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            font-weight: bold;
+            padding-right: 10px;
+        }
+
+        .diagram-chart-cell {
+            width: 42%;
+            vertical-align: middle;
+            text-align: center;
+            padding: 10px 6px 10px 8px;
+        }
+
+        .diagram-side-cell {
+            width: 58%;
+            vertical-align: top;
+            padding: 8px 8px 8px 8px;
+        }
+
+        .diagram-meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0 0 6px 0;
+        }
+
+        .diagram-meta-table td {
+            border: 0;
+            padding: 2px 4px 2px 0;
+            vertical-align: top;
+            text-align: left;
+            background: transparent !important;
+            word-break: normal;
+            font-size: 11px;
+        }
+
+        .diagram-meta-label {
+            font-weight: bold;
+        }
+
+        .rendemen-total-table {
+            width: auto;
+            border-collapse: collapse;
+            border: 0;
+            margin: 0 auto;
+            table-layout: auto;
+        }
+
+        .rendemen-total-table td {
+            border: 0 !important;
+            padding: 0;
+            text-align: center;
+            background: transparent !important;
+        }
+
+        .rendemen-total-label-cell {
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+            padding-bottom: 4px;
+        }
+
+        .rendemen-total-value-cell {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            border: 2px solid #000000 !important;
+            padding: 4px 30px !important;
+            background: #ffffff !important;
+        }
+
+        .diagram-kategori-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 10px;
+            margin: 0;
+        }
+
+        .diagram-kategori-table th,
+        .diagram-kategori-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+        }
+
+        .diagram-kategori-table th {
+            background: #1a3a5c;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .diagram-kategori-table td.num {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .diagram-kategori-table td.left {
+            text-align: left;
+        }
+
+        .diagram-kategori-table td.total-row {
+            font-weight: bold;
+            border-top: 1px solid #1a3a5c;
+            background: #eef2f8;
+        }
+
+        .category-swatch {
+            /* width: 10vw;
+            aspect-ratio: 1 / 1; */
+            border-radius: 50%;
+            width: 4px;
+            height: 4px;
+            vertical-align: middle;
+        }
+
+        .ringkasan-box {
+            padding: 0;
+            font-size: 10px;
+        }
+
+        .ringkasan-table {
+            width: 100%;
+            border: 1px solid #000;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0;
+            font-size: 10px;
+        }
+
+        .ringkasan-table td {
+            border: 0;
+            padding: 3px 10px;
+            background: transparent !important;
+            vertical-align: top;
+        }
+
+        .ringkasan-table td.ringkasan-head {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 5px 8px;
+            background: #1a3a5c;
+            color: #ffffff;
+            border-bottom: 1px solid #000;
+        }
+
+        .ringkasan-table td.ringkasan-label {
+            width: 48%;
+            text-align: left;
+            padding-top: 4px;
+        }
+
+        .ringkasan-table td.ringkasan-eq {
+            width: 4%;
+            text-align: center;
+            padding-top: 4px;
+        }
+
+        .ringkasan-table td.ringkasan-value {
+            width: 48%;
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+            padding-top: 4px;
+        }
+
+        .ringkasan-table td.ringkasan-formula {
+            padding: 4px 10px 4x 10px;
+            border-top: 1px solid #000;
+            font-style: italic;
+        }
+
+        .ringkasan-rendemen-highlight {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .keterangan-box {
+            font-size: 10px;
+            padding: 6px 0 0 0;
+            text-align: left;
+        }
+
+        .keterangan-title {
+            font-weight: bold;
+            font-style: normal;
+            margin: 0 0 4px 0;
+            text-align: left;
+        }
+
+        .keterangan-line {
+            margin: 1px 0;
+        }
+
+        .keterangan-label {
+            font-weight: bold;
+            font-style: normal;
+        }
     </style>
 </head>
 
@@ -879,6 +1188,163 @@
                 </div>
             @endif
         </div>
+        @php
+            $inputGradeNames = array_map(static fn (array $l): string => (string) ($l['grade'] ?? ''), $inputRows);
+            $inputKeterangan = implode(', ', array_filter($inputGradeNames));
+            $outputGradeNames = array_map(static fn (array $l): string => (string) ($l['grade'] ?? ''), $outputRows);
+            $outputKeterangan = implode(', ', array_filter($outputGradeNames));
+            $chartData = is_array($receipt['chart_data'] ?? null) ? $receipt['chart_data'] : [];
+            $chartColorByGrade = [];
+            foreach ($chartData as $chartItem) {
+                $chartColorByGrade[strtoupper(trim((string) ($chartItem['label'] ?? '')))] = (string) ($chartItem['color'] ?? '');
+            }
+        @endphp
+        @if (($inputRows !== [] || $outputRows !== []) && ($receipt['chart_svg'] ?? '') !== '')
+            <div class="diagram-section">
+                <table class="diagram-frame">
+                    <tr>
+                        <td class="frame-banner">DIAGRAM RENDEMEN</td>
+                    </tr>
+                    <tr>
+                        <td class="frame-content" style="padding: 0;">
+                            <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+                                <tr>
+                                    <td class="diagram-chart-cell" style="padding-bottom: 0;">
+                                        <table class="rendemen-total-table">
+                                            <tr>
+                                                <td class="rendemen-total-label-cell">
+                                                    <h2>
+                                                        RENDEMEN TOTAL
+                                                    </h2>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="rendemen-total-value-cell">
+                                                    <h1>
+                                                        {{ $fmtPercentTotal($rendemen, 1) }}
+                                                    </h1>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="diagram-side-cell"></td>
+                                </tr>
+                                <tr>
+                                    <td class="diagram-chart-cell">
+                                        <div class="diagram-chart-wrap">
+                                            {!! $receipt['chart_svg'] ?? '' !!}
+                                        </div>
+                                    </td>
+                                    <td class="diagram-side-cell">
+                                        <table class="diagram-kategori-table" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>KATEGORI</th>
+                                                    <th>ST (TON)</th>
+                                                    <th>%</th>
+                                                    <th>RENDEMEN</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    $sortedOutputRows = $outputRows;
+                                                    usort($sortedOutputRows, static fn (array $a, array $b): int => (float) ($b['percent'] ?? 0) <=> (float) ($a['percent'] ?? 0));
+                                                @endphp
+                                                @forelse ($sortedOutputRows as $bLine)
+                                                    @php
+                                                        $bGrade = trim((string) ($bLine['grade'] ?? ''));
+                                                        $bColor = $chartColorByGrade[strtoupper($bGrade)] ?? '';
+                                                        $bSt = (float) ($bLine['st'] ?? 0.0);
+                                                        $bPct = (float) ($bLine['percent'] ?? 0.0);
+                                                    @endphp
+                                                    <tr>
+                                                        <td class="left">
+                                                            @if ($bColor !== '')
+                                                                <span class="category-swatch" style="background-color: {{ $bColor }};">
+                                                                    &nbsp;
+                                                                </span>
+                                                            @endif
+                                                            &nbsp;&nbsp; {{ $bGrade }}
+                                                        </td>
+                                                        <td class="num">{{ $fmtDetail($bSt, 4) }}</td>
+                                                        <td class="num">{{ $fmtPercentDetail($bPct, 1) }}</td>
+                                                        <td class="num">{{ $fmtPercentTotal($rendemen, 1) }}</td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" style="text-align: center;">{{ $dash }}</td>
+                                                    </tr>
+                                                @endforelse
+                                                <tr>
+                                                    <td class="left total-row">TOTAL</td>
+                                                    <td class="num total-row">{{ $fmtTotal($stTotal, 4) }}</td>
+                                                    <td class="num total-row">100.0%</td>
+                                                    <td class="num total-row">{{ $fmtPercentTotal($rendemen, 1) }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <br> <br> <br>
+
+                                            <table class="ringkasan-table" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="ringkasan-head">Ringkasan</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Total Input (KB) : {{ $fmtTotal($kbTotal, 4) }} Ton</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Total Output (ST) : {{ $fmtTotal($stTotal, 4) }} Ton</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Rendemen : <span class="ringkasan-rendemen-highlight">{{ $fmtPercentTotal($rendemen, 1) }}</span></td>
+                                                    </tr>
+                                                </tbody>
+                                                {{-- <tr>
+                                                    <td colspan="3" class="ringkasan-head">RINGKASAN</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ringkasan-label">Total Input (KB)</td>
+                                                    <td class="ringkasan-eq">&nbsp;</td>
+                                                    <td class="ringkasan-value">{{ $fmtTotal($kbTotal, 4) }} Ton</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ringkasan-label">Total Output (ST)</td>
+                                                    <td class="ringkasan-eq">&nbsp;</td>
+                                                    <td class="ringkasan-value">{{ $fmtTotal($stTotal, 4) }} Ton</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ringkasan-label">Rendemen</td>
+                                                    <td class="ringkasan-eq">&nbsp;</td>
+                                                    <td class="ringkasan-value"><span class="ringkasan-rendemen-highlight">{{ $fmtPercentTotal($rendemen, 1) }}</span></td>
+                                                </tr> --}}
+                                                <tr>
+                                                    <td class="ringkasan-formula">
+                                                        Rendemen = (Total Output ST / KB) x 100% = ({{ $fmtTotal($stTotal, 4) }} / {{ $fmtTotal($kbTotal, 4) }}) x 100% = {{ $fmtPercentTotal($rendemen, 1) }}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="keterangan-box">
+                    <h3 class="keterangan-title">Keterangan:</h3>
+                    <div class="keterangan-line">
+                        <span class="keterangan-label">Input</span> : {{ $inputKeterangan !== '' ? $inputKeterangan : '-' }}
+                    </div>
+                    <div class="keterangan-line">
+                        <span class="keterangan-label">Output</span> : {{ $outputKeterangan !== '' ? $outputKeterangan : '-' }}
+                    </div>
+                </div>
+            </div>
+        @endif
         @if (!$loop->last)
             <div class="receipt-separator"></div>
         @endif

@@ -72,6 +72,7 @@ class DOCustomerBelumTerkirimReportService
             $invoiceDate = self::parseDate((string) ($node->Invoice_x0020_Date ?? ''));
             $itemName = trim((string) ($node->Item_x0020_Name ?? ''));
             $itemCode = trim((string) ($node->Item_x0020_Code ?? ''));
+            $itemFamily = trim((string) ($node->Item_x0020_Family ?? ''));
             $customerName = trim((string) ($node->Customer_x0020_Name ?? ''));
             $salesPerson = trim((string) ($node->SalesPerson_x0020_Name ?? ''));
 
@@ -88,7 +89,7 @@ class DOCustomerBelumTerkirimReportService
                 continue;
             }
 
-            $familiname = $this->resolveFamiliname($itemCode);
+            $familiname = $this->resolveFamiliname($itemName, $itemCode, $itemFamily);
             if ($familiname === 'NULL') {
                 continue;
             }
@@ -143,34 +144,42 @@ class DOCustomerBelumTerkirimReportService
         return 'TAMPIL';
     }
 
-    private function resolveFamiliname(string $itemCode): string
+    private function resolveFamiliname(string $itemName, string $itemCode, string $itemFamily): string
     {
-        if (
-            str_contains($itemCode, '2.1.3.1.01')
-            || str_contains($itemCode, '2.1.3.1.02')
-            || str_contains($itemCode, '2.1.3.1.04')
-        ) {
+        if (str_contains($itemName, 'PROMO')) {
+            return 'NULL';
+        }
+
+        if (str_starts_with($itemCode, '2.1.3.1.01') || str_starts_with($itemCode, '2.1.3.1.02') || str_starts_with($itemCode, '2.1.3.1.04')) {
+            return 'PF1';
+        }
+
+        if ($itemFamily === 'PLASTIK FURNITURE 1') {
             return 'PF1';
         }
 
         if (
-            str_contains($itemCode, '2.1.3.1.03')
-            || str_contains($itemCode, '2.1.3.2.03')
-            || str_contains($itemCode, '2.1.3.2.02')
-            || str_contains($itemCode, '2.1.1.3.12')
+            str_starts_with($itemCode, '2.1.3.1.03')
+            || str_starts_with($itemCode, '2.1.3.2.03')
+            || str_starts_with($itemCode, '2.1.3.2.02')
+            || str_starts_with($itemCode, '2.1.1.3.12')
         ) {
             return 'PF2';
         }
 
-        if (str_contains($itemCode, '2.1.5.1.')) {
+        if ($itemFamily === 'PLASTIK FURNITURE 2') {
+            return 'PF2';
+        }
+
+        if (str_starts_with($itemCode, '2.1.5.1.')) {
             return 'ENAMEL';
         }
 
-        if (str_contains($itemCode, '2.1.5.9.11')) {
+        if (str_starts_with($itemCode, '2.1.5.9.11')) {
             return 'FL';
         }
 
-        if (str_contains($itemCode, '2.1.3.4.') || str_contains($itemCode, '2.1.3.5.')) {
+        if (str_starts_with($itemCode, '2.1.3.4') || str_starts_with($itemCode, '2.1.3.5')) {
             return 'PKAB';
         }
 
@@ -181,10 +190,10 @@ class DOCustomerBelumTerkirimReportService
     {
         $groups = [];
 
-        foreach ($rows as $row) {
+        foreach ($rows as $rowIdx => $row) {
             $salesKey = $row['sales_person'] !== '' ? $row['sales_person'] : '(tanpa sales)';
             $customerKey = $row['customer'] !== '' ? $row['customer'] : '(tanpa customer)';
-            $detailKey = $row['item_code'];
+            $detailKey = $rowIdx;
 
             if (! isset($groups[$salesKey])) {
                 $groups[$salesKey] = [
@@ -206,22 +215,16 @@ class DOCustomerBelumTerkirimReportService
                 ];
             }
 
-            if (! isset($groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey])) {
-                $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey] = [
-                    'item_code' => $row['item_code'],
-                    'item_name' => $row['item_name'],
-                    'invoice_date' => $row['invoice_date'],
-                    'qty_purchased' => 0,
-                    'qty_outstanding' => 0,
-                    'qty_delivered' => 0,
-                    'uom' => $row['uom'],
-                    'days' => $row['days'],
-                ];
-            }
-
-            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey]['qty_purchased'] += $row['qty_purchased'];
-            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey]['qty_outstanding'] += $row['qty_outstanding'];
-            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey]['qty_delivered'] += $row['qty_delivered'];
+            $groups[$salesKey]['customers'][$customerKey]['rows'][$detailKey] = [
+                'item_code' => $row['item_code'],
+                'item_name' => $row['item_name'],
+                'invoice_date' => $row['invoice_date'],
+                'qty_purchased' => $row['qty_purchased'],
+                'qty_outstanding' => $row['qty_outstanding'],
+                'qty_delivered' => $row['qty_delivered'],
+                'uom' => $row['uom'],
+                'days' => $row['days'],
+            ];
 
             $groups[$salesKey]['customers'][$customerKey]['customer_total_purchased'] += $row['qty_purchased'];
             $groups[$salesKey]['customers'][$customerKey]['customer_total_outstanding'] += $row['qty_outstanding'];
@@ -238,7 +241,7 @@ class DOCustomerBelumTerkirimReportService
             ksort($salesGroup['customers']);
 
             foreach ($salesGroup['customers'] as $customerKey => &$customerGroup) {
-                uasort($customerGroup['rows'], static fn (array $a, array $b): int => strcasecmp($a['item_name'], $b['item_name']));
+                uasort($customerGroup['rows'], static fn (array $a, array $b): int => ($b['days'] <=> $a['days']) ?: strcasecmp($a['item_name'], $b['item_name']));
                 $customerGroup['rows'] = array_values($customerGroup['rows']);
             }
 

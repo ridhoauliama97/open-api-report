@@ -10,6 +10,37 @@ class RekapProduktivitasSawmillRpReportService
 {
     private const EPS = 0.0000001;
 
+    private const CHART_COLORS = [
+        [44, 62, 80],
+        [22, 160, 133],
+        [52, 152, 219],
+        [243, 156, 18],
+        [155, 89, 182],
+        [231, 76, 60],
+        [26, 188, 156],
+        [241, 196, 15],
+        [230, 126, 34],
+        [46, 204, 113],
+        [52, 73, 94],
+        [149, 165, 166],
+    ];
+
+    /**
+     * Warna tetap untuk kategori grade yang umum dipakai (rambung), supaya warna
+     * di pie chart konsisten dengan warna kartu kategori di halaman diagram rendemen.
+     */
+    private const CATEGORY_COLORS = [
+        'STD' => [61, 133, 198],
+        'MC 1' => [106, 168, 79],
+        'MC 2' => [241, 194, 50],
+        'KAYU LAT' => [230, 145, 56],
+    ];
+
+    /** @var array<string, string> */
+    private array $chartGradeColors = [];
+
+    private int $chartFallbackCounter = 0;
+
     /**
      * @return array<int, array<string, mixed>>
      */
@@ -461,6 +492,24 @@ class RekapProduktivitasSawmillRpReportService
                         $receipt['rows']['output'][$idx]['percent'] = $stTotal > 0.0 ? (($st / $stTotal) * 100.0) : 0.0;
                     }
                 }
+
+                // Build diagram data (pie chart) for this receipt, mirroring the "DIAGRAM RENDMEN" page.
+                $outputLines = is_array($receipt['rows']['output'] ?? null) ? $receipt['rows']['output'] : [];
+                $chartData = [];
+                foreach ($outputLines as $line) {
+                    $st = (float) ($line['st'] ?? 0.0);
+                    if ($stTotal > 0.0 && $st > 0.0) {
+                        $grade = (string) ($line['grade'] ?? '');
+                        $chartData[] = [
+                            'label' => $grade,
+                            'value' => $st,
+                            'percent' => ($st / $stTotal) * 100.0,
+                            'color' => $this->resolveChartColorHex($grade),
+                        ];
+                    }
+                }
+                $receipt['chart_data'] = $chartData;
+                $receipt['chart_svg'] = $chartData !== [] ? $this->generatePieChartSvg($chartData) : '';
 
                 $receipt['money'] = $this->resolveReceiptMoney(
                     is_array($receipt['_money_detail'] ?? null) ? $receipt['_money_detail'] : [],
@@ -1689,5 +1738,183 @@ class RekapProduktivitasSawmillRpReportService
         }
 
         return $totals;
+    }
+
+    /**
+     * Generate a labelled pie chart as inline SVG.
+     *
+     * mPDF renders inline SVG as vectors, so the chart stays crisp in the PDF
+     * (no GD dependency, no blurry bitmap fonts). Angles are measured clockwise
+     * starting from 12 o'clock to match the original GD layout.
+     *
+     * No external legend is drawn here — grade names, tonnage and rendemen are
+     * already shown in the KATEGORI table next to the chart on the
+     * "DIAGRAM RENDEMEN" page, so the chart itself only needs the slices + a
+     * short label (grade name + percent).
+     *
+     * @param  array<int, array{label: string, value: float, percent: float, color: string}>  $data
+     */
+    private function generatePieChartSvg(array $data): string
+    {
+        $total = 0.0;
+        foreach ($data as $item) {
+            $total += (float) ($item['value'] ?? 0.0);
+        }
+        if ($total <= 0.0) {
+            return '';
+        }
+
+        $width = 340;
+        $height = 340;
+        $cx = 170;
+        $cy = 170;
+        $radius = 155;
+        $colorCount = count(self::CHART_COLORS);
+
+        $svg = [];
+        $svg[] = sprintf('<svg width="%d" height="%d" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg">', $width, $height, $width, $height);
+        $svg[] = sprintf('<rect width="%d" height="%d" fill="#ffffff"/>', $width, $height);
+
+        $startAngle = 0.0;
+        foreach ($data as $i => $item) {
+            $value = (float) ($item['value'] ?? 0.0);
+            if ($value <= 0.0) {
+                continue;
+            }
+
+            $sweep = ($value / $total) * 360.0;
+            $fill = (string) ($item['color'] ?? '');
+            if ($fill === '' || preg_match('/^#[0-9a-f]{6}$/i', $fill) !== 1) {
+                [$r, $g, $b] = self::CHART_COLORS[$i % $colorCount];
+                $fill = sprintf('#%02x%02x%02x', $r, $g, $b);
+            }
+            $textColor = '#000000';
+
+            $points = [];
+            $steps = max(4, (int) ceil($sweep / 5.0));
+            for ($s = 0; $s <= $steps; $s++) {
+                $angle = $startAngle + $sweep * ($s / $steps);
+                [$px, $py] = $this->pieChartPoint($cx, $cy, $radius, $angle);
+                $points[] = sprintf('%.1f,%.1f', $px, $py);
+            }
+            $svg[] = sprintf(
+                '<polygon points="%.1f,%.1f %s" fill="%s" stroke="#ffffff" stroke-width="1.5"/>',
+                $cx,
+                $cy,
+                implode(' ', $points),
+                $fill
+            );
+
+            $percent = (float) ($item['percent'] ?? 0.0);
+            $label = (string) ($item['label'] ?? '');
+            $percentText = number_format($percent, 1, '.', '').'%';
+            $midAngle = $startAngle + ($sweep / 2.0);
+
+            // mPDF's SVG renderer does not honour <tspan dy="..."> line offsets reliably,
+            // which caused multi-line labels to overlap/garble. Each line is drawn as its
+            // own <text> element at an explicit y coordinate instead. Tonnage is dropped
+            // from the in-chart label (it is already in the KATEGORI table below), keeping
+            // each slice to at most two short lines: grade name + percent.
+            if ($sweep >= 20.0) {
+                // Roomy slice.
+                [$lx, $ly] = $this->pieChartPoint($cx, $cy, $radius * 0.62, $midAngle);
+                $svg[] = sprintf(
+                    '<text x="%.1f" y="%.1f" font-size="13" font-weight="bold" text-anchor="middle" fill="%s">%s</text>',
+                    $lx,
+                    $ly - 9,
+                    $textColor,
+                    $this->escapeSvgText($label)
+                );
+                $svg[] = sprintf(
+                    '<text x="%.1f" y="%.1f" font-size="13" font-weight="bold" text-anchor="middle" fill="%s">%s</text>',
+                    $lx,
+                    $ly + 9,
+                    $textColor,
+                    $this->escapeSvgText($percentText)
+                );
+            } elseif ($sweep >= 8.0) {
+                // Medium slice, smaller font.
+                [$lx, $ly] = $this->pieChartPoint($cx, $cy, $radius * 0.74, $midAngle);
+                $svg[] = sprintf(
+                    '<text x="%.1f" y="%.1f" font-size="11" font-weight="bold" text-anchor="middle" fill="%s">%s</text>',
+                    $lx,
+                    $ly - 7,
+                    $textColor,
+                    $this->escapeSvgText($label)
+                );
+                $svg[] = sprintf(
+                    '<text x="%.1f" y="%.1f" font-size="11" font-weight="bold" text-anchor="middle" fill="%s">%s</text>',
+                    $lx,
+                    $ly + 7,
+                    $textColor,
+                    $this->escapeSvgText($percentText)
+                );
+            } elseif ($sweep >= 3.0) {
+                // Thin slice: percent only, pushed toward the outer edge so it stays inside the wedge.
+                [$lx, $ly] = $this->pieChartPoint($cx, $cy, $radius * 0.84, $midAngle);
+                $svg[] = sprintf(
+                    '<text x="%.1f" y="%.1f" font-size="10" font-weight="bold" text-anchor="middle" fill="%s">%s</text>',
+                    $lx,
+                    $ly,
+                    $textColor,
+                    $this->escapeSvgText($percentText)
+                );
+            }
+            // Razor-thin slices (< 3%) get no in-chart label to avoid clutter; the exact
+            // value is still shown in the KATEGORI table below the chart.
+
+            $startAngle += $sweep;
+        }
+
+        $svg[] = '</svg>';
+
+        return implode("\n", $svg);
+    }
+
+    /**
+     * Convert an angle (degrees, clockwise from 12 o'clock) into an SVG point.
+     *
+     * @return array{0: float, 1: float}
+     */
+    private function pieChartPoint(float $cx, float $cy, float $radius, float $degrees): array
+    {
+        $rad = deg2rad($degrees - 90.0);
+
+        return [$cx + ($radius * cos($rad)), $cy + ($radius * sin($rad))];
+    }
+
+    private function escapeSvgText(string $text): string
+    {
+        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    /**
+     * Resolve a stable hex color for a grade, so the pie slices match the
+     * "kartu kategori" colors on the diagram page across all receipts.
+     */
+    private function resolveChartColorHex(string $grade): string
+    {
+        $key = strtoupper(trim($grade));
+
+        if (isset($this->chartGradeColors[$key])) {
+            return $this->chartGradeColors[$key];
+        }
+
+        foreach (self::CATEGORY_COLORS as $category => $rgb) {
+            if (strcasecmp(trim($grade), $category) === 0) {
+                $color = sprintf('#%02x%02x%02x', $rgb[0], $rgb[1], $rgb[2]);
+                $this->chartGradeColors[$key] = $color;
+
+                return $color;
+            }
+        }
+
+        $index = $this->chartFallbackCounter % count(self::CHART_COLORS);
+        $this->chartFallbackCounter++;
+        $rgb = self::CHART_COLORS[$index];
+        $color = sprintf('#%02x%02x%02x', $rgb[0], $rgb[1], $rgb[2]);
+        $this->chartGradeColors[$key] = $color;
+
+        return $color;
     }
 }
