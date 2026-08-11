@@ -28,3 +28,10 @@ rekap-hasil-sawmill-per-meja-upah-borongan-v2-*.pdf
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Graphify code-graph analysis output (generated per-directory, not source)
+graphify-out/
+**/graphify-out/
+
+# OpenCode Zen local config
+.opencode/
