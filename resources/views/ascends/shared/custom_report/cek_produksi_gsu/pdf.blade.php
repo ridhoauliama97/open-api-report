@@ -127,13 +127,15 @@
             $headerSubtitle = 'Dari ' . $startDate . ' s/d ' . $endDate;
         }
 
-        function fmtAmt($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtAmt_cek_produksi_gsu')) {
+            function fmtAmt_cek_produksi_gsu($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 2, '.', ',');
             }
-            return number_format($v, 2, '.', ',');
         }
 
         $globalRow = 0;
@@ -170,9 +172,9 @@
                             <td>{{ $row['item_name'] ?? '' }}</td>
                             {{-- <td class="center">{{ $row['category_name'] ?? '' }}</td> --}}
                             <td class="center">{{ $row['family_name'] ?? '' }}</td>
-                            <td class="number nowrap">{{ fmtAmt($row['saldo_awal'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmt($row['qty_sales'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmt($row['qty_prod'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmt_cek_produksi_gsu($row['saldo_awal'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmt_cek_produksi_gsu($row['qty_sales'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmt_cek_produksi_gsu($row['qty_prod'] ?? 0) }}</td>
                         </tr>
                     @endforeach
 

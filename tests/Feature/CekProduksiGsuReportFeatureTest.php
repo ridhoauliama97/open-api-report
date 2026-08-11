@@ -186,4 +186,45 @@ XML;
         $this->assertSame(0.0, $barangJadi['qty_sales']);
         $this->assertSame(0.0, $barangJadi['qty_prod']);
     }
+
+    public function test_cek_produksi_gsu_endpoint_returns_pdf(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+        $token = $this->issueJwtForUser($user);
+
+        $xmlFile = UploadedFile::fake()->createWithContent('cek_produksi_gsu.xml', self::SAMPLE_XML);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token,
+        ])->post('/api/internal/ascends/shared/custom-report/cek-produksi-gsu/pdf', [
+            'xml_file' => $xmlFile,
+            'DB_CompanyName' => 'GSU',
+            'Sys_Username' => 'Ridho',
+            'StartDate' => '2026-08-01',
+            'EndDate' => '2026-08-02',
+        ]);
+
+        $response->assertOk();
+        $response->assertHeader('Content-Type', 'application/pdf');
+    }
+
+    public function test_endpoint_resolves_alternative_alias_keys(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+        $token = $this->issueJwtForUser($user);
+
+        $xmlFile = UploadedFile::fake()->createWithContent('cek_produksi_gsu.xml', self::SAMPLE_XML);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token,
+        ])->post('/api/internal/ascends/shared/custom-report/cek-produksi-gsu/pdf', [
+            'xml_file' => $xmlFile,
+            'DB_CompanyName' => 'GSU',
+            'sys_username' => 'AlternativeUser',
+            'start_date' => '2026-08-01',
+            'end_date' => '2026-08-02',
+        ]);
+
+        $response->assertOk();
+    }
 }

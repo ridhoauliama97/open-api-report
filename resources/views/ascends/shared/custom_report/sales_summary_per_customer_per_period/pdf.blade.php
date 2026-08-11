@@ -135,13 +135,15 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $periodLabel = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmt($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '0';
+        if (!function_exists('fmtAmt_sales_summary_per_customer_per_period')) {
+            function fmtAmt_sales_summary_per_customer_per_period($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '0';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
     @endphp
 
@@ -179,12 +181,12 @@
                 <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                     <td>{{ $cust['customer_name'] ?? '' }}</td>
                     @foreach ($periods as $idx => $p)
-                        <td class="number nowrap">{{ fmtAmt($cust['months'][$idx] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmt_sales_summary_per_customer_per_period($cust['months'][$idx] ?? 0) }}</td>
                         <td class="number nowrap">{{ $cust['sku_months'][$idx] ?? 0 }}</td>
                     @endforeach
-                    <td class="number nowrap">{{ fmtAmt($cust['min'] ?? 0) }}</td>
-                    <td class="number nowrap">{{ fmtAmt($cust['max'] ?? 0) }}</td>
-                    <td class="number nowrap">{{ fmtAmt($cust['avg'] ?? 0) }}</td>
+                    <td class="number nowrap">{{ fmtAmt_sales_summary_per_customer_per_period($cust['min'] ?? 0) }}</td>
+                    <td class="number nowrap">{{ fmtAmt_sales_summary_per_customer_per_period($cust['max'] ?? 0) }}</td>
+                    <td class="number nowrap">{{ fmtAmt_sales_summary_per_customer_per_period($cust['avg'] ?? 0) }}</td>
                     <td class="number nowrap">{{ $cust['max_sku'] ?? 0 }}</td>
                     <td class="number nowrap">{{ number_format($cust['avg_sku'] ?? 0, 0, '.', ',') }}</td>
                 </tr>
