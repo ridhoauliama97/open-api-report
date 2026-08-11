@@ -10970,54 +10970,68 @@ class AscendXmlTestController extends Controller
 
     private function rekapitulasiKehadiranKurang93TahunanFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
-        $all = $request->all();
-
         return [
-            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
-            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
-            'Pilih Status' => $all['Pilih_Status'] ?? $all['Pilih Status'] ?? null,
+            'AttendanceDate.StartDate' => $this->requestInputByAliases($request, [
+                'AttendanceDate.StartDate',
+                'AttendanceDate_StartDate',
+                'AttendanceDate_x0020_StartDate',
+                'AttendanceDate_x002e_StartDate',
+            ]),
+            'AttendanceDate.EndDate' => $this->requestInputByAliases($request, [
+                'AttendanceDate.EndDate',
+                'AttendanceDate_EndDate',
+                'AttendanceDate_x0020_EndDate',
+                'AttendanceDate_x002e_EndDate',
+            ]),
+            'Pilih Status' => $this->requestInputByAliases($request, [
+                'Pilih_Status',
+                'Pilih Status',
+                'Pilih_x0020_Status',
+            ]),
         ];
     }
 
     private function lemburBulananFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
-        $all = $request->all();
-
         return [
-            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
-            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
+            'AttendanceDate.StartDate' => $this->requestInputByAliases($request, [
+                'AttendanceDate.StartDate',
+                'AttendanceDate_StartDate',
+                'AttendanceDate_x0020_StartDate',
+                'AttendanceDate_x002e_StartDate',
+            ]),
+            'AttendanceDate.EndDate' => $this->requestInputByAliases($request, [
+                'AttendanceDate.EndDate',
+                'AttendanceDate_EndDate',
+                'AttendanceDate_x0020_EndDate',
+                'AttendanceDate_x002e_EndDate',
+            ]),
         ];
     }
 
     private function verifikasiLemburFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
-        $all = $request->all();
-
         return [
-            'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
-            'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
+            'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+            'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
         ];
     }
 
     private function diagramLemburTahunanFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
-        $all = $request->all();
-
         return [
-            'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
-            'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
+            'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+            'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
         ];
     }
 
     private function penjualanPerItemAnalisaSkuFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
-        $all = $request->all();
-
         return [
-            'StartDate' => $all['StartDate'] ?? $all['start_date'] ?? null,
-            'EndDate' => $all['EndDate'] ?? $all['end_date'] ?? null,
-            'Sys_Username' => $all['Sys_Username'] ?? $all['sys_username'] ?? null,
-            'DB_CompanyName' => $all['DB_CompanyName'] ?? $all['company'] ?? null,
+            'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+            'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
+            'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
+            'DB_CompanyName' => $this->requestInputByAliases($request, ['DB_CompanyName', 'company']),
         ];
     }
 
