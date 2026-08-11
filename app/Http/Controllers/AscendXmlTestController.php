@@ -876,7 +876,7 @@ class AscendXmlTestController extends Controller
                 $sourceLabel,
                 [
                     'company' => $company,
-                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
                     'DB_CompanyName' => $company,
                 ],
             );
@@ -992,8 +992,8 @@ class AscendXmlTestController extends Controller
                 $sourceLabel,
                 [
                     'company' => $company,
-                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
-                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+                    'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
                     'DB_CompanyName' => $company,
                 ],
             );
@@ -1005,6 +1005,7 @@ class AscendXmlTestController extends Controller
 
         $companyShort = $reportData['company'] ?? '';
 
+        $yearCount = count($reportData['years'] ?? []);
         $pdf = $pdfGenerator->render('ascends.shared.custom_report.pengiriman_lemari_tahunan.pdf', [
             'company' => $companyShort,
             'reportData' => $reportData,
@@ -1049,9 +1050,9 @@ class AscendXmlTestController extends Controller
                 $sourceLabel,
                 [
                     'company' => $company,
-                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
-                    'EndDate' => $request->input('EndDate', $request->input('end_date')),
-                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+                    'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
+                    'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
                     'DB_CompanyName' => $company,
                 ],
             );
@@ -1108,9 +1109,9 @@ class AscendXmlTestController extends Controller
                 $sourceLabel,
                 [
                     'company' => $company,
-                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
-                    'EndDate' => $request->input('EndDate', $request->input('end_date')),
-                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+                    'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
+                    'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
                     'DB_CompanyName' => $company,
                 ],
             );
@@ -1168,9 +1169,9 @@ class AscendXmlTestController extends Controller
                 $sourceLabel,
                 [
                     'company' => $company,
-                    'StartDate' => $request->input('StartDate', $request->input('start_date')),
-                    'EndDate' => $request->input('EndDate', $request->input('end_date')),
-                    'Sys_Username' => $request->input('Sys_Username', $request->input('sys_username')),
+                    'StartDate' => $this->requestInputByAliases($request, ['StartDate', 'start_date']),
+                    'EndDate' => $this->requestInputByAliases($request, ['EndDate', 'end_date']),
+                    'Sys_Username' => $this->requestInputByAliases($request, ['Sys_Username', 'sys_username']),
                     'DB_CompanyName' => $company,
                 ],
             );
