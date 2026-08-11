@@ -200,13 +200,15 @@
         ];
 
         if (! function_exists('fmtNum')) {
-            function fmtNum($value, $decimals = 0)
-            {
-                $v = (float) $value;
-                if ($v == 0.0) {
-                    return '0';
+            if (!function_exists('fmtNum_penjualan_per_kategori_barang_bulanan')) {
+                function fmtNum_penjualan_per_kategori_barang_bulanan($value, $decimals = 0)
+                {
+                    $v = (float) $value;
+                    if ($v == 0.0) {
+                        return '0';
+                    }
+                    return number_format($v, $decimals, ',', '.');
                 }
-                return number_format($v, $decimals, ',', '.');
             }
         }
 
@@ -288,7 +290,7 @@
                         <th rowspan="4" style="width: 3%;">Tgl</th>
                         @foreach ($displayOrder as $k)
                             @php $headerRp = $k === 'total' ? ($section['monthly_target_total'] ?? 0) : ($section['monthly_target'][$k] ?? 0); @endphp
-                            <th colspan="3" class="header-value">{{ fmtNum($headerRp) }}</th>
+                            <th colspan="3" class="header-value">{{ fmtNum_penjualan_per_kategori_barang_bulanan($headerRp) }}</th>
                         @endforeach
                     </tr>
                     {{-- Row 2: Target Perhari --}}
@@ -297,7 +299,7 @@
                             @php
                                 $targetVal = $k === 'total' ? $section['target_total_per_hari'] : $section['target_per_hari'][$k];
                             @endphp
-                            <th colspan="3" class="header-target">Target Perhari {{ fmtNum($targetVal) }}</th>
+                            <th colspan="3" class="header-target">Target Perhari {{ fmtNum_penjualan_per_kategori_barang_bulanan($targetVal) }}</th>
                         @endforeach
                     </tr>
                     {{-- Row 3: Category names --}}
@@ -322,9 +324,9 @@
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td class="center">{{ $rec['day'] }}</td>
                             @foreach ($displayOrder as $k)
-                                <td class="number">{{ fmtNum(getQty($rec, $k)) }}</td>
-                                <td class="number">{{ fmtNum(getRp($rec, $k)) }}</td>
-                                <td class="number {{ devClass(getDev($rec, $k)) }}">{{ fmtNum(getDev($rec, $k)) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan(getQty($rec, $k)) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan(getRp($rec, $k)) }}</td>
+                                <td class="number {{ devClass(getDev($rec, $k)) }}">{{ fmtNum_penjualan_per_kategori_barang_bulanan(getDev($rec, $k)) }}</td>
                             @endforeach
                         </tr>
                     @endforeach
@@ -332,9 +334,9 @@
                     <tr class="subtotal-row">
                         <td class="center">Total</td>
                         @foreach ($displayOrder as $k)
-                            <td class="number">{{ fmtNum($subtotals[$k . '_qty']) }}</td>
-                            <td class="number">{{ fmtNum($subtotals[$k . '_rp']) }}</td>
-                            <td class="number {{ devClass($subtotals[$k . '_dev']) }}">{{ fmtNum($subtotals[$k . '_dev']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($subtotals[$k . '_qty']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($subtotals[$k . '_rp']) }}</td>
+                            <td class="number {{ devClass($subtotals[$k . '_dev']) }}">{{ fmtNum_penjualan_per_kategori_barang_bulanan($subtotals[$k . '_dev']) }}</td>
                         @endforeach
                     </tr>
                 </tbody>
@@ -373,12 +375,12 @@
                             @endphp
                             <tr class="{{ $isTotal ? 'subtotal-row' : '' }}">
                                 <td>{{ $isTotal ? 'Total' : ($colLabels[$waRow['category']] ?? $waRow['category']) }}</td>
-                                <td class="number">{{ fmtNum($waRow['target']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['target']) }}</td>
                                 @foreach ($weeks as $w)
-                                    <td class="number">{{ fmtNum($waRow['weeks'][$w]['penjualan']) }}</td>
+                                    <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['weeks'][$w]['penjualan']) }}</td>
                                     <td class="number">{{ fmtPct($waRow['weeks'][$w]['pct']) }}</td>
                                 @endforeach
-                                <td class="number">{{ fmtNum($weekSum) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($weekSum) }}</td>
                                 <td class="number">{{ fmtPct($totalPct) }}</td>
                             </tr>
                         @endforeach
@@ -408,9 +410,9 @@
                             @endphp
                             <tr class="{{ $isTotal ? 'subtotal-row' : '' }}">
                                 <td>{{ $isTotal ? 'Total' : ($colLabels[$daRow['category']] ?? $daRow['category']) }}</td>
-                                <td class="number">{{ fmtNum($daRow['rata_rata']) }}</td>
-                                <td class="number">{{ fmtNum($daRow['terendah']) }}</td>
-                                <td class="number">{{ fmtNum($daRow['tertinggi']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($daRow['rata_rata']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($daRow['terendah']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($daRow['tertinggi']) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -446,7 +448,7 @@
                         <th rowspan="4" style="width: 3%;">Tgl</th>
                         @foreach ($displayOrder as $k)
                             @php $headerRp = $k === 'total' ? ($gt['monthly_target_total'] ?? 0) : ($gt['monthly_target'][$k] ?? 0); @endphp
-                            <th colspan="3" class="header-value">{{ fmtNum($headerRp) }}</th>
+                            <th colspan="3" class="header-value">{{ fmtNum_penjualan_per_kategori_barang_bulanan($headerRp) }}</th>
                         @endforeach
                     </tr>
                     <tr>
@@ -454,7 +456,7 @@
                             @php
                                 $targetVal = $k === 'total' ? $gt['target_total_per_hari'] : $gt['target_per_hari'][$k];
                             @endphp
-                            <th colspan="3" class="header-target">Target Perhari {{ fmtNum($targetVal) }}</th>
+                            <th colspan="3" class="header-target">Target Perhari {{ fmtNum_penjualan_per_kategori_barang_bulanan($targetVal) }}</th>
                         @endforeach
                     </tr>
                     <tr>
@@ -477,18 +479,18 @@
                         <tr class="{{ $gtRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td class="center">{{ $rec['day'] }}</td>
                             @foreach ($displayOrder as $k)
-                                <td class="number">{{ fmtNum(getQty($rec, $k)) }}</td>
-                                <td class="number">{{ fmtNum(getRp($rec, $k)) }}</td>
-                                <td class="number {{ devClass(getDev($rec, $k)) }}">{{ fmtNum(getDev($rec, $k)) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan(getQty($rec, $k)) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan(getRp($rec, $k)) }}</td>
+                                <td class="number {{ devClass(getDev($rec, $k)) }}">{{ fmtNum_penjualan_per_kategori_barang_bulanan(getDev($rec, $k)) }}</td>
                             @endforeach
                         </tr>
                     @endforeach
                     <tr class="subtotal-row">
                         <td class="center">Total :</td>
                         @foreach ($displayOrder as $k)
-                            <td class="number">{{ fmtNum($gtSubtotals[$k . '_qty']) }}</td>
-                            <td class="number">{{ fmtNum($gtSubtotals[$k . '_rp']) }}</td>
-                            <td class="number {{ devClass($gtSubtotals[$k . '_dev']) }}">{{ fmtNum($gtSubtotals[$k . '_dev']) }}
+                            <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($gtSubtotals[$k . '_qty']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($gtSubtotals[$k . '_rp']) }}</td>
+                            <td class="number {{ devClass($gtSubtotals[$k . '_dev']) }}">{{ fmtNum_penjualan_per_kategori_barang_bulanan($gtSubtotals[$k . '_dev']) }}
                             </td>
                         @endforeach
                     </tr>
@@ -528,12 +530,12 @@
                             @endphp
                             <tr class="{{ $isTotal ? 'subtotal-row' : '' }}">
                                 <td>{{ $isTotal ? 'Total' : ($colLabels[$waRow['category']] ?? $waRow['category']) }}</td>
-                                <td class="number">{{ fmtNum($waRow['target']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['target']) }}</td>
                                 @foreach ($weeks as $w)
-                                    <td class="number">{{ fmtNum($waRow['weeks'][$w]['penjualan']) }}</td>
+                                    <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['weeks'][$w]['penjualan']) }}</td>
                                     <td class="number">{{ fmtPct($waRow['weeks'][$w]['pct']) }}</td>
                                 @endforeach
-                                <td class="number">{{ fmtNum($weekSum) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($weekSum) }}</td>
                                 <td class="number">{{ fmtPct($totalPct) }}</td>
                             </tr>
                         @endforeach
@@ -563,9 +565,9 @@
                             @endphp
                             <tr class="{{ $isTotal ? 'subtotal-row' : '' }}">
                                 <td>{{ $isTotal ? 'Total' : ($colLabels[$daRow['category']] ?? $daRow['category']) }}</td>
-                                <td class="number">{{ fmtNum($daRow['rata_rata']) }}</td>
-                                <td class="number">{{ fmtNum($daRow['terendah']) }}</td>
-                                <td class="number">{{ fmtNum($daRow['tertinggi']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($daRow['rata_rata']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($daRow['terendah']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($daRow['tertinggi']) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

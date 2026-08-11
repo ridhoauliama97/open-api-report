@@ -143,13 +143,15 @@
             $headerSubtitle = 'Dari ' . $startDate . ' s/d ' . $endDate;
         }
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '0';
+        if (!function_exists('fmtNum_biaya_mobil_truk')) {
+            function fmtNum_biaya_mobil_truk($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '0';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
 
         $globalRow = 0;
@@ -186,24 +188,24 @@
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td>{{ $row['account_name'] ?? '' }}</td>
                             @foreach ($row['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_biaya_mobil_truk($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($row['total']) }}</td>
-                            <td class="number">{{ fmtNum($row['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($row['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($row['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_biaya_mobil_truk($row['total']) }}</td>
+                            <td class="number">{{ fmtNum_biaya_mobil_truk($row['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_biaya_mobil_truk($row['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_biaya_mobil_truk($row['tertinggi']) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="subtotal-row">
                         <td>SUBTOTAL</td>
                         @foreach ($section['subtotal']['values'] as $val)
-                            <td class="number">{{ fmtNum($val) }}</td>
+                            <td class="number">{{ fmtNum_biaya_mobil_truk($val) }}</td>
                         @endforeach
-                        <td class="number">{{ fmtNum($section['subtotal']['total']) }}</td>
-                        <td class="number">{{ fmtNum($section['subtotal']['rata2']) }}</td>
-                        <td class="number">{{ fmtNum($section['subtotal']['terendah']) }}</td>
-                        <td class="number">{{ fmtNum($section['subtotal']['tertinggi']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($section['subtotal']['total']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($section['subtotal']['rata2']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($section['subtotal']['terendah']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($section['subtotal']['tertinggi']) }}</td>
                     </tr>
                 @endforeach
 
@@ -211,12 +213,12 @@
                     <tr class="grand-total-row">
                         <td class="center">GRAND TOTAL</td>
                         @foreach ($grandTotals['values'] as $val)
-                            <td class="number">{{ fmtNum($val) }}</td>
+                            <td class="number">{{ fmtNum_biaya_mobil_truk($val) }}</td>
                         @endforeach
-                        <td class="number">{{ fmtNum($grandTotals['total']) }}</td>
-                        <td class="number">{{ fmtNum($grandTotals['rata2']) }}</td>
-                        <td class="number">{{ fmtNum($grandTotals['terendah']) }}</td>
-                        <td class="number">{{ fmtNum($grandTotals['tertinggi']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($grandTotals['total']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($grandTotals['rata2']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($grandTotals['terendah']) }}</td>
+                        <td class="number">{{ fmtNum_biaya_mobil_truk($grandTotals['tertinggi']) }}</td>
                     </tr>
                 @endif
             </tbody>

@@ -142,13 +142,15 @@
             ? round((100 - $colNoWidth - $colNameWidth - $colTotalQtyWidth - $colTotalPenjualanWidth) / ($monthCount * 2), 1)
             : 0;
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum_penjualan_per_item_analisa_sku_detail')) {
+            function fmtNum_penjualan_per_item_analisa_sku_detail($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
 
         $startDate = trim((string) ($reportData['start_date'] ?? ''));
@@ -195,11 +197,11 @@
                             <td class="center">{{ $globalRow }}</td>
                             <td>{{ $row['item'] ?? '' }}</td>
                             @foreach ($row['cells'] ?? [] as $cell)
-                                <td class="number">{{ fmtNum($cell['qty'] ?? 0) }}</td>
-                                <td class="number">{{ fmtNum($cell['penjualan'] ?? 0) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($cell['qty'] ?? 0) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($cell['penjualan'] ?? 0) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($row['row_total_qty'] ?? 0) }}</td>
-                            <td class="number">{{ fmtNum($row['row_total_penjualan'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($row['row_total_qty'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($row['row_total_penjualan'] ?? 0) }}</td>
                         </tr>
                     @endforeach
                 @endforeach
@@ -208,11 +210,11 @@
                     <tr class="grand-total-row">
                         <td class="center" colspan="2">TOTAL</td>
                         @foreach ($grandTotals as $gt)
-                            <td class="number">{{ fmtNum($gt['qty'] ?? 0) }}</td>
-                            <td class="number">{{ fmtNum($gt['penjualan'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($gt['qty'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($gt['penjualan'] ?? 0) }}</td>
                         @endforeach
-                        <td class="number">{{ fmtNum($reportData['grand_total_qty'] ?? 0) }}</td>
-                        <td class="number">{{ fmtNum($reportData['grand_total_penjualan'] ?? 0) }}</td>
+                        <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($reportData['grand_total_qty'] ?? 0) }}</td>
+                        <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku_detail($reportData['grand_total_penjualan'] ?? 0) }}</td>
                     </tr>
                 @endif
             </tbody>

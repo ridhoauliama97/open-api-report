@@ -135,13 +135,15 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $yearLabel = trim((string) ($reportData['year'] ?? ''));
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum_pengiriman_per_kategori_tahunan')) {
+            function fmtNum_pengiriman_per_kategori_tahunan($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
     @endphp
 
@@ -178,9 +180,9 @@
                                     <tr class="{{ $rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                         <td>{{ $item['item_name'] }}</td>
                                         @foreach ($months as $mNum => $mLabel)
-                                            <td class="number">{{ fmtNum($item['monthly'][$mNum] ?? 0) }}</td>
+                                            <td class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($item['monthly'][$mNum] ?? 0) }}</td>
                                         @endforeach
-                                        <td class="number">{{ fmtNum($item['total_qty']) }}</td>
+                                        <td class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($item['total_qty']) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -193,9 +195,9 @@
                         <tr class="subtotal-row">
                             <td style="width: 24%;" class="center">Total</td>
                             @foreach ($months as $mNum => $mLabel)
-                                <td style="width: 6%;" class="number">{{ fmtNum($category['monthly'][$mNum] ?? 0) }}</td>
+                                <td style="width: 6%;" class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($category['monthly'][$mNum] ?? 0) }}</td>
                             @endforeach
-                            <td style="width: 6%;" class="number">{{ fmtNum($category['total_qty']) }}</td>
+                            <td style="width: 6%;" class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($category['total_qty']) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -220,9 +222,9 @@
                                 <tr class="{{ $rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                     <td>{{ $item['item_name'] }}</td>
                                     @foreach ($months as $mNum => $mLabel)
-                                        <td class="number">{{ fmtNum($item['monthly'][$mNum] ?? 0) }}</td>
+                                        <td class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($item['monthly'][$mNum] ?? 0) }}</td>
                                     @endforeach
-                                    <td class="number">{{ fmtNum($item['total_qty']) }}</td>
+                                    <td class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($item['total_qty']) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -230,9 +232,9 @@
                             <tr class="subtotal-row">
                                 <td class="center">Total</td>
                                 @foreach ($months as $mNum => $mLabel)
-                                    <td class="number">{{ fmtNum($category['monthly'][$mNum] ?? 0) }}</td>
+                                    <td class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($category['monthly'][$mNum] ?? 0) }}</td>
                                 @endforeach
-                                <td class="number">{{ fmtNum($category['total_qty']) }}</td>
+                                <td class="number">{{ fmtNum_pengiriman_per_kategori_tahunan($category['total_qty']) }}</td>
                             </tr>
                         </tfoot>
                     </table>

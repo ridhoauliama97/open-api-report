@@ -126,13 +126,15 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum_budgeting_realisasi_biaya_promosi_penjualan')) {
+            function fmtNum_budgeting_realisasi_biaya_promosi_penjualan($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
 
         function fmtPersen($value)
@@ -175,9 +177,9 @@
                         <td>{{ $row['name'] ?? '' }}</td>
                         <td class="number">-</td>
                         @foreach ($row['values'] as $val)
-                            <td class="number">{{ fmtNum($val) }}</td>
+                            <td class="number">{{ fmtNum_budgeting_realisasi_biaya_promosi_penjualan($val) }}</td>
                         @endforeach
-                        <td class="number">{{ fmtNum($row['total']) }}</td>
+                        <td class="number">{{ fmtNum_budgeting_realisasi_biaya_promosi_penjualan($row['total']) }}</td>
                         <td class="number">0.0%</td>
                     </tr>
                 @endforeach
@@ -187,9 +189,9 @@
                         <td>Total Biaya Promosi Penjualan</td>
                         <td class="number">-</td>
                         @foreach ($total['values'] as $val)
-                            <td class="number">{{ fmtNum($val) }}</td>
+                            <td class="number">{{ fmtNum_budgeting_realisasi_biaya_promosi_penjualan($val) }}</td>
                         @endforeach
-                        <td class="number">{{ fmtNum($total['total']) }}</td>
+                        <td class="number">{{ fmtNum_budgeting_realisasi_biaya_promosi_penjualan($total['total']) }}</td>
                         <td class="number">0.0%</td>
                     </tr>
                 @endif

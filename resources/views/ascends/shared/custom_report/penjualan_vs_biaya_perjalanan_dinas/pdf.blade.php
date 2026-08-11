@@ -141,13 +141,15 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum_penjualan_vs_biaya_perjalanan_dinas')) {
+            function fmtNum_penjualan_vs_biaya_perjalanan_dinas($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
 
         function fmtPersen($value)
@@ -194,24 +196,24 @@
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ $row['family'] ?? '' }}</td>
                                 @foreach ($row['values'] as $val)
-                                    <td class="number">{{ fmtNum($val) }}</td>
+                                    <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                                 @endforeach
-                                <td class="number">{{ fmtNum($row['total']) }}</td>
-                                <td class="number">{{ fmtNum($row['rata2']) }}</td>
-                                <td class="number">{{ fmtNum($row['terendah']) }}</td>
-                                <td class="number">{{ fmtNum($row['tertinggi']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['total']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['rata2']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['terendah']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['tertinggi']) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="grand-total-row">
                             <td>TOTAL PENJUALAN</td>
                             @foreach ($section['penjualan_total']['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($section['penjualan_total']['total']) }}</td>
-                            <td class="number">{{ fmtNum($section['penjualan_total']['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($section['penjualan_total']['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($section['penjualan_total']['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['penjualan_total']['total']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['penjualan_total']['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['penjualan_total']['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['penjualan_total']['tertinggi']) }}</td>
                         </tr>
                     @endif
 
@@ -219,23 +221,23 @@
                         <tr class="grand-total-row">
                             <td>BIAYA PERJALANAN DINAS</td>
                             @foreach ($section['biaya']['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($section['biaya']['total']) }}</td>
-                            <td class="number">{{ fmtNum($section['biaya']['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($section['biaya']['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($section['biaya']['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['total']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['tertinggi']) }}</td>
                         </tr>
 
                         <tr class="grand-total-row">
                             <td>TOTAL BIAYA</td>
                             @foreach ($section['biaya']['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($section['biaya']['total']) }}</td>
-                            <td class="number">{{ fmtNum($section['biaya']['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($section['biaya']['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($section['biaya']['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['total']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($section['biaya']['tertinggi']) }}</td>
                         </tr>
                     @endif
 
@@ -262,24 +264,24 @@
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ $row['family'] ?? '' }}</td>
                                 @foreach ($row['values'] as $val)
-                                    <td class="number">{{ fmtNum($val) }}</td>
+                                    <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                                 @endforeach
-                                <td class="number">{{ fmtNum($row['total']) }}</td>
-                                <td class="number">{{ fmtNum($row['rata2']) }}</td>
-                                <td class="number">{{ fmtNum($row['terendah']) }}</td>
-                                <td class="number">{{ fmtNum($row['tertinggi']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['total']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['rata2']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['terendah']) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($row['tertinggi']) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="grand-total-row">
                             <td>Total Penjualan</td>
                             @foreach ($grandTotals['penjualan_total']['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($grandTotals['penjualan_total']['total']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['penjualan_total']['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['penjualan_total']['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['penjualan_total']['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['penjualan_total']['total']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['penjualan_total']['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['penjualan_total']['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['penjualan_total']['tertinggi']) }}</td>
                         </tr>
                     @endif
 
@@ -287,23 +289,23 @@
                         <tr class="grand-total-row">
                             <td>BIAYA PERJALANAN DINAS</td>
                             @foreach ($grandTotals['biaya']['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['total']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['total']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['tertinggi']) }}</td>
                         </tr>
 
                         <tr class="grand-total-row">
                             <td>Total Biaya</td>
                             @foreach ($grandTotals['biaya']['values'] as $val)
-                                <td class="number">{{ fmtNum($val) }}</td>
+                                <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                             @endforeach
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['total']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['rata2']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['terendah']) }}</td>
-                            <td class="number">{{ fmtNum($grandTotals['biaya']['tertinggi']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['total']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['rata2']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['terendah']) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_vs_biaya_perjalanan_dinas($grandTotals['biaya']['tertinggi']) }}</td>
                         </tr>
                     @endif
 

@@ -138,13 +138,15 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? '')));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum_pengiriman_per_kategori_harian')) {
+            function fmtNum_pengiriman_per_kategori_harian($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
     @endphp
 
@@ -184,18 +186,18 @@
                                     <tr class="{{ $rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                         <td>{{ $item['item_name'] }}</td>
                                         @foreach ($dayNumbers as $day)
-                                            <td class="number">{{ fmtNum($item['daily'][$day] ?? 0) }}</td>
+                                            <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($item['daily'][$day] ?? 0) }}</td>
                                         @endforeach
-                                        <td class="number">{{ fmtNum($item['total_qty']) }}</td>
+                                        <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($item['total_qty']) }}</td>
                                     </tr>
                                 @endforeach
                                 {{-- Group subtotal --}}
                                 <tr class="subtotal-row">
                                     <td class="center">Total {{ $group['grp'] }}</td>
                                     @foreach ($dayNumbers as $day)
-                                        <td class="number">{{ fmtNum($group['daily'][$day] ?? 0) }}</td>
+                                        <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($group['daily'][$day] ?? 0) }}</td>
                                     @endforeach
-                                    <td class="number">{{ fmtNum($group['total_qty']) }}</td>
+                                    <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($group['total_qty']) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -208,10 +210,10 @@
                             <td style="width: 22%;" class="center">Total {{ $category['label'] }}</td>
                             @foreach ($dayNumbers as $day)
                                 <td style="width: {{ round(72 / count($dayNumbers), 1) }}%;" class="number">
-                                    {{ fmtNum($category['daily'][$day] ?? 0) }}
+                                    {{ fmtNum_pengiriman_per_kategori_harian($category['daily'][$day] ?? 0) }}
                                 </td>
                             @endforeach
-                            <td style="width: 6%;" class="number">{{ fmtNum($category['total_qty']) }}</td>
+                            <td style="width: 6%;" class="number">{{ fmtNum_pengiriman_per_kategori_harian($category['total_qty']) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -236,18 +238,18 @@
                                 <tr class="{{ $rowNum % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                     <td>{{ $item['item_name'] }}</td>
                                     @foreach ($dayNumbers as $day)
-                                        <td class="number">{{ fmtNum($item['daily'][$day] ?? 0) }}</td>
+                                        <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($item['daily'][$day] ?? 0) }}</td>
                                     @endforeach
-                                    <td class="number">{{ fmtNum($item['total_qty']) }}</td>
+                                    <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($item['total_qty']) }}</td>
                                 </tr>
                             @endforeach
                             {{-- Category total --}}
                             <tr class="subtotal-row">
                                 <td class="center">Total</td>
                                 @foreach ($dayNumbers as $day)
-                                    <td class="number">{{ fmtNum($category['daily'][$day] ?? 0) }}</td>
+                                    <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($category['daily'][$day] ?? 0) }}</td>
                                 @endforeach
-                                <td class="number">{{ fmtNum($category['total_qty']) }}</td>
+                                <td class="number">{{ fmtNum_pengiriman_per_kategori_harian($category['total_qty']) }}</td>
                             </tr>
                         </tbody>
                     </table>

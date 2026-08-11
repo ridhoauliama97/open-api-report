@@ -115,13 +115,15 @@
         $items = $reportData['items'] ?? [];
 
         if (!function_exists('fmtNum')) {
-            function fmtNum($value)
-            {
-                $v = (float) $value;
-                if ($v == 0.0) {
-                    return '-';
+            if (!function_exists('fmtNum_daftar_harga_furniture_retail')) {
+                function fmtNum_daftar_harga_furniture_retail($value)
+                {
+                    $v = (float) $value;
+                    if ($v == 0.0) {
+                        return '-';
+                    }
+                    return number_format($v, 0, '.', ',');
                 }
-                return number_format($v, 0, '.', ',');
             }
         }
 
@@ -184,8 +186,8 @@
                         <td class="center">{{ $rowNo }}</td>
                         <td>{{ $item['description'] }}</td>
                         <td class="center">{{ rtrim(rtrim(number_format($item['per_dus'], 2, '.', ''), '0'), '.') }}</td>
-                        <td class="number">{{ fmtNum($item['harga_konsumen']) }}</td>
-                        <td class="number">{{ fmtNum($item['retail_diskon_5']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_furniture_retail($item['harga_konsumen']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_furniture_retail($item['retail_diskon_5']) }}</td>
                     </tr>
         @endforeach
             </tbody>

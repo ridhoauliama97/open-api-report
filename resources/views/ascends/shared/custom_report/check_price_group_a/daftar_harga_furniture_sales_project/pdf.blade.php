@@ -115,13 +115,15 @@
         $groups = $reportData['groups'] ?? [];
 
         if (!function_exists('fmtNum')) {
-            function fmtNum($value)
-            {
-                $v = (float) $value;
-                if ($v == 0.0) {
-                    return '-';
+            if (!function_exists('fmtNum_daftar_harga_furniture_sales_project')) {
+                function fmtNum_daftar_harga_furniture_sales_project($value)
+                {
+                    $v = (float) $value;
+                    if ($v == 0.0) {
+                        return '-';
+                    }
+                    return number_format($v, 0, '.', ',');
                 }
-                return number_format($v, 0, '.', ',');
             }
         }
 
@@ -173,13 +175,13 @@
                         <tr class="{{ $rowNo % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td class="center">{{ $rowNo }}</td>
                             <td>{{ $item['description'] }}</td>
-                            <td class="number">{{ fmtNum($item['semi_grosir_1']) }}</td>
-                            <td class="number">{{ fmtNum($item['semi_grosir_2']) }}</td>
-                            <td class="number">{{ fmtNum($item['semi_grosir_3']) }}</td>
+                            <td class="number">{{ fmtNum_daftar_harga_furniture_sales_project($item['semi_grosir_1']) }}</td>
+                            <td class="number">{{ fmtNum_daftar_harga_furniture_sales_project($item['semi_grosir_2']) }}</td>
+                            <td class="number">{{ fmtNum_daftar_harga_furniture_sales_project($item['semi_grosir_3']) }}</td>
                             @if ($has4)
-                                <td class="number">{{ fmtNum($item['semi_grosir_4']) }}</td>
+                                <td class="number">{{ fmtNum_daftar_harga_furniture_sales_project($item['semi_grosir_4']) }}</td>
                             @endif
-                            <td class="number">{{ fmtNum($item['harga_konsumen']) }}</td>
+                            <td class="number">{{ fmtNum_daftar_harga_furniture_sales_project($item['harga_konsumen']) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

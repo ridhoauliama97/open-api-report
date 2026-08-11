@@ -124,13 +124,15 @@
         $colNameWidth = 15;
         $monthSubWidth = $monthCount > 0 ? round((100 - $colNoWidth - $colNameWidth) / ($monthCount * 3), 1) : 0;
 
-        function fmtNum($value)
-        {
-            $v = (float) $value;
-            if ($v == 0.0) {
-                return '-';
+        if (!function_exists('fmtNum_penjualan_per_item_analisa_sku')) {
+            function fmtNum_penjualan_per_item_analisa_sku($value)
+            {
+                $v = (float) $value;
+                if ($v == 0.0) {
+                    return '-';
+                }
+                return number_format($v, 0, '.', ',');
             }
-            return number_format($v, 0, '.', ',');
         }
 
         function fmtPersen($value, $hasil)
@@ -182,8 +184,8 @@
                         <td class="center">{{ $globalRow }}</td>
                         <td>{{ $row['family'] ?? '' }}</td>
                         @foreach ($row['cells'] ?? [] as $cell)
-                            <td class="number">{{ fmtNum($cell['sku'] ?? 0) }}</td>
-                            <td class="number">{{ fmtNum($cell['hasil'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['sku'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['hasil'] ?? 0) }}</td>
                             <td class="number">{{ fmtPersen($cell['percent'] ?? 0, $cell['hasil'] ?? 0) }}</td>
                         @endforeach
                     </tr>
@@ -193,8 +195,8 @@
                     <tr class="totals-row">
                         <td class="center" colspan="2">Total</td>
                         @foreach ($totals['cells'] ?? [] as $cell)
-                            <td class="number">{{ fmtNum($cell['sku'] ?? 0) }}</td>
-                            <td class="number">{{ fmtNum($cell['hasil'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['sku'] ?? 0) }}</td>
+                            <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['hasil'] ?? 0) }}</td>
                             <td class="number">{{ fmtPersen($cell['percent'] ?? 0, $cell['hasil'] ?? 0) }}</td>
                         @endforeach
                     </tr>

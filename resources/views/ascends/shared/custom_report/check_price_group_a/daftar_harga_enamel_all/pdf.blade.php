@@ -114,13 +114,15 @@
         $effectiveDate = $reportData['effective_date'] ?? '...';
 
         if (!function_exists('fmtNum')) {
-            function fmtNum($value)
-            {
-                $v = (float) $value;
-                if ($v == 0.0) {
-                    return '-';
+            if (!function_exists('fmtNum_daftar_harga_enamel_all')) {
+                function fmtNum_daftar_harga_enamel_all($value)
+                {
+                    $v = (float) $value;
+                    if ($v == 0.0) {
+                        return '-';
+                    }
+                    return number_format($v, 0, '.', ',');
                 }
-                return number_format($v, 0, '.', ',');
             }
         }
 
@@ -181,11 +183,11 @@
                         <td class="center nowrap">{{ $rowNo }}{{ ($item['bnt'] ?? 0) === 1 ? '*' : '' }}</td>
                         <td>{{ $item['description'] }}</td>
                         <td class="center">{{ rtrim(rtrim(number_format($item['per_dus'], 2, '.', ''), '0'), '.') }}</td>
-                        <td class="number">{{ fmtNum($item['harga_konsumen']) }}</td>
-                        <td class="number">{{ fmtNum($item['retail']) }}</td>
-                        <td class="number">{{ fmtNum($item['semi_grosir']) }}</td>
-                        <td class="number">{{ fmtNum($item['grosir']) }}</td>
-                        <td class="number">{{ fmtNum($item['akun_spesial']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_enamel_all($item['harga_konsumen']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_enamel_all($item['retail']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_enamel_all($item['semi_grosir']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_enamel_all($item['grosir']) }}</td>
+                        <td class="number">{{ fmtNum_daftar_harga_enamel_all($item['akun_spesial']) }}</td>
                     </tr>
         @endforeach
             </tbody>
