@@ -136,4 +136,24 @@ XML;
         $this->assertSame('34', $rows[2]['si_ke_tgh']);
         $this->assertSame('No', $rows[2]['lunas']);
     }
+
+    public function test_endpoint_resolves_alternative_alias_keys(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+        $token = $this->issueJwtForUser($user);
+
+        $xmlFile = UploadedFile::fake()->createWithContent('MonitoringSoSiTagihan.xml', self::SAMPLE_XML);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token,
+        ])->postJson('/api/internal/ascends/shared/custom-report/monitoring-so-si-tagihan/pdf', [
+            'xml_file' => $xmlFile,
+            'DB_CompanyName' => 'GSU',
+            'sys_username' => 'AlternativeUser',
+            'start_date' => '2026-07-01',
+            'end_date' => '2026-07-31',
+        ]);
+
+        $response->assertOk();
+    }
 }
