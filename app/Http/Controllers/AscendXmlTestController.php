@@ -11069,12 +11069,24 @@ class AscendXmlTestController extends Controller
 
     private function pengabaianKeterlambatanKehadiranManualFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
-        $all = $request->all();
-
         return [
-            'AttendanceDate.StartDate' => $all['AttendanceDate.StartDate'] ?? $all['AttendanceDate']['StartDate'] ?? null,
-            'AttendanceDate.EndDate' => $all['AttendanceDate.EndDate'] ?? $all['AttendanceDate']['EndDate'] ?? null,
-            'Pilih Status' => $all['Pilih_Status'] ?? $all['Pilih Status'] ?? null,
+            'AttendanceDate.StartDate' => $this->requestInputByAliases($request, [
+                'AttendanceDate.StartDate',
+                'AttendanceDate_StartDate',
+                'AttendanceDate_x0020_StartDate',
+                'AttendanceDate_x002e_StartDate',
+            ]),
+            'AttendanceDate.EndDate' => $this->requestInputByAliases($request, [
+                'AttendanceDate.EndDate',
+                'AttendanceDate_EndDate',
+                'AttendanceDate_x0020_EndDate',
+                'AttendanceDate_x002e_EndDate',
+            ]),
+            'Pilih Status' => $this->requestInputByAliases($request, [
+                'Pilih_Status',
+                'Pilih Status',
+                'Pilih_x0020_Status',
+            ]),
         ];
     }
 
