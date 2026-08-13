@@ -1028,7 +1028,7 @@
                                     <td class="data-cell center">{{ $dash }}</td>
                                     <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}
                                     </td>
-                                    <td class="data-cell number">
+                                    <td class="data-cell number" style="font-weight: bold;">
                                         {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                     </td>
                                 </tr>
@@ -1501,6 +1501,12 @@
                                 @endforeach
                             @endif
 
+                            @if ($inputRows !== [] && $outputRows !== [])
+                            <tr class="section-separator">
+                                <td colspan="6"></td>
+                            </tr>
+                        @endif
+
                             @if ($grandBansawOutputRows !== [])
                                 @php $rowspan = count($grandBansawOutputRows); @endphp
                                 @foreach ($grandBansawOutputRows as $line)
@@ -1517,7 +1523,7 @@
                                         <td class="data-cell center">{{ $dash }}</td>
                                         <td class="data-cell number">
                                             {{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                                        <td class="data-cell number">
+                                        <td class="data-cell number" style="font-weight: bold;">
                                             {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                         </td>
                                     </tr>
@@ -1642,6 +1648,12 @@
                                 @endforeach
                             @endif
 
+                            @if ($inputRows !== [] && $outputRows !== [])
+                            <tr class="section-separator">
+                                <td colspan="6"></td>
+                            </tr>
+                        @endif
+
                             @if ($grandSlpOutputRows !== [])
                                 @php $rowspan = count($grandSlpOutputRows); @endphp
                                 @foreach ($grandSlpOutputRows as $line)
@@ -1658,7 +1670,7 @@
                                         <td class="data-cell center">{{ $dash }}</td>
                                         <td class="data-cell number">
                                             {{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                                        <td class="data-cell number">
+                                        <td class="data-cell number" style="font-weight: bold;">
                                             {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                         </td>
                                     </tr>
@@ -1785,6 +1797,12 @@
                                 @endforeach
                             @endif
 
+                            @if ($inputRows !== [] && $outputRows !== [])
+                            <tr class="section-separator">
+                                <td colspan="6"></td>
+                            </tr>
+                        @endif
+
                             @if ($grandOutputRows !== [])
                                 @php $rowspan = count($grandOutputRows); @endphp
                                 @foreach ($grandOutputRows as $line)
@@ -1801,7 +1819,7 @@
                                         <td class="data-cell center">{{ $dash }}</td>
                                         <td class="data-cell number">
                                             {{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
-                                        <td class="data-cell number">
+                                        <td class="data-cell number" style="font-weight: bold;">
                                             {{ $fmtPercentDetail((float) ($line['percent'] ?? 0.0), 1) }}
                                         </td>
                                     </tr>
