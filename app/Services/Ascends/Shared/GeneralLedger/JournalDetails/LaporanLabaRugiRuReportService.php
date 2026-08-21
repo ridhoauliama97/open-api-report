@@ -80,6 +80,10 @@ class LaporanLabaRugiRuReportService
         'BEBAN LAINNYA (BL)',
     ];
 
+    private const SECTION_SUBTOTAL_LABELS = [
+        'HARGA POKOK PENJUALAN' => 'TOTAL HPP PENJUALAN + TOTAL PEMBELIAN BARANG DAGANG',
+    ];
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $allRows = $this->parseXml($xmlContents, $sourceLabel);
@@ -490,6 +494,7 @@ class LaporanLabaRugiRuReportService
 
             $sections[] = [
                 'akl' => $akl,
+                'subtotal_label' => self::SECTION_SUBTOTAL_LABELS[$akl] ?? ('TOTAL '.$akl),
                 'akm_groups' => $akmGroups,
                 'subtotal_b' => $sectionB,
                 'subtotal_a' => $sectionA,
