@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Generate Laporan Barang Jadi (Hidup) Detail</title>
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
-            <a class="navbar-brand fw-semibold" href="{{ url('/') }}">{{ config('app.name','PDF Generator (Open API)') }}</a>
+            <a class="navbar-brand fw-semibold"
+                href="{{ url('/') }}">{{ config('app.name', 'PDF Generator (Open API)') }}</a>
         </div>
     </nav>
 
@@ -18,7 +21,8 @@
             <div class="card-body p-4 p-md-5">
                 <h1 class="h3 mb-3">Generate Laporan Barang Jadi (Hidup) Detail</h1>
                 <p class="text-secondary mb-4">
-                    Laporan ini tidak membutuhkan parameter. Sistem akan mengambil data barang jadi hidup detail langsung dari database
+                    Laporan ini tidak membutuhkan parameter. Sistem akan mengambil data barang jadi hidup detail
+                    langsung dari database
                     dan menyiapkan PDF.
                 </p>
 
@@ -32,27 +36,31 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('reports.barang-jadi.barang-jadi-hidup-detail.download') }}" class="row g-3">
+                <form method="POST" action="{{ route('reports.barang-jadi.barang-jadi-hidup-detail.download') }}"
+                    class="row g-3">
                     @csrf
                     <div class="col-12">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Generate & Download PDF</button>
-                            <button type="submit" class="btn btn-outline-primary" name="preview_pdf" value="1" formtarget="_blank">Preview PDF</button>
-                            <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Raw SP (JSON)</button>
+                            <button type="submit" class="btn btn-outline-primary" name="preview_pdf" value="1"
+                                formtarget="_blank">Preview PDF</button>
+                            <button type="button" id="previewJsonBtn" class="btn btn-outline-secondary">Preview Raw SP
+                                (JSON)</button>
                         </div>
                     </div>
                 </form>
 
                 <div id="previewJsonWrapper" class="mt-4 d-none">
                     <h2 class="h6 mb-2">Preview Raw SP (JSON)</h2>
-                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0" style="max-height: 360px; overflow: auto;"></pre>
+                    <pre id="previewJsonOutput" class="bg-white border rounded p-3 mb-0"
+                        style="max-height: 360px; overflow: auto;"></pre>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const previewButton = document.getElementById('previewJsonBtn');
             const previewWrapper = document.getElementById('previewJsonWrapper');
             const previewOutput = document.getElementById('previewJsonOutput');
@@ -61,7 +69,7 @@
                 return;
             }
 
-            previewButton.addEventListener('click', async function() {
+            previewButton.addEventListener('click', async function () {
                 previewWrapper.classList.remove('d-none');
                 previewOutput.textContent = 'Loading...';
 
@@ -87,4 +95,5 @@
         });
     </script>
 </body>
+
 </html>
