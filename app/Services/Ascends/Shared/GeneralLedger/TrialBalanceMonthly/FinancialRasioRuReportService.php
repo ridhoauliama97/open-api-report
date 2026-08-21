@@ -361,7 +361,7 @@ class FinancialRasioRuReportService
                 'rasio' => $aktivaLancar - $hutangLancar,
             ];
 
-            $labaKotor = $pendapatan - $data['hpp'];
+            $labaKotor = $pendapatan - $data['hpp'] + $data['potongan'];
 
             $gpmRows[] = [
                 'no' => $no,
@@ -372,7 +372,7 @@ class FinancialRasioRuReportService
             ];
 
             $penyusutan = $data['penyusutan'];
-            $labaOperasional = $pendapatan + $data['potongan'] - $data['hpp'] - $operatingExpense - $penyusutan;
+            $labaOperasional = $labaKotor - $data['beban_penjualan'] - $data['beban_adm'];
             $ebitda = $labaOperasional + $penyusutan;
 
             $ebitdaRows[] = [
