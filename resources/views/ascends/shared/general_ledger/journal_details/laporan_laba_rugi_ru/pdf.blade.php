@@ -259,7 +259,7 @@
                     @endforeach
 
                     <tr class="section-subtotal">
-                        <td>{{ $section['subtotal_label'] ?? ('TOTAL '.$section['akl']) }}</td>
+                        <td>TOTAL {{ $section['akl'] }}</td>
                         <td class="number nowrap">{{ fmtAmount(abs((float) ($section['subtotal_b'] ?? 0))) }}</td>
                         <td class="number nowrap">{{ fmtRasio($section['rasio_b'] ?? 0) }}</td>
                         <td class="number nowrap">{{ fmtAmount(abs((float) ($section['subtotal_a'] ?? 0))) }}</td>

@@ -80,8 +80,8 @@ class LaporanLabaRugiRuReportService
         'BEBAN LAINNYA (BL)',
     ];
 
-    private const SECTION_SUBTOTAL_LABELS = [
-        'HARGA POKOK PENJUALAN' => 'TOTAL HPP PENJUALAN + TOTAL PEMBELIAN BARANG DAGANG',
+    private const SECTION_SUBTOTAL_SUBTRACTED_AKMS = [
+        'HARGA POKOK PENJUALAN' => ['PEMBELIAN BARANG DAGANG'],
     ];
 
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
@@ -487,14 +487,28 @@ class LaporanLabaRugiRuReportService
                 continue;
             }
 
-            $sectionB = array_sum(array_map(static fn (array $g): float => $g['subtotal_b'], $akmGroups));
-            $sectionA = array_sum(array_map(static fn (array $g): float => $g['subtotal_a'], $akmGroups));
+            $subtractedAkms = self::SECTION_SUBTOTAL_SUBTRACTED_AKMS[$akl] ?? [];
+
+            $sectionB = 0.0;
+            $sectionA = 0.0;
+
+            foreach ($akmGroups as $akmGroup) {
+                if (in_array($akmGroup['akm'], $subtractedAkms, true)) {
+                    $sectionB -= $akmGroup['subtotal_b'];
+                    $sectionA -= $akmGroup['subtotal_a'];
+
+                    continue;
+                }
+
+                $sectionB += $akmGroup['subtotal_b'];
+                $sectionA += $akmGroup['subtotal_a'];
+            }
+
             $rasioB = $totalPendapatanB['abs_b'] > 0 ? round($sectionB / $totalPendapatanB['abs_b'] * 100, 2) : 0;
             $rasioA = $totalPendapatanA['abs_a'] > 0 ? round($sectionA / $totalPendapatanA['abs_a'] * 100, 2) : 0;
 
             $sections[] = [
                 'akl' => $akl,
-                'subtotal_label' => self::SECTION_SUBTOTAL_LABELS[$akl] ?? ('TOTAL '.$akl),
                 'akm_groups' => $akmGroups,
                 'subtotal_b' => $sectionB,
                 'subtotal_a' => $sectionA,
