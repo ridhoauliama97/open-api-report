@@ -200,6 +200,10 @@
 
     @if (count($ratios) > 0)
         @foreach ($ratios as $index => $ratio)
+            @php
+                $columnFormat = $ratio['column_format'] ?? 'percent';
+                $hasRasioColumn = count($ratio['columns']) > 4;
+            @endphp
             <div class="ratio-section">
                 <p class="ratio-title">{{ $ratio['title'] }}</p>
                 <p class="ratio-description">{{ $ratio['description'] }}</p>
@@ -210,8 +214,12 @@
                             <th class="col-no">{{ $ratio['columns'][0] ?? 'No' }}</th>
                             <th class="col-bulan">{{ $ratio['columns'][1] ?? 'Bulan' }}</th>
                             <th class="col-value">{{ $ratio['columns'][2] ?? '' }}</th>
-                            <th class="col-value">{{ $ratio['columns'][3] ?? '' }}</th>
-                            <th class="col-rasio">{{ $ratio['columns'][4] ?? 'Rasio %' }}</th>
+                            @if ($hasRasioColumn)
+                                <th class="col-value">{{ $ratio['columns'][3] ?? '' }}</th>
+                                <th class="col-rasio">{{ $ratio['columns'][4] ?? 'Rasio %' }}</th>
+                            @else
+                                <th class="col-value">{{ $ratio['columns'][3] ?? '' }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -227,12 +235,22 @@
                                 <td class="number nowrap {{ $nilaiX < 0 ? 'number-negative' : '' }}">
                                     {{ fmtAmount($nilaiX) }}
                                 </td>
-                                <td class="number nowrap {{ $nilaiY < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($nilaiY) }}
-                                </td>
-                                <td class="number nowrap {{ $rasio < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtRasio($rasio) }}
-                                </td>
+                                @if ($hasRasioColumn)
+                                    <td class="number nowrap {{ $nilaiY < 0 ? 'number-negative' : '' }}">
+                                        {{ fmtAmount($nilaiY) }}
+                                    </td>
+                                    <td class="number nowrap {{ $rasio < 0 ? 'number-negative' : '' }}">
+                                        @if ($columnFormat === 'amount')
+                                            {{ fmtAmount($rasio) }}
+                                        @else
+                                            {{ fmtRasio($rasio) }}
+                                        @endif
+                                    </td>
+                                @else
+                                    <td class="number nowrap {{ $rasio < 0 ? 'number-negative' : '' }}">
+                                        {{ fmtAmount($rasio) }}
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

@@ -170,6 +170,7 @@ class FinancialRasioRuReportService
                 'piutang' => 0.0,
                 'persediaan' => 0.0,
                 'operating_expense' => 0.0,
+                'penyusutan' => 0.0,
                 'period' => $period,
             ];
         }
@@ -236,20 +237,24 @@ class FinancialRasioRuReportService
                 $monthly[$key]['operating_expense'] += $ending;
             }
 
+            if ($prefix7 === '500.001') {
+                $monthly[$key]['penyusutan'] += $ending;
+            }
+
             if ($prefix3 === '900') {
                 $monthly[$key]['beban_lain'] += $ending;
             }
 
             if (in_array($prefix3, self::ASSET_PREFIXES, true)) {
-                $monthly[$key]['total_asset'] += $ending;
+                if ($prefix3 === '121' && $normalBalance === 'Credit') {
+                    $monthly[$key]['total_asset'] -= $ending;
+                } else {
+                    $monthly[$key]['total_asset'] += $ending;
+                }
             }
 
             if ($prefix3 === '121' && $normalBalance === 'Debit') {
                 $monthly[$key]['total_aktiva'] += $ending;
-            }
-
-            if ($prefix3 === '121' && $normalBalance === 'Credit') {
-                $monthly[$key]['total_asset'] -= $ending;
             }
 
             if (in_array($prefix3, self::LIABILITY_PREFIXES, true)) {
@@ -284,6 +289,11 @@ class FinancialRasioRuReportService
         $currentRatioRows = [];
         $rosRows = [];
         $roaRows = [];
+        $roeRows = [];
+        $nwcRows = [];
+        $gpmRows = [];
+        $ebitdaRows = [];
+        $runRateRows = [];
         $opexRows = [];
         $derRows = [];
         $darRows = [];
@@ -333,6 +343,52 @@ class FinancialRasioRuReportService
                 'nilai_x' => $labaBersih,
                 'nilai_y' => $totalAktiva,
                 'rasio' => $totalAktiva != 0 ? ($labaBersih / $totalAktiva) * 100 : 0,
+            ];
+
+            $roeRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaBersih,
+                'nilai_y' => $equityCalc,
+                'rasio' => $equityCalc != 0 ? ($labaBersih / $equityCalc) * 100 : 0,
+            ];
+
+            $nwcRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $aktivaLancar,
+                'nilai_y' => $hutangLancar,
+                'rasio' => $aktivaLancar - $hutangLancar,
+            ];
+
+            $labaKotor = $pendapatan - $data['hpp'];
+
+            $gpmRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaKotor,
+                'nilai_y' => $pendapatan,
+                'rasio' => $pendapatan != 0 ? ($labaKotor / $pendapatan) * 100 : 0,
+            ];
+
+            $penyusutan = $data['penyusutan'];
+            $labaOperasional = $pendapatan + $data['potongan'] - $data['hpp'] - $operatingExpense - $penyusutan;
+            $ebitda = $labaOperasional + $penyusutan;
+
+            $ebitdaRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaOperasional,
+                'nilai_y' => $penyusutan,
+                'rasio' => $ebitda,
+            ];
+
+            $runRateRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $pendapatan,
+                'nilai_y' => $pendapatan * 12,
+                'rasio' => $pendapatan * 12,
             ];
 
             $opexRows[] = [
@@ -400,6 +456,49 @@ class FinancialRasioRuReportService
                 'footer_note' => 'Keterangan: < 1% Tidak baik, > 1% Baik',
                 'columns' => ['No', 'Bulan', 'Nilai Laba Bersih', 'Nilai Total Aktiva', 'Rasio %'],
                 'rows' => $roaRows,
+            ],
+            [
+                'id' => 'roe',
+                'title' => 'Return on Equity (ROE)',
+                'description' => '(ROE) adalah cara untuk mengukur seberapa hebat perusahaan memakai modal atau uang dari pemilik saham untuk menghasilkan laba bersih.',
+                'footer_note' => 'Keterangan:<br>- Di atas 15%: Biasanya dianggap sangat baik dan menunjukkan manajemen sangat efisien.<br>- Sekitar 10% - 15%: Dianggap cukup sehat dan normal untuk banyak perusahaan mapan.<br>- Di bawah 5%: Menandakan perusahaan kurang efisien dalam mengolah modal jadi laba.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba Bersih', 'Nilai Ekuitas', 'Rasio %'],
+                'rows' => $roeRows,
+            ],
+            [
+                'id' => 'nwc',
+                'title' => 'Net Working Capital (NWC)',
+                'description' => 'Net Working Capital (NWC) atau modal kerja bersih adalah selisih antara aset lancar (kas, piutang, persediaan) dan kewajiban lancar (utang usaha, beban yang masih harus dibayar). Analisis ini mengukur tingkat likuiditas jangka pendek, efisiensi operasional, dan kesehatan finansial perusahaan untuk memenuhi kewajiban yang jatuh tempo dalam waktu satu tahun.',
+                'footer_note' => '<strong>Rumus NWC = Aset Lancar - Kewajiban Lancar</strong><br>- NWC positif, aset lancar lebih besar daripada kewajiban lancar. Secara umum, perusahaan memiliki ruang yang lebih baik untuk memenuhi kewajiban jangka pendek.<br>- NWC negatif, kewajiban lancar lebih besar daripada aset lancar. Ini dapat menunjukkan tekanan likuiditas, meskipun pada beberapa bisnis tertentu kondisi ini bisa menjadi bagian dari model bisnis.<br>- NWC meningkat, belum tentu selalu positif. Bisa berarti likuiditas membaik, tetapi juga dapat menunjukkan terlalu banyak dana yang tertahan dalam persediaan atau piutang.<br>- NWC menurun, bisa menunjukkan penggunaan modal kerja yang lebih efisien, tetapi jika terlalu rendah dapat meningkatkan risiko kesulitan memenuhi kewajiban jangka pendek.',
+                'columns' => ['No', 'Bulan', 'Nilai Aset Lancar', 'Kewajiban Lancar', 'Nilai NWC'],
+                'column_format' => 'amount',
+                'rows' => $nwcRows,
+            ],
+            [
+                'id' => 'gpm',
+                'title' => 'Gross Profit Margin (GPM)',
+                'description' => 'Gross Profit Margin (GPM) adalah cara menghitung persentase laba kotor dari total pendapatan penjualan setelah dikurangi Harga Pokok Penjualan (HPP). Rasio ini dipakai untuk menilai seberapa efisien sebuah usaha dalam memakai biaya produksi.',
+                'footer_note' => '<strong>Rumus GPM = (Laba Kotor / Penjualan Bersih) * 100%</strong><br>- GPM tinggi, perusahaan mampu menghasilkan laba kotor yang relatif besar dari penjualannya. Hal ini dapat menunjukkan harga jual yang baik atau pengendalian biaya produksi yang efektif.<br>- GPM rendah, biaya produksi/HPP relatif besar dibandingkan penjualan, sehingga ruang perusahaan untuk memperoleh laba menjadi lebih kecil.<br>- GPM meningkat, biasanya menunjukkan peningkatan efisiensi produksi, kenaikan harga jual, atau penurunan HPP.<br>- GPM menurun, dapat disebabkan oleh kenaikan biaya bahan baku, biaya produksi, diskon yang lebih besar, atau tekanan harga jual.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba Kotor', 'Nilai Penjualan Bersih', 'Rasio %'],
+                'rows' => $gpmRows,
+            ],
+            [
+                'id' => 'ebitda',
+                'title' => 'EBITDA',
+                'description' => 'EBITDA (Earnings Before Interest, Taxes, Depreciation, and Amortization) adalah indikator finansial untuk mengukur profitabilitas operasional murni suatu perusahaan sebelum dikurangi beban bunga, pajak, penyusutan, dan amortisasi. Analisis ini membantu menilai kemampuan bisnis menghasilkan laba dari aktivitas inti tanpa dipengaruhi keputusan pendanaan atau akuntansi.',
+                'footer_note' => '<strong>Rumus EBITDA = Laba Operasional (EBIT) + Depresiasi + Amortisasi</strong><br>- Evaluasi Kinerja Murni: Menunjukkan seberapa efisien operasional perusahaan tanpa gangguan struktur utang atau tarif pajak.<br>- Perbandingan Industri: Memudahkan perbandingan profitabilitas antar perusahaan yang memiliki metode pendanaan atau aset berbeda.<br>- Analisis Valuasi: EBITDA sering digunakan sebagai dasar valuasi perusahaan, misalnya melalui rasio EV/EBITDA.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba (Rugi) Operasional', 'Nilai Penyusutan', 'Nilai EBITDA'],
+                'column_format' => 'amount',
+                'rows' => $ebitdaRows,
+            ],
+            [
+                'id' => 'revenue_run_rate',
+                'title' => 'Revenue Run Rate',
+                'description' => 'Revenue Run Rate (sering disebut Run Rate saja) adalah metode peramalan kinerja keuangan perusahaan untuk satu tahun penuh (12 bulan) dengan mengeksplorasi data pendapatan dari periode yang lebih pendek (seperti satu bulan atau satu kuartal). Rumus dasarnya adalah mengalikan pendapatan periode pendek dengan faktor pengali agar genap menjadi 12 bulan.',
+                'footer_note' => '<strong>1. Menggunakan Data Bulanan: Revenue Run Rate = Revenue Bulanan x 12</strong><br>2. Menggunakan Data Kuartal (3 Bulan): Revenue Run Rate = Revenue 3 Bulan x 4<br>Laporan ini menggunakan metode data bulanan (x 12).',
+                'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate'],
+                'column_format' => 'amount',
+                'rows' => $runRateRows,
             ],
             [
                 'id' => 'opex_ratio',
