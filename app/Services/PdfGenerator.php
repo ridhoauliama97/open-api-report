@@ -5,6 +5,7 @@ namespace App\Services;
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\Factory as ViewFactory;
 use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
@@ -78,7 +79,7 @@ class PdfGenerator
         $excluded = ['created_at', 'updated_at'];
         $visibleColumns = array_filter(
             array_keys($firstRow),
-            static fn (string $key): bool => ! in_array($key, $excluded, true)
+            static fn(string $key): bool => ! in_array($key, $excluded, true)
         );
 
         return count($visibleColumns);
@@ -104,7 +105,7 @@ class PdfGenerator
             return $store->remember(
                 $cacheKey,
                 now()->addSeconds($cacheTtl),
-                fn (): string => $this->renderUncached($view, $data)
+                fn(): string => $this->renderUncached($view, $data)
             );
         } catch (Throwable) {
             return $this->renderUncached($view, $data);
@@ -199,25 +200,31 @@ class PdfGenerator
 
         $encoded = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        return 'pdf-render:'.hash('sha256', is_string($encoded) ? $encoded : serialize($payload));
+        return 'pdf-render:' . hash('sha256', is_string($encoded) ? $encoded : serialize($payload));
     }
 
     private function viewFingerprint(string $view): string
     {
         try {
-            $path = view()->getFinder()->find($view);
+            $viewFactory = app('view');
+
+            if (! $viewFactory instanceof ViewFactory) {
+                return 'unresolved:' . $view;
+            }
+
+            $path = $viewFactory->getFinder()->find($view);
         } catch (Throwable) {
-            return 'unresolved:'.$view;
+            return 'unresolved:' . $view;
         }
 
         if (! is_string($path) || ! is_file($path)) {
-            return 'missing:'.$view;
+            return 'missing:' . $view;
         }
 
         $mtime = filemtime($path);
         $size = filesize($path);
 
-        return hash('sha256', $path.'|'.$mtime.'|'.$size);
+        return hash('sha256', $path . '|' . $mtime . '|' . $size);
     }
 
     /**
@@ -258,7 +265,7 @@ class PdfGenerator
         }
 
         if (array_is_list($normalized)) {
-            return array_map(fn ($item) => $this->normalizeCacheData($item), $normalized);
+            return array_map(fn($item) => $this->normalizeCacheData($item), $normalized);
         }
 
         ksort($normalized);
@@ -372,7 +379,7 @@ class PdfGenerator
         $buffer = '';
 
         foreach ($lines as $line) {
-            $candidate = $buffer === '' ? $line : $buffer.PHP_EOL.$line;
+            $candidate = $buffer === '' ? $line : $buffer . PHP_EOL . $line;
 
             if (strlen($candidate) <= $maxLength) {
                 $buffer = $candidate;
