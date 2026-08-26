@@ -19,7 +19,7 @@ untuk dua aplikasi desktop:
 |---|---|
 | PHP | 8.2 |
 | Framework | Laravel 12 |
-| PDF Engine | `mpdf/mpdf` ^8.2 via `PdfGenerator` service |
+| PDF Engine | mPDF ^8.2 (legacy) + Gotenberg/Chromium (baru) via `PdfGenerator` + `GotenbergPdfClient` |
 | Database | SQL Server (stored procedures) |
 | Auth | Laravel Sanctum (token) + middleware JWT-claims kustom |
 | Queue | `database` (dev) / `redis` (production) |
@@ -54,6 +54,10 @@ open-api-report/
 │   │   ├── AuditReportConventionsCommand.php  # php artisan reports:audit-conventions
 │   │   ├── CleanExpiredPdfFiles.php           # php artisan pdf:clean-expired
 │   │   └── ExportDatabaseStructureCommand.php # php artisan db:export-structure
+│   ├── Exceptions/
+│   │   ├── GotenbergPdfException.php          # Base exception PDF Gotenberg (pesan sudah user-facing)
+│   │   ├── GotenbergConnectionException.php   # Server tidak dapat dihubungi
+│   │   └── GotenbergConversionException.php   # Gotenberg balas HTTP error / belum dikonfigurasi
 │   ├── Contracts/
 │   │   └── ReportDataInterface.php            # Interface kontrak untuk report service async
 │   ├── Jobs/
@@ -66,7 +70,8 @@ open-api-report/
 │   ├── Providers/
 │   │   └── AppServiceProvider.php     # Boot auth providers + extend execution time laporan
 │   ├── Services/
-│   │   ├── PdfGenerator.php           # Satu-satunya class mPDF wrapper — SELALU gunakan ini
+│   │   ├── PdfGenerator.php           # Wrapper mPDF (legacy) + helper renderHtml/paperMetrics untuk Gotenberg
+│   │   ├── GotenbergPdfClient.php     # Client HTTP Gotenberg — gunakan ini untuk laporan baru/dimigrasi
 │   │   ├── PPS/                       # Service khusus PPS
 │   │   └── {NamaLaporan}ReportService.php
 │   └── Support/
@@ -306,6 +311,66 @@ $pdfContent = $pdfGenerator->render('reports.mutasi.barang-jadi', [
 // Render langsung ke file (DIREKOMENDASIKAN untuk async job — hemat memory)
 $pdfGenerator->renderToFile('reports.mutasi.barang-jadi', $data, '/absolute/path/output.pdf');
 ```
+
+### 10.1 Jalur Gotenberg (pola baru — pengganti mPDF secara bertahap)
+
+Pilot: `MutasiBarangJadiController` (+ `resources/views/reports/mutasi/barang-jadi-pdf.blade.php`).
+Laporan **baru** atau laporan yang **dimigrasikan** wajib memakai pola ini;
+`render()` / `renderToFile()` (mPDF) hanya untuk laporan lama yang belum dimigrasi.
+
+```php
+use App\Exceptions\GotenbergPdfException;
+use App\Services\GotenbergPdfClient;
+
+// 1) HTML bersih untuk Chromium — markup khusus mPDF dibuang otomatis,
+//    link Google Fonts DIPERTAHANKAN (Chromium bisa fetch font eksternal)
+$html = $pdfGenerator->renderHtml('reports.mutasi.barang-jadi-pdf', [
+    'rows' => $rows,
+    'subRows' => $subRows,
+    'startDate' => $startDate,
+    'endDate' => $endDate,
+    'generatedBy' => $user,
+    'generatedAt' => now(),
+]);
+
+// 2) Ukuran kertas + orientasi (auto-detect landscape jika > 10 kolom)
+$metrics = $pdfGenerator->paperMetrics(['rows' => $rows, 'subRows' => $subRows]);
+
+// 3) Footer (opsional) — partial khusus Gotenberg
+$footerHtml = view('reports.partials.gotenberg-footer', [
+    'generatedByName' => $user->name ?? 'sistem',
+    'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+])->render();
+
+// 4) Konversi — semua urusan HTTP ada di client
+try {
+    $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+} catch (GotenbergPdfException $exception) {
+    return response()->json(['message' => $exception->getMessage()], 502); // web: back()->withErrors()
+}
+
+return response($pdfBytes, 200, [
+    'Content-Type'        => 'application/pdf',
+    'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+]);
+```
+
+Komponen pendukung:
+
+| Komponen | Fungsi |
+|---|---|
+| `App\Services\GotenbergPdfClient` | Satu-satunya class yang bicara HTTP dengan Gotenberg. Endpoint `/forms/chromium/convert/html`; footer di-attach sebagai part `files` bernama `footer.html` |
+| `config/services.php` → `gotenberg` | env: `GOTENBERG_URL` (default `http://localhost:3000`), `GOTENBERG_TIMEOUT=300`, `GOTENBERG_CONNECT_TIMEOUT=10` |
+| `App\Exceptions\GotenbergPdfException` | Base exception; `getMessage()` sudah user-facing (Indonesia), langsung dipakai di response |
+
+Gotchas engine print Chromium (pelajaran pilot Mutasi Barang Jadi):
+
+- Template header/footer **tidak mendukung flexbox** — gunakan layout `<table>` (lihat `reports/partials/gotenberg-footer.blade.php`).
+- Footer dirender **selebar kertas penuh** (margin halaman kiri/kanan diabaikan) → template footer harus memberi `padding: 0 10mm` sendiri agar sejajar konten laporan.
+- Nomor halaman otomatis via class khusus Gotenberg: `pageNumber` / `totalPages`.
+- Tabel `border-collapse: collapse` yang lebarnya tepat 100% bisa **kehilangan border kanan** saat dicetak → pakai `width: calc(100% - 2px)` + `border: 1px solid #000` di level `table`.
+- Jumlah `width` kolom dalam px harus ≤ area cetak; landscape A4 margin 10mm ≈ **1047px**. Kelebihan → kolom terpotong keluar halaman.
+- Background sel striping butuh form field `printBackground=true` (sudah default di client).
 
 ---
 

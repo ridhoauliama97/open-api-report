@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\MutasiBarangJadiReportService;
 use App\Services\PdfGenerator;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -224,9 +226,22 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()
+                ->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
@@ -240,6 +255,9 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'laporan mutasi barang jadi');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     /**
@@ -290,9 +308,22 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()
+                ->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->app->instance(MutasiBarangJadiReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
@@ -304,6 +335,112 @@ class MutasiBarangJadiReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'laporan mutasi barang jadi');
+    }
+
+    /**
+     * Execute test mutasi barang jadi pdf download endpoint returns error when gotenberg unreachable logic.
+     */
+    public function test_mutasi_barang_jadi_pdf_download_endpoint_returns_error_when_gotenberg_unreachable(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+
+        $service = Mockery::mock(MutasiBarangJadiReportService::class);
+        $service
+            ->shouldReceive('fetch')
+            ->once()
+            ->andReturn([
+                [
+                    'Jenis' => 'BJ JABON FJLB A/A',
+                    'Awal' => 4.2935,
+                    'Masuk' => 438.0548,
+                    'Keluar' => 9.2471,
+                    'Akhir' => 29.1020,
+                ],
+            ]);
+        $service
+            ->shouldReceive('fetchSubReport')
+            ->once()
+            ->andReturn([]);
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('renderHtml')
+            ->once()
+            ->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::failedConnection(),
+        ]);
+
+        $this->app->instance(MutasiBarangJadiReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->withHeaders($this->authJsonHeaders($user))
+            ->get('/api/reports/mutasi-barang-jadi/pdf?TglAwal=2026-01-01&TglAkhir=2026-01-31')
+            ->assertStatus(502)
+            ->assertJsonPath('message', 'Gotenberg tidak dapat dihubungi. Coba lagi nanti.');
+    }
+
+    /**
+     * Execute test mutasi barang jadi pdf download endpoint returns error when gotenberg http error logic.
+     */
+    public function test_mutasi_barang_jadi_pdf_download_endpoint_returns_error_when_gotenberg_http_error(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+
+        $service = Mockery::mock(MutasiBarangJadiReportService::class);
+        $service
+            ->shouldReceive('fetch')
+            ->once()
+            ->andReturn([
+                [
+                    'Jenis' => 'BJ JABON FJLB A/A',
+                    'Awal' => 4.2935,
+                    'Masuk' => 438.0548,
+                    'Keluar' => 9.2471,
+                    'Akhir' => 29.1020,
+                ],
+            ]);
+        $service
+            ->shouldReceive('fetchSubReport')
+            ->once()
+            ->andReturn([]);
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('renderHtml')
+            ->once()
+            ->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::response('error', 500),
+        ]);
+
+        $this->app->instance(MutasiBarangJadiReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->actingAs($user)
+            ->post('/reports/mutasi/barang-jadi/download', [
+                'TglAwal' => '2026-01-01',
+                'TglAkhir' => '2026-01-31',
+            ])
+            ->assertSessionHasErrors('report');
     }
 
     /**

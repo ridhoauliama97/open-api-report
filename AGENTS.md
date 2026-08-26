@@ -1,7 +1,7 @@
 # AGENTS.md — open-api-report
 
 ## Stack
-- **Laravel 12** / PHP ^8.2 / mPDF 8.2 / SQL Server (stored procedures) / PhpSpreadsheet ^5.8
+- **Laravel 12** / PHP ^8.2 / PDF: mPDF 8.2 (legacy) + **Gotenberg** via `GotenbergPdfClient` (migrasi berjalan, pilot: Mutasi Barang Jadi) / SQL Server (stored procedures) / PhpSpreadsheet ^5.8
 - Vite + Bootstrap 5; Node 24.16.0 (`.nvmrc`)
 
 ## Quick start
@@ -17,7 +17,8 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - **~230 reports** in 4 groups: Mutasi (19), Kayu Bulat (31), Sawn Timber (41), Standalone (141 including PPS)
 - Standard report = Controller + Service + FormRequest + Blade view, with methods `preview()`, `download()`, `health()`; some also have `index()` for web form views
 - ALL FormRequests extend `BaseReportRequest` — `failedValidation()` auto-returns JSON 422 on `api/*`; **never override**
-- ALL PDF via `App\Services\PdfGenerator` — **never `new Mpdf()`**; methods: `render()` (string) / `renderToFile()` (file, memory-efficient). Supports `pdf_orientation` and `pdf_format` (default A4) in view data
+- ALL PDF via `App\Services\PdfGenerator` — **never `new Mpdf()`**; legacy mPDF: `render()` / `renderToFile()`
+- **PDF baru/dimigrasi wajib jalur Gotenberg**: `$pdfGenerator->renderHtml($view, $data)` + `$pdfGenerator->paperMetrics($data)` (+ footer opsional `reports.partials.gotenberg-footer`) → `$gotenbergPdfClient->convertHtml(...)`, catch `GotenbergPdfException` → 502. Contoh lengkap: `MutasiBarangJadiController`; detail & gotchas: `AGENT_INSTRUCTIONS.md` §10.1
 - Subtitle (period label): `'Dari '.$date->locale('id')->isoFormat('DD-MMM-YY').' s/d '.$date->locale('id')->isoFormat('DD-MMM-YY')` — lowercase `s/d`, Indonesian month names
 - Date convention: ALL PDF view dates use `->locale('id')->isoFormat('DD-MMM-YY')` → e.g. `01-Mei-26`. No `/`, no `YYYY`, no `d/m/Y`
 - PDF render cache via `config('app.pdf_render_cache_store')` + `config('app.pdf_render_cache_ttl_seconds')` (default 300s); auto-bypassed in `local`/`debug`

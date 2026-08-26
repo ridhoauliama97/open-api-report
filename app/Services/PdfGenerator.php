@@ -79,10 +79,91 @@ class PdfGenerator
         $excluded = ['created_at', 'updated_at'];
         $visibleColumns = array_filter(
             array_keys($firstRow),
-            static fn(string $key): bool => ! in_array($key, $excluded, true)
+            static fn (string $key): bool => ! in_array($key, $excluded, true)
         );
 
         return count($visibleColumns);
+    }
+
+    /**
+     * Render the view into a clean HTML string ready for an external
+     * converter (e.g. Gotenberg/Chromium).
+     *
+     * Layout (paper size, margins) is NOT embedded in the HTML: it is
+     * forwarded explicitly to the converter via {@see paperMetrics()}.
+     * mPDF-only constructs (htmlpagefooter/sethtmlpagefooter tags and
+     * the @page margin/footer declarations) are stripped so containers
+     * that do not implement them keep the layout identical.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function renderHtml(string $view, array $data = []): string
+    {
+        $cacheTtl = (int) config('app.pdf_render_cache_ttl_seconds', 0);
+
+        if ($this->shouldBypassCache($cacheTtl, $data)) {
+            return $this->renderHtmlUncached($view, $data);
+        }
+
+        $cacheKey = 'pdf-html:'.$this->cacheKey($view, $data);
+        $cacheStore = trim((string) config('app.pdf_render_cache_store', 'file'));
+
+        try {
+            $store = $cacheStore !== '' ? Cache::store($cacheStore) : Cache::store();
+
+            return $store->remember(
+                $cacheKey,
+                now()->addSeconds($cacheTtl),
+                fn (): string => $this->renderHtmlUncached($view, $data)
+            );
+        } catch (Throwable) {
+            return $this->renderHtmlUncached($view, $data);
+        }
+    }
+
+    /**
+     * Resolve the paper layout used by the document (shared between the
+     * internal renderer and external converters).
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{format: string, orientation: string}
+     */
+    public function resolveLayout(array $data): array
+    {
+        return [
+            'format' => $this->resolveFormat($data),
+            'orientation' => $this->resolveOrientation($data),
+        ];
+    }
+
+    /**
+     * Paper dimensions (in "cm", as accepted by Chromium converters) for a
+     * given format/combination, plus the landscape flag.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{paper_width: string, paper_height: string, landscape: bool}
+     */
+    public function paperMetrics(array $data): array
+    {
+        $layout = $this->resolveLayout($data);
+
+        $paperSize = match (strtoupper($layout['format'])) {
+            'A6' => ['10.5cm', '14.8cm'],
+            'A5' => ['14.8cm', '21.0cm'],
+            'A3' => ['29.7cm', '42.0cm'],
+            'A2' => ['42.0cm', '59.4cm'],
+            'A1' => ['59.4cm', '84.1cm'],
+            'A0' => ['84.1cm', '118.9cm'],
+            'LETTER' => ['21.59cm', '27.94cm'],
+            'LEGAL' => ['21.59cm', '35.56cm'],
+            default => ['21.0cm', '29.7cm'], // A4
+        };
+
+        return [
+            'paper_width' => $paperSize[0],
+            'paper_height' => $paperSize[1],
+            'landscape' => $layout['orientation'] === 'landscape',
+        ];
     }
 
     /**
@@ -105,7 +186,7 @@ class PdfGenerator
             return $store->remember(
                 $cacheKey,
                 now()->addSeconds($cacheTtl),
-                fn(): string => $this->renderUncached($view, $data)
+                fn (): string => $this->renderUncached($view, $data)
             );
         } catch (Throwable) {
             return $this->renderUncached($view, $data);
@@ -184,6 +265,35 @@ class PdfGenerator
     }
 
     /**
+     * Execute HTML render logic without cache.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function renderHtmlUncached(string $view, array $data = []): string
+    {
+        $html = view($view, $data)->render();
+        $html = $this->sanitizeUtf8($html);
+
+        return $this->stripMpdfOnlyMarkup($html);
+    }
+
+    /**
+     * Remove mPDF-only constructs that Chromium-based converters (Gotenberg)
+     * ignore or would render as plain inline elements:
+     *  - <htmlpagefooter> / <sethtmlpagefooter> tags
+     *  - @page margin/footer declarations (layout is forwarded explicitly
+     *    as converter form fields via paperMetrics() instead)
+     */
+    private function stripMpdfOnlyMarkup(string $html): string
+    {
+        $html = preg_replace('/<htmlpagefooter\b[^>]*>.*?<\/htmlpagefooter>/is', '', $html) ?? $html;
+        $html = preg_replace('/<sethtmlpagefooter\b[^>]*\/?>/is', '', $html) ?? $html;
+        $html = preg_replace('/@page\s*\{[^}]*\}/is', '', $html) ?? $html;
+
+        return $html;
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      */
     private function cacheKey(string $view, array $data): string
@@ -200,7 +310,7 @@ class PdfGenerator
 
         $encoded = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        return 'pdf-render:' . hash('sha256', is_string($encoded) ? $encoded : serialize($payload));
+        return 'pdf-render:'.hash('sha256', is_string($encoded) ? $encoded : serialize($payload));
     }
 
     private function viewFingerprint(string $view): string
@@ -209,22 +319,22 @@ class PdfGenerator
             $viewFactory = app('view');
 
             if (! $viewFactory instanceof ViewFactory) {
-                return 'unresolved:' . $view;
+                return 'unresolved:'.$view;
             }
 
             $path = $viewFactory->getFinder()->find($view);
         } catch (Throwable) {
-            return 'unresolved:' . $view;
+            return 'unresolved:'.$view;
         }
 
         if (! is_string($path) || ! is_file($path)) {
-            return 'missing:' . $view;
+            return 'missing:'.$view;
         }
 
         $mtime = filemtime($path);
         $size = filesize($path);
 
-        return hash('sha256', $path . '|' . $mtime . '|' . $size);
+        return hash('sha256', $path.'|'.$mtime.'|'.$size);
     }
 
     /**
@@ -265,7 +375,7 @@ class PdfGenerator
         }
 
         if (array_is_list($normalized)) {
-            return array_map(fn($item) => $this->normalizeCacheData($item), $normalized);
+            return array_map(fn ($item) => $this->normalizeCacheData($item), $normalized);
         }
 
         ksort($normalized);
@@ -379,7 +489,7 @@ class PdfGenerator
         $buffer = '';
 
         foreach ($lines as $line) {
-            $candidate = $buffer === '' ? $line : $buffer . PHP_EOL . $line;
+            $candidate = $buffer === '' ? $line : $buffer.PHP_EOL.$line;
 
             if (strlen($candidate) <= $maxLength) {
                 $buffer = $candidate;
