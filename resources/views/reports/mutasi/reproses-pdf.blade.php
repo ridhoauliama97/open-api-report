@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -40,53 +37,24 @@
         }
 
         .section-title {
-            margin: 10px 0 4px 0;
+            margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 3px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: 700;
-            background: #ffffff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
@@ -113,68 +81,18 @@
 
         .empty-row td {
             background: #c9d1df;
-            border-top: 0 !important;
-            border-right: 1px solid #000 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
         }
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
         }
 
         .totals-row td.blank {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
             text-align: center;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-        }
-
-        .report-table thead tr.headers-row:first-child th[rowspan] {
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[colspan] {
-            border-bottom: 0;
-        }
-
-        .report-table thead tr.headers-row:last-child th {
-            border-top: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
         }
     </style>
 </head>
@@ -267,28 +185,28 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th rowspan="2" style="width:30px">No</th>
-                <th rowspan="2" style="width:170px">Jenis</th>
-                <th rowspan="2" style="width:58px">Awal</th>
+                <th rowspan="2" style="width:27px">No</th>
+                <th rowspan="2" style="width:153px">Jenis</th>
+                <th rowspan="2" style="width:52px">Awal</th>
                 <th colspan="4">Masuk</th>
-                <th rowspan="2" style="width:62px">Total<br>Masuk</th>
+                <th rowspan="2" style="width:56px">Total<br>Masuk</th>
                 <th colspan="8">Keluar</th>
-                <th rowspan="2" style="width:62px">Total<br>Keluar</th>
-                <th rowspan="2" style="width:58px">Akhir</th>
+                <th rowspan="2" style="width:56px">Total<br>Keluar</th>
+                <th rowspan="2" style="width:52px">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th style="width:58px">Adj Out<br>REPRO</th>
-                <th style="width:58px">MLD Out<br>REPRO</th>
-                <th style="width:58px">PACK Out<br>REPRO</th>
-                <th style="width:58px">REPRO<br>Keluar</th>
-                <th style="width:58px">Adj In<br>REPRO</th>
-                <th style="width:58px">BS In<br>REPRO</th>
-                <th style="width:58px">CCA In<br>REPRO</th>
-                <th style="width:58px">LMT In<br>REPRO</th>
-                <th style="width:58px">MLD In<br>REPRO</th>
-                <th style="width:58px">S4S In<br>REPRO</th>
-                <th style="width:58px">SAND In<br>REPRO</th>
-                <th style="width:58px">REPRO<br>Jual</th>
+                <th style="width:52px">Adj Out<br>REPRO</th>
+                <th style="width:52px">MLD Out<br>REPRO</th>
+                <th style="width:52px">PACK Out<br>REPRO</th>
+                <th style="width:52px">REPRO<br>Keluar</th>
+                <th style="width:52px">Adj In<br>REPRO</th>
+                <th style="width:52px">BS In<br>REPRO</th>
+                <th style="width:52px">CCA In<br>REPRO</th>
+                <th style="width:52px">LMT In<br>REPRO</th>
+                <th style="width:52px">MLD In<br>REPRO</th>
+                <th style="width:52px">S4S In<br>REPRO</th>
+                <th style="width:52px">SAND In<br>REPRO</th>
+                <th style="width:52px">REPRO<br>Jual</th>
             </tr>
         </thead>
         <tbody>
@@ -375,8 +293,6 @@
             </tr>
         </tbody>
     </table>
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

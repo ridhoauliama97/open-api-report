@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -40,50 +37,24 @@
         }
 
         .section-title {
-            margin: 10px 0 4px 0;
-            font-size: 11px;
+            margin: 14px 0 6px 0;
+            font-size: 12px;
             font-weight: bold;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
         }
 
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            background: #fff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
@@ -108,35 +79,12 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
+        }
+
+        .headers-row th {
+            font-weight: bold;
         }
 
         .totals-row td.blank {
@@ -318,8 +266,6 @@
             </ul>
         </div>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

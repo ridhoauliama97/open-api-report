@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -46,38 +43,18 @@
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            background: #ffffff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
@@ -91,7 +68,7 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:  "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -104,72 +81,19 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-        }
-
-        .totals-row td.blank {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-            text-align: center;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-        }
-
-        .report-table {
-            border-collapse: collapse;
-            border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
         }
 
         .col-no {
-            width: 32px;
+            width: 3%;
         }
 
         .col-jenis {
-            width: 180px;
+            width: 17%;
         }
-
-        .col-uniform {
-            width: 72px;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -425,8 +349,6 @@
             </tbody>
         </table>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

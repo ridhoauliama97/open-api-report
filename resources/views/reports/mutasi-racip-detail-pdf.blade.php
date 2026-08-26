@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -40,47 +37,32 @@
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 3px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            background: #fff;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
+        td.label {
+            white-space: nowrap;
+        }
+
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -93,71 +75,30 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
         }
 
-        .col-uniform {
-            width: 5.25%;
+        .col-no {
+            width: 3%;
         }
 
         .col-jenis {
-            width: 16%;
+            width: 13%;
         }
 
-        .report-table {
-            border-collapse: collapse;
-            border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
+        .col-dim {
+            width: 5%;
         }
 
-        .report-table thead tr.headers-row:first-child th {
-            border-top: 1px solid #000;
+        .col-group-2 {
+            width: 11.5%;
         }
 
-        .report-table thead tr.headers-row:first-child th[rowspan] {
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[colspan] {
-            border-bottom: 0;
-        }
-
-        .report-table thead tr.headers-row:last-child th {
-            border-top: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        .col-group-4 {
+            width: 23%;
         }
     </style>
 </head>
@@ -242,15 +183,15 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th rowspan="2" style="border-top: 1px solid #000;">No</th>
-                <th rowspan="2" style="border-top: 1px solid #000;">Jenis</th>
-                <th rowspan="2" style="border-top: 1px solid #000;">Tebal (mm)</th>
-                <th rowspan="2" style="border-top: 1px solid #000;">Lebar (mm)</th>
-                <th rowspan="2" style="border-top: 1px solid #000;">Panjang<br>(ft)</th>
-                <th colspan="2" style="border-top: 1px solid #000;">Saldo Awal</th>
-                <th colspan="4" style="border-top: 1px solid #000;">Masuk</th>
-                <th colspan="4" style="border-top: 1px solid #000;">Keluar</th>
-                <th colspan="2" style="border-top: 1px solid #000;">Saldo Akhir</th>
+                <th class="col-no" rowspan="2" style="border-top: 1px solid #000;">No</th>
+                <th class="col-jenis" rowspan="2" style="border-top: 1px solid #000;">Jenis</th>
+                <th class="col-dim" rowspan="2" style="border-top: 1px solid #000;">Tebal (mm)</th>
+                <th class="col-dim" rowspan="2" style="border-top: 1px solid #000;">Lebar (mm)</th>
+                <th class="col-dim" rowspan="2" style="border-top: 1px solid #000;">Panjang<br>(ft)</th>
+                <th class="col-group-2" colspan="2" style="border-top: 1px solid #000;">Saldo Awal</th>
+                <th class="col-group-4" colspan="4" style="border-top: 1px solid #000;">Masuk</th>
+                <th class="col-group-4" colspan="4" style="border-top: 1px solid #000;">Keluar</th>
+                <th class="col-group-2" colspan="2" style="border-top: 1px solid #000;">Saldo Akhir</th>
             </tr>
             <tr class="headers-row">
                 <th style="border-top: 1px solid #000;">Awal</th>
@@ -362,8 +303,6 @@
             @endif
         </tbody>
     </table>
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

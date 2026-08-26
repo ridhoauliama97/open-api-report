@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -46,47 +43,18 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
-            /* border: 1px solid #000; */
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            background: #ffffff;
-            color: #000;
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
@@ -113,47 +81,10 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-        }
-
-        .totals-row td.blank {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
         }
     </style>
 </head>
@@ -264,26 +195,26 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th rowspan="2" style="width: 30px;">No</th>
-                <th rowspan="2" style="width: 210px;">Jenis Kayu</th>
-                <th rowspan="2" style="width: 55px;">Awal</th>
+                <th rowspan="2" style="width: 26px;">No</th>
+                <th rowspan="2" style="width: 180px;">Jenis Kayu</th>
+                <th rowspan="2" style="width: 48px;">Awal</th>
                 <th colspan="4">Masuk</th>
-                <th rowspan="2" style="width: 62px;">Total<br>Masuk</th>
+                <th rowspan="2" style="width: 56px;">Total<br>Masuk</th>
                 <th colspan="6">Keluar</th>
-                <th rowspan="2" style="width: 62px;">Total<br>Keluar</th>
-                <th rowspan="2" style="width: 55px;">Akhir</th>
+                <th rowspan="2" style="width: 56px;">Total<br>Keluar</th>
+                <th rowspan="2" style="width: 48px;">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th style="width: 58px;">Adj Out S4S</th>
-                <th style="width: 58px;">BS Out S4S</th>
-                <th style="width: 58px;">Prod Out S4S</th>
-                <th style="width: 58px;">CCA Prod S4S</th>
-                <th style="width: 58px;">Adj Inpt S4S</th>
-                <th style="width: 58px;">BS Inpt S4S</th>
-                <th style="width: 58px;">S4S Jual</th>
-                <th style="width: 58px;">FJ Inpt S4S</th>
-                <th style="width: 58px;">Mld Inpt S4S</th>
-                <th style="width: 58px;">S4S Inpt S4S</th>
+                <th style="width: 53px;">Adj Out S4S</th>
+                <th style="width: 53px;">BS Out S4S</th>
+                <th style="width: 53px;">Prod Out S4S</th>
+                <th style="width: 53px;">CCA Prod S4S</th>
+                <th style="width: 53px;">Adj Inpt S4S</th>
+                <th style="width: 53px;">BS Inpt S4S</th>
+                <th style="width: 53px;">S4S Jual</th>
+                <th style="width: 53px;">FJ Inpt S4S</th>
+                <th style="width: 53px;">Mld Inpt S4S</th>
+                <th style="width: 53px;">S4S Inpt S4S</th>
             </tr>
         </thead>
         <tbody>
@@ -423,8 +354,6 @@
             </tbody>
         </table>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

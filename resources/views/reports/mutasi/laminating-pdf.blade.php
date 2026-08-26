@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -46,41 +43,18 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            background: #ffffff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
@@ -107,59 +81,10 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-        }
-
-        .totals-row td.blank {
-            background: transparent;
-            font-weight: 400;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-        }
-
-        .report-table thead tr.headers-row:first-child th {
-            border-top: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[rowspan] {
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[colspan] {
-            border-bottom: 0;
-        }
-
-        .report-table thead tr.headers-row:last-child th {
-            border-top: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
         }
     </style>
 </head>
@@ -266,25 +191,25 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th rowspan="2" style="width:30px; border-top: 1px solid #000;">No</th>
-                <th rowspan="2" style="width:222px; border-top: 1px solid #000;">Jenis</th>
-                <th rowspan="2" style="width:60px; border-top: 1px solid #000;">Awal</th>
-                <th colspan="3" style="border-top: 1px solid #000;">Masuk</th>
-                <th rowspan="2" style="width:68px; border-top: 1px solid #000;">Total<br>Masuk</th>
-                <th colspan="6" style="border-top: 1px solid #000;">Keluar</th>
-                <th rowspan="2" style="width:68px; border-top: 1px solid #000;">Total<br>Keluar</th>
-                <th rowspan="2" style="width:60px; border-top: 1px solid #000;">Akhir</th>
+                <th rowspan="2" style="width: 26px;">No</th>
+                <th rowspan="2" style="width: 200px;">Jenis</th>
+                <th rowspan="2" style="width: 54px;">Awal</th>
+                <th colspan="3">Masuk</th>
+                <th rowspan="2" style="width: 61px;">Total<br>Masuk</th>
+                <th colspan="6">Keluar</th>
+                <th rowspan="2" style="width: 61px;">Total<br>Keluar</th>
+                <th rowspan="2" style="width: 54px;">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th style="width:68px; border-top: 1px solid #000;">Adj Out<br>LMT</th>
-                <th style="width:68px; border-top: 1px solid #000;">BS Out<br>LMT</th>
-                <th style="width:68px; border-top: 1px solid #000;">LMT Prod<br>Out</th>
-                <th style="width:60px; border-top: 1px solid #000;">Adj Inp<br>LMT</th>
-                <th style="width:60px; border-top: 1px solid #000;">BS Inpt<br>LMT</th>
-                <th style="width:60px; border-top: 1px solid #000;">CCA Prod<br>Inpt</th>
-                <th style="width:60px; border-top: 1px solid #000;">LMT<br>Jual</th>
-                <th style="width:60px; border-top: 1px solid #000;">Mld Prod<br>Inpt</th>
-                <th style="width:60px; border-top: 1px solid #000;">S4S Prod<br>Inpt</th>
+                <th style="width: 61px;">Adj Out<br>LMT</th>
+                <th style="width: 61px;">BS Out<br>LMT</th>
+                <th style="width: 61px;">LMT Prod<br>Out</th>
+                <th style="width: 54px;">Adj Inp<br>LMT</th>
+                <th style="width: 54px;">BS Inpt<br>LMT</th>
+                <th style="width: 54px;">CCA Prod<br>Inpt</th>
+                <th style="width: 54px;">LMT<br>Jual</th>
+                <th style="width: 54px;">Mld Prod<br>Inpt</th>
+                <th style="width: 54px;">S4S Prod<br>Inpt</th>
             </tr>
         </thead>
         <tbody>
@@ -366,12 +291,12 @@
         <table class="report-table" style="width: 78%;">
             <thead>
                 <tr class="headers-row">
-                    <th style="width:30px; border-top: 1px solid #000;">No</th>
-                    <th style="width:220px; border-top: 1px solid #000;">Jenis</th>
+                    <th style="width:30px;">No</th>
+                    <th style="width:220px;">Jenis</th>
                     @foreach ($subSpec as $spec)
-                        <th style="width:78px; border-top: 1px solid #000;">{{ $spec['label'] }}</th>
+                        <th style="width:78px;">{{ $spec['label'] }}</th>
                     @endforeach
-                    <th style="width:78px; border-top: 1px solid #000;">Total</th>
+                    <th style="width:78px;">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -406,8 +331,6 @@
             </tbody>
         </table>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

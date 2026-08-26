@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -46,47 +43,18 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            background: #ffffff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
@@ -113,61 +81,11 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-        }
-
-        .totals-row td.blank {
-            background: transparent;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
         }
-
-        .report-table thead tr.headers-row:first-child th {
-            border-top: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[rowspan] {
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[colspan] {
-            border-bottom: 0;
-        }
-
-        .report-table thead tr.headers-row:last-child th {
-            border-top: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -283,28 +201,28 @@
     <table class="report-table">
         <thead>
             <tr class="headers-row">
-                <th rowspan="2" style="width: 30px; border-top: 1px solid #000;">No</th>
-                <th rowspan="2" style="width: 210px; border-top: 1px solid #000;">Jenis</th>
-                <th rowspan="2" style="width: 55px; border-top: 1px solid #000;">Awal</th>
-                <th colspan="3" style="border-top: 1px solid #000;">Masuk</th>
-                <th rowspan="2" style="width: 62px; border-top: 1px solid #000;">Total<br>Masuk</th>
-                <th colspan="9" style="border-top: 1px solid #000;">Keluar</th>
-                <th rowspan="2" style="width: 62px; border-top: 1px solid #000;">Total<br>Keluar</th>
-                <th rowspan="2" style="width: 55px; border-top: 1px solid #000;">Akhir</th>
+                <th rowspan="2" style="width: 26px;">No</th>
+                <th rowspan="2" style="width: 180px;">Jenis</th>
+                <th rowspan="2" style="width: 48px;">Awal</th>
+                <th colspan="3">Masuk</th>
+                <th rowspan="2" style="width: 56px;">Total<br>Masuk</th>
+                <th colspan="9">Keluar</th>
+                <th rowspan="2" style="width: 56px;">Total<br>Keluar</th>
+                <th rowspan="2" style="width: 48px;">Akhir</th>
             </tr>
             <tr class="headers-row">
-                <th style="width: 58px; border-top: 1px solid #000;">Adj Outp MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">BS Outp MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">Prod Outp MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">Adj Inpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">BS Inpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">MLD Jual</th>
-                <th style="width: 58px; border-top: 1px solid #000;">CCAInpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">LMT Inpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">MLD Inpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">PACKInpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">SAND Inpt MLD</th>
-                <th style="width: 58px; border-top: 1px solid #000;">S4Sinpt MLD</th>
+                <th style="width: 53px;">Adj Outp MLD</th>
+                <th style="width: 53px;">BS Outp MLD</th>
+                <th style="width: 53px;">Prod Outp MLD</th>
+                <th style="width: 53px;">Adj Inpt MLD</th>
+                <th style="width: 53px;">BS Inpt MLD</th>
+                <th style="width: 53px;">MLD Jual</th>
+                <th style="width: 53px;">CCAInpt MLD</th>
+                <th style="width: 53px;">LMT Inpt MLD</th>
+                <th style="width: 53px;">MLD Inpt MLD</th>
+                <th style="width: 53px;">PACKInpt MLD</th>
+                <th style="width: 53px;">SAND Inpt MLD</th>
+                <th style="width: 53px;">S4Sinpt MLD</th>
             </tr>
         </thead>
         <tbody>
@@ -411,12 +329,12 @@
         <table class="report-table" style="width: 70%;">
             <thead>
                 <tr class="headers-row">
-                    <th style="width: 32px; border-top: 1px solid #000;">No</th>
-                    <th style="width: 220px; border-top: 1px solid #000;">Jenis</th>
+                    <th style="width: 29px;">No</th>
+                    <th style="width: 198px;">Jenis</th>
                     @foreach ($subSpec as $spec)
-                        <th style="width: 84px; border-top: 1px solid #000;">{{ $spec['label'] }}</th>
+                        <th style="width: 76px;">{{ $spec['label'] }}</th>
                     @endforeach
-                    <th style="width: 84px; border-top: 1px solid #000;">Total</th>
+                    <th style="width: 76px;">Total</th>
                 </tr>
             </thead>
 
@@ -454,8 +372,6 @@
             </tbody>
         </table>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>
