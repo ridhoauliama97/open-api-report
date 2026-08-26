@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\PerbandinganKbMasukPeriode1Dan2ReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
@@ -20,23 +23,25 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
         GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest $request,
         PerbandinganKbMasukPeriode1Dan2ReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function previewPdf(
         GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest $request,
         PerbandinganKbMasukPeriode1Dan2ReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     private function buildPdfResponse(
         GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest $request,
         PerbandinganKbMasukPeriode1Dan2ReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $attachment,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -69,7 +74,7 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-pdf', [
             'rows' => $reportData['rows'],
             'summary' => $reportData['summary'],
             'period1StartDate' => $period1StartDate,
@@ -78,8 +83,29 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
             'period2EndDate' => $period2EndDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'rows' => $reportData['rows'],
+            'summary' => $reportData['summary'],
+            'period1StartDate' => $period1StartDate,
+            'period1EndDate' => $period1EndDate,
+            'period2StartDate' => $period2StartDate,
+            'period2EndDate' => $period2EndDate,
+            'generatedBy' => $generatedBy,
+            'generatedAt' => now(),
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Perbandingan-KB-Masuk-Periode1dan2-%s-sd-%s-vs-%s-sd-%s.pdf',
@@ -88,12 +114,26 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
             $period2StartDate,
             $period2EndDate,
         );
-        $dispositionType = $attachment ? 'attachment' : 'inline';
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

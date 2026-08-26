@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GeneratePenerimaanKayuBulatBulananPerSupplierReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\PenerimaanKayuBulatBulananPerSupplierReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class PenerimaanKayuBulatBulananPerSupplierController extends Controller
@@ -20,6 +23,7 @@ class PenerimaanKayuBulatBulananPerSupplierController extends Controller
         GeneratePenerimaanKayuBulatBulananPerSupplierReportRequest $request,
         PenerimaanKayuBulatBulananPerSupplierReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -47,7 +51,7 @@ class PenerimaanKayuBulatBulananPerSupplierController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.penerimaan-bulanan-per-supplier-pdf', [
+        $pdfData = [
             'rows' => $reportData['data'],
             'subRows' => $reportData['sub_data'],
             'detailRows' => $reportData['detail_data'] ?? [],
@@ -59,15 +63,44 @@ class PenerimaanKayuBulatBulananPerSupplierController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
-        ]);
+        ];
+
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.penerimaan-bulanan-per-supplier-pdf', $pdfData);
+
+        $metrics = $pdfGenerator->paperMetrics($pdfData);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf('Laporan-Penerimaan-Kayu-Bulat-Bulanan-Per-Supplier-%s-sd-%s.pdf', $startDate, $endDate);
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GeneratePenerimaanKayuBulatBulananPerSupplierReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

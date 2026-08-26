@@ -10,19 +10,16 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            color: #000;
             line-height: 1.2;
+            color: #000;
         }
 
         .report-title {
@@ -34,63 +31,44 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0 14px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
 
-        .group-title {
-            margin: 12px 0 4px;
+        .section-title {
+            margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
-            text-transform: uppercase;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 8px;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 10px;
-        }
-
-        td.number {
-            text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-            white-space: nowrap;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
+        }
+
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -101,40 +79,42 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-            border-right: 1px solid #000;
-        }
-
         .totals-row td {
             font-weight: bold;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-            font-size: 11px;
         }
 
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
+        .headers-row th {
+            font-weight: bold;
         }
 
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        th {
+            text-align: center;
+        }
+
+        table {
+            margin-bottom: 8px;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        .group-title {
+            margin: 12px 0 4px;
+            font-size: 12px;
+            font-style: italic;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #9c111d;
+        }
+
+        .summary-note {
+            margin: 4px 0 10px 0;
+            font-size: 10px;
+        }
+
+        .summary-note .label {
+            font-weight: bold;
         }
 
         .section-break {
@@ -154,13 +134,9 @@
             font-weight: bold;
         }
 
-        .summary-note {
-            margin: 4px 0 10px 0;
-            font-size: 10px;
-        }
-
-        .summary-note .label {
-            font-weight: bold;
+        svg {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -410,8 +386,6 @@
             </tbody>
         </table>
     @endforelse
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

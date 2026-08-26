@@ -10,40 +10,95 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.25;
+            line-height: 1.2;
             color: #000;
         }
 
         .report-title {
             text-align: center;
-            margin: 0 0 20px 0px;
+            margin: 0;
             font-size: 16px;
             font-weight: bold;
         }
 
-        .meta-table,
-        .report-table,
-        .signature-table {
-            width: 100%;
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
+        }
+
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .totals-row td {
+            font-weight: bold;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        th {
+            text-align: center;
         }
 
         .meta-table {
+            width: 100%;
+            border: 0;
             margin-bottom: 8px;
         }
 
         .meta-table td {
+            border: 0;
             padding: 1px 2px;
             vertical-align: top;
         }
@@ -67,44 +122,20 @@
         }
 
         .summary-row span {
-            display: attachment-block;
             margin-right: 12px;
         }
 
         .grade-title {
             margin: 16px 0 4px;
             font-size: 11px;
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
         }
 
         .report-table {
             width: 180px;
             margin-bottom: 2px;
-        }
-
-        .report-table th,
-        .report-table td {
-            border: 1px solid #000;
-            padding: 3px 5px;
-        }
-
-        .report-table th {
-            text-align: center;
-            font-weight: bold;
-            background: #ffffff;
-        }
-
-        .report-table td {
-            vertical-align: middle;
-        }
-
-        .report-table td.center {
-            text-align: center;
-        }
-
-        .report-table td.number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .report-table tbody tr:nth-child(odd) td {
@@ -115,12 +146,6 @@
             background: #eef2f8;
         }
 
-        .subtotal-text {
-            margin: 0 0 14px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
         .grand-total-line {
             width: 200px;
             border-top: 1px solid #000;
@@ -129,11 +154,12 @@
 
         .grand-total-table {
             width: 200px;
+            border: 0;
             margin: 0 0 14px;
-            border-collapse: collapse;
         }
 
         .grand-total-table td {
+            border: 0;
             padding: 0;
             font-size: 11px;
             font-weight: bold;
@@ -148,15 +174,17 @@
         .grand-total-value {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .signature-table {
+            width: 100%;
+            border: 0;
             margin-top: 14px;
             table-layout: fixed;
         }
 
         .signature-table td {
+            border: 0;
             width: 14.28%;
             text-align: center;
             vertical-align: top;
@@ -177,12 +205,13 @@
 
         .signature-placeholder-table {
             width: 100%;
+            border: 0;
             border-collapse: collapse;
         }
 
         .signature-placeholder-table td {
+            border: 0;
             padding: 0;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
             font-size: 11px;
             font-weight: normal;
             text-align: center;
@@ -194,11 +223,6 @@
 
         .signature-space {
             width: 100px;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
         }
     </style>
 </head>
@@ -396,11 +420,6 @@
             </td>
         </tr>
     </table>
-
-    @include('reports.partials.pdf-footer-table', [
-        'generatedByName' => $generatedByName,
-        'generatedAtText' => $generatedAtText,
-    ])
 </body>
 
 </html>

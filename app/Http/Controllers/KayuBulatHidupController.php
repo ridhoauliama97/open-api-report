@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateKayuBulatHidupReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\KayuBulatHidupReportService;
 use App\Services\PdfGenerator;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class KayuBulatHidupController extends Controller
@@ -21,32 +24,35 @@ class KayuBulatHidupController extends Controller
         GenerateKayuBulatHidupReportRequest $request,
         KayuBulatHidupReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function previewPdf(
         GenerateKayuBulatHidupReportRequest $request,
         KayuBulatHidupReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function previewPdfLink(
         GenerateKayuBulatHidupReportRequest $request,
         KayuBulatHidupReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         string $downloadName,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     private function buildPdfResponse(
         GenerateKayuBulatHidupReportRequest $request,
         KayuBulatHidupReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $attachment,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -74,7 +80,7 @@ class KayuBulatHidupController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.hidup-pdf', [
+        $viewData = [
             'rows' => $reportData['rows'],
             'summary' => $reportData['summary'],
             'startDate' => $startDate,
@@ -82,21 +88,31 @@ class KayuBulatHidupController extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_column_count' => 8,
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.hidup-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics($viewData);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $startLabel = Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $endLabel = Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $filename = sprintf('Laporan Kayu Bulat Hidup - Periode %s s/d %s.pdf', $startLabel, $endLabel);
 
-        $dispositionType = $attachment ? 'attachment' : 'inline';
-
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf(
-                '%s; filename="%s"; filename*=UTF-8\'\'%s',
-                $dispositionType,
+                'attachment; filename="%s"; filename*=UTF-8\'\'%s',
                 addcslashes($filename, '"\\'),
                 rawurlencode($filename)
             ),
@@ -104,6 +120,21 @@ class KayuBulatHidupController extends Controller
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateKayuBulatHidupReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

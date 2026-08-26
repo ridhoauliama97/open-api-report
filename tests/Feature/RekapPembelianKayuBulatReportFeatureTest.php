@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\RekapPembelianKayuBulatReportService;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -68,9 +70,22 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '29.7cm',
+                'paper_height' => '21.0cm',
+                'landscape' => true,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()
+                ->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->app->instance(RekapPembelianKayuBulatReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
@@ -81,6 +96,9 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Rekap Pembelian Kayu Bulat');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_pdf_preview_endpoint_returns_attachment_disposition(): void
@@ -104,9 +122,22 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '29.7cm',
+                'paper_height' => '21.0cm',
+                'landscape' => true,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()
+                ->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->app->instance(RekapPembelianKayuBulatReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
@@ -117,5 +148,8 @@ class RekapPembelianKayuBulatReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Rekap Pembelian Kayu Bulat');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 }

@@ -10,23 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
-        }
-
-        .container-fluid {
-            width: 100%;
-            padding: 0;
             margin: 0;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 6px;
+            padding: 0;
         }
 
         body {
@@ -52,15 +37,66 @@
         }
 
         .section-title {
-            margin: 10px 0 4px 0;
+            margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
         }
 
-        .group-title {
-            margin: 8px 0 4px 0;
-            font-size: 11px;
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
+            border-collapse: collapse;
+            border-spacing: 0;
+            border: 1px solid #000;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .totals-row td {
             font-weight: bold;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        .container-fluid {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 6px;
         }
 
         .kb-block {
@@ -72,6 +108,7 @@
             width: 100%;
             margin-bottom: 6px;
             table-layout: fixed;
+            border: 0;
         }
 
         .kb-meta td {
@@ -96,117 +133,9 @@
             margin-left: 4px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            color: #000;
-        }
-
-        td.center {
-            text-align: center;
-        }
-
-        td.number {
-            text-align: right;
-            white-space: nowrap;
-            font-family:  "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-
         .summary-page {
-            page-break-before: auto;
             margin-top: 10px;
         }
-
-        .summary-title {
-            margin: 0 0 10px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .summary-list {
-            margin: 0;
-            padding-left: 18px;
-            font-size: 10px;
-            line-height: 1.2;
-        }
-
-        .summary-list li {
-            margin: 0 0 2px;
-        }
-
-
     </style>
 </head>
 
@@ -441,8 +370,6 @@
             </table>
         </div>
     </section>
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateNoParameterReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapPembelianKayuBulatReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapPembelianKayuBulatController extends Controller
@@ -44,6 +47,7 @@ class RekapPembelianKayuBulatController extends Controller
         GenerateNoParameterReportRequest $request,
         RekapPembelianKayuBulatReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -69,22 +73,54 @@ class RekapPembelianKayuBulatController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.rekap-pembelian-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.rekap-pembelian-pdf', [
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
             'pdf_column_count' => 14,
         ]);
 
-        $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton.pdf';
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => $reportData,
+            'generatedBy' => $generatedBy,
+            'generatedAt' => now(),
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            'pdf_column_count' => 14,
         ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
+
+        $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton.pdf';
+
+        return response($pdfBytes, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+        ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateNoParameterReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function health(

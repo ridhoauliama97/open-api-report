@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateTimelineKayuBulatBulananKgReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\TimelineKayuBulatBulananKgReportService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class TimelineKayuBulatBulananKgController extends Controller
@@ -21,22 +24,25 @@ class TimelineKayuBulatBulananKgController extends Controller
         GenerateTimelineKayuBulatBulananKgReportRequest $request,
         TimelineKayuBulatBulananKgReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient, true);
     }
 
     public function previewPdf(
         GenerateTimelineKayuBulatBulananKgReportRequest $request,
         TimelineKayuBulatBulananKgReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient, false);
     }
 
     private function buildPdfResponse(
         GenerateTimelineKayuBulatBulananKgReportRequest $request,
         TimelineKayuBulatBulananKgReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -65,25 +71,55 @@ class TimelineKayuBulatBulananKgController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg-pdf', [
+        $viewData = [
             'rows' => $rows,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
             // Table pivot uses: No + Supplier + selected months + Total.
+            // Keeps the landscape auto-detect consistent with the month span.
             'pdf_column_count' => $this->resolvePdfColumnCount($startDate, $endDate),
-        ]);
+        ];
+
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.timeline-kayu-bulat-bulanan-kg-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics($viewData);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf('Laporan-Time-Line-Kayu-Bulat-Bulanan-KG-%s-sd-%s.pdf', $startDate, $endDate);
         $dispositionType = $attachment ? 'attachment' : 'inline';
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateTimelineKayuBulatBulananKgReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

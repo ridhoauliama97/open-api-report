@@ -10,23 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
-        }
-
-        .container-fluid {
-            width: 100%;
-            padding: 0;
             margin: 0;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 6px;
+            padding: 0;
         }
 
         body {
@@ -58,53 +43,32 @@
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
-            border-collapse: collapse;
+            border-spacing: 0;
             border: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: 700;
-            background: #ffffff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
+        td.label {
+            white-space: nowrap;
+        }
+
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family:  "Calibri", "DejaVu Sans", sans-serif;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -117,42 +81,14 @@
 
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
         }
 
         .headers-row th {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-
-        .summary-page {
-            page-break-before: auto;
-            margin-top: 10px;
         }
 
         .summary-title {
-            margin: 0 0 10px;
+            margin: 10px 0 4px;
             font-size: 11px;
             font-weight: bold;
         }
@@ -165,21 +101,10 @@
             line-height: 1.2;
         }
 
-        .summary-list li,
-        .notes-list li {
-            margin: 0 0 2px;
-        }
-
-        .notes {
-            margin-top: 10px;
-        }
-
         .notes-line {
             margin: 0 0 2px;
             font-size: 10px;
         }
-
-
     </style>
 </head>
 
@@ -217,19 +142,19 @@
             <table class="table table-striped report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th rowspan="2" style="width: 34px;">No</th>
-                        <th rowspan="2" style="width: 190px;">Nama Supplier</th>
-                        <th rowspan="2" style="width: 46px;">Jmlh Truk</th>
+                        <th rowspan="2" style="width: 3%;">No</th>
+                        <th rowspan="2" style="width: 17%;">Nama Supplier</th>
+                        <th rowspan="2" style="width: 6%;">Jmlh Truk</th>
                         @foreach ($groupNames as $groupName)
                             <th colspan="2">{{ $groupName }}</th>
                         @endforeach
-                        <th rowspan="2" style="width: 74px;">Total (Kg)</th>
-                        <th rowspan="2" style="width: 62px;">Rasio</th>
+                        <th rowspan="2" style="width: 8%;">Total (Kg)</th>
+                        <th rowspan="2" style="width: 7%;">Rasio</th>
                     </tr>
                     <tr class="headers-row">
                         @foreach ($groupNames as $groupName)
-                            <th style="width: 72px;">Kg</th>
-                            <th style="width: 48px;">%</th>
+                            <th style="width: 8%;">Kg</th>
+                            <th style="width: 8%;">%</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -319,8 +244,6 @@
             </ul>
         </div>
     </section>
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

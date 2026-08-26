@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -34,52 +31,38 @@
 
         .report-subtitle {
             text-align: center;
-            margin: 2px 0;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
 
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            margin-top: 8px;
-            page-break-inside: auto;
-        }
-
-        .report-table {
-            border-collapse: collapse;
+            border-spacing: 0;
             border: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
-            vertical-align: middle;
-            text-align: center;
-            word-break: break-word;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        td.left {
-            text-align: left;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
+        }
+
+        td.label {
+            white-space: nowrap;
         }
 
         td.number {
@@ -96,35 +79,16 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
         }
 
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
+        .headers-row th {
+            font-weight: bold;
         }
 
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        td.left {
+            text-align: left;
         }
 
         .trend-up {
@@ -275,8 +239,6 @@
             </tr>
         </tbody>
     </table>
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

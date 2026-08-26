@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -23,7 +20,6 @@
             font-size: 10px;
             line-height: 1.2;
             color: #000;
-            background: #fff;
         }
 
         .report-title {
@@ -40,65 +36,55 @@
             color: #636466;
         }
 
-        table {
-            width: 60%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            background: #fff;
-            table-layout: fixed;
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        .report-table {
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
-            border: 0;
-            border-left: 1px solid #000;
+            border: 1px solid #000;
+            word-wrap: break-word;
             padding: 2px 2px;
+        }
+
+        td.center {
             text-align: center;
-            vertical-align: middle;
+        }
+
+        td.label {
             white-space: nowrap;
         }
 
-        th:first-child,
-        td:first-child {
-            border-left: 1px solid #000;
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
-        th:last-child,
-        td:last-child {
-            border-right: 0;
+        .row-odd td {
+            background: #c9d1df;
         }
 
-        th {
-            background: #fff;
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .totals-row td {
             font-weight: bold;
-            border-bottom: 1px solid #000;
         }
 
-        .row-label {
-            text-align: left;
+        .headers-row th {
             font-weight: bold;
-            padding-left: 3px;
         }
 
         .group-title {
@@ -107,9 +93,8 @@
             margin: 0 0 4px 0;
         }
 
-        .cell-right {
-            text-align: right;
-            padding-right: 4px;
+        .center td {
+            text-align: center;
         }
 
         .zebra tbody tr:nth-child(odd) td {
@@ -120,37 +105,8 @@
             background: #eef2f8;
         }
 
-        .zebra tbody tr:last-child td,
-        table tbody tr:last-child td {
-            background: #fff;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-        }
-
-        .center td {
-            text-align: center;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            background: #fff !important;
-        }
-
         .zebra tbody tr.totals-row td {
             background: #fff !important;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
         }
 
         .group-cols col.col-no {
@@ -169,10 +125,6 @@
 
         .group-cols col.col-hasil {
             width: 26%;
-        }
-
-        .equal-cols-2 col {
-            width: 50%;
         }
     </style>
 </head>
@@ -258,8 +210,6 @@
             </tbody>
         </table>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

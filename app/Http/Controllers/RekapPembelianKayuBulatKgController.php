@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateNoParameterReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapPembelianKayuBulatKgReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapPembelianKayuBulatKgController extends Controller
@@ -20,16 +23,18 @@ class RekapPembelianKayuBulatKgController extends Controller
         GenerateNoParameterReportRequest $request,
         RekapPembelianKayuBulatKgReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function previewPdf(
         GenerateNoParameterReportRequest $request,
         RekapPembelianKayuBulatKgReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function preview(
@@ -77,7 +82,7 @@ class RekapPembelianKayuBulatKgController extends Controller
         GenerateNoParameterReportRequest $request,
         RekapPembelianKayuBulatKgReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $attachment,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -103,21 +108,53 @@ class RekapPembelianKayuBulatKgController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.rekap-pembelian-kg-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.rekap-pembelian-kg-pdf', [
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
             'pdf_column_count' => 14,
         ]);
 
-        $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton-Timbang-KG.pdf';
-        $dispositionType = $attachment ? 'attachment' : 'inline';
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => $reportData,
+            'generatedBy' => $generatedBy,
+            'generatedAt' => now(),
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            'pdf_column_count' => 14,
         ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
+
+        $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton-Timbang-KG.pdf';
+
+        return response($pdfBytes, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+        ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateNoParameterReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 }

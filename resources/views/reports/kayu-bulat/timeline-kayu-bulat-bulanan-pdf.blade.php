@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -39,69 +36,38 @@
             color: #636466;
         }
 
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-        }
-
-        .page-break-after {
-            page-break-after: always;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
-            border: 0;
-            border-left: 1px solid #000;
-            padding: 3px 4px;
-            vertical-align: middle;
-            word-break: break-word;
-            text-align: center;
-        }
-
-        th:first-child,
-        td:first-child {
-            border-left: 1px solid #000;
-        }
-
-        th:last-child,
-        td:last-child {
-            border-right: 0;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-            border-bottom: 1px solid #000;
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
-        td.number-right {
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
             text-align: right;
+            white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
@@ -113,50 +79,23 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-        }
-
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
         }
 
-        .number-column {
-            width: 34px;
+        .headers-row th {
+            font-weight: bold;
         }
 
-        .supplier-column {
-            width: 170px;
+        .report-table th,
+        .report-table td {
+            text-align: center;
+            vertical-align: middle;
         }
 
-        .month-column {
-            width: 38px;
-        }
-
-        .total-column {
-            width: 60px;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        td.number-right {
+            text-align: right;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
     </style>
 </head>
@@ -519,8 +458,6 @@
             </tbody>
         </table>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

@@ -11,6 +11,8 @@ use App\Services\RekapProduktivitasSawmillRpReportService;
 use App\Services\SaldoHidupKayuBulatKgReportService;
 use App\Services\TimelineKayuBulatBulananKgReportService;
 use App\Services\TimelineKayuBulatHarianKgReportService;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -204,14 +206,30 @@ class KayuBulatKgReportsFeatureTest extends TestCase
         $saldoService = Mockery::mock(SaldoHidupKayuBulatKgReportService::class);
         $saldoService->shouldReceive('buildReportData')->once()->andReturn(['rows' => [], 'sub_rows' => [], 'summary' => []]);
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
-        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+        $pdfGenerator->shouldReceive('renderHtml')->once()->andReturn('<html><body>mocked HTML</body></html>');
+        $pdfGenerator->shouldReceive('paperMetrics')->once()->andReturn([
+            'paper_width' => '21.0cm',
+            'paper_height' => '29.7cm',
+            'landscape' => false,
+        ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()
+                ->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
+
         $this->app->instance(SaldoHidupKayuBulatKgReportService::class, $saldoService);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post('/reports/kayu-bulat/saldo-hidup-kg/download', [])
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
+
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Saldo Hidup Kayu Bulat');
     }
 
     /**
