@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateUmurMouldingDetailReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\UmurMouldingDetailReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class UmurMouldingDetailController extends Controller
@@ -28,6 +31,7 @@ class UmurMouldingDetailController extends Controller
         GenerateUmurMouldingDetailReportRequest $request,
         UmurMouldingDetailReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -61,7 +65,7 @@ class UmurMouldingDetailController extends Controller
 
         $totals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.moulding.umur-moulding-detail-pdf', [
+        $viewData = [
             'reportData' => [
                 'rows' => $rows,
                 'totals' => $totals,
@@ -72,9 +76,22 @@ class UmurMouldingDetailController extends Controller
             'umur4' => $params['Umur4'] ?: self::DEFAULT_UMUR_4,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.moulding.umur-moulding-detail-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics($viewData);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Umur-Moulding-Detail-%s-%s-%s-%s.pdf',
@@ -84,10 +101,25 @@ class UmurMouldingDetailController extends Controller
             $params['Umur4'],
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateUmurMouldingDetailReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(
@@ -122,6 +154,7 @@ class UmurMouldingDetailController extends Controller
         GenerateUmurMouldingDetailReportRequest $request,
         UmurMouldingDetailReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $params = $request->umurParameters();
 
@@ -135,7 +168,9 @@ class UmurMouldingDetailController extends Controller
 
         $totals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.moulding.umur-moulding-detail-pdf', [
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        $viewData = [
             'reportData' => [
                 'rows' => $rows,
                 'totals' => $totals,
@@ -144,11 +179,24 @@ class UmurMouldingDetailController extends Controller
             'umur2' => $params['Umur2'] ?: self::DEFAULT_UMUR_2,
             'umur3' => $params['Umur3'] ?: self::DEFAULT_UMUR_3,
             'umur4' => $params['Umur4'] ?: self::DEFAULT_UMUR_4,
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.moulding.umur-moulding-detail-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics($viewData);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Umur-Moulding-Detail-%s-%s-%s-%s.pdf',
@@ -158,9 +206,9 @@ class UmurMouldingDetailController extends Controller
             $params['Umur4'],
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
     }
 

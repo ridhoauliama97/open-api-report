@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateUmurSawnTimberDetailTonReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\UmurSawnTimberDetailTonReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class UmurSawnTimberDetailTonController extends Controller
@@ -20,6 +23,7 @@ class UmurSawnTimberDetailTonController extends Controller
         GenerateUmurSawnTimberDetailTonReportRequest $request,
         UmurSawnTimberDetailTonReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -51,14 +55,28 @@ class UmurSawnTimberDetailTonController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.umur-sawn-timber-detail-ton-pdf', [
+        $data = [
             'rows' => $rows,
             'parameters' => $parameters,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
-        ]);
+        ];
+
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.umur-sawn-timber-detail-ton-pdf', $data);
+
+        $metrics = $pdfGenerator->paperMetrics($data);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan Umur Sawn Timber Detail (Ton) - U%s-U%s-U%s-U%s.pdf',
@@ -68,12 +86,27 @@ class UmurSawnTimberDetailTonController extends Controller
             $parameters['Umur4'],
         );
 
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
-
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateUmurSawnTimberDetailTonReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+            ], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

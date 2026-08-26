@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -40,63 +37,38 @@
         }
 
         .section-title {
-            margin: 10px 0 6px 0;
+            margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: 700;
-            background: #ffffff;
-            color: #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
+        td.label {
+            white-space: nowrap;
+        }
+
         td.number {
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        td.duration-bold {
-            font-weight: bold;
         }
 
         .row-odd td {
@@ -107,35 +79,34 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-            border-right: 1px solid #000;
-        }
-
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
-            background: #fff;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-style: italic;
+            color: #9c111d;
+        }
+
+        .duration-bold {
+            font-weight: bold;
         }
 
         .group-note {
-            width: 100%;
+            width: calc(100% - 2px);
             margin: 4px 0 14px 0;
             font-size: 11px;
+            border: 0;
         }
 
         .group-note td {
             border: 0;
-            padding: 0 4px;
             background: transparent !important;
+            padding: 0 4px;
             vertical-align: top;
             white-space: nowrap;
         }
@@ -150,13 +121,6 @@
 
         .group-note .right {
             text-align: right;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
         }
     </style>
 </head>
@@ -642,8 +606,6 @@
             </tbody>
         </table>
     @endforelse
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>
