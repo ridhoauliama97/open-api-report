@@ -32,6 +32,7 @@ class RekapRendemenNonRambungController extends Controller
         GenerateRekapRendemenNonRambungReportRequest $request,
         RekapRendemenNonRambungReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

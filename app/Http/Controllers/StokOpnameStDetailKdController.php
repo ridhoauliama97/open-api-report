@@ -32,6 +32,7 @@ class StokOpnameStDetailKdController extends Controller
         GenerateStokOpnameStDetailKdReportRequest $request,
         StokOpnameStDetailKdReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

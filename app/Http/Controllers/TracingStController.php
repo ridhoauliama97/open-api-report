@@ -32,7 +32,8 @@ class TracingStController extends Controller
         GenerateTracingStReportRequest $request,
         TracingStReportService $reportService,
         PdfGenerator $pdfGenerator,
-        ?string $filename = null,
+        ?string $filename,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

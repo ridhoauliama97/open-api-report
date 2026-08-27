@@ -32,6 +32,7 @@ class SupplierIntelController extends Controller
         GenerateSupplierIntelReportRequest $request,
         SupplierIntelReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

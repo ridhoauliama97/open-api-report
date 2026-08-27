@@ -32,6 +32,7 @@ class PenjualanLokalController extends Controller
         GenerateBalokSudahSemprotReportRequest $request,
         PenjualanLokalReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

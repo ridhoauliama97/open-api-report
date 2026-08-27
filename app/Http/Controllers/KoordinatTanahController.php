@@ -34,6 +34,7 @@ class KoordinatTanahController extends Controller
         GenerateKoordinatTanahReportRequest $request,
         KoordinatTanahReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

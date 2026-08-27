@@ -35,6 +35,7 @@ class RekapPenjualanEksporPerProdukPerBuyerController extends Controller
         GenerateRekapPenjualanPerProdukReportRequest $request,
         RekapPenjualanEksporPerProdukPerBuyerReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

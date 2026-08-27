@@ -32,6 +32,7 @@ class TimelineKayuBulatHarianController extends Controller
         GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

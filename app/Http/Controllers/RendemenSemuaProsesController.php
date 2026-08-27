@@ -32,6 +32,7 @@ class RendemenSemuaProsesController extends Controller
         GenerateRendemenSemuaProsesReportRequest $request,
         RendemenSemuaProsesReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);

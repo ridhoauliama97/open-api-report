@@ -32,6 +32,7 @@ class RekapPcsTellyHasilSawmillController extends Controller
         GenerateRekapPcsTellyHasilSawmillReportRequest $request,
         RekapPcsTellyHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
             $gotenbergPdfClient, true);
