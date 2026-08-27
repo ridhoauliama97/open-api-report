@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapProduksiS4SConsolidatedReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiS4SConsolidatedReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiS4SConsolidatedController extends Controller
@@ -20,6 +23,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
         GenerateRekapProduksiS4SConsolidatedReportRequest $request,
         RekapProduksiS4SConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -51,7 +55,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.s4s.rekap-produksi-s4s-consolidated-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.s4s.rekap-produksi-s4s-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -60,10 +64,28 @@ class RekapProduksiS4SConsolidatedController extends Controller
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
-            // Workaround for mPDF collapsed-border table bug (can crash when true).
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'machines' => $machines,
+                'grand_totals' => $grandTotals,
+            ],
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-S4S-Consolidated-%s-sd-%s.pdf',
@@ -71,9 +93,9 @@ class RekapProduksiS4SConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
     }
 
@@ -106,6 +128,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
         GenerateRekapProduksiS4SConsolidatedReportRequest $request,
         RekapProduksiS4SConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -119,18 +142,39 @@ class RekapProduksiS4SConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.s4s.rekap-produksi-s4s-consolidated-pdf', [
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        $html = $pdfGenerator->renderHtml('reports.s4s.rekap-produksi-s4s-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
                 'grand_totals' => $grandTotals,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'machines' => $machines,
+                'grand_totals' => $grandTotals,
+            ],
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy?->name ?? $generatedBy?->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-S4S-Consolidated-%s-sd-%s.pdf',
@@ -138,10 +182,25 @@ class RekapProduksiS4SConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapProduksiS4SConsolidatedReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function health(

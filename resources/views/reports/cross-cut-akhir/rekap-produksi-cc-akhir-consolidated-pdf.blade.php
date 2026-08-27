@@ -10,18 +10,15 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #000;
         }
 
@@ -40,69 +37,38 @@
         }
 
         .section-title {
-            margin: 10px 0 4px 0;
-            font-size: 11px;
+            margin: 14px 0 6px 0;
+            font-size: 12px;
             font-weight: bold;
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            page-break-inside: auto;
-            border-top: 1px solid #000;
-            border-left: 0;
-            border-right: 0;
-            border-bottom: 0;
-            table-layout: fixed;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         th,
         td {
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
-            padding: 2px 3px;
-            vertical-align: middle;
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        th:first-child,
-        td:first-child {
-            border-left: 0;
-        }
-
-        thead tr:first-child th:first-child,
-        .bounded-row td:first-child {
-            border-left: 1px solid #000;
-        }
-
-        thead tr:first-child th:last-child,
-        .bounded-row td:last-child {
-            border-right: 1px solid #000;
-        }
-
-        th {
+        td.center {
             text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-            border-bottom: 1px solid #000;
-            background: #fff;
         }
 
-        tbody td {
-            border-top: 0;
-            border-bottom: 0;
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -113,43 +79,17 @@
             background: #eef2f8;
         }
 
-        .number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .center {
-            text-align: center;
-        }
-
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            background: #fff;
         }
 
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        .headers-row th {
+            font-weight: bold;
         }
 
+        .total-row td,
         .grand-total-row td {
             font-weight: bold;
-            font-size: 12px;
-            border-top: 1px solid #000;
-            border-right: 0 !important;
-            border-bottom: 2px solid #000;
-            border-left: 0 !important;
-            background: #fff;
         }
     </style>
 </head>
@@ -363,7 +303,6 @@
         </table>
     @endforeach
 
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

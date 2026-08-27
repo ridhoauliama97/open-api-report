@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapProduksiMouldingConsolidatedReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiMouldingConsolidatedReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiMouldingConsolidatedController extends Controller
@@ -20,6 +23,7 @@ class RekapProduksiMouldingConsolidatedController extends Controller
         GenerateRekapProduksiMouldingConsolidatedReportRequest $request,
         RekapProduksiMouldingConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -51,7 +55,7 @@ class RekapProduksiMouldingConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.moulding.rekap-produksi-moulding-consolidated-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.moulding.rekap-produksi-moulding-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -60,10 +64,30 @@ class RekapProduksiMouldingConsolidatedController extends Controller
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
             'pdf_orientation' => 'landscape',
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'machines' => $machines,
+                'grand_totals' => $grandTotals,
+            ],
+            'pdf_orientation' => 'landscape',
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Moulding-Consolidated-%s-sd-%s.pdf',
@@ -71,10 +95,25 @@ class RekapProduksiMouldingConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapProduksiMouldingConsolidatedReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(
@@ -106,6 +145,7 @@ class RekapProduksiMouldingConsolidatedController extends Controller
         GenerateRekapProduksiMouldingConsolidatedReportRequest $request,
         RekapProduksiMouldingConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -119,19 +159,41 @@ class RekapProduksiMouldingConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.moulding.rekap-produksi-moulding-consolidated-pdf', [
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        $html = $pdfGenerator->renderHtml('reports.moulding.rekap-produksi-moulding-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
                 'grand_totals' => $grandTotals,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
             'pdf_orientation' => 'landscape',
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'machines' => $machines,
+                'grand_totals' => $grandTotals,
+            ],
+            'pdf_orientation' => 'landscape',
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy?->name ?? $generatedBy?->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Moulding-Consolidated-%s-sd-%s.pdf',
@@ -139,7 +201,7 @@ class RekapProduksiMouldingConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);

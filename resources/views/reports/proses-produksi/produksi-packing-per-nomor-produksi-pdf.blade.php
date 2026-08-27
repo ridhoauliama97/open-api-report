@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -25,36 +22,88 @@
             color: #000;
         }
 
+        .report-title {
+            text-align: center;
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
+        }
+
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            table-layout: fixed;
+            border: 1px solid #000;
         }
 
-        .page-block {
-            page-break-after: always;
+        th,
+        td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        .page-block.last-page {
-            page-break-after: auto;
-        }
-
-        .report-title {
-            margin: 0 0 10px 0;
+        td.center {
             text-align: center;
-            font-size: 15px;
+        }
+
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .totals-row td {
             font-weight: bold;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        /*
+         * Tambahan minimal untuk kelas markup spesifik laporan ini:
+         * tabel layout (tanpa border), judul seksi, tabel detail, dan total.
+         */
+        .meta-grid,
+        .meta-grid td,
+        .section-title-grid,
+        .section-title-grid td,
+        .split-grid,
+        .split-grid td,
+        .meta-table,
+        .meta-table td {
+            border: 0;
         }
 
         .meta-grid {
             margin-bottom: 4px;
-        }
-
-        .meta-grid td {
-            border: 0;
-            padding: 0;
-            vertical-align: top;
         }
 
         .meta-pane-left {
@@ -68,10 +117,8 @@
         }
 
         .meta-table td {
-            border: 0;
             padding: 2px 0;
             vertical-align: top;
-            font-size: 10px;
         }
 
         .meta-label {
@@ -89,7 +136,6 @@
         }
 
         .section-title-grid td {
-            border: 0;
             text-align: center;
             font-size: 12px;
             font-weight: bold;
@@ -97,7 +143,6 @@
         }
 
         .split-grid td {
-            border: 0;
             padding: 0;
             vertical-align: top;
         }
@@ -117,17 +162,6 @@
             font-size: 11px;
             font-weight: bold;
             line-height: 1.1;
-        }
-
-        .detail-table {
-            border: 1px solid #000;
-        }
-
-        .detail-table th,
-        .detail-table td {
-            border: 1px solid #000;
-            padding: 3px 4px;
-            font-size: 10px;
         }
 
         .detail-table thead th {
@@ -152,17 +186,6 @@
 
         .detail-table tfoot td {
             font-weight: bold;
-            font-size: 11px;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .total-label {
@@ -384,8 +407,6 @@
             @endif
         </div>
     @endfor
-
-    @include('reports.partials.pdf-reference-footer')
 </body>
 
 </html>

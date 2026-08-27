@@ -10,18 +10,15 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #000;
         }
 
@@ -40,67 +37,38 @@
         }
 
         .section-title {
-            margin: 10px 0 4px 0;
-            font-size: 11px;
+            margin: 14px 0 6px 0;
+            font-size: 12px;
             font-weight: bold;
         }
 
-        table.data-table {
-            width: 100%;
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            font-size: 10px;
+            border-spacing: 0;
             border: 1px solid #000;
-            table-layout: fixed;
         }
 
-        thead {
-            display: table-header-group;
+        th,
+        td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-        }
-
-        table.data-table th,
-        table.data-table td {
-            border: 0;
-            border-left: 1px solid #000;
-            padding: 2px 3px;
-            vertical-align: middle;
-        }
-
-        table.data-table th:first-child,
-        table.data-table td:first-child {
-            border-left: 0;
-        }
-
-        table.data-table th {
+        td.center {
             text-align: center;
-            font-weight: bold;
-            font-size: 10px;
-            border-bottom: 1px solid #000;
-            background: #fff;
         }
 
-        /* Hilangkan garis horizontal antar baris data. */
-        table.data-table tbody td {
-            border-top: 0;
-            border-bottom: 0;
+        td.label {
+            white-space: nowrap;
         }
 
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -111,14 +79,12 @@
             background: #eef2f8;
         }
 
-        .center {
-            text-align: center;
+        .totals-row td {
+            font-weight: bold;
         }
 
-        .number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        .headers-row th {
+            font-weight: bold;
         }
 
         .cell-split {
@@ -134,7 +100,6 @@
             text-align: right;
         }
 
-        /* mPDF: flexbox tidak selalu konsisten, gunakan float + clearfix. */
         .cell-split::after {
             content: "";
             display: block;
@@ -144,7 +109,18 @@
         .strong td {
             font-weight: bold;
             font-size: 11px;
-            background: transparent !important;
+        }
+
+        .total-row td,
+        .grand-total-row td {
+            font-weight: bold;
+        }
+
+        .empty-row td {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+            background: #c9d1df;
         }
     </style>
 </head>
@@ -284,12 +260,6 @@
                     </tr>
                 @endforeach
 
-                @if ($rows !== [] && $summaryRows !== [])
-                    <tr class="table-end-line">
-                        <td colspan="{{ $colCount }}"></td>
-                    </tr>
-                @endif
-
                 @foreach ($summaryRows as $srIndex => $sr)
                     @php
                         $rowIndex++;
@@ -298,11 +268,6 @@
                         $r = is_array($sr['row'] ?? null) ? $sr['row'] : [];
                         $cells = is_array($r['cells'] ?? null) ? $r['cells'] : [];
                     @endphp
-                    {{-- @if ($srIndex > 0)
-                    <tr class="table-end-line">
-                        <td colspan="{{ $colCount }}"></td>
-                    </tr>
-                    @endif --}}
                     <tr class="{{ $cls }} strong">
                         <td class="center">{{ $label }}</td>
                         @foreach ($jnsColumns as $group)
@@ -356,8 +321,6 @@
             </tbody>
         </table>
     @endforeach
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

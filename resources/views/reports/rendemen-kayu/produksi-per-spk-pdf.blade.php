@@ -10,74 +10,87 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #000;
         }
 
         .report-title {
             text-align: center;
-            margin: 0 0 16px 0;
+            margin: 0;
             font-size: 16px;
             font-weight: bold;
         }
 
-        .info-table,
-        .report-table {
-            width: 100%;
+        .report-subtitle {
+            text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
+        }
+
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
+            border-spacing: 0;
             border: 1px solid #000;
-        }
-
-        .report-table {
-            page-break-inside: auto;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
         }
 
         th,
         td {
-            border: 0;
-            border-left: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        th:first-child,
-        td:first-child {
-            border-left: 0;
-        }
-
-        th {
+        td.center {
             text-align: center;
-            font-weight: bold;
-            border-bottom: 1px solid #000;
         }
 
-        tbody td {
-            border-top: 0;
-            border-bottom: 0;
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        }
+
+        .row-odd td {
+            background: #c9d1df;
+        }
+
+        .row-even td {
+            background: #eef2f8;
+        }
+
+        .totals-row td {
+            font-weight: bold;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        .section-subtitle {
+            margin: 4px 0 6px 0;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         .meta-grid {
@@ -85,8 +98,12 @@
             margin-bottom: 10px;
         }
 
+        .meta-grid table {
+            border: 0;
+        }
+
         .meta-grid td {
-            border: 0 !important;
+            border: 0;
             padding: 2px 6px 2px 0;
             vertical-align: top;
         }
@@ -101,34 +118,10 @@
             text-align: center;
         }
 
-        .section-title {
-            margin: 10px 0 6px 0;
-            font-size: 12px;
+        .label-total td,
+        .group-total td,
+        .grand-total-row td {
             font-weight: bold;
-        }
-
-        .section-subtitle {
-            margin: 4px 0 6px 0;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .empty-state {
@@ -137,22 +130,11 @@
             font-style: italic;
         }
 
-        .label-total td,
-        .group-total td {
+        .empty-row td {
+            font-style: italic;
             font-weight: bold;
-            border-top: 1px solid #000 !important;
-            background: #fff !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
+            color: #9c111d;
+            background: #c9d1df;
         }
 
         .spacer {
@@ -372,8 +354,6 @@
             </tbody>
         </table>
     @endforelse
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

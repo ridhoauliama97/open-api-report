@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiCrossCutAkhirPerJenisPerGradeReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
@@ -20,6 +23,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
         GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest $request,
         RekapProduksiCrossCutAkhirPerJenisPerGradeReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -50,7 +54,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
 
         $grouped = $this->groupByJenis($rows);
 
-        $pdf = $pdfGenerator->render('reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade-pdf', [
+        $viewData = [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -58,9 +62,22 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics(['reportData' => $viewData['reportData']]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-CCAkhir-Per-Jenis-Per-Grade-%s-sd-%s.pdf',
@@ -68,10 +85,25 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(
@@ -103,6 +135,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
         GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest $request,
         RekapProduksiCrossCutAkhirPerJenisPerGradeReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -114,18 +147,32 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
         }
 
         $grouped = $this->groupByJenis($rows);
+        $generatedBy = $request->user() ?? auth('api')->user();
 
-        $pdf = $pdfGenerator->render('reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade-pdf', [
+        $viewData = [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'groups' => $grouped,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics(['reportData' => $viewData['reportData']]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-CCAkhir-Per-Jenis-Per-Grade-%s-sd-%s.pdf',
@@ -133,7 +180,7 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapProduksiFingerJointConsolidatedReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiFingerJointConsolidatedReportService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiFingerJointConsolidatedController extends Controller
@@ -21,6 +24,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         GenerateRekapProduksiFingerJointConsolidatedReportRequest $request,
         RekapProduksiFingerJointConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -53,7 +57,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows, $hk);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.finger-joint.rekap-produksi-finger-joint-consolidated-pdf', [
+        $viewData = [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -63,9 +67,22 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.finger-joint.rekap-produksi-finger-joint-consolidated-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics(['reportData' => $viewData['reportData']]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Finger-Joint-Consolidated-%s-sd-%s.pdf',
@@ -73,10 +90,25 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapProduksiFingerJointConsolidatedReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(
@@ -108,6 +140,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         GenerateRekapProduksiFingerJointConsolidatedReportRequest $request,
         RekapProduksiFingerJointConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -121,8 +154,9 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
         $hk = $this->hkFromRange($startDate, $endDate);
         $machines = $this->groupByMachine($rows, $hk);
         $grandTotals = $this->computeTotals($rows);
+        $generatedBy = $request->user() ?? auth('api')->user();
 
-        $pdf = $pdfGenerator->render('reports.finger-joint.rekap-produksi-finger-joint-consolidated-pdf', [
+        $viewData = [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -130,11 +164,24 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
                 'machines' => $machines,
                 'grand_totals' => $grandTotals,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
+        ];
 
-        ]);
+        $html = $pdfGenerator->renderHtml('reports.finger-joint.rekap-produksi-finger-joint-consolidated-pdf', $viewData);
+
+        $metrics = $pdfGenerator->paperMetrics(['reportData' => $viewData['reportData']]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Finger-Joint-Consolidated-%s-sd-%s.pdf',
@@ -142,7 +189,7 @@ class RekapProduksiFingerJointConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);

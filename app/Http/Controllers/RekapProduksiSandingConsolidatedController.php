@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapProduksiSandingConsolidatedReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiSandingConsolidatedReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiSandingConsolidatedController extends Controller
@@ -20,6 +23,7 @@ class RekapProduksiSandingConsolidatedController extends Controller
         GenerateRekapProduksiSandingConsolidatedReportRequest $request,
         RekapProduksiSandingConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -51,7 +55,7 @@ class RekapProduksiSandingConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.sanding.rekap-produksi-sanding-consolidated-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sanding.rekap-produksi-sanding-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -60,9 +64,28 @@ class RekapProduksiSandingConsolidatedController extends Controller
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'machines' => $machines,
+                'grand_totals' => $grandTotals,
+            ],
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Sanding-Consolidated-%s-sd-%s.pdf',
@@ -70,9 +93,9 @@ class RekapProduksiSandingConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
     }
 
@@ -105,6 +128,7 @@ class RekapProduksiSandingConsolidatedController extends Controller
         GenerateRekapProduksiSandingConsolidatedReportRequest $request,
         RekapProduksiSandingConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -118,18 +142,39 @@ class RekapProduksiSandingConsolidatedController extends Controller
         $machines = $this->groupByMachine($rows);
         $grandTotals = $this->computeTotals($rows);
 
-        $pdf = $pdfGenerator->render('reports.sanding.rekap-produksi-sanding-consolidated-pdf', [
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        $html = $pdfGenerator->renderHtml('reports.sanding.rekap-produksi-sanding-consolidated-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'machines' => $machines,
                 'grand_totals' => $grandTotals,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'machines' => $machines,
+                'grand_totals' => $grandTotals,
+            ],
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy?->name ?? $generatedBy?->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Sanding-Consolidated-%s-sd-%s.pdf',
@@ -137,10 +182,25 @@ class RekapProduksiSandingConsolidatedController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapProduksiSandingConsolidatedReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function health(

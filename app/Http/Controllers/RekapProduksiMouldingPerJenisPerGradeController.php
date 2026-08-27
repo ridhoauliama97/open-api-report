@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapProduksiMouldingPerJenisPerGradeReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiMouldingPerJenisPerGradeReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiMouldingPerJenisPerGradeController extends Controller
@@ -20,6 +23,7 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
         GenerateRekapProduksiMouldingPerJenisPerGradeReportRequest $request,
         RekapProduksiMouldingPerJenisPerGradeReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -50,7 +54,7 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
 
         $grouped = $this->groupByJenis($rows);
 
-        $pdf = $pdfGenerator->render('reports.moulding.rekap-produksi-moulding-per-jenis-per-grade-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.moulding.rekap-produksi-moulding-per-jenis-per-grade-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -58,9 +62,27 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'groups' => $grouped,
+            ],
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Moulding-Per-Jenis-Per-Grade-%s-sd-%s.pdf',
@@ -68,9 +90,9 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
     }
 
@@ -103,6 +125,7 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
         GenerateRekapProduksiMouldingPerJenisPerGradeReportRequest $request,
         RekapProduksiMouldingPerJenisPerGradeReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -115,17 +138,37 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
 
         $grouped = $this->groupByJenis($rows);
 
-        $pdf = $pdfGenerator->render('reports.moulding.rekap-produksi-moulding-per-jenis-per-grade-pdf', [
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        $html = $pdfGenerator->renderHtml('reports.moulding.rekap-produksi-moulding-per-jenis-per-grade-pdf', [
             'reportData' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'groups' => $grouped,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
 
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'groups' => $grouped,
+            ],
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy?->name ?? $generatedBy?->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf(
             'Laporan-Rekap-Produksi-Moulding-Per-Jenis-Per-Grade-%s-sd-%s.pdf',
@@ -133,10 +176,25 @@ class RekapProduksiMouldingPerJenisPerGradeController extends Controller
             $endDate,
         );
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapProduksiMouldingPerJenisPerGradeReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function health(
