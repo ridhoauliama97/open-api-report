@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateStockSTBasahReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\StockSTBasahReportService;
 use Illuminate\Contracts\View\View;
@@ -22,6 +24,7 @@ class StockSTBasahController extends Controller
         GenerateStockSTBasahReportRequest $request,
         StockSTBasahReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
     }
@@ -128,24 +131,34 @@ class StockSTBasahController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.stock-st-basah-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.stock-st-basah-pdf', [
             'rows' => $rows,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
         ]);
 
-        if (! $request->boolean('pdf_disable_cache')) {
-            $this->putCachedPdf($cacheKey, $pdf);
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'portrait');
+
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
         }
-
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-            'X-Report-Cache' => 'MISS',
-        ]);
     }
 
     private function pdfCacheKey(string $endDate, object $generatedBy): string

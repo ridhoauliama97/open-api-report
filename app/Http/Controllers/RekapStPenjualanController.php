@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateDateRangeReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapStPenjualanReportService;
 use Illuminate\Contracts\View\View;
@@ -20,6 +22,7 @@ class RekapStPenjualanController extends Controller
         GenerateDateRangeReportRequest $request,
         RekapStPenjualanReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->renderPdf($request, $reportService, $pdfGenerator, true);
     }
@@ -65,25 +68,35 @@ class RekapStPenjualanController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.rekap-st-penjualan-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.rekap-st-penjualan-pdf', [
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'pdf_orientation' => 'portrait',
-            // Match Mutasi KD styling: keep vertical borders, remove horizontal row separators.
-            // With mPDF, this needs simpleTables=false + packTableData=false to render correctly.
-            'pdf_simple_tables' => false,
-
         ]);
 
-        $filename = 'Laporan-Rekap-ST-Penjualan.pdf';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'portrait');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $attachment ? 'attachment' : 'attachment', $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     public function preview(

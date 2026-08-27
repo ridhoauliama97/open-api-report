@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapPcsTellyHasilSawmillReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapPcsTellyHasilSawmillReportService;
 use Illuminate\Contracts\View\View;
@@ -20,6 +22,7 @@ class RekapPcsTellyHasilSawmillController extends Controller
         GenerateRekapPcsTellyHasilSawmillReportRequest $request,
         RekapPcsTellyHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
     }
@@ -118,22 +121,35 @@ class RekapPcsTellyHasilSawmillController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('sawn-timber.rekap-pcs-telly-hasil-sawmill-pdf', [
+        $html = $pdfGenerator->renderHtml('sawn-timber.rekap-pcs-telly-hasil-sawmill-pdf', [
             'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan-Rekap-Jumlah-Pcs-Telly-Hasil-Sawmill-%s-sd-%s.pdf', $startDate, $endDate);
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'portrait');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $attachment ? 'attachment' : 'attachment', $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRangkumanJlhLabelInputReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RangkumanJlhLabelInputReportService;
 use Illuminate\Contracts\View\View;
@@ -26,6 +28,7 @@ class RangkumanJlhLabelInputController extends Controller
         GenerateRangkumanJlhLabelInputReportRequest $request,
         RangkumanJlhLabelInputReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -57,21 +60,35 @@ class RangkumanJlhLabelInputController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.rangkuman-label-input-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.rangkuman-label-input-pdf', [
             'rows' => $rows,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan-Rangkuman-Label-Input-%s-sd-%s.pdf', $startDate, $endDate);
+        $paperMetrics = $pdfGenerator->paperMetrics('a4');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     /**

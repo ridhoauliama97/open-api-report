@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateStokOpnameStDetailKdReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\StokOpnameStDetailKdReportService;
 use Illuminate\Contracts\View\View;
@@ -20,6 +22,7 @@ class StokOpnameStDetailKdController extends Controller
         GenerateStokOpnameStDetailKdReportRequest $request,
         StokOpnameStDetailKdReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
     }
@@ -116,22 +119,33 @@ class StokOpnameStDetailKdController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.stok-opname-st-detail-kd-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.stok-opname-st-detail-kd-pdf', [
             'reportData' => $reportData,
             'noProcKd' => $noProcKd,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
-            // 'pdf_shrink_tables_to_fit' => 1,
         ]);
 
-        $filename = sprintf('Laporan Stok Opname ST Detail Pada KD %s.pdf', $noProcKd);
-        $dispositionType = $attachment ? 'attachment' : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'portrait');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 }

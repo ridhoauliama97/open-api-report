@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateDateRangeReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\PembelianStTimelineTonReportService;
 use Illuminate\Contracts\View\View;
@@ -20,6 +22,7 @@ class PembelianStTimelineTonController extends Controller
         GenerateDateRangeReportRequest $request,
         PembelianStTimelineTonReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->renderPdf($request, $reportService, $pdfGenerator, true);
     }
@@ -70,24 +73,35 @@ class PembelianStTimelineTonController extends Controller
 
         $pdfColumnCount = max(3, 3 + count($monthColumns));
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.pembelian-st-timeline-ton-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.pembelian-st-timeline-ton-pdf', [
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'pdf_orientation' => $orientation,
-            'pdf_simple_tables' => false,
-
-            'pdf_column_count' => $pdfColumnCount,
         ]);
 
-        $filename = 'Laporan-Pembelian-ST-Time-Line-Ton.pdf';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename=\"%s\"', $attachment ? 'attachment' : 'attachment', $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     public function preview(

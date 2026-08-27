@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateDateRangeReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\TimelineKayuBulatHarianKgReportService;
 use Illuminate\Contracts\View\View;
@@ -20,6 +22,7 @@ class TimelineKayuBulatHarianKgController extends Controller
         GenerateDateRangeReportRequest $request,
         TimelineKayuBulatHarianKgReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
     }
@@ -126,24 +129,34 @@ class TimelineKayuBulatHarianKgController extends Controller
         // Pivot table: No + Supplier + (periodCount dates) + Total
         $pdfColumnCount = max(4, 3 + $periodCount);
 
-        $pdf = $pdfGenerator->render('reports.kayu-bulat.timeline-kayu-bulat-harian-kg-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.kayu-bulat.timeline-kayu-bulat-harian-kg-pdf', [
             'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
-
-            'pdf_orientation' => 'landscape',
-            'pdf_column_count' => $pdfColumnCount,
         ]);
 
-        $filename = sprintf('Laporan-Time-Line-KB-Harian-Rambung-Timbang-KG-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'landscape');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 }

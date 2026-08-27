@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateDateRangeReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\KetahananBarangDagangSandingReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class KetahananBarangDagangSandingController extends Controller
@@ -20,22 +23,25 @@ class KetahananBarangDagangSandingController extends Controller
         GenerateDateRangeReportRequest $request,
         KetahananBarangDagangSandingReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, true);
+        return $this->renderPdf($request, $reportService, $pdfGenerator, $gotenbergPdfClient, true);
     }
 
     public function download(
         GenerateDateRangeReportRequest $request,
         KetahananBarangDagangSandingReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, false);
+        return $this->renderPdf($request, $reportService, $pdfGenerator, $gotenbergPdfClient, false);
     }
 
     private function renderPdf(
         GenerateDateRangeReportRequest $request,
         KetahananBarangDagangSandingReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -65,23 +71,54 @@ class KetahananBarangDagangSandingController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sanding.ketahanan-barang-sanding-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sanding.ketahanan-barang-sanding-pdf', [
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
-
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => $reportData,
+            'pdf_orientation' => 'portrait',
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = 'Laporan-Ketahanan-Barang-Dagang-Sanding.pdf';
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $attachment ? 'attachment' : 'attachment', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateDateRangeReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+            ], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

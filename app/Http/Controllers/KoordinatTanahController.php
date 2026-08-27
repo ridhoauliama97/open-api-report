@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateKoordinatTanahReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\KoordinatTanahReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -22,6 +24,7 @@ class KoordinatTanahController extends Controller
         GenerateKoordinatTanahReportRequest $request,
         KoordinatTanahReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
     }
@@ -113,21 +116,33 @@ class KoordinatTanahController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.penjualan-kayu.koordinat-tanah-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.penjualan-kayu.koordinat-tanah-pdf', [
             'noSpk' => $noSpk,
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
-
         ]);
 
-        $filename = sprintf('Laporan-Koordinat-Tanah-%s.pdf', preg_replace('/[^A-Za-z0-9._-]+/', '-', $noSpk));
-        $dispositionType = $attachment ? 'attachment' : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 }

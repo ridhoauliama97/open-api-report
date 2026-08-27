@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateDashboardRuReportRequest;
 use App\Services\DashboardRuReportService;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +25,7 @@ class DashboardRuController extends Controller
         GenerateDashboardRuReportRequest $request,
         DashboardRuReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -50,23 +53,34 @@ class DashboardRuController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.management.dashboard-ru-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.management.dashboard-ru-pdf', [
             'reportDate' => $reportDate,
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
         ]);
 
-        $periodLabel = $reportData['period_label'] ?? $reportDate;
-        $filename = sprintf('Laporan-Dashboard-RU-%s.pdf', str_replace(' ', '-', (string) $periodLabel));
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'landscape');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     public function preview(

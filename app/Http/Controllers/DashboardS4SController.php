@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\ShowDashboardS4SRequest;
 use App\Services\DashboardS4SReportService;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -96,6 +98,7 @@ class DashboardS4SController extends Controller
         ShowDashboardS4SRequest $request,
         DashboardS4SReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -123,23 +126,35 @@ class DashboardS4SController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('dashboard.s4s-pdf', [
+        $html = $pdfGenerator->renderHtml('dashboard.s4s-pdf', [
             'startDate' => $startDate,
             'endDate' => $endDate,
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf('Laporan-Dashboard-S4S-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'landscape');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     private function resolveDates(ShowDashboardS4SRequest $request): array

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateNoParameterReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\LabelS4SHidupPerJenisKayuReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -20,6 +22,7 @@ class LabelS4SHidupPerJenisKayuController extends Controller
         GenerateNoParameterReportRequest $request,
         LabelS4SHidupPerJenisKayuReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -45,22 +48,35 @@ class LabelS4SHidupPerJenisKayuController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.s4s.label-s4s-hidup-per-jenis-kayu-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.s4s.label-s4s-hidup-per-jenis-kayu-pdf', [
             'reportData' => [
                 'rows' => $rows,
             ],
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
-
         ]);
 
-        $filename = 'Laporan-Label-S4S-Hidup-Per-Jenis-Kayu.pdf';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     public function preview(
@@ -87,6 +103,7 @@ class LabelS4SHidupPerJenisKayuController extends Controller
         GenerateNoParameterReportRequest $request,
         LabelS4SHidupPerJenisKayuReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         try {
             $rows = $reportService->fetch();
@@ -94,21 +111,30 @@ class LabelS4SHidupPerJenisKayuController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $pdf = $pdfGenerator->render('reports.s4s.label-s4s-hidup-per-jenis-kayu-pdf', [
+        $generatedBy = $request->user() ?? auth('api')->user();
+
+        $html = $pdfGenerator->renderHtml('reports.s4s.label-s4s-hidup-per-jenis-kayu-pdf', [
             'reportData' => [
                 'rows' => $rows,
             ],
-            'generatedBy' => $request->user() ?? auth('api')->user(),
+            'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_simple_tables' => false,
-
         ]);
 
-        $filename = 'Laporan-Label-S4S-Hidup-Per-Jenis-Kayu.pdf';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+        }
     }
 }

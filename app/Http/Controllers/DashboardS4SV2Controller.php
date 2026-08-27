@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\ShowDashboardS4SV2Request;
 use App\Services\DashboardS4SV2ReportService;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -96,6 +98,7 @@ class DashboardS4SV2Controller extends Controller
         ShowDashboardS4SV2Request $request,
         DashboardS4SV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -123,31 +126,35 @@ class DashboardS4SV2Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('dashboard.s4s-v2-pdf', [
+        $html = $pdfGenerator->renderHtml('dashboard.s4s-v2-pdf', [
             'startDate' => $startDate,
             'endDate' => $endDate,
             'reportData' => $reportData,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
         ]);
 
-        $filename = sprintf(
-            'Laporan-Dashboard-S4S-v2-%s-sd-%s-%s.pdf',
-            $startDate,
-            $endDate,
-            now()->format('YmdHis')
-        );
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'landscape');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     private function resolveDates(ShowDashboardS4SV2Request $request): array

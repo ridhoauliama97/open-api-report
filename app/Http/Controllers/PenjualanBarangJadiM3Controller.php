@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GeneratePenjualanBarangJadiM3ReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\PenjualanBarangJadiM3ReportService;
 use Illuminate\Http\JsonResponse;
@@ -41,6 +43,7 @@ class PenjualanBarangJadiM3Controller extends Controller
         GeneratePenjualanBarangJadiM3ReportRequest $request,
         PenjualanBarangJadiM3ReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -68,26 +71,34 @@ class PenjualanBarangJadiM3Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.penjualan.penjualan-barang-jadi-m3-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.penjualan.penjualan-barang-jadi-m3-pdf', [
             'reportData' => $reportData,
             'noJual' => $noJual,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
-            'pdf_title' => 'Laporan Penjualan Barang Jadi (M3)',
         ]);
 
-        $filename = sprintf('Laporan-Penjualan-Barang-Jadi-M3-%s.pdf', str_replace(['/', '\\'], '-', $noJual));
-        $dispositionType = $request->routeIs('reports.penjualan.penjualan-barang-jadi-m3.preview-pdf')
-            || $request->expectsJson()
-            ? 'attachment'
-            : 'inline';
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'portrait');
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
+        $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
+
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+                'generatedByName' => $generatedByName,
+                'generatedAtText' => $generatedAtText,
+            ]);
+
+            return $pdf;
+        } catch (GotenbergPdfException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
+        }
     }
 
     public function health(
