@@ -84,10 +84,12 @@ class PenjualanBarangJadiM3Controller extends Controller
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
         try {
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+            $footerHtml = view('reports.partials.gotenberg-footer', [
                 'generatedByName' => $generatedByName,
                 'generatedAtText' => $generatedAtText,
-            ]);
+            ])->render();
+
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
 
             $filename = sprintf('Laporan-Penjualan-Barang-Jadi-M3-%s.pdf', str_replace(['/', '\\'], '-', $noJual));
 

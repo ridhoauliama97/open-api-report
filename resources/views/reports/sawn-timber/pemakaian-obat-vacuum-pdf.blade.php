@@ -35,14 +35,12 @@
         .data-table {
             border: 1px solid #000;
             border-collapse: collapse;
-            width: 100%;
+            width: calc(100% - 2px);
             table-layout: fixed;
         }
         .data-table th,
         .data-table td {
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
-            padding: 1px 2px;
+            border: 1px solid #000;            padding: 1px 2px;
             vertical-align: top;
             word-wrap: break-word;
             overflow-wrap: break-word;

@@ -140,10 +140,12 @@ class DashboardS4SV2Controller extends Controller
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
         try {
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+            $footerHtml = view('reports.partials.gotenberg-footer', [
                 'generatedByName' => $generatedByName,
                 'generatedAtText' => $generatedAtText,
-            ]);
+            ])->render();
+
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
 
             return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Dashboard S4s V2"']);
         } catch (GotenbergPdfException $e) {

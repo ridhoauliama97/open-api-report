@@ -86,10 +86,12 @@ class SupplierIntelController extends Controller
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
         try {
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, 'reports.partials.gotenberg-footer', [
+            $footerHtml = view('reports.partials.gotenberg-footer', [
                 'generatedByName' => $generatedByName,
                 'generatedAtText' => $generatedAtText,
-            ]);
+            ])->render();
+
+            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
 
             return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Supplier Intel"']);
         } catch (GotenbergPdfException $e) {
