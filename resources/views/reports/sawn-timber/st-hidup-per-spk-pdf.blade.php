@@ -12,7 +12,27 @@
         'subtitleMargin' => '2px 0 20px 0',
         'tableMarginBottom' => '6px',
     ])
-</head>
+<style>
+        body { margin: 0; font-family: "Noto Serif", serif; font-size: 10px; color: #000; }
+        .report-companyTitle { font-size: 18px; font-weight: bold; text-align: center; margin: 0 0 4px; }
+        .report-title { font-size: 16px; font-weight: bold; text-align: center; margin: 0; }
+        .report-subtitle { font-size: 12px; color: #636466; text-align: center; margin: 2px 0 20px; }
+.report-table, .total-report-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: calc(100% - 2px);
+            line-height: inherit;
+        }
+.report-table th, .report-table td, .total-report-table th, .total-report-table td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px;
+            vertical-align: top;
+        }
+
+        .report-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .total-report-table th { font-weight: bold; background-color: #eef2f8; }</style></head>
 
 <body>
     @php

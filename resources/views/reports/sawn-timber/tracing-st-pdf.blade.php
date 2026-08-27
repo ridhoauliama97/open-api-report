@@ -99,6 +99,12 @@
         .number-negative {
             color: #9c111d;
         }
+    
+        /* standardized table borders */
+        .meta, .step {
+            border-collapse: collapse;
+        }
+.meta td, .step td { padding: 1px 2px; vertical-align: top; }
     </style>
 </head>
 

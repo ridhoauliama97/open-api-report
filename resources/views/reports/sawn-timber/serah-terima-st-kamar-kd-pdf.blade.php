@@ -98,6 +98,26 @@
         .number-negative {
             color: #9c111d;
         }
+    
+        /* standardized table borders */
+        .handover-summary {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: calc(100% - 2px);
+            line-height: inherit;
+        }
+.handover-summary th, .handover-summary td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px;
+            vertical-align: top;
+        }
+
+        .handover-summary th { font-weight: bold; background-color: #eef2f8; }
+.meta-table, .signature-table {
+            border-collapse: collapse;
+        }
+.meta-table td, .signature-table td { padding: 1px 2px; vertical-align: top; }
     </style>
 </head>
 

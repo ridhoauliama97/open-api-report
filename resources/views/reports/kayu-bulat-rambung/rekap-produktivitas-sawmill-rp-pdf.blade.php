@@ -98,6 +98,40 @@
         .number-negative {
             color: #9c111d;
         }
+    
+        /* standardized table borders */
+        .diagram-kategori-table, .group-summary-table, .mini-table, .money-table, .rendemen-total-table, .report-table, .summary-pair-table, .summary-rendemen-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: calc(100% - 2px);
+            line-height: inherit;
+        }
+.diagram-kategori-table th, .diagram-kategori-table td, .group-summary-table th, .group-summary-table td, .mini-table th, .mini-table td, .money-table th, .money-table td, .rendemen-total-table th, .rendemen-total-table td, .report-table th, .report-table td, .summary-pair-table th, .summary-pair-table td, .summary-rendemen-table th, .summary-rendemen-table td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px;
+            vertical-align: top;
+        }
+
+        .diagram-kategori-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .group-summary-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .mini-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .money-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .rendemen-total-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .report-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .summary-pair-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .summary-rendemen-table th { font-weight: bold; background-color: #eef2f8; }
+.bottom-layout, .btul-layout, .diagram-frame, .meta-table, .ringkasan-table, .summary-frame-table, .summary-section-heading-table {
+            border-collapse: collapse;
+        }
+.bottom-layout td, .btul-layout td, .diagram-frame td, .meta-table td, .ringkasan-table td, .summary-frame-table td, .summary-section-heading-table td { padding: 1px 2px; vertical-align: top; }
     </style>
 </head>
 

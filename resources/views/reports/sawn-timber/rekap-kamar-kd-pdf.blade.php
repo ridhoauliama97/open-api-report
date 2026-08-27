@@ -98,6 +98,12 @@
         .number-negative {
             color: #9c111d;
         }
+    
+        /* standardized table borders */
+        .layout-table, .meta-table, .room-footer-table {
+            border-collapse: collapse;
+        }
+.layout-table td, .meta-table td, .room-footer-table td { padding: 1px 2px; vertical-align: top; }
     </style>
 </head>
 

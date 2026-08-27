@@ -98,6 +98,26 @@
         .number-negative {
             color: #9c111d;
         }
+    
+        /* standardized table borders */
+        .report-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: calc(100% - 2px);
+            line-height: inherit;
+        }
+.report-table th, .report-table td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px;
+            vertical-align: top;
+        }
+
+        .report-table th { font-weight: bold; background-color: #eef2f8; }
+.footer-table, .header-table, .meta-table, .signature-table {
+            border-collapse: collapse;
+        }
+.footer-table td, .header-table td, .meta-table td, .signature-table td { padding: 1px 2px; vertical-align: top; }
     </style>
 </head>
 

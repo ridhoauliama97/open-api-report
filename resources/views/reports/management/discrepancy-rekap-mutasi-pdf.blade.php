@@ -98,6 +98,24 @@
         .number-negative {
             color: #9c111d;
         }
+    
+        /* standardized table borders */
+        .report-table, .stats-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: calc(100% - 2px);
+            line-height: inherit;
+        }
+.report-table th, .report-table td, .stats-table th, .stats-table td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px;
+            vertical-align: top;
+        }
+
+        .report-table th { font-weight: bold; background-color: #eef2f8; }
+
+        .stats-table th { font-weight: bold; background-color: #eef2f8; }
     </style>
 </head>
 
