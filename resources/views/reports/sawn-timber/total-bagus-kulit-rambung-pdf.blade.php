@@ -8,97 +8,97 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        @page {
-            sheet-size: A4;
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
-        }
-
         body {
-            margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
             margin: 0;
+            padding: 0;
+        }
+        .report-companyTitle {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 0 4px;
+        }
+        .report-title {
             font-size: 16px;
             font-weight: bold;
-        }
-
-        .report-subtitle {
             text-align: center;
-            margin: 2px 0 20px 0;
+            margin: 0;
+        }
+        .report-subtitle {
             font-size: 12px;
             color: #636466;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .report-table {
-            border: 1px solid #000;
-        }
-
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 5px 6px;
-            vertical-align: middle;
-        }
-
-        th {
             text-align: center;
+            margin: 2px 0 20px;
+        }
+        .data-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .data-table th,
+        .data-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .data-table th {
+            background-color: #eef2f8;
             font-weight: bold;
-            font-size: 11px;
         }
-
-        .data-row td {
-            border-top: 0;
-            border-bottom: 0;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .empty-row td {
-            background: #c9d1df;
+        .section-header td {
             font-weight: bold;
             font-style: italic;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
         }
-
-        .center {
-            text-align: center;
+        .sub-section-header td {
+            font-weight: bold;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
         }
-
+        .item-row td {
+            padding-left: 4px;
+        }
+        .row-odd td {
+            background-color: #c9d1df;
+        }
+        .row-even td {
+            background-color: #eef2f8;
+        }
+        .subtotal-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .grand-total-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .empty-row td {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+            background-color: #c9d1df;
+        }
         .number {
             text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        .dim {
-            text-align: center;
+        .nowrap {
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
-        .total-row td {
-            font-weight: bold;
-            font-size: 11px;
+        .number-negative {
+            color: #9c111d;
         }
     </style>
 </head>
@@ -167,7 +167,6 @@
         </tbody>
     </table>
 
-    @include('reports.partials.pdf-footer-table')
-</body>
+    </body>
 
 </html>

@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 20mm 8mm 20mm 8mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -40,51 +37,28 @@
         }
 
         .section-title {
-            margin: 20px 0 4px;
+            margin: 14px 0 6px 0;
             font-size: 12px;
             font-weight: bold;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 8px;
-            page-break-inside: auto;
-        }
-
-        .report-table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #000;
-            border-left: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-row-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 3px;
-            vertical-align: middle;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        th {
+        td.center {
             text-align: center;
-            font-weight: 700;
-            font-size: 10px;
         }
 
         td.label {
@@ -105,72 +79,12 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
-            border-left: 0;
-        }
-
-        .report-table thead tr.headers-row:first-child th[rowspan] {
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table thead tr.headers-row:first-child th[colspan] {
-            border-bottom: 0;
-        }
-
-        .report-table thead tr.headers-row:last-child th {
-            border-top: 1px solid #000;
-        }
-
         .totals-row td {
             font-weight: bold;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            border-right: 1px solid #000;
-            border-bottom: 0;
-            border-left: 0;
         }
 
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: transparent !important;
-        }
-
-        .footer-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .footer-left,
-        .footer-right {
-            font-size: 8px;
-            font-style: italic;
-        }
-
-        .footer-right {
-            text-align: right;
-        }
-
-        .summary-table .totals-row td {
-            border: 1px solid #000;
+        .headers-row th {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -263,14 +177,6 @@
             <td class="number">{{ $fmt2($totals['ctr'] ?? 0) }}</td>
         </tr>
     </table>
-
-    <htmlpagefooter name="reportFooter">
-        <div class="footer-wrap">
-            <div class="footer-left">Dicetak oleh: {{ $generatedByName }} pada {{ $generatedAtText }}</div>
-            <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
-        </div>
-    </htmlpagefooter>
-    <sethtmlpagefooter name="reportFooter" value="on" />
 </body>
 
 </html>

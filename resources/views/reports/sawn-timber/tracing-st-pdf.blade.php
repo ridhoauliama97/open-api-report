@@ -9,88 +9,97 @@
         rel="stylesheet">
     <meta charset="utf-8">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        @page {
-            margin: 10mm 10mm 10mm 10mm;
-        }
-
         body {
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            color: #000;
+            margin: 0;
+            padding: 0;
         }
-
-        .title {
+        .report-companyTitle {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 0 4px;
+        }
+        .report-title {
             font-size: 16px;
             font-weight: bold;
             text-align: center;
-            margin: 0 0 20px 0;
-            /* text-transform: uppercase; */
+            margin: 0;
         }
-
-        .meta {
-            width: 100%;
+        .report-subtitle {
+            font-size: 12px;
+            color: #636466;
+            text-align: center;
+            margin: 2px 0 20px;
+        }
+        .data-table {
+            border: 1px solid #000;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            width: 100%;
+            table-layout: fixed;
         }
-
-        .meta td {
-            padding: 1px 0;
+        .data-table th,
+        .data-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
             vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
-
-        .label {
-            color: #000;
-            width: 26mm;
-        }
-
-        .value {
+        .data-table th {
+            background-color: #eef2f8;
             font-weight: bold;
         }
-
-        .section {
-            border-top: 0.4px solid #111;
-            padding-top: 4px;
-            margin-top: 5px;
-        }
-
-        .step {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0 0 3px 0;
-        }
-
-        .step td {
-            vertical-align: top;
-            padding: 1px 0;
-        }
-
-        .step-name {
-            width: 31mm;
+        .section-header td {
             font-weight: bold;
-        }
-
-        .step-date {
-            width: 20mm;
-            text-align: right;
-        }
-
-        .day {
-            font-size: 10px;
-            color: #333;
-            text-align: right;
-        }
-
-        .summary {
-            font-size: 10px;
             font-style: italic;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
         }
-
-        .page-break {
-            page-break-after: always;
+        .sub-section-header td {
+            font-weight: bold;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
+        }
+        .item-row td {
+            padding-left: 4px;
+        }
+        .row-odd td {
+            background-color: #c9d1df;
+        }
+        .row-even td {
+            background-color: #eef2f8;
+        }
+        .subtotal-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .grand-total-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .empty-row td {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+            background-color: #c9d1df;
+        }
+        .number {
+            text-align: right;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+        .number-negative {
+            color: #9c111d;
         }
     </style>
 </head>

@@ -6,206 +6,96 @@
     $tableMarginBottom = $tableMarginBottom ?? '6px';
 @endphp
 <style>
-    * {
-        box-sizing: border-box;
-    }
-
-    @page {
-        margin:
-            {{ $pageMargin }};
-        footer: html_reportFooter;
-    }
-
-    body {
-        margin: 0;
-        font-family: "Noto Serif", serif;
-        font-size:
-            {{ $bodyFontSize }};
-        line-height: 1.2;
-        color: #000;
-    }
-
-    .page-break {
-        page-break-before: always;
-    }
-
-    .report-title {
-        margin: 0;
-        text-align: center;
-        font-size:
-            {{ $titleFontSize }};
-        font-weight: bold;
-    }
-
-    .report-subtitle {
-        margin:
-            {{ $subtitleMargin }};
-        text-align: center;
-        font-size: 12px;
-        color: #636466;
-    }
-
-    .section-title {
-        margin: 10px 0 4px;
-        font-size: 11px;
-        font-weight: bold;
-    }
-
-    .section-rangkuman-title {
-        margin: 10px 0 4px;
-        font-size: 11px;
-        font-weight: bold;
-        text-transform: uppercase;
-        text-decoration: underline;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom:
-            {{ $tableMarginBottom }};
-        page-break-inside: auto;
-        table-layout: fixed;
-    }
-
-    .report-table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        border: 1px solid #000;
-    }
-
-    .report-table-total {
-        border-collapse: collapse;
-        border: none !important;
-        width: 100%;
-        border-spacing: 0;
-    }
-
-    .total-report-table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        border: 0px;
-    }
-
-    .total-report-table th,
-    .total-report-table td {
-        border: none !important;
-    }
-
-    thead {
-        display: table-header-group;
-    }
-
-    tfoot {
-        display: table-footer-group;
-    }
-
-    th,
-    td {
-        border: 1px solid #000;
-        padding: 3px 4px;
-        vertical-align: middle;
-    }
-
-    th {
-        text-align: center;
-        font-weight: bold;
-        font-size: 11px;
-    }
-
-    td.center {
-        text-align: center;
-    }
-
-    td.number {
-        text-align: right;
-        white-space: nowrap;
-        font-family: "Calibri", "DejaVu Sans", sans-serif;
-    }
-
-    .headers-row th {
-        font-size: 11px;
-        border-top: 0;
-        border-bottom: 1px solid #000;
-    }
-
-    .row-odd td {
-        background: #c9d1df;
-    }
-
-    .row-even td {
-        background: #eef2f8;
-    }
-
-    .report-table tbody tr.data-row td.data-cell {
-        border-top: none !important;
-        border-bottom: none !important;
-        border-left: 1px solid #000 !important;
-        border-right: 1px solid #000 !important;
-    }
-
-    .report-table tbody tr.row-last td.data-cell {
-        border-bottom: 1px solid #000 !important;
-    }
-
-    .totals-row td {
-        font-size: 11px;
-        font-weight: bold;
-        border: 1px solid #000;
-    }
-
-    .report-table tbody tr.totals-row:last-child td {
-        border-bottom: 0 !important;
-    }
-
-    .table-end-line td {
-        border-top: 1px solid #000 !important;
-        border-right: 0 !important;
-        border-bottom: 0 !important;
-        border-left: 0 !important;
-        padding: 0 !important;
-        height: 0 !important;
-        line-height: 0 !important;
-        background: #fff !important;
-    }
-
-    .summary-page {
-        page-break-before: always;
-        margin-top: 8px;
-    }
-
-    .summary-title,
-    .notes-title {
-        margin: 0 0 10px;
-        font-size: 11px;
-        font-weight: bold;
-    }
-
-    .summary-list,
-    .notes-list {
-        margin: 0;
-        padding-left: 18px;
-        font-size: 10px;
-        line-height: 1.2;
-    }
-
-    .summary-list li,
-    .notes-list li {
-        margin: 0 0 2px;
-    }
-
-    .notes {
-        margin-top: 10px;
-    }
-
-    .notes-line {
-        margin: 0 0 2px;
-        font-size: 10px;
-    }
-
-    .notes-indent {
-        padding-left: 28px;
-    }
-
-    @include('reports.partials.pdf-footer-table-style')
-</style>
+        body {
+            font-family: "Noto Serif", serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        .report-companyTitle {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 0 4px;
+        }
+        .report-title {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+        }
+        .report-subtitle {
+            font-size: 12px;
+            color: #636466;
+            text-align: center;
+            margin: 2px 0 20px;
+        }
+        .data-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .data-table th,
+        .data-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .data-table th {
+            background-color: #eef2f8;
+            font-weight: bold;
+        }
+        .section-header td {
+            font-weight: bold;
+            font-style: italic;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
+        }
+        .sub-section-header td {
+            font-weight: bold;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
+        }
+        .item-row td {
+            padding-left: 4px;
+        }
+        .row-odd td {
+            background-color: #c9d1df;
+        }
+        .row-even td {
+            background-color: #eef2f8;
+        }
+        .subtotal-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .grand-total-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .empty-row td {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+            background-color: #c9d1df;
+        }
+        .number {
+            text-align: right;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+        .number-negative {
+            color: #9c111d;
+        }
+    </style>

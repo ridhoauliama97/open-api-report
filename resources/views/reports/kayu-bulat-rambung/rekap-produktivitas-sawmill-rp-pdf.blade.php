@@ -8,819 +8,97 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
-        }
-
         body {
-            margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
             margin: 0;
+            padding: 0;
+        }
+        .report-companyTitle {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 0 4px;
+        }
+        .report-title {
             font-size: 16px;
             font-weight: bold;
-        }
-
-        .report-subtitle {
             text-align: center;
-            margin: 2px 0 20px 0;
+            margin: 0;
+        }
+        .report-subtitle {
             font-size: 12px;
             color: #636466;
-        }
-
-        .group-title {
-            margin: 8px 0 4px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .date-separator {
-            border-top: 1px solid #000;
-            margin: 10px 0 8px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
             text-align: center;
-            word-break: break-word;
+            margin: 2px 0 20px;
         }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            color: #000;
-            font-size: 11px;
-        }
-
-        td.left {
-            text-align: left;
-        }
-
-        td.right {
-            text-align: right;
-        }
-
-        td.number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
-        }
-
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
-        }
-
-        .section-separator td {
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            border-top: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-            border-bottom: 0 !important;
-            border-left: 1px solid #000 !important;
-            background: #fff !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-
-        .receipt-block {
-            margin: 0 0 12px 0;
-        }
-
-        .receipt-separator {
-            border-top: 1px solid #000;
-            margin: 8px 0 10px 0;
-        }
-
-        .meta-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 4px;
-            table-layout: fixed;
-        }
-
-        .meta-table td {
-            border: 0;
-            padding: 0 4px 1px 0;
-            vertical-align: top;
-            text-align: left;
-            background: transparent !important;
-            word-break: normal;
-        }
-
-        .meta-line {
-            white-space: nowrap;
-        }
-
-        .meta-line.right {
-            text-align: right;
-        }
-
-        .meta-attachment-label {
-            font-weight: bold;
-        }
-
-        .table-wrap {
-            margin-left: 0;
-        }
-
-        .bottom-section {
-            width: 100%;
-            margin: 6px 0 0 0;
-        }
-
-        .bottom-layout {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0;
-        }
-
-        .bottom-layout td {
-            border: 0;
-            padding: 0;
-            vertical-align: top;
-            background: transparent !important;
-            word-break: normal;
-        }
-
-        .money-box {
-            width: 100%;
-            font-size: 11px;
-            padding-left: 40px;
-        }
-
-        .money-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0;
-        }
-
-        .money-table td {
-            border: 0;
-            padding: 0 0 2px 0;
-            vertical-align: top;
-            background: transparent !important;
-        }
-
-        .money-divider-row td {
-            padding: 1px 0 2px 0;
-        }
-
-        .money-divider-line {
-            border-top: 1px solid #000;
-            height: 0;
-            margin-left: 82px;
-        }
-
-        .money-label {
-            width: 68px;
-            font-weight: bold;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        .money-value {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-            width: 150px;
-            font-weight: bold;
-        }
-
-        .money-flag-attachment {
-            font-weight: bold;
-            white-space: nowrap;
-            padding-left: 10px !important;
-            text-align: left;
-            width: 60px;
-        }
-
-        .btul-box {
-            width: 100%;
-            font-size: 11px;
-            padding-left: 26px;
-        }
-
-        .btul-title {
-            font-weight: normal;
-            text-align: left;
-            margin: 0;
-            line-height: 1.15;
-            width: 96px;
-            white-space: normal;
-            word-break: normal;
-            overflow-wrap: normal;
-        }
-
-        .btul-wrap {
-            width: 100%;
-            margin-left: 0;
-        }
-
-        .btul-layout {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0;
-        }
-
-        .btul-layout td {
-            border: 0;
-            padding: 0;
-            vertical-align: top;
-            background: transparent !important;
-            word-break: normal;
-        }
-
-        .btul-text-cell {
-            width: 108px;
-            padding-right: 12px;
-            padding-top: 4px;
-        }
-
-        .mini-table {
-            border-collapse: collapse;
-            width: 100%;
-            table-layout: fixed;
-        }
-
-        .mini-table th,
-        .mini-table td {
-            border: 1px solid #000;
-            padding: 2px 4px;
-            font-size: 10px;
-        }
-
-        .mini-table th {
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .mini-table td.label {
-            text-align: left;
-        }
-
-        .mini-table td.label-total {
-            text-align: right;
-            font-weight: bold;
-        }
-
-        .mini-table td.num {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .group-summary-wrap {
-            width: 295px;
-            margin: 0 0 10px auto;
-        }
-
-        .summary-pair-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0 0 10px 0;
-        }
-
-        .summary-pair-table td {
-            border: 0;
-            padding: 0;
-            vertical-align: top;
-            background: transparent !important;
-        }
-
-        .summary-pair-left {
-            width: 50%;
-            padding-right: 14px !important;
-        }
-
-        .summary-pair-right {
-            width: 50%;
-        }
-
-        .group-summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            font-size: 10px;
-        }
-
-        .group-summary-table th,
-        .group-summary-table td {
-            border: 1px solid #000;
-            padding: 3px 5px;
-        }
-
-        .group-summary-table th {
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .group-summary-table td:first-child {
-            text-align: left;
-        }
-
-        .group-summary-table td.num {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .group-summary-total td {
-            font-weight: bold;
-        }
-
-        .rendemen-attachment {
-            margin: 2px 0 10px 0;
-            text-align: right;
-            font-size: 11px;
-        }
-
-        .summary-section {
-            page-break-before: always;
-        }
-
-        .summary-frame-table {
-            width: 100%;
-            height: 252mm;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0;
-        }
-
-        .summary-frame-cell {
-            border: 1px solid #000 !important;
-            padding: 4mm !important;
-            height: 252mm;
-            vertical-align: top;
-            text-align: left !important;
-            background: #fff !important;
-        }
-
-        .summary-section-heading-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 25px 0 14px 0;
-        }
-
-        .summary-section-heading-table td {
-            border: 0 !important;
-            padding: 0 !important;
-            text-align: center !important;
-            font-size: 12px;
-            font-weight: bold;
-            background: transparent !important;
-        }
-
-        .summary-section .money-box {
-            width: 92mm !important;
-            font-size: 11px;
-        }
-
-        .summary-section .money-table {
-            table-layout: fixed;
-        }
-
-        .summary-section .money-label {
-            width: 12mm;
-            font-size: 11px;
-        }
-
-        .summary-section .money-value {
-            width: 35mm;
-            font-size: 11px;
-        }
-
-        .summary-section .money-flag-attachment {
-            width: 45mm;
-            font-size: 11px;
-            line-height: 1.2;
-            padding-left: 12px !important;
-            white-space: normal;
-        }
-
-        .summary-section .summary-money-compact {
-            width: 92mm !important;
-        }
-
-        .summary-section .summary-money-compact .money-table {
-            width: 92mm !important;
-            table-layout: fixed;
-        }
-
-        .summary-section .summary-money-compact .money-label {
-            width: 12mm !important;
-        }
-
-        .summary-section .summary-money-compact .money-value {
-            width: 35mm !important;
-        }
-
-        .summary-section .summary-money-compact .money-flag-attachment {
-            width: 45mm !important;
-            padding-left: 12px !important;
-            white-space: normal;
-        }
-
-        .summary-rendemen-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0;
-            table-layout: fixed;
-        }
-
-        .summary-rendemen-table td {
-            border: 0;
-            padding: 0 0 2px 0;
-            text-align: right;
-            font-size: 11px;
-            background: transparent !important;
-        }
-
-        /* --- DIAGRAM RENDMEN page --- */
-        .diagram-section {
-            margin-top: 10px;
-        }
-
-        .diagram-frame {
-            width: 100%;
-            border: 0;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0;
-        }
-
-        .diagram-frame td {
-            border: 0;
-            padding: 6px 10px;
-            vertical-align: top;
-            background: #ffffff;
-            font-size: 10px;
-        }
-
-        .diagram-frame td.frame-banner {
-            background: #1a3a5c;
-            color: #ffffff;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px 0;
-            letter-spacing: 1px;
-        }
-
-        .diagram-frame td.frame-meta {
-            padding: 6px 12px;
-        }
-
-        .diagram-frame td.frame-rendemen {
-            text-align: center;
-            padding: 10px 8px 14px 8px;
-        }
-
-        .diagram-frame td.frame-middle {
-            padding: 0 8px;
-        }
-
-        .diagram-frame td.frame-bottom {
-            padding: 6px 10px 10px 10px;
-        }
-
-        .diagram-frame td.frame-keterangan {
-            padding: 8px 12px;
-        }
-
-        .diagram-middle-left {
-            width: 48%;
-            vertical-align: middle;
-            padding: 10px 8px 10px 12px;
-            text-align: center;
-        }
-
-        .diagram-middle-right {
-            width: 52%;
-            vertical-align: top;
-            padding: 8px 12px 8px 8px;
-        }
-
-        .diagram-chart-wrap {
-            text-align: center;
-            margin: 0 auto;
-            max-width: 100%;
-        }
-
-        .diagram-chart-wrap svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .diagram-card-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            font-size: 10px;
-            margin: 0 0 8px 0;
-        }
-
-        .diagram-card-table td {
-            border: 1px solid #000;
-            padding: 2px 8px;
-        }
-
-        .diagram-card-table td.diagram-card-head {
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 12px;
-            text-align: center;
-            padding: 5px 8px;
-            border: 1px solid #000;
-        }
-
-        .diagram-card-table td.diagram-card-label {
-            width: 50%;
-            text-align: left;
-            padding-left: 10px;
-        }
-
-        .diagram-card-table td.diagram-card-value {
-            width: 50%;
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-            font-weight: bold;
-            padding-right: 10px;
-        }
-
-        .diagram-chart-cell {
-            width: 42%;
-            vertical-align: middle;
-            text-align: center;
-            padding: 10px 6px 10px 8px;
-        }
-
-        .diagram-side-cell {
-            width: 58%;
-            vertical-align: top;
-            padding: 8px 8px 8px 8px;
-        }
-
-        .diagram-meta-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0 0 6px 0;
-        }
-
-        .diagram-meta-table td {
-            border: 0;
-            padding: 2px 4px 2px 0;
-            vertical-align: top;
-            text-align: left;
-            background: transparent !important;
-            word-break: normal;
-            font-size: 11px;
-        }
-
-        .diagram-meta-label {
-            font-weight: bold;
-        }
-
-        .rendemen-total-table {
-            width: auto;
-            border-collapse: collapse;
-            border: 0;
-            margin: 0 auto;
-            table-layout: auto;
-        }
-
-        .rendemen-total-table td {
-            border: 0 !important;
-            padding: 0;
-            text-align: center;
-            background: transparent !important;
-        }
-
-        .rendemen-total-label-cell {
-            font-weight: bold;
-            font-size: 12px;
-            text-transform: uppercase;
-            padding-bottom: 4px;
-        }
-
-        .rendemen-total-value-cell {
-            font-size: 24px;
-            font-weight: bold;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-            border: 2px solid #000000 !important;
-            padding: 4px 30px !important;
-            background: #ffffff !important;
-        }
-
-        .diagram-kategori-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            font-size: 10px;
-            margin: 0;
-        }
-
-        .diagram-kategori-table th,
-        .diagram-kategori-table td {
-            border: 1px solid #000;
-            padding: 4px 6px;
-        }
-
-        .diagram-kategori-table th {
-            background: #1a3a5c;
-            color: #ffffff;
-            font-weight: bold;
-            text-align: center;
-            font-size: 11px;
-        }
-
-        .diagram-kategori-table td.num {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .diagram-kategori-table td.left {
-            text-align: left;
-        }
-
-        .diagram-kategori-table td.total-row {
-            font-weight: bold;
-            border-top: 1px solid #1a3a5c;
-            background: #eef2f8;
-        }
-
-        .category-swatch {
-            /* width: 10vw;
-            aspect-ratio: 1 / 1; */
-            border-radius: 50%;
-            width: 4px;
-            height: 4px;
-            vertical-align: middle;
-        }
-
-        .ringkasan-box {
-            padding: 0;
-            font-size: 10px;
-        }
-
-        .ringkasan-table {
-            width: 100%;
+        .data-table {
             border: 1px solid #000;
             border-collapse: collapse;
+            width: 100%;
             table-layout: fixed;
-            margin: 0;
-            font-size: 10px;
         }
-
-        .ringkasan-table td {
-            border: 0;
-            padding: 3px 10px;
-            background: transparent !important;
+        .data-table th,
+        .data-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
             vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
-
-        .ringkasan-table td.ringkasan-head {
-            text-align: center;
+        .data-table th {
+            background-color: #eef2f8;
             font-weight: bold;
-            font-size: 12px;
-            padding: 5px 8px;
-            background: #1a3a5c;
-            color: #ffffff;
-            border-bottom: 1px solid #000;
         }
-
-        .ringkasan-table td.ringkasan-label {
-            width: 48%;
-            text-align: left;
-            padding-top: 4px;
-        }
-
-        .ringkasan-table td.ringkasan-eq {
-            width: 4%;
-            text-align: center;
-            padding-top: 4px;
-        }
-
-        .ringkasan-table td.ringkasan-value {
-            width: 48%;
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-            padding-top: 4px;
-        }
-
-        .ringkasan-table td.ringkasan-formula {
-            padding: 4px 10px 4x 10px;
-            border-top: 1px solid #000;
+        .section-header td {
+            font-weight: bold;
             font-style: italic;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
         }
-
-        .ringkasan-rendemen-highlight {
-            color: #c0392b;
+        .sub-section-header td {
             font-weight: bold;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
         }
-
-        .keterangan-box {
-            font-size: 10px;
-            padding: 6px 0 0 0;
-            text-align: left;
+        .item-row td {
+            padding-left: 4px;
         }
-
-        .keterangan-title {
+        .row-odd td {
+            background-color: #c9d1df;
+        }
+        .row-even td {
+            background-color: #eef2f8;
+        }
+        .subtotal-row td {
             font-weight: bold;
-            font-style: normal;
-            margin: 0 0 4px 0;
-            text-align: left;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
-
-        .keterangan-line {
-            margin: 1px 0;
-        }
-
-        .keterangan-label {
+        .grand-total-row td {
             font-weight: bold;
-            font-style: normal;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .empty-row td {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+            background-color: #c9d1df;
+        }
+        .number {
+            text-align: right;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+        .number-negative {
+            color: #9c111d;
         }
     </style>
 </head>
@@ -1692,7 +970,6 @@
                         </tr>
                     </table>
 
-
                     <div style="width: 100%; font-size: 11px; text-align: left;">
                         <table align="left"
                             style="width: 92mm; border-collapse: collapse; table-layout: fixed; margin-left: 0; margin-right: auto; text-align: left;">
@@ -1920,7 +1197,6 @@
     </table>
 </div>
 
-@include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

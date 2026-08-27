@@ -8,222 +8,97 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 42mm 10mm;
-            footer: html_reportFooter;
-        }
-
         body {
-            margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
-            color: #000;
+            margin: 0;
+            padding: 0;
         }
-
-        .document-title {
-            margin: 0 0 10px;
-            text-align: center;
+        .report-companyTitle {
             font-size: 18px;
             font-weight: bold;
+            text-align: center;
+            margin: 0 0 4px;
         }
-
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-        }
-
-        .header-table td {
-            border: 0;
-            padding: 0;
-            vertical-align: top;
-        }
-
-        .recipient-name {
-            margin-top: 2px;
+        .report-title {
             font-size: 16px;
             font-weight: bold;
-        }
-
-        .vehicle {
-            margin-top: 8px;
-        }
-
-        .meta-table {
-            width: auto;
-            border-collapse: collapse;
-            margin-left: auto;
-        }
-
-        .meta-table td {
-            border: 0;
-            padding: 1px 0;
-        }
-
-        .meta-date {
-            text-align: right;
-        }
-
-        .meta-label {
-            width: 112px;
-            white-space: nowrap;
-            text-align: right;
-        }
-
-        .meta-sep {
-            width: 12px;
             text-align: center;
+            margin: 0;
         }
-
-        .meta-value {
-            min-width: 170px;
-            text-align: right;
+        .report-subtitle {
+            font-size: 12px;
+            color: #636466;
+            text-align: center;
+            margin: 2px 0 20px;
         }
-
-        .top-line {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            height: 3px;
-            margin: 4px 0 7px;
-        }
-
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
+        .data-table {
             border: 1px solid #000;
-            page-break-inside: auto;
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
         }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
-        th,
-        td {
-            border: 0;
+        .data-table th,
+        .data-table td {
             border-left: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
-
-        th:first-child,
-        td:first-child {
-            border-left: 0;
-        }
-
-        th {
-            text-align: center;
+        .data-table th {
+            background-color: #eef2f8;
             font-weight: bold;
+        }
+        .section-header td {
+            font-weight: bold;
+            font-style: italic;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
+        }
+        .sub-section-header td {
+            font-weight: bold;
+            color: #9c111d;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
+        }
+        .item-row td {
+            padding-left: 4px;
+        }
+        .row-odd td {
+            background-color: #c9d1df;
+        }
+        .row-even td {
+            background-color: #eef2f8;
+        }
+        .subtotal-row td {
+            font-weight: bold;
+            border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
-
-        tbody td {
-            border-top: 0;
-            border-bottom: 0;
-        }
-
-        tbody tr.date-separator td {
-            border-top: 1px solid #000;
-        }
-
-        tfoot td {
-            border-top: 1px solid #000;
+        .grand-total-row td {
             font-weight: bold;
-            background: #fff;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
-
-        .row-odd td {
-            background: #c9d1df;
+        .empty-row td {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+            background-color: #c9d1df;
         }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .center {
-            text-align: center;
-        }
-
         .number {
             text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
-
         .nowrap {
             white-space: nowrap;
         }
-
-        .empty-state {
-            padding: 10px;
-            text-align: center;
-            font-style: italic;
-        }
-
-        .signature-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .signature-table td {
-            border: 0;
-            padding: 5px 8px 0;
-            text-align: center;
-            vertical-align: top;
-            font-size: 10px;
-            line-height: 1.15;
-        }
-
-        .signature-label {
-            line-height: 1.15;
-        }
-
-        .signature-top-line {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            height: 3px;
-            line-height: 3px;
-            margin-bottom: 4px;
-        }
-
-        .signature-line {
-            display: attachment-block;
-            width: 112px;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-            font-size: 10px;
-            line-height: 1;
-            letter-spacing: 0;
-            white-space: nowrap;
-        }
-
-        .signature-space td {
-            height: 28px;
-            line-height: 28px;
-            padding: 0;
-        }
-
-        .signature-lines td {
-            padding-top: 0;
-            padding-bottom: 18px;
-        }
-
-        .total-row td {
-            font-weight: bold;
-            font-size: 11px;
+        .number-negative {
+            color: #9c111d;
         }
     </style>
 </head>

@@ -137,7 +137,6 @@
             <div class="center">Tidak ada data.</div>
         @endforelse
 
-        @include('reports.partials.pdf-footer-table')
-    </body>
+        </body>
 
     </html>
