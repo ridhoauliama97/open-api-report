@@ -235,8 +235,6 @@
             @endif
         </tbody>
     </table>
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>
