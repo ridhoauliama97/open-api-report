@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -39,42 +36,39 @@
             color: #636466;
         }
 
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            margin-bottom: 8px;
-            page-break-inside: auto;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
+            border-spacing: 0;
+            border: 1px solid #000;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
+        td.label {
+            white-space: nowrap;
+        }
+
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -85,20 +79,16 @@
             background: #eef2f8;
         }
 
-        .headers-row th {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
-        }
-
         .totals-row td {
             font-weight: bold;
-            border: 1px solid #000;
         }
 
-        tbody td {
-            border-top: 0;
-            border-bottom: 0;
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
         }
 
         .group-section-title {
@@ -110,11 +100,8 @@
         .group-table {
             width: 260px;
             margin-left: 12px;
+            margin-bottom: 8px;
         }
-
-
-
-        @include('reports.partials.pdf-footer-table-style')
     </style>
 </head>
 
@@ -214,8 +201,6 @@
     @empty
         <div class="center">Tidak ada data.</div>
     @endforelse
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

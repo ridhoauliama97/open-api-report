@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateRekapHasilSawmillPerMejaUpahBoronganV2ReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapHasilSawmillPerMejaUpahBoronganV2ReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapHasilSawmillPerMejaUpahBoronganV2Controller extends Controller
@@ -20,16 +23,18 @@ class RekapHasilSawmillPerMejaUpahBoronganV2Controller extends Controller
         GenerateRekapHasilSawmillPerMejaUpahBoronganV2ReportRequest $request,
         RekapHasilSawmillPerMejaUpahBoronganV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function previewPdf(
         GenerateRekapHasilSawmillPerMejaUpahBoronganV2ReportRequest $request,
         RekapHasilSawmillPerMejaUpahBoronganV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient);
     }
 
     public function preview(
@@ -95,7 +100,7 @@ class RekapHasilSawmillPerMejaUpahBoronganV2Controller extends Controller
         GenerateRekapHasilSawmillPerMejaUpahBoronganV2ReportRequest $request,
         RekapHasilSawmillPerMejaUpahBoronganV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
-        bool $attachment,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -123,7 +128,7 @@ class RekapHasilSawmillPerMejaUpahBoronganV2Controller extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan-v2-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.rekap-hasil-sawmill-per-meja-upah-borongan-v2-pdf', [
             'rows' => $reportData['rows'],
             'subRows' => $reportData['sub_rows'],
             'groupedRows' => $reportData['grouped_rows'],
@@ -134,17 +139,55 @@ class RekapHasilSawmillPerMejaUpahBoronganV2Controller extends Controller
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
-            'pdf_simple_tables' => false,
             'pdf_shrink_tables_to_fit' => 1,
         ]);
 
-        $filename = sprintf('Laporan Rekap Hasil Sawmill Per Meja (Semua Meja) - %s s-d %s.pdf', $startDate, $endDate);
-        $dispositionType = $attachment ? 'attachment' : 'inline';
-
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+        $metrics = $pdfGenerator->paperMetrics([
+            'rows' => $reportData['rows'],
+            'subRows' => $reportData['sub_rows'],
+            'groupedRows' => $reportData['grouped_rows'],
+            'groupedSubRows' => $reportData['grouped_sub_rows'],
+            'summary' => $reportData['summary'],
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'generatedBy' => $generatedBy,
+            'generatedAt' => now(),
+            'pdf_orientation' => 'landscape',
+            'pdf_shrink_tables_to_fit' => 1,
         ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
+
+        $filename = sprintf('Laporan Rekap Hasil Sawmill Per Meja (Semua Meja) - %s s-d %s.pdf', $startDate, $endDate);
+
+        return response($pdfBytes, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+        ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateRekapHasilSawmillPerMejaUpahBoronganV2ReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     /**

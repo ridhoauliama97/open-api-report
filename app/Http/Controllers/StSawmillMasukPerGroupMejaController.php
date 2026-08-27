@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateStSawmillMasukPerGroupMejaReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\StSawmillMasukPerGroupMejaReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class StSawmillMasukPerGroupMejaController extends Controller
@@ -20,6 +23,7 @@ class StSawmillMasukPerGroupMejaController extends Controller
         GenerateStSawmillMasukPerGroupMejaReportRequest $request,
         StSawmillMasukPerGroupMejaReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -49,28 +53,53 @@ class StSawmillMasukPerGroupMejaController extends Controller
 
         $mejaCount = is_array($reportData['meja'] ?? null) ? count($reportData['meja']) : 0;
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.st-sawmill-masuk-per-group-meja-pdf', [
+        $pdfData = [
             'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
 
-            // This report uses complex rowspans and a multi-row header.
-            'pdf_simple_tables' => false,
-            // Avoid mPDF table border packing issues on large pivot tables.
-
-            // Hint for orientation auto-selection in PdfGenerator.
+            // Hint for orientation auto-selection (kept from the mPDF version).
             'pdf_column_count' => 4 + $mejaCount,
-        ]);
+        ];
+
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.st-sawmill-masuk-per-group-meja-pdf', $pdfData);
+
+        $metrics = $pdfGenerator->paperMetrics($pdfData);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf('Laporan-ST-Sawmill-Masuk-Per-Group-%s-sd-%s.pdf', $startDate, $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateStSawmillMasukPerGroupMejaReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(

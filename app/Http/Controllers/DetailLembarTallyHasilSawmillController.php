@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateDetailLembarTallyHasilSawmillReportRequest;
 use App\Services\DetailLembarTallyHasilSawmillReportService;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class DetailLembarTallyHasilSawmillController extends Controller
@@ -20,16 +23,18 @@ class DetailLembarTallyHasilSawmillController extends Controller
         GenerateDetailLembarTallyHasilSawmillReportRequest $request,
         DetailLembarTallyHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient, true);
     }
 
     public function previewPdf(
         GenerateDetailLembarTallyHasilSawmillReportRequest $request,
         DetailLembarTallyHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, $gotenbergPdfClient, false);
     }
 
     public function preview(
@@ -90,6 +95,7 @@ class DetailLembarTallyHasilSawmillController extends Controller
         GenerateDetailLembarTallyHasilSawmillReportRequest $request,
         DetailLembarTallyHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -118,23 +124,53 @@ class DetailLembarTallyHasilSawmillController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('sawn-timber.detail-lembar-tally-hasil-sawmill-pdf', [
+        $html = $pdfGenerator->renderHtml('sawn-timber.detail-lembar-tally-hasil-sawmill-pdf', [
             'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => $reportData,
+            'pdf_orientation' => 'portrait',
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf('Laporan-Tally-Hasil-Sawmill-Detail-%s-sd-%s.pdf', $startDate, $endDate);
         $dispositionType = $attachment ? 'attachment' : 'inline';
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateDetailLembarTallyHasilSawmillReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     /**

@@ -10,11 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -26,71 +23,52 @@
         }
 
         .report-title {
-            margin: 0;
             text-align: center;
+            margin: 0;
             font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
-            margin: 2px 0 20px 0;
             text-align: center;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
 
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
-            margin-bottom: 6px;
-            page-break-inside: auto;
-            table-layout: fixed;
-        }
-
-        .report-table {
+            border-spacing: 0;
             border: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
+        td.label {
+            white-space: nowrap;
+        }
+
         td.number {
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .headers-row th {
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
         }
 
         .row-odd td {
@@ -101,64 +79,25 @@
             background: #eef2f8;
         }
 
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: none !important;
-            border-bottom: none !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .report-table tbody tr.row-last td.data-cell {
-            border-bottom: 1px solid #000 !important;
-        }
-
         .totals-row td {
-            font-size: 11px;
             font-weight: bold;
-            background: #fff !important;
         }
 
-        .meta-table {
-            width: 100%;
-            border: 0;
-            margin-bottom: 8px;
-            table-layout: fixed;
-        }
-
-        .meta-table td {
-            border: 0 !important;
-            padding: 0 8px 3px 0;
-            vertical-align: top;
-        }
-
-        .meta-label {
-            width: 90px;
-            white-space: nowrap;
-        }
-
-        .meta-sep {
-            width: 10px;
-            text-align: center;
-        }
-
-        .group-block {
-            page-break-inside: auto;
-            margin-bottom: 12px;
+        .headers-row th {
+            font-weight: bold;
         }
 
         .meja-block {
-            page-break-inside: auto;
             margin-bottom: 14px;
         }
 
         .group-meta-table {
             width: 240px;
-            border: 0;
             margin: 0 0 8px 0;
         }
 
         .group-meta-table td {
-            border: 0 !important;
+            border: 0;
             padding: 0 4px 3px 0;
             font-size: 12px;
             font-weight: bold;
@@ -179,33 +118,14 @@
             margin-bottom: 6px;
         }
 
-        .meja-total-table {
-            margin-top: -6px;
-        }
-
-        .report-table th {
-            font-size: 11px;
-        }
-
-        .report-table td {
-            font-size: 10px;
-            padding: 2px 3px;
-        }
-
         .rangkuman-qc-container {
             margin-top: 24px;
             page-break-before: always;
         }
 
-        .rangkuman-qc-container,
-        .rangkuman-qc-container table,
         .rangkuman-qc-container th,
         .rangkuman-qc-container td {
             font-size: 8px;
-        }
-
-        .rangkuman-qc-container th,
-        .rangkuman-qc-container td {
             padding: 1px 3px;
         }
     </style>
@@ -478,8 +398,6 @@
             </table>
         </div>
     @endif
-
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

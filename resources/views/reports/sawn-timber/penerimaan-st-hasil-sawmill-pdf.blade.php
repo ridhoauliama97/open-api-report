@@ -10,105 +10,65 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 12mm 8mm 12mm 8mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #000;
         }
 
         .report-title {
-            margin: 0 0 20px 0;
             text-align: center;
+            margin: 0;
             font-size: 16px;
             font-weight: bold;
         }
 
-        .meta-layout {
-            width: 100%;
-            margin: 0 0 8px;
-            table-layout: fixed;
-        }
-
-        .meta-layout td {
-            border: 0;
-            padding: 0;
-            vertical-align: top;
-        }
-
-        .meta-block {
-            width: 100%;
-            table-layout: fixed;
-        }
-
-        .meta-block td {
-            border: 0;
-            padding: 0 0 2px;
-            font-size: 10px;
-            vertical-align: top;
-        }
-
-        .meta-label {
-            width: 82px;
-            white-space: nowrap;
-        }
-
-        .meta-separator {
-            width: 8px;
+        .report-subtitle {
             text-align: center;
+            margin: 2px 0 20px 0;
+            font-size: 12px;
+            color: #636466;
         }
 
-        .length-caption {
-            margin: 3px 0 2px 0;
-            text-align: center;
-            font-size: 10px;
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
-            table-layout: fixed;
-        }
-
-        .report-table {
             border: 1px solid #000;
-        }
-
-        thead {
-            display: table-header-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 2px 4px;
-            vertical-align: middle;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        th {
+        td.center {
             text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-            background: #fff;
         }
 
-        .headers-row th {
-            border-top: 0;
-            border-bottom: 1px solid #000;
+        td.label {
+            white-space: nowrap;
+        }
+
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -119,101 +79,59 @@
             background: #eef2f8;
         }
 
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: none !important;
-            border-bottom: none !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .report-table tbody tr.row-last td.data-cell,
-        .report-table tbody tr.before-total td.data-cell {
-            border-bottom: 1px solid #000 !important;
-        }
-
-        .grade-cell {
-            vertical-align: middle;
-            text-align: center;
+        .totals-row td {
             font-weight: bold;
-            line-height: 1.2;
         }
 
-        .tebal-cell {
-            vertical-align: top;
-        }
-
-        .number,
-        .center {
-            text-align: center;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .text-cell {
-            text-align: left;
-        }
-
-        .total-row td {
+        .headers-row th {
             font-weight: bold;
-            font-size: 10px;
-            border: 1px solid #000;
         }
 
-        .grand-total-row td {
-            font-weight: bold;
-            font-size: 11px;
-            border: 1px solid #000;
-        }
-
-        .note-layout {
-            width: 100%;
-            margin-top: 8px;
-            table-layout: fixed;
-        }
-
-        .note-layout td {
-            border: 0;
-            padding: 0;
-            font-size: 10px;
-            vertical-align: top;
-        }
-
-        .note-table {
-            width: 100%;
-            margin-top: 10px;
-            table-layout: fixed;
-        }
-
-        .note-table td {
-            border: 0;
-            padding: 0 0 3px;
-        }
-
-        .note-label {
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .note-value {
-            width: 74px;
-            padding-left: 8px !important;
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
+        /* --- Gotenberg wave3 extras --- */
+        .meta-layout,
+        .meta-table,
+        .note-table,
         .ratio-table {
-            width: 100%;
-            table-layout: fixed;
+            width: auto;
         }
 
-        .ratio-table td {
+        table.meta-layout,
+        table.meta-table,
+        table.note-table,
+        table.ratio-table,
+        table.meta-layout td,
+        table.meta-table td,
+        table.note-table td,
+        table.ratio-table td,
+        table.meta-layout th,
+        table.meta-table th,
+        .meta-label,
+        .meta-separator,
+        .meta-value {
             border: 0;
-            padding: 0 0 8px;
-            white-space: nowrap;
         }
 
+        .group-title,
+        .customer-title,
+        .grade-output,
+        .date-separator,
+        .grade-title {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+        }
 
+        .total-row td,
+        .grand-total-row td,
+        .row-last td,
+        .before-total td,
+        .totals-label {
+            font-weight: bold;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
     </style>
 </head>
 
@@ -592,7 +510,6 @@
         </table>
     @endif
 
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

@@ -10,18 +10,15 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 14mm 10mm 14mm 10mm;
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #000;
         }
 
@@ -39,61 +36,39 @@
             color: #636466;
         }
 
-        .customer-title {
-            margin: 10px 0 6px 0;
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 11px;
         }
 
-        table.data-table {
-            width: 100%;
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
-            table-layout: fixed;
         }
 
-        thead {
-            display: table-header-group;
+        th,
+        td {
+            border: 1px solid #000;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
-        tfoot {
-            display: table-footer-group;
-        }
-
-        tr {
-            page-break-inside: avoid;
-        }
-
-        table.data-table th,
-        table.data-table td {
-            border: 0;
-            border-left: 1px solid #000;
-            padding: 2px 3px;
-            vertical-align: middle;
-        }
-
-        table.data-table th:first-child,
-        table.data-table td:first-child {
-            border-left: 0;
-        }
-
-        table.data-table th {
+        td.center {
             text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-            border-bottom: 1px solid #000;
-            background: #fff;
         }
 
-        table.data-table tbody td {
-            border-top: 0;
-            border-bottom: 0;
+        td.label {
+            white-space: nowrap;
         }
 
-        table.data-table tfoot td {
-            border-top: 1px solid #000;
-            font-weight: bold;
+        td.number {
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -104,30 +79,58 @@
             background: #eef2f8;
         }
 
-        .center {
-            text-align: center;
-        }
-
-        .number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .summary-table {
-            width: 46%;
-            margin-top: 14px;
-            border-collapse: collapse;
-        }
-
-        .summary-table td {
-            border: 0;
-            padding: 2px 4px;
-        }
-
-        .total-row td {
+        .totals-row td {
             font-weight: bold;
-            font-size: 11px;
+        }
+
+        .headers-row th {
+            font-weight: bold;
+        }
+
+        /* --- Gotenberg wave3 extras --- */
+        .meta-layout,
+        .meta-table,
+        .note-table,
+        .ratio-table {
+            width: auto;
+        }
+
+        table.meta-layout,
+        table.meta-table,
+        table.note-table,
+        table.ratio-table,
+        table.meta-layout td,
+        table.meta-table td,
+        table.note-table td,
+        table.ratio-table td,
+        table.meta-layout th,
+        table.meta-table th,
+        .meta-label,
+        .meta-separator,
+        .meta-value {
+            border: 0;
+        }
+
+        .group-title,
+        .customer-title,
+        .grade-output,
+        .date-separator,
+        .grade-title {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+        }
+
+        .total-row td,
+        .grand-total-row td,
+        .row-last td,
+        .before-total td,
+        .totals-label {
+            font-weight: bold;
+        }
+
+        .page-break {
+            page-break-after: always;
         }
     </style>
 </head>
@@ -209,7 +212,6 @@
         <div class="center">Tidak ada data.</div>
     @endforelse
 
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

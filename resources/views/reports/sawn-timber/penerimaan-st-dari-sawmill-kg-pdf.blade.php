@@ -17,84 +17,65 @@
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: {{ $pageMargin }};
-            footer: html_reportFooter;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             font-family: "Noto Serif", serif;
-            font-size: {{ $bodyFontSize }};
+            font-size: 10px;
             line-height: 1.2;
             color: #000;
         }
 
         .report-title {
-            margin: 0;
             text-align: center;
-            font-size: {{ $titleFontSize }};
+            margin: 0;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
-            margin: {{ $subtitleMargin }};
             text-align: center;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: {{ $tableMarginBottom }};
-            page-break-inside: auto;
-            table-layout: fixed;
+        .section-title {
+            margin: 14px 0 6px 0;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        .report-table {
+        table {
+            width: calc(100% - 2px);
+            line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
         }
 
-        thead {
-            display: table-header-group;
-        }
-
-        tfoot {
-            display: table-footer-group;
-        }
-
         th,
         td {
             border: 1px solid #000;
-            padding: 3px 4px;
-            vertical-align: middle;
-        }
-
-        th {
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
+            word-wrap: break-word;
+            padding: 2px 2px;
         }
 
         td.center {
             text-align: center;
         }
 
+        td.label {
+            white-space: nowrap;
+        }
+
         td.number {
             text-align: right;
             white-space: nowrap;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
-        }
-
-        .headers-row th {
-            font-size: 11px;
-            border-top: 0;
-            border-bottom: 1px solid #000;
         }
 
         .row-odd td {
@@ -105,80 +86,58 @@
             background: #eef2f8;
         }
 
-        .report-table tbody tr.data-row td.data-cell {
-            border-top: none !important;
-            border-bottom: none !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .report-table tbody tr.row-last td.data-cell {
-            border-bottom: 1px solid #000 !important;
-        }
-
         .totals-row td {
-            font-size: 11px;
-            font-weight: bold;
-            border: 1px solid #000;
-        }
-
-        .report-table tbody tr.totals-row:last-child td {
-            border-bottom: 0 !important;
-        }
-
-        .table-end-line td {
-            border-top: 1px solid #000 !important;
-            border-right: 0 !important;
-            border-bottom: 0 !important;
-            border-left: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
-            line-height: 0 !important;
-            background: #fff !important;
-        }
-
-        .group-title {
-            margin: 10px 0 4px;
-            font-size: 12px;
             font-weight: bold;
         }
 
-        .meta-block {
-            margin: 0 0 6px;
-            font-size: 10px;
-            line-height: 1.3;
-        }
-
-        .meta-row {
-            margin: 0 0 2px;
-        }
-
-        .meta-label {
-            display: attachment-block;
-            min-width: 120px;
+        .headers-row th {
             font-weight: bold;
         }
 
-        .date-separator {
-            border-top: 1px solid #000;
-            margin: 12px 0 8px;
+        /* --- Gotenberg wave3 extras --- */
+        .meta-layout,
+        .meta-table,
+        .note-table,
+        .ratio-table {
+            width: auto;
         }
 
-        .section-cell {
-            text-align: center;
+        table.meta-layout,
+        table.meta-table,
+        table.note-table,
+        table.ratio-table,
+        table.meta-layout td,
+        table.meta-table td,
+        table.note-table td,
+        table.ratio-table td,
+        table.meta-layout th,
+        table.meta-table th,
+        .meta-label,
+        .meta-separator,
+        .meta-value {
+            border: 0;
+        }
+
+        .group-title,
+        .customer-title,
+        .grade-output,
+        .date-separator,
+        .grade-title {
+            font-style: italic;
+            font-weight: bold;
+            color: #9c111d;
+        }
+
+        .total-row td,
+        .grand-total-row td,
+        .row-last td,
+        .before-total td,
+        .totals-label {
             font-weight: bold;
         }
 
-        .grade-output {
-            text-align: right;
-            padding-right: 10px;
-        }
-
-        .rendemen-row {
-            margin: 2px 0 10px;
-            text-align: right;
-            font-size: 10px;
-            font-weight: bold;
+        .page-break {
+            page-break-after: always;
         }
     </style>
 </head>
@@ -634,7 +593,6 @@
         </table>
     @endforelse
 
-    @include('reports.partials.pdf-footer-table')
 </body>
 
 </html>

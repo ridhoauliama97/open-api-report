@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GeneratePenerimaanStHasilSawmillReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\PenerimaanStHasilSawmillReportService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class PenerimaanStHasilSawmillController extends Controller
@@ -43,6 +46,7 @@ class PenerimaanStHasilSawmillController extends Controller
         GeneratePenerimaanStHasilSawmillReportRequest $request,
         PenerimaanStHasilSawmillReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -70,15 +74,30 @@ class PenerimaanStHasilSawmillController extends Controller
                 ->withErrors(['report' => $exception->getMessage()]);
         }
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.penerimaan-st-hasil-sawmill-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.penerimaan-st-hasil-sawmill-pdf', [
             'reportData' => $reportData,
             'noPenSt' => $noPenSt,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
             'pdf_orientation' => 'portrait',
-            'pdf_simple_tables' => false,
             'pdf_title' => 'Laporan Penerimaan ST Hasil Sawmill',
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => $reportData,
+            'pdf_orientation' => 'portrait',
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf('Laporan-Penerimaan-ST-Hasil-Sawmill-%s.pdf', str_replace(['/', '\\'], '-', $noPenSt));
 
@@ -87,10 +106,25 @@ class PenerimaanStHasilSawmillController extends Controller
             ? 'attachment'
             : 'inline';
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GeneratePenerimaanStHasilSawmillReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function health(

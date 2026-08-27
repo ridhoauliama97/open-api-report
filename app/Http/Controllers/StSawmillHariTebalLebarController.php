@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateStSawmillHariTebalLebarReportRequest;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\StSawmillHariTebalLebarReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class StSawmillHariTebalLebarController extends Controller
@@ -20,22 +23,25 @@ class StSawmillHariTebalLebarController extends Controller
         GenerateStSawmillHariTebalLebarReportRequest $request,
         StSawmillHariTebalLebarReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, true);
+        return $this->renderPdf($request, $reportService, $pdfGenerator, $gotenbergPdfClient, true);
     }
 
     public function download(
         GenerateStSawmillHariTebalLebarReportRequest $request,
         StSawmillHariTebalLebarReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, false);
+        return $this->renderPdf($request, $reportService, $pdfGenerator, $gotenbergPdfClient, true);
     }
 
     private function renderPdf(
         GenerateStSawmillHariTebalLebarReportRequest $request,
         StSawmillHariTebalLebarReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -67,7 +73,7 @@ class StSawmillHariTebalLebarController extends Controller
         $dateCount = is_array($reportData['date_keys'] ?? null) ? count($reportData['date_keys']) : 0;
         $pdfFormat = $dateCount <= 15 ? 'A4' : 'A3';
 
-        $pdf = $pdfGenerator->render('reports.sawn-timber.st-sawmill-hari-tebal-lebar-pdf', [
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.st-sawmill-hari-tebal-lebar-pdf', [
             'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
@@ -75,16 +81,46 @@ class StSawmillHariTebalLebarController extends Controller
             'generatedAt' => now(),
             'pdf_orientation' => 'landscape',
             'pdf_format' => $pdfFormat,
-            // Ensure mPDF respects the "vertical lines only" table styling.
-            'pdf_simple_tables' => false,
         ]);
+
+        $metrics = $pdfGenerator->paperMetrics([
+            'reportData' => $reportData,
+            'pdf_orientation' => 'landscape',
+            'pdf_format' => $pdfFormat,
+        ]);
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
+
+        try {
+            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        } catch (GotenbergPdfException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage());
+        }
 
         $filename = sprintf('Laporan-ST-Sawmill-Hari-Tebal-Lebar-%s-sd-%s.pdf', $startDate, $endDate);
 
-        return response($pdf, 200, [
+        return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => sprintf('%s; filename="%s"', $attachment ? 'attachment' : 'attachment', $filename),
         ]);
+    }
+
+    /**
+     * Build a failure response when the PDF conversion service is unreachable
+     * or returns an error.
+     */
+    private function gotenbergFailureResponse(GenerateStSawmillHariTebalLebarReportRequest $request, string $message): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 502);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['report' => $message]);
     }
 
     public function preview(
