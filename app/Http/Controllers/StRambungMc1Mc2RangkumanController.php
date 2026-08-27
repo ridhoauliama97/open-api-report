@@ -24,21 +24,25 @@ class StRambungMc1Mc2RangkumanController extends Controller
         PdfGenerator $pdfGenerator,
         GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, true);
+        return $this->renderPdf($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, true);
     }
 
     public function download(
         GenerateNoParameterReportRequest $request,
         StRambungMc1Mc2RangkumanReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, false);
+        return $this->renderPdf($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, false);
     }
 
     private function renderPdf(
         GenerateNoParameterReportRequest $request,
         StRambungMc1Mc2RangkumanReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -82,7 +86,7 @@ class StRambungMc1Mc2RangkumanController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan St Rambung Mc1 Mc2 Rangkuman"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);

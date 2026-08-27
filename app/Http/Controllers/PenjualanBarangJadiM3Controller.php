@@ -89,7 +89,12 @@ class PenjualanBarangJadiM3Controller extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            $filename = sprintf('Laporan-Penjualan-Barang-Jadi-M3-%s.pdf', str_replace(['/', '\\'], '-', $noJual));
+
+            return response($pdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            ]);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);

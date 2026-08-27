@@ -97,7 +97,7 @@ class UmurS4SDetailController extends Controller
 
         return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Disposition' => sprintf('attachment; filename="%s.pdf"', $filename),
         ]);
     }
 

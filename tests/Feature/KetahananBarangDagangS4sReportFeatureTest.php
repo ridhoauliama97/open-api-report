@@ -3,14 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Services\KetahananBarangDagangS4sReportService;
 use App\Services\PdfGenerator;
-use App\Services\RangkumanJlhLabelInputReportService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
-class RangkumanJlhLabelInputReportFeatureTest extends TestCase
+class KetahananBarangDagangS4sReportFeatureTest extends TestCase
 {
     /**
      * Execute set up logic.
@@ -35,66 +35,74 @@ class RangkumanJlhLabelInputReportFeatureTest extends TestCase
     }
 
     /**
-     * Execute test rangkuman label input form page is accessible logic.
+     * Execute test ketahanan barang s4s form page is accessible logic.
      */
-    public function test_rangkuman_label_input_form_page_is_accessible(): void
+    public function test_ketahanan_barang_s4s_form_page_is_accessible(): void
     {
-        $this->get('/reports/rangkuman-label-input')
+        $this->get('/reports/s4s/ketahanan-barang-s4s')
             ->assertOk()
-            ->assertSee('Generate Laporan Rangkuman Jumlah Label Input (PDF)');
+            ->assertSee('Generate Laporan Ketahanan Barang Dagang S4S');
     }
 
     /**
-     * Execute test rangkuman label input preview endpoint returns json data logic.
+     * Execute test ketahanan barang s4s preview endpoint returns json data logic.
      */
-    public function test_rangkuman_label_input_preview_endpoint_returns_json_data(): void
+    public function test_ketahanan_barang_s4s_preview_endpoint_returns_json_data(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
-        $service = Mockery::mock(RangkumanJlhLabelInputReportService::class);
+        $service = Mockery::mock(KetahananBarangDagangS4sReportService::class);
         $service
-            ->shouldReceive('fetch')
+            ->shouldReceive('buildReportData')
             ->once()
             ->with('2026-01-01', '2026-01-31')
             ->andReturn([
-                ['Tanggal' => '2026-01-01', 'Shift' => '1', 'JumlahLabel' => 125],
-                ['Tanggal' => '2026-01-02', 'Shift' => '2', 'JumlahLabel' => 140],
+                'rows' => [
+                    ['Jenis' => 'KAYU JABON', 'Stock' => 10.5, 'Penjualan' => 2.1, 'AvgPenjualan' => 0.7, 'Ketahanan' => 5.0],
+                ],
+                'summary' => ['total_rows' => 1],
             ]);
 
-        $this->app->instance(RangkumanJlhLabelInputReportService::class, $service);
+        $this->app->instance(KetahananBarangDagangS4sReportService::class, $service);
 
         $this->withHeaders($this->authJsonHeaders($user))
-            ->postJson('/api/reports/rangkuman-label-input', [
+            ->postJson('/api/reports/s4s/ketahanan-barang-s4s', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
             ->assertJsonPath('message', 'Preview laporan berhasil diambil.')
-            ->assertJsonPath('meta.total_rows', 2)
-            ->assertJsonCount(2, 'data');
+            ->assertJsonPath('meta.total_rows', 1)
+            ->assertJsonPath('meta.TglAwal', '2026-01-01')
+            ->assertJsonPath('meta.TglAkhir', '2026-01-31')
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('summary.total_rows', 1);
     }
 
     /**
-     * Execute test rangkuman label input pdf download endpoint returns attachment logic.
+     * Execute test ketahanan barang s4s pdf download endpoint returns attachment logic.
      */
-    public function test_rangkuman_label_input_pdf_download_endpoint_returns_attachment(): void
+    public function test_ketahanan_barang_s4s_pdf_download_endpoint_returns_attachment(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
-        $service = Mockery::mock(RangkumanJlhLabelInputReportService::class);
+        $service = Mockery::mock(KetahananBarangDagangS4sReportService::class);
         $service
-            ->shouldReceive('fetch')
+            ->shouldReceive('buildReportData')
             ->once()
             ->with('2026-01-01', '2026-01-31')
             ->andReturn([
-                ['Tanggal' => '2026-01-01', 'Shift' => '1', 'JumlahLabel' => 125],
+                'rows' => [
+                    ['Jenis' => 'KAYU JABON', 'Stock' => 10.5, 'Penjualan' => 2.1, 'AvgPenjualan' => 0.7, 'Ketahanan' => 5.0],
+                ],
+                'summary' => ['total_rows' => 1],
             ]);
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('<html>mocked HTML</html>');
+            ->andReturn('<html><body>mocked HTML</body></html>');
         $pdfGenerator
             ->shouldReceive('paperMetrics')
             ->once()
@@ -104,58 +112,61 @@ class RangkumanJlhLabelInputReportFeatureTest extends TestCase
                 'landscape' => false,
             ]);
 
-        $this->app->instance(RangkumanJlhLabelInputReportService::class, $service);
-        $this->app->instance(PdfGenerator::class, $pdfGenerator);
-
         Http::fake([
-            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+            'http://localhost:3000/*' => Http::sequence()
+                ->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
         ]);
 
+        $this->app->instance(KetahananBarangDagangS4sReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
         $response = $this->actingAs($user)
-            ->post('/reports/rangkuman-label-input/download', [
+            ->post('/reports/s4s/ketahanan-barang-s4s/download', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'laporan rangkuman label input');
+        $this->assertPdfDisposition($response, 'attachment', 'laporan ketahanan barang dagang s4s');
 
         Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
             && $request->method() === 'POST');
     }
 
     /**
-     * Execute test rangkuman label input health endpoint returns structure status logic.
+     * Execute test ketahanan barang s4s health endpoint returns structure status logic.
      */
-    public function test_rangkuman_label_input_health_endpoint_returns_structure_status(): void
+    public function test_ketahanan_barang_s4s_health_endpoint_returns_structure_status(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
-        $service = Mockery::mock(RangkumanJlhLabelInputReportService::class);
+        $service = Mockery::mock(KetahananBarangDagangS4sReportService::class);
         $service
             ->shouldReceive('healthCheck')
             ->once()
             ->with('2026-01-01', '2026-01-31')
             ->andReturn([
                 'is_healthy' => true,
-                'expected_columns' => ['Tanggal', 'Shift', 'JumlahLabel'],
-                'detected_columns' => ['Tanggal', 'Shift', 'JumlahLabel'],
+                'expected_columns' => ['Jenis', 'Stock', 'Penjualan', 'AvgPenjualan', 'Ketahanan'],
+                'detected_columns' => ['Jenis', 'Stock', 'Penjualan', 'AvgPenjualan', 'Ketahanan'],
                 'missing_columns' => [],
                 'extra_columns' => [],
-                'row_count' => 31,
+                'row_count' => 12,
             ]);
 
-        $this->app->instance(RangkumanJlhLabelInputReportService::class, $service);
+        $this->app->instance(KetahananBarangDagangS4sReportService::class, $service);
 
         $this->withHeaders($this->authJsonHeaders($user))
-            ->postJson('/api/reports/rangkuman-label-input/health', [
+            ->postJson('/api/reports/s4s/ketahanan-barang-s4s/health', [
                 'TglAwal' => '2026-01-01',
                 'TglAkhir' => '2026-01-31',
             ])
             ->assertOk()
             ->assertJsonPath('health.is_healthy', true)
-            ->assertJsonPath('health.row_count', 31);
+            ->assertJsonPath('health.row_count', 12)
+            ->assertJsonPath('meta.TglAwal', '2026-01-01')
+            ->assertJsonPath('meta.TglAkhir', '2026-01-31');
     }
 
     /**

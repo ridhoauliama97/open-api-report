@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\StSawmillHariTebalLebarReportService;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -113,12 +115,24 @@ class StSawmillHariTebalLebarReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(StSawmillHariTebalLebarReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->actingAs($user)
             ->post('/reports/sawn-timber/st-sawmill-hari-tebal-lebar/download', [
@@ -129,6 +143,9 @@ class StSawmillHariTebalLebarReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan ST Sawmill Hari Tebal Lebar');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_health_endpoint_returns_structure_status(): void

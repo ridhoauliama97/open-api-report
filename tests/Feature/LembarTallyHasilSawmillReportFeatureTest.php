@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\LembarTallyHasilSawmillReportService;
 use App\Services\PdfGenerator;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -71,12 +72,24 @@ class LembarTallyHasilSawmillReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(LembarTallyHasilSawmillReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->actingAs($user)
             ->post('/reports/sawn-timber/lembar-tally-hasil-sawmill/download', [

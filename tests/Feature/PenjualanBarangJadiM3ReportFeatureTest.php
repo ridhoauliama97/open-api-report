@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\PenjualanBarangJadiM3ReportService;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -72,12 +74,24 @@ class PenjualanBarangJadiM3ReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(PenjualanBarangJadiM3ReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->actingAs($user)
             ->post('/reports/penjualan/penjualan-barang-jadi-m3/download', [
@@ -87,6 +101,9 @@ class PenjualanBarangJadiM3ReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Penjualan Barang Jadi M3 J.001146');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_pdf_preview_endpoint_returns_attachment_pdf(): void
@@ -102,12 +119,24 @@ class PenjualanBarangJadiM3ReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(PenjualanBarangJadiM3ReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->actingAs($user)
             ->post('/reports/penjualan/penjualan-barang-jadi-m3/preview-pdf', [
@@ -117,6 +146,9 @@ class PenjualanBarangJadiM3ReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Penjualan Barang Jadi M3 J.001146');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_health_endpoint_returns_structure_status(): void

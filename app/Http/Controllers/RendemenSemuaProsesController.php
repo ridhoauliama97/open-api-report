@@ -24,7 +24,8 @@ class RendemenSemuaProsesController extends Controller
         PdfGenerator $pdfGenerator,
         GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, false);
     }
 
     public function previewPdf(
@@ -32,7 +33,8 @@ class RendemenSemuaProsesController extends Controller
         RendemenSemuaProsesReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, true);
     }
 
     public function preview(
@@ -95,6 +97,7 @@ class RendemenSemuaProsesController extends Controller
         GenerateRendemenSemuaProsesReportRequest $request,
         RendemenSemuaProsesReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -137,7 +140,7 @@ class RendemenSemuaProsesController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Rendemen Semua Proses"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);

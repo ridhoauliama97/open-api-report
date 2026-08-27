@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\DashboardSawnTimberReportService;
 use App\Services\PdfGenerator;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -68,12 +70,24 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(DashboardSawnTimberReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->actingAs($user)
             ->get('/dashboard/sawn-timber/download?start_date=2026-01-01&end_date=2026-01-31')
@@ -81,6 +95,9 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Dashboard Sawn Timber');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_dashboard_pdf_preview_returns_attachment_disposition(): void
@@ -107,12 +124,24 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(DashboardSawnTimberReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->actingAs($user)
             ->get('/dashboard/sawn-timber/download?start_date=2026-01-01&end_date=2026-01-31&preview_pdf=1')
@@ -120,6 +149,9 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Dashboard Sawn Timber');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_api_dashboard_sawn_timber_pdf_endpoint_returns_attachment(): void
@@ -135,17 +167,29 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
             ->with('dashboard.sawn-timber-pdf', Mockery::on(
                 static fn (array $data): bool => ($data['startDate'] ?? null) === '2026-05-01'
                 && ($data['endDate'] ?? null) === '2026-05-15'
                 && ($data['pdf_simple_tables'] ?? null) === false
             ))
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(DashboardSawnTimberReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->withHeaders($this->authHeaders($user, 'application/pdf'))
             ->get('/api/reports/dashboard-sawn-timber/pdf?start_date=2026-05-01&end_date=2026-05-15')
@@ -153,6 +197,9 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Dashboard Sawn Timber');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_api_dashboard_sawn_timber_health_endpoint_returns_status(): void

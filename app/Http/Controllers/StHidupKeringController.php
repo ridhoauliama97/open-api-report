@@ -24,21 +24,25 @@ class StHidupKeringController extends Controller
         PdfGenerator $pdfGenerator,
         GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, true);
+        return $this->renderPdf($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, true);
     }
 
     public function download(
         GenerateStHidupKeringReportRequest $request,
         StHidupKeringReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, false);
+        return $this->renderPdf($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, false);
     }
 
     private function renderPdf(
         GenerateStHidupKeringReportRequest $request,
         StHidupKeringReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -55,6 +59,8 @@ class StHidupKeringController extends Controller
 
         $hari = $request->hari();
         $modes = $request->selectedModes();
+        $include = $request->include();
+        $exclude = $request->exclude();
 
         try {
             $reportData = $reportService->buildReportData($hari, $modes);
@@ -89,7 +95,7 @@ class StHidupKeringController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan St Hidup Kering"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);

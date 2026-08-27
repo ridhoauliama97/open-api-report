@@ -140,11 +140,19 @@ class PdfGenerator
      * Paper dimensions (in "cm", as accepted by Chromium converters) for a
      * given format/combination, plus the landscape flag.
      *
-     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>|string  $data  View data array or paper format string (e.g. 'a4')
      * @return array{paper_width: string, paper_height: string, landscape: bool}
      */
-    public function paperMetrics(array $data): array
+    public function paperMetrics(array|string $data, string $orientation = ''): array
     {
+        if (is_string($data)) {
+            $data = ['pdf_format' => $data];
+        }
+
+        if ($orientation !== '') {
+            $data['pdf_orientation'] = $orientation;
+        }
+
         $layout = $this->resolveLayout($data);
 
         $paperSize = match (strtoupper($layout['format'])) {

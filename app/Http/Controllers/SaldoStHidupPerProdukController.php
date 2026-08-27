@@ -65,7 +65,7 @@ class SaldoStHidupPerProdukController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Saldo St Hidup Per Produk"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);

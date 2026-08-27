@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\StHidupKeringReportService;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -58,7 +60,7 @@ class StHidupKeringReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
             ->with('reports.sawn-timber.st-hidup-kering-pdf', Mockery::on(
                 static fn (array $data): bool => ($data['hari'] ?? null) === 90
@@ -66,10 +68,22 @@ class StHidupKeringReportFeatureTest extends TestCase
                     && ($data['exclude'] ?? null) === true
                     && ($data['modes'] ?? null) === ['EXCLUDE']
             ))
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $this->app->instance(StHidupKeringReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->withHeaders($this->authHeaders($user, 'application/pdf'))
             ->get('/api/reports/sawn-timber/st-hidup-kering/pdf?hari=90&include=0&exclude=1')
@@ -77,6 +91,9 @@ class StHidupKeringReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan ST Hidup Kering');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_preview_allows_include_and_exclude_to_be_disabled(): void

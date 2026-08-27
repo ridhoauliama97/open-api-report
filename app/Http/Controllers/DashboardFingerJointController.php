@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\ShowDashboardFingerJointRequest;
 use App\Services\DashboardFingerJointReportService;
-use App\Exceptions\GotenbergPdfException;
 use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -145,15 +145,15 @@ class DashboardFingerJointController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Dashboard Finger Joint"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: ' . $e->getMessage()], 502);
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
             }
 
             return back()
                 ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: ' . $e->getMessage()]);
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
         }
     }
 

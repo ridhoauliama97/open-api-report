@@ -27,7 +27,8 @@ class TimelineRekapPenjualanPerProdukController extends Controller
         PdfGenerator $pdfGenerator,
         GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, false);
     }
 
     public function previewPdf(
@@ -35,7 +36,8 @@ class TimelineRekapPenjualanPerProdukController extends Controller
         TimelineRekapPenjualanPerProdukReportService $reportService,
         PdfGenerator $pdfGenerator,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, true);
     }
 
     public function preview(
@@ -94,6 +96,7 @@ class TimelineRekapPenjualanPerProdukController extends Controller
         GenerateRekapPenjualanPerProdukReportRequest $request,
         TimelineRekapPenjualanPerProdukReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -142,7 +145,7 @@ class TimelineRekapPenjualanPerProdukController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Timeline Rekap Penjualan Per Produk"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);

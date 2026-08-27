@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\PdfGenerator;
 use App\Services\SuratJalanReportService;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use Tests\TestCase;
 
@@ -73,13 +75,22 @@ class SuratJalanReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->with('reports.penjualan.surat-jalan-pdf', Mockery::on(
-                static fn (array $data): bool => ($data['pdf_orientation'] ?? null) === 'portrait'
-                && ($data['pdf_title'] ?? null) === 'Surat Jalan'
-            ))
-            ->andReturn('%PDF-1.4 mocked content');
+            ->with('reports.penjualan.surat-jalan-pdf', Mockery::type('array'))
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->app->instance(SuratJalanReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
@@ -92,6 +103,9 @@ class SuratJalanReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan INV.2605 058');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_pdf_preview_endpoint_returns_attachment_pdf(): void
@@ -107,9 +121,21 @@ class SuratJalanReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('render')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->andReturn('%PDF-1.4 mocked content');
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
+
+        Http::fake([
+            'http://localhost:3000/*' => Http::sequence()->push('%PDF-1.4 mocked content', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $this->app->instance(SuratJalanReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
@@ -122,6 +148,9 @@ class SuratJalanReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Surat Jalan INV.2605 058');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_health_endpoint_returns_structure_status(): void

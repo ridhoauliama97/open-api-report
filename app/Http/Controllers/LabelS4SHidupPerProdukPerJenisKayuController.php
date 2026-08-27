@@ -67,7 +67,7 @@ class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Label S4s Hidup Per Produk Per Jenis Kayu.pdf"']);
         } catch (GotenbergPdfException $e) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
@@ -132,7 +132,7 @@ class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
                 'generatedAtText' => $generatedAtText,
             ]);
 
-            return $pdf;
+            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Label S4s Hidup Per Produk Per Jenis Kayu.pdf"']);
         } catch (GotenbergPdfException $e) {
             return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
         }
