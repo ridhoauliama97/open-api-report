@@ -14,41 +14,48 @@
             margin: 0;
             padding: 0;
         }
+
         .report-companyTitle {
             font-size: 18px;
             font-weight: bold;
             text-align: center;
             margin: 0 0 4px;
         }
+
         .report-title {
             font-size: 16px;
             font-weight: bold;
             text-align: center;
             margin: 0;
         }
+
         .report-subtitle {
             font-size: 12px;
             color: #636466;
             text-align: center;
             margin: 2px 0 20px;
         }
+
         .data-table {
             border: 1px solid #000;
             border-collapse: collapse;
             width: calc(100% - 2px);
             table-layout: fixed;
         }
+
         .data-table th,
         .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
+            border: 1px solid #000;
+            padding: 1px 2px;
             vertical-align: top;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
+
         .data-table th {
-            background-color: #eef2f8;
             font-weight: bold;
         }
+
         .section-header td {
             font-weight: bold;
             font-style: italic;
@@ -57,6 +64,7 @@
             border-bottom: 1px solid #000;
             padding-left: 4px;
         }
+
         .sub-section-header td {
             font-weight: bold;
             color: #9c111d;
@@ -64,58 +72,80 @@
             border-bottom: 1px solid #000;
             padding-left: 4px;
         }
+
         .item-row td {
             padding-left: 4px;
         }
+
         .row-odd td {
             background-color: #c9d1df;
         }
+
         .row-even td {
             background-color: #eef2f8;
         }
+
+        .center {
+            text-align: center;
+        }
+
         .subtotal-row td {
             font-weight: bold;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
+
         .grand-total-row td {
             font-weight: bold;
             border-top: 1px solid #000;
             border-bottom: 1px solid #000;
         }
+
         .empty-row td {
             font-style: italic;
             font-weight: bold;
             color: #9c111d;
             background-color: #c9d1df;
         }
+
         .number {
             text-align: right;
         }
+
         .nowrap {
             white-space: nowrap;
         }
+
         .number-negative {
             color: #9c111d;
         }
-    
+
         /* standardized table borders */
-        .report-table, .report-table-summary {
+        .report-table {
             border: 1px solid #000;
             border-collapse: collapse;
             width: calc(100% - 2px);
             line-height: inherit;
         }
-.report-table th, .report-table td, .report-table-summary th, .report-table-summary td {
+
+        .report-table th,
+        .report-table td {
             border: 1px solid #000;
             word-wrap: break-word;
             padding: 2px;
             vertical-align: top;
         }
 
-        .report-table th { font-weight: bold; background-color: #eef2f8; }
+        .report-table th {
+            font-weight: bold;
+        }
 
-        .report-table-summary th { font-weight: bold; background-color: #eef2f8; }
+        .report-table-summary {
+            border-collapse: collapse;
+            width: calc(100% - 2px);
+            line-height: inherit;
+            margin-top: 4px;
+        }
     </style>
 </head>
 
@@ -188,27 +218,27 @@
         </table>
     @endforelse
 
-    @if (($summary['total_rows'] ?? 0) > 0)
-        <div class="summary-block">
-            <div class="section-title">Grand Total</div>
-            <ul class="summary-list">
-                <li>Total Jenis:
-                    <strong> {{ number_format((int) ($summary['total_jenis'] ?? 0), 0, '.', ',') }} Jenis </strong>
-                </li>
-                <li>Total Produk:
-                    <strong>{{ number_format((int) ($summary['total_produk'] ?? 0), 0, '.', ',') }} Produk </strong>
-                </li>
-                <li>Total Pcs:
-                    <strong>{{ number_format((int) ($summary['total_pcs'] ?? 0), 0, '.', ',') }} Pcs </strong>
-                </li>
-                <li>Total m3 :
-                    <strong>{{ number_format((float) ($summary['total_m3'] ?? 0), 4, '.', ',') }} m3
-                    </strong>
-                </li>
-            </ul>
-        </div>
-    @endif
+    {{-- @if (($summary['total_rows'] ?? 0) > 0)
+    <div class="summary-block">
+        <div class="section-title">Grand Total</div>
+        <ul class="summary-list">
+            <li>Total Jenis:
+                <strong> {{ number_format((int) ($summary['total_jenis'] ?? 0), 0, '.', ',') }} Jenis </strong>
+            </li>
+            <li>Total Produk:
+                <strong>{{ number_format((int) ($summary['total_produk'] ?? 0), 0, '.', ',') }} Produk </strong>
+            </li>
+            <li>Total Pcs:
+                <strong>{{ number_format((int) ($summary['total_pcs'] ?? 0), 0, '.', ',') }} Pcs </strong>
+            </li>
+            <li>Total m3 :
+                <strong>{{ number_format((float) ($summary['total_m3'] ?? 0), 4, '.', ',') }} m3
+                </strong>
+            </li>
+        </ul>
+    </div>
+    @endif --}}
 
-    </body>
+</body>
 
 </html>
