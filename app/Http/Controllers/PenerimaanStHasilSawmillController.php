@@ -101,10 +101,7 @@ class PenerimaanStHasilSawmillController extends Controller
 
         $filename = sprintf('Laporan-Penerimaan-ST-Hasil-Sawmill-%s.pdf', str_replace(['/', '\\'], '-', $noPenSt));
 
-        $dispositionType = $request->routeIs('reports.sawn-timber.penerimaan-st-hasil-sawmill.preview-pdf')
-            || $request->expectsJson()
-            ? 'attachment'
-            : 'inline';
+        $dispositionType = 'attachment';
 
         return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',

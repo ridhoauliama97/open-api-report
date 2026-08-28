@@ -90,7 +90,7 @@ class RendemenSemuaProsesReportFeatureTest extends TestCase
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator->shouldReceive('renderHtml')
             ->once()
-            ->with('reports.rendemen-kayu.rendemen-semua-proses-pdf', Mockery::on(fn ($data) => isset($data['pdf_orientation']) && $data['pdf_orientation'] === 'landscape'))
+            ->with('reports.rendemen-kayu.rendemen-semua-proses-pdf', Mockery::on(fn ($data) => isset($data['reportData'])))
             ->andReturn('<html>mocked HTML</html>');
         $pdfGenerator
             ->shouldReceive('paperMetrics')

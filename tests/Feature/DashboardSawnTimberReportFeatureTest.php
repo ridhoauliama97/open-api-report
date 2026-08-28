@@ -172,7 +172,7 @@ class DashboardSawnTimberReportFeatureTest extends TestCase
             ->with('dashboard.sawn-timber-pdf', Mockery::on(
                 static fn (array $data): bool => ($data['startDate'] ?? null) === '2026-05-01'
                 && ($data['endDate'] ?? null) === '2026-05-15'
-                && ($data['pdf_simple_tables'] ?? null) === false
+
             ))
             ->andReturn('<html>mocked HTML</html>');
         $pdfGenerator

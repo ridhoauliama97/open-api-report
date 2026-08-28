@@ -127,7 +127,7 @@ class KayuBulatKgReportsFeatureTest extends TestCase
     {
         $user = User::factory()->make(['id' => 1]);
         $service = Mockery::mock(RekapProduktivitasSawmillRpReportService::class);
-        $service->shouldReceive('buildReportData')->once()->with('2026-01-01', '2026-01-02', null)->andReturn([
+        $service->shouldReceive('buildReportData')->once()->with('2026-01-01', '2026-01-02', null, null)->andReturn([
             'rows' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Rp' => 10000]],
             'rows_sub' => [['Tanggal' => '2026-01-01', 'NamaGrade' => 'A', 'InOut' => '1', 'Rp' => 10000]],
             'date_groups' => [

@@ -90,10 +90,7 @@ class KdUpahPerCustomerController extends Controller
             return $this->gotenbergFailureResponse($request, $exception->getMessage());
         }
 
-        $dispositionType = $request->routeIs('reports.sawn-timber.kd-upah-per-customer.preview-pdf')
-            || $request->expectsJson()
-            ? 'attachment'
-            : 'inline';
+        $dispositionType = 'attachment';
 
         return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',

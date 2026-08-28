@@ -60,7 +60,7 @@ class SemuaLabelController extends Controller
         $pdfGenerator->renderToFile('pps.semua_label.pdf', $payload, $tmpPath);
 
         $filename = sprintf('Laporan-Semua-Label-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response()
             ->file($tmpPath, [

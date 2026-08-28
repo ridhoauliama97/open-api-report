@@ -1467,7 +1467,7 @@ Route::prefix('reports/kayu-bulat')->name('reports.kayu-bulat.')->group(function
     /** Rekap pembelian kayu bulat routes. */
     Route::prefix('rekap-pembelian')->name('rekap-pembelian.')->group(function (): void {
         Route::get('/', [RekapPembelianKayuBulatController::class, 'index'])->name('index');
-        Route::post('/download', [RekapPembelianKayuBulatController::class, 'download'])->name('download');
+        Route::match(['get', 'post'], '/download', [RekapPembelianKayuBulatController::class, 'download'])->name('download');
         Route::post('/preview-pdf', [RekapPembelianKayuBulatController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [RekapPembelianKayuBulatController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapPembelianKayuBulatController::class, 'health'])->name('health');

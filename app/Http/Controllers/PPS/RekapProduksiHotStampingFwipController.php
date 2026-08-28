@@ -55,7 +55,7 @@ class RekapProduksiHotStampingFwipController extends Controller
         ]);
 
         $filename = sprintf('Laporan-Rekap-Produksi-Hot-Stamping-FWIP-%s.pdf', $endDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

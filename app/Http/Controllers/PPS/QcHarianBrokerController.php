@@ -45,7 +45,7 @@ class QcHarianBrokerController extends Controller
         ]);
 
         $filename = sprintf('Laporan-QC-Harian-Broker-%s.pdf', $reportDate);
-        $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
+        $dispositionType = $request->boolean('preview_pdf') ? 'inline' : 'attachment';
 
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',

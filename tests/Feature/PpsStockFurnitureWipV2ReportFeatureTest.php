@@ -30,7 +30,7 @@ class PpsStockFurnitureWipV2ReportFeatureTest extends TestCase
     {
         $this->get('/reports/pps/furniture-wip/stock-furniture-wip-v2')
             ->assertOk()
-            ->assertSee('Generate Laporan Stock Barang Jadi (PPS)');
+            ->assertSee('Generate Laporan Stock Furniture WIP (PPS)');
     }
 
     public function test_preview_endpoint_returns_json_data(): void
@@ -83,7 +83,7 @@ class PpsStockFurnitureWipV2ReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'laporan-stock-barang-jadi-furniture-wip');
+        $this->assertPdfDisposition($response, 'attachment', 'laporan-stock-furniture-wip-v2');
     }
 
     public function test_health_endpoint_returns_structure_status(): void
