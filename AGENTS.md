@@ -19,6 +19,7 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - ALL FormRequests extend `BaseReportRequest` — `failedValidation()` auto-returns JSON 422 on `api/*`; **never override**
 - ALL PDF via `App\Services\PdfGenerator` — **never `new Mpdf()`**; legacy mPDF: `render()` / `renderToFile()`
 - **PDF baru/dimigrasi wajib jalur Gotenberg**: `$pdfGenerator->renderHtml($view, $data)` + `$pdfGenerator->paperMetrics($data)` (+ footer opsional `reports.partials.gotenberg-footer`) → `$gotenbergPdfClient->convertHtml(...)`, catch `GotenbergPdfException` → 502. Contoh lengkap: `MutasiBarangJadiController`; detail & gotchas: `AGENT_INSTRUCTIONS.md` §10.1
+- **ATURAN BRANCH (WAJIB)**: seluruh kerja migrasi Gotenberg hidup di branch `test/gotenberg-pdf` — **JANGAN PERNAH merge branch ini ke `main`** (main tetap mPDF sampai organisasi memutuskan adopsi). Push hanya ke `origin/test/gotenberg-pdf` dan `utama/test/gotenberg-pdf`. P3 (trait `BuildsGotenbergPdfResponses`, retry, throttle) juga tetap di branch ini, dikerjakan hanya setelah pilot dinyatakan stabil
 - Subtitle (period label): `'Dari '.$date->locale('id')->isoFormat('DD-MMM-YY').' s/d '.$date->locale('id')->isoFormat('DD-MMM-YY')` — lowercase `s/d`, Indonesian month names
 - Date convention: ALL PDF view dates use `->locale('id')->isoFormat('DD-MMM-YY')` → e.g. `01-Mei-26`. No `/`, no `YYYY`, no `d/m/Y`
 - PDF render cache via `config('app.pdf_render_cache_store')` + `config('app.pdf_render_cache_ttl_seconds')` (default 300s); auto-bypassed in `local`/`debug`

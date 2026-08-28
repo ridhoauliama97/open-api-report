@@ -100,7 +100,7 @@ class KetahananBarangDagangReprosesController extends Controller
 
         return response($pdfBytes, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $attachment ? 'attachment' : 'attachment', $filename),
+            'Content-Disposition' => sprintf('%s; filename="%s"', 'attachment', $filename),
         ]);
     }
 
