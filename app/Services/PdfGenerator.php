@@ -4,6 +4,7 @@ namespace App\Services;
 
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Factory as ViewFactory;
 use Mpdf\HTMLParserMode;
@@ -13,6 +14,8 @@ use Throwable;
 
 class PdfGenerator
 {
+    public function __construct(private readonly GotenbergPdfClient $gotenbergPdfClient) {}
+
     /**
      * Data keys that change per request but should not make identical report
      * parameters miss the PDF render cache.
@@ -389,6 +392,31 @@ class PdfGenerator
         ksort($normalized);
 
         return $normalized;
+    }
+
+    /**
+     * Render a report view to a PDF file via Gotenberg/Chromium.
+     */
+    public function renderHtmlToFile(string $view, array $data, string $outputPath): void
+    {
+        $html = $this->renderHtml($view, $data);
+        $metrics = $this->paperMetrics($data);
+
+        $generatedBy = $data['generatedBy'] ?? null;
+        $generatedAt = $data['generatedAt'] ?? now();
+        $generatedAtText = $generatedAt instanceof DateTimeInterface
+            ? Carbon::instance($generatedAt)->locale('id')->translatedFormat('d-M-y H:i')
+            : (string) $generatedAt;
+
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy?->name ?? $generatedBy?->Username ?? 'sistem',
+            'generatedAtText' => $generatedAtText,
+        ])->render();
+
+        file_put_contents(
+            $outputPath,
+            $this->gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml),
+        );
     }
 
     /**

@@ -50,7 +50,7 @@ class GenerateStockStKeringPdfCommand extends Command
                 @mkdir($outputDir, 0777, true);
             }
 
-            $pdfGenerator->renderToFile('reports.sawn-timber.stock-st-kering-pdf', [
+            $pdfGenerator->renderHtmlToFile('reports.sawn-timber.stock-st-kering-pdf', [
                 'rows' => $rows,
                 'endDate' => $endDate,
                 'generatedBy' => (object) [

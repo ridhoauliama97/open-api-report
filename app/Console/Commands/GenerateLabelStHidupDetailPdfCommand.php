@@ -42,7 +42,7 @@ class GenerateLabelStHidupDetailPdfCommand extends Command
                 @mkdir($outputDir, 0777, true);
             }
 
-            $pdfGenerator->renderToFile('reports.sawn-timber.label-st-hidup-detail-pdf', [
+            $pdfGenerator->renderHtmlToFile('reports.sawn-timber.label-st-hidup-detail-pdf', [
                 'reportData' => $reportData,
                 'generatedBy' => (object) [
                     'name' => $requestedBy,

@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Services\FilePdfJobStore;
 use App\Services\PdfGenerator;
 use App\Services\StockSTKeringReportService;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Tests\TestCase;
@@ -33,7 +35,7 @@ class StockSTKeringReportFeatureTest extends TestCase
         config()->set('reports.report_auth.enforce_scope', false);
     }
 
-    public function test_preview_pdf_renders_to_file_for_lower_memory_usage(): void
+    public function test_preview_pdf_renders_via_gotenberg(): void
     {
         $user = User::factory()->make(['id' => 1]);
 
@@ -59,21 +61,31 @@ class StockSTKeringReportFeatureTest extends TestCase
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
-            ->shouldReceive('renderToFile')
+            ->shouldReceive('renderHtml')
             ->once()
-            ->withArgs(function (string $view, array $data, string $outputPath): bool {
-                file_put_contents($outputPath, '%PDF-1.4 mocked stock st kering');
-
+            ->withArgs(function (string $view, array $data): bool {
                 return $view === 'reports.sawn-timber.stock-st-kering-pdf'
-                    && ($data['endDate'] ?? null) === '2026-05-12'
-                    && is_string($outputPath);
-            });
+                    && ($data['endDate'] ?? null) === '2026-05-12';
+            })
+            ->andReturn('<html>mocked HTML</html>');
+        $pdfGenerator
+            ->shouldReceive('paperMetrics')
+            ->once()
+            ->andReturn([
+                'paper_width' => '21.0cm',
+                'paper_height' => '29.7cm',
+                'landscape' => false,
+            ]);
 
         $pdfGenerator
             ->shouldNotReceive('render');
 
         $this->app->instance(StockSTKeringReportService::class, $service);
         $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        Http::fake([
+            config('services.gotenberg.url').'/*' => Http::sequence()->push('%PDF-1.4 mocked stock st kering', 200, ['Content-Type' => 'application/pdf']),
+        ]);
 
         $response = $this->actingAs($user)
             ->post('/reports/sawn-timber/stock-st-kering/preview-pdf', [
@@ -83,6 +95,9 @@ class StockSTKeringReportFeatureTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf');
 
         $this->assertPdfDisposition($response, 'attachment', 'Laporan Stock ST Kering');
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === config('services.gotenberg.url').'/forms/chromium/convert/html'
+            && $request->method() === 'POST');
     }
 
     public function test_web_async_creates_file_based_job_for_stock_st_kering(): void

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateStockSTKeringReportRequest;
 use App\Services\FilePdfJobStore;
+use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\StockSTKeringReportService;
 use Illuminate\Contracts\View\View;
@@ -28,16 +30,20 @@ class StockSTKeringController extends Controller
         GenerateStockSTKeringReportRequest $request,
         StockSTKeringReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, false);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, false);
     }
 
     public function previewPdf(
         GenerateStockSTKeringReportRequest $request,
         StockSTKeringReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
     ) {
-        return $this->buildPdfResponse($request, $reportService, $pdfGenerator, true);
+        return $this->buildPdfResponse($request, $reportService, $pdfGenerator,
+            $gotenbergPdfClient, true);
     }
 
     public function dispatchAsync(GenerateStockSTKeringReportRequest $request, FilePdfJobStore $jobStore): JsonResponse
@@ -339,6 +345,7 @@ class StockSTKeringController extends Controller
         GenerateStockSTKeringReportRequest $request,
         StockSTKeringReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         bool $attachment,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
@@ -397,21 +404,29 @@ class StockSTKeringController extends Controller
         $filename = sprintf('Laporan-Stock-ST-Kering-%s.pdf', $endDate);
         $dispositionType = $attachment ? 'attachment' : 'inline';
 
-        $dir = storage_path('app/pdf-temp');
-        if (! is_dir($dir)) {
-            @mkdir($dir, 0777, true);
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml(
+                $pdfGenerator->renderHtml('reports.sawn-timber.stock-st-kering-pdf', $payload),
+                $pdfGenerator->paperMetrics($payload),
+                view('reports.partials.gotenberg-footer', [
+                    'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+                    'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+                ])->render(),
+            );
+        } catch (GotenbergPdfException $exception) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()], 502);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()]);
         }
 
-        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('stock-st-kering-', true).'.pdf';
-
-        $pdfGenerator->renderToFile('reports.sawn-timber.stock-st-kering-pdf', $payload, $tmpPath);
-
-        return response()
-            ->file($tmpPath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-            ])
-            ->deleteFileAfterSend(true);
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
+        ]);
     }
 
     private function resolveWebPreviewLimit(GenerateStockSTKeringReportRequest $request): int

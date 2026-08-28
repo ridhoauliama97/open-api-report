@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GotenbergPdfException;
 use App\Http\Requests\GenerateNoParameterReportRequest;
 use App\Services\FilePdfJobStore;
+use App\Services\GotenbergPdfClient;
 use App\Services\LabelStHidupDetailReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -30,18 +32,20 @@ class LabelStHidupDetailController extends Controller
         GenerateNoParameterReportRequest $request,
         LabelStHidupDetailReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         FilePdfJobStore $jobStore,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, $jobStore, true);
+        return $this->renderPdf($request, $reportService, $pdfGenerator, $gotenbergPdfClient, $jobStore, true);
     }
 
     public function download(
         GenerateNoParameterReportRequest $request,
         LabelStHidupDetailReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         FilePdfJobStore $jobStore,
     ) {
-        return $this->renderPdf($request, $reportService, $pdfGenerator, $jobStore, false);
+        return $this->renderPdf($request, $reportService, $pdfGenerator, $gotenbergPdfClient, $jobStore, false);
     }
 
     public function dispatchAsync(GenerateNoParameterReportRequest $request, FilePdfJobStore $jobStore): JsonResponse
@@ -324,6 +328,7 @@ class LabelStHidupDetailController extends Controller
         GenerateNoParameterReportRequest $request,
         LabelStHidupDetailReportService $reportService,
         PdfGenerator $pdfGenerator,
+        GotenbergPdfClient $gotenbergPdfClient,
         FilePdfJobStore $jobStore,
         bool $attachment,
     ) {
@@ -373,22 +378,31 @@ class LabelStHidupDetailController extends Controller
 
         $filename = 'Laporan-Label-ST-Hidup-Detail.pdf';
 
-        $dir = storage_path('app/pdf-temp');
-        if (! is_dir($dir)) {
-            @mkdir($dir, 0777, true);
-        }
-        $tmpPath = $dir.DIRECTORY_SEPARATOR.uniqid('label-st-hidup-detail-', true).'.pdf';
+        try {
+            $pdf = $gotenbergPdfClient->convertHtml(
+                $pdfGenerator->renderHtml('reports.sawn-timber.label-st-hidup-detail-pdf', $payload),
+                $pdfGenerator->paperMetrics($payload),
+                view('reports.partials.gotenberg-footer', [
+                    'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+                    'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+                ])->render(),
+            );
+        } catch (GotenbergPdfException $exception) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()], 502);
+            }
 
-        $pdfGenerator->renderToFile('reports.sawn-timber.label-st-hidup-detail-pdf', $payload, $tmpPath);
+            return back()
+                ->withInput()
+                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()]);
+        }
 
         $disposition = $attachment ? 'attachment' : 'inline';
 
-        return response()
-            ->file($tmpPath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf('%s; filename="%s"', $disposition, $filename),
-            ])
-            ->deleteFileAfterSend(true);
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('%s; filename="%s"', $disposition, $filename),
+        ]);
     }
 
     public function preview(
