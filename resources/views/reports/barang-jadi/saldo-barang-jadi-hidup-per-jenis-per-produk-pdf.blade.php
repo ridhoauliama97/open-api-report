@@ -36,21 +36,6 @@
             margin: 2px 0 20px;
         }
 
-        .data-table {
-            border: 1px solid #000;
-            border-collapse: collapse;
-            width: calc(100% - 2px);
-            table-layout: fixed;
-        }
-
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;
-            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
 
         .data-table th {
             font-weight: bold;

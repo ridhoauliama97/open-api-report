@@ -32,12 +32,6 @@
             text-align: center;
             margin: 2px 0 20px;
         }
-        .data-table {
-            border: 1px solid #000;
-            border-collapse: collapse;
-            width: calc(100% - 2px);
-            table-layout: fixed;
-        }
         .data-table th,
         .data-table td {
             border: 1px solid #000;            padding: 1px 2px;
@@ -243,7 +237,7 @@
             <tr>
                 <th rowspan="2" class="no-column">No</th>
                 @foreach ($columnGroups as $group)
-                    <th colspan="{{ $group['span'] ?? 1 }}" class="group-start">{!! $group['label'] ?? '' !!}</th>
+                    <th colspan="{{ $group['span'] ?? 1 }}" class="group-start">{{ $group['label'] ?? '' }}</th>
                 @endforeach
             </tr>
             <tr>

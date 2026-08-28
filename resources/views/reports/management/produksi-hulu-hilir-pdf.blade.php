@@ -188,7 +188,7 @@
             <tr>
                 <th rowspan="2">No</th>
                 @foreach ($columns as $column)
-                    <th colspan="3">{!! $column['label'] ?? '' !!}</th>
+                    <th colspan="3">{{ $column['label'] ?? '' }}</th>
                 @endforeach
             </tr>
             <tr class="sub-header">

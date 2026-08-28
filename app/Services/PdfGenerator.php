@@ -284,6 +284,7 @@ class PdfGenerator
     {
         $html = view($view, $data)->render();
         $html = $this->sanitizeUtf8($html);
+        $html = $this->stripExternalFontLinks($html);
 
         return $this->stripMpdfOnlyMarkup($html);
     }
@@ -413,10 +414,11 @@ class PdfGenerator
             'generatedAtText' => $generatedAtText,
         ])->render();
 
-        file_put_contents(
-            $outputPath,
-            $this->gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml),
-        );
+        $bytes = $this->gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+
+        if (file_put_contents($outputPath, $bytes) === false) {
+            throw new \RuntimeException("Gagal menulis PDF ke: {$outputPath}");
+        }
     }
 
     /**
