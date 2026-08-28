@@ -488,24 +488,40 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}"
-                                    style="font-weight: bold; text-align: center;">
-                                    Sub Total {{ $produkName }}
-                                </td>
-                                @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
-                                    @php $summaryColumn = $tableColumns[$idx]; @endphp
-                                    @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
-                                        <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalPcs, 0, '.', ',') }}
-                                        </td>
-                                    @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
-                                        <td class="number" style="font-weight: bold">
-                                            {{ number_format($subtotalTon, 4, '.', ',') }}
-                                        </td>
-                                    @else
-                                        <td></td>
-                                    @endif
-                                @endfor
+                                @if ($firstSummaryIndex >= 2)
+                                    <td colspan="{{ $firstSummaryIndex + 1 }}"
+                                        style="font-weight: bold; text-align: center;">
+                                        Sub Total {{ $produkName }}
+                                    </td>
+                                    @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
+                                        @php $summaryColumn = $tableColumns[$idx]; @endphp
+                                        @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
+                                            <td class="number" style="font-weight: bold">
+                                                {{ number_format($subtotalPcs, 0, '.', ',') }}
+                                            </td>
+                                        @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
+                                            <td class="number" style="font-weight: bold">
+                                                {{ number_format($subtotalTon, 4, '.', ',') }}
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
+                                    @endfor
+                                @else
+                                    @php
+                                        $compactParts = [];
+                                        if ($pcsColumn !== null) {
+                                            $compactParts[] = number_format($subtotalPcs, 0, '.', ',').' Pcs';
+                                        }
+                                        if ($tonColumn !== null) {
+                                            $compactParts[] = number_format($subtotalTon, 4, '.', ',').' Ton';
+                                        }
+                                    @endphp
+                                    <td colspan="{{ count($tableColumns) + 1 }}"
+                                        style="font-weight: bold; text-align: center;">
+                                        Sub Total {{ $produkName }} : {{ implode(' / ', $compactParts) }}
+                                    </td>
+                                @endif
                             @else
                                 <td colspan="{{ count($tableColumns) + 1 }}" style="text-align: center">
                                     Sub Total {{ $produkName }}
@@ -524,24 +540,40 @@
                                         ? $firstSummaryIndex
                                         : count($tableColumns);
                                 @endphp
-                                <td colspan="{{ $firstSummaryIndex + 1 }}"
-                                    style="font-weight: bold; text-align: center;">
-                                    Total {{ $jenisName }}
-                                </td>
-                                @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
-                                    @php $summaryColumn = $tableColumns[$idx]; @endphp
-                                    @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
-                                        <td class="number" style="font-weight: bold">
-                                            {{ number_format($jenisTotalPcs, 0, '.', ',') }}
-                                        </td>
-                                    @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
-                                        <td class="number" style="font-weight: bold">
-                                            {{ number_format($jenisTotalTon, 4, '.', ',') }}
-                                        </td>
-                                    @else
-                                        <td></td>
-                                    @endif
-                                @endfor
+                                @if ($firstSummaryIndex >= 2)
+                                    <td colspan="{{ $firstSummaryIndex + 1 }}"
+                                        style="font-weight: bold; text-align: center;">
+                                        Total {{ $jenisName }}
+                                    </td>
+                                    @for ($idx = $firstSummaryIndex; $idx < count($tableColumns); $idx++)
+                                        @php $summaryColumn = $tableColumns[$idx]; @endphp
+                                        @if ($pcsColumn !== null && $summaryColumn === $pcsColumn)
+                                            <td class="number" style="font-weight: bold">
+                                                {{ number_format($jenisTotalPcs, 0, '.', ',') }}
+                                            </td>
+                                        @elseif ($tonColumn !== null && $summaryColumn === $tonColumn)
+                                            <td class="number" style="font-weight: bold">
+                                                {{ number_format($jenisTotalTon, 4, '.', ',') }}
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
+                                    @endfor
+                                @else
+                                    @php
+                                        $compactParts = [];
+                                        if ($pcsColumn !== null) {
+                                            $compactParts[] = number_format($jenisTotalPcs, 0, '.', ',').' Pcs';
+                                        }
+                                        if ($tonColumn !== null) {
+                                            $compactParts[] = number_format($jenisTotalTon, 4, '.', ',').' Ton';
+                                        }
+                                    @endphp
+                                    <td colspan="{{ count($tableColumns) + 1 }}"
+                                        style="font-weight: bold; text-align: center;">
+                                        Total {{ $jenisName }} : {{ implode(' / ', $compactParts) }}
+                                    </td>
+                                @endif
                             @else
                                 <td colspan="{{ count($tableColumns) + 1 }}" style="text-align: center">
                                     Total {{ $jenisName }}
