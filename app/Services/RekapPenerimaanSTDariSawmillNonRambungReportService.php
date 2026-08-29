@@ -30,7 +30,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -63,7 +63,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $totalTblStSource = $this->resolveTotalTblStColumn($columns);
 
         $schema = self::OUTPUT_SCHEMA;
-        $schemaKeys = array_values(array_map(static fn (array $spec): string => (string) ($spec['key'] ?? ''), $schema));
+        $schemaKeys = array_values(array_map(static fn(array $spec): string => (string) ($spec['key'] ?? ''), $schema));
 
         /** @var array<string, array<int, array{sort_date: string, row: array<string, mixed}}>> $rowsBySupplier */
         $rowsBySupplier = [];
@@ -113,7 +113,9 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                 'Ton (ST)' => $tonStSource !== null ? ($rawRow[$tonStSource] ?? null) : null,
                 'Ave Dia' => $aveDia,
                 'Ave Tbl' => $aveTbl,
-                'Potong' => $potongSource !== null ? $this->formatPotong($rawRow[$potongSource] ?? null) : null,
+                'Potong' => $potongSource !== null
+                    ? ($this->potongLabelFromPengukuran($rawRow[$potongSource] ?? null) ?? $this->formatPotong($rawRow[$potongSource] ?? null))
+                    : null,
                 'Rend ST-KB' => $rend,
             ];
 
@@ -215,7 +217,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                 return strcmp($da, $db);
             });
 
-            $rowsForSupplier = array_values(array_map(static fn (array $item): array => (array) ($item['row'] ?? []), $items));
+            $rowsForSupplier = array_values(array_map(static fn(array $item): array => (array) ($item['row'] ?? []), $items));
 
             $diaAvg = $areaSum > 0.0000001 && $pcsKbSum > 0.0000001 ? sqrt($areaSum / $pcsKbSum) : null;
             $tblAvg = $totalTblStSum > 0.0000001 && $pcsStSum > 0.0000001 ? ($totalTblStSum / $pcsStSum) : null;
@@ -932,6 +934,56 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         return $raw;
     }
 
+    private ?array $potongByPengukuran = null;
+
+    /**
+     * Kolom "Potong" dari SP berisi kode mentah IdPengukuran (SP: `C.IdPengukuran As Potong`).
+     * Label potong (mis. 2", 3") diambil dari MstGolPengukuran.GolPengukuran,
+     * contoh: IdPengukuran 2 -> "TON, POTONG 3''" -> 3", IdPengukuran 11 -> "TON, POT 2, STD 4X4" -> 2".
+     */
+    private function potongLabelFromPengukuran(mixed $value): ?string
+    {
+        $id = is_numeric($value) ? (int) $value : 0;
+        if ($id <= 0) {
+            return null;
+        }
+
+        if ($this->potongByPengukuran === null) {
+            $this->potongByPengukuran = $this->loadPotongMapping();
+        }
+
+        $gol = $this->potongByPengukuran[$id] ?? null;
+        if ($gol === null || preg_match('/POT(?:ONG)?\s*(\d+)/i', $gol, $m) !== 1) {
+            return null;
+        }
+
+        $inch = (int) $m[1];
+
+        return $inch > 0 ? ($inch . '"') : null;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function loadPotongMapping(): array
+    {
+        try {
+            $configKey = 'reports.rekap_penerimaan_st_dari_sawmill_non_rambung';
+            $connectionName = config("{$configKey}.database_connection");
+            $rows = DB::connection($connectionName ?: null)
+                ->select('SELECT IdPengukuran, GolPengukuran FROM MstGolPengukuran');
+
+            $map = [];
+            foreach ($rows as $row) {
+                $map[(int) $row->IdPengukuran] = (string) ($row->GolPengukuran ?? '');
+            }
+
+            return $map;
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
     private function formatPotong(mixed $value): string
     {
         if ($value === null) {
@@ -956,7 +1008,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         // In some datasets the SP returns "coded" values (e.g. 11 == 2", 12 == 3").
         $inch = $n >= 10 ? ($n - 9) : $n;
 
-        return $inch > 0 ? ($inch.'"') : '';
+        return $inch > 0 ? ($inch . '"') : '';
     }
 
     /**
@@ -982,7 +1034,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap penerimaan ST dari sawmill (Non Rambung) dikonfigurasi untuk SQL Server. '
-                .'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                    . 'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
