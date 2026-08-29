@@ -91,6 +91,11 @@
             background: #eef2f8;
         }
 
+        .rend-below {
+            color: red;
+            text-decoration: underline;
+        }
+
         td.center {
             text-align: center;
         }
@@ -121,6 +126,14 @@
         $schema = is_array($data['column_schema'] ?? null) ? $data['column_schema'] : [];
         $summaries = is_array($data['supplier_summaries'] ?? null) ? $data['supplier_summaries'] : [];
         $grand = is_array($data['grand_totals'] ?? null) ? $data['grand_totals'] : [];
+
+        $historis = [
+            'diameters' => [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 23],
+            'rows' => [
+                '2"' => [null, null, 73, 70, 68, 65, 65, 62, 60, 64, 47, 61, 56, 56, null, null, null, null],
+                '3"' => [221, 121, 107, 97, 91, 86, 82, 78, 78, 75, 74, 73, 63, 73, 69, null, 71, 43],
+            ],
+        ];
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
@@ -229,6 +242,54 @@
 
             return '';
         };
+
+        $rendThresholdFor = static function (mixed $potong, mixed $aveDia) use ($historis): ?float {
+            $potongKey = trim((string) ($potong ?? ''));
+            if ($potongKey === '' || !isset($historis['rows'][$potongKey]) || !is_array($historis['rows'][$potongKey])) {
+                return null;
+            }
+
+            if (!is_numeric($aveDia)) {
+                return null;
+            }
+
+            $diameter = (int) round((float) $aveDia);
+            $index = array_search($diameter, $historis['diameters'], true);
+            if ($index === false) {
+                return null;
+            }
+
+            $value = $historis['rows'][$potongKey][$index] ?? null;
+
+            return $value === null ? null : (float) $value;
+        };
+
+        $rendBelowBySupplier = [];
+        foreach ($groups as $grp) {
+            $supplierName = (string) ($grp['supplier'] ?? '');
+            $potongCounts = [];
+            foreach ($grp['rows'] as $grRow) {
+                $potongValue = trim((string) ((is_array($grRow) ? $grRow : (array) $grRow)['Potong'] ?? ''));
+                if ($potongValue !== '') {
+                    $potongCounts[$potongValue] = true;
+                }
+            }
+            $summaryRow = null;
+            foreach ($summaries as $sm) {
+                if ((string) ($sm['supplier'] ?? '') === $supplierName) {
+                    $summaryRow = $sm;
+                    break;
+                }
+            }
+            if ($summaryRow === null) {
+                $rendBelowBySupplier[$supplierName] = false;
+                continue;
+            }
+            $potong = count($potongCounts) === 1 ? array_key_first($potongCounts) : null;
+            $threshold = $rendThresholdFor($potong, $summaryRow['ave_dia'] ?? null);
+            $rend = $summaryRow['rend_percent'] ?? null;
+            $rendBelowBySupplier[$supplierName] = $rend !== null && $threshold !== null && $rend < $threshold;
+        }
     @endphp
 
     <h1 class="report-title">Laporan Rekap Penerimaan ST Dari Sawmill (Non Rambung)</h1>
@@ -250,6 +311,8 @@
             $diaAvg = $supplierSummary['ave_dia'] ?? null;
             $tblAvg = $supplierSummary['ave_tbl'] ?? null;
             $rendPct = $supplierSummary['rend_percent'] ?? null;
+
+            $groupRendBelow = $rendBelowBySupplier[$supplierName] ?? false;
         @endphp
 
         <div class="group-title">{{ $supplierName }}</div>
@@ -270,6 +333,13 @@
                     @php
                         $rowIndex++;
                         $rowData = is_array($row ?? null) ? $row : (array) $row;
+
+                        $rendValue = $rowData['Rend ST-KB'] ?? null;
+                        $rendPercent = $rendValue === null
+                            ? null
+                            : ((float) $rendValue <= 1.5 ? (float) $rendValue * 100.0 : (float) $rendValue);
+                        $rendThreshold = $rendThresholdFor($rowData['Potong'] ?? null, $rowData['Ave Dia'] ?? null);
+                        $rendBelowBaseline = $rendPercent !== null && $rendThreshold !== null && $rendPercent < $rendThreshold;
                     @endphp
                     <tr class="{{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td class="center">{{ $rowIndex }}</td>
@@ -277,8 +347,12 @@
                             @php
                                 $key = (string) ($colSpec['key'] ?? '');
                                 $cell = $key !== '' ? $rowData[$key] ?? null : null;
+                                $tdClass = $cellClassBySpec($colSpec);
+                                if (strtolower(trim($key)) === 'rend st-kb' && $rendBelowBaseline) {
+                                    $tdClass = trim($tdClass . ' rend-below');
+                                }
                             @endphp
-                            <td class="{{ $cellClassBySpec($colSpec) }}">{{ $formatBySpec($cell, $colSpec) }}</td>
+                            <td class="{{ $tdClass }}">{{ $formatBySpec($cell, $colSpec) }}</td>
                         @endforeach
                     </tr>
                 @empty
@@ -320,8 +394,12 @@
                                 } elseif ($k === 'rend st-kb') {
                                     $v = $rendPct === null ? '' : $formatNumber((float) $rendPct, 2) . '%';
                                 }
+                                $tdClass = $v !== '' ? 'number' : '';
+                                if ($k === 'rend st-kb' && $groupRendBelow) {
+                                    $tdClass = trim($tdClass . ' rend-below');
+                                }
                             @endphp
-                            <td class="{{ $v !== '' ? 'number' : '' }}"><strong>{{ $v }}</strong></td>
+                            <td class="{{ $tdClass }}"><strong>{{ $v }}</strong></td>
                         @endforeach
                     </tr>
                 @endif
@@ -381,16 +459,6 @@
             </tbody>
         </table>
 
-        @php
-            $historis = [
-                'diameters' => [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 23],
-                'rows' => [
-                    '2"' => [null, null, 73, 70, 68, 65, 65, 62, 60, 64, 47, 61, 56, 56, null, null, null, null],
-                    '3"' => [221, 121, 107, 97, 91, 86, 82, 78, 78, 75, 74, 73, 63, 73, 69, null, 71, 43],
-                ],
-            ];
-        @endphp
-
         <div class="group-title" style="text-align: center; margin-top: 18px;">Tabel Rata-rata Rendemen Secara Historis
             Per-Maret 2019</div>
         <table>
@@ -447,6 +515,7 @@
                         $dia = $s['ave_dia'] ?? null;
                         $tbl = $s['ave_tbl'] ?? null;
                         $rend = $s['rend_percent'] ?? null;
+                        $summaryBelow = $rendBelowBySupplier[(string) ($s['supplier'] ?? '')] ?? false;
                     @endphp
                     <tr class="{{ $si % 2 === 1 ? 'row-odd' : 'row-even' }}">
                         <td>{{ (string) ($s['supplier'] ?? '') }}</td>
@@ -456,7 +525,7 @@
                         <td class="number">{{ $stPct === null ? '' : $formatNumber((float) $stPct, 2) . '%' }}</td>
                         <td class="number">{{ $dia === null ? '' : $formatNumber((float) $dia, 1) }}</td>
                         <td class="number">{{ $tbl === null ? '' : $formatNumber((float) $tbl, 1) }}</td>
-                        <td class="number">{{ $rend === null ? '' : $formatNumber((float) $rend, 2) . '%' }}</td>
+                        <td class="number{{ $summaryBelow ? ' rend-below' : '' }}">{{ $rend === null ? '' : $formatNumber((float) $rend, 2) . '%' }}</td>
                     </tr>
                 @endforeach
                 <tr>
