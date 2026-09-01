@@ -12,37 +12,37 @@ class FinancialRasioGsuReportService
     private const TITLE = 'Laporan Financial Ratio';
 
     private const CURRENT_ASSET_PREFIXES = [
-        '111.101', '111.102', '111.105',
-        '111.200', '111.300', '111.400',
+        '111.101',
+        '111.102',
+        '111.105',
+        '111.200',
+        '111.300',
+        '111.400',
     ];
 
     private const CURRENT_LIABILITY_PREFIXES = [
-        '211.100', '211.200', '211.300',
-        '211.400', '211.500', '212.100', '222.000',
+        '211.100',
+        '211.200',
+        '211.300',
+        '211.400',
+        '211.500',
+        '212.100',
+        '222.000',
     ];
 
     private const REVENUE_PREFIX = '411';
-
-    private const REVENUE_DEDUCTION_PREFIXES = ['431', '451'];
-
-    private const EXPENSE_PREFIXES = [
-        '501', '512', '514', '516', '642',
-        '711', '721', '722', '900',
-    ];
 
     private const OTHER_INCOME_PREFIX = '800';
 
     private const DEDUCTION_PREFIX = '621';
 
-    private const OPERATING_EXPENSE_PREFIXES = ['711', '721', '514'];
-
     private const ASSET_PREFIXES = ['111', '112', '121', '131'];
 
     private const LIABILITY_PREFIXES = ['211', '212', '222'];
 
-    private const EQUITY_PREFIXES = ['312', '313', '314'];
+    private const EQUITY_PREFIXES = ['311', '312', '313', '314'];
 
-    private const RECEIVABLE_PREFIX = '111.200';
+    private const RECEIVABLE_PREFIX = '111.200.200';
 
     private const INVENTORY_PREFIX = '111.400';
 
@@ -161,15 +161,17 @@ class FinancialRasioGsuReportService
                 'potongan_penjualan' => 0.0,
                 'retur_penjualan' => 0.0,
                 'hpp' => 0.0,
-                'beban_produksi' => 0.0,
                 'beban_penjualan' => 0.0,
                 'beban_adm' => 0.0,
                 'beban_lain' => 0.0,
                 'operating_expense' => 0.0,
                 'total_asset' => 0.0,
+                'total_aktiva' => 0.0,
+                'penyusutan' => 0.0,
                 'liabilitas' => 0.0,
                 'equitas' => 0.0,
                 'piutang' => 0.0,
+                'piutang_awal' => 0.0,
                 'persediaan' => 0.0,
                 'period' => $period,
             ];
@@ -225,12 +227,11 @@ class FinancialRasioGsuReportService
                 $monthly[$key]['retur_penjualan'] += $ending;
             }
 
-            if ($prefix3 === '516') {
+            if ($prefix3 === '516' || $prefix3 === '642') {
                 $monthly[$key]['hpp'] += $ending;
             }
 
-            if ($prefix3 === '514') {
-                $monthly[$key]['beban_produksi'] += $ending;
+            if ($prefix3 === '514' || $prefix3 === '642') {
                 $monthly[$key]['operating_expense'] += $ending;
             }
 
@@ -239,13 +240,11 @@ class FinancialRasioGsuReportService
                 $monthly[$key]['operating_expense'] += $ending;
             }
 
-            if ($prefix3 === '712') {
-                $monthly[$key]['beban_penjualan'] += $ending;
-            }
-
             if ($prefix3 === '721') {
                 $monthly[$key]['beban_adm'] += $ending;
-                $monthly[$key]['operating_expense'] += $ending;
+                if ($accountCode !== '721.000.201') {
+                    $monthly[$key]['operating_expense'] += $ending;
+                }
             }
 
             if ($prefix3 === '722') {
@@ -254,22 +253,22 @@ class FinancialRasioGsuReportService
 
             if ($prefix3 === '900') {
                 $monthly[$key]['beban_lain'] += $ending;
+                $monthly[$key]['operating_expense'] += $ending;
             }
 
-            if ($prefix3 === '501') {
-                $monthly[$key]['beban_produksi'] += $ending;
-            }
-
-            if ($prefix3 === '512') {
-                $monthly[$key]['beban_produksi'] += $ending;
-            }
-
-            if ($prefix3 === '642') {
-                $monthly[$key]['beban_produksi'] += $ending;
+            if ($prefix7 === '500.001') {
+                $monthly[$key]['penyusutan'] += $ending;
             }
 
             if (in_array($prefix3, self::ASSET_PREFIXES, true)) {
                 $monthly[$key]['total_asset'] += $ending;
+            }
+
+            if ($prefix3 === '121') {
+                $normalBalance = (string) ($row['Normal Balance'] ?? $row['Normal_Balance'] ?? '');
+                if ($normalBalance === 'Debit') {
+                    $monthly[$key]['total_aktiva'] += $ending;
+                }
             }
 
             if (in_array($prefix3, self::LIABILITY_PREFIXES, true)) {
@@ -282,6 +281,7 @@ class FinancialRasioGsuReportService
 
             if (substr($accountCode, 0, strlen(self::RECEIVABLE_PREFIX)) === self::RECEIVABLE_PREFIX) {
                 $monthly[$key]['piutang'] += $ending;
+                $monthly[$key]['piutang_awal'] += (float) ($row['Beginning'] ?? 0);
             }
 
             if (substr($accountCode, 0, strlen(self::INVENTORY_PREFIX)) === self::INVENTORY_PREFIX) {
@@ -295,20 +295,37 @@ class FinancialRasioGsuReportService
     private function buildRatios(array $monthlyData): array
     {
         $monthNames = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
-            4 => 'April', 5 => 'Mei', 6 => 'Juni',
-            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
-            10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
 
         $currentRatioRows = [];
         $rosRows = [];
+        $roaRows = [];
+        $roeRows = [];
+        $nwcRows = [];
+        $gpmRows = [];
+        $ebitdaRows = [];
+        $runRateRows = [];
+        $salesGrowthRows = [];
         $opexRows = [];
         $derRows = [];
+        $darRows = [];
         $receivableTurnoverRows = [];
         $inventoryTurnoverRows = [];
 
         $no = 0;
+        $previousPendapatan = null;
         foreach ($monthlyData as $key => $data) {
             $no++;
             $period = $data['period'];
@@ -318,15 +335,18 @@ class FinancialRasioGsuReportService
             $aktivaLancar = $data['aktiva_lancar'];
             $hutangLancar = $data['hutang_lancar'];
             $pendapatan = $data['pendapatan'];
-            $labaBersih = $pendapatan + $data['other_income'] + $data['potongan']
+            $labaBersih = $pendapatan + $data['other_income']
                 - $data['potongan_penjualan'] - $data['retur_penjualan']
-                - $data['hpp'] - $data['beban_produksi']
+                - $data['hpp']
                 - $data['beban_penjualan'] - $data['beban_adm'] - $data['beban_lain'];
             $operatingExpense = $data['operating_expense'];
+            $totalAktiva = $data['total_aktiva'];
             $liabilitas = $data['liabilitas'];
             $equitas = $data['equitas'];
+            $totalAsset = $data['total_asset'];
             $piutang = $data['piutang'];
             $persediaan = $data['persediaan'];
+            $equityCalc = $totalAsset - $liabilitas;
 
             $currentRatioRows[] = [
                 'no' => $no,
@@ -344,6 +364,72 @@ class FinancialRasioGsuReportService
                 'rasio' => $pendapatan != 0 ? ($labaBersih / $pendapatan) * 100 : 0,
             ];
 
+            $roaRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaBersih,
+                'nilai_y' => $totalAktiva,
+                'rasio' => $totalAktiva != 0 ? ($labaBersih / $totalAktiva) * 100 : 0,
+            ];
+
+            $roeRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaBersih,
+                'nilai_y' => $equityCalc,
+                'rasio' => $equityCalc != 0 ? ($labaBersih / $equityCalc) * 100 : 0,
+            ];
+
+            $nwcRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $aktivaLancar,
+                'nilai_y' => $hutangLancar,
+                'rasio' => $aktivaLancar - $hutangLancar,
+            ];
+
+            $labaKotor = $pendapatan - $data['hpp'] + $data['potongan'];
+
+            $gpmRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaKotor,
+                'nilai_y' => $pendapatan,
+                'rasio' => $pendapatan != 0 ? ($labaKotor / $pendapatan) * 100 : 0,
+            ];
+
+            $penyusutan = $data['penyusutan'];
+            $labaOperasional = $labaKotor - $data['beban_penjualan'] - $data['beban_adm'];
+            $ebitda = $labaOperasional + $penyusutan;
+
+            $ebitdaRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaOperasional,
+                'nilai_y' => $penyusutan,
+                'rasio' => $ebitda,
+            ];
+
+            $runRateRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $pendapatan,
+                'nilai_y' => $pendapatan * 12,
+                'rasio' => $pendapatan * 12,
+            ];
+
+            $salesGrowthRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $previousPendapatan ?? 0,
+                'nilai_y' => $pendapatan,
+                'rasio' => $previousPendapatan != 0
+                    ? (($pendapatan - $previousPendapatan) / $previousPendapatan) * 100
+                    : 0,
+            ];
+
+            $previousPendapatan = $pendapatan;
+
             $opexRows[] = [
                 'no' => $no,
                 'bulan' => $bulan,
@@ -360,12 +446,22 @@ class FinancialRasioGsuReportService
                 'rasio' => $equitas != 0 ? ($hutangLancar / $equitas) * 100 : 0,
             ];
 
+            $darRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $liabilitas,
+                'nilai_y' => $totalAsset,
+                'rasio' => $totalAsset != 0 ? ($liabilitas / $totalAsset) * 100 : 0,
+            ];
+
+            $piutangRataRata = ($data['piutang_awal'] + $piutang) / 2;
+
             $receivableTurnoverRows[] = [
                 'no' => $no,
                 'bulan' => $bulan,
                 'nilai_x' => $pendapatan,
-                'nilai_y' => $piutang,
-                'rasio' => $piutang != 0 ? ($pendapatan / $piutang) * 100 : 0,
+                'nilai_y' => $piutangRataRata,
+                'rasio' => $piutangRataRata != 0 ? ($pendapatan / $piutangRataRata) * 100 : 0,
             ];
 
             $inventoryTurnoverRows[] = [
@@ -395,6 +491,65 @@ class FinancialRasioGsuReportService
                 'rows' => $rosRows,
             ],
             [
+                'id' => 'roa',
+                'title' => 'Return On Asset (ROA)',
+                'description' => 'Tingkat pengembalian aset merupakan rasio profitabilitas untuk menilai persentase keuntungan (laba) yang diperoleh perusahaan terkait sumber daya atau total fixed aset sehingga efisiensi suatu perusahaan dalam mengelola asetnya bisa terlihat dari persentase rasio ini.',
+                'footer_note' => 'Keterangan: < 1% Tidak baik, > 1% Baik',
+                'columns' => ['No', 'Bulan', 'Nilai Laba Bersih', 'Nilai Total Aktiva', 'Rasio %'],
+                'rows' => $roaRows,
+            ],
+            [
+                'id' => 'roe',
+                'title' => 'Return on Equity (ROE)',
+                'description' => '(ROE) adalah cara untuk mengukur seberapa hebat perusahaan memakai modal atau uang dari pemilik saham untuk menghasilkan laba bersih.',
+                'footer_note' => 'Keterangan:<br>- Di atas 15%: Biasanya dianggap sangat baik dan menunjukkan manajemen sangat efisien.<br>- Sekitar 10% - 15%: Dianggap cukup sehat dan normal untuk banyak perusahaan mapan.<br>- Di bawah 5%: Menandakan perusahaan kurang efisien dalam mengolah modal jadi laba.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba Bersih', 'Nilai Ekuitas', 'Rasio %'],
+                'rows' => $roeRows,
+            ],
+            [
+                'id' => 'nwc',
+                'title' => 'Net Working Capital (NWC)',
+                'description' => 'Net Working Capital (NWC) atau modal kerja bersih adalah selisih antara aset lancar (kas, piutang, persediaan) dan kewajiban lancar (utang usaha, beban yang masih harus dibayar). Analisis ini mengukur tingkat likuiditas jangka pendek, efisiensi operasional, dan kesehatan finansial perusahaan untuk memenuhi kewajiban yang jatuh tempo dalam waktu satu tahun.',
+                'footer_note' => '<strong>Rumus NWC = Aset Lancar - Kewajiban Lancar</strong><br>- NWC positif, aset lancar lebih besar daripada kewajiban lancar. Secara umum, perusahaan memiliki ruang yang lebih baik untuk memenuhi kewajiban jangka pendek.<br>- NWC negatif, kewajiban lancar lebih besar daripada aset lancar. Ini dapat menunjukkan tekanan likuiditas, meskipun pada beberapa bisnis tertentu kondisi ini bisa menjadi bagian dari model bisnis.<br>- NWC meningkat, belum tentu selalu positif. Bisa berarti likuiditas membaik, tetapi juga dapat menunjukkan terlalu banyak dana yang tertahan dalam persediaan atau piutang.<br>- NWC menurun, bisa menunjukkan penggunaan modal kerja yang lebih efisien, tetapi jika terlalu rendah dapat meningkatkan risiko kesulitan memenuhi kewajiban jangka pendek.',
+                'columns' => ['No', 'Bulan', 'Nilai Aset Lancar', 'Kewajiban Lancar', 'Nilai NWC'],
+                'column_format' => 'amount',
+                'rows' => $nwcRows,
+            ],
+            [
+                'id' => 'gpm',
+                'title' => 'Gross Profit Margin (GPM)',
+                'description' => 'Gross Profit Margin (GPM) adalah cara menghitung persentase laba kotor dari total pendapatan penjualan setelah dikurangi Harga Pokok Penjualan (HPP). Rasio ini dipakai untuk menilai seberapa efisien sebuah usaha dalam memakai biaya produksi.',
+                'footer_note' => '<strong>Rumus GPM = (Laba Kotor / Penjualan Bersih) * 100%</strong><br>- GPM tinggi, perusahaan mampu menghasilkan laba kotor yang relatif besar dari penjualannya. Hal ini dapat menunjukkan harga jual yang baik atau pengendalian biaya produksi yang efektif.<br>- GPM rendah, biaya produksi/HPP relatif besar dibandingkan penjualan, sehingga ruang perusahaan untuk memperoleh laba menjadi lebih kecil.<br>- GPM meningkat, biasanya menunjukkan peningkatan efisiensi produksi, kenaikan harga jual, atau penurunan HPP.<br>- GPM menurun, dapat disebabkan oleh kenaikan biaya bahan baku, biaya produksi, diskon yang lebih besar, atau tekanan harga jual.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba Kotor', 'Nilai Penjualan Bersih', 'Rasio %'],
+                'rows' => $gpmRows,
+            ],
+            [
+                'id' => 'ebitda',
+                'title' => 'EBITDA',
+                'description' => 'EBITDA (Earnings Before Interest, Taxes, Depreciation, and Amortization) adalah indikator finansial untuk mengukur profitabilitas operasional murni suatu perusahaan sebelum dikurangi beban bunga, pajak, penyusutan, dan amortisasi. Analisis ini membantu menilai kemampuan bisnis menghasilkan laba dari aktivitas inti tanpa dipengaruhi keputusan pendanaan atau akuntansi.',
+                'footer_note' => '<strong>Rumus EBITDA = Laba Operasional (EBIT) + Depresiasi + Amortisasi</strong><br>- Evaluasi Kinerja Murni: Menunjukkan seberapa efisien operasional perusahaan tanpa gangguan struktur utang atau tarif pajak.<br>- Perbandingan Industri: Memudahkan perbandingan profitabilitas antar perusahaan yang memiliki metode pendanaan atau aset berbeda.<br>- Analisis Valuasi: EBITDA sering digunakan sebagai dasar valuasi perusahaan, misalnya melalui rasio EV/EBITDA.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba (Rugi) Operasional', 'Nilai Penyusutan', 'Nilai EBITDA'],
+                'column_format' => 'amount',
+                'rows' => $ebitdaRows,
+            ],
+            [
+                'id' => 'revenue_run_rate',
+                'title' => 'Revenue Run Rate',
+                'description' => 'Revenue Run Rate (sering disebut Run Rate saja) adalah metode peramalan kinerja keuangan perusahaan untuk satu tahun penuh (12 bulan) dengan mengeksplorasi data pendapatan dari periode yang lebih pendek (seperti satu bulan atau satu kuartal). Rumus dasarnya adalah mengalikan pendapatan periode pendek dengan faktor pengali agar genap menjadi 12 bulan.',
+                'footer_note' => '<strong>1. Menggunakan Data Bulanan: Revenue Run Rate = Revenue Bulanan x 12</strong><br>2. Menggunakan Data Kuartal (3 Bulan): Revenue Run Rate = Revenue 3 Bulan x 4<br>Laporan ini menggunakan metode data bulanan (x 12).',
+                'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate'],
+                'column_format' => 'amount',
+                'rows' => $runRateRows,
+            ],
+            [
+                'id' => 'sales_growth',
+                'title' => 'Sales Growth',
+                'description' => 'Rasio yang mengukur seberapa besar kenaikan/penurunan penjualan perusahaan dari satu periode ke periode berikutnya. Termasuk dalam kategori rasio pertumbuhan (growth ratio) pada analisis laporan keuangan.',
+                'footer_note' => '<strong>Rumus Sales Growth = (Penjualan Bulan Ini - Penjualan Bulan Sebelumnya) / Penjualan Bulan Sebelumnya x 100%</strong><br>Contoh: Sales Growth = (1.000.000.000 - 800.000.000) / 800.000.000 x 100% = 25%<br><br>Positif -> penjualan naik<br>Negatif -> penjualan turun<br>Perlu dibandingkan dengan pertumbuhan laba juga, karena penjualan naik belum tentu diikuti kenaikan profit (bisa jadi margin turun).',
+                'columns' => ['No', 'Bulan', 'Penjualan Bulan Sebelumnya', 'Penjualan Bulan Ini', 'Sales Growth %'],
+                'rows' => $salesGrowthRows,
+            ],
+            [
                 'id' => 'opex_ratio',
                 'title' => 'Opex Ratio',
                 'description' => 'Opex ratio merupakan rasio untuk mengukur tingkat biaya operasional perusahaan terhadap penjualan.',
@@ -409,6 +564,14 @@ class FinancialRasioGsuReportService
                 'footer_note' => '',
                 'columns' => ['No', 'Bulan', 'Nilai Kewajiban Lancar', 'Nilai Equitas', 'Rasio %'],
                 'rows' => $derRows,
+            ],
+            [
+                'id' => 'dar',
+                'title' => 'Debt To Asset (DAR)',
+                'description' => 'Menurut Kasmir Debt to Asset Ratio juga bisa digunakan untuk mengukur seberapa besar aset perusahaan dibiayai oleh utang. Rasio ini sangat penting guna melihat solvabilitas perusahaan atau kemampuan untuk menyelesaikan segala kewajiban jangka panjang. Namun, secara garis besar nilai DAR dapat diklasifikasikan sebagai berikut: DAR < 0,5 : Artinya mayoritas aset perusahaan tersebut didanai oleh modal (equitas) perusahaan sendiri dan bukan dari pinjaman. DAR > 0,5 : Artinya mayoritas aset perusahaan berasal dari utang. DAR = 0,6-0,7 : Artinya mayoritas aset perusahaan berasal dari utang tapi masih dalam batas kewajaran.',
+                'footer_note' => 'Liabilitas sendiri dapat diartikan sebagai hutang yang mesti dilunasi pihak lain di masa datang. Keduanya, baik liabilitas maupun aset, sama-sama diambil dari nilai totalnya. Maka dapat disimpulkan aset haruslah dari hasil penjumlahan aset lancar dan aset tidak lancar. Liabilitas juga diambil dari liabilitas jangka pendek dan liabilitas jangka panjang.',
+                'columns' => ['No', 'Bulan', 'Nilai Liabilitas', 'Nilai Total Asset', 'Rasio %'],
+                'rows' => $darRows,
             ],
             [
                 'id' => 'receivable_turnover',

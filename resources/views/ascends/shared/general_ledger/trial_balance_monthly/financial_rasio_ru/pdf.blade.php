@@ -115,8 +115,6 @@
             white-space: nowrap;
         }
 
-
-
         .center {
             text-align: center;
         }

@@ -12,21 +12,36 @@ class FinancialRasioRuReportService
     private const TITLE = 'Laporan Financial Ratio';
 
     private const OPERATING_EXPENSE_EXCLUDED_500 = [
-        '500.001', '500.003', '500.018',
+        '500.001',
+        '500.003',
+        '500.018',
     ];
 
     private const OPERATING_EXPENSE_INCLUDED_500 = [
-        '500.004', '500.005', '500.006', '500.010', '500.015',
+        '500.004',
+        '500.005',
+        '500.006',
+        '500.010',
+        '500.015',
     ];
 
     private const CURRENT_ASSET_PREFIXES = [
-        '111.101', '111.102', '111.103', '111.105',
-        '111.200', '111.400',
+        '111.101',
+        '111.102',
+        '111.103',
+        '111.105',
+        '111.200',
+        '111.400',
     ];
 
     private const CURRENT_LIABILITY_PREFIXES = [
-        '211.100', '211.200', '211.300',
-        '211.400', '211.500', '212.100', '222.000',
+        '211.100',
+        '211.200',
+        '211.300',
+        '211.400',
+        '211.500',
+        '212.100',
+        '222.000',
     ];
 
     private const REVENUE_PREFIXES = ['411', '412'];
@@ -67,7 +82,7 @@ class FinancialRasioRuReportService
         return [
             'title' => self::TITLE,
             'company' => '',
-            'period_label' => 'Periode '.$periodLabel,
+            'period_label' => 'Periode ' . $periodLabel,
             'ratios' => $ratios,
             'printed_by' => '',
         ];
@@ -280,10 +295,18 @@ class FinancialRasioRuReportService
     private function buildRatios(array $monthlyData): array
     {
         $monthNames = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
-            4 => 'April', 5 => 'Mei', 6 => 'Juni',
-            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
-            10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
 
         $currentRatioRows = [];
@@ -294,6 +317,7 @@ class FinancialRasioRuReportService
         $gpmRows = [];
         $ebitdaRows = [];
         $runRateRows = [];
+        $salesGrowthRows = [];
         $opexRows = [];
         $derRows = [];
         $darRows = [];
@@ -301,6 +325,7 @@ class FinancialRasioRuReportService
         $inventoryTurnoverRows = [];
 
         $no = 0;
+        $previousPendapatan = null;
         foreach ($monthlyData as $key => $data) {
             $no++;
             $period = $data['period'];
@@ -390,6 +415,18 @@ class FinancialRasioRuReportService
                 'nilai_y' => $pendapatan * 12,
                 'rasio' => $pendapatan * 12,
             ];
+
+            $salesGrowthRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $previousPendapatan ?? 0,
+                'nilai_y' => $pendapatan,
+                'rasio' => $previousPendapatan != 0
+                    ? (($pendapatan - $previousPendapatan) / $previousPendapatan) * 100
+                    : 0,
+            ];
+
+            $previousPendapatan = $pendapatan;
 
             $opexRows[] = [
                 'no' => $no,
@@ -499,6 +536,14 @@ class FinancialRasioRuReportService
                 'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate'],
                 'column_format' => 'amount',
                 'rows' => $runRateRows,
+            ],
+            [
+                'id' => 'sales_growth',
+                'title' => 'Sales Growth',
+                'description' => 'Rasio yang mengukur seberapa besar kenaikan/penurunan penjualan perusahaan dari satu periode ke periode berikutnya. Termasuk dalam kategori rasio pertumbuhan (growth ratio) pada analisis laporan keuangan.',
+                'footer_note' => '<strong>Rumus Sales Growth = (Penjualan Bulan Ini - Penjualan Bulan Sebelumnya) / Penjualan Bulan Sebelumnya x 100%</strong><br>- Positif -> penjualan naik<br>- Negatif -> penjualan turun<br>- Perlu dibandingkan dengan pertumbuhan laba juga, karena penjualan naik belum tentu diikuti kenaikan profit (bisa jadi margin turun).',
+                'columns' => ['No', 'Bulan', 'Penjualan Bulan Sebelumnya', 'Penjualan Bulan Ini', 'Sales Growth %'],
+                'rows' => $salesGrowthRows,
             ],
             [
                 'id' => 'opex_ratio',

@@ -200,6 +200,9 @@
 
     @if (count($ratios) > 0)
         @foreach ($ratios as $index => $ratio)
+            @php
+                $columnFormat = $ratio['column_format'] ?? 'percent';
+            @endphp
             <div class="ratio-section">
                 <p class="ratio-title">{{ $ratio['title'] }}</p>
                 <p class="ratio-description">{{ $ratio['description'] }}</p>
@@ -231,7 +234,11 @@
                                     {{ fmtAmount($nilaiY) }}
                                 </td>
                                 <td class="number nowrap {{ $rasio < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtRasio($rasio) }}
+                                    @if ($columnFormat === 'amount')
+                                        {{ fmtAmount($rasio) }}
+                                    @else
+                                        {{ fmtRasio($rasio) }}
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
