@@ -82,7 +82,7 @@ class FinancialRasioRuReportService
         return [
             'title' => self::TITLE,
             'company' => '',
-            'period_label' => 'Periode ' . $periodLabel,
+            'period_label' => 'Periode '.$periodLabel,
             'ratios' => $ratios,
             'printed_by' => '',
         ];
