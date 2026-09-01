@@ -35,7 +35,7 @@ class SalesSummaryPerCustomerPerPeriodReportService
             $carbonPeriod = Carbon::createFromFormat('m-Y', $origPeriod);
             $periodMapping[$origPeriod] = $carbonPeriod->locale('id')->isoFormat('MMM-YY');
         }
-        
+
         // Use formatted periods for display
         $periods = array_values($periodMapping);
 
@@ -150,7 +150,7 @@ class SalesSummaryPerCustomerPerPeriodReportService
             'headerTitle' => self::TITLE,
             'start_date' => $startDateFormatted,
             'end_date' => $endDateFormatted,
-            'period_label' => ($startDateFormatted && $endDateFormatted) ? 'Dari ' . $startDateFormatted . ' s/d ' . $endDateFormatted : '',
+            'period_label' => ($startDateFormatted && $endDateFormatted) ? 'Dari '.$startDateFormatted.' s/d '.$endDateFormatted : '',
             'periods' => $periods,
             'customers' => $customers,
             'period_totals' => $periodTotals,
@@ -207,8 +207,8 @@ class SalesSummaryPerCustomerPerPeriodReportService
         $value = trim((string) (
             $filters[$key]
             ?? $filters[strtolower($key)]
-            ?? $filters['DateRange.' . $key]
-            ?? $filters['DateRange_' . $key]
+            ?? $filters['DateRange.'.$key]
+            ?? $filters['DateRange_'.$key]
             ?? ''
         ));
 

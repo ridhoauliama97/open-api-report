@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Services\Ascends\Shared\CustomReport\PengirimanLemariHarianReportService;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
@@ -95,7 +96,7 @@ XML;
 
     public function test_promo_lem_items_are_excluded(): void
     {
-        $service = new \App\Services\Ascends\Shared\CustomReport\PengirimanLemariHarianReportService();
+        $service = new PengirimanLemariHarianReportService;
         $reportData = $service->buildReportDataFromXml(self::SAMPLE_XML, 'Custom15.xml', [
             'StartDate' => '2026-07-01',
             'EndDate' => '2026-07-31',
@@ -118,7 +119,7 @@ XML;
 
     public function test_non_cabinet_items_are_excluded(): void
     {
-        $service = new \App\Services\Ascends\Shared\CustomReport\PengirimanLemariHarianReportService();
+        $service = new PengirimanLemariHarianReportService;
         $reportData = $service->buildReportDataFromXml(self::SAMPLE_XML, 'Custom15.xml', [
             'StartDate' => '2026-07-01',
             'EndDate' => '2026-07-31',
@@ -139,7 +140,7 @@ XML;
 
     public function test_grp_calculation_and_category_grouping(): void
     {
-        $service = new \App\Services\Ascends\Shared\CustomReport\PengirimanLemariHarianReportService();
+        $service = new PengirimanLemariHarianReportService;
         $reportData = $service->buildReportDataFromXml(self::SAMPLE_XML, 'Custom15.xml', [
             'StartDate' => '2026-07-01',
             'EndDate' => '2026-07-31',

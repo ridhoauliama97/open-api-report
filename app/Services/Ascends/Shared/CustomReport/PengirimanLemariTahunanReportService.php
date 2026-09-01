@@ -71,7 +71,7 @@ class PengirimanLemariTahunanReportService
             'headerCompany' => $company,
             'headerTitle' => self::TITLE,
             'year' => (string) $year,
-            'period_label' => $year !== '' ? 'Periode ' . $year : '',
+            'period_label' => $year !== '' ? 'Periode '.$year : '',
             'months' => self::MONTH_NAMES,
             'categories' => $categories,
         ];
@@ -186,7 +186,7 @@ class PengirimanLemariTahunanReportService
     {
         return array_values(array_filter(
             $rows,
-            fn(array $row): bool => $this->determineGab((string) ($row['ItemName'] ?? '')) === 'TAMPIL'
+            fn (array $row): bool => $this->determineGab((string) ($row['ItemName'] ?? '')) === 'TAMPIL'
         ));
     }
 
@@ -205,7 +205,7 @@ class PengirimanLemariTahunanReportService
 
     private function formatItemName(string $itemName): string
     {
-        return ' ' . $itemName;
+        return ' '.$itemName;
     }
 
     private function buildCategories(array $rows, string $year): array

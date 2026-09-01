@@ -63,7 +63,7 @@ class PengirimanLemariHarianReportService
             'start_date' => $startDateFormatted,
             'end_date' => $endDateFormatted,
             'period_label' => ($startDateFormatted && $endDateFormatted)
-                ? 'Dari ' . $startDateFormatted . ' s/d ' . $endDateFormatted
+                ? 'Dari '.$startDateFormatted.' s/d '.$endDateFormatted
                 : '',
             'day_numbers' => $dayNumbers,
             'categories' => $categories,
@@ -116,8 +116,8 @@ class PengirimanLemariHarianReportService
         $value = trim((string) (
             $filters[$key]
             ?? $filters[strtolower($key)]
-            ?? $filters['DateRange.' . $key]
-            ?? $filters['DateRange_' . $key]
+            ?? $filters['DateRange.'.$key]
+            ?? $filters['DateRange_'.$key]
             ?? ''
         ));
 
@@ -140,7 +140,7 @@ class PengirimanLemariHarianReportService
 
         return array_values(array_filter(
             $rows,
-            fn(array $row): bool => $this->isWithinDateRange($row, $startDate, $endDate)
+            fn (array $row): bool => $this->isWithinDateRange($row, $startDate, $endDate)
         ));
     }
 
@@ -207,7 +207,7 @@ class PengirimanLemariHarianReportService
     {
         return array_values(array_filter(
             $rows,
-            fn(array $row): bool => $this->determineKeterangan((string) ($row['ItemName'] ?? '')) === 'TAMPIL'
+            fn (array $row): bool => $this->determineKeterangan((string) ($row['ItemName'] ?? '')) === 'TAMPIL'
         ));
     }
 
@@ -231,7 +231,7 @@ class PengirimanLemariHarianReportService
 
     private function formatItemName(string $itemName): string
     {
-        return ' ' . $itemName;
+        return ' '.$itemName;
     }
 
     private function buildCategories(array $rows, array $dayNumbers): array
@@ -345,7 +345,7 @@ class PengirimanLemariHarianReportService
             $itemMap[$key]['total_qty'] += $qty;
         }
 
-        usort($itemMap, fn($a, $b) => strcasecmp($a['item_name'], $b['item_name']));
+        usort($itemMap, fn ($a, $b) => strcasecmp($a['item_name'], $b['item_name']));
 
         return $itemMap;
     }

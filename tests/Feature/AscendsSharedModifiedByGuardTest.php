@@ -37,7 +37,7 @@ class AscendsSharedModifiedByGuardTest extends TestCase
 
     private function xmlWithEmptyModifiedBy(): string
     {
-        return <<<XML
+        return <<<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <NewDataSet>
     <Attendance>
@@ -54,7 +54,7 @@ XML;
 
     private function xmlWithPopulatedModifiedBy(): string
     {
-        return <<<XML
+        return <<<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <NewDataSet>
     <Attendance>

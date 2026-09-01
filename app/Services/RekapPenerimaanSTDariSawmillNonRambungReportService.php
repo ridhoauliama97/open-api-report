@@ -30,7 +30,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
     {
         $rows = $this->runProcedureQuery($startDate, $endDate);
 
-        return array_values(array_map(static fn(object $row): array => (array) $row, $rows));
+        return array_values(array_map(static fn (object $row): array => (array) $row, $rows));
     }
 
     /**
@@ -63,7 +63,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         $totalTblStSource = $this->resolveTotalTblStColumn($columns);
 
         $schema = self::OUTPUT_SCHEMA;
-        $schemaKeys = array_values(array_map(static fn(array $spec): string => (string) ($spec['key'] ?? ''), $schema));
+        $schemaKeys = array_values(array_map(static fn (array $spec): string => (string) ($spec['key'] ?? ''), $schema));
 
         /** @var array<string, array<int, array{sort_date: string, row: array<string, mixed}}>> $rowsBySupplier */
         $rowsBySupplier = [];
@@ -217,7 +217,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
                 return strcmp($da, $db);
             });
 
-            $rowsForSupplier = array_values(array_map(static fn(array $item): array => (array) ($item['row'] ?? []), $items));
+            $rowsForSupplier = array_values(array_map(static fn (array $item): array => (array) ($item['row'] ?? []), $items));
 
             $diaAvg = $areaSum > 0.0000001 && $pcsKbSum > 0.0000001 ? sqrt($areaSum / $pcsKbSum) : null;
             $tblAvg = $totalTblStSum > 0.0000001 && $pcsStSum > 0.0000001 ? ($totalTblStSum / $pcsStSum) : null;
@@ -959,7 +959,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
 
         $inch = (int) $m[1];
 
-        return $inch > 0 ? ($inch . '"') : null;
+        return $inch > 0 ? ($inch.'"') : null;
     }
 
     /**
@@ -1008,7 +1008,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         // In some datasets the SP returns "coded" values (e.g. 11 == 2", 12 == 3").
         $inch = $n >= 10 ? ($n - 9) : $n;
 
-        return $inch > 0 ? ($inch . '"') : '';
+        return $inch > 0 ? ($inch.'"') : '';
     }
 
     /**
@@ -1034,7 +1034,7 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan rekap penerimaan ST dari sawmill (Non Rambung) dikonfigurasi untuk SQL Server. '
-                    . 'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                    .'Set REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
