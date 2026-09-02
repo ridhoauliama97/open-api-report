@@ -355,16 +355,14 @@ class FinancialRasioUcReportService
                 'rasio' => $aktivaLancar - $hutangLancar,
             ];
 
-            $labaKotor = $pendapatan - $data['hpp'];
-            $labaOperasional = $labaKotor - $data['beban_operasional'];
             $penyusutan = $data['penyusutan'];
 
             $ebitdaRows[] = [
                 'no' => $no,
                 'bulan' => $bulan,
-                'nilai_x' => $labaOperasional,
+                'nilai_x' => $labaBersih,
                 'nilai_y' => $penyusutan,
-                'rasio' => $labaOperasional + $penyusutan,
+                'rasio' => $labaBersih + $penyusutan,
             ];
 
             $runRateRows[] = [
