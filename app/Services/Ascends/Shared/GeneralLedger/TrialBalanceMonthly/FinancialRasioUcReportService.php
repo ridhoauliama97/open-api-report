@@ -21,8 +21,6 @@ class FinancialRasioUcReportService
         '211.400', '211.500', '212.100', '222.000',
     ];
 
-    private const FIXED_ASSET_CATEGORY = 'FixedAsset';
-
     private const REVENUE_PREFIX = '421';
 
     private const EXPENSE_PREFIX = '721';
@@ -37,7 +35,13 @@ class FinancialRasioUcReportService
 
     private const EQUITY_PREFIXES = ['311', '312', '313', '314'];
 
-    private const RECEIVABLE_PREFIXES = ['111.200', '112.100'];
+    private const RECEIVABLE_CODES = [
+        '111.200.101', '111.200.102', '111.200.103',
+        '112.100.111', '112.100.112', '112.100.121',
+        '112.100.122', '112.100.131', '112.100.132',
+    ];
+
+    private const ROA_FIXED_ASSET_PREFIXES = ['121.101', '121.102', '131.100'];
 
     private const OPERATING_EXPENSE_EXCLUDED_CODES = [
         '721.000.201A', '721.000.201B', '721.000.201C', '721.000.201D',
@@ -176,6 +180,7 @@ class FinancialRasioUcReportService
                 'liabilitas' => 0.0,
                 'equitas' => 0.0,
                 'piutang' => 0.0,
+                'piutang_awal' => 0.0,
                 'period' => $period,
             ];
         }
@@ -253,8 +258,11 @@ class FinancialRasioUcReportService
                 $monthly[$key]['other_expense'] += $ending;
             }
 
-            if ($category === self::FIXED_ASSET_CATEGORY) {
-                $monthly[$key]['aktiva_tetap'] += $ending;
+            foreach (self::ROA_FIXED_ASSET_PREFIXES as $fixedPrefix) {
+                if (substr($accountCode, 0, strlen($fixedPrefix)) === $fixedPrefix) {
+                    $monthly[$key]['aktiva_tetap'] += $ending;
+                    break;
+                }
             }
 
             if (in_array($prefix3, self::ASSET_PREFIXES, true)) {
@@ -269,11 +277,9 @@ class FinancialRasioUcReportService
                 $monthly[$key]['equitas'] += $ending;
             }
 
-            foreach (self::RECEIVABLE_PREFIXES as $receivablePrefix) {
-                if (substr($accountCode, 0, strlen($receivablePrefix)) === $receivablePrefix) {
-                    $monthly[$key]['piutang'] += $ending;
-                    break;
-                }
+            if (in_array($accountCode, self::RECEIVABLE_CODES, true)) {
+                $monthly[$key]['piutang'] += $ending;
+                $monthly[$key]['piutang_awal'] += (float) ($row['Beginning'] ?? 0);
             }
         }
 
@@ -313,11 +319,9 @@ class FinancialRasioUcReportService
             $labaBersih = $pendapatan + $data['other_income'] - $data['total_expense'] - $data['other_expense'];
             $operatingExpense = $data['operating_expense'];
             $aktivaTetap = $data['aktiva_tetap'];
-            $totalAsset = $data['total_asset'];
             $liabilitas = $data['liabilitas'];
             $equitas = $data['equitas'];
             $piutang = $data['piutang'];
-            $equityCalc = $totalAsset - $liabilitas;
 
             $currentRatioRows[] = [
                 'no' => $no,
@@ -383,24 +387,26 @@ class FinancialRasioUcReportService
                 'no' => $no,
                 'bulan' => $bulan,
                 'nilai_x' => $liabilitas,
-                'nilai_y' => $totalAsset,
-                'rasio' => $totalAsset != 0 ? ($liabilitas / $totalAsset) * 100 : 0,
+                'nilai_y' => $liabilitas + $equitas,
+                'rasio' => ($liabilitas + $equitas) != 0 ? ($liabilitas / ($liabilitas + $equitas)) * 100 : 0,
             ];
 
             $derRows[] = [
                 'no' => $no,
                 'bulan' => $bulan,
                 'nilai_x' => $liabilitas,
-                'nilai_y' => $equityCalc,
-                'rasio' => $equityCalc != 0 ? ($liabilitas / $equityCalc) * 100 : 0,
+                'nilai_y' => $equitas,
+                'rasio' => $equitas != 0 ? ($liabilitas / $equitas) * 100 : 0,
             ];
+
+            $piutangRataRata = ($data['piutang_awal'] + $piutang) / 2;
 
             $receivableTurnoverRows[] = [
                 'no' => $no,
                 'bulan' => $bulan,
                 'nilai_x' => $pendapatan,
-                'nilai_y' => $piutang,
-                'rasio' => $piutang != 0 ? ($pendapatan / $piutang) * 100 : 0,
+                'nilai_y' => $piutangRataRata,
+                'rasio' => $piutangRataRata != 0 ? ($pendapatan / $piutangRataRata) * 100 : 0,
             ];
         }
 
