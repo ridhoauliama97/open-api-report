@@ -45,6 +45,14 @@ class FinancialRasioUcReportService
         '721.000.268', '721.000.269', '721.000.270',
     ];
 
+    private const HPP_PREFIXES = ['642', '516'];
+
+    private const PAJAK_EXPENSE_CODE = '721.000.171';
+
+    private const DEPRECIATION_EXPENSE_CODES = [
+        '721.000.201A', '721.000.201B', '721.000.201C', '721.000.201D',
+    ];
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $allRows = $this->parseXml($xmlContents, $sourceLabel);
@@ -58,7 +66,10 @@ class FinancialRasioUcReportService
 
         $ratios = $this->buildRatios($monthlyData);
 
-        $periodLabel = now()->locale('id')->isoFormat('MMM-YY');
+        $maxDate = end($periods);
+        $periodLabel = $maxDate !== false
+            ? (clone $maxDate)->locale('id')->isoFormat('MMM-YY')
+            : '';
 
         return [
             'title' => self::TITLE,
@@ -153,6 +164,9 @@ class FinancialRasioUcReportService
                 'hutang_lancar' => 0.0,
                 'pendapatan' => 0.0,
                 'other_income' => 0.0,
+                'hpp' => 0.0,
+                'beban_operasional' => 0.0,
+                'penyusutan' => 0.0,
                 'total_expense' => 0.0,
                 'other_expense' => 0.0,
                 'operating_expense' => 0.0,
@@ -205,8 +219,16 @@ class FinancialRasioUcReportService
                 $monthly[$key]['other_income'] += $ending;
             }
 
+            if (in_array($prefix3, self::HPP_PREFIXES, true)) {
+                $monthly[$key]['hpp'] += $ending;
+            }
+
             if ($prefix3 === self::EXPENSE_PREFIX) {
                 $monthly[$key]['total_expense'] += $ending;
+
+                if ($accountCode !== self::PAJAK_EXPENSE_CODE) {
+                    $monthly[$key]['beban_operasional'] += $ending;
+                }
 
                 $isExcluded = false;
                 foreach (self::OPERATING_EXPENSE_EXCLUDED_CODES as $excludedCode) {
@@ -221,6 +243,10 @@ class FinancialRasioUcReportService
                 } else {
                     $monthly[$key]['operating_expense'] += $ending;
                 }
+            }
+
+            if (in_array($accountCode, self::DEPRECIATION_EXPENSE_CODES, true)) {
+                $monthly[$key]['penyusutan'] += $ending;
             }
 
             if ($prefix3 === self::OTHER_EXPENSE_PREFIX) {
@@ -266,6 +292,9 @@ class FinancialRasioUcReportService
         $currentRatioRows = [];
         $rosRows = [];
         $roaRows = [];
+        $nwcRows = [];
+        $ebitdaRows = [];
+        $runRateRows = [];
         $opexRows = [];
         $darRows = [];
         $derRows = [];
@@ -312,6 +341,34 @@ class FinancialRasioUcReportService
                 'nilai_x' => $labaBersih,
                 'nilai_y' => $aktivaTetap,
                 'rasio' => $aktivaTetap != 0 ? ($labaBersih / $aktivaTetap) * 100 : 0,
+            ];
+
+            $nwcRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $aktivaLancar,
+                'nilai_y' => $hutangLancar,
+                'rasio' => $aktivaLancar - $hutangLancar,
+            ];
+
+            $labaKotor = $pendapatan - $data['hpp'];
+            $labaOperasional = $labaKotor - $data['beban_operasional'];
+            $penyusutan = $data['penyusutan'];
+
+            $ebitdaRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $labaOperasional,
+                'nilai_y' => $penyusutan,
+                'rasio' => $labaOperasional + $penyusutan,
+            ];
+
+            $runRateRows[] = [
+                'no' => $no,
+                'bulan' => $bulan,
+                'nilai_x' => $pendapatan,
+                'nilai_y' => $pendapatan * 12,
+                'rasio' => $pendapatan * 12,
             ];
 
             $opexRows[] = [
@@ -377,6 +434,33 @@ class FinancialRasioUcReportService
                 'col_x_label' => 'Nilai Laba Bersih',
                 'col_y_label' => 'Nilai Aktiva Tetap',
                 'rows' => $roaRows,
+            ],
+            [
+                'id' => 'nwc',
+                'title' => 'Net Working Capital (NWC)',
+                'description' => 'Net Working Capital (NWC) atau modal kerja bersih adalah selisih antara aset lancar (kas, piutang, persediaan) dan kewajiban lancar (utang usaha, beban yang masih harus dibayar). Analisis ini mengukur tingkat likuiditas jangka pendek, efisiensi operasional, dan kesehatan finansial perusahaan untuk memenuhi kewajiban yang jatuh tempo dalam waktu satu tahun.',
+                'footer_note' => '<strong>Rumus NWC = Aset Lancar - Kewajiban Lancar</strong><br>- NWC positif, aset lancar lebih besar daripada kewajiban lancar. Secara umum, perusahaan memiliki ruang yang lebih baik untuk memenuhi kewajiban jangka pendek.<br>- NWC negatif, kewajiban lancar lebih besar daripada aset lancar. Ini dapat menunjukkan tekanan likuiditas, meskipun pada beberapa bisnis tertentu kondisi ini bisa menjadi bagian dari model bisnis.<br>- NWC meningkat, belum tentu selalu positif. Bisa berarti likuiditas membaik, tetapi juga dapat menunjukkan terlalu banyak dana yang tertahan dalam persediaan atau piutang.<br>- NWC menurun, bisa menunjukkan penggunaan modal kerja yang lebih efisien, tetapi jika terlalu rendah dapat meningkatkan risiko kesulitan memenuhi kewajiban jangka pendek.',
+                'columns' => ['No', 'Bulan', 'Nilai Aset Lancar', 'Kewajiban Lancar', 'Nilai NWC'],
+                'column_format' => 'amount',
+                'rows' => $nwcRows,
+            ],
+            [
+                'id' => 'ebitda',
+                'title' => 'EBITDA',
+                'description' => 'EBITDA (Earnings Before Interest, Taxes, Depreciation, and Amortization) adalah indikator finansial untuk mengukur profitabilitas operasional murni suatu perusahaan sebelum dikurangi beban bunga, pajak, penyusutan, dan amortisasi. Analisis ini membantu menilai kemampuan bisnis menghasilkan laba dari aktivitas inti tanpa dipengaruhi keputusan pendanaan atau akuntansi.',
+                'footer_note' => '<strong>Rumus EBITDA = Laba Operasional (EBIT) + Depresiasi + Amortisasi</strong><br>- Evaluasi Kinerja Murni: Menunjukkan seberapa efisien operasional perusahaan tanpa gangguan struktur utang atau tarif pajak.<br>- Perbandingan Industri: Memudahkan perbandingan profitabilitas antar perusahaan yang memiliki metode pendanaan atau aset berbeda.<br>- Analisis Valuasi: EBITDA sering digunakan sebagai dasar valuasi perusahaan, misalnya melalui rasio EV/EBITDA.',
+                'columns' => ['No', 'Bulan', 'Nilai Laba (Rugi) Operasional', 'Nilai Penyusutan', 'Nilai EBITDA'],
+                'column_format' => 'amount',
+                'rows' => $ebitdaRows,
+            ],
+            [
+                'id' => 'revenue_run_rate',
+                'title' => 'Revenue Run Rate',
+                'description' => 'Revenue Run Rate (sering disebut Run Rate saja) adalah metode peramalan kinerja keuangan perusahaan untuk satu tahun penuh (12 bulan) dengan mengeksplorasi data pendapatan dari periode yang lebih pendek (seperti satu bulan atau satu kuartal). Rumus dasarnya adalah mengalikan pendapatan periode pendek dengan faktor pengali agar genap menjadi 12 bulan.',
+                'footer_note' => '<strong>1. Menggunakan Data Bulanan: Revenue Run Rate = Revenue Bulanan x 12</strong><br>2. Menggunakan Data Kuartal (3 Bulan): Revenue Run Rate = Revenue 3 Bulan x 4<br>Laporan ini menggunakan metode data bulanan (x 12).',
+                'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate'],
+                'column_format' => 'amount',
+                'rows' => $runRateRows,
             ],
             [
                 'id' => 'opex_ratio',
