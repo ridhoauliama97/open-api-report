@@ -77,7 +77,10 @@ class FinancialRasioRuReportService
 
         $ratios = $this->buildRatios($monthlyData);
 
-        $periodLabel = now()->locale('id')->isoFormat('MMM-YY');
+        $maxDate = end($periods);
+        $periodLabel = $maxDate !== false
+            ? (clone $maxDate)->locale('id')->isoFormat('MMM-YY')
+            : '';
 
         return [
             'title' => self::TITLE,
