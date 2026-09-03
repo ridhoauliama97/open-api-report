@@ -91,7 +91,7 @@
         }
 
         .cost-table .color-swatch {
-            display: attachment-block;
+            display: inline-block;
             width: 16px;
             height: 14px;
             margin-right: 6px;

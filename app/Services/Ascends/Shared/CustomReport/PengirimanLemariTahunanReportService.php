@@ -84,7 +84,7 @@ class PengirimanLemariTahunanReportService
         }
 
         $reader = new XMLReader;
-        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA)) {
+        if (! @$reader->XML($xmlContents, null, LIBXML_NOCDATA | LIBXML_NONET)) {
             throw new RuntimeException("File XML tidak valid ({$sourceLabel}).");
         }
 
