@@ -171,7 +171,6 @@ class FinancialRasioGsuReportService
                 'liabilitas' => 0.0,
                 'equitas' => 0.0,
                 'piutang' => 0.0,
-                'piutang_awal' => 0.0,
                 'persediaan' => 0.0,
                 'period' => $period,
             ];
@@ -231,18 +230,14 @@ class FinancialRasioGsuReportService
                 $monthly[$key]['hpp'] += $ending;
             }
 
-            if ($prefix3 === '514' || $prefix3 === '642') {
-                $monthly[$key]['operating_expense'] += $ending;
-            }
-
-            if ($prefix3 === '711') {
+            if ($prefix3 === '711' || $prefix3 === '712') {
                 $monthly[$key]['beban_penjualan'] += $ending;
                 $monthly[$key]['operating_expense'] += $ending;
             }
 
             if ($prefix3 === '721') {
                 $monthly[$key]['beban_adm'] += $ending;
-                if ($accountCode !== '721.000.201') {
+                if ($accountCode !== '721.000.213' && $accountCode !== '721.000.171') {
                     $monthly[$key]['operating_expense'] += $ending;
                 }
             }
@@ -253,7 +248,6 @@ class FinancialRasioGsuReportService
 
             if ($prefix3 === '900') {
                 $monthly[$key]['beban_lain'] += $ending;
-                $monthly[$key]['operating_expense'] += $ending;
             }
 
             if ($prefix7 === '500.001') {
@@ -281,7 +275,6 @@ class FinancialRasioGsuReportService
 
             if (substr($accountCode, 0, strlen(self::RECEIVABLE_PREFIX)) === self::RECEIVABLE_PREFIX) {
                 $monthly[$key]['piutang'] += $ending;
-                $monthly[$key]['piutang_awal'] += (float) ($row['Beginning'] ?? 0);
             }
 
             if (substr($accountCode, 0, strlen(self::INVENTORY_PREFIX)) === self::INVENTORY_PREFIX) {
@@ -388,7 +381,7 @@ class FinancialRasioGsuReportService
                 'rasio' => $aktivaLancar - $hutangLancar,
             ];
 
-            $labaKotor = $pendapatan - $data['hpp'] + $data['potongan'];
+            $labaKotor = $pendapatan - $data['hpp'] - $data['potongan'];
 
             $gpmRows[] = [
                 'no' => $no,
@@ -454,14 +447,12 @@ class FinancialRasioGsuReportService
                 'rasio' => $totalAsset != 0 ? ($liabilitas / $totalAsset) * 100 : 0,
             ];
 
-            $piutangRataRata = ($data['piutang_awal'] + $piutang) / 2;
-
             $receivableTurnoverRows[] = [
                 'no' => $no,
                 'bulan' => $bulan,
                 'nilai_x' => $pendapatan,
-                'nilai_y' => $piutangRataRata,
-                'rasio' => $piutangRataRata != 0 ? ($pendapatan / $piutangRataRata) * 100 : 0,
+                'nilai_y' => $piutang,
+                'rasio' => $piutang != 0 ? ($pendapatan / $piutang) * 100 : 0,
             ];
 
             $inventoryTurnoverRows[] = [
