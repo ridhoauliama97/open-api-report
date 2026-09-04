@@ -29,12 +29,23 @@ class SalesSummaryPerCustomerPerPeriodReportService
             throw new RuntimeException('Tidak ada periode data ditemukan pada XML.');
         }
 
-        // Create mapping: original (01-2026) -> formatted (Jan-26)
+        // Create mapping: original (01-2026) -> formatted (Jan-26).
+        // Only keep periods that parse to a valid month; malformed values are dropped
+        // so $originalPeriods and $periodMapping always stay in sync.
         $periodMapping = [];
         foreach ($originalPeriods as $origPeriod) {
-            $carbonPeriod = Carbon::createFromFormat('m-Y', $origPeriod);
+            try {
+                $carbonPeriod = Carbon::createFromFormat('m-Y', $origPeriod);
+            } catch (Throwable) {
+                $carbonPeriod = false;
+            }
+            if ($carbonPeriod === false) {
+                continue;
+            }
             $periodMapping[$origPeriod] = $carbonPeriod->locale('id')->isoFormat('MMM-YY');
         }
+
+        $originalPeriods = array_keys($periodMapping);
 
         // Use formatted periods for display
         $periods = array_values($periodMapping);

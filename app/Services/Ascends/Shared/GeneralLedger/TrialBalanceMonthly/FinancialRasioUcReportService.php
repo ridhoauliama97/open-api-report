@@ -118,6 +118,7 @@ class FinancialRasioUcReportService
             }
 
             if (($row['AccountCode1'] ?? '') !== '') {
+                $row['_period_key'] = $this->periodKey((string) ($row['PeriodDate'] ?? ''));
                 $rows[] = $row;
             }
         }
@@ -136,20 +137,34 @@ class FinancialRasioUcReportService
         return str_replace('_x002F_', '/', $key);
     }
 
+    private function periodKey(string $dateStr): string
+    {
+        if (trim($dateStr) === '') {
+            return '';
+        }
+
+        try {
+            return Carbon::parse($dateStr)->startOfMonth()->format('Y-m');
+        } catch (Throwable) {
+            return '';
+        }
+    }
+
     private function extractPeriods(array $rows): array
     {
         $periodSet = [];
         foreach ($rows as $row) {
-            $dateStr = (string) ($row['PeriodDate'] ?? '');
-            if ($dateStr === '') {
+            $key = (string) ($row['_period_key'] ?? '');
+            if ($key === '') {
                 continue;
             }
-            try {
-                $date = Carbon::parse($dateStr)->startOfMonth();
-                $key = $date->format('Y-m');
-                $periodSet[$key] = $date;
-            } catch (Throwable) {
+
+            $date = Carbon::createFromFormat('!Y-m', $key);
+            if ($date === false) {
+                continue;
             }
+
+            $periodSet[$key] = $date->startOfMonth();
         }
 
         ksort($periodSet);
@@ -186,18 +201,8 @@ class FinancialRasioUcReportService
         }
 
         foreach ($rows as $row) {
-            $dateStr = (string) ($row['PeriodDate'] ?? '');
-            if ($dateStr === '') {
-                continue;
-            }
-            try {
-                $date = Carbon::parse($dateStr)->startOfMonth();
-                $key = $date->format('Y-m');
-            } catch (Throwable) {
-                continue;
-            }
-
-            if (! isset($monthly[$key])) {
+            $key = (string) ($row['_period_key'] ?? '');
+            if ($key === '' || ! isset($monthly[$key])) {
                 continue;
             }
 

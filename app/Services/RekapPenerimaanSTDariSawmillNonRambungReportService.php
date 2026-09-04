@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -967,21 +968,27 @@ class RekapPenerimaanSTDariSawmillNonRambungReportService
      */
     private function loadPotongMapping(): array
     {
-        try {
-            $configKey = 'reports.rekap_penerimaan_st_dari_sawmill_non_rambung';
-            $connectionName = config("{$configKey}.database_connection");
-            $rows = DB::connection($connectionName ?: null)
-                ->select('SELECT IdPengukuran, GolPengukuran FROM MstGolPengukuran');
+        return Cache::remember(
+            'rekap_penerimaan_st:potong_mapping',
+            now()->addHours(24),
+            function (): array {
+                try {
+                    $configKey = 'reports.rekap_penerimaan_st_dari_sawmill_non_rambung';
+                    $connectionName = config("{$configKey}.database_connection");
+                    $rows = DB::connection($connectionName ?: null)
+                        ->select('SELECT IdPengukuran, GolPengukuran FROM MstGolPengukuran');
 
-            $map = [];
-            foreach ($rows as $row) {
-                $map[(int) $row->IdPengukuran] = (string) ($row->GolPengukuran ?? '');
+                    $map = [];
+                    foreach ($rows as $row) {
+                        $map[(int) $row->IdPengukuran] = (string) ($row->GolPengukuran ?? '');
+                    }
+
+                    return $map;
+                } catch (\Throwable) {
+                    return [];
+                }
             }
-
-            return $map;
-        } catch (\Throwable) {
-            return [];
-        }
+        );
     }
 
     private function formatPotong(mixed $value): string
