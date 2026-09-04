@@ -163,6 +163,7 @@ class FinancialRasioGsuReportService
                 'hpp' => 0.0,
                 'beban_penjualan' => 0.0,
                 'beban_adm' => 0.0,
+                'beban_adm_nonoperasional' => 0.0,
                 'beban_lain' => 0.0,
                 'operating_expense' => 0.0,
                 'total_asset' => 0.0,
@@ -237,6 +238,9 @@ class FinancialRasioGsuReportService
 
             if ($prefix3 === '721') {
                 $monthly[$key]['beban_adm'] += $ending;
+                if ($accountCode === '721.000.171') {
+                    $monthly[$key]['beban_adm_nonoperasional'] += $ending;
+                }
                 if ($accountCode !== '721.000.213' && $accountCode !== '721.000.171') {
                     $monthly[$key]['operating_expense'] += $ending;
                 }
@@ -396,7 +400,7 @@ class FinancialRasioGsuReportService
             ];
 
             $penyusutan = $data['penyusutan'];
-            $labaOperasional = $labaKotor - $data['beban_penjualan'] - $data['beban_adm'];
+            $labaOperasional = $labaKotor - $data['beban_penjualan'] - $data['beban_adm'] + $data['beban_adm_nonoperasional'];
             $ebitda = $labaOperasional + $penyusutan;
 
             $ebitdaRows[] = [
