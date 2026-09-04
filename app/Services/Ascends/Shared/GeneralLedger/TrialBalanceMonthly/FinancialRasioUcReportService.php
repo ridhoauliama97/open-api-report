@@ -264,7 +264,7 @@ class FinancialRasioUcReportService
             }
 
             foreach (self::ROA_FIXED_ASSET_PREFIXES as $fixedPrefix) {
-                if (substr($accountCode, 0, strlen($fixedPrefix)) === $fixedPrefix) {
+                if (str_starts_with($accountCode, $fixedPrefix)) {
                     $monthly[$key]['aktiva_tetap'] += $ending;
                     break;
                 }

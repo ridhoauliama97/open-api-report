@@ -135,7 +135,6 @@ class PdfGenerator
         $orientation = $this->resolveOrientation($data);
         $format = $this->resolveFormat($data);
         $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
-        // $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
         $defaultFont = (string) ($data['pdf_default_font'] ?? 'Noto Serif');
 
         $mpdf = new Mpdf([
@@ -143,7 +142,6 @@ class PdfGenerator
             'format' => $format,
             'orientation' => $orientation,
             'simpleTables' => $simpleTables,
-            // 'packTableData' => $packTableData,
             'default_font' => $defaultFont,
             'autoScriptToLang' => false,
             'autoLangToFont' => false,
@@ -284,7 +282,6 @@ class PdfGenerator
         $orientation = $this->resolveOrientation($data);
         $format = $this->resolveFormat($data);
         $simpleTables = filter_var($data['pdf_simple_tables'] ?? true, FILTER_VALIDATE_BOOL);
-        // $packTableData = filter_var($data['pdf_pack_table_data'] ?? true, FILTER_VALIDATE_BOOL);
         $defaultFont = (string) ($data['pdf_default_font'] ?? 'dejavusans');
 
         $mpdf = new Mpdf([
@@ -292,7 +289,6 @@ class PdfGenerator
             'format' => $format,
             'orientation' => $orientation,
             'simpleTables' => $simpleTables,
-            // 'packTableData' => $packTableData,
             'default_font' => $defaultFont,
             'autoScriptToLang' => false,
             'autoLangToFont' => false,

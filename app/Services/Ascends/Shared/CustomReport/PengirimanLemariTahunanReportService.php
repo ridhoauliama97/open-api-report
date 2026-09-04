@@ -327,8 +327,9 @@ class PengirimanLemariTahunanReportService
         }
 
         uasort($itemMap, function ($a, $b) {
-            if ($b['total_qty'] <=> $a['total_qty']) {
-                return $b['total_qty'] <=> $a['total_qty'];
+            $cmp = $b['total_qty'] <=> $a['total_qty'];
+            if ($cmp !== 0) {
+                return $cmp;
             }
 
             return strcasecmp($a['item_name'], $b['item_name']);
