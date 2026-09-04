@@ -255,7 +255,11 @@ class FinancialRasioGsuReportService
             }
 
             if (in_array($prefix3, self::ASSET_PREFIXES, true)) {
-                $monthly[$key]['total_asset'] += $ending;
+                if ($prefix3 === '131') {
+                    $monthly[$key]['total_asset'] -= $ending;
+                } else {
+                    $monthly[$key]['total_asset'] += $ending;
+                }
             }
 
             if ($prefix3 === '121') {
@@ -381,7 +385,7 @@ class FinancialRasioGsuReportService
                 'rasio' => $aktivaLancar - $hutangLancar,
             ];
 
-            $labaKotor = $pendapatan - $data['hpp'] - $data['potongan'];
+            $labaKotor = $pendapatan - $data['hpp'] - $data['potongan'] - $data['potongan_penjualan'] - $data['retur_penjualan'];
 
             $gpmRows[] = [
                 'no' => $no,
