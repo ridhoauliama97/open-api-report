@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -103,10 +102,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
 
         $mainColumns = array_keys($rowsData[0] ?? []);
         $subColumns = array_keys($subRowsData[0] ?? []);
@@ -257,8 +256,7 @@
                             }
                         @endphp
                         @if ($isNumeric)
-                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell"
-                                @if ($isSaldoAkhirColumn($column)) style="font-weight: bold;" @endif>
+                            <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell" @if ($isSaldoAkhirColumn($column)) style="font-weight: bold;" @endif>
                                 {{ $fmt($floatValue ?? 0.0, true) }}
                             </td>
                         @else
@@ -319,13 +317,11 @@
                                 }
                             @endphp
                             @if ($isNumeric)
-                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell"
-                                    @if ($isSaldoAkhirColumn($column)) style="font-weight: bold;" @endif>
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell" @if ($isSaldoAkhirColumn($column)) style="font-weight: bold;" @endif>
                                     {{ $fmt($floatValue ?? 0.0, true) }}
                                 </td>
                             @else
-                                <td
-                                    class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
+                                <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ (string) $value }}
                                 </td>
                             @endif

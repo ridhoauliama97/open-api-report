@@ -86,7 +86,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -103,7 +102,8 @@
             border-top: 1px solid #000;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
+        ;
     </style>
 </head>
 

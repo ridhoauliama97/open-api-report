@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -163,7 +162,8 @@
                         <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                             <td class="center data-cell" style="{{ $dataCellStyle }}">{{ $loop->iteration }}</td>
                             <td class="data-cell" style="{{ $dataCellStyle }}">
-                                {{ (string) ($supplier['supplier'] ?? '') }}</td>
+                                {{ (string) ($supplier['supplier'] ?? '') }}
+                            </td>
                             <td class="center data-cell" style="{{ $dataCellStyle }}">
                                 {{ (int) ($supplier['trucks'] ?? 0) }}
                             </td>
@@ -174,14 +174,18 @@
                                         : ['ton' => 0.0, 'ratio' => 0.0];
                                 @endphp
                                 <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                    {{ $fmtKg((float) ($group['ton'] ?? 0.0)) }}</td>
+                                    {{ $fmtKg((float) ($group['ton'] ?? 0.0)) }}
+                                </td>
                                 <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                    {{ $fmtRatio((float) ($group['ratio'] ?? 0.0)) }}</td>
+                                    {{ $fmtRatio((float) ($group['ratio'] ?? 0.0)) }}
+                                </td>
                             @endforeach
                             <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
-                                {{ $fmtKg((float) ($supplier['total_ton'] ?? 0.0)) }}</td>
+                                {{ $fmtKg((float) ($supplier['total_ton'] ?? 0.0)) }}
+                            </td>
                             <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
-                                {{ $fmtRatio((float) ($supplier['ratio'] ?? 0.0)) }}</td>
+                                {{ $fmtRatio((float) ($supplier['ratio'] ?? 0.0)) }}
+                            </td>
                         </tr>
                     @empty
                         <tr>
@@ -218,19 +222,23 @@
             <p class="notes-line">{{ $start }} s/d {{ $end }} =
                 {{ (int) ($summary['working_days'] ?? 0) }} hari,
                 jumlah KB masuk per hari = {{ $fmtKg((float) ($summary['daily_ton'] ?? 0.0)) }} kg, dalam 25 hari
-                estimasi masuk = {{ $fmtKg((float) ($summary['estimated_25_days_ton'] ?? 0.0)) }} kg.</p>
+                estimasi masuk = {{ $fmtKg((float) ($summary['estimated_25_days_ton'] ?? 0.0)) }} kg.
+            </p>
 
             <p class="notes-line"><strong>Asumsi:</strong></p>
             <ul class="notes-list">
                 <li>Kapasitas racip 1 meja per hari =
                     {{ $fmtKg((float) ($assumptions['racip_per_meja_per_day'] ?? 0.0)) }} kg ST per hari.
                     Rendemen KB ke ST =
-                    {{ number_format((float) ($assumptions['rendemen_kb_to_st'] ?? 0.0), 0, '.', ',') }}%.</li>
+                    {{ number_format((float) ($assumptions['rendemen_kb_to_st'] ?? 0.0), 0, '.', ',') }}%.
+                </li>
                 <li>Konsumsi KB per meja per hari =
                     {{ $fmtKg((float) ($assumptions['consumption_per_meja_per_day'] ?? 0.0)) }} kg KB per hari.
-                    Meja yang tersedia = {{ (int) ($assumptions['available_meja'] ?? 0) }} meja.</li>
+                    Meja yang tersedia = {{ (int) ($assumptions['available_meja'] ?? 0) }} meja.
+                </li>
                 <li>Konsumsi KB per hari =
-                    {{ $fmtKg((float) ($assumptions['consumption_per_day'] ?? 0.0)) }} kg KB per hari.</li>
+                    {{ $fmtKg((float) ($assumptions['consumption_per_day'] ?? 0.0)) }} kg KB per hari.
+                </li>
             </ul>
 
             <p class="notes-line"><strong>Kalkulasi:</strong></p>
@@ -240,7 +248,8 @@
                 </li>
                 <li>Dalam horizon 25 hari dibutuhkan
                     {{ number_format((float) ($calculations['needed_meja_per_day'] ?? 0.0), 2, '.', ',') }}
-                    meja sawmill per hari.</li>
+                    meja sawmill per hari.
+                </li>
             </ul>
         </div>
     </section>

@@ -121,7 +121,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -182,16 +181,16 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
         $wasteRowsData =
             isset($wasteRows) && is_iterable($wasteRows)
-                ? (is_array($wasteRows)
-                    ? $wasteRows
-                    : collect($wasteRows)->values()->all())
-                : [];
+            ? (is_array($wasteRows)
+                ? $wasteRows
+                : collect($wasteRows)->values()->all())
+            : [];
 
         usort(
             $rowsData,

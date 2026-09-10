@@ -94,7 +94,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -205,7 +204,8 @@
                 <th rowspan="2" style="width: 58px;">Tanggal</th>
                 @foreach ($columns as $column)
                     <th colspan="2" class="{{ in_array($column, $highlightColumns, true) ? 'highlight-col' : '' }}">
-                        {{ $column }}</th>
+                        {{ $column }}
+                    </th>
                 @endforeach
             </tr>
             <tr class="headers-row">
@@ -227,12 +227,12 @@
                             $outflow = (float) ($row['cells'][$column]['out'] ?? 0 ?: 0);
                             $isHighlight = in_array($column, $highlightColumns, true);
                         @endphp
-                        <td
-                            class="data-cell number {{ $isHighlight && abs($inflow) >= 0.000001 ? 'highlight-col' : '' }}">
-                            {{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}</td>
-                        <td
-                            class="data-cell number {{ $isHighlight && abs($outflow) >= 0.000001 ? 'highlight-col' : '' }}">
-                            {{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}</td>
+                        <td class="data-cell number {{ $isHighlight && abs($inflow) >= 0.000001 ? 'highlight-col' : '' }}">
+                            {{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}
+                        </td>
+                        <td class="data-cell number {{ $isHighlight && abs($outflow) >= 0.000001 ? 'highlight-col' : '' }}">
+                            {{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}
+                        </td>
                     @endforeach
                 </tr>
             @empty
@@ -253,7 +253,8 @@
                 <td class="label"># Ctr</td>
                 @foreach ($columns as $column)
                     <td class="number" colspan="2" style="text-align: center;">
-                        {{ $fmt2($ctrByColumn[$column] ?? 0) }}</td>
+                        {{ $fmt2($ctrByColumn[$column] ?? 0) }}
+                    </td>
                 @endforeach
             </tr>
         </tfoot>

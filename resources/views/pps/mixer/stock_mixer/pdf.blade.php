@@ -89,7 +89,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -131,10 +130,10 @@
         $columns = array_keys($rowsData[0] ?? []);
         $visibleColumns =
             $columns !== []
-                ? array_values(
-                    array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
-                )
-                : $preferredOrder;
+            ? array_values(
+                array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
+            )
+            : $preferredOrder;
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
                 return (float) $value;

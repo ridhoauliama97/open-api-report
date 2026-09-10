@@ -73,7 +73,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -240,8 +239,7 @@
                     @php
                         $totalLabelColspan = $qtyColumnIndex !== false ? $qtyColumnIndex + 1 : count($columns) + 1;
                     @endphp
-                    <td colspan="{{ $totalLabelColspan }}"
-                        style="text-align:center; font-weight:bold; font-size: 11px;">
+                    <td colspan="{{ $totalLabelColspan }}" style="text-align:center; font-weight:bold; font-size: 11px;">
                         Total
                     </td>
                     @if ($qtyColumnIndex !== false)

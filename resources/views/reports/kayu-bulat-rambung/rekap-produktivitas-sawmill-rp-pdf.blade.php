@@ -92,7 +92,7 @@
         .number-negative {
             color: #9c111d;
         }
-    
+
         /* standardized table borders */
         .diagram-kategori-table, .group-summary-table, .mini-table, .money-table, .rendemen-total-table, .report-table, .summary-pair-table, .summary-rendemen-table {
             border: 1px solid #000;
@@ -857,7 +857,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     ST</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneyBansaw['st'] ?? 0.0)) }}
                                 </td>
                                 <td style="border: 0; padding: 0 0 2px 12px; width: 45mm;"></td>
@@ -867,7 +867,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     KB</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneyBansaw['kb'] ?? 0.0)) }}
                                 </td>
                                 <td style="border: 0; padding: 0 0 2px 12px; width: 45mm;"></td>
@@ -877,7 +877,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     Upah</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneyBansaw['upah'] ?? 0.0)) }}</td>
                                 <td style="border: 0; padding: 0 0 2px 12px; width: 45mm;"></td>
                             </tr>
@@ -893,7 +893,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     Hasil</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneyBansaw['hasil'] ?? 0.0)) }} </td>
                                 <td
                                     style="border: 0; padding: 0 0 2px 12px; width: 45mm; font-weight: bold; text-align: left; white-space: normal;">
@@ -1004,7 +1004,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     ST</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneySlp['st'] ?? 0.0)) }}
                                 </td>
                                 <td style="border: 0; padding: 0 0 2px 12px; width: 45mm;"></td>
@@ -1014,7 +1014,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     KB</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneySlp['kb'] ?? 0.0)) }}
                                 </td>
                                 <td style="border: 0; padding: 0 0 2px 12px; width: 45mm;"></td>
@@ -1024,7 +1024,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     Upah</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneySlp['upah'] ?? 0.0)) }}
                                 </td>
                                 <td style="border: 0; padding: 0 0 2px 12px; width: 45mm;"></td>
@@ -1041,7 +1041,7 @@
                                     style="border: 0; padding: 0 0 2px 0; width: 12mm; font-weight: bold; text-align: left; white-space: nowrap;">
                                     Hasil</td>
                                 <td
-                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                                    style="border: 0; padding: 0 0 2px 0; width: 35mm; font-weight: bold; text-align: right; white-space: nowrap; ">
                                     {{ $fmtMoney((float) ($grandMoneySlp['hasil'] ?? 0.0)) }}
                                 </td>
                                 <td

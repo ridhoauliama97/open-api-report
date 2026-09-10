@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -160,7 +159,8 @@
                 <td class="label"># Ctr</td>
                 @foreach ($columns as $column)
                     <td class="number" colspan="2" style="text-align: center;">
-                        {{ $fmt2($ctrByColumn[$column] ?? 0) }}</td>
+                        {{ $fmt2($ctrByColumn[$column] ?? 0) }}
+                    </td>
                 @endforeach
             </tr>
         </tfoot>

@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -283,7 +282,8 @@
                             {{ $fmtBlank($perColumnAverage((float) ($totals['S4S'] ?? 0.0), $countNonZero($rows, 'S4S'))) }}
                         </td>
                         <td class="number">
-                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalInput'] ?? 0.0) / $hk : 0.0) }}</td>
+                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalInput'] ?? 0.0) / $hk : 0.0) }}
+                        </td>
                         <td class="number">
                             {{ $fmtBlank($perColumnAverage((float) ($totals['OutputMoulding'] ?? 0.0), $countNonZero($rows, 'OutputMoulding'))) }}
                         </td>
@@ -291,7 +291,8 @@
                             {{ $fmtBlank($perColumnAverage((float) ($totals['OutputReproses'] ?? 0.0), $countNonZero($rows, 'OutputReproses'))) }}
                         </td>
                         <td class="number">
-                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalOutput'] ?? 0.0) / $hk : 0.0) }}</td>
+                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalOutput'] ?? 0.0) / $hk : 0.0) }}
+                        </td>
                         <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>

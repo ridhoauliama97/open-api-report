@@ -117,7 +117,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -164,10 +163,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
         usort(
             $rowsData,
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),
@@ -320,25 +319,25 @@
 
                 <tbody>
                     @forelse ($subRowsData as $row)
-                        @php
-                            $subTotals['MixInputBB'] += $num($row, 'MixInputBB');
-                            $subTotals['MixInputBroker'] += $num($row, 'MixInputBroker');
-                            $subTotals['MixInputGil'] += $num($row, 'MixInputGil');
-                            $subTotals['MixInputMix'] += $num($row, 'MixInputMix');
-                        @endphp
-                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="center data-cell">{{ $loop->iteration }}</td>
-                            <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
-                            <td class="number data-cell">{{ $fmt($row['MixInputBB'] ?? null, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($row['MixInputBroker'] ?? null, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($row['MixInputGil'] ?? null, true) }}</td>
-                            <td class="number data-cell">{{ $fmt($row['MixInputMix'] ?? null, true) }}</td>
-                            <td class="number data-cell" style="font-weight: bold;">
-                                {{ $fmt(
-                                    ($row['MixInputBroker'] ?? 0) + ($row['MixInputMix'] ?? 0) + ($row['MixInputGil'] ?? 0) + ($row['MixInputBB'] ?? 0),
-                                    true,
-                                ) }}
-                        </tr>
+                                        @php
+                                            $subTotals['MixInputBB'] += $num($row, 'MixInputBB');
+                                            $subTotals['MixInputBroker'] += $num($row, 'MixInputBroker');
+                                            $subTotals['MixInputGil'] += $num($row, 'MixInputGil');
+                                            $subTotals['MixInputMix'] += $num($row, 'MixInputMix');
+                                        @endphp
+                                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                                            <td class="center data-cell">{{ $loop->iteration }}</td>
+                                            <td class="label data-cell">{{ $row['Jenis'] ?? '' }}</td>
+                                            <td class="number data-cell">{{ $fmt($row['MixInputBB'] ?? null, true) }}</td>
+                                            <td class="number data-cell">{{ $fmt($row['MixInputBroker'] ?? null, true) }}</td>
+                                            <td class="number data-cell">{{ $fmt($row['MixInputGil'] ?? null, true) }}</td>
+                                            <td class="number data-cell">{{ $fmt($row['MixInputMix'] ?? null, true) }}</td>
+                                            <td class="number data-cell" style="font-weight: bold;">
+                                                {{ $fmt(
+                            ($row['MixInputBroker'] ?? 0) + ($row['MixInputMix'] ?? 0) + ($row['MixInputGil'] ?? 0) + ($row['MixInputBB'] ?? 0),
+                            true,
+                        ) }}
+                                        </tr>
                     @empty
                         <tr class="data-row row-even">
                             <td class="data-cell" colspan="5" style="text-align: center;">Tidak ada data sub mutasi.
@@ -353,9 +352,9 @@
                         <td class="number">{{ $fmt($subTotals['MixInputMix'], true) }}</td>
                         <td class="number">
                             {{ $fmt(
-                                $subTotals['MixInputBroker'] + $subTotals['MixInputMix'] + $subTotals['MixInputGil'] + $subTotals['MixInputBB'],
-                                true,
-                            ) }}
+    $subTotals['MixInputBroker'] + $subTotals['MixInputMix'] + $subTotals['MixInputGil'] + $subTotals['MixInputBB'],
+    true,
+) }}
                     </tr>
                 </tbody>
             </table>

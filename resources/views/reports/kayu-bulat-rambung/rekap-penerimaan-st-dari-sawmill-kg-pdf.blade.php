@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -260,7 +259,8 @@
                                 @endif
                                 <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '') }}</td>
                                 <td class="data-cell left">
-                                    {{ (string) ($line['grade'] ?? '') }}</td>
+                                    {{ (string) ($line['grade'] ?? '') }}
+                                </td>
                                 <td class="data-cell number">{{ $fmtDetail((float) ($line['kb'] ?? 0.0), 4) }}</td>
                                 <td class="data-cell center">{{ $dash }}</td>
                                 <td class="data-cell number" style="font-weight: bold;">
@@ -287,7 +287,8 @@
                                 @endif
                                 <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
                                 <td class="data-cell right" style="font-weight: bold;">
-                                    {{ (string) ($line['grade'] ?? '') }}</td>
+                                    {{ (string) ($line['grade'] ?? '') }}
+                                </td>
                                 <td class="data-cell center">{{ $dash }}</td>
                                 <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
                                 <td class="data-cell number" style="font-weight: bold;">
@@ -404,7 +405,8 @@
                             @endif
                             <td class="data-cell center">{{ $fmtTruck($line['jmlh_truk'] ?? '0') }}</td>
                             <td class="data-cell right" style="font-weight: bold;">
-                                {{ (string) ($line['grade'] ?? '') }}</td>
+                                {{ (string) ($line['grade'] ?? '') }}
+                            </td>
                             <td class="data-cell center">{{ $dash }}</td>
                             <td class="data-cell number">{{ $fmtDetail((float) ($line['st'] ?? 0.0), 4) }}</td>
                             <td class="data-cell number" style="font-weight: bold;">

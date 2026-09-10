@@ -91,7 +91,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -183,7 +182,8 @@
                 <th rowspan="2" style="width: 58px;">Tanggal</th>
                 @foreach ($columns as $column)
                     <th colspan="2" class="{{ in_array($column, $highlightColumns, true) ? 'highlight-col' : '' }}">
-                        {{ $column }}</th>
+                        {{ $column }}
+                    </th>
                 @endforeach
             </tr>
             <tr class="headers-row">
@@ -205,12 +205,12 @@
                             $outflow = (float) ($row['cells'][$column]['out'] ?? 0 ?: 0);
                             $isHighlight = in_array($column, $highlightColumns, true);
                         @endphp
-                        <td
-                            class="data-cell number {{ $isHighlight && abs($inflow) >= 0.000001 ? 'highlight-col' : '' }}">
-                            {{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}</td>
-                        <td
-                            class="data-cell number {{ $isHighlight && abs($outflow) >= 0.000001 ? 'highlight-col' : '' }}">
-                            {{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}</td>
+                        <td class="data-cell number {{ $isHighlight && abs($inflow) >= 0.000001 ? 'highlight-col' : '' }}">
+                            {{ abs($inflow) < 0.000001 ? '' : $fmt1($inflow) }}
+                        </td>
+                        <td class="data-cell number {{ $isHighlight && abs($outflow) >= 0.000001 ? 'highlight-col' : '' }}">
+                            {{ abs($outflow) < 0.000001 ? '' : $fmt1($outflow) }}
+                        </td>
                     @endforeach
                 </tr>
             @empty
@@ -236,7 +236,8 @@
                 @foreach ($columns as $column)
                     @php $ctrValue = (float) ($ctrByColumn[$column] ?? 0); @endphp
                     <td class="number" colspan="2" style="text-align: center;">
-                        {{ abs($ctrValue) < 0.000001 ? '' : $fmt2($ctrValue) }}</td>
+                        {{ abs($ctrValue) < 0.000001 ? '' : $fmt2($ctrValue) }}
+                    </td>
                 @endforeach
             </tr>
             <tr class="table-end-line">

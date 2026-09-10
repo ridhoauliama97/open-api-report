@@ -89,7 +89,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -106,7 +105,8 @@
             border-top: #000 solid 1px;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
+        ;
     </style>
 </head>
 
@@ -225,7 +225,8 @@
             <tr>
                 <th rowspan="2" style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
-                    <th colspan="{{ count($activeMeasures) }}">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                    <th colspan="{{ count($activeMeasures) }}">
+                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
                 @endforeach
                 <th colspan="{{ count($activeMeasures) }}">Total</th>
             </tr>
@@ -255,13 +256,14 @@
                         @endforeach
                     @endforeach
                     @foreach (array_keys($activeMeasures) as $measureName)
-                        <td class="number" style="font-weight: bold;">{{ number_format($rowTotals[$measureName] ?? 0, 2, '.', ',') }}</td>
+                        <td class="number" style="font-weight: bold;">
+                            {{ number_format($rowTotals[$measureName] ?? 0, 2, '.', ',') }}</td>
                     @endforeach
                 </tr>
             @empty
                 <tr class="row-odd">
-                    <td colspan="{{ count($warehouseLabels) * count($activeMeasures) + count($activeMeasures) + 1 }}" class="center"
-                        style="font-weight: bold; font-size: 11px; font-style: italic;">
+                    <td colspan="{{ count($warehouseLabels) * count($activeMeasures) + count($activeMeasures) + 1 }}"
+                        class="center" style="font-weight: bold; font-size: 11px; font-style: italic;">
                         Tidak ada data.
                     </td>
                 </tr>

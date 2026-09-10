@@ -137,7 +137,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .signature-table {
@@ -202,7 +201,6 @@
         .signature-panel-value {
             text-align: right;
             padding-right: 6px;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
     </style>
 </head>

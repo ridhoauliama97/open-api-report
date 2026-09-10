@@ -275,7 +275,7 @@
 
         .number {
             text-align: right;
-            font-family: 'Calibri', 'Dejavu Sans', sans-serif;
+
             white-space: nowrap;
         }
 

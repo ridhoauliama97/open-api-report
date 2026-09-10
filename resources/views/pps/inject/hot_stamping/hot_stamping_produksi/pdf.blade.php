@@ -125,7 +125,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .signature-table {
@@ -190,7 +189,6 @@
         .signature-panel-value {
             text-align: right;
             padding-right: 6px;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
     </style>
 </head>
@@ -264,16 +262,19 @@
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell">{!! $textOrBlank($row['input_nama_barang'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty'], 0) : '' }}</td>
+                        {{ $row['input_qty'] !== null ? $formatNumber($row['input_qty'], 0) : '' }}
+                    </td>
                     <td class="data-cell number">
                         {{ $row['input_percentage'] !== null ? $formatNumber($row['input_percentage']) . '%' : '' }}
                     </td>
                     <td class="data-cell">{!! $textOrBlank($row['output_nama_barang'] ?? '') !!}</td>
                     <td class="data-cell number">{!! $textOrBlank($row['output_jumlah_label'] ?? '') !!}</td>
                     <td class="data-cell number">
-                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty'], 0) : '' }}</td>
+                        {{ $row['output_qty'] !== null ? $formatNumber($row['output_qty'], 0) : '' }}
+                    </td>
                     <td class="data-cell number">
-                        {{ $row['output_berat'] !== null ? $formatNumber($row['output_berat']) : '' }}</td>
+                        {{ $row['output_berat'] !== null ? $formatNumber($row['output_berat']) : '' }}
+                    </td>
                     <td class="data-cell">{!! $textOrBlank($row['downtime_jam_berhenti'] ?? '') !!}</td>
                     <td class="data-cell">{!! $textOrBlank($row['downtime_durasi'] ?? '') !!}</td>
                     <td class="data-cell">{!! $textOrBlank($row['downtime_keterangan'] ?? '') !!}</td>

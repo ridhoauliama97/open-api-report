@@ -71,7 +71,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .merged-cell {
@@ -152,7 +151,8 @@
                     <td class="merged-cell" rowspan="{{ $rowspan }}">{{ $row['Jenis'] ?? '' }}</td>
                     <td class="number">{{ $formatNumber($moistureValues[0] ?? null) }}</td>
                     <td class="number merged-cell" rowspan="{{ $rowspan }}">
-                        {{ $formatNumber($row['MFI'] ?? null) }}</td>
+                        {{ $formatNumber($row['MFI'] ?? null) }}
+                    </td>
                     <td class="center merged-cell" rowspan="{{ $rowspan }}">{{ $row['MeltTemp'] ?? '' }}</td>
                 </tr>
 

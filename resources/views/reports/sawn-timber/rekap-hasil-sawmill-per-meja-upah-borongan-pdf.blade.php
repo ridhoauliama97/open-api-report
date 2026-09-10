@@ -80,7 +80,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -350,7 +349,7 @@
                                             <td class="data-cell center">{{ $left['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $left['row']['UOM'] ?? '' }}</td>
                                             <td class="data-cell center"
-                                                style="font-weight: bold; font-family: 'Calibri', 'DejaVu Sans', sans-serif;">
+                                                style="font-weight: bold; ">
                                                 {{ isset($left['row']) ? $formatNumber($left['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>
@@ -383,7 +382,7 @@
                                             <td class="data-cell center">{{ $right['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['UOM'] ?? '' }}</td>
                                             <td class="data-cell center"
-                                                style="font-weight: bold; font-family: 'Calibri', 'DejaVu Sans', sans-serif;">
+                                                style="font-weight: bold; ">
                                                 {{ isset($right['row']) ? $formatNumber($right['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>
@@ -501,7 +500,9 @@
                 <tr class="totals-row">
                     <td class="data-cell center" style="width: 30%;">Grand Total</td>
                     <td class="data-cell number" style="width: 15%;">
-                        {{ $formatNumber($overallTotal['RB STD (Tbl 14/16/18/23)']) }}</td>
+                        {{ $formatNumber($overallTotal['RB STD (Tbl 14/16/18/23)']) }}
+
+                    </td>
                     <td class="data-cell number" style="width: 15%;">{{ $formatNumber($overallTotal['RB STD']) }}</td>
                     <td class="data-cell number" style="width: 15%;">
                         {{ $formatNumber($overallTotal['RB MC + Lain-Lain']) }}
@@ -510,7 +511,7 @@
                     <td class="data-cell number" style="width: 10%;">{{ $formatNumber($overallTotal['SM']) }}</td>
                 </tr>
             </tfoot>
-        </table>
+            </table>
     @endif
 </body>
 

@@ -26,7 +26,7 @@ php artisan reports:audit-conventions && php artisan reports:audit-api   # verif
 - ALL DB queries: `DB::select('EXEC SP_... ?, ?', [...])` — **no string interpolation**; `call_syntax=query` for non-SQL Server
 - Route registration: `$registerReportRoutes()` closure in `routes/api.php` generates 3 routes (preview/download/health) per entry; add entry to 1 of 4 arrays: `$mutasiReportRouteDefinitions`, `$kayuBulatReportRouteDefinitions`, `$sawnTimberReportRouteDefinitions`, `$standaloneReportRouteDefinitions`. Two special groups registered outside the loop: `RekapHasilSawmillPerMejaUpahBoronganV2` and PPS Inject alias
 - **3 async PDF patterns**: (1) generic `PdfJobController` + `GenerateReportPdfJob`, (2) `LabelStHidupDetailController` custom endpoints, (3) `StockSTKeringController` custom endpoints
-- Non-standard **`AscendXmlTestController`** (~10600 lines, 185 `internal/ascends/*` routes in `routes/api.php` at last count, one method per route). These routes are registered OUTSIDE the `report.jwt.claims` middleware group (no JWT auth). `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (separate, web-only)
+- Non-standard **`AscendXmlTestController`** (~11.4k lines, 195 `internal/ascends/*` routes in `routes/api.php` at last count, one method per route). These routes are registered OUTSIDE the `report.jwt.claims` middleware group (no JWT auth). `EmployeeListController` lives at `App\Http\Controllers\Ascends\Ru\Hrm\` (separate, web-only)
 - Middleware stack (`bootstrap/app.php`): `LogUserActivity` + `NormalizePdfDownloadFilename` on all API/web routes; `ForceattachmentPdfPreview` on web routes only
   - Note: `ForceattachmentPdfPreview` extends `ForceInlinePdfPreview` (logic lives in `ForceInlinePdfPreview.php`) — class/file name mismatch is intentional
 - Setelah selesai membuat Ascends shared report, tambah dokumentasi endpoint di `docs/ascends-endpoint/` sesuai kategorinya
@@ -85,8 +85,10 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 - `CACHE_STORE=database` in `.env.example` (uses `file` in local `.env`, `array` in testing)
 - `APP_TIMEZONE=Asia/Jakarta` default
 - `config/reports.php` (2746 lines) is the single source of truth for SP names, DB connections, columns, and `report_auth` config
-- `boost.json` registers `codex` agent + `laravel-best-practices` skill; no `opencode.json`
-- Detailed reference: `AGENT_INSTRUCTIONS.md` (463 lines with code patterns)
+- CI (`.github/workflows/ci.yml`, push/PR to `main` only): `vendor/bin/pint --test` + `php artisan test`, but the test step is `continue-on-error: true` — **green CI does not mean tests pass**
+- `boost.json` registers `opencode` agent + `laravel-best-practices` skill; `.opencode/opencode.json` only registers the graphify plugin
+- Gotenberg env in `.env.example`: `GOTENBERG_URL` (default `http://localhost:3000`), `GOTENBERG_TIMEOUT=300`, `GOTENBERG_CONNECT_TIMEOUT=10` — Gotenberg route fails without a running Gotenberg server
+- Detailed reference: `AGENT_INSTRUCTIONS.md` (528 lines with code patterns)
 - `fmtAmount()` helper is defined locally in each blade file — usage: `number_format($v, 2, ',', '.')`; zero → `-`; negative → `'- '` prefix
 
 ## UC Shared Report Design Conventions

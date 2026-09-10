@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -185,17 +184,17 @@
     @endforeach
 
     {{-- @if ($groups !== [])
-        <div style="margin-top: 10px;">
-            <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
-            <ul style="margin: 0; padding-left: 18px;">
-                <li>In FJ : <strong>{{ $fmt($grandTotals['InFJ']) }}</strong></li>
-                <li>In Moulding : <strong>{{ $fmt($grandTotals['InMoulding']) }}</strong></li>
-                <li>In CCAkhir : <strong>{{ $fmt($grandTotals['InCCAkhir']) }}</strong></li>
-                <li>In WIP : <strong>{{ $fmt($grandTotals['InWIP']) }}</strong></li>
-                <li>In Reproses : <strong>{{ $fmt($grandTotals['InReproses']) }}</strong></li>
-                <li>Output : <strong>{{ $fmt($grandTotals['Output']) }}</strong></li>
-            </ul>
-        </div>
+    <div style="margin-top: 10px;">
+        <div class="group-title" style="margin-bottom: 6px;">Grand Total</div>
+        <ul style="margin: 0; padding-left: 18px;">
+            <li>In FJ : <strong>{{ $fmt($grandTotals['InFJ']) }}</strong></li>
+            <li>In Moulding : <strong>{{ $fmt($grandTotals['InMoulding']) }}</strong></li>
+            <li>In CCAkhir : <strong>{{ $fmt($grandTotals['InCCAkhir']) }}</strong></li>
+            <li>In WIP : <strong>{{ $fmt($grandTotals['InWIP']) }}</strong></li>
+            <li>In Reproses : <strong>{{ $fmt($grandTotals['InReproses']) }}</strong></li>
+            <li>Output : <strong>{{ $fmt($grandTotals['Output']) }}</strong></li>
+        </ul>
+    </div>
     @endif --}}
 
 </body>

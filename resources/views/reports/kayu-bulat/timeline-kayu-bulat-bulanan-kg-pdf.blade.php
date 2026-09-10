@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -95,7 +94,6 @@
 
         td.number-right {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
     </style>
 </head>
@@ -415,7 +413,8 @@
                             </td>
                         @endforeach
                         <td class="number-right data-cell" style="font-weight: bold">
-                            {{ $formatNumber($row['total'] ?? null) }}</td>
+                            {{ $formatNumber($row['total'] ?? null) }}
+                        </td>
                     </tr>
                 @empty
                     <tr class="data-row">

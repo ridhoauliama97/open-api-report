@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -366,7 +365,8 @@
 
     @if (!empty($rangkumanRows))
         <div class="rangkuman-qc-container">
-            <h2 style="text-align: center; margin: 0 0 8px 0; font-size: 11px; font-weight: bold;">Rangkuman Grand Total</h2>
+            <h2 style="text-align: center; margin: 0 0 8px 0; font-size: 11px; font-weight: bold;">Rangkuman Grand Total
+            </h2>
             <table class="report-table">
                 <thead>
                     <tr>

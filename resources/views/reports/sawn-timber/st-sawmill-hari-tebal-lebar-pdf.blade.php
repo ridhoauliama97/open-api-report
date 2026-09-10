@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -291,7 +290,8 @@
                                 <td class="center" style="background: none;">Sub total</td>
                                 @foreach ($allDates as $dk)
                                     <td class="number" style="background: none;">
-                                        {{ $fmtTotal((float) ($tebalTotals[$dk] ?? 0.0)) }}</td>
+                                        {{ $fmtTotal((float) ($tebalTotals[$dk] ?? 0.0)) }}
+                                    </td>
                                 @endforeach
                                 <td class="number" style="background: none;">{{ $fmtTotal($tebalTotal) }}</td>
                             </tr>
@@ -305,96 +305,98 @@
                             <td class="center" colspan="2" style="background: none;">Total</td>
                             @foreach ($allDates as $dk)
                                 <td class="number" style="background: none;">
-                                    {{ $fmtTotal((float) ($groupTotals[$dk] ?? 0.0)) }}</td>
+                                    {{ $fmtTotal((float) ($groupTotals[$dk] ?? 0.0)) }}
+                                </td>
                             @endforeach
                             <td class="number" style="background: none;">{{ $fmtTotal($groupTotal) }}</td>
                         </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ 4 + count($allDates) }}" class="center">Tidak ada data.</td>
-                            </tr>
-                        @endforelse
-
-                        @if ($groups !== [])
-                            @php
-                                $rowIndex++;
-                                $isGroupGrandTotal = $sumForDates($isGroupTotals, $allDates);
-                            @endphp
-                            <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
-                                <td class="center" colspan="3" style="background: none; font-size: 11px;">Grand Total
-                                </td>
-                                @foreach ($allDates as $dk)
-                                    <td class="number" style="background: none; font-size: 11px;">
-                                        {{ $fmtTotal((float) ($isGroupTotals[$dk] ?? 0.0)) }}
-                                    </td>
-                                @endforeach
-                                <td class="number" style="background: none; font-size: 11px;">
-                                    {{ $fmtTotal($isGroupGrandTotal) }}
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            @endforeach
-        @else
-            <div class="center">Tidak ada data.</div>
-        @endif
-
-        <div class="page-break"></div>
-        @if ($isGroupBlocks !== [])
-            @if ($rangkumanItems !== [])
-                <div class="section-title">Rangkuman Grand Total</div>
-                <table class="rangkuman-table zebra-table">
-                    <thead>
+                    @empty
                         <tr>
-                            <th style="width: 160px;">Jenis Kayu</th>
-                            <th style="width: 50px;">Tebal</th>
-                            <th style="width: 80px;">Total</th>
-                            <th style="width: 60px;">Persen</th>
+                            <td colspan="{{ 4 + count($allDates) }}" class="center">Tidak ada data.</td>
                         </tr>
-                    </thead>
+                    @endforelse
 
-                    <tbody>
-                        @foreach ($rangkumanGrouped as $jenis => $jenisItems)
-                            @php
-                                $jenisRowspan = count($jenisItems) + 1;
-                                $jenisTotal = (float) ($rangkumanTotalsByJenis[$jenis] ?? 0.0);
-                            @endphp
-
-                            @foreach ($jenisItems as $idx => $it)
-                                @php
-                                    $tebal = (float) ($it['tebal'] ?? 0.0);
-                                    $total = (float) ($it['total'] ?? 0.0);
-                                    $percent = (float) ($it['percent'] ?? 0.0);
-                                @endphp
-                                <tr class="rangkuman-group{{ $idx === 0 ? ' rangkuman-group-start' : '' }}">
-                                    @if ($idx === 0)
-                                        <td rowspan="{{ $jenisRowspan }}" class="jenis-cell">{{ $jenis }}</td>
-                                    @endif
-                                    <td class="center">{{ $fmtDim($tebal) }}</td>
-                                    <td class="number">{{ $fmtTotal($total) }}</td>
-                                    <td class="center">{{ $fmtPct($percent) }}</td>
-                                </tr>
+                    @if ($groups !== [])
+                        @php
+                            $rowIndex++;
+                            $isGroupGrandTotal = $sumForDates($isGroupTotals, $allDates);
+                        @endphp
+                        <tr class="totals-row {{ $rowIndex % 2 === 1 ? 'row-odd' : 'row-even' }}">
+                            <td class="center" colspan="3" style="background: none; font-size: 11px;">Grand Total
+                            </td>
+                            @foreach ($allDates as $dk)
+                                <td class="number" style="background: none; font-size: 11px;">
+                                    {{ $fmtTotal((float) ($isGroupTotals[$dk] ?? 0.0)) }}
+                                </td>
                             @endforeach
+                            <td class="number" style="background: none; font-size: 11px;">
+                                {{ $fmtTotal($isGroupGrandTotal) }}
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        @endforeach
+    @else
+        <div class="center">Tidak ada data.</div>
+    @endif
 
-                            <tr class="totals-row rangkuman-group">
-                                <td class="center">Total</td>
-                                <td class="number">{{ $fmtTotal($jenisTotal) }}</td>
-                                <td class="center">100%</td>
+    <div class="page-break"></div>
+    @if ($isGroupBlocks !== [])
+        @if ($rangkumanItems !== [])
+            <div class="section-title">Rangkuman Grand Total</div>
+            <table class="rangkuman-table zebra-table">
+                <thead>
+                    <tr>
+                        <th style="width: 160px;">Jenis Kayu</th>
+                        <th style="width: 50px;">Tebal</th>
+                        <th style="width: 80px;">Total</th>
+                        <th style="width: 60px;">Persen</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach ($rangkumanGrouped as $jenis => $jenisItems)
+                        @php
+                            $jenisRowspan = count($jenisItems) + 1;
+                            $jenisTotal = (float) ($rangkumanTotalsByJenis[$jenis] ?? 0.0);
+                        @endphp
+
+                        @foreach ($jenisItems as $idx => $it)
+                            @php
+                                $tebal = (float) ($it['tebal'] ?? 0.0);
+                                $total = (float) ($it['total'] ?? 0.0);
+                                $percent = (float) ($it['percent'] ?? 0.0);
+                            @endphp
+                            <tr class="rangkuman-group{{ $idx === 0 ? ' rangkuman-group-start' : '' }}">
+                                @if ($idx === 0)
+                                    <td rowspan="{{ $jenisRowspan }}" class="jenis-cell">{{ $jenis }}</td>
+                                @endif
+                                <td class="center">{{ $fmtDim($tebal) }}</td>
+                                <td class="number">{{ $fmtTotal($total) }}</td>
+                                <td class="center">{{ $fmtPct($percent) }}</td>
                             </tr>
                         @endforeach
 
-                        <tr class="totals-row">
-                            <td colspan="2" class="center" style="background: none; font-size: 11px;">Grand Total</td>
-                            <td class="number" style="background: none; font-size: 11px;">
-                                {{ $fmtTotal($rangkumanGrandTotal) }}</td>
-                            <td class="center" style="background: none; font-size: 11px;">100%</td>
+                        <tr class="totals-row rangkuman-group">
+                            <td class="center">Total</td>
+                            <td class="number">{{ $fmtTotal($jenisTotal) }}</td>
+                            <td class="center">100%</td>
                         </tr>
-                    </tbody>
-                </table>
-            @endif
+                    @endforeach
+
+                    <tr class="totals-row">
+                        <td colspan="2" class="center" style="background: none; font-size: 11px;">Grand Total</td>
+                        <td class="number" style="background: none; font-size: 11px;">
+                            {{ $fmtTotal($rangkumanGrandTotal) }}
+                        </td>
+                        <td class="center" style="background: none; font-size: 11px;">100%</td>
+                    </tr>
+                </tbody>
+            </table>
         @endif
+    @endif
 
-    </body>
+</body>
 
-    </html>
+</html>

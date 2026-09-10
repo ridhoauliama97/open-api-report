@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .strong-number {
@@ -248,13 +247,17 @@
                         <td colspan="2" class="center">Jmlh/HK</td>
                         <td class="number">{{ $fmtBlank($jmlhPerActive((float) ($totals['BJ'] ?? 0.0), 'BJ')) }}</td>
                         <td class="number">
-                            {{ $fmtBlank($jmlhPerActive((float) ($totals['CCAkhir'] ?? 0.0), 'CCAkhir')) }}</td>
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['CCAkhir'] ?? 0.0), 'CCAkhir')) }}
+                        </td>
                         <td class="number">
-                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Moulding'] ?? 0.0), 'Moulding')) }}</td>
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Moulding'] ?? 0.0), 'Moulding')) }}
+                        </td>
                         <td class="number">
-                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Reproses'] ?? 0.0), 'Reproses')) }}</td>
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Reproses'] ?? 0.0), 'Reproses')) }}
+                        </td>
                         <td class="number">
-                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Sanding'] ?? 0.0), 'Sanding')) }}</td>
+                            {{ $fmtBlank($jmlhPerActive((float) ($totals['Sanding'] ?? 0.0), 'Sanding')) }}
+                        </td>
                         <td class="number">{{ $fmtBlank($jmlhPerCalendarHk((float) ($totals['TotalInput'] ?? 0.0))) }}
                         </td>
                         <td class="number">

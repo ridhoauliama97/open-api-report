@@ -117,7 +117,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -178,10 +177,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
 
         usort(
             $rowsData,
@@ -355,15 +354,15 @@
 
                 <tbody>
                     @forelse ($subRowsData as $row)
-                        <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                            <td class="label data-cell">{{ $row['NamaBonggolan'] ?? '' }}</td>
-                            <td class="number data-cell">{{ $fmt($row['Berat'] ?? null, true) }}</td>
-                        </tr>
+                    <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
+                        <td class="label data-cell">{{ $row['NamaBonggolan'] ?? '' }}</td>
+                        <td class="number data-cell">{{ $fmt($row['Berat'] ?? null, true) }}</td>
+                    </tr>
                     @empty
-                        <tr class="data-row row-even">
-                            <td class="data-cell" colspan="2" style="text-align: center;">Tidak ada data sub mutasi.
-                            </td>
-                        </tr>
+                    <tr class="data-row row-even">
+                        <td class="data-cell" colspan="2" style="text-align: center;">Tidak ada data sub mutasi.
+                        </td>
+                    </tr>
                     @endforelse
                     <tr class="totals-row">
                         <td style="text-align:center;">Total :</td>

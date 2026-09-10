@@ -89,7 +89,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -109,8 +108,6 @@
         .jenis-column {
             width: 200px;
         }
-
-
     </style>
 </head>
 
@@ -136,10 +133,10 @@
         $columns = array_keys($rowsData[0] ?? []);
         $visibleColumns =
             $columns !== []
-                ? array_values(
-                    array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
-                )
-                : $preferredOrder;
+            ? array_values(
+                array_filter($preferredOrder, static fn(string $column): bool => in_array($column, $columns, true)),
+            )
+            : $preferredOrder;
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
                 return (float) $value;
@@ -344,7 +341,8 @@
                         <td class="center">Total</td>
                         @foreach ($warehouseLabels as $warehouseName)
                             <td class="number">
-                                {{ number_format($pivotTotals[$warehouseName]['JmlhSak'], 0, '.', ',') }}</td>
+                                {{ number_format($pivotTotals[$warehouseName]['JmlhSak'], 0, '.', ',') }}
+                            </td>
                             <td class="number">{{ number_format($pivotTotals[$warehouseName]['Berat'], 2, '.', ',') }}
                             </td>
                         @endforeach
@@ -414,7 +412,8 @@
                         <td class="center">Total</td>
                         @foreach ($warehouseLabels as $warehouseName)
                             <td class="number">
-                                {{ number_format($pivotTotals[$warehouseName]['JmlhSak'], 0, '.', ',') }}</td>
+                                {{ number_format($pivotTotals[$warehouseName]['JmlhSak'], 0, '.', ',') }}
+                            </td>
                             <td class="number">{{ number_format($pivotTotals[$warehouseName]['Berat'], 2, '.', ',') }}
                             </td>
                         @endforeach

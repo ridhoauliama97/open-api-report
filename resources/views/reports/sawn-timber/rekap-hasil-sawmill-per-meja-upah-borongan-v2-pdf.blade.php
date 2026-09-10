@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -269,7 +268,8 @@
             @endphp
 
             <p class="session-meta">Tanggal : {{ $formatDate($session['date'] ?? null) }} Operator :
-                {{ $session['operator'] !== '' ? $session['operator'] : '-' }}</p>
+                {{ $session['operator'] !== '' ? $session['operator'] : '-' }}
+            </p>
 
             <table class="split-table-wrap">
                 <tbody>
@@ -296,7 +296,7 @@
                                             <td class="data-cell center">{{ $left['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $left['row']['UOM'] ?? '' }}</td>
                                             <td class="data-cell center"
-                                                style="font-weight: bold; font-family: 'Calibri', 'DejaVu Sans', sans-serif;">
+                                                style="font-weight: bold; ">
                                                 {{ isset($left['row']) ? $formatNumber($left['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>
@@ -327,7 +327,7 @@
                                             <td class="data-cell center">{{ $right['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['UOM'] ?? '' }}</td>
                                             <td class="data-cell center"
-                                                style="font-weight: bold; font-family: 'Calibri', 'DejaVu Sans', sans-serif;">
+                                                style="font-weight: bold; ">
                                                 {{ isset($right['row']) ? $formatNumber($right['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>

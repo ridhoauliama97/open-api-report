@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -207,40 +206,35 @@
         <ul style="margin: 4px 0 14px 0; padding-left: 14px; font-size: 11px; list-style: none;">
             <li style="display: flex; justify-content: space-between; gap: 10px; padding: 2px 0;">
                 <strong>In ST :
-                    <span
-                        style="min-width: 120px; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                    <span style="min-width: 120px; text-align: right; white-space: nowrap; ">
                         {{ $fmtTotal($grandTotals['ST']) }}
                 </strong>
                 </span>
             </li>
             <li style="display: flex; justify-content: space-between; gap: 10px; padding: 2px 0;">
                 <strong>In S4S :
-                    <span
-                        style="min-width: 120px; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                    <span style="min-width: 120px; text-align: right; white-space: nowrap; ">
                         {{ $fmtTotal($grandTotals['S4S']) }}
                     </span>
                 </strong>
             </li>
             <li style="display: flex; justify-content: space-between; gap: 10px; padding: 2px 0;">
                 <strong>In WIP :
-                    <span
-                        style="min-width: 120px; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                    <span style="min-width: 120px; text-align: right; white-space: nowrap; ">
                         {{ $fmtTotal($grandTotals['WIP']) }}
                     </span>
                 </strong>
             </li>
             <li style="display: flex; justify-content: space-between; gap: 10px; padding: 2px 0;">
                 <strong>In Reproses :
-                    <span
-                        style="min-width: 120px; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                    <span style="min-width: 120px; text-align: right; white-space: nowrap; ">
                         {{ $fmtTotal($grandTotals['Reproses']) }}
                     </span>
                 </strong>
             </li>
             <li style="display: flex; justify-content: space-between; gap: 10px; padding: 2px 0;">
                 <strong>Output :
-                    <span
-                        style="min-width: 120px; text-align: right; white-space: nowrap; font-family: Calibri, 'DejaVu Sans', sans-serif;">
+                    <span style="min-width: 120px; text-align: right; white-space: nowrap; ">
                         {{ $fmtTotal($grandTotals['Output']) }}
                     </span>
                 </strong>

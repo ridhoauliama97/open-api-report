@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -170,7 +169,8 @@
                     </td>
                     <td class="data-cell">{{ (string) ($row['Jenis'] ?? '') }}</td>
                     <td class="number data-cell">
-                        {{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}</td>
+                        {{ number_format((float) ($row['BatangBalokMasuk'] ?? 0), 0, '.', ',') }}
+                    </td>
                     <td class="number data-cell">
                         {{ number_format((float) ($row['BatangBalokTerpakai'] ?? 0), 0, '.', ',') }}
                     </td>

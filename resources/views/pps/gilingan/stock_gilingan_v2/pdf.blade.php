@@ -89,7 +89,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -106,7 +105,8 @@
             border-top: #000 solid 1px;
         }
 
-        @include('reports.partials.pdf-footer-table-style');
+        @include('reports.partials.pdf-footer-table-style')
+        ;
     </style>
 </head>
 
@@ -224,7 +224,8 @@
             <tr>
                 <th style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
-                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                    <th style="width: 10%;">{{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}
+                    </th>
                 @endforeach
                 <th style="width: 10%;">Total</th>
             </tr>
@@ -243,7 +244,8 @@
                             <td class="number">{{ number_format($value, 2, '.', ',') }}</td>
                         @endforeach
                     @endforeach
-                    <td class="number" style="font-weight: bold;">{{ number_format($rowTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
+                    <td class="number" style="font-weight: bold;">
+                        {{ number_format($rowTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
                 </tr>
             @empty
                 <tr class="row-odd">
@@ -265,7 +267,8 @@
                         <td class="number">{{ number_format($totalValue, 2, '.', ',') }}</td>
                     @endforeach
                 @endforeach
-                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
+                <td class="number">{{ number_format($grandTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}
+                </td>
             </tr>
         </tbody>
     </table>

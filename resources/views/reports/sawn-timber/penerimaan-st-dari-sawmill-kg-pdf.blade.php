@@ -75,7 +75,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -148,10 +147,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $groupsData =
             isset($groupedRows) && is_iterable($groupedRows)
-                ? (is_array($groupedRows)
-                    ? $groupedRows
-                    : collect($groupedRows)->values()->all())
-                : [];
+            ? (is_array($groupedRows)
+                ? $groupedRows
+                : collect($groupedRows)->values()->all())
+            : [];
         $availableColumns = array_keys($rowsData[0] ?? []);
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
@@ -493,17 +492,20 @@
 
         <div class="meta-block">
             <div class="meta-row"><span class="meta-label">No Pen ST</span>:
-                {{ $displayNoPenSt !== '' ? $displayNoPenSt : '-' }}</div>
+                {{ $displayNoPenSt !== '' ? $displayNoPenSt : '-' }}
+            </div>
             <div class="meta-row"><span class="meta-label">No KB</span>: {{ $displayNoKb !== '' ? $displayNoKb : '-' }}
             </div>
             <div class="meta-row"><span class="meta-label">Tanggal Penerimaan</span>:
-                {{ $displayTanggal !== '' ? $displayTanggal : '-' }}</div>
+                {{ $displayTanggal !== '' ? $displayTanggal : '-' }}
+            </div>
             <div class="meta-row"><span class="meta-label">Truk</span>: {{ $displayTruk !== '' ? $displayTruk : '-' }}
             </div>
             <div class="meta-row"><span class="meta-label">Meja</span>: {{ $displayMeja !== '' ? $displayMeja : '-' }}
             </div>
             <div class="meta-row"><span class="meta-label">Jenis Kayu</span>:
-                {{ $displayJenisKayu !== '' ? $displayJenisKayu : '-' }}</div>
+                {{ $displayJenisKayu !== '' ? $displayJenisKayu : '-' }}
+            </div>
         </div>
 
         <table class="report-table">
@@ -534,7 +536,8 @@
                             <td class="data-cell number">{{ $formatDetail((float) ($line['kb_ton'] ?? 0.0), 2) }}</td>
                             <td class="data-cell center"></td>
                             <td class="data-cell number">
-                                {{ $formatPercent((float) ($line['input_percent'] ?? 0.0), 1) }}</td>
+                                {{ $formatPercent((float) ($line['input_percent'] ?? 0.0), 1) }}
+                            </td>
                             <td class="data-cell center"></td>
                         </tr>
                     @endforeach
@@ -554,7 +557,8 @@
                             <td class="data-cell number">{{ $formatDetail((float) ($line['st_ton'] ?? 0.0), 4) }}</td>
                             <td class="data-cell center"></td>
                             <td class="data-cell number">
-                                {{ $formatPercent((float) ($line['output_percent'] ?? 0.0), 1) }}</td>
+                                {{ $formatPercent((float) ($line['output_percent'] ?? 0.0), 1) }}
+                            </td>
                         </tr>
                     @endforeach
                 @endif

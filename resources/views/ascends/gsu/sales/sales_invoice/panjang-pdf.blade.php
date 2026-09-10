@@ -307,7 +307,7 @@
 
         .summary-table td:last-child {
             text-align: right;
-            font-family: 'Calibri', 'Dejavu Sans', sans-serif;
+
         }
 
         .grand-total-row td {
@@ -353,7 +353,7 @@
 
         .number {
             text-align: right;
-            font-family: 'Calibri', 'Dejavu Sans', sans-serif;
+
             white-space: nowrap;
         }
 

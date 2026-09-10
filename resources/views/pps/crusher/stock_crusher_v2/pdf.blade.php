@@ -89,7 +89,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -243,7 +242,8 @@
                         @endforeach
                     @endforeach
                     <td class="number" style="font-weight: bold;">
-                        {{ number_format($rowTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}</td>
+                        {{ number_format($rowTotals[array_key_first($activeMeasures)] ?? 0, 2, '.', ',') }}
+                    </td>
                 </tr>
             @empty
                 <tr class="row-odd">

@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -106,10 +105,10 @@
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $subRowsData =
             isset($subRows) && is_iterable($subRows)
-                ? (is_array($subRows)
-                    ? $subRows
-                    : collect($subRows)->values()->all())
-                : [];
+            ? (is_array($subRows)
+                ? $subRows
+                : collect($subRows)->values()->all())
+            : [];
         usort(
             $rowsData,
             static fn(array $a, array $b): int => strcmp((string) ($a['Jenis'] ?? ''), (string) ($b['Jenis'] ?? '')),
@@ -339,14 +338,14 @@
                             $totalKeluarDirect = $valueFromAliases($row, ['TotalKeluar', 'Total Keluar', 'TTL Keluar']);
                             $totalKeluar =
                                 $totalKeluarDirect !== 0.0
-                                    ? $totalKeluarDirect
-                                    : $adjInpFJ +
-                                        $bsInpFJ +
-                                        $fjJual +
-                                        $ccaProdInpt +
-                                        $mldProdInpt +
-                                        $s4sProdInpt +
-                                        $sandProdInpt;
+                                ? $totalKeluarDirect
+                                : $adjInpFJ +
+                                $bsInpFJ +
+                                $fjJual +
+                                $ccaProdInpt +
+                                $mldProdInpt +
+                                $s4sProdInpt +
+                                $sandProdInpt;
 
                             $akhir = $valueFromAliases($row, ['Akhir', 'FJAkhir', 'FJ Akhir']);
 
@@ -373,7 +372,8 @@
                             <td class="number data-cell">{{ $fmt($bsOutFJ, true) }}</td>
                             <td class="number data-cell">{{ $fmt($fjProdOut, true) }}</td>
                             <td class="number data-cell {{ $totalClass($totalMasuk) }}" style="font-weight: bold">
-                                {{ $fmt($totalMasuk, true) }}</td>
+                                {{ $fmt($totalMasuk, true) }}
+                            </td>
                             <td class="number data-cell">{{ $fmt($adjInpFJ, true) }}</td>
                             <td class="number data-cell">{{ $fmt($bsInpFJ, true) }}</td>
                             <td class="number data-cell">{{ $fmt($fjJual, true) }}</td>
@@ -382,7 +382,8 @@
                             <td class="number data-cell">{{ $fmt($s4sProdInpt, true) }}</td>
                             <td class="number data-cell">{{ $fmt($sandProdInpt, true) }}</td>
                             <td class="number data-cell {{ $totalClass($totalKeluar) }}" style="font-weight: bold">
-                                {{ $fmt($totalKeluar, true) }}</td>
+                                {{ $fmt($totalKeluar, true) }}
+                            </td>
                             <td class="number data-cell" style="font-weight: bold">{{ $fmt($akhir, true) }}</td>
                         </tr>
                     @empty
@@ -393,34 +394,47 @@
                     <tr class="totals-row">
                         <td colspan="2" class="blank" style="text-align: center">Total</td>
                         <td class="number {{ $totalClass($mainTotals['FJAwal']) }}">
-                            {{ $fmt($mainTotals['FJAwal'], true) }}</td>
+                            {{ $fmt($mainTotals['FJAwal'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['AdjOutFJ']) }}">
-                            {{ $fmt($mainTotals['AdjOutFJ'], true) }}</td>
+                            {{ $fmt($mainTotals['AdjOutFJ'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['BSOutFJ']) }}">
-                            {{ $fmt($mainTotals['BSOutFJ'], true) }}</td>
+                            {{ $fmt($mainTotals['BSOutFJ'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['FJProdOut']) }}">
-                            {{ $fmt($mainTotals['FJProdOut'], true) }}</td>
+                            {{ $fmt($mainTotals['FJProdOut'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['TotalMasuk']) }}">
                             {{ $fmt($mainTotals['TotalMasuk'], true) }}
                         </td>
                         <td class="number {{ $totalClass($mainTotals['AdjInpFJ']) }}">
-                            {{ $fmt($mainTotals['AdjInpFJ'], true) }}</td>
+                            {{ $fmt($mainTotals['AdjInpFJ'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['BSInpFJ']) }}">
-                            {{ $fmt($mainTotals['BSInpFJ'], true) }}</td>
+                            {{ $fmt($mainTotals['BSInpFJ'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['FJJual']) }}">
-                            {{ $fmt($mainTotals['FJJual'], true) }}</td>
+                            {{ $fmt($mainTotals['FJJual'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['CCAProdInpt']) }}">
-                            {{ $fmt($mainTotals['CCAProdInpt'], true) }}</td>
+                            {{ $fmt($mainTotals['CCAProdInpt'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['MldProdInpt']) }}">
-                            {{ $fmt($mainTotals['MldProdInpt'], true) }}</td>
+                            {{ $fmt($mainTotals['MldProdInpt'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['S4SProdInpt']) }}">
-                            {{ $fmt($mainTotals['S4SProdInpt'], true) }}</td>
+                            {{ $fmt($mainTotals['S4SProdInpt'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['SandProdInpt']) }}">
-                            {{ $fmt($mainTotals['SandProdInpt'], true) }}</td>
+                            {{ $fmt($mainTotals['SandProdInpt'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['TotalKeluar']) }}">
-                            {{ $fmt($mainTotals['TotalKeluar'], true) }}</td>
+                            {{ $fmt($mainTotals['TotalKeluar'], true) }}
+                        </td>
                         <td class="number {{ $totalClass($mainTotals['Akhir']) }}">
-                            {{ $fmt($mainTotals['Akhir'], true) }}</td>
+                            {{ $fmt($mainTotals['Akhir'], true) }}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -465,11 +479,14 @@
                         <tr class="totals-row">
                             <td colspan="2" class="blank" style="text-align:center">Total</td>
                             <td class="number {{ $totalClass($subTotals['CCAkhir']) }}">
-                                {{ $fmt($subTotals['CCAkhir'], true) }}</td>
+                                {{ $fmt($subTotals['CCAkhir'], true) }}
+                            </td>
                             <td class="number {{ $totalClass($subTotals['S4S']) }}">
-                                {{ $fmt($subTotals['S4S'], true) }}</td>
+                                {{ $fmt($subTotals['S4S'], true) }}
+                            </td>
                             <td class="number {{ $totalClass($subTotals['Total']) }}">
-                                {{ $fmt($subTotals['Total'], true) }}</td>
+                                {{ $fmt($subTotals['Total'], true) }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -302,13 +301,16 @@
                                         </td>
                                     @endif
                                     <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                        {{ $fmt((float) ($row['Bruto'] ?? 0.0)) }}</td>
+                                        {{ $fmt((float) ($row['Bruto'] ?? 0.0)) }}
+                                    </td>
                                     <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                        {{ $fmt((float) ($row['Tara'] ?? 0.0)) }}</td>
+                                        {{ $fmt((float) ($row['Tara'] ?? 0.0)) }}
+                                    </td>
                                     <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NamaGrade'] ?? '' }}
                                     </td>
                                     <td class="number data-cell" style="{{ $dataCellStyle }} font-weight:bold;">
-                                        {{ $fmtTon((float) ($row['Berat'] ?? 0.0)) }}</td>
+                                        {{ $fmtTon((float) ($row['Berat'] ?? 0.0)) }}
+                                    </td>
                                 </tr>
                             @endforeach
                             <tr class="totals-row">
@@ -352,7 +354,8 @@
                             <td class="data-cell" style="{{ $dataCellStyle }}">{{ $row['NamaGrade'] ?? '' }}</td>
                             <td class="number data-cell" style="{{ $dataCellStyle }}">{{ $fmtTon($berat) }}</td>
                             <td class="number data-cell" style="{{ $dataCellStyle }}">
-                                {{ $fmtRatio($grandTotal > 0 ? ($berat / $grandTotal) * 100 : 0.0) }}</td>
+                                {{ $fmtRatio($grandTotal > 0 ? ($berat / $grandTotal) * 100 : 0.0) }}
+                            </td>
                         </tr>
                     @empty
                         <tr>

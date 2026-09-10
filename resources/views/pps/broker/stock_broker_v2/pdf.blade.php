@@ -89,7 +89,6 @@
         .number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -224,7 +223,8 @@
                 <th rowspan="2" style="width: 35%;"></th>
                 @foreach ($warehouseLabels as $warehouseName)
                     <th colspan="{{ count($activeMeasures) }}">
-                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}</th>
+                        {{ strtoupper(trim((string) $warehouseName)) === 'ALL' ? '' : $warehouseName }}
+                    </th>
                 @endforeach
                 <th colspan="{{ count($activeMeasures) }}">Total</th>
             </tr>
@@ -255,7 +255,8 @@
                     @endforeach
                     @foreach (array_keys($activeMeasures) as $measureName)
                         <td class="number" style="font-weight: bold;">
-                            {{ number_format($rowTotals[$measureName] ?? 0, 2, '.', ',') }}</td>
+                            {{ number_format($rowTotals[$measureName] ?? 0, 2, '.', ',') }}
+                        </td>
                     @endforeach
                 </tr>
             @empty

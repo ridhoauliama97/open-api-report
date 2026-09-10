@@ -62,7 +62,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -133,9 +132,7 @@
             return strtolower(str_replace([' ', '_'], '', trim($column)));
         };
 
-        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use (
-            $normalizeColumnName,
-        ): ?string {
+        $findColumnByNames = static function (array $availableColumns, array $candidateNames) use ($normalizeColumnName, ): ?string {
             $normalizedCandidates = array_map($normalizeColumnName, $candidateNames);
 
             foreach ($availableColumns as $column) {
@@ -326,9 +323,9 @@
                                 }
                             @endphp
                             @if ($numeric)
-                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell"
-                                    @if ($isAkhirColumn) style="font-weight: bold;" @endif>
-                                    {{ $formatByColumn($column, $floatValue) }}</td>
+                                <td class="number {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell" @if ($isAkhirColumn) style="font-weight: bold;" @endif>
+                                    {{ $formatByColumn($column, $floatValue) }}
+                                </td>
                             @else
                                 <td class="label {{ $isJenisColumn($column) ? 'col-jenis' : 'col-uniform' }} data-cell">
                                     {{ (string) $value }}

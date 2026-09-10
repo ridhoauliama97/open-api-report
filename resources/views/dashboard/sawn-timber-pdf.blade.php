@@ -87,7 +87,6 @@
 
         td.number {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
         }
 

@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -344,7 +343,8 @@
                     <td class="data-cell">{{ number_format((float) $summary['max'], 0, '.', ',') }}</td>
                     <td class="data-cell">{{ $summary['bulan_capai'] }}/{{ $summary['total_bulan_target'] }}</td>
                     <td class="data-cell" style="font-weight: bold">
-                        {{ number_format((float) $summary['persen_capai_group'], 2, '.', ',') }}%</td>
+                        {{ number_format((float) $summary['persen_capai_group'], 2, '.', ',') }}%
+                    </td>
                 </tr>
             @empty
                 <tr class="data-row">
@@ -360,16 +360,16 @@
                 @php
                     $yPos = $padTop + $plotHeight - $y * $yScale;
                 @endphp
-                <line x1="{{ $padLeft }}" y1="{{ $yPos }}" x2="{{ $padLeft + $plotWidth }}"
-                    y2="{{ $yPos }}" stroke="#d1d5db" stroke-width="1" />
+                <line x1="{{ $padLeft }}" y1="{{ $yPos }}" x2="{{ $padLeft + $plotWidth }}" y2="{{ $yPos }}"
+                    stroke="#d1d5db" stroke-width="1" />
                 <text x="{{ $padLeft - 4 }}" y="{{ $yPos + 3 }}" font-size="7" text-anchor="end"
                     fill="#111827">{{ $y }}</text>
             @endfor
 
             <line x1="{{ $padLeft }}" y1="{{ $padTop + $plotHeight }}" x2="{{ $padLeft + $plotWidth }}"
                 y2="{{ $padTop + $plotHeight }}" stroke="#111827" stroke-width="1" />
-            <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}"
-                y2="{{ $padTop + $plotHeight }}" stroke="#111827" stroke-width="1" />
+            <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}" y2="{{ $padTop + $plotHeight }}"
+                stroke="#111827" stroke-width="1" />
 
             @foreach ($chartLabelsDisplay as $index => $label)
                 @php $xPos = $padLeft + $index * $xStep; @endphp
@@ -393,11 +393,9 @@
                     }
                 @endphp
                 @if (!empty($points))
-                    <polyline points="{{ implode(' ', $points) }}" fill="none" stroke="{{ $color }}"
-                        stroke-width="1.2" />
+                    <polyline points="{{ implode(' ', $points) }}" fill="none" stroke="{{ $color }}" stroke-width="1.2" />
                     @foreach ($labelPoints as $lp)
-                        <circle cx="{{ $lp['x'] }}" cy="{{ $lp['y'] }}" r="1.8"
-                            fill="{{ $color }}" />
+                        <circle cx="{{ $lp['x'] }}" cy="{{ $lp['y'] }}" r="1.8" fill="{{ $color }}" />
                         <text x="{{ $lp['x'] }}" y="{{ $lp['y'] - 4 }}" font-size="7" text-anchor="middle"
                             fill="#111827">{{ $lp['value'] }}</text>
                     @endforeach
@@ -413,8 +411,7 @@
                     $color = $resolveSeriesColor((string) $seriesName);
                     $itemWidth = $legendBoxWidth + 4 + strlen((string) $seriesName) * $legendFontWidth;
                 @endphp
-                <rect x="{{ $legendX }}" y="{{ $legendY - 8 }}" width="8" height="8"
-                    fill="{{ $color }}" />
+                <rect x="{{ $legendX }}" y="{{ $legendY - 8 }}" width="8" height="8" fill="{{ $color }}" />
                 <text x="{{ $legendX + 12 }}" y="{{ $legendY - 1 }}" font-size="7"
                     fill="{{ $color }}">{{ $seriesName }}</text>
                 @php

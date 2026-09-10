@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -208,7 +207,8 @@
                         <td class="number" style="font-weight: bold;">{{ $fmtBlank($row['OutputSanding'] ?? null) }}
                         </td>
                         <td class="number">
-                            {{ $fmtIntBlank(isset($row['Jam']) ? (int) round((float) $row['Jam']) : null) }}</td>
+                            {{ $fmtIntBlank(isset($row['Jam']) ? (int) round((float) $row['Jam']) : null) }}
+                        </td>
                         <td class="number">{{ $fmtIntBlank($row['Org'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
@@ -270,7 +270,8 @@
                             {{ $fmtBlank($perColumnAverage((float) ($totals['Reproses'] ?? 0.0), $countNonZero($rows, 'Reproses'))) }}
                         </td>
                         <td class="number">
-                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalInput'] ?? 0.0) / $hk : 0.0) }}</td>
+                            {{ $fmtBlank($hk > 0 ? (float) ($totals['TotalInput'] ?? 0.0) / $hk : 0.0) }}
+                        </td>
                         <td class="number">
                             {{ $fmtBlank($perColumnAverage((float) ($totals['OutputSanding'] ?? 0.0), $countNonZero($rows, 'OutputSanding'))) }}
                         </td>

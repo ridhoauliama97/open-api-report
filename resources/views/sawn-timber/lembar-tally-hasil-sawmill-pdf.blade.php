@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -204,7 +203,6 @@
 
         .summary-value {
             text-align: right;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
             white-space: nowrap;
             width: 96px;
         }

@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -336,7 +335,8 @@
                             class="data-row {{ $lineCounter % 2 === 1 ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'before-total' : '' }}">
                             @if ($loop->first)
                                 <td class="data-cell tebal-cell center" rowspan="{{ $tebalRowspan }}">
-                                    {{ $formatNumber($tebalGroup['tebal'] ?? 0, 2) }}</td>
+                                    {{ $formatNumber($tebalGroup['tebal'] ?? 0, 2) }}
+                                </td>
                             @endif
                             <td class="data-cell center">{{ $formatNumber($detailRow['lebar'] ?? 0, 2) }}</td>
                             <td class="data-cell center">{{ $detailRow['uom'] ?? '-' }}</td>
@@ -345,9 +345,11 @@
                                 <td class="data-cell number">{{ $formatNumber($value) }}</td>
                             @endforeach
                             <td class="data-cell number" style="font-weight: bold;">
-                                {{ $formatNumber($detailRow['total_pcs'] ?? 0) }}</td>
+                                {{ $formatNumber($detailRow['total_pcs'] ?? 0) }}
+                            </td>
                             <td class="data-cell number" style="font-weight: bold;">
-                                {{ $formatNumber($detailRow['total_ton'] ?? 0, 4) }}</td>
+                                {{ $formatNumber($detailRow['total_ton'] ?? 0, 4) }}
+                            </td>
                         </tr>
                     @endforeach
                 @empty
@@ -386,12 +388,14 @@
                                 class="data-row {{ $lineCounter % 2 === 1 ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'before-total' : '' }}">
                                 @if (!$printedGrade)
                                     <td class="data-cell grade-cell text-cell" rowspan="{{ $gradeRowspan }}">
-                                        {{ $group['grade'] ?? '-' }}</td>
+                                        {{ $group['grade'] ?? '-' }}
+                                    </td>
                                     @php $printedGrade = true; @endphp
                                 @endif
                                 @if ($loop->first)
                                     <td class="data-cell tebal-cell center" rowspan="{{ $tebalRowspan }}">
-                                        {{ $formatSize($tebalGroup['tebal'] ?? 0) }}</td>
+                                        {{ $formatSize($tebalGroup['tebal'] ?? 0) }}
+                                    </td>
                                 @endif
                                 <td class="data-cell center">{{ $formatSize($detailRow['lebar'] ?? 0) }}</td>
                                 <td class="data-cell center">{{ $detailRow['uom'] ?? '-' }}</td>

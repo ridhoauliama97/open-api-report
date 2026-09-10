@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -168,11 +167,7 @@
             }
         };
 
-        $formatBySpec = static function (mixed $value, array $spec) use (
-            $toFloat,
-            $formatNumber,
-            $formatDateCell,
-        ): string {
+        $formatBySpec = static function (mixed $value, array $spec) use ($toFloat, $formatNumber, $formatDateCell, ): string {
             $type = strtolower((string) ($spec['type'] ?? 'text'));
             $decimals = isset($spec['decimals']) ? (int) $spec['decimals'] : 2;
 

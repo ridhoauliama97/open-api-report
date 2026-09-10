@@ -68,7 +68,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -213,7 +212,8 @@
                 <th rowspan="2">Target <br> Hari</th>
                 <th rowspan="2">Target <br> Bulan</th>
                 <th colspan="{{ count($dayColumns) }}">
-                    {{ ucfirst($monthTitle) }}</th>
+                    {{ ucfirst($monthTitle) }}
+                </th>
                 <th rowspan="2" style="font-weight: bold">Total</th>
             </tr>
             <tr class="headers-row">
@@ -237,7 +237,8 @@
                         </td>
                     @endforeach
                     <td class="data-cell" style="font-weight: bold">
-                        {{ number_format((float) $row['total'], 0, '.', ',') }}</td>
+                        {{ number_format((float) $row['total'], 0, '.', ',') }}
+                    </td>
                 </tr>
             @empty
                 <tr class="data-row">
@@ -278,16 +279,16 @@
                 @php
                     $yPos = $padTop + $plotHeight - $y * $yScale;
                 @endphp
-                <line x1="{{ $padLeft }}" y1="{{ $yPos }}" x2="{{ $padLeft + $plotWidth }}"
-                    y2="{{ $yPos }}" stroke="#d1d5db" stroke-width="1" />
+                <line x1="{{ $padLeft }}" y1="{{ $yPos }}" x2="{{ $padLeft + $plotWidth }}" y2="{{ $yPos }}"
+                    stroke="#d1d5db" stroke-width="1" />
                 <text x="{{ $padLeft - 4 }}" y="{{ $yPos + 3 }}" font-size="7" text-anchor="end"
                     fill="#111827">{{ $y }}</text>
             @endfor
 
             <line x1="{{ $padLeft }}" y1="{{ $padTop + $plotHeight }}" x2="{{ $padLeft + $plotWidth }}"
                 y2="{{ $padTop + $plotHeight }}" stroke="#111827" stroke-width="1" />
-            <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}"
-                y2="{{ $padTop + $plotHeight }}" stroke="#111827" stroke-width="1" />
+            <line x1="{{ $padLeft }}" y1="{{ $padTop }}" x2="{{ $padLeft }}" y2="{{ $padTop + $plotHeight }}"
+                stroke="#111827" stroke-width="1" />
 
             @foreach ($chartLabels as $index => $label)
                 @php
@@ -313,11 +314,9 @@
                     }
                 @endphp
                 @if (!empty($points))
-                    <polyline points="{{ implode(' ', $points) }}" fill="none" stroke="{{ $color }}"
-                        stroke-width="1.2" />
+                    <polyline points="{{ implode(' ', $points) }}" fill="none" stroke="{{ $color }}" stroke-width="1.2" />
                     @foreach ($labelPoints as $lp)
-                        <circle cx="{{ $lp['x'] }}" cy="{{ $lp['y'] }}" r="1.8"
-                            fill="{{ $color }}" />
+                        <circle cx="{{ $lp['x'] }}" cy="{{ $lp['y'] }}" r="1.8" fill="{{ $color }}" />
                         <text x="{{ $lp['x'] }}" y="{{ $lp['y'] - 4 }}" font-size="7" text-anchor="middle"
                             fill="#111827">{{ $lp['value'] }}</text>
                     @endforeach
@@ -333,8 +332,7 @@
                     $color = $resolveSeriesColor((string) $seriesName);
                     $itemWidth = $legendBoxWidth + 4 + strlen((string) $seriesName) * $legendFontWidth;
                 @endphp
-                <rect x="{{ $legendX }}" y="{{ $legendY - 8 }}" width="8" height="8"
-                    fill="{{ $color }}" />
+                <rect x="{{ $legendX }}" y="{{ $legendY - 8 }}" width="8" height="8" fill="{{ $color }}" />
                 <text x="{{ $legendX + 12 }}" y="{{ $legendY - 1 }}" font-size="7"
                     fill="{{ $color }}">{{ $seriesName }}</text>
                 @php

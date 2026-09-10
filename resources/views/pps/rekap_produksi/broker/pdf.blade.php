@@ -79,7 +79,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
         }
 
         .row-odd td {
@@ -214,7 +213,8 @@
                         <td class="data-cell number">{{ $berat === null ? '' : number_format($berat, 2, '.', ',') }}
                         </td>
                         <td class="data-cell number" style="text-align: center">
-                            {{ (string) ($row['IdWarehouse'] ?? '') }}</td>
+                            {{ (string) ($row['IdWarehouse'] ?? '') }}
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -230,7 +230,8 @@
     <htmlpagefooter name="reportFooter">
         <div class="footer-wrap">
             <div class="footer-left">Dicetak oleh {{ $generatedByName }} pada
-                {{ $generatedAt->copy()->format('d-M-y H:i') }}</div>
+                {{ $generatedAt->copy()->format('d-M-y H:i') }}
+            </div>
             <div class="footer-right">Halaman {PAGENO} dari {nbpg}</div>
         </div>
     </htmlpagefooter>
