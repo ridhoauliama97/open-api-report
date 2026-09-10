@@ -220,7 +220,7 @@ class AuditReportConventionsCommand extends Command
                 $issues[] = $reflection->getShortName().' download() tidak menginjeksi PdfGenerator.';
             }
 
-            if (str_contains($contents, 'function download(') && ! str_contains($contents, "'Content-Type' => 'application/pdf'")) {
+            if (str_contains($contents, 'function download(') && ! str_contains($contents, "'Content-Type' => 'application/pdf'") && ! str_contains($contents, 'buildGotenbergPdfResponse(')) {
                 $issues[] = $reflection->getShortName().' download() tidak menetapkan header application/pdf.';
             }
         }
