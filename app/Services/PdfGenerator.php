@@ -414,7 +414,7 @@ class PdfGenerator
             'generatedAtText' => $generatedAtText,
         ])->render();
 
-        $bytes = $this->gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
+        $bytes = $this->gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml, ['bucket' => 'warm']);
 
         if (file_put_contents($outputPath, $bytes) === false) {
             throw new \RuntimeException("Gagal menulis PDF ke: {$outputPath}");

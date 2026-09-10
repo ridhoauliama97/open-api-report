@@ -40,6 +40,13 @@ return [
         'timeout' => (int) env('GOTENBERG_TIMEOUT', 300),
         'connect_timeout' => (int) env('GOTENBERG_CONNECT_TIMEOUT', 10),
         'retry_attempts' => (int) env('GOTENBERG_RETRY_ATTEMPTS', 2),
+        'max_interactive' => (int) env('GOTENBERG_MAX_INTERACTIVE', 2),
+        'max_warm' => (int) env('GOTENBERG_MAX_WARM', 1),
+        'max_async' => (int) env('GOTENBERG_MAX_ASYNC', 1),
+        'wait_interactive_seconds' => (int) env('GOTENBERG_WAIT_INTERACTIVE_SECONDS', 2),
+        'wait_warm_seconds' => (int) env('GOTENBERG_WAIT_WARM_SECONDS', 0),
+        'wait_async_seconds' => (int) env('GOTENBERG_WAIT_ASYNC_SECONDS', 5),
+        'throttle_retry_after' => (int) env('GOTENBERG_THROTTLE_RETRY_AFTER', 5),
     ],
 
 ];

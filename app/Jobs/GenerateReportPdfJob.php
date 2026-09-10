@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\PdfJobStatus;
+use App\Services\GotenbergBucketContext;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -55,7 +56,7 @@ class GenerateReportPdfJob implements ShouldQueue
             $controller = app($controllerClass);
 
             /** @var mixed $result */
-            $result = app()->call([$controller, $method], ['request' => $request]);
+            $result = GotenbergBucketContext::run('async', fn (): mixed => app()->call([$controller, $method], ['request' => $request]));
 
             if (! $result instanceof Response) {
                 throw new RuntimeException('Controller download() tidak mengembalikan response yang valid.');

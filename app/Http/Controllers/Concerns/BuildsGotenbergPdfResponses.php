@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Concerns;
 
 use App\Exceptions\GotenbergConnectionException;
 use App\Exceptions\GotenbergConversionException;
+use App\Exceptions\GotenbergThrottleException;
 use App\Services\GotenbergPdfClient;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +18,7 @@ trait BuildsGotenbergPdfResponses
      *
      * Failure modes are handled separately:
      * - Gotenberg unreachable            → 502 (upstream down)
+     * - conversion queue full            → 503 (throttled, retry after header)
      * - Gotenberg client error (4xx)     → 500 (our request was malformed)
      * - Gotenberg server error (5xx)     → 502 (bad gateway)
      *
@@ -38,6 +40,10 @@ trait BuildsGotenbergPdfResponses
             $pdfBytes = app(GotenbergPdfClient::class)->convertHtml($html, $metrics, $footerHtml, $options);
         } catch (GotenbergConnectionException $exception) {
             return $this->gotenbergFailureResponse($request, $exception->getMessage(), 502);
+        } catch (GotenbergThrottleException $exception) {
+            return $this->gotenbergFailureResponse($request, $exception->getMessage(), 503, [
+                'Retry-After' => (string) $exception->retryAfterSeconds,
+            ]);
         } catch (GotenbergConversionException $exception) {
             $upstreamStatus = $exception->status();
             $httpStatus = $upstreamStatus !== null && $upstreamStatus >= 500 ? 502 : 500;
@@ -60,11 +66,12 @@ trait BuildsGotenbergPdfResponses
         Request $request,
         string $message,
         int $status = 502,
+        array $headers = [],
     ): JsonResponse|RedirectResponse {
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => $message,
-            ], $status);
+            ], $status, $headers);
         }
 
         return back()

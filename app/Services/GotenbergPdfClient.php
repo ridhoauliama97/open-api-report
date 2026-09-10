@@ -14,10 +14,13 @@ class GotenbergPdfClient
 {
     private const CONVERT_ENDPOINT = '/forms/chromium/convert/html';
 
+    public function __construct(private readonly GotenbergThrottle $throttle) {}
+
     /**
      * Convert an HTML document into PDF bytes via a Gotenberg server.
      *
-     * Connection failures are retried with exponential backoff + jitter.
+     * Conversions are throttled per bucket (interactive / warm / async) and
+     * connection failures are retried with exponential backoff + jitter.
      * Gotenberg HTTP error responses (4xx/5xx) are never retried.
      *
      * @param  array<string, mixed>  $metrics  Output of {@see PdfGenerator::paperMetrics()}:
@@ -27,6 +30,7 @@ class GotenbergPdfClient
      *
      * @throws GotenbergConnectionException
      * @throws GotenbergConversionException
+     * @throws GotenbergThrottleException
      */
     public function convertHtml(string $html, array $metrics = [], ?string $footerHtml = null, array $options = []): string
     {
@@ -36,7 +40,15 @@ class GotenbergPdfClient
             throw new GotenbergConversionException('URL Gotenberg belum dikonfigurasi.');
         }
 
-        return $this->convertHtmlWithRetry($baseUrl, $html, $metrics, $footerHtml, $options);
+        $bucket = $options['bucket'] ?? GotenbergBucketContext::current();
+        unset($options['bucket']);
+        $slot = $this->throttle->acquire($bucket);
+
+        try {
+            return $this->convertHtmlWithRetry($baseUrl, $html, $metrics, $footerHtml, $options);
+        } finally {
+            $this->throttle->release($slot);
+        }
     }
 
     private function convertHtmlWithRetry(
