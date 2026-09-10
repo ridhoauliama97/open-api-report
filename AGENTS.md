@@ -91,6 +91,9 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 - Detailed reference: `AGENT_INSTRUCTIONS.md` (528 lines with code patterns)
 - `fmtAmount()` helper is defined locally in each blade file — usage: `number_format($v, 2, ',', '.')`; zero → `-`; negative → `'- '` prefix
 
+## Known Issues (pre-existing, unrelated to Gotenberg migration)
+- Baseline test suite (branch HEAD, verified identical before/after the Gotenberg refactor): **51 errors + 41 failures** across 35 `Ascends*ReportFeatureTest` classes (legacy `internal/ascends/*` XML rendering) + 1 `OpenApiFeatureTest` failure. Dominant symptom: "Test code or tested code did not remove its own error/exception handlers"; failing stacks call the legacy `PdfGenerator::render()` (mPDF) path. CI marks the test step `continue-on-error`, so green CI does not mean these pass. Track separately — do NOT fold into Gotenberg migration reports.
+
 ## UC Shared Report Design Conventions
 
 Views at `resources/views/ascends/shared/`:
