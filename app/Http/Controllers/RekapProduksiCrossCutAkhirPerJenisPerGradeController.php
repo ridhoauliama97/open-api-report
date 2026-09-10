@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiCrossCutAkhirPerJenisPerGradeReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.cross-cut-akhir.rekap-produksi-cc-akhir-per-jenis-per-grade-form');
@@ -23,7 +23,6 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
         GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest $request,
         RekapProduksiCrossCutAkhirPerJenisPerGradeReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -73,37 +72,13 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf(
             'Laporan-Rekap-Produksi-CCAkhir-Per-Jenis-Per-Grade-%s-sd-%s.pdf',
             $startDate,
             $endDate,
         );
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-        ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'attachment');
     }
 
     public function preview(
@@ -135,7 +110,6 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
         GenerateRekapProduksiCrossCutAkhirPerJenisPerGradeReportRequest $request,
         RekapProduksiCrossCutAkhirPerJenisPerGradeReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -168,22 +142,13 @@ class RekapProduksiCrossCutAkhirPerJenisPerGradeController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf(
             'Laporan-Rekap-Produksi-CCAkhir-Per-Jenis-Per-Grade-%s-sd-%s.pdf',
             $startDate,
             $endDate,
         );
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
-        ]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'inline');
     }
 
     public function health(

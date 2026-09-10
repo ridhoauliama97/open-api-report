@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateHidupKBPerGroupReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\HidupKBPerGroupReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class HidupKBPerGroupController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.kayu-bulat.hidup-per-group-form');
@@ -23,7 +23,6 @@ class HidupKBPerGroupController extends Controller
         GenerateHidupKBPerGroupReportRequest $request,
         HidupKBPerGroupReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -65,33 +64,9 @@ class HidupKBPerGroupController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = 'laporan-hidup-kb-per-group.pdf';
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-        ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GenerateHidupKBPerGroupReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'attachment');
     }
 
     public function preview(

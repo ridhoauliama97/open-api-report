@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateStockSTKeringReportRequest;
 use App\Services\FilePdfJobStore;
 use App\Services\GotenbergPdfClient;
@@ -17,6 +17,8 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class StockSTKeringController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     private const REPORT_TYPE = 'sawn-timber/stock-st-kering';
 
     private const SHARED_REQUESTED_BY = 'system';
@@ -404,29 +406,14 @@ class StockSTKeringController extends Controller
         $filename = sprintf('Laporan-Stock-ST-Kering-%s.pdf', $endDate);
         $dispositionType = $attachment ? 'attachment' : 'inline';
 
-        try {
-            $pdf = $gotenbergPdfClient->convertHtml(
-                $pdfGenerator->renderHtml('reports.sawn-timber.stock-st-kering-pdf', $payload),
-                $pdfGenerator->paperMetrics($payload),
-                view('reports.partials.gotenberg-footer', [
-                    'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
-                    'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
-                ])->render(),
-            );
-        } catch (GotenbergPdfException $exception) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()], 502);
-            }
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.stock-st-kering-pdf', $payload);
+        $metrics = $pdfGenerator->paperMetrics($payload);
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
 
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()]);
-        }
-
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, $dispositionType);
     }
 
     private function resolveWebPreviewLimit(GenerateStockSTKeringReportRequest $request): int

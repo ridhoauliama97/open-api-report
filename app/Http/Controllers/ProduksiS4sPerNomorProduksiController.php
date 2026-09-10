@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateProduksiPerNomorProduksiReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\ProduksiS4sPerNomorProduksiReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class ProduksiS4sPerNomorProduksiController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.proses-produksi.produksi-s4s-per-nomor-produksi-form');
@@ -23,7 +23,6 @@ class ProduksiS4sPerNomorProduksiController extends Controller
         GenerateProduksiPerNomorProduksiReportRequest $request,
         ProduksiS4sPerNomorProduksiReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $noProduksi = $request->noProduksi();
         $generatedBy = $this->resolveReportGeneratedBy($request);
@@ -53,38 +52,10 @@ class ProduksiS4sPerNomorProduksiController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf('Laporan-Produksi-S4S-Per-Nomor-Produksi-%s.pdf', str_replace(['\\', '/', ' '], '-', $noProduksi));
         $dispositionType = $request->boolean('preview_pdf') ? 'attachment' : 'inline';
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, $filename),
-        ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(
-        GenerateProduksiPerNomorProduksiReportRequest $request,
-        string $message,
-    ): JsonResponse|RedirectResponse {
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => $message,
-            ], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, $dispositionType);
     }
 
     public function preview(

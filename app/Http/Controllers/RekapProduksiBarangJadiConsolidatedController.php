@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateRekapProduksiBarangJadiConsolidatedReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\RekapProduksiBarangJadiConsolidatedReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class RekapProduksiBarangJadiConsolidatedController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.barang-jadi.rekap-produksi-barang-jadi-consolidated-form');
@@ -23,7 +23,6 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
         GenerateRekapProduksiBarangJadiConsolidatedReportRequest $request,
         RekapProduksiBarangJadiConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -65,33 +64,9 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf('Laporan-Rekap-Produksi-Packing-Consolidated-%s-sd-%s.pdf', $startDate, $endDate);
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-        ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GenerateRekapProduksiBarangJadiConsolidatedReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'attachment');
     }
 
     public function preview(
@@ -118,7 +93,6 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
         GenerateRekapProduksiBarangJadiConsolidatedReportRequest $request,
         RekapProduksiBarangJadiConsolidatedReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $startDate = $request->startDate();
         $endDate = $request->endDate();
@@ -147,18 +121,9 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf('Laporan-Rekap-Produksi-Packing-Consolidated-%s-sd-%s.pdf', $startDate, $endDate);
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
-        ]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'inline');
     }
 
     public function health(

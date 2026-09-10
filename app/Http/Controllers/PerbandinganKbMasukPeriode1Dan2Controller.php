@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest;
 use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\PerbandinganKbMasukPeriode1Dan2ReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.kayu-bulat.perbandingan-kb-masuk-periode-1-dan-2-form');
@@ -101,12 +102,6 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf(
             'Laporan-Perbandingan-KB-Masuk-Periode1dan2-%s-sd-%s-vs-%s-sd-%s.pdf',
             $period1StartDate,
@@ -115,25 +110,7 @@ class PerbandinganKbMasukPeriode1Dan2Controller extends Controller
             $period2EndDate,
         );
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-        ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GeneratePerbandinganKbMasukPeriode1Dan2ReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'attachment');
     }
 
     public function preview(

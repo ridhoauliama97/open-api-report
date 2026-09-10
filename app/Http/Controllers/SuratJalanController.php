@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateSuratJalanReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\SuratJalanReportService;
 use Illuminate\Http\JsonResponse;
@@ -12,6 +11,8 @@ use RuntimeException;
 
 class SuratJalanController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function preview(
         GenerateSuratJalanReportRequest $request,
         SuratJalanReportService $reportService,
@@ -45,7 +46,6 @@ class SuratJalanController extends Controller
         GenerateSuratJalanReportRequest $request,
         SuratJalanReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -85,29 +85,14 @@ class SuratJalanController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
+        $filename = sprintf('Surat Jalan %s.pdf', $noJual);
 
-            $filename = sprintf('Surat Jalan %s.pdf', $noJual);
-
-            return response($pdf, 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-            ]);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $paperMetrics, $footerHtml, 'attachment');
     }
 
     public function health(

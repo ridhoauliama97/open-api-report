@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateStockSTBasahReportRequest;
 use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
@@ -15,6 +15,8 @@ use Throwable;
 
 class StockSTBasahController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.sawn-timber.stock-st-basah-form');
@@ -147,24 +149,12 @@ class StockSTBasahController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Stock St Basah"']);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan Stock St Basah', $paperMetrics, $footerHtml, 'attachment');
     }
 
     private function pdfCacheKey(string $endDate, object $generatedBy): string

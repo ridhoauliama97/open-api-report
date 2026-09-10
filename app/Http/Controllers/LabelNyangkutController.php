@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateLabelNyangkutReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\LabelNyangkutReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -13,6 +12,8 @@ use RuntimeException;
 
 class LabelNyangkutController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     /**
      * Display the default page for this resource.
      */
@@ -28,7 +29,6 @@ class LabelNyangkutController extends Controller
         GenerateLabelNyangkutReportRequest $request,
         LabelNyangkutReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -69,29 +69,14 @@ class LabelNyangkutController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
+        $filename = 'Laporan-Label-Nyangkut.pdf';
 
-            $filename = 'Laporan-Label-Nyangkut.pdf';
-
-            return response($pdf, 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-            ]);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $paperMetrics, $footerHtml, 'attachment');
     }
 
     /**

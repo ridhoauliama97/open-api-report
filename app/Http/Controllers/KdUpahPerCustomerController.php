@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateKdUpahPerCustomerReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\KdUpahPerCustomerReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class KdUpahPerCustomerController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function preview(
         GenerateKdUpahPerCustomerReportRequest $request,
         KdUpahPerCustomerReportService $reportService,
@@ -40,7 +40,6 @@ class KdUpahPerCustomerController extends Controller
         GenerateKdUpahPerCustomerReportRequest $request,
         KdUpahPerCustomerReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -84,33 +83,9 @@ class KdUpahPerCustomerController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $dispositionType = 'attachment';
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $dispositionType, 'Laporan-KD-Upah-Per-Cutomer.pdf'),
-        ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GenerateKdUpahPerCustomerReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan-KD-Upah-Per-Cutomer.pdf', $metrics, $footerHtml, $dispositionType);
     }
 
     public function health(

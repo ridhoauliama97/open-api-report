@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateSaldoStHidupPerProdukReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\SaldoStHidupPerProdukReportService;
 use Illuminate\Contracts\View\View;
@@ -13,6 +12,8 @@ use RuntimeException;
 
 class SaldoStHidupPerProdukController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.sawn-timber.saldo-st-hidup-per-produk-form');
@@ -22,7 +23,6 @@ class SaldoStHidupPerProdukController extends Controller
         GenerateSaldoStHidupPerProdukReportRequest $request,
         SaldoStHidupPerProdukReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -59,24 +59,12 @@ class SaldoStHidupPerProdukController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Saldo St Hidup Per Produk"']);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan Saldo St Hidup Per Produk', $paperMetrics, $footerHtml, 'attachment');
     }
 
     public function preview(

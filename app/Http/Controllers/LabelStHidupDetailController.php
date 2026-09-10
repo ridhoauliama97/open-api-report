@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateNoParameterReportRequest;
 use App\Services\FilePdfJobStore;
 use App\Services\GotenbergPdfClient;
@@ -17,6 +17,8 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class LabelStHidupDetailController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     private const PREVIEW_ROW_LIMIT = 500;
 
     private const REPORT_TYPE = 'sawn-timber/label-st-hidup-detail';
@@ -378,31 +380,16 @@ class LabelStHidupDetailController extends Controller
 
         $filename = 'Laporan-Label-ST-Hidup-Detail.pdf';
 
-        try {
-            $pdf = $gotenbergPdfClient->convertHtml(
-                $pdfGenerator->renderHtml('reports.sawn-timber.label-st-hidup-detail-pdf', $payload),
-                $pdfGenerator->paperMetrics($payload),
-                view('reports.partials.gotenberg-footer', [
-                    'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
-                    'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
-                ])->render(),
-            );
-        } catch (GotenbergPdfException $exception) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$exception->getMessage()]);
-        }
+        $html = $pdfGenerator->renderHtml('reports.sawn-timber.label-st-hidup-detail-pdf', $payload);
+        $metrics = $pdfGenerator->paperMetrics($payload);
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedBy->name ?? $generatedBy->Username ?? 'sistem',
+            'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
+        ])->render();
 
         $disposition = $attachment ? 'attachment' : 'inline';
 
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('%s; filename="%s"', $disposition, $filename),
-        ]);
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, $disposition);
     }
 
     public function preview(

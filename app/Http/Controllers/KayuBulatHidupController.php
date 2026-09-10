@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateKayuBulatHidupReportRequest;
 use App\Services\GotenbergPdfClient;
 use App\Services\KayuBulatHidupReportService;
@@ -10,11 +10,12 @@ use App\Services\PdfGenerator;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class KayuBulatHidupController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.kayu-bulat.hidup-form');
@@ -99,18 +100,11 @@ class KayuBulatHidupController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $startLabel = Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $endLabel = Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
         $filename = sprintf('Laporan Kayu Bulat Hidup - Periode %s s/d %s.pdf', $startLabel, $endLabel);
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'attachment', [], [
             'Content-Disposition' => sprintf(
                 'attachment; filename="%s"; filename*=UTF-8\'\'%s',
                 addcslashes($filename, '"\\'),
@@ -120,21 +114,6 @@ class KayuBulatHidupController extends Controller
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GenerateKayuBulatHidupReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
     }
 
     public function preview(

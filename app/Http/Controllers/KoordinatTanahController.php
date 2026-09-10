@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateKoordinatTanahReportRequest;
 use App\Services\GotenbergPdfClient;
 use App\Services\KoordinatTanahReportService;
@@ -13,6 +13,8 @@ use RuntimeException;
 
 class KoordinatTanahController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(GenerateKoordinatTanahReportRequest $request): View
     {
         return view('reports.penjualan-kayu.koordinat-tanah-form', [
@@ -132,23 +134,11 @@ class KoordinatTanahController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Koordinat Tanah"']);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan Koordinat Tanah', $paperMetrics, $footerHtml, 'attachment');
     }
 }

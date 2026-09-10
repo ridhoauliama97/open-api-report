@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateSaldoKayuBulatReportRequest;
 use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use App\Services\SaldoKayuBulatReportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use RuntimeException;
 
 class SaldoKayuBulatController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.kayu-bulat.saldo-form');
@@ -87,18 +88,11 @@ class SaldoKayuBulatController extends Controller
             'generatedAtText' => now()->locale('id')->translatedFormat('d-M-y H:i'),
         ])->render();
 
-        try {
-            $pdfBytes = $gotenbergPdfClient->convertHtml($html, $metrics, $footerHtml);
-        } catch (GotenbergPdfException $exception) {
-            return $this->gotenbergFailureResponse($request, $exception->getMessage());
-        }
-
         $filename = sprintf('Laporan-Saldo-Kayu-Bulat-%s-sd-%s.pdf', $startDate, $endDate);
 
         $dispositionType = $attachment ? 'attachment' : 'inline';
 
-        return response($pdfBytes, 200, [
-            'Content-Type' => 'application/pdf',
+        return $this->buildGotenbergPdfResponse($request, $html, $filename, $metrics, $footerHtml, 'attachment', [], [
             'Content-Disposition' => sprintf(
                 '%s; filename="%s"; filename*=UTF-8\'\'%s',
                 $dispositionType,
@@ -106,21 +100,6 @@ class SaldoKayuBulatController extends Controller
                 rawurlencode($filename)
             ),
         ]);
-    }
-
-    /**
-     * Build a failure response when the PDF conversion service is unreachable
-     * or returns an error.
-     */
-    private function gotenbergFailureResponse(GenerateSaldoKayuBulatReportRequest $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 502);
-        }
-
-        return back()
-            ->withInput()
-            ->withErrors(['report' => $message]);
     }
 
     public function preview(

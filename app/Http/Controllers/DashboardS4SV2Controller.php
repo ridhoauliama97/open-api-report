@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\ShowDashboardS4SV2Request;
 use App\Services\DashboardS4SV2ReportService;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +12,8 @@ use RuntimeException;
 
 class DashboardS4SV2Controller extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(
         ShowDashboardS4SV2Request $request,
         DashboardS4SV2ReportService $reportService,
@@ -98,7 +99,6 @@ class DashboardS4SV2Controller extends Controller
         ShowDashboardS4SV2Request $request,
         DashboardS4SV2ReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -139,24 +139,12 @@ class DashboardS4SV2Controller extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Dashboard S4s V2"']);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Dashboard S4s V2', $paperMetrics, $footerHtml, 'attachment');
     }
 
     private function resolveDates(ShowDashboardS4SV2Request $request): array

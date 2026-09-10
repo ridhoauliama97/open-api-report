@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateDateRangeReportRequest;
 use App\Services\FlowProduksiPerPeriodeReportService;
-use App\Services\GotenbergPdfClient;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +13,8 @@ use RuntimeException;
 
 class FlowProduksiPerPeriodeController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(Request $request): View
     {
         return view('reports.management.flow-produksi-per-periode-form', [
@@ -26,7 +27,6 @@ class FlowProduksiPerPeriodeController extends Controller
         GenerateDateRangeReportRequest $request,
         FlowProduksiPerPeriodeReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -68,24 +68,12 @@ class FlowProduksiPerPeriodeController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Flow Produksi Per Periode"']);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan Flow Produksi Per Periode', $paperMetrics, $footerHtml, 'attachment');
     }
 
     public function preview(

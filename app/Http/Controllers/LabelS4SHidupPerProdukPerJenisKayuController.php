@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GotenbergPdfException;
+use App\Http\Controllers\Concerns\BuildsGotenbergPdfResponses;
 use App\Http\Requests\GenerateNoParameterReportRequest;
-use App\Services\GotenbergPdfClient;
 use App\Services\LabelS4SHidupPerProdukPerJenisKayuReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Contracts\View\View;
@@ -13,6 +12,8 @@ use RuntimeException;
 
 class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
 {
+    use BuildsGotenbergPdfResponses;
+
     public function index(): View
     {
         return view('reports.s4s.label-s4s-hidup-per-produk-per-jenis-kayu-form');
@@ -22,7 +23,6 @@ class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
         GenerateNoParameterReportRequest $request,
         LabelS4SHidupPerProdukPerJenisKayuReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         $generatedBy = $request->user() ?? auth('api')->user();
 
@@ -61,24 +61,12 @@ class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Label S4s Hidup Per Produk Per Jenis Kayu.pdf"']);
-        } catch (GotenbergPdfException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['report' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()]);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan Label S4s Hidup Per Produk Per Jenis Kayu.pdf', $paperMetrics, $footerHtml, 'attachment');
     }
 
     public function preview(
@@ -105,7 +93,6 @@ class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
         GenerateNoParameterReportRequest $request,
         LabelS4SHidupPerProdukPerJenisKayuReportService $reportService,
         PdfGenerator $pdfGenerator,
-        GotenbergPdfClient $gotenbergPdfClient,
     ) {
         try {
             $rows = $reportService->fetch();
@@ -128,17 +115,11 @@ class LabelS4SHidupPerProdukPerJenisKayuController extends Controller
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');
 
-        try {
-            $footerHtml = view('reports.partials.gotenberg-footer', [
-                'generatedByName' => $generatedByName,
-                'generatedAtText' => $generatedAtText,
-            ])->render();
+        $footerHtml = view('reports.partials.gotenberg-footer', [
+            'generatedByName' => $generatedByName,
+            'generatedAtText' => $generatedAtText,
+        ])->render();
 
-            $pdf = $gotenbergPdfClient->convertHtml($html, $paperMetrics, $footerHtml);
-
-            return response($pdf, 200, ['Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="Laporan Label S4s Hidup Per Produk Per Jenis Kayu.pdf"']);
-        } catch (GotenbergPdfException $e) {
-            return response()->json(['message' => 'Gagal generate PDF via Gotenberg: '.$e->getMessage()], 502);
-        }
+        return $this->buildGotenbergPdfResponse($request, $html, 'Laporan Label S4s Hidup Per Produk Per Jenis Kayu.pdf', $paperMetrics, $footerHtml, 'attachment');
     }
 }
