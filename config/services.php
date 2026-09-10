@@ -39,6 +39,7 @@ return [
         'url' => env('GOTENBERG_URL', 'http://localhost:3000'),
         'timeout' => (int) env('GOTENBERG_TIMEOUT', 300),
         'connect_timeout' => (int) env('GOTENBERG_CONNECT_TIMEOUT', 10),
+        'retry_attempts' => (int) env('GOTENBERG_RETRY_ATTEMPTS', 2),
     ],
 
 ];

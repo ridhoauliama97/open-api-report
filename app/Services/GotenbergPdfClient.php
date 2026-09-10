@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Exceptions\GotenbergConnectionException;
 use App\Exceptions\GotenbergConversionException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class GotenbergPdfClient
 {
@@ -14,6 +16,9 @@ class GotenbergPdfClient
 
     /**
      * Convert an HTML document into PDF bytes via a Gotenberg server.
+     *
+     * Connection failures are retried with exponential backoff + jitter.
+     * Gotenberg HTTP error responses (4xx/5xx) are never retried.
      *
      * @param  array<string, mixed>  $metrics  Output of {@see PdfGenerator::paperMetrics()}:
      *                                         paper_width, paper_height, landscape.
@@ -31,10 +36,25 @@ class GotenbergPdfClient
             throw new GotenbergConversionException('URL Gotenberg belum dikonfigurasi.');
         }
 
+        return $this->convertHtmlWithRetry($baseUrl, $html, $metrics, $footerHtml, $options);
+    }
+
+    private function convertHtmlWithRetry(
+        string $baseUrl,
+        string $html,
+        array $metrics,
+        ?string $footerHtml,
+        array $options,
+    ): string {
+        $attempts = max(1, (int) config('services.gotenberg.retry_attempts', 2));
+
         $request = Http::baseUrl($baseUrl)
             ->timeout((int) config('services.gotenberg.timeout', 300))
             ->connectTimeout((int) config('services.gotenberg.connect_timeout', 10))
             ->asMultipart()
+            ->retry($attempts, fn (int $attempt): int => $this->backoffDelay($attempt), function (Throwable $exception): bool {
+                return $exception instanceof ConnectionException;
+            })
             ->attach('files', $html, 'index.html');
 
         if ($footerHtml !== null && trim($footerHtml) !== '') {
@@ -61,6 +81,16 @@ class GotenbergPdfClient
             ]);
 
             throw GotenbergConnectionException::unreachable();
+        } catch (RequestException $exception) {
+            $status = $exception->response?->status() ?? 0;
+
+            Log::error('Gotenberg conversion failed', [
+                'endpoint' => self::CONVERT_ENDPOINT,
+                'status' => $status,
+                'body' => mb_substr((string) ($exception->response?->body() ?? ''), 0, 1000),
+            ]);
+
+            throw GotenbergConversionException::fromStatus($status);
         }
 
         if ($response->failed()) {
@@ -74,5 +104,16 @@ class GotenbergPdfClient
         }
 
         return $response->body();
+    }
+
+    /**
+     * Exponential backoff (200, 400, 800... ms) with ±50% jitter.
+     */
+    private function backoffDelay(int $attempt): int
+    {
+        $base = 200 * (2 ** (max(1, $attempt) - 1));
+        $jitter = (mt_rand() / mt_getrandmax()) - 0.5;
+
+        return max(0, (int) round($base * (1 + $jitter)));
     }
 }
