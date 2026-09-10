@@ -42,10 +42,12 @@ class GotenbergPdfClient
 
         $bucket = $options['bucket'] ?? GotenbergBucketContext::current();
         unset($options['bucket']);
+        $metadata = $options['metadata'] ?? null;
+        unset($options['metadata']);
         $slot = $this->throttle->acquire($bucket);
 
         try {
-            return $this->convertHtmlWithRetry($baseUrl, $html, $metrics, $footerHtml, $options);
+            return $this->convertHtmlWithRetry($baseUrl, $html, $metrics, $footerHtml, $options, $metadata);
         } finally {
             $this->throttle->release($slot);
         }
@@ -57,6 +59,7 @@ class GotenbergPdfClient
         array $metrics,
         ?string $footerHtml,
         array $options,
+        mixed $metadata,
     ): string {
         $attempts = max(1, (int) config('services.gotenberg.retry_attempts', 2));
 
@@ -83,6 +86,12 @@ class GotenbergPdfClient
             'marginLeft' => '10mm',
             'marginRight' => '10mm',
         ], $options);
+
+        if ($metadata !== null) {
+            $formParams['metadata'] = is_array($metadata)
+                ? json_encode($metadata, JSON_UNESCAPED_UNICODE)
+                : (string) $metadata;
+        }
 
         try {
             $response = $request->post(self::CONVERT_ENDPOINT, $formParams);

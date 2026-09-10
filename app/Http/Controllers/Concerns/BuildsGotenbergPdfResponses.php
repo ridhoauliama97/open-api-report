@@ -18,7 +18,7 @@ trait BuildsGotenbergPdfResponses
      *
      * Failure modes are handled separately:
      * - Gotenberg unreachable            → 502 (upstream down)
-     * - conversion queue full            → 503 (throttled, retry after header)
+     * - conversion queue full            → 503 (throttled, retry later)
      * - Gotenberg client error (4xx)     → 500 (our request was malformed)
      * - Gotenberg server error (5xx)     → 502 (bad gateway)
      *
@@ -36,6 +36,11 @@ trait BuildsGotenbergPdfResponses
         array $options = [],
         array $extraHeaders = [],
     ): Response|JsonResponse|RedirectResponse {
+        $options['metadata'] = array_merge(
+            ['Title' => $this->pdfMetadataTitle($filename)],
+            is_array($options['metadata'] ?? null) ? $options['metadata'] : [],
+        );
+
         try {
             $pdfBytes = app(GotenbergPdfClient::class)->convertHtml($html, $metrics, $footerHtml, $options);
         } catch (GotenbergConnectionException $exception) {
@@ -77,5 +82,12 @@ trait BuildsGotenbergPdfResponses
         return back()
             ->withInput()
             ->withErrors(['report' => $message]);
+    }
+
+    private function pdfMetadataTitle(string $filename): string
+    {
+        $title = preg_replace('/\.pdf$/i', '', $filename);
+
+        return str_replace(['-', '_'], ' ', trim((string) $title));
     }
 }
