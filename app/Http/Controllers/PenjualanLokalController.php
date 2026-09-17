@@ -134,10 +134,10 @@ class PenjualanLokalController extends Controller
 
         $html = $pdfGenerator->renderHtml('reports.penjualan-kayu.penjualan-lokal-pdf', [
             'rows' => $rows,
-            'sections' => $sections,
-            'summaryRows' => $summaryRows,
-            'subtotalTon' => $subtotalTon,
-            'grandTotalTon' => $grandTotalTon,
+            'sections' => $summary['sections'],
+            'summaryRows' => $summary['rows'],
+            'subtotalTon' => $summary['subtotal_ton'],
+            'grandTotalTon' => $summary['grand_total_ton'],
             'startDate' => $startDate,
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,

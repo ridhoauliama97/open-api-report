@@ -79,7 +79,6 @@ class SupplierIntelController extends Controller
             'endDate' => $endDate,
             'generatedBy' => $generatedBy,
             'generatedAt' => now(),
-            'parameterCount' => $parameterCount,
         ]);
 
         $paperMetrics = $pdfGenerator->paperMetrics('a4');
