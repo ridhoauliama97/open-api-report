@@ -323,7 +323,8 @@ use App\Exceptions\GotenbergPdfException;
 use App\Services\GotenbergPdfClient;
 
 // 1) HTML bersih untuk Chromium — markup khusus mPDF dibuang otomatis,
-//    link Google Fonts DIPERTAHANKAN (Chromium bisa fetch font eksternal)
+//    link Google Fonts / font eksternal DIHAPUS oleh stripExternalFontLinks()
+//    (font wajib tersedia di container Gotenberg, mis. Noto Serif)
 $html = $pdfGenerator->renderHtml('reports.mutasi.barang-jadi-pdf', [
     'rows' => $rows,
     'subRows' => $subRows,
@@ -371,6 +372,7 @@ Gotchas engine print Chromium (pelajaran pilot Mutasi Barang Jadi):
 - Tabel `border-collapse: collapse` yang lebarnya tepat 100% bisa **kehilangan border kanan** saat dicetak → pakai `width: calc(100% - 2px)` + `border: 1px solid #000` di level `table`.
 - Jumlah `width` kolom dalam px harus ≤ area cetak; landscape A4 margin 10mm ≈ **1047px**. Kelebihan → kolom terpotong keluar halaman.
 - Background sel striping butuh form field `printBackground=true` (sudah default di client).
+- **Kontrak font (tervalidasi via benchmark 2026-09-17, utama#2)**: set font yang di-embed **deterministik terhadap HTML+data** — cold start, warm, dan boundary `--chromium-restart-after=25` menghasilkan set identik. `Noto Serif` embed sebagai subset 3 varian (Regular/Bold/BoldItalic); glyph di luar cakupannya (emoji, CJK, simbol khusus) otomatis menarik subset fallback `DejaVuSans` — itu normal, bukan bug, tapi berarti **isi data memengaruhi set font**. Jangan pakai font-family eksternal (Calibri/DejaVu eksplisit di view sudah dihapus; link Google Fonts di-strip otomatis). Latensi: cold start pertama ~13s sekali per (re)start container, boundary restart hanya +~0.2s.
 
 ---
 
