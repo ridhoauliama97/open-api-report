@@ -49,6 +49,7 @@ class GotenbergPdfThrottleTest extends TestCase
     public function test_controller_returns_503_with_retry_after_header_when_bucket_saturated(): void
     {
         config()->set('services.gotenberg.wait_interactive_seconds', 0);
+        config()->set('services.gotenberg.max_interactive', 2);
 
         $user = User::factory()->make(['id' => 1]);
 
