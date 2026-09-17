@@ -87,7 +87,7 @@ php artisan test tests/Feature/MutasiBarangJadiReportFeatureTest.php
 - `config/reports.php` (2746 lines) is the single source of truth for SP names, DB connections, columns, and `report_auth` config
 - CI (`.github/workflows/ci.yml`, push/PR to `main` only): `vendor/bin/pint --test` + `php artisan test`, but the test step is `continue-on-error: true` — **green CI does not mean tests pass**
 - `boost.json` registers `opencode` agent + `laravel-best-practices` skill; `.opencode/opencode.json` only registers the graphify plugin
-- Gotenberg env in `.env.example`: `GOTENBERG_URL` (default `http://localhost:3000`), `GOTENBERG_TIMEOUT=300`, `GOTENBERG_CONNECT_TIMEOUT=10` — Gotenberg route fails without a running Gotenberg server
+- Gotenberg env in `.env.example` (all in `config/services.php`): `GOTENBERG_URL` (default `http://localhost:3000`), `GOTENBERG_TIMEOUT=300`, `GOTENBERG_CONNECT_TIMEOUT=10`; retry/throttle: `GOTENBERG_RETRY_ATTEMPTS=2` (connection failures only, not 4xx/5xx), bucket slots `GOTENBERG_MAX_INTERACTIVE=4` / `GOTENBERG_MAX_WARM=2` / `GOTENBERG_MAX_ASYNC=2` (benchmark dev 2026-09-17, recalibrasi dengan report riil sebelum production), wait budgets `GOTENBERG_WAIT_*_SECONDS`, and `GOTENBERG_THROTTLE_RETRY_AFTER=5` (Retry-After on 503) — Gotenberg route fails without a running Gotenberg server
 - Detailed reference: `AGENT_INSTRUCTIONS.md` (528 lines with code patterns)
 - `fmtAmount()` helper is defined locally in each blade file — usage: `number_format($v, 2, ',', '.')`; zero → `-`; negative → `'- '` prefix
 
@@ -118,6 +118,20 @@ Views at `resources/views/ascends/shared/`:
 | **Number wrap** | `.nowrap` | `white-space: nowrap` |
 | **Number negative** | `.number-negative` | `color: #9c111d` |
 | **Footer** | — | `@include('ascends.shared.partials.report-footer')` |
+
+## Agent skills
+
+### Issue tracker
+
+GitHub issues on the `utama` remote (`utama-corporation/open-api-report`) via the `gh` CLI; always pass `-R` since this clone has two remotes. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical triage roles; label strings equal to role names (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` + `docs/adr/` (created lazily; proceed silently if absent). See `docs/agents/domain.md`.
 
 ## graphify
 
