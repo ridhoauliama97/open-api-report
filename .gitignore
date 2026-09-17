@@ -20,6 +20,11 @@
 /storage/pail
 /vendor
 /storage/app/public/*.pdf
+
+# Session helper scripts (smoke-test lookups, one-off loaders)
+/storage/*.php
+/storage/smoke/
+/storage/load/
 /tmp
 /.tools/
 /.tmp_ilspy_wps/
