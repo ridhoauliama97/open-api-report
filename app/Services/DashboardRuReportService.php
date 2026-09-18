@@ -21,7 +21,7 @@ class DashboardRuReportService
         ],
         [
             'source' => 'Saldo ST PBL Hidup',
-            'label' => 'ST PBL<br>Hidup',
+            'label' => 'ST PBL Hidup',
             'subs' => ['RB'],
         ],
         [
