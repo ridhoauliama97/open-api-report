@@ -7,98 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <meta charset="utf-8">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
-        }
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-        .data-table {
+        .data-table th, .data-table td {
             border: 1px solid #000;
-            border-collapse: collapse;
-            width: calc(100% - 2px);
-            table-layout: fixed;
-        }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .data-table th {
-            background-color: #eef2f8;
-            font-weight: bold;
-        }
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .item-row td {
-            padding-left: 4px;
-        }
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-        .row-even td {
-            background-color: #eef2f8;
-        }
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-        .number {
-            text-align: right;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .number-negative {
-            color: #9c111d;
         }
     </style>
+    
+    
 </head>
 
 <body>
@@ -108,10 +24,10 @@
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
         $grandTotals = is_array($summary['grand_totals'] ?? null) ? $summary['grand_totals'] : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
-        $start = \Carbon\Carbon::parse((string) ($data['start_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
-        $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->translatedFormat('d-M-y');
-        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->format('d-M-y');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
+        $start = \Carbon\Carbon::parse((string) ($data['start_date'] ?? ''))->locale('id')->isoFormat('DD-MMM-YY');
+        $end = \Carbon\Carbon::parse((string) ($data['end_date'] ?? ''))->locale('id')->isoFormat('DD-MMM-YY');
+        $fmtDate = static fn(string $v): string => $v === '' ? '' : \Carbon\Carbon::parse($v)->locale('id')->isoFormat('DD-MMM-YY');
         $fmt = static fn(?float $v): string => $v === null || abs($v) < 0.0000001 ? '' : number_format($v, 2, '.', ',');
         $fmtPercent = static fn(?float $v): string => $v === null || abs($v) < 0.0000001
             ? ''
@@ -173,7 +89,7 @@
     @if (empty($groupNames) || empty($dateKeys))
         <div class="center">Tidak ada data.</div>
     @else
-        <table>
+        <table class="data-table">
             <thead>
                 <tr>
                     <th style="width: 44px;" rowspan="2">No</th>

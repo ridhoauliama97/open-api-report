@@ -7,123 +7,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <meta charset="utf-8">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
+        .data-table th, .data-table td {
+            border: 1px solid #000;
         }
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .data-table th {
-            background-color: #eef2f8;
-            font-weight: bold;
-        }
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .item-row td {
-            padding-left: 4px;
-        }
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-        .row-even td {
-            background-color: #eef2f8;
-        }
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-        .number {
-            text-align: right;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .number-negative {
-            color: #9c111d;
-        }
-    
-        /* standardized table borders */
         .handover-summary {
             border: 1px solid #000;
             border-collapse: collapse;
             width: calc(100% - 2px);
             line-height: inherit;
         }
-.handover-summary th, .handover-summary td {
+        .handover-summary th, .handover-summary td {
             border: 1px solid #000;
             word-wrap: break-word;
             padding: 2px;
             vertical-align: top;
         }
-
-        .handover-summary th { font-weight: bold; background-color: #eef2f8; }
-.meta-table, .signature-table {
+        .handover-summary th {
+            font-weight: bold;
+            background-color: #eef2f8;
+        }
+        .meta-table, .signature-table {
             border-collapse: collapse;
         }
-.meta-table td, .signature-table td { padding: 1px 2px; vertical-align: top; }
-    
-        .data-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
+        .meta-table td, .signature-table td {
+            padding: 1px 2px;
+            vertical-align: top;
         }
-            /* restored baseline table rules */
-        .meta-table { width: 100%; margin: 14px 0 10px 0; border-collapse: collapse; }
-        .meta-table td { border: 0; padding: 1px 4px; vertical-align: top; }
-        .signature-table { width: 100%; margin-top: 26px; border-collapse: collapse; font-size: 10px; }
-        .signature-table td { border: 0; padding: 0 4px; text-align: center; vertical-align: top; }
+        .meta-table {
+            width: 100%;
+            margin: 14px 0 10px 0;
+            border-collapse: collapse;
+        }
+        .meta-table td {
+            border: 0;
+            padding: 1px 4px;
+            vertical-align: top;
+        }
+        .signature-table {
+            width: 100%;
+            margin-top: 26px;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        .signature-table td {
+            border: 0;
+            padding: 0 4px;
+            text-align: center;
+            vertical-align: top;
+        }
     </style>
+    
+    
 </head>
 
 <body>
@@ -155,7 +91,7 @@
         }
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
 
         $fmtDecimal = static function ($v, int $decimals = 4): string {
             $n = (float) ($v ?? 0.0);
@@ -174,14 +110,14 @@
             }
 
             try {
-                return \Carbon\Carbon::parse($t)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse($t)->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable $e) {
                 return $t;
             }
         };
     @endphp
 
-    <h1 class="report-title">Laporan Serah Terima ST (Kamar KD)</h1>
+    <h1 class="report-title" style="margin-bottom: 20px;">Laporan Serah Terima ST (Kamar KD)</h1>
 
     <table class="meta-table">
         <tbody>

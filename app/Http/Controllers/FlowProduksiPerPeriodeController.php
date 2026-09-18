@@ -63,7 +63,7 @@ class FlowProduksiPerPeriodeController extends Controller
             'generatedAt' => now(),
         ]);
 
-        $paperMetrics = $pdfGenerator->paperMetrics('a4');
+        $paperMetrics = $pdfGenerator->paperMetrics('a4', orientation: 'landscape');
 
         $generatedByName = $generatedBy->name ?? $generatedBy->Username ?? 'sistem';
         $generatedAtText = now()->locale('id')->translatedFormat('d-M-y H:i');

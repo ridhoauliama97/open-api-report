@@ -7,114 +7,61 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <meta charset="utf-8">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
+        .data-table th, .data-table td {
+            border: 1px solid #000;
         }
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .data-table th {
-            background-color: #eef2f8;
-            font-weight: bold;
-        }
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .item-row td {
-            padding-left: 4px;
-        }
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-        .row-even td {
-            background-color: #eef2f8;
-        }
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-        .number {
-            text-align: right;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .number-negative {
-            color: #9c111d;
-        }
-    
-        /* standardized table borders */
         .layout-table, .meta-table, .room-footer-table {
             border-collapse: collapse;
         }
-.layout-table td, .meta-table td, .room-footer-table td { padding: 1px 2px; vertical-align: top; }
-    
-        .data-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
+        .layout-table td, .meta-table td, .room-footer-table td {
+            padding: 1px 2px;
+            vertical-align: top;
         }
-            /* restored baseline table rules */
-        .layout-table { width: 100%; border-collapse: collapse; border: 0; table-layout: fixed; }
-        .layout-table td { border: 0; padding: 0; vertical-align: top; }
-        .left-col { width: 33%; padding-right: 8px; }
-        .right-col { width: 67%; }
-        .room-footer-table { width: 100%; border-collapse: collapse; border: 0; }
-        .room-footer-table td { border: 0; padding: 1px 0; vertical-align: baseline; }
-        .room-footer-table .label { font-weight: bold; white-space: nowrap; }
-        .room-footer-table .sep { width: 10px; text-align: center; }
-        .room-footer-table .value { text-align: right; white-space: nowrap; }
+        .layout-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 0;
+            table-layout: fixed;
+        }
+        .layout-table td {
+            border: 0;
+            padding: 0;
+            vertical-align: top;
+        }
+        .left-col {
+            width: 33%;
+            padding-right: 8px;
+        }
+        .right-col {
+            width: 67%;
+        }
+        .room-footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 0;
+        }
+        .room-footer-table td {
+            border: 0;
+            padding: 1px 0;
+            vertical-align: baseline;
+        }
+        .room-footer-table .label {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .room-footer-table .sep {
+            width: 10px;
+            text-align: center;
+        }
+        .room-footer-table .value {
+            text-align: right;
+            white-space: nowrap;
+        }
     </style>
+    
+    
 </head>
 
 <body>
@@ -123,9 +70,9 @@
         $rooms = is_array($data['rooms'] ?? null) ? $data['rooms'] : [];
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
-        $start = \Carbon\Carbon::parse((string) ($startDate ?? ''))->locale('id')->translatedFormat('d-M-y');
-        $end = \Carbon\Carbon::parse((string) ($endDate ?? ''))->locale('id')->translatedFormat('d-M-y');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
+        $start = \Carbon\Carbon::parse((string) ($startDate ?? ''))->locale('id')->isoFormat('DD-MMM-YY');
+        $end = \Carbon\Carbon::parse((string) ($endDate ?? ''))->locale('id')->isoFormat('DD-MMM-YY');
 
         $fmtTon = static function ($v): string {
             $n = (float) ($v ?? 0.0);

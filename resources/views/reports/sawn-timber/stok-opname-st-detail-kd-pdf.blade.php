@@ -7,107 +7,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <meta charset="utf-8">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
+        .data-table th, .data-table td {
+            border: 1px solid #000;
         }
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .data-table th {
-            background-color: #eef2f8;
-            font-weight: bold;
-        }
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .item-row td {
-            padding-left: 4px;
-        }
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-        .row-even td {
-            background-color: #eef2f8;
-        }
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-        .number {
-            text-align: right;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .number-negative {
-            color: #9c111d;
-        }
-    
-        /* standardized table borders */
         .meta-table {
             border-collapse: collapse;
         }
-.meta-table td { padding: 1px 2px; vertical-align: top; }
-    
-        .data-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
+        .meta-table td {
+            padding: 1px 2px;
+            vertical-align: top;
         }
-            /* restored baseline table rules */
-        .meta-table { width: 100%; margin: 0 0 8px 0; border-collapse: collapse; table-layout: fixed; }
-        .meta-table td { border: 0; padding: 0 8px 3px 0; vertical-align: top; }
+        .meta-table {
+            width: 100%;
+            margin: 0 0 8px 0;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        .meta-table td {
+            border: 0;
+            padding: 0 8px 3px 0;
+            vertical-align: top;
+        }
     </style>
+    
+    
 </head>
 
 <body>
@@ -118,7 +43,7 @@
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
 
         $formatDate = static function ($value): string {
             if ($value === null || trim((string) $value) === '') {
@@ -126,7 +51,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse($value)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse($value)->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable) {
                 return (string) $value;
             }

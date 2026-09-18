@@ -7,41 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         .group-title {
             margin: 10px 0 4px 0;
             font-size: 12px;
@@ -52,7 +19,7 @@
         }
 
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -78,29 +45,9 @@
             text-align: right;
             white-space: nowrap;
         }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-        }
-    
-        .report-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
     </style>
+
+
 </head>
 
 <body>
@@ -113,9 +60,9 @@
                 ? $subRows
                 : collect($subRows)->values()->all())
             : [];
-        $reportDateText = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d-M-y');
+        $reportDateText = \Carbon\Carbon::parse($reportDate)->locale('id')->isoFormat('DD-MMM-YY');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
         $tonToM3Factor = isset($tonToM3Factor) ? (float) $tonToM3Factor : 1.416;
 
         $toFloat = static function ($value): ?float {

@@ -7,43 +7,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -68,22 +35,6 @@
         td.number {
             text-align: right;
             white-space: nowrap;
-        }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
         }
 
         .section-title {
@@ -121,13 +72,9 @@
         .group-note .right {
             text-align: right;
         }
-    
-        .report-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
     </style>
+
+
 </head>
 
 <body>
@@ -135,12 +82,12 @@
         $rowsData =
             isset($rows) && is_iterable($rows) ? (is_array($rows) ? $rows : collect($rows)->values()->all()) : [];
         $columns = array_keys($rowsData[0] ?? []);
-        $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y') : null;
-        $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y') : null;
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $start = isset($startDate) ? \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('DD-MMM-YY') : null;
+        $end = isset($endDate) ? \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('DD-MMM-YY') : null;
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
         $reportEndReference = isset($endDate)
-            ? \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y')
-            : $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
+            ? \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('DD-MMM-YY')
+            : $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY');
 
         $normalize = static function (string $value): string {
             return strtolower(str_replace([' ', '_', '.'], '', trim($value)));
@@ -241,10 +188,10 @@
             if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $textValue) === 1) {
                 try {
                     if (str_contains($normalizedColumn, 'racip')) {
-                        return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
+                        return \Carbon\Carbon::parse($textValue)->locale('id')->isoFormat('DD-MMM-YY');
                     }
 
-                    return \Carbon\Carbon::parse($textValue)->locale('id')->translatedFormat('d-M-y');
+                    return \Carbon\Carbon::parse($textValue)->locale('id')->isoFormat('DD-MMM-YY');
                 } catch (\Throwable $exception) {
                     return $textValue;
                 }
@@ -398,12 +345,14 @@
         <table class="report-table">
             <thead>
                 <tr class="headers-row">
-                    <th>No</th>
+                    <th style="width: 4.5%;">No</th>
                     @foreach ($displayColumns as $column)
                         @if ($column === $tanggalRacipColumn || $column === $tanggalLamaRacipColumn)
-                            <th colspan="2" style="width: 9.5%;">{{ $formatHeaderLabel($column) }}</th>
+                            <th colspan="2" style="width: 14.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @elseif ($column === 'LAMA_TUNGGU_VIRTUAL')
-                            <th style="width: 9.5%;">Lama Tunggu</th>
+                            <th style="width: 8.5%;">Lama Tunggu</th>
+                        @elseif ($loop->last)
+                            <th style="width: 10.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @else
                             <th style="width: 9.5%;">{{ $formatHeaderLabel($column) }}</th>
                         @endif

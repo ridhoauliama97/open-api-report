@@ -12,41 +12,39 @@
         'subtitleMargin' => '2px 0 20px 0',
         'tableMarginBottom' => '6px',
     ])
-<style>
-        body { margin: 0; font-family: "Noto Serif", serif; font-size: 10px; color: #000; }
-        .report-companyTitle { font-size: 18px; font-weight: bold; text-align: center; margin: 0 0 4px; }
-        .report-title { font-size: 16px; font-weight: bold; text-align: center; margin: 0; }
-        .report-subtitle { font-size: 12px; color: #636466; text-align: center; margin: 2px 0 20px; }
-.report-table, .total-report-table {
+    <style>
+        .report-table, .total-report-table {
             border: 1px solid #000;
             border-collapse: collapse;
             width: calc(100% - 2px);
             line-height: inherit;
         }
-.report-table th, .report-table td, .total-report-table th, .total-report-table td {
+        .report-table th, .report-table td, .total-report-table th, .total-report-table td {
             border: 1px solid #000;
             word-wrap: break-word;
             padding: 2px;
             vertical-align: top;
         }
-
-        .report-table th { font-weight: bold; background-color: #eef2f8; }
-
-        .total-report-table th { font-weight: bold; background-color: #eef2f8; }
-        .report-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
+        .report-table th {
+            font-weight: bold;
+            background-color: #eef2f8;
         }
-    </style></head>
+        .total-report-table th {
+            font-weight: bold;
+            background-color: #eef2f8;
+        }
+    </style>
+    
+    
+</head>
 
 <body>
     @php
         $data = is_array($reportData ?? null) ? $reportData : [];
         $groups = is_array($data['groups'] ?? null) ? $data['groups'] : [];
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
-        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
+        $generatedDate = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY');
 
         $fmtDim = static function (?float $v): string {
             if ($v === null) {

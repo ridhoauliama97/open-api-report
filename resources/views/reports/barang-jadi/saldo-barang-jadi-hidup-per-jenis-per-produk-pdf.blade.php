@@ -7,140 +7,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-
-
-        .data-table th {
-            font-weight: bold;
-        }
-
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-
-        .item-row td {
-            padding-left: 4px;
-        }
-
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-
-        .row-even td {
-            background-color: #eef2f8;
-        }
-
         .center {
             text-align: center;
         }
-
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-
-        .number {
-            text-align: right;
-        }
-
-        .nowrap {
-            white-space: nowrap;
-        }
-
-        .number-negative {
-            color: #9c111d;
-        }
-
-        /* standardized table borders */
-        .report-table {
-            border: 1px solid #000;
-            border-collapse: collapse;
-            width: calc(100% - 2px);
-            line-height: inherit;
-        }
-
-        .report-table th,
-        .report-table td {
+        .report-table th, .report-table td {
             border: 1px solid #000;
             word-wrap: break-word;
             padding: 2px;
             vertical-align: top;
         }
-
         .report-table th {
             font-weight: bold;
         }
-
         .report-table-summary {
             border-collapse: collapse;
             width: calc(100% - 2px);
             line-height: inherit;
             margin-top: 4px;
-        
             border-collapse: collapse;
             width: calc(100% - 2px);
             line-height: inherit;
             margin-top: 4px;
-        
             width: calc(100% - 2px);
             border-collapse: collapse;
             border: 1px solid #000;
-}
+        }
     </style>
+    
+    
 </head>
 
 <body>
@@ -154,7 +50,7 @@
         $fmtM3 = static fn($v): string => is_numeric($v) && abs((float) $v) >= 0.0000001
             ? number_format((float) $v, 4, '.', ',')
             : '';
-        $generatedDate = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y');
+        $generatedDate = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY');
     @endphp
 
     <h1 class="report-title">Laporan Saldo Barang Jadi Hidup Per-Jenis Per-Produk</h1>

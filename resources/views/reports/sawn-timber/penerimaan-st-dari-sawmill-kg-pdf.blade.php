@@ -14,43 +14,10 @@
         $subtitleMargin = '2px 0 20px 0';
         $tableMarginBottom = '8px';
     @endphp
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -77,23 +44,6 @@
             white-space: nowrap;
         }
 
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-        }
-
-        /* --- Gotenberg wave3 extras --- */
         .meta-layout,
         .meta-table,
         .note-table,
@@ -138,13 +88,9 @@
         .page-break {
             page-break-after: always;
         }
-    
-        .report-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
     </style>
+
+
 </head>
 
 <body>
@@ -159,7 +105,7 @@
             : [];
         $availableColumns = array_keys($rowsData[0] ?? []);
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
 
         $toFloat = static function ($value): ?float {
             if (is_numeric($value)) {
@@ -215,7 +161,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -227,7 +173,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -358,8 +304,8 @@
 
     <h1 class="report-title">Laporan Penerimaan ST Dari Sawmill - Timbang KG</h1>
     <p class="report-subtitle">
-        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->translatedFormat('d-M-y') }} s/d
-        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->translatedFormat('d-M-y') }}
+        Periode {{ \Carbon\Carbon::parse((string) $startDate)->locale('id')->isoFormat('DD-MMM-YY') }} s/d
+        {{ \Carbon\Carbon::parse((string) $endDate)->locale('id')->isoFormat('DD-MMM-YY') }}
     </p>
 
     @forelse ($groupsData as $group)

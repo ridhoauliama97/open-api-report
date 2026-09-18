@@ -4,8 +4,8 @@
             ?? ($generatedBy?->Username ?? 'sistem'));
     $footerGeneratedAtText = $generatedAtText
         ?? (isset($generatedAt) && method_exists($generatedAt, 'copy')
-            ? $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i')
-            : now()->locale('id')->translatedFormat('d-M-y H:i'));
+            ? $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm')
+            : now()->locale('id')->isoFormat('DD-MMM-YY HH:mm'));
     $footerCenterText = trim((string) ($footerCenterText ?? ''));
     $footerColumnWidths = $footerColumnWidths ?? ['30%', '40%', '30%'];
     $footerCenterAbsolute = (bool) ($footerCenterAbsolute ?? false);

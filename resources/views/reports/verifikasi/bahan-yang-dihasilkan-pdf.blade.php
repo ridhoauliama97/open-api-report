@@ -7,43 +7,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -70,22 +37,6 @@
             white-space: nowrap;
         }
 
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-        }
-
         .summary-table {
             width: 72%;
             margin-top: 0px;
@@ -104,13 +55,9 @@
             color: #9c111d;
             background: #c9d1df;
         }
-    
-        .report-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
     </style>
+
+
 </head>
 
 <body>
@@ -119,7 +66,7 @@
         $categories = is_array($data['categories'] ?? null) ? $data['categories'] : [];
         $summaryRows = is_array($data['summary_rows'] ?? null) ? $data['summary_rows'] : [];
         $grandTotals = is_array($data['grand_totals'] ?? null) ? $data['grand_totals'] : [];
-        $date = \Carbon\Carbon::parse($reportDate)->locale('id')->translatedFormat('d-M-y');
+        $date = \Carbon\Carbon::parse($reportDate)->locale('id')->isoFormat('DD-MMM-YY');
         $fmt = static fn($value): string => $value === null ? '' : number_format((float) $value, 4, '.', ',');
         $fmtInt = static fn($value): string => $value === null ? '' : number_format((float) $value, 0, '.', ',');
         $fmtDim = static fn($value): string => $value === null ? '-' : number_format((float) $value, 0, '.', ',');

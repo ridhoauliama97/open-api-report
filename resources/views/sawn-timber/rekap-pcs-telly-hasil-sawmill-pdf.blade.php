@@ -7,105 +7,67 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         @page {
             margin: 14mm 10mm 14mm 10mm;
             footer: html_reportFooter;
         }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.15;
-            color: #000;
-        }
-
         .page-break {
             page-break-before: always;
         }
-
-        .report-title {
-            margin: 0;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
         .meta-layout {
             width: 100%;
             margin: 10px 0 10px;
             table-layout: fixed;
         }
-
         .meta-layout td {
             border: 0;
             padding: 0;
             vertical-align: top;
         }
-
         .meta-block {
             width: 100%;
             table-layout: fixed;
         }
-
         .meta-block td {
             border: 0;
             padding: 0 0 2px 0;
             font-size: 9.5px;
             vertical-align: top;
         }
-
         .meta-label {
             width: 88px;
             white-space: nowrap;
         }
-
         .meta-separator {
             width: 10px;
             text-align: center;
         }
-
         .grade-title {
             margin: 10px 0 6px;
             font-size: 11px;
             font-weight: bold;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
             table-layout: fixed;
         }
-
         .split-layout {
             width: 100%;
             table-layout: fixed;
             margin: 0 0 6px 0;
         }
-
         .split-layout td {
             border: 0;
             padding: 0;
             vertical-align: top;
         }
-
         .split-gap {
             width: 5%;
         }
-
         .tebal-table {
             width: 100%;
             border-collapse: collapse;
@@ -113,15 +75,12 @@
             border: 1px solid #000;
             margin-bottom: 3px;
         }
-
-        .tebal-table th,
-        .tebal-table td {
+        .tebal-table th, .tebal-table td {
             border: 1px solid #000;
             padding: 2px 4px;
             text-align: center;
             vertical-align: middle;
         }
-
         .tebal-table .headers-row th {
             font-size: 10px;
             font-weight: bold;
@@ -129,68 +88,45 @@
             border-bottom: 1px solid #000;
             background: #fff;
         }
-
         .tebal-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
             border-left: 1px solid #000 !important;
             border-right: 1px solid #000 !important;
         }
-
         .tebal-table tbody tr.row-last td.data-cell {
             border-bottom: 1px solid #000 !important;
         }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .number {
-            text-align: right;
-            white-space: nowrap;
-        }
-
         .tebal-total {
             margin: 0 0 10px;
             text-align: right;
             font-size: 10px;
         }
-
         .grade-total {
             margin: 2px 0 10px;
             font-size: 11px;
         }
-
         .footer-summary {
             width: 100%;
             margin-top: 10px;
             table-layout: fixed;
         }
-
         .footer-summary td {
             border: 0;
             padding: 0;
             font-size: 11px;
         }
-
         .footer-summary .left {
             text-align: left;
         }
-
         .footer-summary .right {
             text-align: right;
         }
-
         .bottom-line {
             width: 100%;
             border: 1px solid #000;
             margin-top: 4px;
         }
-
         .bottom-line td {
             border: 0;
             padding: 2px 6px;
@@ -198,17 +134,19 @@
             font-size: 11px;
         }
     </style>
+    
+    
 </head>
 
 <body>
     @php
         $documents = is_array($reportData['documents'] ?? null) ? $reportData['documents'] : [];
-        $formatDate = static function (?string $value, string $format = 'd-M-y'): string {
+        $formatDate = static function (?string $value, string $format = 'DD-MMM-YY'): string {
             if ($value === null || trim($value) === '') {
                 return '-';
             }
             try {
-                return \Carbon\Carbon::parse($value)->copy()->locale('id')->translatedFormat($format);
+                return \Carbon\Carbon::parse($value)->copy()->locale('id')->isoFormat($format);
             } catch (\Throwable $e) {
                 return $value;
             }
@@ -223,8 +161,8 @@
     @endphp
 
     <h1 class="report-title">Rekap Jumlah (Pcs) Telly Hasil Sawmill</h1>
-    <p class="report-subtitle">Periode {{ $formatDate(isset($startDate) ? (string) $startDate : null, 'd-M-y') }}
-        s/d {{ $formatDate(isset($endDate) ? (string) $endDate : null, 'd-M-y') }}</p>
+    <p class="report-subtitle">Periode {{ $formatDate(isset($startDate) ? (string) $startDate : null, 'DD-MMM-YY') }}
+        s/d {{ $formatDate(isset($endDate) ? (string) $endDate : null, 'DD-MMM-YY') }}</p>
     @foreach ($documents as $document)
         @php
             $header = is_array($document['header'] ?? null) ? $document['header'] : [];

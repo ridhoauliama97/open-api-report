@@ -134,7 +134,7 @@
                         <tbody>
                             @forelse ($rows as $row)
                                 <tr>
-                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->isoFormat('DD-MMM-YY') }}</td>
                                     @foreach ($columns as $column)
                                         @php
                                             $inflow = (float) (($row['cells'][$column]['in'] ?? 0) ?: 0);

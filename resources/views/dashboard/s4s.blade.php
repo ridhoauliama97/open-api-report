@@ -96,7 +96,7 @@
                         <tbody>
                             @forelse ($rows as $row)
                                 <tr>
-                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->isoFormat('DD-MMM-YY') }}</td>
                                     @foreach ($groups as $groupKey => $group)
                                         @php
                                             $masuk = (float) ($row['cells'][$groupKey]['masuk'] ?? 0);

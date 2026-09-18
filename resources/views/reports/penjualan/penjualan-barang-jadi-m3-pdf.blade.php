@@ -7,117 +7,49 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
-        }
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .data-table th {
-            background-color: #eef2f8;
-            font-weight: bold;
-        }
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .item-row td {
-            padding-left: 4px;
-        }
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-        .row-even td {
-            background-color: #eef2f8;
-        }
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-        .number {
-            text-align: right;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .number-negative {
-            color: #9c111d;
-        }
-    
-        /* standardized table borders */
-        .report-table {
+        .data-table th, .data-table td {
             border: 1px solid #000;
-            border-collapse: collapse;
-            width: calc(100% - 2px);
-            line-height: inherit;
         }
-.report-table th, .report-table td {
+        .report-table th, .report-table td {
             border: 1px solid #000;
             word-wrap: break-word;
             padding: 2px;
             vertical-align: top;
         }
-
-        .report-table th { font-weight: bold; background-color: #eef2f8; }
-.meta-grid, .total-line {
+        .report-table th {
+            font-weight: bold;
+            background-color: #eef2f8;
+        }
+        .meta-grid, .total-line {
             border-collapse: collapse;
         }
-.meta-grid td, .total-line td { padding: 1px 2px; vertical-align: top; }
-            /* restored baseline table rules */
-        .meta-grid { width: 100%; margin-bottom: 10px; }
-        .meta-grid td { border: 0 !important; padding: 2px 6px 2px 0; vertical-align: top; }
-        .total-line { width: 100%; margin: 4px 0 0; border-collapse: collapse; }
-        .total-line td { border: 0; padding: 1px 4px; }
+        .meta-grid td, .total-line td {
+            padding: 1px 2px;
+            vertical-align: top;
+        }
+        .meta-grid {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .meta-grid td {
+            border: 0 !important;
+            padding: 2px 6px 2px 0;
+            vertical-align: top;
+        }
+        .total-line {
+            width: 100%;
+            margin: 4px 0 0;
+            border-collapse: collapse;
+        }
+        .total-line td {
+            border: 0;
+            padding: 1px 4px;
+        }
     </style>
+    
+    
 </head>
 
 <body>
@@ -133,7 +65,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable) {
                 return (string) $value;
             }
@@ -143,7 +75,7 @@
         $fmtM3 = static fn($value): string => number_format((float) $value, 4, '.', ',');
     @endphp
 
-    <h1 class="report-title">Laporan Penjualan Barang Jadi (M3)</h1>
+    <h1 class="report-title" style="margin-bottom: 20px;">Laporan Penjualan Barang Jadi (M3)</h1>
 
     <table class="meta-grid">
         <tr>

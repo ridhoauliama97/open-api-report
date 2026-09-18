@@ -7,43 +7,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -70,26 +37,6 @@
             white-space: nowrap;
         }
 
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-        }
-
-        /*
-         * Tambahan minimal untuk kelas markup spesifik laporan ini:
-         * tabel layout (tanpa border), judul seksi, tabel detail, dan total.
-         */
         .meta-grid,
         .meta-grid td,
         .section-title-grid,
@@ -196,6 +143,8 @@
             font-size: 11px;
         }
     </style>
+
+
 </head>
 
 <body>
@@ -244,7 +193,7 @@
         @endphp
 
         <div class="page-block {{ $isLastPage ? 'last-page' : '' }}">
-            <h1 class="report-title">Laporan Produksi Per Nomor Produksi CC Akhir</h1>
+            <h1 class="report-title" style="margin-bottom: 20px;">Laporan Produksi Per Nomor Produksi CC Akhir</h1>
 
             <table class="meta-grid">
                 <tr>
@@ -258,7 +207,7 @@
                             <tr>
                                 <td class="meta-label">Tanggal</td>
                                 <td class="meta-sep">:</td>
-                                <td>{{ isset($meta['tanggal']) && $meta['tanggal'] instanceof \Carbon\Carbon ? $meta['tanggal']->format('d-M-y') : '' }}
+                                <td>{{ isset($meta['tanggal']) && $meta['tanggal'] instanceof \Carbon\Carbon ? $meta['tanggal']->locale('id')->isoFormat('DD-MMM-YY') : '' }}
                                 </td>
                             </tr>
                             <tr>

@@ -7,140 +7,81 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         @page {
             margin: 20mm 8mm 20mm 8mm;
             footer: html_reportFooter;
         }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 20px 0 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 8px;
             page-break-inside: auto;
         }
-
         .report-table {
-            border-collapse: collapse;
             border-spacing: 0;
             border-top: 0;
             border-right: 0;
             border-bottom: 1px solid #000;
             border-left: 1px solid #000;
         }
-
         thead {
             display: table-header-group;
         }
-
         tfoot {
             display: table-row-group;
         }
-
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
         }
-
-        th,
-        td {
+        th, td {
             border: 1px solid #000;
             padding: 2px 3px;
             vertical-align: middle;
         }
-
         th {
             text-align: center;
             font-weight: 700;
             font-size: 10px;
         }
-
         td.label {
             white-space: nowrap;
         }
-
         td.number {
             text-align: right;
             white-space: nowrap;
         }
-
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
         .headers-row th {
-            font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
             border-right: 1px solid #000;
             border-bottom: 1px solid #000;
             border-left: 0;
         }
-
         .report-table thead tr.headers-row:first-child th[rowspan] {
             border-bottom: 1px solid #000;
         }
-
         .report-table thead tr.headers-row:first-child th[colspan] {
             border-bottom: 0;
         }
-
         .report-table thead tr.headers-row:last-child th {
             border-top: 1px solid #000;
         }
-
         .totals-row td {
-            font-weight: bold;
             font-size: 11px;
             border-top: 1px solid #000;
             border-right: 1px solid #000;
             border-bottom: 0;
             border-left: 0;
         }
-
         .report-table tbody tr.data-row td.data-cell {
             border-top: 0 !important;
             border-bottom: 0 !important;
             border-left: 0 !important;
             border-right: 1px solid #000 !important;
         }
-
         .table-end-line td {
             border-top: 1px solid #000 !important;
             border-right: 0 !important;
@@ -151,23 +92,18 @@
             line-height: 0 !important;
             background: transparent !important;
         }
-
         .footer-wrap {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
         }
-
-        .footer-left,
-        .footer-right {
+        .footer-left, .footer-right {
             font-size: 8px;
             font-style: italic;
         }
-
         .footer-right {
             text-align: right;
         }
-
         .summary-table .totals-row td {
             border: 1px solid #000;
         }
@@ -185,10 +121,10 @@
         $totals = is_array($reportData['totals'] ?? null) ? $reportData['totals'] : ['s_akhir' => 0, 'ctr' => 0];
         $highlightColumns = ['JABON NISOBO', 'PULAI NISOBO'];
 
-        $startText = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
-        $endText = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
+        $startText = \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('DD-MMM-YY');
+        $endText = \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('DD-MMM-YY');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
 
         $fmt1 = static fn($v): string => number_format((float) ($v ?? 0), 1, '.', ',');
         $fmt2 = static fn($v): string => number_format((float) ($v ?? 0), 2, '.', ',');
@@ -219,7 +155,7 @@
             @forelse ($rows as $row)
                 <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }}">
                     <td class="data-cell label" style="text-align: center;">
-                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->translatedFormat('d-M-y') }}
+                        {{ \Carbon\Carbon::parse((string) ($row['date'] ?? now()))->locale('id')->isoFormat('DD-MMM-YY') }}
                     </td>
                     @foreach ($columns as $column)
                         @php

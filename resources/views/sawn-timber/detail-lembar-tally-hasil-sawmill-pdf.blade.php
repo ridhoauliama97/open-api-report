@@ -7,43 +7,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -70,23 +37,6 @@
             white-space: nowrap;
         }
 
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-        }
-
-        /* --- Gotenberg wave3 extras --- */
         .meta-layout,
         .meta-table,
         .note-table,
@@ -132,6 +82,8 @@
             page-break-after: always;
         }
     </style>
+
+
 </head>
 
 <body>
@@ -145,7 +97,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse($value)->copy()->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse($value)->copy()->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable $exception) {
                 return $value;
             }
@@ -291,7 +243,7 @@
                         $summary = is_array($group['summary'] ?? null) ? $group['summary'] : [];
                     @endphp
                     <tr class="data-row {{ $loop->odd ? 'row-odd' : 'row-even' }} {{ $loop->last ? 'row-last' : '' }}">
-                        <td class="data-cell">{{ $loop->iteration }}</td>
+                        <td class="data-cell" style="text-align: center;">{{ $loop->iteration }}</td>
                         <td class="data-cell">{{ $header['no_meja'] ?? '-' }}</td>
                         <td class="data-cell">{{ $header['no_st'] ?? '-' }}</td>
                         <td class="data-cell">{{ $header['no_kb'] ?? '-' }}</td>

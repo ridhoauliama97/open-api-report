@@ -7,43 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <meta charset="utf-8">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            line-height: 1.2;
-            color: #000;
-        }
-
-        .report-title {
-            text-align: center;
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .report-subtitle {
-            text-align: center;
-            margin: 2px 0 20px 0;
-            font-size: 12px;
-            color: #636466;
-        }
-
-        .section-title {
-            margin: 14px 0 6px 0;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 2px);
+            width: 100%;
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
@@ -70,22 +37,6 @@
             white-space: nowrap;
         }
 
-        .row-odd td {
-            background: #c9d1df;
-        }
-
-        .row-even td {
-            background: #eef2f8;
-        }
-
-        .totals-row td {
-            font-weight: bold;
-        }
-
-        .headers-row th {
-            font-weight: bold;
-        }
-
         .meja-title,
         .summary-title,
         .condition-title {
@@ -107,13 +58,9 @@
         .split-table-wrap {
             width: 100%;
         }
-    
-        .report-table {
-            width: calc(100% - 2px);
-            border-collapse: collapse;
-            border: 1px solid #000;
-        }
     </style>
+
+
 </head>
 
 <body>
@@ -128,10 +75,10 @@
                 ? $groupedSubRows
                 : collect($groupedSubRows)->values()->all())
             : [];
-        $startText = \Carbon\Carbon::parse((string) ($startDate ?? now()))->locale('id')->translatedFormat('d-M-y');
-        $endText = \Carbon\Carbon::parse((string) ($endDate ?? now()))->locale('id')->translatedFormat('d-M-y');
+        $startText = \Carbon\Carbon::parse((string) ($startDate ?? now()))->locale('id')->isoFormat('DD-MMM-YY');
+        $endText = \Carbon\Carbon::parse((string) ($endDate ?? now()))->locale('id')->isoFormat('DD-MMM-YY');
         $generatedByName = $generatedBy?->name ?? 'sistem';
-        $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
+        $generatedAtText = $generatedAt->copy()->locale('id')->isoFormat('DD-MMM-YY HH:mm');
 
         $formatDate = static function ($value): string {
             if ($value === null || $value === '') {
@@ -139,7 +86,7 @@
             }
 
             try {
-                return \Carbon\Carbon::parse((string) $value)->locale('id')->translatedFormat('d-M-y');
+                return \Carbon\Carbon::parse((string) $value)->locale('id')->isoFormat('DD-MMM-YY');
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
@@ -301,8 +248,7 @@
                                             <td class="data-cell center">{{ $left['row']['Tebal'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $left['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $left['row']['UOM'] ?? '' }}</td>
-                                            <td class="data-cell center"
-                                                style="font-weight: bold; ">
+                                            <td class="data-cell center" style="font-weight: bold; ">
                                                 {{ isset($left['row']) ? $formatNumber($left['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>
@@ -332,8 +278,7 @@
                                             <td class="data-cell center">{{ $right['row']['Tebal'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['Lebar'] ?? '' }}</td>
                                             <td class="data-cell center">{{ $right['row']['UOM'] ?? '' }}</td>
-                                            <td class="data-cell center"
-                                                style="font-weight: bold; ">
+                                            <td class="data-cell center" style="font-weight: bold; ">
                                                 {{ isset($right['row']) ? $formatNumber($right['row']['TonRacip'] ?? 0) : '' }}
                                             </td>
                                         </tr>

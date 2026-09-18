@@ -7,115 +7,41 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    @include('reports.partials.pdf-reference-style')
     <style>
-        body {
-            font-family: "Noto Serif", serif;
-            font-size: 10px;
-            margin: 0;
-            padding: 0;
-        }
-        .report-companyTitle {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0 0 4px;
-        }
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 0;
-        }
-        .report-subtitle {
-            font-size: 12px;
-            color: #636466;
-            text-align: center;
-            margin: 2px 0 20px;
-        }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #000;            padding: 1px 2px;
-            vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .data-table th {
-            background-color: #eef2f8;
-            font-weight: bold;
-        }
-        .section-header td {
-            font-weight: bold;
-            font-style: italic;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .sub-section-header td {
-            font-weight: bold;
-            color: #9c111d;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding-left: 4px;
-        }
-        .item-row td {
-            padding-left: 4px;
-        }
-        .row-odd td {
-            background-color: #c9d1df;
-        }
-        .row-even td {
-            background-color: #eef2f8;
-        }
-        .subtotal-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .grand-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .empty-row td {
-            font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
-            background-color: #c9d1df;
-        }
-        .number {
-            text-align: right;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .number-negative {
-            color: #9c111d;
-        }
-    
-        /* standardized table borders */
-        .report-table {
+        .data-table th, .data-table td {
             border: 1px solid #000;
-            border-collapse: collapse;
-            width: calc(100% - 2px);
-            line-height: inherit;
         }
-.report-table th, .report-table td {
+        .report-table th, .report-table td {
             border: 1px solid #000;
             word-wrap: break-word;
             padding: 2px;
             vertical-align: top;
         }
-
-        .report-table th { font-weight: bold; background-color: #eef2f8; }
-.summary-lines {
+        .report-table th {
+            font-weight: bold;
+            background-color: #eef2f8;
+        }
+        .summary-lines {
             border-collapse: collapse;
         }
-.summary-lines td { padding: 1px 2px; vertical-align: top; }
-            /* restored baseline table rules */
-        .summary-lines { width: 100%; border-collapse: collapse; border-spacing: 0; }
-        .summary-lines td { border: 0 !important; padding: 2px 4px 2px 0; vertical-align: top; }
+        .summary-lines td {
+            padding: 1px 2px;
+            vertical-align: top;
+        }
+        .summary-lines {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .summary-lines td {
+            border: 0 !important;
+            padding: 2px 4px 2px 0;
+            vertical-align: top;
+        }
     </style>
+    
+    
 </head>
 
 <body>
@@ -133,8 +59,8 @@
 
             return $line;
         }, $summaryLines);
-        $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
-        $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
+        $start = \Carbon\Carbon::parse($startDate)->locale('id')->isoFormat('DD-MMM-YY');
+        $end = \Carbon\Carbon::parse($endDate)->locale('id')->isoFormat('DD-MMM-YY');
 
         $fmt = static function ($value, bool $blankWhenZero = true): string {
             if (!is_numeric($value)) {
@@ -157,19 +83,19 @@
         <thead>
             <tr>
                 <th style="width: 3%;">No</th>
-                <th style="width: 7.46%;">Group Kayu</th>
-                <th style="width: 7.46%;">Pembelian KB<br>(Ton)</th>
-                <th style="width: 7.46%;">KB diRacip<br>(Ton)</th>
-                <th style="width: 7.46%;">ST Hasil Racip<br>(Ton)</th>
-                <th style="width: 7.46%;">ST Siap Vacuum Stick<br>(Ton)</th>
-                <th style="width: 7.46%;">ST Hasil Racip - <br> ST Masuk KD<br>(Ton)</th>
-                <th style="width: 7.46%;">ST Keluar KD<br>(Ton)</th>
-                <th style="width: 7.46%;">ST Pakai di S4S<br>(Ton)</th>
-                <th style="width: 7.46%;">WIP Bersih S4S<br>(m3)</th>
-                <th style="width: 7.46%;">WIP Pakai di FJ<br>(m3)</th>
-                <th style="width: 7.46%;">WIP Hasil FJ<br>(m3)</th>
-                <th style="width: 7.46%;">WIP Pakai di Moulding<br>(m3)</th>
-                <th style="width: 7.46%;">WIP hasil Moulding<br>(m3)</th>
+                <th style="width: 10%;">Group Kayu</th>
+                <th style="width: 7.25%;">Pembelian KB<br>(Ton)</th>
+                <th style="width: 7.25%;">KB diRacip<br>(Ton)</th>
+                <th style="width: 7.25%;">ST Hasil Racip<br>(Ton)</th>
+                <th style="width: 7.25%;">ST Siap Vacuum Stick<br>(Ton)</th>
+                <th style="width: 7.25%;">ST Hasil Racip - <br> ST Masuk KD<br>(Ton)</th>
+                <th style="width: 7.25%;">ST Keluar KD<br>(Ton)</th>
+                <th style="width: 7.25%;">ST Pakai di S4S<br>(Ton)</th>
+                <th style="width: 7.25%;">WIP Bersih S4S<br>(m3)</th>
+                <th style="width: 7.25%;">WIP Pakai di FJ<br>(m3)</th>
+                <th style="width: 7.25%;">WIP Hasil FJ<br>(m3)</th>
+                <th style="width: 7.25%;">WIP Pakai di Moulding<br>(m3)</th>
+                <th style="width: 7.25%;">WIP hasil Moulding<br>(m3)</th>
             </tr>
         </thead>
         <tbody>
@@ -209,7 +135,7 @@
         </tbody>
     </table>
 
-    <div class="summary-block">
+    <div class="summary-block" style="margin-top: 18px;">
         <div class="summary-title">Rangkuman/Rekap La. Flow Produksi :</div>
         <table class="summary-lines">
             <tbody>
