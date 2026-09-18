@@ -156,6 +156,12 @@
             border: 0 !important;
             padding: 2px 4px 2px 0;
         }
+    
+        .report-table {
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
     </style>
 </head>
 

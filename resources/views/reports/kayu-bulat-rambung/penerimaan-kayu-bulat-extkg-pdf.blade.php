@@ -135,7 +135,14 @@
         .report-table {
             width: 180px;
             margin-bottom: 2px;
-        }
+        
+            width: 180px;
+            margin-bottom: 2px;
+        
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+}
 
         .report-table tbody tr:nth-child(odd) td {
             background: #c9d1df;

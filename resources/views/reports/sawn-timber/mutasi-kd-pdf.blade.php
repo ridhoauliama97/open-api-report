@@ -93,6 +93,12 @@
         tfoot td {
             font-weight: bold;
         }
+    
+        .data-table {
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
     </style>
 </head>
 

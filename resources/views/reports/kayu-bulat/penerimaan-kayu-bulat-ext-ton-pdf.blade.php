@@ -118,7 +118,13 @@
 
         .report-table {
             margin-bottom: 6px;
-        }
+        
+            margin-bottom: 6px;
+        
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+}
 
         .report-table th,
         .report-table td {

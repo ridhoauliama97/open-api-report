@@ -32,7 +32,13 @@
 
         .report-table th { font-weight: bold; background-color: #eef2f8; }
 
-        .report-table-total th { font-weight: bold; background-color: #eef2f8; }</style></head>
+        .report-table-total th { font-weight: bold; background-color: #eef2f8; }
+        .report-table {
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
+    </style></head>
 
 <body>
     @php

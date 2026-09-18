@@ -112,6 +112,12 @@
             border-collapse: collapse;
         }
 .report-table-section td, .small-summary td { padding: 1px 2px; vertical-align: top; }
+    
+        .report-table-section {
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
     </style>
 </head>
 

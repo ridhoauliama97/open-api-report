@@ -126,6 +126,12 @@
             border-collapse: collapse;
         }
 .bottom-layout td, .btul-layout td, .diagram-frame td, .meta-table td, .ringkasan-table td, .summary-frame-table td, .summary-section-heading-table td { padding: 1px 2px; vertical-align: top; }
+    
+        .report-table {
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
     </style>
 </head>
 

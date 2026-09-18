@@ -106,6 +106,12 @@
             font-weight: bold;
             font-family: "DejaVu Sans", "Noto Serif", serif;
         }
+    
+        .report-table {
+            width: calc(100% - 2px);
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
     </style>
 </head>
 
