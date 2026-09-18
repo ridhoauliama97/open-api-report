@@ -112,6 +112,11 @@
             border-collapse: collapse;
         }
 .meta-grid td, .total-line td { padding: 1px 2px; vertical-align: top; }
+            /* restored baseline table rules */
+        .meta-grid { width: 100%; margin-bottom: 10px; }
+        .meta-grid td { border: 0 !important; padding: 2px 6px 2px 0; vertical-align: top; }
+        .total-line { width: 100%; margin: 4px 0 0; border-collapse: collapse; }
+        .total-line td { border: 0; padding: 1px 4px; }
     </style>
 </head>
 

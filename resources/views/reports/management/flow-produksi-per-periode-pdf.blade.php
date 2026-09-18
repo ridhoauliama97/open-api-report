@@ -112,6 +112,9 @@
             border-collapse: collapse;
         }
 .summary-lines td { padding: 1px 2px; vertical-align: top; }
+            /* restored baseline table rules */
+        .summary-lines { width: 100%; border-collapse: collapse; border-spacing: 0; }
+        .summary-lines td { border: 0 !important; padding: 2px 4px 2px 0; vertical-align: top; }
     </style>
 </head>
 

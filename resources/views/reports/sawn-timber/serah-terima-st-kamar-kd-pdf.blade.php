@@ -118,6 +118,11 @@
             border-collapse: collapse;
             border: 1px solid #000;
         }
+            /* restored baseline table rules */
+        .meta-table { width: 100%; margin: 14px 0 10px 0; border-collapse: collapse; }
+        .meta-table td { border: 0; padding: 1px 4px; vertical-align: top; }
+        .signature-table { width: 100%; margin-top: 26px; border-collapse: collapse; font-size: 10px; }
+        .signature-table td { border: 0; padding: 0 4px; text-align: center; vertical-align: top; }
     </style>
 </head>
 

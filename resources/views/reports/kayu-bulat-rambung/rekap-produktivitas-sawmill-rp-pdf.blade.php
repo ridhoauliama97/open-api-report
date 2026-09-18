@@ -132,6 +132,54 @@
             border-collapse: collapse;
             border: 1px solid #000;
         }
+            /* restored baseline table rules */
+        .bottom-layout { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; }
+        .bottom-layout td { border: 0; padding: 0; vertical-align: top; background: transparent !important; word-break: normal; }
+        .money-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; }
+        .money-table td { border: 0; padding: 0 0 2px 0; vertical-align: top; background: transparent !important; }
+        .btul-layout { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; }
+        .btul-layout td { border: 0; padding: 0; vertical-align: top; background: transparent !important; word-break: normal; }
+        .mini-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+        .mini-table th, .mini-table td { border: 1px solid #000; padding: 2px 4px; font-size: 10px; }
+        .mini-table th { text-align: center; font-weight: bold; }
+        .mini-table td.label { text-align: left; }
+        .mini-table td.label-total { text-align: right; font-weight: bold; }
+        .mini-table td.num { text-align: right; white-space: nowrap; }
+        .summary-pair-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 0 10px 0; }
+        .summary-pair-table td { border: 0; padding: 0; vertical-align: top; background: transparent !important; }
+        .group-summary-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 10px; }
+        .group-summary-table th, .group-summary-table td { border: 1px solid #000; padding: 3px 5px; }
+        .group-summary-table th { text-align: center; font-weight: bold; }
+        .group-summary-table td:first-child { text-align: left; }
+        .group-summary-table td.num { text-align: right; white-space: nowrap; }
+        .summary-frame-table { width: 100%; height: 252mm; border-collapse: collapse; table-layout: fixed; margin: 0; }
+        .summary-section-heading-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 25px 0 14px 0; }
+        .summary-section-heading-table td { border: 0 !important; padding: 0 !important; text-align: center !important; font-size: 12px; font-weight: bold; background: transparent !important; }
+        .summary-section .money-table { table-layout: fixed; }
+        .summary-section .summary-money-compact .money-table { width: 92mm !important; table-layout: fixed; }
+        .diagram-frame { width: 100%; border: 0; border-collapse: collapse; table-layout: fixed; margin: 0; }
+        .diagram-frame td { border: 0; padding: 6px 10px; vertical-align: top; background: #ffffff; font-size: 10px; }
+        .diagram-frame td.frame-banner { background: #1a3a5c; color: #ffffff; font-size: 22px; font-weight: bold; text-align: center; padding: 10px 0; letter-spacing: 1px; }
+        .diagram-frame td.frame-meta { padding: 6px 12px; }
+        .diagram-frame td.frame-rendemen { text-align: center; padding: 10px 8px 14px 8px; }
+        .diagram-frame td.frame-middle { padding: 0 8px; }
+        .diagram-frame td.frame-bottom { padding: 6px 10px 10px 10px; }
+        .diagram-frame td.frame-keterangan { padding: 8px 12px; }
+        .rendemen-total-table { width: auto; border-collapse: collapse; border: 0; margin: 0 auto; table-layout: auto; }
+        .rendemen-total-table td { border: 0 !important; padding: 0; text-align: center; background: transparent !important; }
+        .diagram-kategori-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 10px; margin: 0; }
+        .diagram-kategori-table th, .diagram-kategori-table td { border: 1px solid #000; padding: 4px 6px; }
+        .diagram-kategori-table th { background: #1a3a5c; color: #ffffff; font-weight: bold; text-align: center; font-size: 11px; }
+        .diagram-kategori-table td.num { text-align: right; white-space: nowrap; }
+        .diagram-kategori-table td.left { text-align: left; }
+        .diagram-kategori-table td.total-row { font-weight: bold; border-top: 1px solid #1a3a5c; background: #eef2f8; }
+        .ringkasan-table { width: 100%; border: 1px solid #000; border-collapse: collapse; table-layout: fixed; margin: 0; font-size: 10px; }
+        .ringkasan-table td { border: 0; padding: 3px 10px; background: transparent !important; vertical-align: top; }
+        .ringkasan-table td.ringkasan-head { text-align: center; font-weight: bold; font-size: 12px; padding: 5px 8px; background: #1a3a5c; color: #ffffff; border-bottom: 1px solid #000; }
+        .ringkasan-table td.ringkasan-label { width: 48%; text-align: left; padding-top: 4px; }
+        .ringkasan-table td.ringkasan-eq { width: 4%; text-align: center; padding-top: 4px; }
+        .ringkasan-table td.ringkasan-value { width: 48%; text-align: right; white-space: nowrap; padding-top: 4px; }
+        .ringkasan-table td.ringkasan-formula { padding: 4px 10px 4x 10px; border-top: 1px solid #000; font-style: italic; }
     </style>
 </head>
 

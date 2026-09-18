@@ -104,6 +104,16 @@
             border-collapse: collapse;
             border: 1px solid #000;
         }
+            /* restored baseline table rules */
+        .layout-table { width: 100%; border-collapse: collapse; border: 0; table-layout: fixed; }
+        .layout-table td { border: 0; padding: 0; vertical-align: top; }
+        .left-col { width: 33%; padding-right: 8px; }
+        .right-col { width: 67%; }
+        .room-footer-table { width: 100%; border-collapse: collapse; border: 0; }
+        .room-footer-table td { border: 0; padding: 1px 0; vertical-align: baseline; }
+        .room-footer-table .label { font-weight: bold; white-space: nowrap; }
+        .room-footer-table .sep { width: 10px; text-align: center; }
+        .room-footer-table .value { text-align: right; white-space: nowrap; }
     </style>
 </head>
 

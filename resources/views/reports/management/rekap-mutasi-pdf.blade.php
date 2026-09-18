@@ -118,6 +118,9 @@
             border-collapse: collapse;
             border: 1px solid #000;
         }
+            /* restored baseline table rules */
+        .small-summary { width: 28%; margin-top: 4px; margin-bottom: 10px; margin-left: 8px; }
+        .small-summary td { padding: 3px 6px; border: 1px solid #000; font-weight: bold; background: #fff !important; }
     </style>
 </head>
 

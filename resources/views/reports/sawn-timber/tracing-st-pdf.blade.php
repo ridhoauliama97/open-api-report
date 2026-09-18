@@ -99,6 +99,13 @@
             border-collapse: collapse;
         }
 .meta td, .step td { padding: 1px 2px; vertical-align: top; }
+            /* restored baseline table rules */
+        .meta { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+        .meta td { padding: 1px 0; vertical-align: top; }
+        .step { width: 100%; border-collapse: collapse; margin: 0 0 3px 0; }
+        .step td { vertical-align: top; padding: 1px 0; }
+        .step-name { width: 31mm; font-weight: bold; }
+        .step-date { width: 20mm; text-align: right; }
     </style>
 </head>
 

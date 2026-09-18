@@ -104,6 +104,9 @@
             border-collapse: collapse;
             border: 1px solid #000;
         }
+            /* restored baseline table rules */
+        .meta-table { width: 100%; margin: 0 0 8px 0; border-collapse: collapse; table-layout: fixed; }
+        .meta-table td { border: 0; padding: 0 8px 3px 0; vertical-align: top; }
     </style>
 </head>
 

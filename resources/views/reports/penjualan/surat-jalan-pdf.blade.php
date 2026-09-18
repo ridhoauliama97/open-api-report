@@ -112,6 +112,13 @@
             border-collapse: collapse;
         }
 .footer-table td, .header-table td, .meta-table td, .signature-table td { padding: 1px 2px; vertical-align: top; }
+            /* restored baseline table rules */
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+        .header-table td { border: 0; padding: 0; vertical-align: top; }
+        .meta-table { width: auto; border-collapse: collapse; margin-left: auto; }
+        .meta-table td { border: 0; padding: 1px 0; }
+        .signature-table { width: 100%; border-collapse: collapse; }
+        .signature-table td { border: 0; padding: 5px 8px 0; text-align: center; vertical-align: top; font-size: 10px; line-height: 1.15; }
     </style>
 </head>
 

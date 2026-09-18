@@ -112,6 +112,9 @@
             border-collapse: collapse;
         }
 .meta-grid td { padding: 1px 2px; vertical-align: top; }
+            /* restored baseline table rules */
+        .meta-grid { width: 100%; margin-bottom: 10px; }
+        .meta-grid td { border: 0 !important; padding: 2px 6px 2px 0; vertical-align: top; }
     </style>
 </head>
 
