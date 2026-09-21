@@ -9,8 +9,11 @@
         rel="stylesheet">
     @include('reports.partials.pdf-reference-style')
     <style>
+        /* Gotcha Chromium print: border-collapse + width tepat 100% menghilangkan
+           border kanan saat dicetak — kurangi 2px agar border tidak ter-clip
+           di tepi content box (AGENT_INSTRUCTIONS.md §10.1). */
         table {
-            width: 100%;
+            width: calc(100% - 2px);
             line-height: inherit;
             border-collapse: collapse;
             border-spacing: 0;
