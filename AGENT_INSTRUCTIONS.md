@@ -374,6 +374,34 @@ Gotchas engine print Chromium (pelajaran pilot Mutasi Barang Jadi):
 - Background sel striping butuh form field `printBackground=true` (sudah default di client).
 - **Kontrak font (tervalidasi via benchmark 2026-09-17, utama#2)**: set font yang di-embed **deterministik terhadap HTML+data** — cold start, warm, dan boundary `--chromium-restart-after=25` menghasilkan set identik. `Noto Serif` embed sebagai subset 3 varian (Regular/Bold/BoldItalic); glyph di luar cakupannya (emoji, CJK, simbol khusus) otomatis menarik subset fallback `DejaVuSans` — itu normal, bukan bug, tapi berarti **isi data memengaruhi set font**. Jangan pakai font-family eksternal (Calibri/DejaVu eksplisit di view sudah dihapus; link Google Fonts di-strip otomatis). Latensi: cold start pertama ~13s sekali per (re)start container, boundary restart hanya +~0.2s.
 
+### 10.2 Fasad `spatie/laravel-pdf` (opsional — lewat pipeline yang sama)
+
+`spatie/laravel-pdf` (^2.13) terpasang sebagai fasad alternatif untuk menyusun PDF. Di project ini binding `laravel-pdf.driver.gotenberg` **di-override** oleh `App\Services\Pdf\GotenbergPipelineDriver` di `AppServiceProvider::register()`, yang mendelegasikan ke `GotenbergPdfClient`. Konsekuensinya: **semua** pemakaian fasad `Pdf` otomatis melewati throttle bucket, retry+backoff, dan mapping `GotenbergPdfException` → 502 yang sama — tidak ada jalur HTTP kedua ke Gotenberg. Default driver dikunci `gotenberg` di `config/laravel-pdf.php` (env `LARAVEL_PDF_DRIVER`).
+
+```php
+use Spatie\LaravelPdf\Facades\Pdf;
+
+// Render ke string (controller tetap wrap response + catch GotenbergPdfException sendiri)
+$pdfBytes = Pdf::html($html)
+    ->format('A4')            // dinotasikan ke PdfGenerator::paperMetrics() (cm)
+    ->landscape()
+    ->footerHtml($footerHtml) // part footer.html — partial gotenberg-footer
+    ->generatePdfContent();
+
+// Simpan ke file (mis. job async)
+Pdf::html($html)->save(storage_path('app/report.pdf'));
+```
+
+Catatan dan batasan:
+
+- `format('A4')` memakai tabel dimensi `PdfGenerator::paperMetrics()` (cm) — sumber kebenaran sama dengan jalur controller; format tak dikenal jatuh ke A4. `paperSize(w, h, unit)` dipetakan langsung ke `paperWidth/paperHeight`.
+- `headerHtml()` **ditolak** (`InvalidArgumentException`) — pipeline hanya mendukung part footer; sisipkan header di view utama.
+- `margins()` selalu mengirim keempat sisi (sisi yang tak disebut = `0mm`), menimpa default 10mm client — tulis eksplisit jika ingin mempertahankan default.
+- `waitUntilReady()` dipetakan ke `waitForExpression`; `tagged()`/`documentOutline()`/`scale()`/`pageRanges()` diteruskan apa adanya.
+- Bucket throttle tetap mengikuti `GotenbergBucketContext` ambient (trait `BuildsGotenbergPdfResponses`), bukan opsi fasad.
+- Jangan aktifkan `cache.automatic` di `config/laravel-pdf.php` — render caching report sudah punya konvensi sendiri di `config/app.php` (`pdf_render_cache_*`).
+
+
 ---
 
 ## 11. Async PDF — Arsitektur yang Sudah Diimplementasikan

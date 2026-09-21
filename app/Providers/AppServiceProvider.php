@@ -6,6 +6,9 @@ use App\Auth\DualLegacyPasswordUserProvider;
 use App\Auth\LegacyPasswordUserProvider;
 use App\Console\Commands\ExportDatabaseStructureCommand;
 use App\Database\CustomSqlServerConnector;
+use App\Services\GotenbergPdfClient;
+use App\Services\Pdf\GotenbergPipelineDriver;
+use App\Services\PdfGenerator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
@@ -22,6 +25,18 @@ class AppServiceProvider extends ServiceProvider
         // sehingga login (query ke SQL Server) gagal dengan
         // SQLSTATE[IMSSP]: An invalid attribute was designated on the PDO object.
         $this->app->bind('db.connector.sqlsrv', CustomSqlServerConnector::class);
+
+        // Route spatie/laravel-pdf's "gotenberg" driver through the project's
+        // Gotenberg pipeline so bucket throttling, connection retry with
+        // backoff, and GotenbergPdfException -> 502 handling stay in a single
+        // code path (P3). Resolves `app(PdfDriver::class)` because
+        // config('laravel-pdf.driver') defaults to 'gotenberg'.
+        $this->app->singleton('laravel-pdf.driver.gotenberg', function ($app) {
+            return new GotenbergPipelineDriver(
+                $app->make(GotenbergPdfClient::class),
+                $app->make(PdfGenerator::class),
+            );
+        });
     }
 
     /**
