@@ -255,7 +255,12 @@ class FinancialRasioRuReportService
                 $monthly[$key]['operating_expense'] += $ending;
             }
 
-            if ($prefix3 === '500' && $ending > 0 && ! in_array($prefix7, self::OPERATING_EXPENSE_EXCLUDED_500, true)) {
+            // Akun 500.018 dikecualikan dari Operating Expense,
+            // KECUALI 500.018.002 (Pemakaian Bahan Pembantu) yang tetap dihitung.
+            $isExcludedOperatingExpense500 = in_array($prefix7, self::OPERATING_EXPENSE_EXCLUDED_500, true)
+                && ! str_starts_with($accountCode, '500.018.002');
+
+            if ($prefix3 === '500' && $ending > 0 && ! $isExcludedOperatingExpense500) {
                 $monthly[$key]['operating_expense_500'] += $ending;
                 $monthly[$key]['operating_expense'] += $ending;
             }
@@ -540,7 +545,7 @@ class FinancialRasioRuReportService
                 'id' => 'revenue_run_rate',
                 'title' => 'Revenue Run Rate',
                 'description' => 'Revenue Run Rate (sering disebut Run Rate saja) adalah metode peramalan kinerja keuangan perusahaan untuk satu tahun penuh (12 bulan) dengan mengeksplorasi data pendapatan dari periode yang lebih pendek (seperti satu bulan atau satu kuartal). Rumus dasarnya adalah mengalikan pendapatan periode pendek dengan faktor pengali agar genap menjadi 12 bulan.',
-                'footer_note' => '<strong>1. Menggunakan Data Bulanan: Revenue Run Rate = Revenue Bulanan x 12</strong><br>2. Menggunakan Data Kuartal (3 Bulan): Revenue Run Rate = Revenue 3 Bulan x 4<br>Laporan ini menggunakan metode data bulanan (x 12).',
+                'footer_note' => '<strong>Keterangan : </strong> Laporan ini Menggunakan Data Bulanan: Revenue Run Rate = Revenue Bulanan x 12',
                 'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate'],
                 'column_format' => 'amount',
                 'rows' => $runRateRows,
@@ -548,8 +553,8 @@ class FinancialRasioRuReportService
             [
                 'id' => 'sales_growth',
                 'title' => 'Sales Growth',
-                'description' => 'Rasio yang mengukur seberapa besar kenaikan/penurunan penjualan perusahaan dari satu periode ke periode berikutnya. Termasuk dalam kategori rasio pertumbuhan (growth ratio) pada analisis laporan keuangan.',
-                'footer_note' => '<strong>Rumus Sales Growth = (Penjualan Bulan Ini - Penjualan Bulan Sebelumnya) / Penjualan Bulan Sebelumnya x 100%</strong><br>- Positif -> penjualan naik<br>- Negatif -> penjualan turun<br>- Perlu dibandingkan dengan pertumbuhan laba juga, karena penjualan naik belum tentu diikuti kenaikan profit (bisa jadi margin turun).',
+                'description' => 'Rasio yang mengukur seberapa besar kenaikan/penurunan penjualan perusahaan dari satu periode ke periode berikutnya. Termasuk dalam kategori rasio pertumbuhan (growth ratio) pada analisis laporan keuangan. Tujuannya adalah untuk mengetahui apakah penjualan perusahaan berkembang, stagnan, atau menurun, serta mencari faktor penyebabnya. Perbandingan biasanya dilakukan secara bulanan, kuartalan, atau tahunan.',
+                'footer_note' => '<strong>Rumus Sales Growth = (Penjualan Bulan Ini - Penjualan Bulan Sebelumnya) / Penjualan Bulan Sebelumnya x 100%</strong><br>- Positif -> penjualan naik<br>- Negatif -> penjualan turun<br>- Perlu dibandingkan dengan pertumbuhan laba juga, karena penjualan naik belum tentu diikuti kenaikan profit (bisa jadi margin turun)<br>- Secara singkat, <strong>analisa sales growth digunakan untuk melihat perkembangan kinerja penjualan perusahaan dan menjadi dasar dalam menentukan strategi penjualan berikutnya.</strong>',
                 'columns' => ['No', 'Bulan', 'Penjualan Bulan Sebelumnya', 'Penjualan Bulan Ini', 'Sales Growth %'],
                 'rows' => $salesGrowthRows,
             ],
