@@ -28,6 +28,8 @@ class KdKeluarMasukReportService
         $groupColumns = [
             'JABON',
             'JABON TG',
+            // Tambah kolom KAYU LAT
+            'KAYU LAT',
             'PULAI',
             'RAMBUNG',
             'RAMBUNG MC1',
@@ -202,6 +204,8 @@ class KdKeluarMasukReportService
         return match ($t) {
             'JABON' => 'JABON',
             'JABON TG', 'JABON TGI', 'JABON TANGGUNG' => 'JABON TG',
+            // Tambah mapping kolom KAYU LAT
+            'KAYU LAT', 'LAT', 'KAYULAT' => 'KAYU LAT',
             'PULAI' => 'PULAI',
             'RAMBUNG' => 'RAMBUNG',
             'RAMBUNG MC1', 'RAMBUNG MC 1' => 'RAMBUNG MC1',
@@ -269,7 +273,7 @@ class KdKeluarMasukReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan KD (Keluar - Masuk) dikonfigurasi untuk SQL Server. '
-                .'Set KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                    .'Set KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -280,7 +284,7 @@ class KdKeluarMasukReportService
                 ? $customQuery
                 : throw new RuntimeException(
                     'KD_KELUAR_MASUK_REPORT_QUERY belum diisi. '
-                    .'Isi query manual jika menggunakan KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query.',
+                        .'Isi query manual jika menggunakan KD_KELUAR_MASUK_REPORT_CALL_SYNTAX=query.',
                 );
 
             return $connection->select($query, str_contains($query, '?') ? $bindings : []);
