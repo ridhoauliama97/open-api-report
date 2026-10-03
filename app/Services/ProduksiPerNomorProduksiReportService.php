@@ -44,6 +44,8 @@ class ProduksiPerNomorProduksiReportService
             'row_count' => count($rows),
             'input_row_count' => count($report['input_rows'] ?? []),
             'output_row_count' => count($report['output_rows'] ?? []),
+            'repair_row_count' => count($report['repair_rows'] ?? []),
+            'afkir_row_count' => count($report['afkir_rows'] ?? []),
         ];
     }
 
@@ -54,53 +56,39 @@ class ProduksiPerNomorProduksiReportService
     public function buildReportData(string $noProduksi, array $rows): array
     {
         $firstRow = $rows[0] ?? [];
-        $inputRows = [];
-        $outputRows = [];
-        $inputLabel = null;
-        $outputLabel = null;
+        $buckets = [
+            'input' => [],
+            'output' => [],
+            'repair' => [],
+            'afkir' => [],
+        ];
+        $labels = ['input' => null, 'output' => null];
 
         foreach ($rows as $row) {
-            [$prefixedInput, $prefixedOutput] = $this->extractPrefixedItems($row);
+            foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
+                $bucket = $this->resolveFlagBucket($row) ?? $direction;
 
-            if ($prefixedInput !== null) {
-                $inputRows[] = $prefixedInput['row'];
-                $inputLabel ??= $prefixedInput['label'];
-            }
+                if ($bucket === null) {
+                    continue;
+                }
 
-            if ($prefixedOutput !== null) {
-                $outputRows[] = $prefixedOutput['row'];
-                $outputLabel ??= $prefixedOutput['label'];
-            }
+                $buckets[$bucket][] = $detail;
 
-            if ($prefixedInput !== null || $prefixedOutput !== null) {
-                continue;
-            }
-
-            $direction = $this->detectDirection($row);
-            $detail = $this->mapDetailRow($row);
-
-            if (! $this->hasDetailContent($detail)) {
-                continue;
-            }
-
-            if ($direction === 'input') {
-                $inputRows[] = $detail;
-                $inputLabel ??= $this->extractSectionLabel($row, 'input');
-
-                continue;
-            }
-
-            if ($direction === 'output') {
-                $outputRows[] = $detail;
-                $outputLabel ??= $this->extractSectionLabel($row, 'output');
+                if ($bucket === 'input' || $bucket === 'output') {
+                    $labels[$bucket] ??= $label;
+                }
             }
         }
 
-        $inputRows = $this->sortDetailRows($inputRows);
-        $outputRows = $this->sortDetailRows($outputRows);
+        $inputRows = $this->sortDetailRows($buckets['input']);
+        $outputRows = $this->sortDetailRows($buckets['output']);
+        $repairRows = $this->sortDetailRows($buckets['repair']);
+        $afkirRows = $this->sortDetailRows($buckets['afkir']);
 
         $inputTotals = $this->calculateTotals($inputRows);
         $outputTotals = $this->calculateTotals($outputRows);
+        $repairTotals = $this->calculateTotals($repairRows);
+        $afkirTotals = $this->calculateTotals($afkirRows);
         $rendemen = $inputTotals['kubik'] > 0
             ? ($outputTotals['kubik'] / $inputTotals['kubik']) * 100.0
             : null;
@@ -116,14 +104,18 @@ class ProduksiPerNomorProduksiReportService
                 'jam_kerja' => $this->firstNumber($firstRow, ['JamKerja', 'JmKerja', 'HK']),
                 'anggota' => $this->firstInt($firstRow, ['JmlhAnggota', 'JumlahAnggota', 'Anggota']),
                 'operator' => $this->firstNonEmptyString($firstRow, ['Operator', 'CreateBy', 'NamaOperator']),
-                'input_label' => $inputLabel ?: 'LAMINATING',
-                'output_label' => $outputLabel ?: 'CCAKHIR',
+                'input_label' => $labels['input'] ?: 'LAMINATING',
+                'output_label' => $labels['output'] ?: 'CCAKHIR',
             ],
             'input_rows' => $inputRows,
             'output_rows' => $outputRows,
+            'repair_rows' => $repairRows,
+            'afkir_rows' => $afkirRows,
             'totals' => [
                 'input' => $inputTotals,
                 'output' => $outputTotals,
+                'repair' => $repairTotals,
+                'afkir' => $afkirTotals,
                 'rendemen' => $rendemen,
             ],
             'raw_columns' => array_keys($firstRow),
@@ -204,6 +196,84 @@ class ProduksiPerNomorProduksiReportService
         }
 
         return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
+    }
+
+    /**
+     * Menentukan bucket baris berdasarkan flag SP, tanpa mengubah bucket asal (input/output).
+     * IsRepair lebih didahulukan karena repair adalah perbaikan, bukan pembuangan.
+     *
+     * @param  array<string, mixed>  $row
+     */
+    private function resolveFlagBucket(array $row): ?string
+    {
+        if ($this->isFlagSet($row, 'IsRepair')) {
+            return 'repair';
+        }
+
+        if ($this->isFlagSet($row, 'IsReject')) {
+            return 'afkir';
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     */
+    private function isFlagSet(array $row, string $column): bool
+    {
+        if (! array_key_exists($column, $row)) {
+            return false;
+        }
+
+        $value = $row[$column];
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        return $this->toFloat($value) === 1.0;
+    }
+
+    /**
+     * Menghasilkan kandidat baris detail beserta arah (input/output) dan label section-nya.
+     *
+     * @param  array<string, mixed>  $row
+     * @return array<int, array{0: array<string, mixed>, 1: ?string, 2: ?string}>
+     */
+    private function extractCandidates(array $row): array
+    {
+        [$prefixedInput, $prefixedOutput] = $this->extractPrefixedItems($row);
+
+        if ($prefixedInput !== null || $prefixedOutput !== null) {
+            $candidates = [];
+
+            if ($prefixedInput !== null) {
+                $candidates[] = [$prefixedInput['row'], 'input', $prefixedInput['label']];
+            }
+
+            if ($prefixedOutput !== null) {
+                $candidates[] = [$prefixedOutput['row'], 'output', $prefixedOutput['label']];
+            }
+
+            return $candidates;
+        }
+
+        $detail = $this->mapDetailRow($row);
+
+        if (! $this->hasDetailContent($detail)) {
+            return [];
+        }
+
+        $direction = $this->detectDirection($row);
+
+        return [[
+            $detail,
+            $direction,
+            in_array($direction, ['input', 'output'], true)
+                ? $this->extractSectionLabel($row, $direction)
+                : null,
+        ]];
     }
 
     /**

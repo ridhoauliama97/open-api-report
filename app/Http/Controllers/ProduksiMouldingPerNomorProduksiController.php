@@ -70,6 +70,8 @@ class ProduksiMouldingPerNomorProduksiController extends Controller
                 'NoProduksi' => $noProduksi,
                 'input_row_count' => count($report['input_rows'] ?? []),
                 'output_row_count' => count($report['output_rows'] ?? []),
+                'repair_row_count' => count($report['repair_rows'] ?? []),
+                'afkir_row_count' => count($report['afkir_rows'] ?? []),
                 'raw_column_count' => count($report['raw_columns'] ?? []),
                 'source' => $report['meta']['source'] ?? null,
             ],

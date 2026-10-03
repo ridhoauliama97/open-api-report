@@ -181,6 +181,8 @@
         $meta = $report['meta'] ?? [];
         $inputRows = $report['input_rows'] ?? [];
         $outputRows = $report['output_rows'] ?? [];
+        $repairRows = $report['repair_rows'] ?? [];
+        $afkirRows = $report['afkir_rows'] ?? [];
         $totals = $report['totals'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
 
@@ -190,35 +192,47 @@
             ? '-'
             : number_format((float) $value, 2, '.', '') . '%';
 
-        $inputTotals = $totals['input'] ?? ['count' => 0, 'jmlh_batang' => 0, 'kubik' => 0];
-        $outputTotals = $totals['output'] ?? ['count' => 0, 'jmlh_batang' => 0, 'kubik' => 0];
+        $emptyTotals = ['count' => 0, 'jmlh_batang' => 0, 'kubik' => 0];
+        $inputTotals = $totals['input'] ?? $emptyTotals;
+        $outputTotals = $totals['output'] ?? $emptyTotals;
+        $repairTotals = $totals['repair'] ?? $emptyTotals;
+        $afkirTotals = $totals['afkir'] ?? $emptyTotals;
         $rendemen = $totals['rendemen'] ?? null;
 
         $pageHeightMm = 297 - 16 - 18;
         $reservedHeightMm = 34;
         $rowHeightMm = 4.9;
-        $rowsPerPage = max(1, (int) floor(($pageHeightMm - $reservedHeightMm) / $rowHeightMm));
-        $inputChunks = array_values(array_chunk($inputRows, $rowsPerPage));
-        $outputChunks = array_values(array_chunk($outputRows, $rowsPerPage));
 
-        if ($inputChunks === []) {
-            $inputChunks = [[]];
-        }
+        // Tabel Repair dan Afkir ditumpuk di bawah Input/Output pada halaman yang sama,
+        // jadi tinggi yang tersedia dibagi dua hanya ketika tabel kedua memang berisi data.
+        $tableBlocks = ($repairRows !== [] || $afkirRows !== []) ? 2 : 1;
+        $rowsPerPage = max(1, (int) floor(($pageHeightMm - $reservedHeightMm) / ($rowHeightMm * $tableBlocks)));
 
-        if ($outputChunks === []) {
-            $outputChunks = [[]];
-        }
+        $inputChunks = array_values(array_chunk($inputRows, $rowsPerPage)) ?: [[]];
+        $outputChunks = array_values(array_chunk($outputRows, $rowsPerPage)) ?: [[]];
+        $repairChunks = array_values(array_chunk($repairRows, $rowsPerPage)) ?: [[]];
+        $afkirChunks = array_values(array_chunk($afkirRows, $rowsPerPage)) ?: [[]];
 
-        $pageCount = max(count($inputChunks), count($outputChunks));
+        $pageCount = max(
+            count($inputChunks),
+            count($outputChunks),
+            count($repairChunks),
+            count($afkirChunks),
+        );
     @endphp
 
     @for ($pageIndex = 0; $pageIndex < $pageCount; $pageIndex++)
         @php
             $pageInputRows = $inputChunks[$pageIndex] ?? [];
             $pageOutputRows = $outputChunks[$pageIndex] ?? [];
+            $pageRepairRows = $repairChunks[$pageIndex] ?? [];
+            $pageAfkirRows = $afkirChunks[$pageIndex] ?? [];
             $isLastInputPage = $pageIndex === count($inputChunks) - 1;
             $isLastOutputPage = $pageIndex === count($outputChunks) - 1;
+            $isLastRepairPage = $pageIndex === count($repairChunks) - 1;
+            $isLastAfkirPage = $pageIndex === count($afkirChunks) - 1;
             $isLastPage = $pageIndex === $pageCount - 1;
+            $showEmptyMessage = $pageIndex === 0;
         @endphp
 
         <div class="page-block {{ $isLastPage ? 'last-page' : '' }}">
@@ -285,89 +299,27 @@
                 <tr>
                     <td class="left-pane">
                         <p class="section-heading">Input : {{ $meta['input_label'] ?? 'INPUT' }}</p>
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%;">No Label</th>
-                                    <th style="width: 12%;">Tebal (mm)</th>
-                                    <th style="width: 12%;">Lebar (mm)</th>
-                                    <th style="width: 18%;">Panjang (ft)</th>
-                                    <th style="width: 19%;">Jmlh Batang</th>
-                                    <th style="width: 19%;">Kubik</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if ($pageInputRows === [] && $pageIndex === 0)
-                                    <tr>
-                                        <td class="center" colspan="6">Data input tidak tersedia.</td>
-                                    </tr>
-                                @else
-                                    @foreach ($pageInputRows as $row)
-                                        <tr>
-                                            <td>{{ $row['no_label'] ?? '' }}</td>
-                                            <td class="center">{{ $fmtInt($row['tebal'] ?? null) }}</td>
-                                            <td class="center">{{ $fmtInt($row['lebar'] ?? null) }}</td>
-                                            <td class="number">{{ $fmtInt($row['panjang'] ?? null) }}</td>
-                                            <td class="number">{{ $fmtInt($row['jmlh_batang'] ?? null) }}</td>
-                                            <td class="number">{{ $fmt4($row['kubik'] ?? null) }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                            @if ($isLastInputPage)
-                                <tfoot>
-                                    <tr>
-                                        <td class="center">{{ $fmtInt($inputTotals['count'] ?? 0) }}</td>
-                                        <td class="total-label" colspan="3">Total :</td>
-                                        <td class="number">{{ $fmtInt($inputTotals['jmlh_batang'] ?? 0) }}</td>
-                                        <td class="number">{{ $fmt4($inputTotals['kubik'] ?? 0) }}</td>
-                                    </tr>
-                                </tfoot>
-                            @endif
-                        </table>
+                        @include('reports.partials.produksi-detail-table', [
+                            'rows' => $pageInputRows,
+                            'totals' => $inputTotals,
+                            'emptyMessage' => 'Data input tidak tersedia.',
+                            'showEmpty' => $showEmptyMessage,
+                            'showTotal' => $isLastInputPage,
+                            'fmtInt' => $fmtInt,
+                            'fmt4' => $fmt4,
+                        ])
                     </td>
                     <td class="right-pane">
                         <p class="section-heading">Output : {{ $meta['output_label'] ?? 'OUTPUT' }}</p>
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%;">No Label</th>
-                                    <th style="width: 12%;">Tebal (mm)</th>
-                                    <th style="width: 12%;">Lebar (mm)</th>
-                                    <th style="width: 18%;">Panjang (ft)</th>
-                                    <th style="width: 19%;">Jmlh Batang</th>
-                                    <th style="width: 19%;">Kubik</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if ($pageOutputRows === [] && $pageIndex === 0)
-                                    <tr>
-                                        <td class="center" colspan="6">Data output tidak tersedia.</td>
-                                    </tr>
-                                @else
-                                    @foreach ($pageOutputRows as $row)
-                                        <tr>
-                                            <td>{{ $row['no_label'] ?? '' }}</td>
-                                            <td class="center">{{ $fmtInt($row['tebal'] ?? null) }}</td>
-                                            <td class="center">{{ $fmtInt($row['lebar'] ?? null) }}</td>
-                                            <td class="number">{{ $fmtInt($row['panjang'] ?? null) }}</td>
-                                            <td class="number">{{ $fmtInt($row['jmlh_batang'] ?? null) }}</td>
-                                            <td class="number">{{ $fmt4($row['kubik'] ?? null) }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                            @if ($isLastOutputPage)
-                                <tfoot>
-                                    <tr>
-                                        <td class="center">{{ $fmtInt($outputTotals['count'] ?? 0) }}</td>
-                                        <td class="total-label" colspan="3">Total :</td>
-                                        <td class="number">{{ $fmtInt($outputTotals['jmlh_batang'] ?? 0) }}</td>
-                                        <td class="number">{{ $fmt4($outputTotals['kubik'] ?? 0) }}</td>
-                                    </tr>
-                                </tfoot>
-                            @endif
-                        </table>
+                        @include('reports.partials.produksi-detail-table', [
+                            'rows' => $pageOutputRows,
+                            'totals' => $outputTotals,
+                            'emptyMessage' => 'Data output tidak tersedia.',
+                            'showEmpty' => $showEmptyMessage,
+                            'showTotal' => $isLastOutputPage,
+                            'fmtInt' => $fmtInt,
+                            'fmt4' => $fmt4,
+                        ])
                     </td>
                 </tr>
             </table>
@@ -382,6 +334,42 @@
                     {{ $fmtPercent($rendemen) }}
                 </p>
             @endif
+
+            <table class="section-title-grid">
+                <tr>
+                    <td>Repair</td>
+                    <td>Afkir</td>
+                </tr>
+            </table>
+
+            <table class="split-grid">
+                <tr>
+                    <td class="left-pane">
+                        <p class="section-heading">Repair</p>
+                        @include('reports.partials.produksi-detail-table', [
+                            'rows' => $pageRepairRows,
+                            'totals' => $repairTotals,
+                            'emptyMessage' => 'Data repair tidak tersedia.',
+                            'showEmpty' => $showEmptyMessage,
+                            'showTotal' => $isLastRepairPage,
+                            'fmtInt' => $fmtInt,
+                            'fmt4' => $fmt4,
+                        ])
+                    </td>
+                    <td class="right-pane">
+                        <p class="section-heading">Afkir</p>
+                        @include('reports.partials.produksi-detail-table', [
+                            'rows' => $pageAfkirRows,
+                            'totals' => $afkirTotals,
+                            'emptyMessage' => 'Data afkir tidak tersedia.',
+                            'showEmpty' => $showEmptyMessage,
+                            'showTotal' => $isLastAfkirPage,
+                            'fmtInt' => $fmtInt,
+                            'fmt4' => $fmt4,
+                        ])
+                    </td>
+                </tr>
+            </table>
         </div>
     @endfor
 
