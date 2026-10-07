@@ -160,6 +160,10 @@
             margin: 0 0 12px 0;
         }
 
+        .receipt-block-new-page {
+            page-break-before: always;
+        }
+
         .receipt-separator {
             border-top: 1px solid #000;
             margin: 8px 0 10px 0;
@@ -927,7 +931,7 @@
             $balokRows = is_array($receipt['balok_timbang_ulang'] ?? null) ? $receipt['balok_timbang_ulang'] : [];
         @endphp
 
-        <div class="receipt-block">
+        <div class="receipt-block {{ ($loop->parent->first ?? false) && $loop->first ? '' : 'receipt-block-new-page' }}">
             <table class="meta-table">
                 <tr>
                     <td class="meta-line">

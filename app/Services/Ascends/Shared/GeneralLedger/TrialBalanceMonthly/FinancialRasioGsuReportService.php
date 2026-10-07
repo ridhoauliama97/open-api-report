@@ -46,6 +46,22 @@ class FinancialRasioGsuReportService
 
     private const INVENTORY_PREFIX = '111.400';
 
+    /**
+     * Penyusutan pada Laba Rugi > Beban Umum (721.000.xxx).
+     * 721.000.201 = "BU - Penyusutan".
+     * Varian 201A-201E mengikuti akun GSU specific pada BebanUmumGsuReportService.
+     */
+    private const DEPRECIATION_EXPENSE_CODES = [
+        '721.000.201',
+        '721.000.201A',
+        '721.000.201B',
+        '721.000.201C',
+        '721.000.201D',
+        '721.000.201E',
+    ];
+
+    private const NON_OPERATING_EXPENSE_CODE = '721.000.171';
+
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $allRows = $this->parseXml($xmlContents, $sourceLabel);
@@ -238,10 +254,14 @@ class FinancialRasioGsuReportService
 
             if ($prefix3 === '721') {
                 $monthly[$key]['beban_adm'] += $ending;
-                if ($accountCode === '721.000.171') {
+                if ($accountCode === self::NON_OPERATING_EXPENSE_CODE) {
                     $monthly[$key]['beban_adm_nonoperasional'] += $ending;
                 }
-                if ($accountCode !== '721.000.213' && $accountCode !== '721.000.171') {
+                if (in_array($accountCode, self::DEPRECIATION_EXPENSE_CODES, true)) {
+                    $monthly[$key]['penyusutan'] += $ending;
+                }
+                if (! in_array($accountCode, self::DEPRECIATION_EXPENSE_CODES, true)
+                    && $accountCode !== self::NON_OPERATING_EXPENSE_CODE) {
                     $monthly[$key]['operating_expense'] += $ending;
                 }
             }
@@ -252,10 +272,6 @@ class FinancialRasioGsuReportService
 
             if ($prefix3 === '900') {
                 $monthly[$key]['beban_lain'] += $ending;
-            }
-
-            if ($prefix7 === '500.001') {
-                $monthly[$key]['penyusutan'] += $ending;
             }
 
             if (in_array($prefix3, self::ASSET_PREFIXES, true)) {
@@ -416,7 +432,9 @@ class FinancialRasioGsuReportService
                 'bulan' => $bulan,
                 'nilai_x' => $pendapatan,
                 'nilai_y' => $pendapatan * 12,
-                'rasio' => $pendapatan * 12,
+                'rasio' => $previousPendapatan != 0
+                    ? (($pendapatan - $previousPendapatan) / $previousPendapatan) * 100
+                    : 0,
             ];
 
             $salesGrowthRows[] = [
@@ -536,8 +554,7 @@ class FinancialRasioGsuReportService
                 'title' => 'Revenue Run Rate',
                 'description' => 'Revenue Run Rate (sering disebut Run Rate saja) adalah metode peramalan kinerja keuangan perusahaan untuk satu tahun penuh (12 bulan) dengan mengeksplorasi data pendapatan dari periode yang lebih pendek (seperti satu bulan atau satu kuartal). Rumus dasarnya adalah mengalikan pendapatan periode pendek dengan faktor pengali agar genap menjadi 12 bulan.',
                 'footer_note' => '<strong>Keterangan : </strong> Laporan ini Menggunakan Data Bulanan: Revenue Run Rate = Revenue Bulanan x 12',
-                'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate'],
-                'column_format' => 'amount',
+                'columns' => ['No', 'Bulan', 'Nilai Pendapatan Bulanan', 'Revenue Run Rate', 'Rasio %'],
                 'rows' => $runRateRows,
             ],
             [
